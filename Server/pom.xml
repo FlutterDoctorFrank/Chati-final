@@ -38,7 +38,7 @@
                             <archive>
                                 <manifest>
                                     <addClasspath>true</addClasspath>
-                                    <mainClass>Launcher</mainClass>
+                                    <mainClass>controller.Launcher</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
