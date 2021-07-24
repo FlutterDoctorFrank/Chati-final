@@ -9,7 +9,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>Chati Client</name>
     <artifactId>chati-client</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>tm-pse</groupId>
+            <artifactId>chati-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <finalName>Chati-Client</finalName>
@@ -42,7 +51,7 @@
                                 </manifest>
                             </archive>
                             <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                                <descriptorRef>executable</descriptorRef>
                             </descriptorRefs>
                         </configuration>
                     </execution>
