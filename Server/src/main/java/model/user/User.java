@@ -1,7 +1,9 @@
 package model.user;
 
 import controller.network.ClientSender;
+import model.MessageBundle;
 import model.communication.CommunicationHandler;
+import model.communication.message.TextMessage;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.IContext;
@@ -64,6 +66,17 @@ public class User implements IUser {
         }
         currentWorld = world;
         currentWorld.addUser(this);
+
+        // Send packets related to world join
+        clientSender.send(ClientSender.SendAction.WORLD_ACTION, currentWorld);
+        clientSender.send(ClientSender.SendAction.CONTEXT_JOIN, currentWorld);
+        clientSender.send(ClientSender.SendAction.CONTEXT_ROLE, contextRoles);
+        clientSender.send(ClientSender.SendAction.NOTIFICATION, getWorldNotifications());
+        currentWorld.getUsers().forEach((userID, user) -> {
+            user.getClientSender().send(ClientSender.SendAction.USER_INFO, this);
+        });
+
+        // Spawn User & send packets related to location
         teleport(currentWorld.getSpawnLocation());
     }
 
@@ -74,7 +87,17 @@ public class User implements IUser {
         }
         currentLocation = null;
         currentWorld.removeUser(this);
+
+        // Send packets to other users to remove avatar & update user info
+        currentWorld.getUsers().forEach((userID, user) -> {
+            user.getClientSender().send(ClientSender.SendAction.AVATAR_REMOVE, this);
+            user.getClientSender().send(ClientSender.SendAction.USER_INFO, this);
+        });
+
         currentWorld = null;
+
+        // Send packet for leaving world
+        clientSender.send(ClientSender.SendAction.WORLD_ACTION, null); // Hier is noch unklar wie das gehen soll?
     }
 
     @Override
@@ -89,8 +112,8 @@ public class User implements IUser {
 
     @Override
     public void move(int posX, int posY) throws IllegalPositionException, IllegalActionException {
-        SpatialContext currentRoom = currentLocation.getRoom();
-        SpatialContext currentArea = currentLocation.getArea();
+        SpatialContext currentRoom = getRoom();
+        SpatialContext currentArea = getArea();
         if (!currentRoom.isLegal(posX, posY)) {
             throw new IllegalPositionException("Position is illegal.", this, posX, posY);
         }
@@ -98,11 +121,18 @@ public class User implements IUser {
             throw new IllegalActionException("Movement is not allowed.");
         }
         currentLocation.setPosition(posX, posY);
-        SpatialContext newArea = currentLocation.getArea();
+
+        currentRoom.getUsers().forEach((userID, user) -> {
+            user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, this);
+        });
+
+        SpatialContext newArea = getArea();
         if (!currentArea.equals(newArea)) {
             Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
             lastCommonAncestor.removeUser(this);
             newArea.addUser(this);
+            // Send music info of new context
+            clientSender.send(ClientSender.SendAction.CONTEXT_MUSIC, newArea);
         }
     }
 
@@ -161,11 +191,13 @@ public class User implements IUser {
     @Override
     public void setStatus(Status status) {
         this.status = status;
+        updateUserInfo();
     }
 
     @Override
     public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
+        updateUserInfo();
     }
 
     @Override
@@ -210,12 +242,14 @@ public class User implements IUser {
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    /*
     @Override
     public Map<IContext, IContextRole> getWorldRoles() {
         return contextRoles.entrySet().stream()
                 .filter(entry -> entry.getKey().equals(currentWorld))
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
+     */
 
     @Override
     public Map<UUID, INotification> getGlobalNotifications() {
@@ -224,8 +258,7 @@ public class User implements IUser {
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    @Override
-    public Map<UUID, INotification> getWorldNotification() {
+    public Map<UUID, INotification> getWorldNotifications() {
         return notifications.entrySet().stream()
                 .filter(entry -> entry.getValue().getContext().equals(currentWorld))
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -234,24 +267,28 @@ public class User implements IUser {
     public void addFriend(User user) {
         friends.put(user.getUserID(), user);
         database.addFriendship(this, user);
+        updateUserInfo();
     }
 
     public void removeFriend(User user) {
         friends.remove(user.getUserID());
         database.removeFriendship(this, user);
+        updateUserInfo();
     }
 
     public void ignoreUser(User user) {
         ignoredUsers.put(user.getUserID(), user);
         database.addIgnoredUser(this, user);
+        updateUserInfo();
     }
 
     public void unignoreUser(User user) {
         ignoredUsers.remove(user.getUserID());
         database.removeIgnoredUser(this, user);
+        updateUserInfo();
     }
 
-    public void addRole(Context context, Role role) throws IllegalActionException {
+    public void addRole(Context context, Role role) {
         ContextRole contextRole = contextRoles.get(context);
         if (contextRole == null) {
             contextRoles.put(context, new ContextRole(context, role));
@@ -259,20 +296,23 @@ public class User implements IUser {
             contextRole.addRole(role);
         }
         database.addRole(this, context, role);
+        clientSender.send(ClientSender.SendAction.CONTEXT_ROLE, contextRoles);
     }
 
-    public void removeRole(Context context, Role role) throws IllegalActionException {
+    public void removeRole(Context context, Role role) {
         ContextRole contextRole = contextRoles.get(context);
         contextRole.removeRole(role);
         if (contextRole.getRoles().isEmpty()) {
             contextRoles.remove(context);
         }
         database.removeRole(this, context, role);
+        clientSender.send(ClientSender.SendAction.CONTEXT_ROLE, contextRoles);
     }
 
     public void addNotification(Notification notification) {
         notifications.put(notification.getNotificationID(), notification);
         database.addNotification(this, notification);
+        clientSender.send(ClientSender.SendAction.NOTIFICATION, Collections.singletonMap(notification.getNotificationID(), notification));
     }
 
     public void removeNotification(Notification notification) {
@@ -294,6 +334,7 @@ public class User implements IUser {
         }
     }
 
+    /*
     public Context getHighestPermittedContext(Context context, Permission permission) {
         Context highestPermittedContext = null;
         Context currentContext = context;
@@ -307,6 +348,7 @@ public class User implements IUser {
         } while (currentContext != null);
         return highestPermittedContext;
     }
+    */
 
     public boolean isFriend(User user) {
         return friends.containsKey(user.getUserID());
@@ -316,13 +358,43 @@ public class User implements IUser {
         return ignoredUsers.containsKey(user.getUserID());
     }
 
-    public void teleport(Location location) {
-        // richtiges verlassen und betreten von bereichen
-        // überprüfen ob raum gewechselt wurde
-        // überprüfen ob privater raum betreten wurde ( um anderen benutzern bescheid zu geben )
-        // überprüfen ob koordinaten legal sind
-        // entsprechende Pakete senden.
-        this.currentLocation = location;
+    public void teleport(Location newLocation) {
+        SpatialContext currentRoom = getRoom();
+        SpatialContext currentArea = getArea();
+        currentLocation = newLocation;
+        SpatialContext newRoom = getRoom();
+        SpatialContext newArea = getArea();
+        // check if user entered a new area
+        if (!currentArea.equals(newArea)) {
+            // check if user entered a new room
+            if (!currentRoom.equals(newRoom)) {
+                // Remove avatar from all other users in the old room
+                currentRoom.getUsers().forEach((userID, user) -> {
+                    user.getClientSender().send(ClientSender.SendAction.AVATAR_REMOVE, this);
+                });
+                // Send room join information to user
+                clientSender.send(ClientSender.SendAction.CONTEXT_JOIN, this);
+                // Send position of user to other users in new room & position of others in new room to joining user
+                newRoom.getUsers().forEach((userID, user) -> {
+                    clientSender.send(ClientSender.SendAction.AVATAR_MOVE, user);
+                    user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, this);
+                });
+                // check if user entered a private room
+                if (newRoom.isPrivate()) {
+                    MessageBundle messageBundle = new MessageBundle("PrivateRoomEnterMessageKey", new Object[]{username});
+                    TextMessage info = new TextMessage(messageBundle);
+                    // send message to users in private room
+                    newRoom.getUsers().forEach((userID, user) -> {
+                        user.getClientSender().send(ClientSender.SendAction.MESSAGE, info);
+                    });
+                }
+            }
+            Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
+            lastCommonAncestor.removeUser(this);
+            newArea.addUser(this);
+            // Send music info of new context
+            clientSender.send(ClientSender.SendAction.CONTEXT_MUSIC, newArea);
+        }
     }
 
     public boolean isInteractingWith(SpatialContext interactable) {
@@ -339,5 +411,25 @@ public class User implements IUser {
 
     public void setClientSender(ClientSender clientSender) {
         this.clientSender = clientSender;
+    }
+
+    public ClientSender getClientSender() {
+        return clientSender;
+    }
+
+    public SpatialContext getArea() {
+        return currentLocation != null ? currentLocation.getArea() : null;
+    }
+
+    public SpatialContext getRoom() {
+        return currentLocation != null ? currentLocation.getRoom() : null;
+    }
+
+    private void updateUserInfo() {
+        Map<UUID, User> receivers = getWorld().getUsers();
+        receivers.putAll(friends);
+        receivers.forEach((userID, user) -> {
+            user.getClientSender().send(ClientSender.SendAction.USER_INFO, this);
+        });
     }
 }

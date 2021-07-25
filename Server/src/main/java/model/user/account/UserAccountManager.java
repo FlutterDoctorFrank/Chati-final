@@ -1,5 +1,6 @@
 package model.user.account;
 
+import controller.network.ClientSender;
 import model.context.Context;
 import model.context.global.GlobalContext;
 import model.database.Database;
@@ -44,7 +45,7 @@ public class UserAccountManager implements IUserAccountManager {
     }
 
     @Override
-    public User loginUser(String username, String password) throws IllegalAccountActionException {
+    public User loginUser(String username, String password, ClientSender clientSender) throws IllegalAccountActionException {
         User user;
         try {
             user = getUser(username);
@@ -57,6 +58,7 @@ public class UserAccountManager implements IUserAccountManager {
         if (user.isOnline()) {
             throw new IllegalAccountActionException("", "Das Konto ist bereits verbunden.");
         }
+        user.setClientSender(clientSender);
         user.setStatus(Status.ONLINE);
         GlobalContext.getInstance().addUser(user);
         return user;

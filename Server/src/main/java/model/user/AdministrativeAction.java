@@ -31,7 +31,7 @@ public enum AdministrativeAction {
                 performer.unignoreUser(target);
             }
             FriendRequest friendRequest = new FriendRequest(target, args[0], performer);
-            // Send Notification
+            target.addNotification(friendRequest);
         }
     },
     REMOVE_FRIEND {
@@ -77,6 +77,7 @@ public enum AdministrativeAction {
                 throw new IllegalActionException("Invited user is already in the private room.");
             }
             RoomInvitation roomInvitation = new RoomInvitation(target, performer.getWorld(), args[0], performer, invitedRoom);
+            target.addNotification(roomInvitation);
         }
     },
     ROOM_KICK {
@@ -120,9 +121,10 @@ public enum AdministrativeAction {
             }
             performerContext.addReportedUser(target);
 
-            MessageBundle messageBundle = new MessageBundle("messageKey", args);
+            Object[] notificationArguments = new Object[]{performer, target, args[0]};
+            MessageBundle messageBundle = new MessageBundle("messageKey", notificationArguments);
             receivers.forEach((userID, user) -> {
-                Notification reportNotification = new Notification(user, performer.getWorld(), messageBundle, null, null);
+                Notification reportNotification = new Notification(user, performer.getWorld(), messageBundle);
                 user.addNotification(reportNotification);
             });
         }
@@ -158,7 +160,6 @@ public enum AdministrativeAction {
                 targetContext.removeMutedUser(target);
                 targetContext = targetContext.getParent();
             } while (!targetContext.equals(commonContext));
-            // Send Packet
         }
     },
     BAN_USER {
@@ -182,16 +183,17 @@ public enum AdministrativeAction {
             performerContext.removeReportedUser(target);
             performerContext.addBannedUser(target);
 
-            MessageBundle messageBundle = new MessageBundle("messageKey", args);
+            Object[] notificationArguments = new Object[]{performer, target, args[0]};
+            MessageBundle messageBundle = new MessageBundle("messageKey", notificationArguments);
             receivers.forEach((userID, user) -> {
-                Notification banNotification = new Notification(user, performer.getWorld(), messageBundle, null, null);
+                Notification banNotification = new Notification(user, performer.getWorld(), messageBundle);
                 user.addNotification(banNotification);
             });
         }
     },
     UNBAN_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) throws IllegalActionException, NoPermissionException {
+        protected void execute(User performer, User target, String[] args) throws NoPermissionException {
             Context performerContext = performer.getWorld();
             Map<UUID, User> receivers = UserAccountManager.getInstance().getUsersWithPermission(performerContext, Permission.BAN_MODERATOR);
             if (target.hasPermission(performerContext, Permission.BAN_USER)) {
@@ -206,9 +208,10 @@ public enum AdministrativeAction {
             }
             performerContext.removeBannedUser(target);
 
-            MessageBundle messageBundle = new MessageBundle("messageKey", args);
+            Object[] notificationArguments = new Object[]{performer, target, args[0]};
+            MessageBundle messageBundle = new MessageBundle("messageKey", notificationArguments);
             receivers.forEach((userID, user) -> {
-                Notification unbanNotification = new Notification(user, performer.getWorld(), messageBundle, null, null);
+                Notification unbanNotification = new Notification(user, performer.getWorld(), messageBundle);
                 user.addNotification(unbanNotification);
             });
         }
@@ -222,8 +225,9 @@ public enum AdministrativeAction {
             }
             target.addRole(performerContext, Role.MODERATOR);
 
-            MessageBundle messageBundle = new MessageBundle("messageKey", args);
-            Notification roleReceiveNotification = new Notification(target, performer.getWorld(), messageBundle, null, null);
+            Object[] notificationArguments = new Object[]{performer, Role.MODERATOR, args[0]};
+            MessageBundle messageBundle = new MessageBundle("messageKey", notificationArguments);
+            Notification roleReceiveNotification = new Notification(target, performer.getWorld(), messageBundle);
             target.addNotification(roleReceiveNotification);
         }
     },
@@ -236,8 +240,9 @@ public enum AdministrativeAction {
             }
             target.removeRole(performerContext, Role.MODERATOR);
 
-            MessageBundle messageBundle = new MessageBundle("messageKey", args);
-            Notification roleLoseNotification = new Notification(target, performer.getWorld(), messageBundle, null, null);
+            Object[] notificationArguments = new Object[]{performer, Role.MODERATOR, args[0]};
+            MessageBundle messageBundle = new MessageBundle("messageKey", notificationArguments);
+            Notification roleLoseNotification = new Notification(target, performer.getWorld(), messageBundle);
             target.addNotification(roleLoseNotification);
         }
     },
@@ -250,8 +255,9 @@ public enum AdministrativeAction {
             }
             target.addRole(performerContext, Role.ADMINISTRATOR);
 
-            MessageBundle messageBundle = new MessageBundle("messageKey", args);
-            Notification roleReceiveNotification = new Notification(target, GlobalContext.getInstance(), messageBundle, null, null);
+            Object[] notificationArguments = new Object[]{performer, Role.ADMINISTRATOR, args[0]};
+            MessageBundle messageBundle = new MessageBundle("messageKey", notificationArguments);
+            Notification roleReceiveNotification = new Notification(target, GlobalContext.getInstance(), messageBundle);
             target.addNotification(roleReceiveNotification);
         }
     },
@@ -264,8 +270,9 @@ public enum AdministrativeAction {
             }
             target.removeRole(performerContext, Role.ADMINISTRATOR);
 
+            Object[] notificationArguments = new Object[]{performer, Role.ADMINISTRATOR, args[0]};
             MessageBundle messageBundle = new MessageBundle("messageKey", args);
-            Notification roleLoseNotification = new Notification(target, GlobalContext.getInstance(), messageBundle, null, null);
+            Notification roleLoseNotification = new Notification(target, GlobalContext.getInstance(), messageBundle);
             target.addNotification(roleLoseNotification);
         }
     };

@@ -13,6 +13,4 @@ public interface INotification {
     public IContext getContext();
     public MessageBundle getMessageBundle();
     public LocalDateTime getTimestamp();
-    public User getRequestingUser();
-    public ISpatialContext getRequestedContext();
 }

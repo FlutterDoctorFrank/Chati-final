@@ -33,7 +33,5 @@ public interface IUser {
     public Map<UUID, IUser> getFriends();
     public Map<UUID, IUser> getIgnoredUsers();
     public Map<IContext, IContextRole> getGlobalRoles();
-    public Map<IContext, IContextRole> getWorldRoles();
     public Map<UUID, INotification> getGlobalNotifications();
-    public Map<UUID, INotification> getWorldNotification();
 }

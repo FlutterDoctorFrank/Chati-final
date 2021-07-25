@@ -24,9 +24,6 @@ public class Portal extends SpatialContext {
 
     @Override
     public void executeMenuOption(User user, int menuOption, String[] args) throws IllegalInteractionException {
-        if (!user.isInteractingWith(this)) {
-            throw new IllegalInteractionException("User has not opened the menu of this object.", user);
-        }
         switch (menuOption) {
             case 0:
                 user.setCurrentInteractable(null);

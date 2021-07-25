@@ -1,7 +1,6 @@
 package model.role;
 
 import model.context.Context;
-import model.exception.IllegalActionException;
 
 import java.util.EnumSet;
 import java.util.Set;

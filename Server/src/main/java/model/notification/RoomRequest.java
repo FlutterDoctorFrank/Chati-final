@@ -1,7 +1,7 @@
 package model.notification;
 
+import controller.network.ClientSender;
 import model.MessageBundle;
-import model.communication.message.MessageType;
 import model.communication.message.TextMessage;
 import model.context.Context;
 import model.context.spatial.SpatialContext;
@@ -10,9 +10,13 @@ import model.user.User;
 import model.user.account.UserAccountManager;
 
 public class RoomRequest extends Notification {
+    private final User requestingUser;
+    private final SpatialContext requestedRoom;
 
-    public RoomRequest(User owner, Context owningContext, String userMessage, User requestingUser, SpatialContext requestedContext) {
-        super(owner, owningContext, new MessageBundle("roomRequestKey", new Object[]{userMessage}), requestingUser, requestedContext);
+    public RoomRequest(User owner, Context owningWorld, String userMessage, User requestingUser, SpatialContext requestedRoom) {
+        super(owner, owningWorld, new MessageBundle("roomRequestKey", new Object[]{userMessage}));
+        this.requestingUser = requestingUser;
+        this.requestedRoom = requestedRoom;
     }
 
     @Override
@@ -21,17 +25,19 @@ public class RoomRequest extends Notification {
         if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserID())) {
             MessageBundle messageBundle = new MessageBundle("Der anfragende Benutzer existiert nicht mehr.");
             TextMessage infoMessage = new TextMessage(messageBundle);
+            owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
             delete();
             return;
         }
-        // Check if owner of this notification is still roomowner of the requested room.
-        if (!owner.getWorld().containsPrivateRoom(requestedContext) || !owner.hasPermission(requestedContext, Permission.MANAGE_PRIVATE_ROOM)) {
+        // Check if user of this notification is still roomowner of the requested room.
+        if (!owner.getWorld().containsPrivateRoom(requestedRoom) || !owner.hasPermission(requestedRoom, Permission.MANAGE_PRIVATE_ROOM)) {
             MessageBundle messageBundle = new MessageBundle("Du hast nicht die nötige Berechtigung für den angefragten Raum.");
             TextMessage infoMessage = new TextMessage(messageBundle);
+            owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
             delete();
             return;
         }
-        RoomInvitation roomInvitation = new RoomInvitation(requestingUser, owner.getWorld(), null, owner, requestedContext);
+        RoomInvitation roomInvitation = new RoomInvitation(requestingUser, owner.getWorld(), null, owner, requestedRoom);
         requestingUser.addNotification(roomInvitation);
         delete();
     }

@@ -1,28 +1,33 @@
 package model.notification;
 
+import controller.network.ClientSender;
 import model.MessageBundle;
-import model.communication.message.MessageType;
 import model.communication.message.TextMessage;
 import model.context.Context;
 import model.context.spatial.SpatialContext;
 import model.user.User;
 
 public class RoomInvitation extends Notification {
+    private final User invitingUser;
+    private final SpatialContext invitedRoom;
 
-    public RoomInvitation(User owner, Context owningContext, String userMessage, User requestingUser, SpatialContext requestedContext) {
-        super(owner, owningContext, new MessageBundle("roomInvitationKey", new Object[]{userMessage}), requestingUser, requestedContext);
+    public RoomInvitation(User owner, Context owningWorld, String userMessage, User invitingUser, SpatialContext invitedRoom) {
+        super(owner, owningWorld, new MessageBundle("roomInvitationKey", new Object[]{userMessage}));
+        this.invitingUser = invitingUser;
+        this.invitedRoom = invitedRoom;
     }
 
     @Override
     public void accept() {
-        // Check if invited room still exists.
-        if (!requestingUser.getWorld().containsPrivateRoom(getRequestedContext())) {
+        // Check if invited room exists.
+        if (!owner.getWorld().containsPrivateRoom(invitedRoom)) {
             MessageBundle messageBundle = new MessageBundle("Der private Raum existiert nicht mehr.");
             TextMessage infoMessage = new TextMessage(messageBundle);
+            owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
             delete();
             return;
         }
-        owner.teleport(requestedContext.getSpawnLocation());
+        owner.teleport(invitedRoom.getSpawnLocation());
     }
 
     @Override

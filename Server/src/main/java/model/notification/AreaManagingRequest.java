@@ -6,9 +6,10 @@ import model.context.spatial.SpatialContext;
 import model.user.User;
 
 public class AreaManagingRequest extends Notification {
+    // TODO
 
-    public AreaManagingRequest(User owner, Context owningContext, String userMessage, User requestingUser, SpatialContext requestedContext) {
-        super(owner, owningContext, new MessageBundle("areManagingKey", new Object[]{userMessage}), requestingUser, requestedContext);
+    public AreaManagingRequest(User owner, Context owningContext, MessageBundle messageBundle) {
+        super(owner, owningContext, messageBundle);
     }
 
     @Override

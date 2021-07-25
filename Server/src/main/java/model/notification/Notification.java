@@ -2,7 +2,6 @@ package model.notification;
 
 import model.MessageBundle;
 import model.context.Context;
-import model.context.spatial.SpatialContext;
 import model.exception.IllegalNotificationActionException;
 import model.user.User;
 
@@ -15,18 +14,13 @@ public class Notification implements INotification {
     private final Context owningContext;
     private final MessageBundle messageBundle;
     private final LocalDateTime timestamp;
-    protected final User requestingUser;
-    protected final SpatialContext requestedContext;
 
-    public Notification(User owner, Context owningContext, MessageBundle messageBundle,
-                        User requestingUser, SpatialContext requestedContext) {
+    public Notification(User owner, Context owningContext, MessageBundle messageBundle) {
         this.notificationID = UUID.randomUUID();
         this.owner = owner;
         this.owningContext = owningContext;
         this.messageBundle = messageBundle;
         this.timestamp = LocalDateTime.now();
-        this.requestingUser = requestingUser;
-        this.requestedContext = requestedContext;
     }
 
     @Override
@@ -49,22 +43,12 @@ public class Notification implements INotification {
         return timestamp;
     }
 
-    @Override
-    public User getRequestingUser() {
-        return requestingUser;
-    }
-
-    @Override
-    public SpatialContext getRequestedContext() {
-        return requestedContext;
-    }
-
     public void accept() throws IllegalNotificationActionException {
-        throw new IllegalNotificationActionException("This notification is not a request.", owner, this, true);
+        delete();
     }
 
     public void decline() throws IllegalNotificationActionException {
-        throw new IllegalNotificationActionException("This notification is not a request.", owner, this, false);
+        delete();
     }
 
     public boolean isRequest() {
