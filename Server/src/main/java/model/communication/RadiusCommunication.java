@@ -1,6 +1,7 @@
 package model.communication;
 
 import model.context.Context;
+import model.context.spatial.SpatialContext;
 import model.user.User;
 
 import java.util.Map;
@@ -12,7 +13,7 @@ public class RadiusCommunication extends CommunicationRegion {
     private static final int DEFAULT_RADIUS = 2;
     private final int radius;
 
-    public RadiusCommunication(Context context) {
+    public RadiusCommunication(SpatialContext context) {
         super(context);
         radius = DEFAULT_RADIUS;
     }

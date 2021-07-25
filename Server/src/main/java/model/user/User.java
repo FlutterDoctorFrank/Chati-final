@@ -116,6 +116,9 @@ public class User implements IUser {
     public void interact(ContextID spatialID) throws IllegalInteractionException {
         SpatialContext currentArea = currentLocation.getArea();
         SpatialContext interactable = currentArea.getChildren().get(spatialID);
+        if (currentInteractable != null) {
+            throw new IllegalInteractionException("User is already interacting with a context.", this);
+        }
         if (interactable == null || !interactable.canInteract(this)) {
             throw new IllegalInteractionException("There is no interactable context with this ID near the user.", this);
         }

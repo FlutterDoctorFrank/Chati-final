@@ -1,14 +1,13 @@
 package model.context;
 
+import model.communication.CommunicationMedium;
+import model.communication.CommunicationRegion;
 import model.context.spatial.Music;
 import model.context.spatial.SpatialContext;
 import model.user.IUser;
 import model.user.User;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Context implements IContext {
     private ContextID contextID;
@@ -20,9 +19,11 @@ public class Context implements IContext {
     private Map<UUID, User> mutedUsers;
     private Map<UUID, User> bannedUsers;
     private Music music;
+    private CommunicationRegion communicationRegion;
+    private Set<CommunicationMedium> communicationMedia;
 
     protected Context(String contextName, Context parent, Map<ContextID, SpatialContext> children) {
-        // generate contextID
+        this.contextID = new ContextID(parent.getContextID().getId().concat(contextName));
         this.contextName = contextName;
         this.parent = parent;
         this.children = children;
@@ -138,6 +139,14 @@ public class Context implements IContext {
 
     public void stopMusic() {
         this.music = null;
+    }
+
+    public java.util.Map<UUID, User> getCommunicableUsers(User communicatingUser) {
+        return communicationRegion.getCommunicableUsers(communicatingUser);
+    }
+
+    public boolean canCommunicateWith(CommunicationMedium medium) {
+        return communicationMedia.contains(medium);
     }
 
     public Map<UUID, User> getContainedUsers() {

@@ -18,9 +18,8 @@ public class MusicPlayer extends SpatialContext {
 
     @Override
     public void interact(User user) {
-        // Check if user is close to object
-        // Check if user currently interacts with another object
-        // Send Packet for menu open
+        user.setCurrentInteractable(this);
+        // send menu open packet
     }
 
     @Override
@@ -42,6 +41,8 @@ public class MusicPlayer extends SpatialContext {
                 }
                 getParent().playMusic(music);
                 break;
+            case 2:
+                getParent().stopMusic();
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
         }

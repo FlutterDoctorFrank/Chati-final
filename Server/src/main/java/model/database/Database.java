@@ -16,7 +16,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
     private static Database database;
 
-
+/*
     @Override
     public static Connection getConnection() {
 
@@ -31,6 +31,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
         }
         return null;
     }
+
+ */
 
     @Override
     public void addWorld(SpatialContext world) {

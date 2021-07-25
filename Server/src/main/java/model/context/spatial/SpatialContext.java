@@ -12,14 +12,11 @@ import java.util.Set;
 import java.util.UUID;
 
 public class SpatialContext extends Context implements ISpatialContext {
-    private static final int INTERACTION_DISTANCE = 1;
+    protected static final int INTERACTION_DISTANCE = 1;
     /*
         General Context parameters
      */
     private SpatialContextType spatialContextType;
-    private int maxUserCount;
-    private CommunicationRegion communicationRegion;
-    private Set<CommunicationMedium> communicationMedia;
     /*
         Parameters only relevant for type 'AREA' and 'OBJECT'
      */
@@ -27,7 +24,7 @@ public class SpatialContext extends Context implements ISpatialContext {
     private boolean isManageable;
     private boolean isInteractable;
     private Menu menu;
-    private Location interactionLocation;
+    protected Location interactionLocation;
     /*
         Parameters relevant for type 'ROOM' and 'WORLD'
      */
@@ -49,11 +46,11 @@ public class SpatialContext extends Context implements ISpatialContext {
     }
 
     public void interact(User user) throws IllegalInteractionException {
-        throw new IllegalInteractionException("Interaction not possible.", user);
+        throw new IllegalInteractionException("Interaction with this context is not possible.", user, this);
     }
 
     public void executeMenuOption(User user, int menuOption, String[] args) throws IllegalInteractionException, IllegalMenuActionException {
-        throw new IllegalInteractionException("Interaction not possible.", user);
+        throw new IllegalInteractionException("Interaction with this context is not possible.", user);
     }
 
     public void addPrivateRoom(SpatialContext privateRoom) {
@@ -110,14 +107,6 @@ public class SpatialContext extends Context implements ISpatialContext {
 
     public boolean checkPassword(String password) {
         return this.password.equals(password);
-    }
-
-    public java.util.Map<UUID, User> getCommunicableUsers(User communicatingUser) {
-        return communicationRegion.getCommunicableUsers(communicatingUser);
-    }
-
-    public boolean canCommunicateWith(CommunicationMedium medium) {
-        return communicationMedia.contains(medium);
     }
 
     public Location getInteractionLocation() {

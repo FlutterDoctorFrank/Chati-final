@@ -25,9 +25,8 @@ public class RoomReception extends SpatialContext {
 
     @Override
     public void interact(User user) {
-        // Check if user is close to object
-        // Check if user currently interacts with another object
-        // Send Packet for menu open
+        user.setCurrentInteractable(this);
+        // send menu open packet
     }
 
     @Override
