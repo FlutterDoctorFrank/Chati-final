@@ -1,5 +1,6 @@
 package model.context.spatial.objects;
 
+import controller.network.ClientSender;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.Map;
@@ -26,7 +27,7 @@ public class RoomReception extends SpatialContext {
     @Override
     public void interact(User user) {
         user.setCurrentInteractable(this);
-        // send menu open packet
+        user.getClientSender().send(ClientSender.SendAction.OPEN_MENU, this);
     }
 
     @Override
@@ -34,7 +35,7 @@ public class RoomReception extends SpatialContext {
         switch (menuOption) {
             case 0:
                 user.setCurrentInteractable(null);
-                // Send packet for menu close
+                user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
             case 1:
                 String roomname = args[0];
@@ -55,7 +56,7 @@ public class RoomReception extends SpatialContext {
                 // add role room owner
                 // teleport to private room
                 user.setCurrentInteractable(null);
-                // send packet for menu close
+                user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
             case 2:
                 ContextID roomID = new ContextID(args[0]);
@@ -67,6 +68,8 @@ public class RoomReception extends SpatialContext {
                 if (!privateRoom.checkPassword(password)) {
                     throw new IllegalMenuActionException("", "Das eingegebene Passwort ist nicht korrekt.");
                 }
+                user.setCurrentInteractable(null);
+                user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 user.teleport(privateRoom.getSpawnLocation());
             case 3:
                 roomID = new ContextID(args[0]);
@@ -75,12 +78,12 @@ public class RoomReception extends SpatialContext {
                     throw new IllegalMenuActionException("", "Der angefragte private Raum existiert nicht.");
                 }
                 java.util.Map<UUID, User> users = privateRoom.getContainedUsers();
-                SpatialContext ownerRoom = privateRoom;
-                User roomOwner = UserAccountManager.getInstance()
-                        .getUsersWithPermission(privateRoom, Permission.MANAGE_PRIVATE_ROOM).entrySet().stream()
-                        .findFirst().get().getValue();
+                SpatialContext finalPrivateRoom = privateRoom;
+                User roomOwner = users.entrySet().stream()
+                        .filter(entry -> entry.getValue().hasPermission(finalPrivateRoom, Permission.MANAGE_PRIVATE_ROOM))
+                        .findFirst().orElseThrow().getValue();
                 RoomRequest roomRequest = new RoomRequest(roomOwner, roomOwner.getWorld(), args[1], user, privateRoom);
-                // send notification
+                roomOwner.addNotification(roomRequest);
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
         }

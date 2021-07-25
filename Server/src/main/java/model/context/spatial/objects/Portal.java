@@ -1,5 +1,6 @@
 package model.context.spatial.objects;
 
+import controller.network.ClientSender;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.Location;
@@ -19,7 +20,7 @@ public class Portal extends SpatialContext {
     @Override
     public void interact(User user) {
         user.setCurrentInteractable(this);
-        // send menu open packet
+        user.getClientSender().send(ClientSender.SendAction.OPEN_MENU, this);
     }
 
     @Override
@@ -27,10 +28,11 @@ public class Portal extends SpatialContext {
         switch (menuOption) {
             case 0:
                 user.setCurrentInteractable(null);
-                // Send packet for menu close
+                user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
             case 1:
                 user.setCurrentInteractable(null);
+                user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 user.teleport(destination);
                 break;
             default:

@@ -1,5 +1,6 @@
 package model.context.spatial.objects;
 
+import controller.network.ClientSender;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.Music;
@@ -19,7 +20,7 @@ public class MusicPlayer extends SpatialContext {
     @Override
     public void interact(User user) {
         user.setCurrentInteractable(this);
-        // send menu open packet
+        user.getClientSender().send(ClientSender.SendAction.OPEN_MENU, this);
     }
 
     @Override
@@ -27,7 +28,7 @@ public class MusicPlayer extends SpatialContext {
         switch (menuOption) {
             case 0:
                 user.setCurrentInteractable(null);
-                // Send packet for menu close
+                user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
             case 1:
                 Music music;
@@ -40,6 +41,7 @@ public class MusicPlayer extends SpatialContext {
                 break;
             case 2:
                 getParent().stopMusic();
+                user.getClientSender().send(ClientSender.SendAction.CONTEXT_MUSIC, getParent()); // ???
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
         }

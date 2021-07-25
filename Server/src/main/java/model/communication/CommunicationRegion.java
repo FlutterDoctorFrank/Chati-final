@@ -1,6 +1,5 @@
 package model.communication;
 
-import model.context.Context;
 import model.context.spatial.SpatialContext;
 import model.user.User;
 

@@ -1,6 +1,5 @@
 package model.communication;
 
-import model.context.Context;
 import model.context.spatial.SpatialContext;
 import model.user.User;
 
@@ -17,7 +16,6 @@ public class RadiusCommunication extends CommunicationRegion {
         super(context);
         radius = DEFAULT_RADIUS;
     }
-
 
     @Override
     public Map<UUID, User> getCommunicableUsers(User user) {

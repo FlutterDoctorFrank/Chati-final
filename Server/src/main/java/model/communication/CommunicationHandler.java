@@ -1,5 +1,6 @@
 package model.communication;
 
+import controller.network.ClientSender;
 import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.communication.message.TextMessage;
@@ -45,8 +46,8 @@ public class CommunicationHandler {
                 default:
                     String errorMessage = "Dieser Chatbefehl existiert nicht.";
                     MessageBundle messageBundle = new MessageBundle("Dieser Chatbefehl existiert nicht.");
-                    TextMessage info = new TextMessage(messageBundle);
-                    // Send message
+                    TextMessage infoMessage = new TextMessage(messageBundle);
+                    communicator.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
             }
         } else {
             handleStandardMessage(message);
@@ -63,27 +64,33 @@ public class CommunicationHandler {
         Map<UUID, User> receivers = filterIgnoredUsers(communicator, communicableUsers);
         receivers.remove(communicator.getUserID());
         VoiceMessage voiceMessage = new VoiceMessage(communicator, voicedata);
-        // Send voicepacket
+
+        receivers.forEach((userID, user) -> {
+            user.getClientSender().send(ClientSender.SendAction.MESSAGE, voiceMessage);
+        });
     }
 
     private void handleStandardMessage(String message) {
         SpatialContext communicationContext = communicator.getLocation().getArea();
         if (!communicationContext.canCommunicateWith(CommunicationMedium.TEXT)) {
             MessageBundle messageBundle = new MessageBundle("In diesem Bereich ist keine Kommunikation in Schriftform möglich.");
-            TextMessage info = new TextMessage(messageBundle);
-            // Send message
+            TextMessage infoMessage = new TextMessage(messageBundle);
+            communicator.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
             return;
         }
         if (communicationContext.isMuted(communicator)) {
             MessageBundle messageBundle = new MessageBundle("Du bist in diesem Bereich stummgeschaltet.");
-            TextMessage info = new TextMessage(messageBundle);
-            // Send message
+            TextMessage infoMessage = new TextMessage(messageBundle);
+            communicator.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
             return;
         }
         Map<UUID, User> communicableUsers = communicationContext.getCommunicableUsers(communicator);
         Map<UUID, User> receivers = filterIgnoredUsers(communicator, communicableUsers);
         TextMessage textMessage = new TextMessage(communicator, message, MessageType.STANDARD);
-        // Send message to receivers
+
+        receivers.forEach((userID, user) -> {
+            user.getClientSender().send(ClientSender.SendAction.MESSAGE, textMessage);
+        });
     }
 
     private void handleWhisperMessage(String username, String message) {
@@ -92,8 +99,8 @@ public class CommunicationHandler {
             receiver = UserAccountManager.getInstance().getUser(username);
         } catch (UserNotFoundException e) {
             MessageBundle messageBundle = new MessageBundle("Es existiert kein Benutzer mit diesem Namen");
-            TextMessage info = new TextMessage(messageBundle);
-            // send Info message
+            TextMessage infoMessage = new TextMessage(messageBundle);
+            communicator.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
             return;
         }
         SpatialContext communicationContext = communicator.getLocation().getArea();
@@ -104,40 +111,45 @@ public class CommunicationHandler {
                 && !receiver.hasPermission(commonContext, Permission.CONTACT_USER)
                 || communicator.isIgnoring(receiver) || receiver.isIgnoring(communicator)) {
             MessageBundle messageBundle = new MessageBundle("Eine Flüsterkommunikation mit diesem Benutzer ist nicht möglich.");
-            TextMessage info = new TextMessage(messageBundle);
-            // send Info message
+            TextMessage infoMessage = new TextMessage(messageBundle);
+            communicator.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
             return;
         }
         TextMessage textMessage = new TextMessage(communicator, message, MessageType.WHISPER);
-        // send message
+        communicator.getClientSender().send(ClientSender.SendAction.MESSAGE, textMessage);
+        receiver.getClientSender().send(ClientSender.SendAction.MESSAGE, textMessage);
     }
 
     private void handleRoomMessage(String message) {
         SpatialContext communicationRoom = communicator.getLocation().getRoom();
         if (!communicator.hasPermission(communicationRoom, Permission.CONTACT_CONTEXT)) {
             MessageBundle messageBundle = new MessageBundle("Du hast nicht die nötige Berechtigung um diesen Chatbefehl zu benutzen.");
-            TextMessage info = new TextMessage(messageBundle);
-            // send Info message
+            TextMessage infoMessage = new TextMessage(messageBundle);
+            communicator.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
             return;
         }
         Map<UUID, User> communicableUsers = communicationRoom.getContainedUsers();
         Map<UUID, User> receivers = filterIgnoredUsers(communicator, communicableUsers);
         TextMessage textMessage = new TextMessage(communicator, message, MessageType.ROOM);
-        // Send message
+        receivers.forEach((userID, user) -> {
+            user.getClientSender().send(ClientSender.SendAction.MESSAGE, textMessage);
+        });
     }
 
     private void handleWorldMessage(String message) {
         SpatialContext communicationWorld = communicator.getWorld();
         if (!communicator.hasPermission(communicationWorld, Permission.CONTACT_CONTEXT)) {
             MessageBundle messageBundle = new MessageBundle("Du hast nicht die nötige Berechtigung um diesen Chatbefehl zu benutzen.");
-            TextMessage info = new TextMessage(messageBundle);
-            // send Info message
+            TextMessage infoMessage = new TextMessage(messageBundle);
+            communicator.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
             return;
         }
         Map<UUID, User> communicableUsers = communicationWorld.getContainedUsers();
         Map<UUID, User> receivers = filterIgnoredUsers(communicator, communicableUsers);
         TextMessage textMessage = new TextMessage(communicator, message, MessageType.WORLD);
-        // Send message
+        receivers.forEach((userID, user) -> {
+            user.getClientSender().send(ClientSender.SendAction.MESSAGE, textMessage);
+        });
     }
 
     private Map<UUID, User> filterIgnoredUsers(User communicator, Map<UUID, User> communicableUsers) {

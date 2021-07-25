@@ -1,5 +1,6 @@
 package model.context.spatial.objects;
 
+import controller.network.ClientSender;
 import model.MessageBundle;
 import model.communication.message.TextMessage;
 import model.context.Context;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class Seat extends SpatialContext {
 
     private User sittingUser;
-    private Location leaveLocation;
+    private Location sittingLocation;
 
     protected Seat(String contextName, Context parent, Map<ContextID, SpatialContext> children) {
         super(contextName, parent, children);
@@ -25,18 +26,18 @@ public class Seat extends SpatialContext {
         if (sittingUser != null) {
             if (sittingUser.equals(user)) {
                 try {
-                    user.move(leaveLocation.getPosX(), leaveLocation.getPosY());
+                    user.move(interactionLocation.getPosX(), interactionLocation.getPosY());
                     user.setCurrentInteractable(null);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             MessageBundle messageBundle = new MessageBundle("Dieser Platz ist bereits belegt.");
-            TextMessage info = new TextMessage(messageBundle);
-            // send message
+            TextMessage infoMessage = new TextMessage(messageBundle);
+            user.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
         }
         user.setCurrentInteractable(this);
-        // send menu open packet
+        user.getClientSender().send(ClientSender.SendAction.OPEN_MENU, this);
     }
 
     @Override
@@ -44,11 +45,13 @@ public class Seat extends SpatialContext {
         switch (menuOption) {
             case 0:
                 user.setCurrentInteractable(null);
-                // Send packet for menu close
+                user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
             case 1:
+                user.setCurrentInteractable(null);
+                user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 try {
-                    user.move(interactionLocation.getPosX(), interactionLocation.getPosY());
+                    user.move(sittingLocation.getPosX(), sittingLocation.getPosY());
                     sittingUser = user;
                 } catch (Exception e) {
                     e.printStackTrace();
