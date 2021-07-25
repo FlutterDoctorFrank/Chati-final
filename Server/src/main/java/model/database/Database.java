@@ -13,9 +13,24 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGlobalContextDatabase {
-    private static final String dbURL = null;
+    private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
     private static Database database;
-    // TODO
+
+
+    @Override
+    public static Connection getConnection() {
+
+        try {
+            Connection connection = DriverManager
+                    .getConnection(dbURL);
+
+            connection.setAutoCommit(false);
+            return connection;
+        } catch (SQLException e){
+            System.out.print(e);
+        }
+        return null;
+    }
 
     @Override
     public void addWorld(SpatialContext world) {
