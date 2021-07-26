@@ -1,6 +1,7 @@
 package controller.network;
 
 import controller.network.protocol.Packet;
+import controller.network.protocol.PacketAvatarMove;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -100,12 +101,28 @@ public interface ServerSender {
 
         /**
          * Information, dass sich die Position des Avatars geändert hat.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@link Integer}, Die X-Koordinate<br>
+         *     - {@code 1}: {@link Integer}, Die Y-Koordinate
+         * </p>
          */
         AVATAR_MOVE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des AvatarMove-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (objects.length == 2) {
+                    try {
+                        final int posX = (int) objects[0];
+                        final int posY = (int) objects[1];
+
+                        return new PacketAvatarMove(posX, posY);
+                    } catch (ClassCastException ex) {
+                        throw new IllegalArgumentException("Expected Integer and Integer, got "
+                                + objects[0].getClass() + " and " + objects[1].getClass(), ex);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 2, got " + objects.length);
+                }
             }
         },
 

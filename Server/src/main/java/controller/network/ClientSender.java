@@ -1,6 +1,9 @@
 package controller.network;
 
 import controller.network.protocol.Packet;
+import controller.network.protocol.PacketAvatarMove;
+import controller.network.protocol.PacketAvatarMove.AvatarAction;
+import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,7 +29,7 @@ public interface ClientSender {
          */
         USER_INFO {
             @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object object) {
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 //TODO Verpackung des UserInfo-Pakets implementieren.
                 throw new UnsupportedOperationException("Not implemented yet");
             }
@@ -37,7 +40,7 @@ public interface ClientSender {
          */
         CONTEXT_INFO {
             @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object object) {
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 //TODO Verpackung des ContextInfo-Pakets implementieren.
                 throw new UnsupportedOperationException("Not implemented yet");
             }
@@ -48,7 +51,7 @@ public interface ClientSender {
          */
         CONTEXT_JOIN {
             @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object object) {
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 //TODO Verpackung des ContextJoin-Pakets implementieren.
                 throw new UnsupportedOperationException("Not implemented yet");
             }
@@ -59,7 +62,7 @@ public interface ClientSender {
          */
         CONTEXT_ROLE {
             @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object object) {
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 //TODO Verpackung des ContextRole-Pakets implementieren.
                 throw new UnsupportedOperationException("Not implemented yet");
             }
@@ -70,7 +73,7 @@ public interface ClientSender {
          */
         CONTEXT_MUSIC {
             @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object object) {
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 //TODO Verpackung des ContextMusic-Pakets implementieren.
                 throw new UnsupportedOperationException("Not implemented yet");
             }
@@ -78,23 +81,50 @@ public interface ClientSender {
 
         /**
          * Information, dass die Position eines Avatars im Raum aktualisiert werden soll.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link model.user.IUser}
+         * </p>
          */
         AVATAR_MOVE {
             @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object object) {
-                //TODO Verpackung des AvatarMove-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser self, @NotNull final Object object) {
+                if (object instanceof IUser) {
+                    final IUser other = (IUser) object;
+                    int posX = other.getLocation().getPosX();
+                    int posY = other.getLocation().getPosY();
+                    AvatarAction action;
+
+                    if (self.getLocation().getRoom().equals(other.getLocation().getRoom())) {
+                        action = AvatarAction.UPDATE_AVATAR;
+                    } else {
+                        action = AvatarAction.SPAWN_AVATAR;
+                    }
+
+                    return new PacketAvatarMove(action, other.getUserID(), posX, posY);
+                } else {
+                    throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
+                }
             }
         },
 
         /**
          * Information, dass ein Avatar aus dem aktuellen Raum entfernt werden soll.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link model.user.IUser}
+         * </p>
          */
         AVATAR_REMOVE {
             @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object object) {
-                //TODO Verpackung des AvatarMove-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser self, @NotNull final Object object) {
+                if (object instanceof IUser) {
+                    final IUser other = (IUser) object;
+                    int posX = other.getLocation().getPosX();
+                    int posY = other.getLocation().getPosY();
+
+                    return new PacketAvatarMove(AvatarAction.REMOVE_AVATAR, other.getUserID(), posX, posY);
+                } else {
+                    throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
+                }
             }
         },
 
@@ -103,7 +133,7 @@ public interface ClientSender {
          */
         OPEN_MENU {
             @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object object) {
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 //TODO Verpackung des MenuAction-Pakets implementieren.
                 throw new UnsupportedOperationException("Not implemented yet");
             }
@@ -114,7 +144,7 @@ public interface ClientSender {
          */
         CLOSE_MENU {
             @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object object) {
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 //TODO Verpackung des MenuAction-Pakets implementieren.
                 throw new UnsupportedOperationException("Not implemented yet");
             }
@@ -125,7 +155,7 @@ public interface ClientSender {
          */
         WORLD_ACTION {
             @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object object) {
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 //TODO Verpackung des WorldAction-Pakets implementieren.
                 throw new UnsupportedOperationException("Not implemented yet");
             }
@@ -136,7 +166,7 @@ public interface ClientSender {
          */
         NOTIFICATION {
             @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object object) {
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 //TODO Verpackung des Notification-Pakets implementieren.
                 throw new UnsupportedOperationException("Not implemented yet");
             }
@@ -147,7 +177,7 @@ public interface ClientSender {
          */
         MESSAGE {
             @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object object) {
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 //TODO Verpackung des ChatMessage-Pakets implementieren.
                 throw new UnsupportedOperationException("Not implemented yet");
             }
@@ -158,6 +188,6 @@ public interface ClientSender {
          * @param object Das Informationsobjekt, welches die benötigten Informationen beinhaltet.
          * @return Das erzeugte Paket.
          */
-        protected abstract @NotNull Packet<?> getPacket(@NotNull final Object object);
+        protected abstract @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object);
     }
 }

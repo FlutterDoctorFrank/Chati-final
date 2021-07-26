@@ -3,8 +3,13 @@ package controller.network;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import controller.network.protocol.Packet;
+import controller.network.protocol.PacketAvatarMove;
+import controller.network.protocol.PacketAvatarMove.AvatarAction;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerIn;
+import model.exception.IllegalActionException;
+import model.exception.IllegalPositionException;
+import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,6 +20,8 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
     private final ServerNetworkManager manager;
     private final Connection connection;
 
+    private IUser user;
+
     public UserConnection(@NotNull final ServerNetworkManager manager, @NotNull final Connection connection) {
         this.manager = manager;
         this.connection = connection;
@@ -22,11 +29,15 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         connection.addListener(this);
     }
 
+    public void send(@NotNull final Packet<?> packet) {
+        if (this.connection.isConnected()) {
+            this.connection.sendTCP(packet);
+        }
+    }
+
     @Override
     public void send(@NotNull final SendAction action, @NotNull final Object object) {
-        if (this.connection.isConnected()) {
-            this.connection.sendTCP(action.getPacket(object));
-        }
+        this.send(action.getPacket(this.user, object));
     }
 
     @Override
@@ -51,5 +62,26 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
     private static <T extends PacketListener> void call(@NotNull final Packet<T> packet,
                                                         @NotNull final PacketListener listener) {
         packet.call((T) listener);
+    }
+
+    @Override
+    public void handle(@NotNull final PacketAvatarMove packet) {
+        // Die Client-Anwendung darf nur die Aktion UPDATE_AVATAR versenden.
+        if (packet.getAction() == AvatarAction.UPDATE_AVATAR) {
+            // Überprüfung ob gegebenenfalls eine falsche User-ID versendet wurde.
+            if (packet.getUserId() != null && !packet.getUserId().equals(this.user.getUserID())) {
+                return;
+            }
+
+            try {
+                this.user.move(packet.getPosX(), packet.getPosY());
+            } catch (IllegalPositionException | IllegalActionException ex) {
+                // Illegale Position. Sende vorherige Position.
+                int posX = this.user.getLocation().getPosX();
+                int posY = this.user.getLocation().getPosY();
+
+                this.send(new PacketAvatarMove(AvatarAction.UPDATE_AVATAR, this.user.getUserID(), posX, posY));
+            }
+        }
     }
 }
