@@ -9,12 +9,14 @@ import model.role.Role;
 import model.user.Avatar;
 import model.user.User;
 
+import java.sql.Connection;
 import java.util.Map;
 import java.util.UUID;
 
 public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGlobalContextDatabase {
     private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
     private static Database database;
+    //private Connection connection;
 
 /*
     @Override
@@ -37,16 +39,31 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public void addWorld(SpatialContext world) {
         // TODO
+        /*
+        PreparedStatement ps = this.connection.prepareStatement("INSERT INTO WORLD(NAME, ID) values(?,?)");
+        ps.setString(1,world.getContextName);
+        ps.setString(2,world.getContextID);
+        ps.executeUpdate();
+        this.connection.close();
+         */
+
     }
 
     @Override
     public void removeWorld(SpatialContext world) {
         // TODO
+        /*
+        String worldId = world.getContextID;
+        PreparedStatement ps = this.connection.prepareStatement("DELETE FROM WORLD WHERE ID = worldId");
+        ps.executeUpdate();
+        this.connection.close();
+         */
     }
 
     @Override
     public void getWorld(ContextID worldID) {
         // TODO
+
     }
 
     @Override
@@ -72,15 +89,33 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public void changeAvatar(User user, Avatar avatar) {
         // TODO
+        /*
+        PreparedStatement ps = this.connection.prepareStatement("UPDATE USER SET AVATAR_NAME = avatar.getName
+                WHERE USER_ID = user.getUserID");
+        ps.executeUpdate();
+        this.connection.close();
+         */
+
     }
 
     @Override
     public void updateLastOnlineTime(User user) {
         // TODO
+        /*
+        PreparedStatement ps = this.connection.prepareStatement("UPDATE USER SET LAST_ONLINE_TIME = ???
+                WHERE USER_ID = user.getUserID");
+        ps.executeUpdate();
+        this.connection.close();
+         */
     }
 
     @Override
     public void deleteAccount(User user) {
+         /*
+        PreparedStatement ps = this.connection.prepareStatement("DELETE FROM USER WHERE USER_ID = user.getUserID");
+        ps.executeUpdate();
+        this.connection.close();
+         */
 
     }
 
@@ -102,6 +137,13 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public void addFriendship(User first, User second) {
         // TODO
+        /*
+        PreparedStatement ps = this.connection.prepareStatement("INSERT INTO FRIENDSHIP(USER_ID1, USER_ID2) values(?,?)");
+        ps.setString(1,first.getUserID);
+        ps.setString(2,second.getUserID);
+        ps.executeUpdate();
+        this.connection.close();
+         */
     }
 
     @Override
