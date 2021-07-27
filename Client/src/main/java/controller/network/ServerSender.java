@@ -2,6 +2,8 @@ package controller.network;
 
 import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
+import controller.network.protocol.PacketInContextInteract;
+import model.context.ContextID;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -128,12 +130,23 @@ public interface ServerSender {
 
         /**
          * Information, dass mit einem Kontext interagiert werden soll.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@link model.context.ContextID}, Die ID des Kontexts, mit dem interagiert wird.
+         * </p>
          */
         CONTEXT_INTERACT {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des ContextInteract-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (objects.length != 1) {
+                    try {
+                        return new PacketInContextInteract((ContextID) objects[0]);
+                    } catch (ClassCastException ex) {
+                        throw new IllegalArgumentException("Expected ContextID, got " + objects[0].getClass());
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 1, got " + objects.length);
+                }
             }
         },
 

@@ -3,8 +3,19 @@ package controller.network;
 import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
+import controller.network.protocol.PacketOutContextInfo;
+import controller.network.protocol.PacketOutContextJoin;
+import controller.network.protocol.PacketOutContextMusic;
+import controller.network.protocol.PacketOutContextRole;
+import model.context.IContext;
+import model.context.global.IGlobalContext;
+import model.context.spatial.ISpatialContext;
+import model.role.IContextRole;
 import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Eine Schnittstelle, welche als Beobachter für das Model dient.
@@ -37,45 +48,96 @@ public interface ClientSender {
 
         /**
          * Information, dass die verfügbaren Welten oder private Räume an den Client versendet werden sollen.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link IGlobalContext} oder {@link ISpatialContext} mit
+         *     {@link model.context.spatial.SpatialContextType#WORLD}
+         * </p>
          */
         CONTEXT_INFO {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                //TODO Verpackung des ContextInfo-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (object instanceof IContext) {
+                    final Set<PacketOutContextInfo.Info> infos = new HashSet<>();
+
+                    if (object instanceof IGlobalContext) {
+                        for (final ISpatialContext world : ((IGlobalContext) object).getWorlds().values()) {
+                            infos.add(new PacketOutContextInfo.Info(world.getContextID(), world.getContextName()));
+                        }
+                    } else {
+                        //TODO Fehlende Möglichkeit zum Holen der Räume.
+                    }
+
+                    return new PacketOutContextInfo(((IContext) object).getContextID(), infos);
+                } else {
+                    throw new IllegalArgumentException("Expected IGlobalContext or ISpatialContext, got " + object.getClass());
+                }
             }
         },
 
         /**
          * Information, dass eine Welt beziehungsweise ein Raum betreten werden soll.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link model.context.spatial.ISpatialContext} mit
+         *     {@link model.context.spatial.SpatialContextType#WORLD} oder
+         *     {@link model.context.spatial.SpatialContextType#ROOM}
+         * </p>
          */
         CONTEXT_JOIN {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                //TODO Verpackung des ContextJoin-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (object instanceof ISpatialContext) {
+                    final ISpatialContext room = (ISpatialContext) object;
+
+                    if (user.getWorld() != null) {
+                        if (room.getMap() == null) {
+                            throw new IllegalArgumentException("Context without a Map can not be joined");
+                        }
+
+                        return new PacketOutContextJoin(room.getContextID(), room.getMap());
+                    }
+
+                    return new PacketOutContextJoin(room.getContextID(), null);
+                } else {
+                    throw new IllegalArgumentException("Expected ISpatialContext, got " + object.getClass());
+                }
             }
         },
 
         /**
          * Information, dass sich die Rolle innerhalb eines Kontextes geändert hat.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link model.role.IContextRole}
+         * </p>
          */
         CONTEXT_ROLE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                //TODO Verpackung des ContextRole-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (object instanceof IContextRole) {
+                    final IContextRole role = (IContextRole) object;
+
+                    return new PacketOutContextRole(role.getContext().getContextID(), role.getRoles());
+                } else {
+                    throw new IllegalArgumentException("Expected IContextRole, got " + object.getClass());
+                }
             }
         },
 
         /**
          * Information, dass sich die Musik innerhalb eines Kontextes geändert hat.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link model.context.spatial.ISpatialContext}
+         * </p>
          */
         CONTEXT_MUSIC {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                //TODO Verpackung des ContextMusic-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (object instanceof ISpatialContext) {
+                    final ISpatialContext area = (ISpatialContext) object;
+
+                    return new PacketOutContextMusic(area.getContextID(), area.getMusic());
+                } else {
+                    throw new IllegalArgumentException("Expected ISpatialContext, got " + object.getClass());
+                }
             }
         },
 

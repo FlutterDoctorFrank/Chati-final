@@ -5,9 +5,11 @@ import com.esotericsoftware.kryonet.Listener;
 import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
+import controller.network.protocol.PacketInContextInteract;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerIn;
 import model.exception.IllegalActionException;
+import model.exception.IllegalInteractionException;
 import model.exception.IllegalPositionException;
 import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
@@ -82,6 +84,16 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
                 this.send(new PacketAvatarMove(AvatarAction.UPDATE_AVATAR, this.user.getUserID(), posX, posY));
             }
+        }
+    }
+
+    @Override
+    public void handle(@NotNull final PacketInContextInteract packet) {
+        try {
+            this.user.interact(packet.getContextId());
+        } catch (IllegalInteractionException ex) {
+            // Objekt wurde nicht gefunden oder der Benutzer interagiert bereits mit einem Objekt.
+            // Verbindung trennen?
         }
     }
 }

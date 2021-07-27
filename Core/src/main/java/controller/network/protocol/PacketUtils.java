@@ -2,6 +2,7 @@ package controller.network.protocol;
 
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import model.context.ContextID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
@@ -20,6 +21,14 @@ public class PacketUtils {
         }
 
         return object;
+    }
+
+    public static void writeContextId(@NotNull final Output output, @NotNull final ContextID contextId) {
+        output.writeString(contextId.getId());
+    }
+
+    public static @NotNull ContextID readContextId(@NotNull final Input input) {
+        return new ContextID(input.readString());
     }
 
     public static void writeUniqueId(@NotNull final Output output, @Nullable final UUID uniqueId) {

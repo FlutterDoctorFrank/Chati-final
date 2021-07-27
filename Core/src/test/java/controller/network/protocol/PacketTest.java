@@ -3,6 +3,8 @@ package controller.network.protocol;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import model.context.ContextID;
+import net.bytebuddy.utility.RandomString;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import java.util.Random;
@@ -46,11 +48,27 @@ public abstract class PacketTest<T extends Packet<?>> {
      */
 
     public static  <E extends Enum<E>> @NotNull E randomEnum(@NotNull final Class<E> clazz) {
+        if (clazz.getEnumConstants().length <= 0) {
+            throw new IllegalArgumentException("Non-existent enum elements cannot be randomized");
+        }
+
         return clazz.getEnumConstants()[RANDOM.nextInt(clazz.getEnumConstants().length)];
+    }
+
+    public static @NotNull ContextID randomContextId() {
+        return new ContextID(randomString());
     }
 
     public static @NotNull UUID randomUniqueId() {
         return UUID.randomUUID();
+    }
+
+    public static @NotNull String randomString() {
+        return RandomString.make(randomInt(16) + 1);
+    }
+
+    public static int randomInt(final int bound) {
+        return RANDOM.nextInt(bound);
     }
 
     public static int randomInt() {

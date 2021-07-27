@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum Map implements Resource {
 
-    ;
+    PLACEHOLDER("placeholder");
 
     private static final String PATH = "maps/";
 

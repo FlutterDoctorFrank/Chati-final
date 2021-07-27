@@ -6,6 +6,10 @@ import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerOut;
+import controller.network.protocol.PacketOutContextInfo;
+import controller.network.protocol.PacketOutContextJoin;
+import controller.network.protocol.PacketOutContextMusic;
+import controller.network.protocol.PacketOutContextRole;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -62,5 +66,25 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         if (packet.getUserId() != null) {
             //TODO Verarbeitung des AvatarMove-Pakets implementieren.
         }
+    }
+
+    @Override
+    public void handle(@NotNull final PacketOutContextInfo packet) {
+        //TODO Verarbeitung des ContextInfo-Pakets implementieren.
+    }
+
+    @Override
+    public void handle(@NotNull final PacketOutContextJoin packet) {
+        //TODO Verarbeitung des ContextJoin-Pakets implementieren.
+    }
+
+    @Override
+    public void handle(@NotNull final PacketOutContextMusic packet) {
+        //TODO Verarbeitung des ContextMusic-Pakets implementieren.
+    }
+
+    @Override
+    public void handle(@NotNull final PacketOutContextRole packet) {
+        //TODO Verarbeitung des ContextRole-Pakets implementieren.
     }
 }
