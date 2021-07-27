@@ -41,8 +41,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
         // TODO
         /*
         PreparedStatement ps = this.connection.prepareStatement("INSERT INTO WORLD(NAME, ID) values(?,?)");
-        ps.setString(1,world.getContextName);
-        ps.setString(2,world.getContextID);
+        ps.setString(1, world.getContextName());
+        ps.setString(2, world.getContextID());
         ps.executeUpdate();
         this.connection.close();
          */
@@ -53,8 +53,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     public void removeWorld(SpatialContext world) {
         // TODO
         /*
-        String worldId = world.getContextID;
-        PreparedStatement ps = this.connection.prepareStatement("DELETE FROM WORLD WHERE ID = worldId");
+        String worldId = world.getContextID();
+        PreparedStatement ps = this.connection.prepareStatement("DELETE FROM WORLD WHERE ID = " + worldId);
         ps.executeUpdate();
         this.connection.close();
          */
@@ -71,6 +71,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
         return null; // TODO
     }
 
+    //password --> hash; salt?
     @Override
     public User createAccount(String username, String password) {
         return null; // TODO
@@ -90,8 +91,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     public void changeAvatar(User user, Avatar avatar) {
         // TODO
         /*
-        PreparedStatement ps = this.connection.prepareStatement("UPDATE USER SET AVATAR_NAME = avatar.getName
-                WHERE USER_ID = user.getUserID");
+        PreparedStatement ps = this.connection.prepareStatement("UPDATE USER SET AVATAR_NAME = " + avatar.getName +
+                "WHERE USER_ID = " + user.getUserID());
         ps.executeUpdate();
         this.connection.close();
          */
@@ -103,7 +104,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
         // TODO
         /*
         PreparedStatement ps = this.connection.prepareStatement("UPDATE USER SET LAST_ONLINE_TIME = ???
-                WHERE USER_ID = user.getUserID");
+                WHERE USER_ID = " + user.getUserID());
         ps.executeUpdate();
         this.connection.close();
          */
@@ -112,7 +113,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public void deleteAccount(User user) {
          /*
-        PreparedStatement ps = this.connection.prepareStatement("DELETE FROM USER WHERE USER_ID = user.getUserID");
+        PreparedStatement ps = this.connection.prepareStatement("DELETE FROM USER WHERE USER_ID = " + user.getUserID());
         ps.executeUpdate();
         this.connection.close();
          */
@@ -139,8 +140,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
         // TODO
         /*
         PreparedStatement ps = this.connection.prepareStatement("INSERT INTO FRIENDSHIP(USER_ID1, USER_ID2) values(?,?)");
-        ps.setString(1,first.getUserID);
-        ps.setString(2,second.getUserID);
+        ps.setString(1, first.getUserID());
+        ps.setString(2, second.getUserID());
         ps.executeUpdate();
         this.connection.close();
          */
@@ -149,26 +150,61 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public void removeFriendship(User first, User second) {
         // TODO
+        /*
+        PreparedStatement ps = this.connection.prepareStatement("DELETE FROM FRIENDSHIP WHERE (USER_ID1 = "
+                + first.getUserID() + " AND USER_ID2 = " + second.getUserID() + ") OR (USER_ID1 = "
+                + second.getUserID() + " AND USER_ID2 = " + first.getUserID() + ")");
+        ps.executeUpdate();
+        this.connection.close();
+         */
     }
 
     @Override
     public void addIgnoredUser(User ignoringUser, User ignoredUser) {
         // TODO
+        /*
+        PreparedStatement ps = this.connection.prepareStatement("INSERT INTO IGNORE(USER_ID, IGNORED_ID) values(?,?)");
+        ps.setString(1, ignoringUser.getUserID());
+        ps.setString(2, ignoredUser.getUserID());
+        ps.executeUpdate();
+        this.connection.close();
+         */
     }
 
     @Override
     public void removeIgnoredUser(User ignoringUser, User ignoredUser) {
         // TODO
+        /*
+        PreparedStatement ps = this.connection.prepareStatement("DELETE FROM IGNORE WHERE USER_ID = "
+                + ignoringUser.getUserID() + " AND IGNORED_ID = " + ignoredUser.getUserID();
+        ps.executeUpdate();
+        this.connection.close();
+         */
     }
 
     @Override
     public void addRole(User user, Context context, Role role) {
         // TODO
+        /*
+        PreparedStatement ps = this.connection.prepareStatement("INSERT INTO ROLE_WITH_CONTEXT
+                (USER_ID, ROLE, CONTEXT_ID) values(?,?,?)");
+        ps.setString(1, user.getUserID());
+        ps.setString(2, role.name());
+        ps.serString(3, context.getContextID());
+        ps.executeUpdate();
+        this.connection.close();
+         */
     }
 
     @Override
     public void removeRole(User user, Context context, Role role) {
         // TODO
+        /*
+        PreparedStatement ps = this.connection.prepareStatement("DELETE FROM ROLE_WITH_CONTEXT WHERE USER_ID = "
+                + user.getUserID() + " AND ROLE = " + role.name() + " AND CONTEXT_ID = " + context.getContextID();
+        ps.executeUpdate();
+        this.connection.close();
+         */
     }
 
     @Override
@@ -184,11 +220,25 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public void addBannedUser(User user, SpatialContext world) {
         // TODO
+        /*
+        PreparedStatement ps = this.connection.prepareStatement("INSERT INTO BAN
+                (USER_ID, WORLD_ID) values(?,?)");
+        ps.setString(1, user.getUserID());
+        ps.setString(2, world.getContextID());
+        ps.executeUpdate();
+        this.connection.close();
+         */
     }
 
     @Override
     public void removeBannedUser(User user, SpatialContext world) {
         // TODO
+        /*
+        PreparedStatement ps = this.connection.prepareStatement("DELETE FROM BAN WHERE USER_ID = "
+                + user.getUserID() + " AND WORLD_ID = " + world.getContextID();
+        ps.executeUpdate();
+        this.connection.close();
+         */
     }
 
     @Override
