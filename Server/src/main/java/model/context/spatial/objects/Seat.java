@@ -6,6 +6,7 @@ import model.communication.message.TextMessage;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.Location;
+import model.context.spatial.Menu;
 import model.context.spatial.SpatialContext;
 import model.exception.IllegalInteractionException;
 import model.user.User;
@@ -17,8 +18,8 @@ public class Seat extends SpatialContext {
     private User sittingUser;
     private Location sittingLocation;
 
-    protected Seat(String contextName, Context parent, Map<ContextID, SpatialContext> children) {
-        super(contextName, parent, children);
+    protected Seat(String contextName, SpatialContext parent, Menu menu, Location interactionLocation) {
+        super(contextName, parent, menu, interactionLocation);
     }
 
     @Override

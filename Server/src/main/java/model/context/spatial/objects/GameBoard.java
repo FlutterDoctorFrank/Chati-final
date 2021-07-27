@@ -1,22 +1,21 @@
 package model.context.spatial.objects;
 
-import model.context.Context;
-import model.context.ContextID;
+import controller.network.ClientSender;
+import model.context.spatial.Location;
+import model.context.spatial.Menu;
 import model.context.spatial.SpatialContext;
 import model.user.User;
 
-import java.util.Map;
-
 public class GameBoard extends SpatialContext {
 
-    protected GameBoard(String contextName, Context parent, Map<ContextID, SpatialContext> children) {
-        super(contextName, parent, children);
+    protected GameBoard(String contextName, SpatialContext parent, Menu menu, Location interactionLocation) {
+        super(contextName, parent, menu, interactionLocation);
     }
 
     @Override
     public void interact(User user) {
         user.setCurrentInteractable(this);
-        // send menu open packet
+        user.getClientSender().send(ClientSender.SendAction.OPEN_MENU, this);
     }
 
     @Override

@@ -4,6 +4,7 @@ import controller.network.ClientSender;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.Location;
+import model.context.spatial.Menu;
 import model.context.spatial.SpatialContext;
 import model.exception.IllegalInteractionException;
 import model.user.User;
@@ -13,8 +14,8 @@ import java.util.Map;
 public class Portal extends SpatialContext {
     private Location destination;
 
-    protected Portal(String contextName, Context parent, Map<ContextID, SpatialContext> children) {
-        super(contextName, parent, children);
+    protected Portal(String contextName, SpatialContext parent, Menu menu, Location interactionLocation) {
+        super(contextName, parent, menu, interactionLocation);
     }
 
     @Override

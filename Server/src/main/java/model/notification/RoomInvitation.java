@@ -11,8 +11,8 @@ public class RoomInvitation extends Notification {
     private final User invitingUser;
     private final SpatialContext invitedRoom;
 
-    public RoomInvitation(User owner, Context owningWorld, String userMessage, User invitingUser, SpatialContext invitedRoom) {
-        super(owner, owningWorld, new MessageBundle("roomInvitationKey", new Object[]{userMessage}));
+    public RoomInvitation(User owner, String userMessage, User invitingUser, SpatialContext invitedRoom) {
+        super(owner, invitingUser.getWorld(), new MessageBundle("roomInvitationKey", new Object[]{userMessage}));
         this.invitingUser = invitingUser;
         this.invitedRoom = invitedRoom;
     }

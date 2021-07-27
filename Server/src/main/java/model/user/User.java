@@ -425,7 +425,7 @@ public class User implements IUser {
         return currentLocation != null ? currentLocation.getRoom() : null;
     }
 
-    private void updateUserInfo() {
+    public void updateUserInfo() {
         Map<UUID, User> receivers = getWorld().getUsers();
         receivers.putAll(friends);
         receivers.forEach((userID, user) -> {

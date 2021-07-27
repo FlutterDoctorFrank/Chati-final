@@ -13,8 +13,8 @@ public class RoomRequest extends Notification {
     private final User requestingUser;
     private final SpatialContext requestedRoom;
 
-    public RoomRequest(User owner, Context owningWorld, String userMessage, User requestingUser, SpatialContext requestedRoom) {
-        super(owner, owningWorld, new MessageBundle("roomRequestKey", new Object[]{userMessage}));
+    public RoomRequest(User owner, String userMessage, User requestingUser, SpatialContext requestedRoom) {
+        super(owner, requestingUser.getWorld(), new MessageBundle("roomRequestKey", new Object[]{userMessage}));
         this.requestingUser = requestingUser;
         this.requestedRoom = requestedRoom;
     }
@@ -37,7 +37,7 @@ public class RoomRequest extends Notification {
             delete();
             return;
         }
-        RoomInvitation roomInvitation = new RoomInvitation(requestingUser, owner.getWorld(), null, owner, requestedRoom);
+        RoomInvitation roomInvitation = new RoomInvitation(requestingUser, null, owner, requestedRoom);
         requestingUser.addNotification(roomInvitation);
         delete();
     }

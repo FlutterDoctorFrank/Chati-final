@@ -4,40 +4,103 @@ import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.Context;
 import model.context.ContextID;
+import model.context.global.GlobalContext;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.user.User;
 
-import java.util.Set;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class SpatialContext extends Context implements ISpatialContext {
     protected static final int INTERACTION_DISTANCE = 1;
     /*
         General Context parameters
      */
-    private SpatialContextType spatialContextType;
+    private final SpatialContextType spatialContextType;
     /*
         Parameters only relevant for type 'AREA' and 'OBJECT'
      */
     private boolean isMoveable;
-    private boolean isManageable;
     private boolean isInteractable;
     private Menu menu;
     protected Location interactionLocation;
+    private Set<AreaReservation> areaReservations;
     /*
         Parameters relevant for type 'ROOM' and 'WORLD'
      */
     private Map map;
     private boolean[][] collisionMap;
-    private SpatialContext[][] areaMap;
+    private Expanse expanse;
     private boolean isPrivate;
     private String password;
     private Location spawnLocation;
     private java.util.Map<ContextID, SpatialContext> privateRooms;
 
-    protected SpatialContext(String contextName, Context parent, java.util.Map<ContextID, SpatialContext> children) {
-        super(contextName, parent, children);
+    // World constructor
+    public SpatialContext(String worldName, Map map) {
+        super(worldName, GlobalContext.getInstance());
+        GlobalContext.getInstance().addChild(this);
+        this.spatialContextType = SpatialContextType.WORLD;
+        this.isMoveable = true;
+        this.isInteractable = false;
+        this.menu = null;
+        this.interactionLocation = null;
+        this.areaReservations = null;
+        this.map = map;
+        this.isPrivate = false;
+        this.password = null;
+        this.privateRooms = new HashMap<>();
+        initializeMap();
+    }
+
+    // Private Room constructor
+    public SpatialContext(String roomName, SpatialContext world, Map map, String password) {
+        super(roomName, world);
+        world.addChild(this);
+        this.spatialContextType = SpatialContextType.ROOM;
+        this.isMoveable = true;
+        this.isInteractable = false;
+        this.menu = null;
+        this.interactionLocation = null;
+        this.areaReservations = null;
+        this.map = map;
+        this.isPrivate = true;
+        this.password = password;
+        this.privateRooms = null;
+        initializeMap();
+    }
+
+    // Area constructor
+    public SpatialContext(String areaName, SpatialContext parent) {
+        super(areaName, parent);
+        parent.addChild(this);
+        this.spatialContextType = SpatialContextType.AREA;
+        this.isMoveable = true;
+        this.isInteractable = false;
+        this.menu = null;
+        this.interactionLocation = null;
+        this.areaReservations = new HashSet<>();
+        this.map = null;
+        this.isPrivate = false;
+        this.password = null;
+        this.privateRooms = null;
+    }
+
+    // Object constructor
+    protected SpatialContext(String objectName, SpatialContext parent, Menu menu, Location interactionLocation) {
+        super(objectName, parent);
+        parent.addChild(this);
+        this.spatialContextType = SpatialContextType.OBJECT;
+        this.isMoveable = false;
+        this.isInteractable = true;
+        this.menu = menu;
+        this.interactionLocation = interactionLocation;
+        this.areaReservations = null;
+        this.map = null;
+        this.isPrivate = false;
+        this.password = null;
+        this.privateRooms = null;
     }
 
     @Override
@@ -62,27 +125,20 @@ public class SpatialContext extends Context implements ISpatialContext {
     }
 
     public SpatialContext getArea(int posX, int posY) {
-        return null; // TODO
-    }
-
-    public SpatialContext getArea(Location location) {
-        return null; // TODO
-    }
-
-    public SpatialContext getInteractable(int posX, int posY, ContextID spatialID) {
-        return null; // TODO
-    }
-
-    public SpatialContext getInteractable(Location location, ContextID spatialID) {
-        return null; // TODO
+        try {
+            return children.entrySet().stream().filter(entry -> entry.getValue().getExpanse().isIn(posX, posY))
+                    .findFirst().orElseThrow().getValue().getArea(posX, posY);
+        } catch (NoSuchElementException e) {
+            return this;
+        }
     }
 
     public boolean isLegal(int posX, int posY) {
-        return false; // TODO
+        return collisionMap[posX][posY];
     }
 
-    public boolean isLegal(Location location) {
-        return false; // TODO
+    public Expanse getExpanse() {
+        return expanse;
     }
 
     public Location getSpawnLocation() {
@@ -109,11 +165,24 @@ public class SpatialContext extends Context implements ISpatialContext {
         return this.password.equals(password);
     }
 
-    public Location getInteractionLocation() {
-        return interactionLocation;
-    }
-
     public boolean canInteract(User user) {
         return isInteractable && user.getLocation().distance(interactionLocation) <= INTERACTION_DISTANCE;
+    }
+
+    public void initializeMap() {
+        // TODO
+    }
+
+    public void addReservation(User user, LocalDateTime from, LocalDateTime to) {
+        areaReservations.add(new AreaReservation(user, from, to));
+    }
+
+    public boolean isReservedBy(User user) {
+        return areaReservations.stream().anyMatch(reservation -> reservation.getReserver().equals(user));
+    }
+
+    public boolean isReservedAt(LocalDateTime from, LocalDateTime to) {
+        return areaReservations.stream().anyMatch(reservation -> reservation.getFrom().equals(from)
+            && reservation.getTo().equals(to));
     }
 }

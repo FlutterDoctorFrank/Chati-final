@@ -3,7 +3,9 @@ package model.context.spatial.objects;
 import controller.network.ClientSender;
 import model.context.Context;
 import model.context.ContextID;
+import model.context.spatial.Location;
 import model.context.spatial.Map;
+import model.context.spatial.Menu;
 import model.context.spatial.SpatialContext;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
@@ -20,8 +22,8 @@ public class RoomReception extends SpatialContext {
     private static final Pattern ROOMNAME_PATTERN = Pattern.compile("^\\w{2,16}");
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^.{4,32}");
 
-    protected RoomReception(String contextName, Context parent, java.util.Map<ContextID, SpatialContext> children) {
-        super(contextName, parent, children);
+    protected RoomReception(String contextName, SpatialContext parent, Menu menu, Location interactionLocation) {
+        super(contextName, parent, menu, interactionLocation);
     }
 
     @Override
@@ -82,7 +84,7 @@ public class RoomReception extends SpatialContext {
                 User roomOwner = users.entrySet().stream()
                         .filter(entry -> entry.getValue().hasPermission(finalPrivateRoom, Permission.MANAGE_PRIVATE_ROOM))
                         .findFirst().orElseThrow().getValue();
-                RoomRequest roomRequest = new RoomRequest(roomOwner, roomOwner.getWorld(), args[1], user, privateRoom);
+                RoomRequest roomRequest = new RoomRequest(roomOwner, args[1], user, privateRoom);
                 roomOwner.addNotification(roomRequest);
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
