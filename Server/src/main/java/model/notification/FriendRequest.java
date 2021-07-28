@@ -18,7 +18,7 @@ public class FriendRequest extends Notification {
     @Override
     public void accept() {
         // Check if requesting user still exists.
-        if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserID())) {
+        if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserId())) {
             MessageBundle messageBundle = new MessageBundle("Der anfragende Benutzer existiert nicht mehr");
             TextMessage infoMessage = new TextMessage(messageBundle);
             owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);

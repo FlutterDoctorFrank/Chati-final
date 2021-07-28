@@ -62,7 +62,7 @@ public class Context implements IContext {
     }
 
     public void addUser(User user) {
-        containedUsers.put(user.getUserID(), user);
+        containedUsers.put(user.getUserId(), user);
         if (parent != null && !parent.contains(user)) {
             parent.addUser(user);
         }
@@ -72,7 +72,7 @@ public class Context implements IContext {
     }
 
     public void removeUser(User user) {
-        containedUsers.remove(user.getUserID());
+        containedUsers.remove(user.getUserId());
         children.forEach((childID, child) -> {
             if (child.contains(user)) {
                 child.removeUser(user);
@@ -81,12 +81,12 @@ public class Context implements IContext {
     }
 
     public void addReportedUser(User user) {
-        reportedUsers.put(user.getUserID(), user);
+        reportedUsers.put(user.getUserId(), user);
         user.updateUserInfo();
     }
 
     public void removeReportedUser(User user) {
-        reportedUsers.remove(user.getUserID());
+        reportedUsers.remove(user.getUserId());
         children.forEach((childID, child) -> {
             if (child.isReported(user)) {
                 child.removeReportedUser(user);
@@ -96,12 +96,12 @@ public class Context implements IContext {
     }
 
     public void addMutedUser(User user) {
-        mutedUsers.put(user.getUserID(), user);
+        mutedUsers.put(user.getUserId(), user);
         user.updateUserInfo();
     }
 
     public void removeMutedUser(User user) {
-        mutedUsers.remove(user.getUserID());
+        mutedUsers.remove(user.getUserId());
         children.forEach((childID, child) -> {
             if (child.isMuted(user)) {
                 child.removeMutedUser(user);
@@ -111,12 +111,12 @@ public class Context implements IContext {
     }
 
     public void addBannedUser(User user) {
-        bannedUsers.put(user.getUserID(), user);
+        bannedUsers.put(user.getUserId(), user);
         user.updateUserInfo();
     }
 
     public void removeBannedUser(User user) {
-        bannedUsers.remove(user.getUserID());
+        bannedUsers.remove(user.getUserId());
         children.forEach((childID, child) -> {
             if (child.isBanned(user)) {
                 child.removeBannedUser(user);
@@ -126,19 +126,19 @@ public class Context implements IContext {
     }
 
     public boolean contains(User user) {
-        return containedUsers.containsKey(user.getUserID());
+        return containedUsers.containsKey(user.getUserId());
     }
 
     public boolean isReported(User user) {
-        return reportedUsers.containsKey(user.getUserID());
+        return reportedUsers.containsKey(user.getUserId());
     }
 
     public boolean isMuted(User user) {
-        return mutedUsers.containsKey(user.getUserID()) || parent.isMuted(user);
+        return mutedUsers.containsKey(user.getUserId()) || parent.isMuted(user);
     }
 
     public boolean isBanned(User user) {
-        return bannedUsers.containsKey(user.getUserID()) || parent.isBanned(user);
+        return bannedUsers.containsKey(user.getUserId()) || parent.isBanned(user);
     }
 
     public boolean isInContext(Context context) {

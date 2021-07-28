@@ -71,7 +71,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         // Die Client-Anwendung darf nur die Aktion UPDATE_AVATAR versenden.
         if (packet.getAction() == AvatarAction.UPDATE_AVATAR) {
             // Überprüfung ob gegebenenfalls eine falsche User-ID versendet wurde.
-            if (packet.getUserId() != null && !packet.getUserId().equals(this.user.getUserID())) {
+            if (packet.getUserId() != null && !packet.getUserId().equals(this.user.getUserId())) {
                 return;
             }
 
@@ -82,7 +82,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 int posX = this.user.getLocation().getPosX();
                 int posY = this.user.getLocation().getPosY();
 
-                this.send(new PacketAvatarMove(AvatarAction.UPDATE_AVATAR, this.user.getUserID(), posX, posY));
+                this.send(new PacketAvatarMove(AvatarAction.UPDATE_AVATAR, this.user.getUserId(), posX, posY));
             }
         }
     }

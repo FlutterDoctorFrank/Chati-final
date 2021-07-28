@@ -162,7 +162,7 @@ public interface ClientSender {
                         action = AvatarAction.SPAWN_AVATAR;
                     }
 
-                    return new PacketAvatarMove(action, other.getUserID(), posX, posY);
+                    return new PacketAvatarMove(action, other.getUserId(), posX, posY);
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }
@@ -183,7 +183,7 @@ public interface ClientSender {
                     int posX = other.getLocation().getPosX();
                     int posY = other.getLocation().getPosY();
 
-                    return new PacketAvatarMove(AvatarAction.REMOVE_AVATAR, other.getUserID(), posX, posY);
+                    return new PacketAvatarMove(AvatarAction.REMOVE_AVATAR, other.getUserId(), posX, posY);
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }

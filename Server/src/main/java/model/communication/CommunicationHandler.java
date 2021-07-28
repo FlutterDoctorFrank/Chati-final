@@ -62,7 +62,7 @@ public class CommunicationHandler {
         }
         Map<UUID, User> communicableUsers = communicationContext.getCommunicableUsers(communicator);
         Map<UUID, User> receivers = filterIgnoredUsers(communicator, communicableUsers);
-        receivers.remove(communicator.getUserID());
+        receivers.remove(communicator.getUserId());
         VoiceMessage voiceMessage = new VoiceMessage(communicator, voicedata);
 
         receivers.forEach((userID, user) -> {
@@ -106,7 +106,7 @@ public class CommunicationHandler {
         SpatialContext communicationContext = communicator.getLocation().getArea();
         Map<UUID, User> communicableUsers = communicationContext.getCommunicableUsers(communicator);
         Context commonContext = communicationContext.lastCommonAncestor(receiver.getLocation().getArea());
-        if (!communicableUsers.containsKey(receiver.getUserID())
+        if (!communicableUsers.containsKey(receiver.getUserId())
                 && !communicator.hasPermission(commonContext, Permission.CONTACT_USER)
                 && !receiver.hasPermission(commonContext, Permission.CONTACT_USER)
                 || communicator.isIgnoring(receiver) || receiver.isIgnoring(communicator)) {

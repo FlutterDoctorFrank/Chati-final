@@ -3,7 +3,6 @@ package model.notification;
 import controller.network.ClientSender;
 import model.MessageBundle;
 import model.communication.message.TextMessage;
-import model.context.Context;
 import model.context.spatial.SpatialContext;
 import model.user.User;
 import model.user.account.UserAccountManager;
@@ -27,7 +26,7 @@ public class AreaManagingRequest extends Notification {
     @Override
     public void accept() {
         // Check if requesting user still exists.
-        if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserID())) {
+        if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserId())) {
             MessageBundle messageBundle = new MessageBundle("Der anfragende Benutzer existiert nicht mehr");
             TextMessage infoMessage = new TextMessage(messageBundle);
             owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);

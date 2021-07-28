@@ -5,7 +5,7 @@ import model.context.Context;
 import model.context.global.GlobalContext;
 import model.context.spatial.Location;
 import model.context.spatial.SpatialContext;
-import model.exception.IllegalActionException;
+import java.lang.IllegalStateException;
 import model.exception.NoPermissionException;
 import model.notification.FriendRequest;
 import model.notification.Notification;
@@ -20,9 +20,9 @@ import java.util.UUID;
 public enum AdministrativeAction {
     INVITE_FRIEND {
         @Override
-        protected void execute(User performer, User target, String[] args) throws IllegalActionException {
+        protected void execute(User performer, User target, String[] args) throws IllegalStateException {
             if (performer.isFriend(target) || target.isFriend(performer)) {
-                throw new IllegalActionException("Users are already friends.");
+                throw new IllegalStateException("Users are already friends.");
             }
             if (target.isIgnoring(performer)) {
                 return;
@@ -36,9 +36,9 @@ public enum AdministrativeAction {
     },
     REMOVE_FRIEND {
         @Override
-        protected void execute(User performer, User target, String[] args) throws IllegalActionException {
+        protected void execute(User performer, User target, String[] args) throws IllegalStateException {
             if (!performer.isFriend(target) || !target.isFriend(performer)) {
-                throw new IllegalActionException("Users are not friends.");
+                throw new IllegalStateException("Users are not friends.");
             }
             performer.removeFriend(target);
             target.removeFriend(performer);
@@ -46,9 +46,9 @@ public enum AdministrativeAction {
     },
     IGNORE_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) throws IllegalActionException {
+        protected void execute(User performer, User target, String[] args) throws IllegalStateException {
             if (performer.isIgnoring(target)) {
-                throw new IllegalActionException("User is already ignored.");
+                throw new IllegalStateException("User is already ignored.");
             }
             if (performer.isFriend(target) || target.isFriend(performer)) {
                 performer.removeFriend(target);
@@ -59,36 +59,36 @@ public enum AdministrativeAction {
     },
     UNIGNORE_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) throws IllegalActionException {
+        protected void execute(User performer, User target, String[] args) throws IllegalStateException {
             if (!performer.isIgnoring(target)) {
-                throw new IllegalActionException("User is not ignored.");
+                throw new IllegalStateException("User is not ignored.");
             }
             performer.unignoreUser(target);
         }
     },
     ROOM_INVITE {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException, IllegalActionException {
+        protected void execute(User performer, User target, String[] args) throws NoPermissionException, IllegalStateException {
             SpatialContext invitedRoom = performer.getLocation().getRoom();
             if (!performer.hasPermission(invitedRoom, Permission.MANAGE_PRIVATE_ROOM)) {
                 throw new NoPermissionException("Performer has not the required permission.", performer, Permission.MANAGE_PRIVATE_ROOM);
             }
             if (invitedRoom.contains(target)) {
-                throw new IllegalActionException("Invited user is already in the private room.");
+                throw new IllegalStateException("Invited user is already in the private room.");
             }
-            RoomInvitation roomInvitation = new RoomInvitation(target, performer.getWorld(), args[0], performer, invitedRoom);
+            RoomInvitation roomInvitation = new RoomInvitation(target, args[0], performer, invitedRoom);
             target.addNotification(roomInvitation);
         }
     },
     ROOM_KICK {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException, IllegalActionException {
+        protected void execute(User performer, User target, String[] args) throws NoPermissionException, IllegalStateException {
             SpatialContext kickedRoom = performer.getLocation().getRoom();
             if (!performer.hasPermission(kickedRoom, Permission.MANAGE_PRIVATE_ROOM)) {
                 throw new NoPermissionException("Performer has not the required permission.", performer, Permission.MANAGE_PRIVATE_ROOM);
             }
             if (!kickedRoom.contains(target)) {
-                throw new IllegalActionException("Target is not in the private room.");
+                throw new IllegalStateException("Target is not in the private room.");
             }
             target.teleport(target.getWorld().getSpawnLocation());
         }
@@ -110,10 +110,10 @@ public enum AdministrativeAction {
     },
     REPORT_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) throws IllegalActionException {
+        protected void execute(User performer, User target, String[] args) throws IllegalStateException {
             Context performerContext = performer.getWorld();
             if (target.hasPermission(performerContext, Permission.BAN_MODERATOR)) {
-                throw new IllegalActionException("Users with permission to ban moderators cannot be reported.");
+                throw new IllegalStateException("Users with permission to ban moderators cannot be reported.");
             }
             Map<UUID, User> receivers = UserAccountManager.getInstance().getUsersWithPermission(performerContext, Permission.BAN_MODERATOR);
             if (!target.hasPermission(performerContext, Permission.BAN_USER)) {
@@ -131,7 +131,7 @@ public enum AdministrativeAction {
     },
     MUTE_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException, IllegalActionException {
+        protected void execute(User performer, User target, String[] args) throws NoPermissionException, IllegalStateException {
             Context performerContext = performer.getLocation().getArea();
             Context targetContext = target.getLocation().getArea();
             Context commonContext = performerContext.lastCommonAncestor(targetContext);
@@ -139,14 +139,14 @@ public enum AdministrativeAction {
                 throw new NoPermissionException("Performer has not the required permission.", performer, Permission.MUTE);
             }
             if (commonContext.isMuted(target)) {
-                throw new IllegalActionException("Target is already muted in this context.");
+                throw new IllegalStateException("Target is already muted in this context.");
             }
             commonContext.addMutedUser(target);
         }
     },
     UNMUTE_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException, IllegalActionException {
+        protected void execute(User performer, User target, String[] args) throws NoPermissionException, IllegalStateException {
             Context performerContext = performer.getLocation().getArea();
             Context targetContext = target.getLocation().getArea();
             Context commonContext = performerContext.lastCommonAncestor(targetContext);
@@ -154,7 +154,7 @@ public enum AdministrativeAction {
                 throw new NoPermissionException("Performer has not the required permission.", performer, Permission.MUTE);
             }
             if (!commonContext.isMuted(target)) {
-                throw new IllegalActionException("Target is not muted in this context.");
+                throw new IllegalStateException("Target is not muted in this context.");
             }
             do {
                 targetContext.removeMutedUser(target);
@@ -164,10 +164,10 @@ public enum AdministrativeAction {
     },
     BAN_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) throws IllegalActionException, NoPermissionException {
+        protected void execute(User performer, User target, String[] args) throws IllegalStateException, NoPermissionException {
             Context performerContext = performer.getWorld();
             if (target.hasPermission(performerContext, Permission.BAN_MODERATOR)) {
-                throw new IllegalActionException("Users with permission to ban moderators cannot be banned.");
+                throw new IllegalStateException("Users with permission to ban moderators cannot be banned.");
             }
             Map<UUID, User> receivers = UserAccountManager.getInstance().getUsersWithPermission(performerContext, Permission.BAN_MODERATOR);
             if (target.hasPermission(performerContext, Permission.BAN_USER)) {
@@ -218,10 +218,10 @@ public enum AdministrativeAction {
     },
     ASSIGN_MODERATOR {
         @Override
-        protected void execute(User performer, User target, String[] args) throws IllegalActionException {
+        protected void execute(User performer, User target, String[] args) throws IllegalStateException {
             Context performerContext = performer.getWorld();
             if (target.hasRole(performerContext, Role.MODERATOR)) {
-                throw new IllegalActionException("Target is already moderator in this world.");
+                throw new IllegalStateException("Target is already moderator in this world.");
             }
             target.addRole(performerContext, Role.MODERATOR);
 
@@ -233,10 +233,10 @@ public enum AdministrativeAction {
     },
     WITHDRAW_MODERATOR {
         @Override
-        protected void execute(User performer, User target, String[] args) throws IllegalActionException {
+        protected void execute(User performer, User target, String[] args) throws IllegalStateException {
             Context performerContext = performer.getWorld();
             if (!target.hasRole(performerContext, Role.MODERATOR)) {
-                throw new IllegalActionException("Target is not moderator in this world.");
+                throw new IllegalStateException("Target is not moderator in this world.");
             }
             target.removeRole(performerContext, Role.MODERATOR);
 
@@ -248,10 +248,10 @@ public enum AdministrativeAction {
     },
     ASSIGN_ADMINISTRATOR {
         @Override
-        protected void execute(User performer, User target, String[] args) throws IllegalActionException {
+        protected void execute(User performer, User target, String[] args) throws IllegalStateException {
             Context performerContext = GlobalContext.getInstance();
             if (target.hasRole(performerContext, Role.ADMINISTRATOR)) {
-                throw new IllegalActionException("Target is already administrator.");
+                throw new IllegalStateException("Target is already administrator.");
             }
             target.addRole(performerContext, Role.ADMINISTRATOR);
 
@@ -263,10 +263,10 @@ public enum AdministrativeAction {
     },
     WITHDRAW_ADMINISTRATOR {
         @Override
-        protected void execute(User performer, User target, String[] args) throws IllegalActionException {
+        protected void execute(User performer, User target, String[] args) throws IllegalStateException {
             Context performerContext = GlobalContext.getInstance();
             if (!target.hasRole(performerContext, Role.ADMINISTRATOR)) {
-                throw new IllegalActionException("Target is not administrator");
+                throw new IllegalStateException("Target is not administrator");
             }
             target.removeRole(performerContext, Role.ADMINISTRATOR);
 
@@ -277,5 +277,5 @@ public enum AdministrativeAction {
         }
     };
 
-    protected abstract void execute(User performer, User target, String[] args) throws IllegalActionException, NoPermissionException;
+    protected abstract void execute(User performer, User target, String[] args) throws IllegalStateException, NoPermissionException;
 }

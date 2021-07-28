@@ -1,5 +1,7 @@
 package model.context.spatial;
 
+import model.communication.CommunicationMedium;
+import model.communication.CommunicationRegion;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
@@ -102,6 +104,11 @@ public class SpatialContext extends Context implements ISpatialContext {
     }
 
     @Override
+    public java.util.Map<ContextID, SpatialContext> getPrivateRooms() {
+        return Collections.unmodifiableMap(privateRooms);
+    }
+
+    @Override
     public SpatialMap getMap() {
         return map;
     }
@@ -124,7 +131,7 @@ public class SpatialContext extends Context implements ISpatialContext {
 
     public SpatialContext getArea(int posX, int posY) {
         try {
-            return children.entrySet().stream().filter(entry -> entry.getValue().getExpanse().isIn(posX, posY))
+            return children.entrySet().stream().filter(entry -> entry.getValue().expanse.isIn(posX, posY))
                     .findFirst().orElseThrow().getValue().getArea(posX, posY);
         } catch (NoSuchElementException e) {
             return this;

@@ -78,6 +78,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     }
 
     //password --> hash; salt?
+    // Ja, das muss hier passieren in dieser Klasse. Wir schicken das Passwort ja in Reinform, und sollen es nur als
+    // Hash und Salt speichern. Das können wir dann zusammen überlegen, raoul
     @Override
     public User createAccount(String username, String password) {
         return null; // TODO
@@ -97,7 +99,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
         try {
             PreparedStatement ps = this.connection.prepareStatement("UPDATE USER SET AVATAR_NAME = " + avatar.getName() +
-                    "WHERE USER_ID = " + user.getUserID().toString());
+                    "WHERE USER_ID = " + user.getUserId().toString());
             ps.executeUpdate();
             this.connection.close();
         } catch (SQLException e) {
@@ -112,7 +114,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
         try {
             PreparedStatement ps = this.connection.prepareStatement("UPDATE USER SET LAST_ONLINE_TIME = " + "???" +
-                    "WHERE USER_ID = " + user.getUserID().toString());
+                    "WHERE USER_ID = " + user.getUserId().toString());
             ps.executeUpdate();
             this.connection.close();
         } catch (SQLException e) {
@@ -127,7 +129,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
         try {
             PreparedStatement ps = this.connection.prepareStatement("DELETE FROM USER WHERE USER_ID = "
-                        + user.getUserID().toString());
+                        + user.getUserId().toString());
             ps.executeUpdate();
             this.connection.close();
         } catch (SQLException e) {
@@ -157,8 +159,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
         try {
             PreparedStatement ps = this.connection.prepareStatement("INSERT INTO FRIENDSHIP(USER_ID1, USER_ID2) values(?,?)");
-            ps.setString(1, first.getUserID().toString());
-            ps.setString(2, second.getUserID().toString());
+            ps.setString(1, first.getUserId().toString());
+            ps.setString(2, second.getUserId().toString());
             ps.executeUpdate();
             this.connection.close();
         } catch (SQLException e) {
@@ -172,8 +174,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
         try {
             PreparedStatement ps = this.connection.prepareStatement("DELETE FROM FRIENDSHIP WHERE (USER_ID1 = "
-                    + first.getUserID().toString() + " AND USER_ID2 = " + second.getUserID().toString() + ") OR (USER_ID1 = "
-                    + second.getUserID().toString() + " AND USER_ID2 = " + first.getUserID().toString() + ")");
+                    + first.getUserId().toString() + " AND USER_ID2 = " + second.getUserId().toString() + ") OR (USER_ID1 = "
+                    + second.getUserId().toString() + " AND USER_ID2 = " + first.getUserId().toString() + ")");
             ps.executeUpdate();
             this.connection.close();
         } catch (SQLException e) {
