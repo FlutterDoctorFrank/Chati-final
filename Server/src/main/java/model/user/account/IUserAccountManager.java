@@ -37,9 +37,8 @@ public interface IUserAccountManager {
      * Meldet einen Benutzer ab.
      * @param userId Die ID des Benutzers, der abgemeldet werden soll.
      * @throws UserNotFoundException wenn kein Benutzer mit der ID existiert.
-     * @throws IllegalActionException wenn der Benutzer nicht angemeldet ist.
      */
-    public void logoutUser(UUID userId) throws UserNotFoundException, IllegalActionException;
+    public void logoutUser(UUID userId) throws UserNotFoundException;
 
     /**
      * Löscht ein Benutzerkonto. Meldet den entsprechenden Benutzer automatisch ab,

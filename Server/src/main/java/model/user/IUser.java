@@ -55,7 +55,7 @@ public interface IUser {
 
     /**
      * Sendet eine Sprachnachricht im Namen des Benutzers, von dem sie erhalten wurde
-     * gemäÿ der geltenden Kommunikationsform an andere Benutzer.
+     * gemäß der geltenden Kommunikationsform an andere Benutzer.
      * @param voicedata Audiodaten.
      * @see model.communication.message.VoiceMessage
      * @see model.communication.CommunicationRegion
@@ -79,7 +79,7 @@ public interface IUser {
      * @param spatialId ID des räumlichen Kontexts, mit dem interagiert werden soll.
      * @throws IllegalInteractionException wenn der Benutzer sich nicht in unmittelbarer
      * Nähe eines Kontextes mit der ID befindet, mit dem Kontext keine Interaktion
-     * möglich ist, oder der Benutzer das Menü eines Kontextes gerade geöffnet hat.
+     * möglich ist, oder der Benutzer gerade bereits mit einem Kontext interagiert.
      * @see model.context.spatial.SpatialContext
      */
     public void interact(ContextID spatialId) throws IllegalInteractionException;
@@ -117,17 +117,10 @@ public interface IUser {
      * @throws NotificationNotFoundException wenn der Benutzer keine Benachrichtigung
      * mit der ID besitzt.
      * @throws IllegalNotificationActionException wenn die Benachrichtigung keine
-     * Anfrage ist oder das Annehmen oder Ablehnen dieser zur Durchführung einer
-     * nicht erlaubten Aktion führt.
+     * Anfrage ist.
      * @see model.notification.Notification
      */
     public void manageNotification(UUID notificationId, boolean accept) throws NotificationNotFoundException, IllegalNotificationActionException;
-
-    /**
-     * Ändert den Status eines Benutzers.
-     * @param status Neuer Status des Benutzers.
-     */
-    public void setStatus(Status status);
 
     /**
      * Ändert den Avatar des Benutzers.

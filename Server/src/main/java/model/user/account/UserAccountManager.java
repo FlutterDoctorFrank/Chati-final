@@ -88,8 +88,8 @@ public class UserAccountManager implements IUserAccountManager {
     }
 
     @Override
-    public void logoutUser(UUID userID) throws UserNotFoundException {
-        User user = getUser(userID);
+    public void logoutUser(UUID userId) throws UserNotFoundException {
+        User user = getUser(userId);
         // Überprüfe, ob der Benutzer angemeldet ist.
         if (!user.isOnline()) {
             return;
@@ -101,21 +101,21 @@ public class UserAccountManager implements IUserAccountManager {
     }
 
     @Override
-    public void deleteUser(UUID userID, String password) throws UserNotFoundException, IllegalAccountActionException {
-        User user = getUser(userID);
+    public void deleteUser(UUID userId, String password) throws UserNotFoundException, IllegalAccountActionException {
+        User user = getUser(userId);
         // Überprüfe, ob das aktuelle Passwort korrekt übergeben wurde.
         if (!database.checkPassword(user.getUsername(), password)) {
             throw new IllegalAccountActionException("", "Das eingegebene Passwort ist nicht korrekt.");
         }
         // Melde den Benutzer ab und lösche sein Benutzerkonto.
-        logoutUser(userID);
-        registeredUsers.remove(userID);
+        logoutUser(userId);
+        registeredUsers.remove(userId);
         database.deleteAccount(user);
     }
 
     @Override
-    public void changePassword(UUID userID, String password, String newPassword) throws UserNotFoundException, IllegalAccountActionException {
-        User user = getUser(userID);
+    public void changePassword(UUID userId, String password, String newPassword) throws UserNotFoundException, IllegalAccountActionException {
+        User user = getUser(userId);
         // Überprüfe, ob das aktuelle Passwort korrekt übergeben wurde.
         if (!database.checkPassword(user.getUsername(), password)) {
             throw new IllegalAccountActionException("", "Das eingegebene Passwort ist nicht korrekt.");
