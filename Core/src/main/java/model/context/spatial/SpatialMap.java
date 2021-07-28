@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Eine Enumeration, welche die Karten repräsentiert, die ein räumlicher Kontext haben kann.
  */
-public enum Map implements Resource {
+public enum SpatialMap implements Resource {
 
     PLACEHOLDER("placeholder");
 
@@ -15,7 +15,7 @@ public enum Map implements Resource {
     private final String name;
     private final String path;
 
-    Map(@NotNull final String name) {
+    SpatialMap(@NotNull final String name) {
         this.name = name;
         this.path = PATH + this.name().toLowerCase();
     }

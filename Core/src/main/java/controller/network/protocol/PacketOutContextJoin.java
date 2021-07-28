@@ -4,7 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import model.context.ContextID;
-import model.context.spatial.Map;
+import model.context.spatial.SpatialMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public class PacketOutContextJoin implements Packet<PacketListenerOut> {
 
     private ContextID contextId;
-    private Map map;
+    private SpatialMap map;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -31,7 +31,7 @@ public class PacketOutContextJoin implements Packet<PacketListenerOut> {
      * @param contextId die ID des Kontexts der Karte, die geladen werden soll.
      * @param map die Karte die geladen werden soll, oder null wenn die Karte verlassen werden soll.
      */
-    public PacketOutContextJoin(@NotNull final ContextID contextId, @Nullable final Map map) {
+    public PacketOutContextJoin(@NotNull final ContextID contextId, @Nullable final SpatialMap map) {
         this.contextId = contextId;
         this.map = map;
     }
@@ -58,7 +58,7 @@ public class PacketOutContextJoin implements Packet<PacketListenerOut> {
         this.contextId = PacketUtils.readContextId(input);
 
         if (input.readBoolean()) {
-            this.map = PacketUtils.readEnum(input, Map.class);
+            this.map = PacketUtils.readEnum(input, SpatialMap.class);
         }
     }
 
@@ -74,7 +74,7 @@ public class PacketOutContextJoin implements Packet<PacketListenerOut> {
      * Gibt die Karte der Welt bzw des Raumes zurück.
      * @return die Karte, sofern eine geladen werden soll.
      */
-    public @Nullable Map getMap() {
+    public @Nullable SpatialMap getMap() {
         return this.map;
     }
 

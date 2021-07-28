@@ -1,7 +1,5 @@
 package model.context.spatial;
 
-import model.communication.CommunicationMedium;
-import model.communication.CommunicationRegion;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
@@ -29,7 +27,7 @@ public class SpatialContext extends Context implements ISpatialContext {
     /*
         Parameters relevant for type 'ROOM' and 'WORLD'
      */
-    private Map map;
+    private SpatialMap map;
     private boolean[][] collisionMap;
     private Expanse expanse;
     private boolean isPrivate;
@@ -38,7 +36,7 @@ public class SpatialContext extends Context implements ISpatialContext {
     private java.util.Map<ContextID, SpatialContext> privateRooms;
 
     // World constructor
-    public SpatialContext(String worldName, Map map) {
+    public SpatialContext(String worldName, SpatialMap map) {
         super(worldName, GlobalContext.getInstance());
         GlobalContext.getInstance().addChild(this);
         this.spatialContextType = SpatialContextType.WORLD;
@@ -55,7 +53,7 @@ public class SpatialContext extends Context implements ISpatialContext {
     }
 
     // Private Room constructor
-    public SpatialContext(String roomName, SpatialContext world, Map map, String password) {
+    public SpatialContext(String roomName, SpatialContext world, SpatialMap map, String password) {
         super(roomName, world);
         world.addChild(this);
         this.spatialContextType = SpatialContextType.ROOM;
@@ -104,7 +102,7 @@ public class SpatialContext extends Context implements ISpatialContext {
     }
 
     @Override
-    public Map getMap() {
+    public SpatialMap getMap() {
         return map;
     }
 

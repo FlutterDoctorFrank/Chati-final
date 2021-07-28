@@ -3,7 +3,7 @@ package model.context.global;
 import controller.network.ClientSender;
 import model.context.Context;
 import model.context.ContextID;
-import model.context.spatial.Map;
+import model.context.spatial.SpatialMap;
 import model.context.spatial.SpatialContext;
 import model.database.Database;
 import model.database.IGlobalContextDatabase;
@@ -11,13 +11,13 @@ import model.exception.*;
 import model.role.Permission;
 import model.user.User;
 import model.user.account.UserAccountManager;
-
 import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
 public class GlobalContext extends Context implements IGlobalContext {
     private static GlobalContext globalContext;
-    private java.util.Map<ContextID, SpatialContext> worlds;
+    private Map<ContextID, SpatialContext> worlds;
     private IGlobalContextDatabase database;
 
     private GlobalContext() {
@@ -27,7 +27,7 @@ public class GlobalContext extends Context implements IGlobalContext {
     }
 
     @Override
-    public void createWorld(UUID performerID, String worldname, Map map) throws UserNotFoundException, NoPermissionException, IllegalWorldActionException {
+    public void createWorld(UUID performerID, String worldname, SpatialMap map) throws UserNotFoundException, NoPermissionException, IllegalWorldActionException {
         User performer = UserAccountManager.getInstance().getUser(performerID);
         if (!performer.hasPermission(GlobalContext.getInstance(), Permission.MANAGE_WORLDS)) {
             throw new NoPermissionException("no permission", performer, Permission.MANAGE_WORLDS);

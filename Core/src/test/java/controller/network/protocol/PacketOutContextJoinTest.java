@@ -1,6 +1,6 @@
 package controller.network.protocol;
 
-import model.context.spatial.Map;
+import model.context.spatial.SpatialMap;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ public class PacketOutContextJoinTest extends PacketTest<PacketOutContextJoin> {
 
     @Test
     public void joinSerializationTest() {
-        this.before = new PacketOutContextJoin(randomContextId(), randomEnum(Map.class));
+        this.before = new PacketOutContextJoin(randomContextId(), randomEnum(SpatialMap.class));
 
         this.serialize();
         this.equals();

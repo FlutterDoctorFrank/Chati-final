@@ -1,10 +1,9 @@
 package model.context.spatial.objects;
 
 import controller.network.ClientSender;
-import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.Location;
-import model.context.spatial.Map;
+import model.context.spatial.SpatialMap;
 import model.context.spatial.Menu;
 import model.context.spatial.SpatialContext;
 import model.exception.IllegalInteractionException;
@@ -12,7 +11,6 @@ import model.exception.IllegalMenuActionException;
 import model.notification.RoomRequest;
 import model.role.Permission;
 import model.user.User;
-import model.user.account.UserAccountManager;
 
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -48,9 +46,9 @@ public class RoomReception extends SpatialContext {
                 if (!PASSWORD_PATTERN.matcher(password).matches()) {
                     throw new IllegalMenuActionException("", "Das eingegebene Passwort hat nicht das richtige Format.");
                 }
-                Map map;
+                SpatialMap map;
                 try {
-                    map = Map.valueOf(args[3]);
+                    map = SpatialMap.valueOf(args[3]);
                 } catch (IllegalArgumentException e) {
                     throw new IllegalMenuActionException("", "Die anzuzeigende Karte existiert nicht.", e);
                 }
