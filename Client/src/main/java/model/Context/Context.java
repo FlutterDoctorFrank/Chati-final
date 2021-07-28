@@ -1,10 +1,12 @@
 package model.Context;
 
+import model.Communication.CommunicationRegion;
 import model.Context.Global.GlobalContext;
-import model.Context.Spatial.CommunicationMedium;
-import model.Context.Spatial.CommunicationRegion;
 import model.Context.Spatial.SpatialContext;
+import model.communication.CommunicationMedium;
 import model.context.ContextID;
+import model.context.spatial.Music;
+
 import java.util.Map;
 import java.util.Set;
 

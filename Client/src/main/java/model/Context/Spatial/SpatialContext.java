@@ -1,12 +1,12 @@
 package model.Context.Spatial;
 
 import model.Context.Context;
-import model.Context.Music;
 import model.context.ContextID;
-import model.Context.Spatial.Expanse;
+import model.context.spatial.SpatialContextType;
+import model.context.spatial.SpatialMap;
+
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -27,12 +27,7 @@ public class SpatialContext extends Context implements ISpatialContextView{
     public SpatialContext[][] getAreaMap() {
         return areaMap;
     }
-    public void setRooms(Map<ContextID, SpatialContext> rooms) {
-        this.rooms = rooms;
-    }
-    public void setMap(SpatialMap map) {
-        this.map = map;
-    }
+
 
     public SpatialContext(String contextName, Context parent, ContextID contextId) {
         super(contextName, parent, contextId);
@@ -77,5 +72,11 @@ public class SpatialContext extends Context implements ISpatialContextView{
 
     public Expanse getExpanse() {
         return expanse;
+    }
+    public void setRooms(Map<ContextID, SpatialContext> rooms) {
+        this.rooms = rooms;
+    }
+    public void setMap(SpatialMap map) {
+        this.map = map;
     }
 }

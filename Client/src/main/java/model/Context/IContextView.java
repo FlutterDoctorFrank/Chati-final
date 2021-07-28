@@ -1,8 +1,9 @@
 package model.Context;
 
-import model.Context.Spatial.CommunicationMedium;
-import model.Context.Spatial.CommunicationRegion;
+import model.Communication.CommunicationRegion;
+import model.communication.CommunicationMedium;
 import model.context.ContextID;
+import model.context.spatial.Music;
 
 import java.util.Set;
 

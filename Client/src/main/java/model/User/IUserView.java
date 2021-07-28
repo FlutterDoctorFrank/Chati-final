@@ -4,7 +4,6 @@ import model.Context.Global.GlobalContext;
 import model.Context.Spatial.ILocationView;
 import model.Context.Spatial.Location;
 import model.Context.Spatial.SpatialContext;
-import model.Context.Spatial.SpatialContextType;
 import model.Notification.INotificationView;
 import model.Notification.Notification;
 import model.role.Role;

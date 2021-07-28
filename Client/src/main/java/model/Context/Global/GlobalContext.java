@@ -1,12 +1,13 @@
 package model.Context.Global;
 
 import model.Context.Context;
-import model.Context.Music;
 import model.Context.Spatial.ISpatialContextView;
 import model.Context.Spatial.SpatialContext;
-import model.Context.Spatial.SpatialMap;
 import model.Exceptions.ContextNotFoundException;
 import model.context.ContextID;
+import model.context.spatial.Music;
+import model.context.spatial.SpatialMap;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;

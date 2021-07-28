@@ -2,6 +2,9 @@ package model.Context.Spatial;
 
 import model.Context.IContextView;
 import model.context.ContextID;
+import model.context.spatial.SpatialContextType;
+import model.context.spatial.SpatialMap;
+
 import java.util.Map;
 
 /**

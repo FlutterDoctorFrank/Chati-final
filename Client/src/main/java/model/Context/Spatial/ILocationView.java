@@ -1,5 +1,7 @@
 package model.Context.Spatial;
 
+import model.context.spatial.SpatialContextType;
+
 /**
  * Eine Schnittstelle, welche der View Zugriff auf die Koordinaten einer Position ermöglicht.
  */

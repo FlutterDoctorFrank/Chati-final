@@ -1,11 +1,11 @@
 package model.Context.Global;
 
-import model.Context.Music;
 import model.Context.Spatial.SpatialContext;
-import model.Context.Spatial.SpatialContextType;
-import model.Context.Spatial.SpatialMap;
 import model.Exceptions.ContextNotFoundException;
 import model.context.ContextID;
+import model.context.spatial.Music;
+import model.context.spatial.SpatialContextType;
+import model.context.spatial.SpatialMap;
 
 import java.util.Map;
 
