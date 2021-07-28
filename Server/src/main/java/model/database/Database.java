@@ -42,7 +42,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
         try {
             PreparedStatement ps = this.connection.prepareStatement("INSERT INTO WORLD(NAME, ID) values(?,?)");
             ps.setString(1, world.getContextName());
-            ps.setString(2, world.getContextID().getID());
+            ps.setString(2, world.getContextID().getId());
             ps.executeUpdate();
             this.connection.close();
         } catch (SQLException e) {
@@ -55,7 +55,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     public void removeWorld(SpatialContext world) {
 
         try {
-            String worldId = world.getContextID().getID();
+            String worldId = world.getContextID().getId();
             PreparedStatement ps = this.connection.prepareStatement("DELETE FROM WORLD WHERE ID = " + worldId);
             ps.executeUpdate();
             this.connection.close();
