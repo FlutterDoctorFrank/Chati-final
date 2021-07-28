@@ -67,6 +67,10 @@ public abstract class PacketTest<T extends Packet<?>> {
         return RandomString.make(randomInt(16) + 1);
     }
 
+    public static boolean randomBoolean() {
+        return RANDOM.nextBoolean();
+    }
+
     public static int randomInt(final int bound) {
         return RANDOM.nextInt(bound);
     }

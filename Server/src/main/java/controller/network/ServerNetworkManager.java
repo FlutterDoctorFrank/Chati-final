@@ -2,6 +2,7 @@ package controller.network;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
+import model.context.global.IGlobalContext;
 import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,11 +13,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServerNetworkManager extends NetworkManager<Server> {
 
     private final Map<Integer, UserConnection> connections;
+    private final IGlobalContext global;
 
-    protected ServerNetworkManager() {
+    protected ServerNetworkManager(@NotNull final IGlobalContext global) {
         super(new Server());
 
         this.connections = new ConcurrentHashMap<>();
+        this.global = global;
     }
 
     @Override
@@ -31,5 +34,9 @@ public class ServerNetworkManager extends NetworkManager<Server> {
 
             connection.removeListener(handler);
         }
+    }
+
+    public @NotNull IGlobalContext getGlobal() {
+        return this.global;
     }
 }

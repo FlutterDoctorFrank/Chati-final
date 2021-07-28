@@ -7,13 +7,13 @@ import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextMusic;
 import controller.network.protocol.PacketOutContextRole;
+import controller.network.protocol.PacketWorldAction;
 import model.context.IContext;
 import model.context.global.IGlobalContext;
 import model.context.spatial.ISpatialContext;
 import model.role.IContextRole;
 import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,7 +64,9 @@ public interface ClientSender {
                             infos.add(new PacketOutContextInfo.Info(world.getContextID(), world.getContextName()));
                         }
                     } else {
-                        //TODO Fehlende Möglichkeit zum Holen der Räume.
+                        for (final ISpatialContext room : ((ISpatialContext) object).getPrivateRooms().values()) {
+                            infos.add(new PacketOutContextInfo.Info(room.getContextID(), room.getContextName()));
+                        }
                     }
 
                     return new PacketOutContextInfo(((IContext) object).getContextID(), infos);
@@ -218,8 +220,18 @@ public interface ClientSender {
         WORLD_ACTION {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                //TODO Verpackung des WorldAction-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (object instanceof ISpatialContext) {
+                    final ISpatialContext world = (ISpatialContext) object;
+
+                    //TODO: Check for Context-Type
+
+                    final PacketWorldAction.Action action = world.getIUsers().containsKey(user.getUserId())
+                            ? PacketWorldAction.Action.JOIN : PacketWorldAction.Action.LEAVE;
+
+                    return new PacketWorldAction(action, world.getContextID(), null, true);
+                } else {
+                    throw new IllegalArgumentException("Expected ISpatialContext, got " + object.getClass());
+                }
             }
         },
 

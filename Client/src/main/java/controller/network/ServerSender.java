@@ -3,7 +3,9 @@ package controller.network;
 import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketInContextInteract;
+import controller.network.protocol.PacketWorldAction;
 import model.context.ContextID;
+import model.context.spatial.SpatialMap;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -58,46 +60,75 @@ public interface ServerSender {
         },
 
         /**
-         * Information, dass eine Welt betreten werden soll.
+         * Information, dass eine Welt betreten oder verlassen werden soll.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@link ContextID}, die Kontext-ID der Welt die betreten oder verlassen werden soll<br>
+         *     - {@code 1}: {@link Boolean}, true, wenn die Welt betreten und false wenn die Welt verlassen werden soll
+         * </p>
          */
-        WORLD_JOIN {
+        WORLD_ACTION {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des WorldAction-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
-            }
-        },
+                if (objects.length != 2) {
+                    try {
+                        final ContextID contextId = (ContextID) objects[0];
+                        final boolean join = (boolean) objects[1];
 
-        /**
-         * Information, dass die aktuelle Welt verlassen wurde.
-         */
-        WORLD_LEAVE {
-            @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des WorldAction-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                        return new PacketWorldAction(join ? PacketWorldAction.Action.JOIN : PacketWorldAction.Action.LEAVE, contextId);
+                    } catch (ClassCastException ex) {
+                        throw new IllegalArgumentException("Expected ContextID and Boolean, got "
+                                + objects[0].getClass() + " and " + objects[1].getClass(), ex);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 2, got " + objects.length);
+                }
             }
         },
 
         /**
          * Information, dass eine neue Welt erstellt werden soll.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@link SpatialMap}, die Karte, die die zu erstellende Welt besitzen soll.<br>
+         *     - {@code 1}: {@link String}, der Name der zu erstellenden Welt.
+         * </p>
          */
         WORLD_CREATE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des WorldAction-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (objects.length != 2) {
+                    try {
+                        return new PacketWorldAction((SpatialMap) objects[0], (String) objects[1]);
+                    } catch (ClassCastException ex) {
+                        throw new IllegalArgumentException("Expected SpatialMap and String, got "
+                                + objects[0].getClass() + " and " + objects[1].getClass(), ex);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 2, got " + objects.length);
+                }
             }
         },
 
         /**
          * Information, dass eine vorhandene Welt gelöscht werden soll.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@link ContextID}, die Kontext-ID der Welt, die gelöscht werden soll.
+         * </p>
          */
         WORLD_DELETE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des WorldAction-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (objects.length != 1) {
+                    try {
+                        return new PacketWorldAction(PacketWorldAction.Action.DELETE, (ContextID) objects[0]);
+                    } catch (ClassCastException ex) {
+                        throw new IllegalArgumentException("Expected ContextID, got " + objects[0].getClass());
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 1, got " + objects.length);
+                }
             }
         },
 
@@ -132,7 +163,7 @@ public interface ServerSender {
          * Information, dass mit einem Kontext interagiert werden soll.
          * <p>
          *     Erwartet als Objekt Array die Klassen:<br>
-         *     - {@code 0}: {@link model.context.ContextID}, Die ID des Kontexts, mit dem interagiert wird.
+         *     - {@code 0}: {@link ContextID}, Die ID des Kontexts, mit dem interagiert wird.
          * </p>
          */
         CONTEXT_INTERACT {

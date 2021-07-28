@@ -8,16 +8,24 @@ import controller.network.protocol.PacketAvatarMove.AvatarAction;
 import controller.network.protocol.PacketInContextInteract;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerIn;
-import model.exception.IllegalActionException;
+import controller.network.protocol.PacketWorldAction;
+import model.exception.ContextNotFoundException;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalPositionException;
+import model.exception.IllegalWorldActionException;
+import model.exception.NoPermissionException;
+import model.exception.UserNotFoundException;
 import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Empfängt und verarbeitet alle eingehenden Pakete eines einzelnen Clients und sendet Pakete an diesen Client.
  */
 public class UserConnection extends Listener implements PacketListenerIn, ClientSender {
+
+    private static final Logger LOGGER = Logger.getLogger("Chati-Network");
 
     private final ServerNetworkManager manager;
     private final Connection connection;
@@ -68,32 +76,104 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
     @Override
     public void handle(@NotNull final PacketAvatarMove packet) {
-        // Die Client-Anwendung darf nur die Aktion UPDATE_AVATAR versenden.
-        if (packet.getAction() == AvatarAction.UPDATE_AVATAR) {
-            // Überprüfung ob gegebenenfalls eine falsche User-ID versendet wurde.
-            if (packet.getUserId() != null && !packet.getUserId().equals(this.user.getUserId())) {
-                return;
+        if (this.user != null && this.user.getWorld() != null) {
+            // Die Client-Anwendung darf nur die Aktion UPDATE_AVATAR versenden.
+            if (packet.getAction() == AvatarAction.UPDATE_AVATAR) {
+                // Überprüfung, ob gegebenenfalls eine falsche User-ID versendet wurde.
+                if (packet.getUserId() != null && !packet.getUserId().equals(this.user.getUserId())) {
+                    return;
+                }
+
+                try {
+                    this.user.move(packet.getPosX(), packet.getPosY());
+                } catch (IllegalPositionException ex) {
+                    // Illegale Position. Sende vorherige Position.
+                    LOGGER.warning("Received illegal movement from user " + this.user.getUsername() + ": " + ex.getMessage());
+
+                    int posX = this.user.getLocation().getPosX();
+                    int posY = this.user.getLocation().getPosY();
+
+                    this.send(new PacketAvatarMove(AvatarAction.UPDATE_AVATAR, this.user.getUserId(), posX, posY));
+                }
             }
+        }
+    }
 
+    @Override
+    public void handle(@NotNull final PacketWorldAction packet) {
+        if (this.user != null) {
             try {
-                this.user.move(packet.getPosX(), packet.getPosY());
-            } catch (IllegalPositionException | IllegalActionException ex) {
-                // Illegale Position. Sende vorherige Position.
-                int posX = this.user.getLocation().getPosX();
-                int posY = this.user.getLocation().getPosY();
+                if (packet.getAction() != PacketWorldAction.Action.CREATE) {
+                    if (packet.getContextId() == null) {
+                        return;
+                    }
 
-                this.send(new PacketAvatarMove(AvatarAction.UPDATE_AVATAR, this.user.getUserId(), posX, posY));
+                    try {
+                        switch (packet.getAction()) {
+                            case JOIN:
+                                this.user.joinWorld(packet.getContextId());
+                                break;
+
+                            case LEAVE:
+                                this.user.leaveWorld();
+                                break;
+
+                            case DELETE:
+                                this.manager.getGlobal().removeWorld(this.user.getUserId(), packet.getContextId());
+
+                                // Löschung erfolgreich. Sende Bestätigung.
+                                this.send(new PacketWorldAction(packet.getAction(), packet.getContextId(), null, true));
+                                break;
+                        }
+                    } catch (IllegalWorldActionException ex) {
+                        // Illegale Welt-Aktion.
+                        LOGGER.fine("User " + this.user.getUsername() + " tried an illegal world action: " + ex.getMessage());
+
+                        this.send(new PacketWorldAction(packet.getAction(), packet.getContextId(), ex.getClientMessageKey(), false));
+                    } catch (NoPermissionException ex) {
+                        // Unzureichende Berechtigung. Sende zugehörige Fehlermeldung.
+                        LOGGER.fine("User " + this.user.getUsername() + " is missing permission: " + ex.getPermission());
+
+                        this.send(new PacketWorldAction(packet.getAction(), packet.getContextId(), "", false));
+                    } catch (ContextNotFoundException ex) {
+                        LOGGER.warning("Received illegal action from user " + this.user.getUsername() + ": " + ex.getMessage());
+
+                        this.send(new PacketWorldAction(packet.getAction(), packet.getContextId(), null, false));
+                    }
+                } else {
+                    if (packet.getMap() != null && packet.getName() != null) {
+                        try {
+                            this.manager.getGlobal().createWorld(this.user.getUserId(), packet.getName(), packet.getMap());
+
+                            // Erstellung erfolgreich. Sende Bestätigung.
+                            this.send(new PacketWorldAction(packet.getMap(), packet.getName(), null, true));
+                        } catch (IllegalWorldActionException ex) {
+                            // Welt existiert bereits.
+                            this.send(new PacketWorldAction(packet.getMap(), packet.getName(), ex.getClientMessageKey(), false));
+                        } catch (NoPermissionException ex) {
+                            // Unzureichende Berechtigung. Sende zugehörige Fehlermeldung.
+                            LOGGER.fine("User " + this.user.getUsername() + " is missing permission: " + ex.getPermission());
+
+                            this.send(new PacketWorldAction(packet.getMap(), packet.getName(), "", false));
+                        }
+                    }
+                }
+            } catch (UserNotFoundException ex) {
+                // Sollte niemals der Fall sein.
+                LOGGER.log(Level.WARNING, "Failed to provide corresponding user-id: ", ex);
             }
         }
     }
 
     @Override
     public void handle(@NotNull final PacketInContextInteract packet) {
-        try {
-            this.user.interact(packet.getContextId());
-        } catch (IllegalInteractionException ex) {
-            // Objekt wurde nicht gefunden oder der Benutzer interagiert bereits mit einem Objekt.
-            // Verbindung trennen?
+        if (this.user != null) {
+            try {
+                this.user.interact(packet.getContextId());
+            } catch (IllegalInteractionException ex) {
+                // Objekt wurde nicht gefunden oder der Benutzer interagiert bereits mit einem Objekt.
+                // Verbindung trennen?
+            }
         }
     }
 }
