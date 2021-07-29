@@ -20,6 +20,7 @@ import model.role.Role;
 import model.user.account.UserAccountManager;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -339,16 +340,16 @@ public class User implements IUser {
 
     @Override
     public Map<IContext, IContextRole> getGlobalRoles() {
-        return contextRoles.entrySet().stream()
-                .filter(entry -> entry.getKey().equals(GlobalContext.getInstance()))
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        return contextRoles.values().stream()
+                .filter(contextRole -> contextRole.getContext().equals(GlobalContext.getInstance()))
+                .collect(Collectors.toUnmodifiableMap(ContextRole::getContext, Function.identity()));
     }
 
     @Override
     public Map<UUID, INotification> getGlobalNotifications() {
-        return notifications.entrySet().stream()
-                .filter(entry -> entry.getValue().getContext().equals(GlobalContext.getInstance()))
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        return notifications.values().stream()
+                .filter(notification -> notification.getContext().equals(GlobalContext.getInstance()))
+                .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
     }
 
     /**
@@ -480,15 +481,6 @@ public class User implements IUser {
     }
 
     /**
-     * Entfernt eine Benachrichtigung des Benutzers.
-     * @param notification Zu entfernende Benachrichtigung.
-     */
-    public void removeNotification(Notification notification) {
-        notifications.remove(notification.getNotificationId());
-        database.removeNotification(this, notification);
-    }
-
-    /**
      * Überprüft, ob ein Benutzer eine Rolle in einem Kontext besitzt.
      * @param context Zu überprüfender Kontext.
      * @param role Zu überprüfende Rolle.
@@ -576,9 +568,9 @@ public class User implements IUser {
         if (currentWorld == null) {
             throw new IllegalStateException("User is not in a world.");
         }
-        return contextRoles.entrySet().stream()
-                .filter(entry -> entry.getKey().isInContext(currentWorld))
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        return contextRoles.values().stream()
+                .filter(contextRole -> contextRole.getContext().equals(currentWorld))
+                .collect(Collectors.toUnmodifiableMap(ContextRole::getContext, Function.identity()));
     }
 
     /**
@@ -591,9 +583,9 @@ public class User implements IUser {
         if (currentWorld == null) {
             throw new IllegalStateException("User is not in a world.");
         }
-        return notifications.entrySet().stream()
-                .filter(entry -> entry.getValue().getContext().equals(currentWorld))
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        return notifications.values().stream()
+                .filter(notification -> notification.getContext().equals(currentWorld))
+                .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
     }
 
     /**

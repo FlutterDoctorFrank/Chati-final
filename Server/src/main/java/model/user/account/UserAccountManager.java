@@ -14,6 +14,7 @@ import model.user.User;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -156,8 +157,8 @@ public class UserAccountManager implements IUserAccountManager {
      * @return true, wenn der Benutzer existiert, sonst false.
      */
     public boolean isRegistered(String username) {
-        return registeredUsers.entrySet().stream()
-                .anyMatch(user -> user.getValue().getUsername().equals(username));
+        return registeredUsers.values().stream()
+                .anyMatch(user -> user.getUsername().equals(username));
     }
 
     /**
@@ -182,9 +183,9 @@ public class UserAccountManager implements IUserAccountManager {
      */
     public User getUser(String username) throws UserNotFoundException {
         try {
-            return registeredUsers.entrySet().stream()
-                    .filter(user -> user.getValue().getUsername().equals(username))
-                    .findFirst().orElseThrow().getValue();
+            return registeredUsers.values().stream()
+                    .filter(user -> user.getUsername().equals(username))
+                    .findFirst().orElseThrow();
         } catch(NoSuchElementException e) {
             throw new UserNotFoundException("User does not exist.", username, e);
         }
@@ -198,8 +199,8 @@ public class UserAccountManager implements IUserAccountManager {
      * @return Menge aller Benutzer mit der Berechtigung in dem Kontext.
      */
     public Map<UUID, User> getUsersWithPermission(Context context, Permission permission) {
-        return registeredUsers.entrySet().stream()
-                .filter(user -> user.getValue().hasPermission(context, permission))
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        return registeredUsers.values().stream()
+                .filter(user -> user.hasPermission(context, permission))
+                .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
 }
