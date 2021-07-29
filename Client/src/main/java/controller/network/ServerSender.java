@@ -12,6 +12,7 @@ import model.context.spatial.SpatialMap;
 import model.user.Avatar;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -271,9 +272,10 @@ public interface ServerSender {
                 if (objects.length != 3) {
                     if (objects[0] instanceof UUID && objects[1] instanceof AdministrativeAction) {
                         try {
-                            PacketInUserManage.Action action = PacketInUserManage.Action.valueOf(((AdministrativeAction) objects[1]).name());
+                            final PacketInUserManage.Action action = PacketInUserManage.Action.valueOf(((AdministrativeAction) objects[1]).name());
+                            final String[] arguments = Arrays.copyOfRange(objects, 2, objects.length, String[].class);
 
-                            return new PacketInUserManage((UUID) objects[0], action, (String) objects[2]);
+                            return new PacketInUserManage((UUID) objects[0], action, arguments);
                         } catch (IllegalArgumentException ex) {
                             throw new IllegalStateException("Failed to provide corresponding administrative-action", ex);
                         }

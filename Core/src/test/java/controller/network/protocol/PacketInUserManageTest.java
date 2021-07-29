@@ -10,9 +10,16 @@ public class PacketInUserManageTest extends PacketTest<PacketInUserManage> {
     }
 
     @Test
-    public void serializationTest() {
-        this.before = new PacketInUserManage(randomUniqueId(), randomEnum(PacketInUserManage.Action.class),
-                randomBoolean() ? randomString() : null);
+    public void emptySerializationTest() {
+        this.before = new PacketInUserManage(randomUniqueId(), randomEnum(PacketInUserManage.Action.class), null);
+
+        this.serialize();
+        this.equals();
+    }
+
+    @Test
+    public void singleSerializationTest() {
+        this.before = new PacketInUserManage(randomUniqueId(), randomEnum(PacketInUserManage.Action.class), new String[]{randomString()});
 
         this.serialize();
         this.equals();
@@ -24,12 +31,12 @@ public class PacketInUserManageTest extends PacketTest<PacketInUserManage> {
         Assert.assertEquals(this.before.getUserId(), this.after.getUserId());
         Assert.assertEquals(this.before.getAction(), this.after.getAction());
 
-        // Vergleiche optionale Nachrichten
-        if (this.before.getMessage() != null) {
-            Assert.assertNotNull(this.after.getMessage());
-            Assert.assertEquals(this.before.getMessage(), this.after.getMessage());
+        // Vergleiche optionale Argumente
+        if (this.before.getArguments() != null) {
+            Assert.assertNotNull(this.after.getArguments());
+            Assert.assertArrayEquals(this.before.getArguments(), this.after.getArguments());
         } else {
-            Assert.assertNull(this.after.getMessage());
+            Assert.assertNull(this.after.getArguments());
         }
     }
 }

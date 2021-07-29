@@ -251,9 +251,8 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         if (this.user != null) {
             try {
                 final AdministrativeAction action = AdministrativeAction.valueOf(packet.getAction().name());
-                final String[] arguments = packet.getMessage() != null ? packet.getMessage().split(" ") : null;
 
-                this.user.executeAdministrativeAction(packet.getUserId(), action, arguments);
+                this.user.executeAdministrativeAction(packet.getUserId(), action, packet.getArguments());
             } catch (NoPermissionException ex) {
                 // Unzureichende Berechtigung.
                 LOGGER.fine("User " + this.user.getUsername() + " is missing permission " + ex.getPermission() + " for managing user: " + packet.getAction().name());

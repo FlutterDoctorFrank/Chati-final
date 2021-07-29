@@ -19,7 +19,7 @@ public class PacketInUserManage implements Packet<PacketListenerIn> {
 
     private UUID userId;
     private Action action;
-    private String message;
+    private String[] arguments;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -32,12 +32,12 @@ public class PacketInUserManage implements Packet<PacketListenerIn> {
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Client-Anwendung.
      * @param userId die ID des Benutzers, auf dem die Verwaltungsmöglichkeit ausgeführt werden soll.
      * @param action die Aktion, die auf dem Benutzer ausgeführt werden soll.
-     * @param message die Nachricht, die zur auszuführenden Aktion gehört.
+     * @param arguments die Argumente, die zur auszuführenden Aktion gehören.
      */
-    public PacketInUserManage(@NotNull final UUID userId, @NotNull final Action action, @Nullable final String message) {
+    public PacketInUserManage(@NotNull final UUID userId, @NotNull final Action action, @Nullable final String[] arguments) {
         this.userId = userId;
         this.action = action;
-        this.message = message;
+        this.arguments = arguments;
     }
 
     @Override
@@ -49,14 +49,22 @@ public class PacketInUserManage implements Packet<PacketListenerIn> {
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeUniqueId(output, this.userId);
         PacketUtils.writeEnum(output, this.action);
-        output.writeString(this.message);
+        output.writeInt(this.arguments.length, true);
+
+        for (final String argument : this.arguments) {
+            output.writeString(argument);
+        }
     }
 
     @Override
     public void read(Kryo kryo, Input input) {
         this.userId = PacketUtils.readUniqueId(input);
         this.action = PacketUtils.readEnum(input, Action.class);
-        this.message = input.readString();
+        this.arguments = new String[input.readInt(true)];
+
+        for (int index = 0; index < this.arguments.length; index++) {
+            this.arguments[index] = input.readString();
+        }
     }
 
     /**
@@ -76,14 +84,14 @@ public class PacketInUserManage implements Packet<PacketListenerIn> {
     }
 
     /**
-     * Gibt die zur Aktion gehörige Nachricht zurück.
+     * Gibt die zur Aktion gehörigen Argumente zurück.
      * <p><i>
      *     Wird nur bei den Aktionen {@link Action#BAN_USER} und {@link Action#REPORT_USER} genutzt.
      * </i></p>
-     * @return die zur Aktion gehörigen Nachricht, oder null.
+     * @return die zur Aktion gehörigen Argumente, oder null.
      */
-    public @Nullable String getMessage() {
-        return this.message;
+    public @Nullable String[] getArguments() {
+        return this.arguments;
     }
 
     /**
