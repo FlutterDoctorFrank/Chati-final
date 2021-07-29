@@ -10,6 +10,7 @@ import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextMusic;
 import controller.network.protocol.PacketOutContextRole;
+import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketWorldAction;
 import org.jetbrains.annotations.NotNull;
 
@@ -72,6 +73,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     @Override
     public void handle(@NotNull final PacketWorldAction packet) {
         //TODO Verarbeitung des WorldAction-Pakets implementieren.
+    }
+
+    @Override
+    public void handle(@NotNull final PacketProfileAction packet) {
+        //TODO Verarbeitung des ProfileAction-Pakets implementieren.
     }
 
     @Override

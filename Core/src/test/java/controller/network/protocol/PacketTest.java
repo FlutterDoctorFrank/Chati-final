@@ -47,6 +47,20 @@ public abstract class PacketTest<T extends Packet<?>> {
      * Statische Methoden für die zufällige Erzeugung von Netzwerkpaketen.
      */
 
+    public static  <E extends Enum<E>> @NotNull E randomEnum(@NotNull final Class<E> clazz, @NotNull final E without) {
+        if (clazz.getEnumConstants().length <= 0) {
+            throw new IllegalArgumentException("Non-existent enum elements cannot be randomized");
+        }
+
+        E random = null;
+
+        while (random == null || random == without) {
+            random = clazz.getEnumConstants()[RANDOM.nextInt(clazz.getEnumConstants().length)];
+        }
+
+        return random;
+    }
+
     public static  <E extends Enum<E>> @NotNull E randomEnum(@NotNull final Class<E> clazz) {
         if (clazz.getEnumConstants().length <= 0) {
             throw new IllegalArgumentException("Non-existent enum elements cannot be randomized");
