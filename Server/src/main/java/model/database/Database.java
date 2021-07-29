@@ -81,7 +81,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
         try {
             initialize();
             Connection con = DriverManager.getConnection("jdbc:derby:E:/DBTest;create=true");
-            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
             //Pruefe ob username schon besitzt
             ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_NAME = " + "'" +username+ "'");
@@ -118,7 +118,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
         try{
             initialize();
             Connection con = DriverManager.getConnection("jdbc:derby:E:/DBTest;create=true");
-            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
             ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_NAME = " + "'" + username + "'");
             int row = 0;
@@ -217,7 +217,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
         try{
             initialize();
             Connection con = DriverManager.getConnection(dbURL);
-            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
             //Suche der User in Datenbank
             ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_ID = " + "'" + userID.toString()+ "'");
@@ -256,7 +256,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
         try{
             initialize();
             Connection con = DriverManager.getConnection(dbURL);
-            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
             //Suche der User in Datenbank
             ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_NAME = " + "'" + username+ "'");
