@@ -6,6 +6,7 @@ import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
 import controller.network.protocol.PacketInContextInteract;
+import controller.network.protocol.PacketInUserManage;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerIn;
 import controller.network.protocol.PacketProfileAction;
@@ -18,6 +19,7 @@ import model.exception.IllegalPositionException;
 import model.exception.IllegalWorldActionException;
 import model.exception.NoPermissionException;
 import model.exception.UserNotFoundException;
+import model.user.AdministrativeAction;
 import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
 import java.util.logging.Logger;
@@ -145,6 +147,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 LOGGER.fine("User " + this.user.getUsername() + " is missing permission " + ex.getPermission() + " for world action: " + packet.getAction().name());
                 this.send(new PacketWorldAction(packet, "missing.permission", false));
             } catch (ContextNotFoundException ex) {
+                // Ungültige Welt, auf die Zugegriffen wird.
                 LOGGER.fine("User " + this.user.getUsername() + " tried to access non-existing world");
             } catch (UserNotFoundException ex) {
                 // Sollte niemals der Fall sein.
@@ -240,6 +243,29 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 // Objekt wurde nicht gefunden oder der Benutzer interagiert bereits mit einem Objekt.
                 // Verbindung trennen?
             }
+        }
+    }
+
+    @Override
+    public void handle(@NotNull final PacketInUserManage packet) {
+        if (this.user != null) {
+            try {
+                final AdministrativeAction action = AdministrativeAction.valueOf(packet.getAction().name());
+                final String[] arguments = packet.getMessage() != null ? packet.getMessage().split(" ") : null;
+
+                this.user.executeAdministrativeAction(packet.getUserId(), action, arguments);
+            } catch (NoPermissionException ex) {
+                // Unzureichende Berechtigung.
+                LOGGER.fine("User " + this.user.getUsername() + " is missing permission " + ex.getPermission() + " for managing user: " + packet.getAction().name());
+            } catch (UserNotFoundException ex) {
+                // Ungültiger Benutzer, der verwaltet werden soll.
+                LOGGER.fine("User " + this.user.getUsername() + " tried to manage non-existing user");
+            } catch (IllegalArgumentException ex) {
+                // Sollte niemals der Fall sein.
+                throw new IllegalStateException("Failed to provide corresponding administrative-action", ex);
+            }
+        } else {
+            LOGGER.fine("Connection " + this.connection.getID() + " tried to manage user while not logged in");
         }
     }
 }

@@ -3,15 +3,11 @@ package model.context.spatial.objects;
 import controller.network.ClientSender;
 import model.MessageBundle;
 import model.communication.message.TextMessage;
-import model.context.Context;
-import model.context.ContextID;
 import model.context.spatial.Location;
 import model.context.spatial.Menu;
 import model.context.spatial.SpatialContext;
 import model.exception.IllegalInteractionException;
 import model.user.User;
-
-import java.util.Map;
 
 public class Seat extends SpatialContext {
 
@@ -28,7 +24,7 @@ public class Seat extends SpatialContext {
             if (sittingUser.equals(user)) {
                 try {
                     user.move(interactionLocation.getPosX(), interactionLocation.getPosY());
-                    user.setCurrentInteractable(null);
+                    //user.setCurrentInteractable(null);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -37,7 +33,7 @@ public class Seat extends SpatialContext {
             TextMessage infoMessage = new TextMessage(messageBundle);
             user.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
         }
-        user.setCurrentInteractable(this);
+        //user.setCurrentInteractable(this);
         user.getClientSender().send(ClientSender.SendAction.OPEN_MENU, this);
     }
 
@@ -45,11 +41,11 @@ public class Seat extends SpatialContext {
     public void executeMenuOption(User user, int menuOption, String[] args) throws IllegalInteractionException {
         switch (menuOption) {
             case 0:
-                user.setCurrentInteractable(null);
+                //user.setCurrentInteractable(null);
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
             case 1:
-                user.setCurrentInteractable(null);
+                //user.setCurrentInteractable(null);
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 try {
                     user.move(sittingLocation.getPosX(), sittingLocation.getPosY());

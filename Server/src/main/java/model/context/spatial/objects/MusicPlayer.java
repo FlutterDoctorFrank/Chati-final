@@ -17,7 +17,7 @@ public class MusicPlayer extends SpatialContext {
 
     @Override
     public void interact(User user) {
-        user.setCurrentInteractable(this);
+        //user.setCurrentInteractable(this);
         user.getClientSender().send(ClientSender.SendAction.OPEN_MENU, this);
     }
 
@@ -25,7 +25,7 @@ public class MusicPlayer extends SpatialContext {
     public void executeMenuOption(User user, int menuOption, String[] args) throws IllegalInteractionException, IllegalMenuActionException {
         switch (menuOption) {
             case 0:
-                user.setCurrentInteractable(null);
+                //user.setCurrentInteractable(null);
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
             case 1:

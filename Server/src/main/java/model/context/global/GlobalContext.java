@@ -57,7 +57,7 @@ public class GlobalContext extends Context implements IGlobalContext {
         world.getContainedUsers().forEach((userID, user) -> {
             try {
                 user.leaveWorld();
-            } catch (IllegalActionException e) {
+            } catch (IllegalStateException e) {
                 e.printStackTrace();
             }
         });

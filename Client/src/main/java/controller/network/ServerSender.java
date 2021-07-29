@@ -3,12 +3,16 @@ package controller.network;
 import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketInContextInteract;
+import controller.network.protocol.PacketInUserManage;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketWorldAction;
+import model.User.AdministrativeAction;
 import model.context.ContextID;
 import model.context.spatial.SpatialMap;
 import model.user.Avatar;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 /**
  * Eine Schnittstelle, welche als Beobachter für die View dient.
@@ -264,8 +268,22 @@ public interface ServerSender {
         USER_MANAGE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des UserManage-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (objects.length != 3) {
+                    if (objects[0] instanceof UUID && objects[1] instanceof AdministrativeAction) {
+                        try {
+                            PacketInUserManage.Action action = PacketInUserManage.Action.valueOf(((AdministrativeAction) objects[1]).name());
+
+                            return new PacketInUserManage((UUID) objects[0], action, (String) objects[2]);
+                        } catch (IllegalArgumentException ex) {
+                            throw new IllegalStateException("Failed to provide corresponding administrative-action", ex);
+                        }
+                    } else {
+                        throw new IllegalArgumentException("Expected UUID, AdministrativeAction and String, got "
+                                + objects[0].getClass() + "," + objects[1].getClass() + " and " + objects[2].getClass());
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 3, got " + objects.length);
+                }
             }
         },
 

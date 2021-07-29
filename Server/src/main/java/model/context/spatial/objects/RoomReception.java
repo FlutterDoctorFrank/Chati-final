@@ -26,7 +26,7 @@ public class RoomReception extends SpatialContext {
 
     @Override
     public void interact(User user) {
-        user.setCurrentInteractable(this);
+        //user.setCurrentInteractable(this);
         user.getClientSender().send(ClientSender.SendAction.OPEN_MENU, this);
     }
 
@@ -34,7 +34,7 @@ public class RoomReception extends SpatialContext {
     public void executeMenuOption(User user, int menuOption, String[] args) throws IllegalInteractionException, IllegalMenuActionException {
         switch (menuOption) {
             case 0:
-                user.setCurrentInteractable(null);
+                //user.setCurrentInteractable(null);
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
             case 1:
@@ -55,7 +55,7 @@ public class RoomReception extends SpatialContext {
                 // create private room & add it to worlds private rooms
                 // add role room owner
                 // teleport to private room
-                user.setCurrentInteractable(null);
+                //user.setCurrentInteractable(null);
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
             case 2:
@@ -68,7 +68,7 @@ public class RoomReception extends SpatialContext {
                 if (!privateRoom.checkPassword(password)) {
                     throw new IllegalMenuActionException("", "Das eingegebene Passwort ist nicht korrekt.");
                 }
-                user.setCurrentInteractable(null);
+                //user.setCurrentInteractable(null);
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 user.teleport(privateRoom.getSpawnLocation());
             case 3:
