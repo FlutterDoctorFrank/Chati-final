@@ -31,6 +31,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     public void addWorld(SpatialContext world) {
 
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO WORLDS(NAME, ID) values(?,?)");
             ps.setString(1, world.getContextName());
@@ -47,6 +48,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     public void removeWorld(SpatialContext world) {
 
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             String worldId = world.getContextID().getId();
             PreparedStatement ps = con.prepareStatement("DELETE FROM WORLDS WHERE ID = " + worldId);
@@ -77,6 +79,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public User createAccount(String username, String password) {
         try {
+            initialize();
             Connection con = DriverManager.getConnection("jdbc:derby:E:/DBTest;create=true");
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 
@@ -112,20 +115,44 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
     @Override
     public boolean checkPassword(String username, String password) {
-        try {
-            Connection con = DriverManager.getConnection(dbURL);
+        try{
+            initialize();
+            Connection con = DriverManager.getConnection("jdbc:derby:E:/DBTest;create=true");
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 
+            ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_NAME = " + "'" + username + "'");
+            int row = 0;
+            while (res.next()){
+                row ++;
+            }
+            System.out.println(row);
+
+            if (row == 1) {
+                res.first();
+
+                String realPassword = res.getString("USER_PSW");
+                boolean result =  realPassword.equals(password);
+                return result;
+            } else {
+                System.out.println("User nicht existiert");
+            }
+            res.close();
+            st.close();
             con.close();
-        } catch (SQLException e) {
-            System.out.print("Fehler in Database-checkPassword: " + e);
+            //con.commit();
+        } catch(SQLException e){
+            System.out.println("Fehler in Database-checkPassword: " + e);
+
         }
         return false;
     }
     @Override
     public void setPassword(User user, String newPassword) {
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
 
+            //TODO
             con.close();
         } catch (SQLException e) {
             System.out.print("Fehler in Database-setPassword: " + e);
@@ -137,6 +164,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     public void changeAvatar(User user, Avatar avatar) {
 
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET AVATAR_NAME = " + avatar.getName() +
                     "WHERE USER_ID = " + user.getUserId().toString());
@@ -154,6 +182,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
         //!!!!!!Timestamp noch zu bearbeiten
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET LAST_ONLINE_TIME = " + null +
                     "WHERE USER_ID = " + user.getUserId().toString());
@@ -170,6 +199,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     public void deleteAccount(User user) {
 
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM USER_ACCOUNT WHERE USER_ID = "
                         + user.getUserId().toString());
@@ -185,6 +215,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public User getUser(UUID userID) {
         try{
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 
@@ -204,6 +235,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
 
                 //!!! noch nicht bearbeitet!!!
+                //TODO
                 User user = new User(userID, user_name, user_avatar, null, null, null, null);
 
                 return user;
@@ -222,6 +254,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public User getUser(String username) {
         try{
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 
@@ -241,6 +274,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
 
                 //!!! noch nicht bearbeitet!!!
+                //TODO
                 User user = new User(UUID.fromString(user_id), username, user_avatar, null, null, null, null);
 
                 return user;
@@ -265,6 +299,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     public void addFriendship(User first, User second) {
 
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO FRIENDSHIP(USER_ID1, USER_ID2) values(?,?)");
             ps.setString(1, first.getUserId().toString());
@@ -281,6 +316,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     public void removeFriendship(User first, User second) {
 
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM FRIENDSHIP WHERE (USER_ID1 = "
                     + first.getUserId().toString() + " AND USER_ID2 = " + second.getUserId().toString() + ") OR (USER_ID1 = "
@@ -299,6 +335,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
 
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO IGNORE(USER_ID, IGNORED_ID) values(?,?)");
             ps.setString(1, ignoringUser.getUserId().toString());
@@ -319,6 +356,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
 
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM IGNORE WHERE USER_ID = "
                     + ignoringUser.getUserId().toString() + " AND IGNORED_ID = " + ignoredUser.getUserId().toString());
@@ -337,6 +375,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     public void addRole(User user, Context context, Role role) {
 
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO ROLE_WITH_CONTEXT " +
                     "(USER_ID, ROLE, CONTEXT_ID) values(?,?,?)");
@@ -356,6 +395,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     public void removeRole(User user, Context context, Role role) {
 
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM ROLE_WITH_CONTEXT WHERE USER_ID = "
                     + user.getUserId().toString() + " AND ROLE = " + role.name()
@@ -372,6 +412,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public void addNotification(User user, Notification notification) {
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO NOTIFICATION " +
                     "(USER_ID CHAR, NOTIFICATION_ID CHAR, OWING_CONTEXT_ID CHAR, " +
@@ -383,6 +424,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
             if (notification.isRequest() == true){
                 if (notification instanceof RoomRequest) {
 
+                    //TODO
                     //vielleicht noch ein paar getter in Request-Klassen?
 
                 }
@@ -408,6 +450,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public void removeNotification(User user, Notification notification) {
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM NOTIFICATION WHERE NOTIFICATION_ID = "
                     + notification.getNotificationID().toString());
@@ -422,6 +465,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     public void addBannedUser(User user, SpatialContext world) {
 
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO BAN(USER_ID, WORLD_ID) values(?,?)");
             ps.setString(1, user.getUserId().toString());
@@ -438,6 +482,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public void removeBannedUser(User user, SpatialContext world) {
         try {
+            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM BAN WHERE USER_ID = "
                     + user.getUserId().toString() + " AND WORLD_ID = " + world.getContextID().getId());
@@ -527,7 +572,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
             con.close();
             //DriverManager.getConnection("jdbc:derby:E:/DBTest;shutdown=true");
         } catch (SQLException e){
-            System.out.print("UserAccount " + e );
+            System.out.print("Fehler in Database-init " + e );
         }
 
         // TODO
