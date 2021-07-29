@@ -5,6 +5,7 @@ import model.context.ContextID;
 import model.context.spatial.AreaReservation;
 import model.context.spatial.SpatialContext;
 import model.notification.Notification;
+import model.notification.RoomRequest;
 import model.role.Role;
 import model.user.Avatar;
 import model.user.User;
@@ -18,6 +19,13 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
     private static Database database;
 
+
+    public static Database getInstance() {
+        if (database == null) {
+            database = new Database();
+        }
+        return database;
+    }
 
     @Override
     public void addWorld(SpatialContext world) {
@@ -51,6 +59,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
     }
 
+    //warum void??
     @Override
     public void getWorld(ContextID worldID) {
         // TODO
@@ -68,9 +77,33 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public User createAccount(String username, String password) {
         try {
-            Connection con = DriverManager.getConnection(dbURL);
+            Connection con = DriverManager.getConnection("jdbc:derby:E:/DBTest;create=true");
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 
+            //Pruefe ob username schon besitzt
+            ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_NAME = " + "'" +username+ "'");
+            int row = 0;
+            while (res.next()){
+                row ++;
+            }
+
+            User user = null;
+            if (row == 0) {
+                user = new User(username);
+                String sql = "INSERT INTO USER_ACCOUNT(USER_ID, USER_NAME, USER_PSW, LAST_ONLINE_TIME, AVATAR_NAME) values(?,?,?,?,?)";
+                PreparedStatement ps = con.prepareStatement(sql);
+                ps.setString(1, user.getUserId().toString());
+                ps.setString(2, username);
+                ps.setString(3, password);
+                ps.setString(4, null);
+                ps.setString(5, user.getAvatar().getName());
+                ps.executeUpdate();
+
+            } else {
+                System.out.println("Name ist besitzt");
+            }
             con.close();
+            return user;
         } catch (SQLException e) {
             System.out.print("Fehler in Database-createAccount: " + e);
         }
@@ -119,9 +152,10 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     @Override
     public void updateLastOnlineTime(User user) {
 
+        //!!!!!!Timestamp noch zu bearbeiten
         try {
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET LAST_ONLINE_TIME = " + "???" +
+            PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET LAST_ONLINE_TIME = " + null +
                     "WHERE USER_ID = " + user.getUserId().toString());
             ps.executeUpdate();
             con.close();
@@ -150,12 +184,76 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
     @Override
     public User getUser(UUID userID) {
-        return null; // TODO
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+
+            //Suche der User in Datenbank
+            ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_ID = " + "'" + userID.toString()+ "'");
+            int row = 0;
+            while (res.next()){
+                row ++;
+            }
+
+            //Falls dieser User existiert
+            if (row == 1) {
+                res.first();
+                String user_name = res.getString("USER_NAME");
+                String avatar_name = res.getString("AVATAR_NAME");
+                Avatar user_avatar = Avatar.valueOf(avatar_name);
+
+
+                //!!! noch nicht bearbeitet!!!
+                User user = new User(userID, user_name, user_avatar, null, null, null, null);
+
+                return user;
+
+            } else {
+                System.out.println("mehr als 1 or not exist");
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+
+        }
+        return null;
     }
 
     @Override
     public User getUser(String username) {
-        return null; // TODO
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+
+            //Suche der User in Datenbank
+            ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_NAME = " + "'" + username+ "'");
+            int row = 0;
+            while (res.next()){
+                row ++;
+            }
+
+            //Falls dieser User existiert
+            if (row == 1) {
+                res.first();
+                String user_id = res.getString("USER_ID");
+                String avatar_name = res.getString("AVATAR_NAME");
+                Avatar user_avatar = Avatar.valueOf(avatar_name);
+
+
+                //!!! noch nicht bearbeitet!!!
+                User user = new User(UUID.fromString(user_id), username, user_avatar, null, null, null, null);
+
+                return user;
+
+            } else {
+                System.out.println("mehr als 1 or not exist");
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+
+        }
+        return null;
     }
 
     @Override
@@ -273,13 +371,51 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
     @Override
     public void addNotification(User user, Notification notification) {
-        // TODO
+        try {
+            Connection con = DriverManager.getConnection(dbURL);
+            PreparedStatement ps = con.prepareStatement("INSERT INTO NOTIFICATION " +
+                    "(USER_ID CHAR, NOTIFICATION_ID CHAR, OWING_CONTEXT_ID CHAR, " +
+                    "REQUESTER_ID CHAR, MESSAGE_KEY CHAR, ARGUMENTS CHAR, SEND_TIME TIMESTAMP , REQUESTING_CONTEXT_ID CHAR, " +
+                    "REQUEST_TYPE CHAR) values(?,?,?,?,?,?,?,?,?)");
+            ps.setString(1, user.getUserId().toString());
+            ps.setString(2, notification.getNotificationID().toString());
+            ps.setString(3, notification.getContext().getContextID().getId());
+            if (notification.isRequest() == true){
+                if (notification instanceof RoomRequest) {
+
+                    //vielleicht noch ein paar getter in Request-Klassen?
+
+                }
+            } else {
+                ps.setString(4, null);
+                ps.setString(5, null);
+                ps.setString(6, null);
+                //send_time noch zu bearbeiten
+                ps.setString(7, null);
+                ps.setString(8, null);
+                ps.setString(9, null);
+
+            }
+
+            ps.executeUpdate();
+            con.close();
+        } catch (SQLException e) {
+            System.out.print("Fehler in Database-addNotification: " + e);
+        }
 
     }
 
     @Override
     public void removeNotification(User user, Notification notification) {
-        // TODO
+        try {
+            Connection con = DriverManager.getConnection(dbURL);
+            PreparedStatement ps = con.prepareStatement("DELETE FROM NOTIFICATION WHERE NOTIFICATION_ID = "
+                    + notification.getNotificationID().toString());
+            ps.executeUpdate();
+            con.close();
+        } catch (SQLException e) {
+            System.out.print("Fehler in Database-removeNotification: " + e);
+        }
     }
 
     @Override
@@ -341,7 +477,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
             //Pruefe ob alle tables existieren, falls nicht dann create
             if (!set.contains("USER_ACCOUNT")) {
                 String sql = "CREATE TABLE USER_ACCOUNT(USER_ID CHAR, USER_NAME VARCHAR(16) not null, USER_PSW VARCHAR(128) not null, " +
-                        "LAST_ONLINE_TIME TIMESTAMP, AVATAR_ID CHAR)";
+                        "LAST_ONLINE_TIME TIMESTAMP, AVATAR_NAME CHAR)";
                 statement.execute(sql);
 
             }
@@ -382,7 +518,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
             }
             if (!set.contains("NOTIFICATION")) {
                 String sql = "CREATE TABLE NOTIFICATION(USER_ID CHAR, NOTIFICATION_ID CHAR, OWING_CONTEXT_ID CHAR, " +
-                        "REQUESTER_ID CHAR, MESSAGE_KEY CHAR, ARGUMENTS CHAR, TIME TIMESTAMP, REQUESTING_CONTEXT_ID CHAR, " +
+                        "REQUESTER_ID CHAR, MESSAGE_KEY CHAR, ARGUMENTS CHAR, SEND_TIME TIMESTAMP, REQUESTING_CONTEXT_ID CHAR, " +
                         "REQUEST_TYPE CHAR)";
                 statement.execute(sql);
 
@@ -398,14 +534,17 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     }
 
     public static IUserAccountManagerDatabase getUserAccountManagerDatabase() {
+        getInstance();
         return database;
     }
 
     public static IUserDatabase getUserDatabase() {
+        getInstance();
         return database;
     }
 
     public static IGlobalContextDatabase getGlobalContextDatabase() {
+        getInstance();
         return database;
     }
 }
