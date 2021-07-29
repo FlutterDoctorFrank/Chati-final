@@ -9,10 +9,8 @@ import model.role.Role;
 import model.user.Avatar;
 import model.user.User;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,7 +24,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
         try {
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("INSERT INTO WORLD(NAME, ID) values(?,?)");
+            PreparedStatement ps = con.prepareStatement("INSERT INTO WORLDS(NAME, ID) values(?,?)");
             ps.setString(1, world.getContextName());
             ps.setString(2, world.getContextID().getId());
             ps.executeUpdate();
@@ -43,7 +41,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
         try {
             Connection con = DriverManager.getConnection(dbURL);
             String worldId = world.getContextID().getId();
-            PreparedStatement ps = con.prepareStatement("DELETE FROM WORLD WHERE ID = " + worldId);
+            PreparedStatement ps = con.prepareStatement("DELETE FROM WORLDS WHERE ID = " + worldId);
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -107,7 +105,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
         try {
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("UPDATE USER SET AVATAR_NAME = " + avatar.getName() +
+            PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET AVATAR_NAME = " + avatar.getName() +
                     "WHERE USER_ID = " + user.getUserId().toString());
             ps.executeUpdate();
             con.close();
@@ -123,7 +121,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
         try {
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("UPDATE USER SET LAST_ONLINE_TIME = " + "???" +
+            PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET LAST_ONLINE_TIME = " + "???" +
                     "WHERE USER_ID = " + user.getUserId().toString());
             ps.executeUpdate();
             con.close();
@@ -139,7 +137,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
         try {
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("DELETE FROM USER WHERE USER_ID = "
+            PreparedStatement ps = con.prepareStatement("DELETE FROM USER_ACCOUNT WHERE USER_ID = "
                         + user.getUserId().toString());
             ps.executeUpdate();
             con.close();
@@ -289,7 +287,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
 
         try {
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("INSERT INTO BAN (USER_ID, WORLD_ID) values(?,?)");
+            PreparedStatement ps = con.prepareStatement("INSERT INTO BAN(USER_ID, WORLD_ID) values(?,?)");
             ps.setString(1, user.getUserId().toString());
             ps.setString(2, world.getContextID().getId());
             ps.executeUpdate();
@@ -327,6 +325,75 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     }
 
     public static void initialize() {
+        try {
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement statement = con.createStatement();
+
+            //Suche alle Namen von schon existierten tables
+            DatabaseMetaData meta = con.getMetaData();
+            ResultSet res = meta.getTables(null, null, null, new String[]{"TABLE"});
+            HashSet<String> set=new HashSet<String>();
+            while (res.next()) {
+                set.add(res.getString("TABLE_NAME"));
+            }
+            //System.out.println(set);
+
+            //Pruefe ob alle tables existieren, falls nicht dann create
+            if (!set.contains("USER_ACCOUNT")) {
+                String sql = "CREATE TABLE USER_ACCOUNT(USER_ID CHAR, USER_NAME VARCHAR(16) not null, USER_PSW VARCHAR(128) not null, " +
+                        "LAST_ONLINE_TIME TIMESTAMP, AVATAR_ID CHAR)";
+                statement.execute(sql);
+
+            }
+            if (!set.contains("WORLDS")) {
+                String sql = "CREATE TABLE WORLDS(WORLD_ID CHAR, WORLD_NAME CHAR)";
+                statement.execute(sql);
+
+            }
+            if (!set.contains("USER_IN_WORLD")) {
+                String sql = "CREATE TABLE USER_IN_WORLD(WORLD_ID CHAR, USER_ID CHAR)";
+                statement.execute(sql);
+
+            }
+            if (!set.contains("BAN")) {
+                String sql = "CREATE TABLE BAN(USER_ID CHAR, WORLD_ID CHAR)";
+                statement.execute(sql);
+
+            }
+            if (!set.contains("IGNORE")) {
+                String sql = "CREATE TABLE IGNORE(USER_ID CHAR, IGNORED_ID CHAR)";
+                statement.execute(sql);
+
+            }
+            if (!set.contains("FRIENDSHIP")) {
+                String sql = "CREATE TABLE FRIENDSHIP(USER_ID1 CHAR, USER_ID2 CHAR)";
+                statement.execute(sql);
+
+            }
+            if (!set.contains("USER_RESERVATION")) {
+                String sql = "CREATE TABLE USER_RESERVATION(USER_ID CHAR, START_TIME TIMESTAMP, END_TIME TIMESTAMP, CONTEXT_ID CHAR)";
+                statement.execute(sql);
+
+            }
+            if (!set.contains("ROLE_WITH_CONTEXT")) {
+                String sql = "CREATE TABLE ROLE_WITH_CONTEXT(USER_ID CHAR, ROLE CHAR, CONTEXT_ID CHAR)";
+                statement.execute(sql);
+
+            }
+            if (!set.contains("NOTIFICATION")) {
+                String sql = "CREATE TABLE NOTIFICATION(USER_ID CHAR, NOTIFICATION_ID CHAR, OWING_CONTEXT_ID CHAR, " +
+                        "REQUESTER_ID CHAR, MESSAGE_KEY CHAR, ARGUMENTS CHAR, TIME TIMESTAMP, REQUESTING_CONTEXT_ID CHAR, " +
+                        "REQUEST_TYPE CHAR)";
+                statement.execute(sql);
+
+            }
+            statement.close();
+            con.close();
+            //DriverManager.getConnection("jdbc:derby:E:/DBTest;shutdown=true");
+        } catch (SQLException e){
+            System.out.print("UserAccount " + e );
+        }
+
         // TODO
     }
 
