@@ -419,7 +419,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
                     "REQUESTER_ID CHAR, MESSAGE_KEY CHAR, ARGUMENTS CHAR, SEND_TIME TIMESTAMP , REQUESTING_CONTEXT_ID CHAR, " +
                     "REQUEST_TYPE CHAR) values(?,?,?,?,?,?,?,?,?)");
             ps.setString(1, user.getUserId().toString());
-            ps.setString(2, notification.getNotificationID().toString());
+            ps.setString(2, notification.getNotificationId().toString());
             ps.setString(3, notification.getContext().getContextID().getId());
             if (notification.isRequest() == true){
                 if (notification instanceof RoomRequest) {
@@ -453,7 +453,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
             initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM NOTIFICATION WHERE NOTIFICATION_ID = "
-                    + notification.getNotificationID().toString());
+                    + notification.getNotificationId().toString());
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
