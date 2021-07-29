@@ -1,9 +1,7 @@
 package model.user;
 
 import controller.network.ClientSender;
-import model.MessageBundle;
 import model.communication.CommunicationHandler;
-import model.communication.message.TextMessage;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.IContext;
@@ -287,6 +285,9 @@ public class User implements IUser {
         } else {
             notification.decline();
         }
+
+        // Lösche die entsprechende Benachrichtigung.
+        deleteNotification(notificationID);
     }
 
     @Override
@@ -472,10 +473,10 @@ public class User implements IUser {
      * @param notification Hinzuzufügende Benachrichtigung.
      */
     public void addNotification(Notification notification) {
-        notifications.put(notification.getNotificationID(), notification);
+        notifications.put(notification.getNotificationId(), notification);
         database.addNotification(this, notification);
         // Sende Benachrichtigung an Benutzer.
-        clientSender.send(ClientSender.SendAction.NOTIFICATION, Collections.singletonMap(notification.getNotificationID(), notification));
+        clientSender.send(ClientSender.SendAction.NOTIFICATION, Collections.singletonMap(notification.getNotificationId(), notification));
     }
 
     /**
@@ -483,7 +484,7 @@ public class User implements IUser {
      * @param notification Zu entfernende Benachrichtigung.
      */
     public void removeNotification(Notification notification) {
-        notifications.remove(notification.getNotificationID());
+        notifications.remove(notification.getNotificationId());
         database.removeNotification(this, notification);
     }
 

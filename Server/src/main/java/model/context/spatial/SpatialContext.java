@@ -190,4 +190,9 @@ public class SpatialContext extends Context implements ISpatialContext {
         return areaReservations.stream().anyMatch(reservation -> reservation.getFrom().equals(from)
             && reservation.getTo().equals(to));
     }
+
+    public boolean isReservedAtBy(User user, LocalDateTime from, LocalDateTime to) {
+        return areaReservations.stream().anyMatch(reservation -> reservation.getReserver().equals(user)
+                && reservation.getFrom().equals(from) && reservation.getTo().equals(to));
+    }
 }

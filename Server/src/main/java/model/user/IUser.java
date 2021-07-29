@@ -16,6 +16,7 @@ import java.util.UUID;
  * Benutzerdaten bereitstellt. Wird von {@link User} implementiert.
  */
 public interface IUser {
+
     /**
      * Lässt den Benutzer eine Welt betreten.
      * @param worldId Die ID der zu betretenden Welt.

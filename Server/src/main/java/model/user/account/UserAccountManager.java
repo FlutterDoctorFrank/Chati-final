@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  * werden.
  */
 public class UserAccountManager implements IUserAccountManager {
+
     /** Regulärer Ausdruck für das Format von Benutzernamen */
     private static final String USERNAME_FORMAT = "^\\w{2,16}";
 
@@ -37,7 +38,8 @@ public class UserAccountManager implements IUserAccountManager {
     private final IUserAccountManagerDatabase database;
 
     /**
-     * Konstruktor der Klasse. Initialisiert die Menge der registrierten Benutzer mit Hilfe einer Instanz der Datenbank.
+     * Erzeugt eine Instanz des UserAccountManager. Initialisiert die Menge der registrierten Benutzer mit Hilfe einer
+     * Instanz der Datenbank.
      */
     private UserAccountManager() {
         database = Database.getUserAccountManagerDatabase();

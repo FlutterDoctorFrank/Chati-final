@@ -13,6 +13,7 @@ import java.util.UUID;
  * {@link UserAccountManager} implementiert.
  */
 public interface IUserAccountManager {
+
     /**
      * Erstellt ein Benutzerkonto.
      * @param username Der Benutzername, mit dem das Konto erstellt werden soll.
