@@ -7,9 +7,6 @@ import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextMusic;
 import controller.network.protocol.PacketOutContextRole;
-import controller.network.protocol.PacketOutUserInfo;
-import controller.network.protocol.PacketOutUserInfo.Action;
-import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketWorldAction;
 import model.context.IContext;
 import model.context.global.IGlobalContext;
@@ -44,6 +41,7 @@ public interface ClientSender {
         USER_INFO {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
+                /*
                 if (object instanceof IUser) {
                     final IUser other = (IUser) object;
 
@@ -93,6 +91,10 @@ public interface ClientSender {
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }
+                 */
+
+                //TODO Verpackung des MenuAction-Pakets implementieren.
+                throw new UnsupportedOperationException("Not implemented yet");
             }
         },
 

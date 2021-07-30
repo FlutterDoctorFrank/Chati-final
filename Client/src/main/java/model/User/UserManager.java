@@ -102,7 +102,7 @@ public class UserManager implements IUserManagerController, IUserManagerView{
         if (userManager == null) {
             return userManager = new UserManager();
         }
-        
+
         return userManager;
     }
 
