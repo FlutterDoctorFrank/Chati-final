@@ -7,15 +7,19 @@ import model.context.ContextID;
 import model.role.Role;
 import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
+import java.util.UUID;
 
 /**
  * Ein Paket, das Informationen über die Rollen innerhalb eines Kontexts enthält.
- * Das Paket wird vom Server erzeugt und an einen Client gesendet.
- * Das Paket teilt dem Client die Rollen und somit die Berechtigung mit, die dieser Benutzer in einem Kontext besitzt.
+ * <p>
+ *     Das Paket wird vom Server erzeugt und an einen Client gesendet.
+ *     Das Paket teilt dem Client die Rollen und somit die Berechtigung mit, die ein Benutzer in einem Kontext besitzt.
+ * </p>
  */
 public class PacketOutContextRole implements Packet<PacketListenerOut> {
 
     private ContextID contextId;
+    private UUID userId;
     private Role[] roles;
 
     /**
@@ -28,10 +32,11 @@ public class PacketOutContextRole implements Packet<PacketListenerOut> {
     /**
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Server-Anwendung.
      * @param contextId die ID des Kontexts in der die Rolle gesetzt wird.
-     * @param roles die neue Rollen die gesetzt werden sollen.
+     * @param roles die neuen Rollen die gesetzt werden sollen.
      */
-    public PacketOutContextRole(@NotNull final ContextID contextId, @NotNull final Collection<Role> roles) {
+    public PacketOutContextRole(@NotNull final ContextID contextId, @NotNull final UUID userId, @NotNull final Collection<Role> roles) {
         this.contextId = contextId;
+        this.userId = userId;
         this.roles = roles.toArray(new Role[0]);
     }
 
@@ -43,6 +48,7 @@ public class PacketOutContextRole implements Packet<PacketListenerOut> {
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeContextId(output, this.contextId);
+        PacketUtils.writeUniqueId(output, this.userId);
         output.writeInt(this.roles.length, true);
 
         for (final Role role : this.roles) {
@@ -53,6 +59,7 @@ public class PacketOutContextRole implements Packet<PacketListenerOut> {
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.contextId = PacketUtils.readContextId(input);
+        this.userId = PacketUtils.readUniqueId(input);
         this.roles = new Role[input.readInt(true)];
 
         for (int index = 0; index < this.roles.length; index++) {
@@ -66,6 +73,14 @@ public class PacketOutContextRole implements Packet<PacketListenerOut> {
      */
     public @NotNull ContextID getContextId() {
         return this.contextId;
+    }
+
+    /**
+     * Gibt die Benutzer-ID des Benutzers zurück, für den die Rolle im geltenden Kontext gilt.
+     * @return die ID des Benutzers.
+     */
+    public @NotNull UUID getUserId() {
+        return this.userId;
     }
 
     /**

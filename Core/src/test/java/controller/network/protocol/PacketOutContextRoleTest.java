@@ -15,7 +15,7 @@ public class PacketOutContextRoleTest extends PacketTest<PacketOutContextRole> {
 
     @Test
     public void emptySerializationTest() {
-        this.before = new PacketOutContextRole(randomContextId(), Collections.emptySet());
+        this.before = new PacketOutContextRole(randomContextId(), randomUniqueId(), Collections.emptySet());
 
         this.serialize();
         this.equals();
@@ -23,7 +23,7 @@ public class PacketOutContextRoleTest extends PacketTest<PacketOutContextRole> {
 
     @Test
     public void singleSerializationTest() {
-        this.before = new PacketOutContextRole(randomContextId(), Collections.singleton(randomEnum(Role.class)));
+        this.before = new PacketOutContextRole(randomContextId(), randomUniqueId(), Collections.singleton(randomEnum(Role.class)));
 
         this.serialize();
         this.equals();
@@ -38,7 +38,7 @@ public class PacketOutContextRoleTest extends PacketTest<PacketOutContextRole> {
             roles.add(randomEnum(Role.class));
         }
 
-        this.before = new PacketOutContextRole(randomContextId(), roles);
+        this.before = new PacketOutContextRole(randomContextId(), randomUniqueId(), roles);
 
         this.serialize();
         this.equals();
