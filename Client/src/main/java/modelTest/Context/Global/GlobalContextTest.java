@@ -50,7 +50,6 @@ public class GlobalContextTest {
 
             }
         });
-
         Assert.assertEquals("Zu Beginn darf es keine CurrentWorld geben", null, globalContext.getWorld());
         Assert.assertEquals("Zu Beginn darf es keinen CurrenRoom geben", null, globalContext.getRoom());
         Assert.assertTrue(globalContext.getWorlds().isEmpty());
