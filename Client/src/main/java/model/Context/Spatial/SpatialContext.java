@@ -4,6 +4,7 @@ import model.Context.Context;
 import model.context.ContextID;
 import model.context.spatial.SpatialContextType;
 import model.context.spatial.SpatialMap;
+import view.Screens.IModelObserver;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -21,12 +22,6 @@ public class SpatialContext extends Context implements ISpatialContextView{
     private boolean interactable;
     private SpatialContext[][] areaMap;
     private Expanse expanse;
-    public Map<ContextID, SpatialContext> getRooms() {
-        return rooms;
-    }
-    public SpatialContext[][] getAreaMap() {
-        return areaMap;
-    }
 
 
     public SpatialContext(String contextName, Context parent, ContextID contextId) {
@@ -78,5 +73,11 @@ public class SpatialContext extends Context implements ISpatialContextView{
     }
     public void setMap(SpatialMap map) {
         this.map = map;
+    }
+    public Map<ContextID, SpatialContext> getRooms() {
+        return rooms;
+    }
+    public SpatialContext[][] getAreaMap() {
+        return areaMap;
     }
 }

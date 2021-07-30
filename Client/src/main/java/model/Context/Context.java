@@ -6,6 +6,8 @@ import model.Context.Spatial.SpatialContext;
 import model.communication.CommunicationMedium;
 import model.context.ContextID;
 import model.context.spatial.Music;
+import view.Screens.IModelObserver;
+
 
 import java.util.Map;
 import java.util.Set;

@@ -4,6 +4,8 @@ import model.Context.Global.GlobalContext;
 import model.Exceptions.NotInWorldException;
 import model.Exceptions.NotLoggedInException;
 import model.Exceptions.UserNotFoundException;
+import view.Screens.IModelObserver;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;

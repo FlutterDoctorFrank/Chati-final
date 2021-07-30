@@ -4,6 +4,9 @@ import model.Context.Context;
 import model.Exceptions.IllegalActionException;
 import model.role.Permission;
 import model.role.Role;
+import org.lwjgl.system.CallbackI;
+import view.Screens.IModelObserver;
+
 import java.util.Set;
 
 /**
@@ -12,6 +15,7 @@ import java.util.Set;
 public class ContextRole {
     private Context context;
     private Set<Role> roles;
+    private IModelObserver iModelObserver;
 
 
     public ContextRole(Context context, Set<Role> roles) {
