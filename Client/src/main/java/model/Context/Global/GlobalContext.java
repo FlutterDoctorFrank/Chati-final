@@ -27,12 +27,9 @@ public class GlobalContext extends Context implements IGlobalContextView, IGloba
     private IModelObserver iModelObserver;
 
 
-    public GlobalContext(String contextName, ContextID contextId, Map<ContextID, SpatialContext> worlds,
-                         SpatialContext currentWorld, SpatialContext currentRoom) {
-        super(contextName, null, contextId);
-        this.worlds = worlds;
-        this.currentWorld = currentWorld;
-        this.currentRoom = currentRoom;
+    private GlobalContext() {
+        super("global", null, new ContextID("global"));
+        this.worlds = new HashMap<>();
     }
 
 
@@ -99,6 +96,9 @@ public class GlobalContext extends Context implements IGlobalContextView, IGloba
      * @return Die Instanz von GlobalContext.
      */
     public static GlobalContext getInstance(){
+        if (global == null){
+            global = new GlobalContext();
+        }
         return global;
     }
 
