@@ -46,7 +46,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             initialize();
             Connection con = DriverManager.getConnection(dbURL);
             String worldId = world.getContextID().getId();
-            PreparedStatement ps = con.prepareStatement("DELETE FROM WORLDS WHERE ID = " + worldId);
+            PreparedStatement ps = con.prepareStatement("DELETE FROM WORLDS WHERE ID = " + "'" + worldId + "'");
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -68,11 +68,15 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         return null; // TODO
     }
 
+
     //password --> hash; salt?
     // Ja, das muss hier passieren in dieser Klasse. Wir schicken das Passwort ja in Reinform, und sollen es nur als
     // Hash und Salt speichern. Das können wir dann zusammen überlegen, raoul
     @Override
     public User createAccount(String username, String password) {
+        if (username.length() > 16) {
+            System.out.println("Name ist mehr als 16 Zeichen");
+        }
         try {
             initialize();
             Connection con = DriverManager.getConnection("jdbc:derby:E:/DBTest;create=true");
@@ -161,8 +165,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         try {
             initialize();
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET AVATAR_NAME = " + avatar.getName() +
-                    "WHERE USER_ID = " + user.getUserId().toString());
+            PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET AVATAR_NAME = " + "'" + avatar.getName() + "'" +
+                    "WHERE USER_ID = " + "'" + user.getUserId().toString() + "'");
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -180,7 +184,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET LAST_ONLINE_TIME = " + null +
-                    "WHERE USER_ID = " + user.getUserId().toString());
+                    "WHERE USER_ID = " + "'" + user.getUserId().toString() + "'");
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -196,8 +200,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         try {
             initialize();
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("DELETE FROM USER_ACCOUNT WHERE USER_ID = "
-                        + user.getUserId().toString());
+            PreparedStatement ps = con.prepareStatement("DELETE FROM USER_ACCOUNT WHERE USER_ID = '"
+                        + user.getUserId().toString() + "'");
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -313,9 +317,9 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         try {
             initialize();
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("DELETE FROM FRIENDSHIP WHERE (USER_ID1 = "
-                    + first.getUserId().toString() + " AND USER_ID2 = " + second.getUserId().toString() + ") OR (USER_ID1 = "
-                    + second.getUserId().toString() + " AND USER_ID2 = " + first.getUserId().toString() + ")");
+            PreparedStatement ps = con.prepareStatement("DELETE FROM FRIENDSHIP WHERE (USER_ID1 = '"
+                    + first.getUserId().toString() + "'" + " AND USER_ID2 = '" + second.getUserId().toString()
+                    + "') OR (USER_ID1 = '" + second.getUserId().toString() + "'" + " AND USER_ID2 = '" + first.getUserId().toString() + "')");
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -353,8 +357,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         try {
             initialize();
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("DELETE FROM IGNORE WHERE USER_ID = "
-                    + ignoringUser.getUserId().toString() + " AND IGNORED_ID = " + ignoredUser.getUserId().toString());
+            PreparedStatement ps = con.prepareStatement("DELETE FROM IGNORE WHERE (USER_ID = '"
+                    + ignoringUser.getUserId().toString() + "'" + " AND IGNORED_ID = '" + ignoredUser.getUserId().toString() + "')");
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -392,9 +396,9 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         try {
             initialize();
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("DELETE FROM ROLE_WITH_CONTEXT WHERE USER_ID = "
-                    + user.getUserId().toString() + " AND ROLE = " + role.name()
-                    + " AND CONTEXT_ID = " + context.getContextID().getId());
+            PreparedStatement ps = con.prepareStatement("DELETE FROM ROLE_WITH_CONTEXT WHERE (USER_ID = '"
+                    + user.getUserId().toString() + "' AND ROLE = '" + role.name()
+                    + "' AND CONTEXT_ID = '" + context.getContextID().getId() + "')");
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -447,8 +451,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         try {
             initialize();
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("DELETE FROM NOTIFICATION WHERE NOTIFICATION_ID = "
-                    + notification.getNotificationId().toString());
+            PreparedStatement ps = con.prepareStatement("DELETE FROM NOTIFICATION WHERE NOTIFICATION_ID = '"
+                    + notification.getNotificationId().toString() + "'");
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -479,8 +483,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         try {
             initialize();
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("DELETE FROM BAN WHERE USER_ID = "
-                    + user.getUserId().toString() + " AND WORLD_ID = " + world.getContextID().getId());
+            PreparedStatement ps = con.prepareStatement("DELETE FROM BAN WHERE (USER_ID = '"
+                    + user.getUserId().toString() + "' AND WORLD_ID = '" + world.getContextID().getId() + "')");
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
