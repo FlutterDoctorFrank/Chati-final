@@ -22,6 +22,7 @@ import model.exception.UserNotFoundException;
 import model.user.AdministrativeAction;
 import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -41,6 +42,9 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         this.connection = connection;
 
         connection.addListener(this);
+
+        LOGGER.setLevel(Level.FINE);
+        LOGGER.fine("Connected with connection " + connection.getID());
     }
 
     public void send(@NotNull final Packet<?> packet) {

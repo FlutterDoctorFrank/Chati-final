@@ -5,12 +5,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import controller.network.ClientNetworkManager;
-import controller.network.ServerConnection;
 import controller.network.ServerSender;
 import model.communication.message.MessageType;
 import model.context.spatial.Menu;
@@ -18,7 +15,6 @@ import view.Chati;
 import view.Screens.ApplicationScreen;
 import view.Screens.IModelObserver;
 import view.Screens.ViewControllerInterface;
-
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.UUID;
@@ -165,6 +161,9 @@ public class Hud implements IModelObserver, ViewControllerInterface {
 
     public void sendRequest(Object[] credentials) {
         ServerSender serverSender = applicationScreen.getGame().getServerSender();
+
+        System.out.println(serverSender);
+
         serverSender.send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
     }
 }

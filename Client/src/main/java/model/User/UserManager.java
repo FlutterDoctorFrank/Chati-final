@@ -4,8 +4,6 @@ import model.Context.Global.GlobalContext;
 import model.Exceptions.NotInWorldException;
 import model.Exceptions.NotLoggedInException;
 import model.Exceptions.UserNotFoundException;
-import view.Screens.IModelObserver;
-
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,7 +19,7 @@ public class UserManager implements IUserManagerController, IUserManagerView{
     private Map<UUID, User> externs;
 
     private UserManager(){
-        this.userManager = new UserManager();
+
     }
 
 
@@ -99,6 +97,10 @@ public class UserManager implements IUserManagerController, IUserManagerView{
      * @return Instanz des UserManager.
      */
     public static UserManager getInstance(){
+        if (userManager == null) {
+            return userManager = new UserManager();
+        }
+
         return userManager;
     }
 
