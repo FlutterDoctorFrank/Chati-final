@@ -1,6 +1,8 @@
 package model.context.spatial.objects;
 
 import controller.network.ClientSender;
+import model.communication.CommunicationMedium;
+import model.communication.CommunicationRegion;
 import model.context.ContextID;
 import model.context.spatial.Location;
 import model.context.spatial.SpatialMap;
@@ -12,6 +14,7 @@ import model.notification.RoomRequest;
 import model.role.Permission;
 import model.user.User;
 
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -20,8 +23,9 @@ public class RoomReception extends SpatialContext {
     private static final Pattern ROOMNAME_PATTERN = Pattern.compile("^\\w{2,16}");
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^.{4,32}");
 
-    protected RoomReception(String contextName, SpatialContext parent, Menu menu, Location interactionLocation) {
-        super(contextName, parent, menu, interactionLocation);
+    protected RoomReception(String contextName, SpatialContext parent, Menu menu, Location interactionLocation,
+                            CommunicationRegion region, Set<CommunicationMedium> communicationMedia) {
+        super(contextName, parent, menu, interactionLocation, region, communicationMedia);
     }
 
     @Override
@@ -77,7 +81,7 @@ public class RoomReception extends SpatialContext {
                 if (privateRoom == null) {
                     throw new IllegalMenuActionException("", "Der angefragte private Raum existiert nicht.");
                 }
-                java.util.Map<UUID, User> users = privateRoom.getContainedUsers();
+                java.util.Map<UUID, User> users = privateRoom.getUsers();
                 SpatialContext finalPrivateRoom = privateRoom;
                 User roomOwner = users.entrySet().stream()
                         .filter(entry -> entry.getValue().hasPermission(finalPrivateRoom, Permission.MANAGE_PRIVATE_ROOM))

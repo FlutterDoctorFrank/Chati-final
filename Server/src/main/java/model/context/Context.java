@@ -135,7 +135,7 @@ public abstract class Context implements IContext {
         if (parent != null && !parent.contains(user)) {
             parent.addUser(user);
         } else {
-            // send new User music information
+            // Sende Musikinformationen an den Benutzer.
             user.getClientSender().send(ClientSender.SendAction.CONTEXT_MUSIC, this);
         }
     }

@@ -1,6 +1,8 @@
 package model.context.spatial.objects;
 
 import controller.network.ClientSender;
+import model.communication.CommunicationMedium;
+import model.communication.CommunicationRegion;
 import model.context.spatial.Location;
 import model.context.spatial.Menu;
 import model.context.spatial.Music;
@@ -9,10 +11,13 @@ import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.user.User;
 
+import java.util.Set;
+
 public class MusicPlayer extends SpatialContext {
 
-    protected MusicPlayer(String contextName, SpatialContext parent, Menu menu, Location interactionLocation) {
-        super(contextName, parent, menu, interactionLocation);
+    protected MusicPlayer(String contextName, SpatialContext parent, Menu menu, Location interactionLocation,
+                          CommunicationRegion region, Set<CommunicationMedium> communicationMedia) {
+        super(contextName, parent, menu, interactionLocation, region, communicationMedia);
     }
 
     @Override
