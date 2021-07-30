@@ -62,7 +62,8 @@ public class UserAccountManager implements IUserAccountManager {
             throw new IllegalAccountActionException("errorMsg console", "Ein Konto mit dem Benutzernamen existiert bereits. - key");
         }
         // Erzeuge Benutzer und füge ihn zu den registrierten Benutzern hinzu.
-        User createdUser = database.createAccount(username, password);
+        // User createdUser = database.createAccount(username, password);
+        User createdUser = new User(username);
         registeredUsers.put(createdUser.getUserId(), createdUser);
     }
 
@@ -100,7 +101,7 @@ public class UserAccountManager implements IUserAccountManager {
         // Melde den Benutzer ab.
         GlobalContext.getInstance().removeUser(user);
         user.setStatus(Status.OFFLINE);
-        database.updateLastOnlineTime(user);
+        // database.updateLastOnlineTime(user);
     }
 
     @Override
@@ -113,7 +114,7 @@ public class UserAccountManager implements IUserAccountManager {
         // Melde den Benutzer ab und lösche sein Benutzerkonto.
         logoutUser(userId);
         registeredUsers.remove(userId);
-        database.deleteAccount(user);
+        // database.deleteAccount(user);
     }
 
     @Override
@@ -128,7 +129,7 @@ public class UserAccountManager implements IUserAccountManager {
             throw new IllegalAccountActionException("", "Das neue Passwort hat nicht das richtige Format.");
         }
         // Ändere das Passwort.
-        database.setPassword(user, newPassword);
+        // database.setPassword(user, newPassword);
     }
 
     /**
