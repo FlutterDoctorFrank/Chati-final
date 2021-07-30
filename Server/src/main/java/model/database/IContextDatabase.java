@@ -11,7 +11,7 @@ import java.util.Map;
 public interface IContextDatabase {
     void addWorld(SpatialContext world);
     void removeWorld(SpatialContext world);
-    void getWorld(ContextID worldID);
+    SpatialContext getWorld(ContextID worldID);
     Map<ContextID, SpatialContext> getWorlds();
 
     void addBannedUser(User user, Context world);

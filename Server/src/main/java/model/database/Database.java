@@ -19,6 +19,9 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
     private static Database database;
 
+    private Database() {
+        initialize();
+    }
 
 
 
@@ -26,7 +29,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void addWorld(SpatialContext world) {
 
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO WORLDS(NAME, ID) values(?,?)");
             ps.setString(1, world.getContextName());
@@ -43,7 +45,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void removeWorld(SpatialContext world) {
 
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             String worldId = world.getContextID().getId();
             PreparedStatement ps = con.prepareStatement("DELETE FROM WORLDS WHERE ID = " + "'" + worldId + "'");
@@ -56,11 +57,10 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
     }
 
-    //warum void??
     @Override
-    public void getWorld(ContextID worldID) {
+    public SpatialContext getWorld(ContextID worldID) {
         // TODO
-
+        return null;
     }
 
     @Override
@@ -74,11 +74,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     // Hash und Salt speichern. Das können wir dann zusammen überlegen, raoul
     @Override
     public User createAccount(String username, String password) {
-        if (username.length() > 16) {
-            System.out.println("Name ist mehr als 16 Zeichen");
-        }
         try {
-            initialize();
             Connection con = DriverManager.getConnection("jdbc:derby:E:/DBTest;create=true");
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
@@ -115,7 +111,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public boolean checkPassword(String username, String password) {
         try{
-            initialize();
             Connection con = DriverManager.getConnection("jdbc:derby:E:/DBTest;create=true");
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
@@ -148,7 +143,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public void setPassword(User user, String newPassword) {
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
 
             //TODO
@@ -163,7 +157,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void changeAvatar(User user, Avatar avatar) {
 
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET AVATAR_NAME = " + "'" + avatar.getName() + "'" +
                     "WHERE USER_ID = " + "'" + user.getUserId().toString() + "'");
@@ -180,8 +173,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void updateLastOnlineTime(User user) {
 
         //!!!!!!Timestamp noch zu bearbeiten
+        //now
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET LAST_ONLINE_TIME = " + null +
                     "WHERE USER_ID = " + "'" + user.getUserId().toString() + "'");
@@ -198,7 +191,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void deleteAccount(User user) {
 
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM USER_ACCOUNT WHERE USER_ID = '"
                         + user.getUserId().toString() + "'");
@@ -214,7 +206,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public User getUser(UUID userID) {
         try{
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
@@ -253,7 +244,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public User getUser(String username) {
         try{
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
@@ -289,6 +279,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         return null;
     }
 
+    //alle
     @Override
     public Map<UUID, User> getUsers() {
         return null; // TODO
@@ -298,7 +289,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void addFriendship(User first, User second) {
 
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO FRIENDSHIP(USER_ID1, USER_ID2) values(?,?)");
             ps.setString(1, first.getUserId().toString());
@@ -315,7 +305,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void removeFriendship(User first, User second) {
 
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM FRIENDSHIP WHERE (USER_ID1 = '"
                     + first.getUserId().toString() + "'" + " AND USER_ID2 = '" + second.getUserId().toString()
@@ -334,7 +323,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
 
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO IGNORE(USER_ID, IGNORED_ID) values(?,?)");
             ps.setString(1, ignoringUser.getUserId().toString());
@@ -355,7 +343,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
 
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM IGNORE WHERE (USER_ID = '"
                     + ignoringUser.getUserId().toString() + "'" + " AND IGNORED_ID = '" + ignoredUser.getUserId().toString() + "')");
@@ -374,7 +361,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void addRole(User user, Context context, Role role) {
 
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO ROLE_WITH_CONTEXT " +
                     "(USER_ID, ROLE, CONTEXT_ID) values(?,?,?)");
@@ -394,7 +380,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void removeRole(User user, Context context, Role role) {
 
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM ROLE_WITH_CONTEXT WHERE (USER_ID = '"
                     + user.getUserId().toString() + "' AND ROLE = '" + role.name()
@@ -411,7 +396,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public void addNotification(User user, Notification notification) {
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO NOTIFICATION " +
                     "(USER_ID CHAR, NOTIFICATION_ID CHAR, OWING_CONTEXT_ID CHAR, " +
@@ -449,7 +433,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public void removeNotification(User user, Notification notification) {
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM NOTIFICATION WHERE NOTIFICATION_ID = '"
                     + notification.getNotificationId().toString() + "'");
@@ -464,7 +447,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void addBannedUser(User user, Context world) {
 
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO BAN(USER_ID, WORLD_ID) values(?,?)");
             ps.setString(1, user.getUserId().toString());
@@ -481,7 +463,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public void removeBannedUser(User user, Context world) {
         try {
-            initialize();
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM BAN WHERE (USER_ID = '"
                     + user.getUserId().toString() + "' AND WORLD_ID = '" + world.getContextID().getId() + "')");
