@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.UUID;
 
 public class Hud implements IModelObserver, ViewControllerInterface {
-    private static Hud hud;
     private Stage stage;
     private Viewport viewport;
     private OrthographicCamera camera;
@@ -164,12 +163,8 @@ public class Hud implements IModelObserver, ViewControllerInterface {
 
     }
 
-    public static Hud getInstance(){
-        return hud;
-    }
-
     public void sendRequest(Object[] credentials) {
-        ServerSender serverSender = hud.getApplicationScreen().getGame().getServerSender();
+        ServerSender serverSender = applicationScreen.getGame().getServerSender();
         serverSender.send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
     }
 }

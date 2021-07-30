@@ -123,23 +123,23 @@ public class LoginTable extends UIComponentTable {
     }
 
     public void receiveLoginResponse(@NotNull boolean success, @NotNull String message) {
-        waitingLoginResponse = false;
         if (waitingLoginResponse && success) {
             hud.addTable(new StartScreenTable(hud));
         }
         if (!success) {
             infoLabel.setText(message);
         }
+        waitingLoginResponse = false;
     }
 
     public void receiveRegResponse(@NotNull boolean success, @NotNull String message) {
-        waitingRegResponse = false;
         if (waitingLoginResponse && success) {
             hud.addTable(new StartScreenTable(hud));
         }
         if (!success) {
             infoLabel.setText(message);
         }
+        waitingRegResponse = false;
     }
 
 
