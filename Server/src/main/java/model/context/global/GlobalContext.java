@@ -32,7 +32,7 @@ public class GlobalContext extends Context implements IGlobalContext {
             throw new IllegalWorldActionException("", "Eine Welt mit diesem Namen existiert bereits");
         }
         SpatialContext world = new SpatialContext(worldname, map, null, null);
-        worlds.put(world.getContextID(), world);
+        worlds.put(world.getContextId(), world);
 
         // Send all online users info about new world
         getUsers().forEach((userID, user) -> {

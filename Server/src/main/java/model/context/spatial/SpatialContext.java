@@ -126,11 +126,11 @@ public class SpatialContext extends Context implements ISpatialContext {
     }
 
     public void addPrivateRoom(SpatialContext privateRoom) {
-        privateRooms.put(privateRoom.getContextID(), privateRoom);
+        privateRooms.put(privateRoom.getContextId(), privateRoom);
     }
 
     public void removePrivateRoom(SpatialContext privateRoom) {
-        privateRooms.remove(privateRoom.getContextID());
+        privateRooms.remove(privateRoom.getContextId());
     }
 
     public SpatialContext getArea(int posX, int posY) {
@@ -163,7 +163,7 @@ public class SpatialContext extends Context implements ISpatialContext {
     }
 
     public boolean containsPrivateRoom(SpatialContext privateRoom) {
-        return privateRooms.containsKey(privateRoom.getContextID());
+        return privateRooms.containsKey(privateRoom.getContextId());
     }
 
     public SpatialContext getPrivateRoom(ContextID roomID) {
