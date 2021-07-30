@@ -10,7 +10,7 @@ import view.UIComponents.LoginTable;
 
 public class Chati extends Game {
     private ServerSender serverSender;
-    private ApplicationScreen currentScreen;
+    private Screen currentScreen;
     public static final int V_WIDTH = 1280;
     public static final int V_HEIGHT = 680;
     public static final float PPM = 10; //pixels per meter
@@ -32,7 +32,13 @@ public class Chati extends Game {
     }
 
     @Override
-    public ApplicationScreen getScreen() {
+    public void setScreen(Screen screen) {
+        currentScreen = screen;
+        super.setScreen(screen);
+    }
+
+    @Override
+    public Screen getScreen() {
         return currentScreen;
     }
 
