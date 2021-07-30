@@ -26,7 +26,8 @@ public class RoomInvitation extends Notification {
      * @param invitedRoom Der Raum, für den diese Einladung ausgestellt wurde.
      */
     public RoomInvitation(User owner, String userMessage, User invitingUser, SpatialContext invitedRoom) {
-        super(NotificationType.ROOM_INVITATION, owner, invitingUser.getWorld(), new MessageBundle("roomInvitationKey", userMessage));
+        super(NotificationType.ROOM_INVITATION, owner, invitingUser.getWorld(),
+                new MessageBundle("roomInvitationKey", invitingUser.getUsername(), invitedRoom.getContextName(), userMessage));
         this.invitingUser = invitingUser;
         this.invitedRoom = invitedRoom;
     }

@@ -21,7 +21,7 @@ public class FriendRequest extends Notification {
      */
     public FriendRequest(User owner, String userMessage, User requestingUser) {
         super(NotificationType.FRIEND_REQUEST, owner, GlobalContext.getInstance(),
-                new MessageBundle("friendRequestKey", userMessage));
+                new MessageBundle("friendRequestKey", requestingUser.getUsername(), userMessage));
         this.requestingUser = requestingUser;
     }
 

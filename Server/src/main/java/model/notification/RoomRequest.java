@@ -3,7 +3,6 @@ package model.notification;
 import controller.network.ClientSender;
 import model.MessageBundle;
 import model.communication.message.TextMessage;
-import model.context.global.GlobalContext;
 import model.context.spatial.SpatialContext;
 import model.role.Permission;
 import model.user.User;
@@ -28,7 +27,8 @@ public class RoomRequest extends Notification {
      * @param requestedRoom Der angefragte Raum.
      */
     public RoomRequest(User owner, String userMessage, User requestingUser, SpatialContext requestedRoom) {
-        super(NotificationType.ROOM_REQUEST, owner, requestingUser.getWorld(), new MessageBundle("roomRequestKey", userMessage));
+        super(NotificationType.ROOM_REQUEST, owner, requestingUser.getWorld(),
+                new MessageBundle("roomRequestKey", requestingUser.getUsername(), requestedRoom.getContextName(), userMessage));
         this.requestingUser = requestingUser;
         this.requestedRoom = requestedRoom;
     }

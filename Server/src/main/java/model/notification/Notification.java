@@ -108,4 +108,8 @@ public class Notification implements INotification {
     public boolean isRequest() {
         return false;
     }
+
+    public NotificationType getNotificationType() {
+        return notificationType;
+    }
 }
