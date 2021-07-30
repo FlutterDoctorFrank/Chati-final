@@ -3,6 +3,7 @@ package model.Notification;
 import model.Context.Context;
 import model.MessageBundle;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -44,8 +45,20 @@ public class Notification implements INotificationView{
         return isRequest;
     }
 
-
     public Context getContext() {
         return context;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Notification that = (Notification) o;
+        return Objects.equals(notificationId, that.notificationId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(notificationId);
     }
 }

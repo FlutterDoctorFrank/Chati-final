@@ -55,7 +55,6 @@ public class ContextRole {
         return roles.stream().anyMatch(role -> role.hasPermission(permission));
     }
 
-
     public Set<Role> getRoles() {
         return roles;
     }

@@ -18,6 +18,7 @@ import view.Screens.IModelObserver;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -237,5 +238,18 @@ public class User implements IUserController, IUserView{
     public Map<UUID, INotificationView> getWorldNotifications() {
         return notifications.entrySet().stream().filter(context -> context.getValue().getContext().equals(GlobalContext.
                 getInstance().getWorld())).collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(userId, user.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId);
     }
 }
