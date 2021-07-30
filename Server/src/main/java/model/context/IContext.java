@@ -31,6 +31,24 @@ public interface IContext {
     Map<UUID, IUser> getIUsers();
 
     /**
+     * Gibt die Benutzer zurück, die in diesem Kontext gemeldet sind.
+     * @return Gemeldete Benutzer.
+     */
+    Map<UUID, IUser> getReportedUsers();
+
+    /**
+     * Gibt die Benutzer zurück, die in diesem Kontext stummgeschaltet sind.
+     * @return Stummgeschaltete Benutzer.
+     */
+    Map<UUID, IUser> getMutedUsers();
+
+    /**
+     * Gibt die Benutzer zurück, die in diesem Kontext gesperrt sind.
+     * @return Gesperrte Benutzer.
+     */
+    Map<UUID, IUser> getBannedUsers();
+
+    /**
      * Gibt die Musik, die innerhalb des Kontextes läuft, zurück.
      * @return Musik des Kontexts, wenn dieser eine hat, sonst null.
      */

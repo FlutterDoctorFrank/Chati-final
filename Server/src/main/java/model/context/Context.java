@@ -64,7 +64,11 @@ public abstract class Context implements IContext {
      */
     protected Context(String contextName, Context parent, CommunicationRegion communicationRegion,
                       Set<CommunicationMedium> communicationMedia) {
-        this.contextID = new ContextID(parent.getContextID().getId().concat(contextName));
+        if (parent == null) {
+            this.contextID = new ContextID(contextName);
+        } else {
+            this.contextID = new ContextID(parent.getContextID().getId().concat(".").concat(contextName));
+        }
         this.contextName = contextName;
         this.parent = parent;
         this.children = new HashMap<>();
@@ -91,6 +95,21 @@ public abstract class Context implements IContext {
     @Override
     public Map<UUID, IUser> getIUsers() {
         return Collections.unmodifiableMap(containedUsers);
+    }
+
+    @Override
+    public Map<UUID, IUser> getReportedUsers() {
+        return Collections.unmodifiableMap(reportedUsers);
+    }
+
+    @Override
+    public Map<UUID, IUser> getMutedUsers() {
+        return Collections.unmodifiableMap(mutedUsers);
+    }
+
+    @Override
+    public Map<UUID, IUser> getBannedUsers() {
+        return Collections.unmodifiableMap(bannedUsers);
     }
 
     @Override
