@@ -21,7 +21,6 @@ public class UserManager implements IUserManagerController, IUserManagerView{
     private Map<UUID, User> externs;
 
     private UserManager(){
-        this.userManager = new UserManager();
         externs = new HashMap<>();
     }
 
@@ -100,6 +99,10 @@ public class UserManager implements IUserManagerController, IUserManagerView{
      * @return Instanz des UserManager.
      */
     public static UserManager getInstance(){
+        if (userManager == null) {
+            return userManager = new UserManager();
+        }
+        
         return userManager;
     }
 
