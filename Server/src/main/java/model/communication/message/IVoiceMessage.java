@@ -1,7 +1,7 @@
 package model.communication.message;
 
 /**
- * Eine Schnittstelle, welche dem Controller Methoden zur Verwaltung von Sprachnachrichten bereitstellt. Wird von
+ * Ein Interface, welche dem Controller Methoden zur Verwaltung von Sprachnachrichten bereitstellt. Wird von
  * {@link VoiceMessage} implementiert.
  */
 public interface IVoiceMessage extends IMessage {

@@ -38,8 +38,9 @@ public class SpatialContext extends Context implements ISpatialContext {
     private java.util.Map<ContextID, SpatialContext> privateRooms;
 
     // World constructor
-    public SpatialContext(String worldName, SpatialMap map) {
-        super(worldName, GlobalContext.getInstance());
+    public SpatialContext(String worldName, SpatialMap map, CommunicationRegion communicationRegion,
+                          Set<CommunicationMedium> communicationMedia) {
+        super(worldName, GlobalContext.getInstance(), communicationRegion, communicationMedia);
         GlobalContext.getInstance().addChild(this);
         this.spatialContextType = SpatialContextType.WORLD;
         this.isMoveable = true;
@@ -55,8 +56,9 @@ public class SpatialContext extends Context implements ISpatialContext {
     }
 
     // Private Room constructor
-    public SpatialContext(String roomName, SpatialContext world, SpatialMap map, String password) {
-        super(roomName, world);
+    public SpatialContext(String roomName, SpatialContext world, SpatialMap map, String password,
+                          CommunicationRegion communicationRegion, Set<CommunicationMedium> communicationMedia) {
+        super(roomName, world, communicationRegion, communicationMedia);
         world.addChild(this);
         this.spatialContextType = SpatialContextType.ROOM;
         this.isMoveable = true;
@@ -72,8 +74,9 @@ public class SpatialContext extends Context implements ISpatialContext {
     }
 
     // Area constructor
-    public SpatialContext(String areaName, SpatialContext parent) {
-        super(areaName, parent);
+    public SpatialContext(String areaName, SpatialContext parent, CommunicationRegion communicationRegion,
+                          Set<CommunicationMedium> communicationMedia) {
+        super(areaName, parent, communicationRegion, communicationMedia);
         parent.addChild(this);
         this.spatialContextType = SpatialContextType.AREA;
         this.isMoveable = true;
@@ -88,8 +91,9 @@ public class SpatialContext extends Context implements ISpatialContext {
     }
 
     // Object constructor
-    protected SpatialContext(String objectName, SpatialContext parent, Menu menu, Location interactionLocation) {
-        super(objectName, parent);
+    protected SpatialContext(String objectName, SpatialContext parent, Menu menu, Location interactionLocation,
+                             CommunicationRegion communicationRegion, Set<CommunicationMedium> communicationMedia) {
+        super(objectName, parent, communicationRegion, communicationMedia);
         parent.addChild(this);
         this.spatialContextType = SpatialContextType.OBJECT;
         this.isMoveable = false;

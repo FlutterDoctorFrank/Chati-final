@@ -21,7 +21,7 @@ public interface IUserAccountManager {
      * @throws IllegalAccountActionException wenn der übergebene Benutzername oder das Passwort das falsche Format
      * haben, oder ein Benutzer mit dem Benutzernamen bereits existiert.
      */
-    public void registerUser(String username, String password) throws IllegalAccountActionException;
+    void registerUser(String username, String password) throws IllegalAccountActionException;
 
     /**
      * Meldet einen Benutzer an.
@@ -32,14 +32,14 @@ public interface IUserAccountManager {
      * @throws IllegalAccountActionException wenn kein Benutzer mit dem übergebenen Benutzernamen existiert, das
      * Passwort nicht korrekt ist, oder der Benutzer bereits angemeldet ist.
      */
-    public IUser loginUser(String username, String password, ClientSender clientSender) throws IllegalAccountActionException;
+    IUser loginUser(String username, String password, ClientSender clientSender) throws IllegalAccountActionException;
 
     /**
      * Meldet einen Benutzer ab.
      * @param userId Die ID des Benutzers, der abgemeldet werden soll.
      * @throws UserNotFoundException wenn kein Benutzer mit der ID existiert.
      */
-    public void logoutUser(UUID userId) throws UserNotFoundException;
+    void logoutUser(UUID userId) throws UserNotFoundException;
 
     /**
      * Löscht ein Benutzerkonto. Meldet den entsprechenden Benutzer automatisch ab,
@@ -49,7 +49,7 @@ public interface IUserAccountManager {
      * @throws UserNotFoundException wenn kein Benutzer mit der ID existiert.
      * @throws IllegalAccountActionException wenn das übergebene Passwort nicht korrekt ist.
      */
-    public void deleteUser(UUID userId, String password) throws UserNotFoundException, IllegalAccountActionException;
+    void deleteUser(UUID userId, String password) throws UserNotFoundException, IllegalAccountActionException;
 
     /**
      * Ändert das Passwort eines Benutzers.
@@ -60,5 +60,5 @@ public interface IUserAccountManager {
      * @throws IllegalAccountActionException wenn das aktuelle Passwort nicht korrekt ist oder das neue Passwort nicht
      * das richtige Format hat.
      */
-    public void changePassword(UUID userId, String password, String newPassword) throws UserNotFoundException, IllegalAccountActionException;
+    void changePassword(UUID userId, String password, String newPassword) throws UserNotFoundException, IllegalAccountActionException;
 }

@@ -15,17 +15,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
-public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGlobalContextDatabase {
+public class Database implements IUserAccountManagerDatabase, IUserDatabase, IContextDatabase {
     private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
     private static Database database;
 
 
-    public static Database getInstance() {
-        if (database == null) {
-            database = new Database();
-        }
-        return database;
-    }
+
 
     @Override
     public void addWorld(SpatialContext world) {
@@ -462,7 +457,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     }
 
     @Override
-    public void addBannedUser(User user, SpatialContext world) {
+    public void addBannedUser(User user, Context world) {
 
         try {
             initialize();
@@ -480,7 +475,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
     }
 
     @Override
-    public void removeBannedUser(User user, SpatialContext world) {
+    public void removeBannedUser(User user, Context world) {
         try {
             initialize();
             Connection con = DriverManager.getConnection(dbURL);
@@ -578,18 +573,22 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, IGl
         // TODO
     }
 
-    public static IUserAccountManagerDatabase getUserAccountManagerDatabase() {
-        getInstance();
+    private static Database getInstance() {
+        if (database == null) {
+            database = new Database();
+        }
         return database;
+    }
+
+    public static IUserAccountManagerDatabase getUserAccountManagerDatabase() {
+        return getInstance();
     }
 
     public static IUserDatabase getUserDatabase() {
-        getInstance();
-        return database;
+        return getInstance();
     }
 
-    public static IGlobalContextDatabase getGlobalContextDatabase() {
-        getInstance();
-        return database;
+    public static IContextDatabase getContextDatabase() {
+        return getInstance();
     }
 }

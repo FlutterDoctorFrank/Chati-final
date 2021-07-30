@@ -199,7 +199,7 @@ public enum AdministrativeAction {
             }
             // Sende die Benachrichtigung an alle Benutzer.
             MessageBundle messageBundle = new MessageBundle("messageKey", performer, target, args[0]);
-            receivers.forEach((userID, user) -> {
+            receivers.values().forEach(user -> {
                 Notification reportNotification = new Notification(user, performer.getWorld(), messageBundle);
                 user.addNotification(reportNotification);
             });
@@ -252,7 +252,8 @@ public enum AdministrativeAction {
             if (!commonContext.isMuted(target)) {
                 throw new IllegalStateException("Target is not muted in this context.");
             }
-            // Hebe die Stummschaltung in dem Kontext und allen untergeordneten Kontexten auf.
+            // Hebe die Stummschaltung in dem Kontext und allen übergeordneten Kontexten, bis zu größten dem Kontext,
+            // in dem sich der ausführende Benutzer befindet und die Berechtigung besitzt, auf.
             do {
                 targetContext.removeMutedUser(target);
                 targetContext = targetContext.getParent();
@@ -294,7 +295,7 @@ public enum AdministrativeAction {
             performerContext.addBannedUser(target);
             // Sende eine Benachrichtigung mit der Information an alle relevanten Benutzer.
             MessageBundle messageBundle = new MessageBundle("messageKey", performer, target, args[0]);
-            receivers.forEach((userID, user) -> {
+            receivers.values().forEach(user -> {
                 Notification banNotification = new Notification(user, performer.getWorld(), messageBundle);
                 user.addNotification(banNotification);
             });
@@ -332,7 +333,7 @@ public enum AdministrativeAction {
             performerContext.removeBannedUser(target);
             // Sende eine Benachrichtigung mit der Information an alle relevanten Benutzer.
             MessageBundle messageBundle = new MessageBundle("messageKey", performer, target, args[0]);
-            receivers.forEach((userID, user) -> {
+            receivers.values().forEach(user -> {
                 Notification unbanNotification = new Notification(user, performer.getWorld(), messageBundle);
                 user.addNotification(unbanNotification);
             });

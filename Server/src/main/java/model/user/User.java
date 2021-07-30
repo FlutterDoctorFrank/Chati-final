@@ -265,9 +265,11 @@ public class User implements IUser {
 
     @Override
     public void deleteNotification(UUID notificationID) throws NotificationNotFoundException {
-        if (notifications.remove(notificationID) == null) {
+        Notification notification = notifications.get(notificationID);
+        if (notification == null) {
             throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationID);
         }
+        database.removeNotification(this, notification);
     }
 
     @Override
@@ -294,6 +296,7 @@ public class User implements IUser {
     @Override
     public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
+        database.changeAvatar(this, avatar);
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
         updateUserInfo();
     }
@@ -601,7 +604,7 @@ public class User implements IUser {
     public void updateUserInfo() {
         Map<UUID, User> receivers = getWorld().getUsers();
         receivers.putAll(friends);
-        receivers.forEach((userID, user) -> {
+        receivers.values().forEach(user -> {
             user.getClientSender().send(ClientSender.SendAction.USER_INFO, this);
         });
     }
@@ -612,7 +615,7 @@ public class User implements IUser {
     public void updateRoleInfo() {
         Map<UUID, User> receivers = getWorld().getUsers();
         receivers.putAll(friends);
-        receivers.forEach((userId, user) -> {
+        receivers.values().forEach(user -> {
             user.getClientSender().send(ClientSender.SendAction.CONTEXT_ROLE, this);
         });
     }

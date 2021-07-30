@@ -109,7 +109,7 @@ public class CommunicationHandler {
         receivers.remove(communicator.getUserId());
         // Versende die Sprachnachricht.
         VoiceMessage voiceMessage = new VoiceMessage(communicator, voicedata);
-        receivers.forEach((userID, user) -> {
+        receivers.values().forEach(user -> {
             user.getClientSender().send(ClientSender.SendAction.MESSAGE, voiceMessage);
         });
     }
@@ -143,7 +143,7 @@ public class CommunicationHandler {
         Map<UUID, User> receivers = filterIgnoredUsers(communicator, communicableUsers);
         // Versende die Textnachricht.
         TextMessage textMessage = new TextMessage(communicator, message, MessageType.STANDARD);
-        receivers.forEach((userID, user) -> {
+        receivers.values().forEach(user -> {
             user.getClientSender().send(ClientSender.SendAction.MESSAGE, textMessage);
         });
     }
@@ -216,11 +216,11 @@ public class CommunicationHandler {
             return;
         }
         // Ermittle die empfangsberechtigten Benutzer.
-        Map<UUID, User> communicableUsers = communicationRoom.getContainedUsers();
+        Map<UUID, User> communicableUsers = communicationRoom.getUsers();
         Map<UUID, User> receivers = filterIgnoredUsers(communicator, communicableUsers);
         // Versende die Textnachricht.
         TextMessage textMessage = new TextMessage(communicator, message, MessageType.ROOM);
-        receivers.forEach((userID, user) -> {
+        receivers.values().forEach(user -> {
             user.getClientSender().send(ClientSender.SendAction.MESSAGE, textMessage);
         });
     }
@@ -252,11 +252,11 @@ public class CommunicationHandler {
             return;
         }
         // Ermittle die empfangsberechtigten Benutzer.
-        Map<UUID, User> communicableUsers = communicationWorld.getContainedUsers();
+        Map<UUID, User> communicableUsers = communicationWorld.getUsers();
         Map<UUID, User> receivers = filterIgnoredUsers(communicator, communicableUsers);
         // Versende die Textnachricht.
         TextMessage textMessage = new TextMessage(communicator, message, MessageType.WORLD);
-        receivers.forEach((userID, user) -> {
+        receivers.values().forEach(user -> {
             user.getClientSender().send(ClientSender.SendAction.MESSAGE, textMessage);
         });
     }

@@ -3,7 +3,7 @@ package model.communication.message;
 import model.MessageBundle;
 
 /**
- * Eine Schnittstelle, welche dem Controller Methoden zur Verwaltung von Textnachrichten bereitstellt. Wird von
+ * Ein Interface, welche dem Controller Methoden zur Verwaltung von Textnachrichten bereitstellt. Wird von
  * {@link TextMessage} implementiert.
  */
 public interface ITextMessage extends IMessage {

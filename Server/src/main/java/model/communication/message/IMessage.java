@@ -5,7 +5,7 @@ import model.user.IUser;
 import java.time.LocalDateTime;
 
 /**
- * Eine Schnittstelle, welche dem Controller Methoden zur Verwaltung von Nachrichten bereitstellt. Wird von
+ * Ein Interface, welche dem Controller Methoden zur Verwaltung von Nachrichten bereitstellt. Wird von
  * {@link Message} implementiert.
  */
 public interface IMessage {
