@@ -11,7 +11,6 @@ import model.context.ContextID;
 import model.context.spatial.SpatialMap;
 import model.user.Avatar;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -45,7 +44,7 @@ public interface ServerSender {
         PROFILE_LOGIN {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                if (objects.length != 3) {
+                if (objects.length == 3) {
                     if (objects[0] instanceof String && objects[1] instanceof String && objects[2] instanceof Boolean) {
                         // Sende Paket zum anmelden oder registrieren.
                         return new PacketProfileAction((String) objects[0], (String) objects[1], (boolean) objects[2]);
@@ -106,7 +105,7 @@ public interface ServerSender {
         PROFILE_LOGOUT {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                if (objects.length != 2) {
+                if (objects.length == 2) {
                     if (objects[0] instanceof String && objects[1] instanceof Boolean) {
                         return new PacketProfileAction((String) objects[0], (boolean) objects[1]);
                     } else {
@@ -130,7 +129,7 @@ public interface ServerSender {
         WORLD_ACTION {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                if (objects.length != 2) {
+                if (objects.length == 2) {
                     if (objects[0] instanceof ContextID && objects[1] instanceof Boolean) {
                         final ContextID contextId = (ContextID) objects[0];
                         final boolean join = (boolean) objects[1];
@@ -157,7 +156,7 @@ public interface ServerSender {
         WORLD_CREATE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                if (objects.length != 2) {
+                if (objects.length == 2) {
                     if (objects[0] instanceof SpatialMap && objects[1] instanceof String) {
                         return new PacketWorldAction((SpatialMap) objects[0], (String) objects[1]);
                     } else {
@@ -180,7 +179,7 @@ public interface ServerSender {
         WORLD_DELETE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                if (objects.length != 1) {
+                if (objects.length == 1) {
                     if (objects[0] instanceof ContextID) {
                         return new PacketWorldAction(PacketWorldAction.Action.DELETE, (ContextID) objects[0]);
                     } else {
@@ -229,7 +228,7 @@ public interface ServerSender {
         CONTEXT_INTERACT {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                if (objects.length != 1) {
+                if (objects.length == 1) {
                     if (objects[0] instanceof ContextID) {
                         return new PacketInContextInteract((ContextID) objects[0]);
                     } else {
@@ -269,7 +268,7 @@ public interface ServerSender {
         USER_MANAGE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                if (objects.length != 3) {
+                if (objects.length == 3) {
                     if (objects[0] instanceof UUID && objects[1] instanceof AdministrativeAction) {
                         try {
                             final PacketInUserManage.Action action = PacketInUserManage.Action.valueOf(((AdministrativeAction) objects[1]).name());

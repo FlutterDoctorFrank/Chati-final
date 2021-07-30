@@ -7,6 +7,9 @@ import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextMusic;
 import controller.network.protocol.PacketOutContextRole;
+import controller.network.protocol.PacketOutUserInfo;
+import controller.network.protocol.PacketOutUserInfo.Action;
+import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketWorldAction;
 import model.context.IContext;
 import model.context.global.IGlobalContext;
@@ -41,8 +44,55 @@ public interface ClientSender {
         USER_INFO {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                //TODO Verpackung des UserInfo-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (object instanceof IUser) {
+                    final IUser other = (IUser) object;
+
+                    if (user.getWorld() != null) {
+                        final ISpatialContext world = user.getWorld();
+                        final UserInfo info = new UserInfo(other.getUserId(), other.getUsername(), other.getStatus());
+
+                        if (user.getFriends().containsKey(other.getUserId())) {
+                            info.addFlag(UserInfo.Flag.FRIEND);
+                        }
+
+                        if (world.equals(other.getWorld())) {
+                            info.setAvatar(other.getAvatar());
+
+                            if (user.getIgnoredUsers().containsKey(other.getUserId())) {
+                                info.addFlag(UserInfo.Flag.IGNORED);
+                            }
+
+                            if (world.getReportedUsers().containsKey(other.getUserId())) {
+                                info.addFlag(UserInfo.Flag.REPORTED);
+                            }
+
+                            //TODO Kontexte in Benutzerinformation setzen, in denen der Benutzer stumm geschaltet ist
+
+                            return new PacketOutUserInfo(world.getContextID(), Action.UPDATE_USER, info);
+                        }
+
+                        if (world.getBannedUsers().containsKey(other.getUserId())) {
+                            info.addFlag(UserInfo.Flag.BANNED);
+
+                            return new PacketOutUserInfo(world.getContextID(), Action.UPDATE_USER, info);
+                        }
+
+                        return new PacketOutUserInfo(world.getContextID(), Action.REMOVE_USER, info);
+                    } else {
+                        if (user.getFriends().containsKey(other.getUserId())) {
+                            final UserInfo info = new UserInfo(other.getUserId(), other.getUsername());
+
+                            info.addFlag(UserInfo.Flag.FRIEND);
+                            info.setStatus(other.getStatus());
+
+                            return new PacketOutUserInfo(null, Action.UPDATE_USER, info);
+                        }
+
+                        return new PacketOutUserInfo(null, Action.REMOVE_USER, new UserInfo(other.getUserId()));
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
+                }
             }
         },
 
@@ -117,7 +167,7 @@ public interface ClientSender {
                 if (object instanceof IContextRole) {
                     final IContextRole role = (IContextRole) object;
 
-                    return new PacketOutContextRole(role.getContext().getContextID(), role.getRoles());
+                    return new PacketOutContextRole(role.getContext().getContextID(), null, role.getRoles());
                 } else {
                     throw new IllegalArgumentException("Expected IContextRole, got " + object.getClass());
                 }

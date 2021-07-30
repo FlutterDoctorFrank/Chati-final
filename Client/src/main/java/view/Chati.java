@@ -21,7 +21,7 @@ public class Chati extends Game {
         config.useVsync(true);
         config.setTitle("Chati");
 
-        serverSender = serverSender;
+        this.serverSender = serverSender;
 
         config.setMaximized(true);
         config.setResizable(true);
