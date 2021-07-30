@@ -50,4 +50,8 @@ public class Chati extends Game {
     public void setServerSender(ServerSender serverSender) {
         this.setServerSender(serverSender);
     }
+
+    public ServerSender getServerSender() {
+        return serverSender;
+    }
 }
