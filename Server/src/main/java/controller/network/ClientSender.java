@@ -113,15 +113,15 @@ public interface ClientSender {
 
                     if (object instanceof IGlobalContext) {
                         for (final ISpatialContext world : ((IGlobalContext) object).getWorlds().values()) {
-                            infos.add(new PacketOutContextInfo.Info(world.getContextID(), world.getContextName()));
+                            infos.add(new PacketOutContextInfo.Info(world.getContextId(), world.getContextName()));
                         }
                     } else {
                         for (final ISpatialContext room : ((ISpatialContext) object).getPrivateRooms().values()) {
-                            infos.add(new PacketOutContextInfo.Info(room.getContextID(), room.getContextName()));
+                            infos.add(new PacketOutContextInfo.Info(room.getContextId(), room.getContextName()));
                         }
                     }
 
-                    return new PacketOutContextInfo(((IContext) object).getContextID(), infos);
+                    return new PacketOutContextInfo(((IContext) object).getContextId(), infos);
                 } else {
                     throw new IllegalArgumentException("Expected IGlobalContext or ISpatialContext, got " + object.getClass());
                 }
@@ -147,10 +147,10 @@ public interface ClientSender {
                             throw new IllegalArgumentException("Context without a Map can not be joined");
                         }
 
-                        return new PacketOutContextJoin(room.getContextID(), room.getMap());
+                        return new PacketOutContextJoin(room.getContextId(), room.getMap());
                     }
 
-                    return new PacketOutContextJoin(room.getContextID(), null);
+                    return new PacketOutContextJoin(room.getContextId(), null);
                 } else {
                     throw new IllegalArgumentException("Expected ISpatialContext, got " + object.getClass());
                 }
@@ -169,7 +169,7 @@ public interface ClientSender {
                 if (object instanceof IContextRole) {
                     final IContextRole role = (IContextRole) object;
 
-                    return new PacketOutContextRole(role.getContext().getContextID(), null, role.getRoles());
+                    return new PacketOutContextRole(role.getContext().getContextId(), null, role.getRoles());
                 } else {
                     throw new IllegalArgumentException("Expected IContextRole, got " + object.getClass());
                 }
@@ -188,7 +188,7 @@ public interface ClientSender {
                 if (object instanceof ISpatialContext) {
                     final ISpatialContext area = (ISpatialContext) object;
 
-                    return new PacketOutContextMusic(area.getContextID(), area.getMusic());
+                    return new PacketOutContextMusic(area.getContextId(), area.getMusic());
                 } else {
                     throw new IllegalArgumentException("Expected ISpatialContext, got " + object.getClass());
                 }
@@ -280,7 +280,7 @@ public interface ClientSender {
                     final PacketWorldAction.Action action = world.getIUsers().containsKey(user.getUserId())
                             ? PacketWorldAction.Action.JOIN : PacketWorldAction.Action.LEAVE;
 
-                    return new PacketWorldAction(action, world.getContextID(), null, true);
+                    return new PacketWorldAction(action, world.getContextId(), null, true);
                 } else {
                     throw new IllegalArgumentException("Expected ISpatialContext, got " + object.getClass());
                 }

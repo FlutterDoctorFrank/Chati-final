@@ -16,7 +16,7 @@ public interface IContext {
      * Gibt die ID des Kontexts zurück.
      * @return ID des Kontexts.
      */
-    ContextID getContextID();
+    ContextID getContextId();
 
     /**
      * Gibt den Namen des Kontexts zurück.

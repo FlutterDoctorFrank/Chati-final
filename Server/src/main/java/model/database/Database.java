@@ -33,7 +33,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO WORLDS(NAME, ID) values(?,?)");
             ps.setString(1, world.getContextName());
-            ps.setString(2, world.getContextID().getId());
+            ps.setString(2, world.getContextId().getId());
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -47,7 +47,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
         try {
             Connection con = DriverManager.getConnection(dbURL);
-            String worldId = world.getContextID().getId();
+            String worldId = world.getContextId().getId();
             PreparedStatement ps = con.prepareStatement("DELETE FROM WORLDS WHERE ID = " + "'" + worldId + "'");
             ps.executeUpdate();
             con.close();
@@ -367,7 +367,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                     "(USER_ID, ROLE, CONTEXT_ID) values(?,?,?)");
             ps.setString(1, user.getUserId().toString());
             ps.setString(2, role.name());
-            ps.setString(3, context.getContextID().getId());
+            ps.setString(3, context.getContextId().getId());
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -384,7 +384,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM ROLE_WITH_CONTEXT WHERE (USER_ID = '"
                     + user.getUserId().toString() + "' AND ROLE = '" + role.name()
-                    + "' AND CONTEXT_ID = '" + context.getContextID().getId() + "')");
+                    + "' AND CONTEXT_ID = '" + context.getContextId().getId() + "')");
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -404,7 +404,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                     "REQUEST_TYPE CHAR) values(?,?,?,?,?,?,?,?,?)");
             ps.setString(1, user.getUserId().toString());
             ps.setString(2, notification.getNotificationId().toString());
-            ps.setString(3, notification.getContext().getContextID().getId());
+            ps.setString(3, notification.getContext().getContextId().getId());
             if (notification.isRequest() == true){
                 if (notification instanceof RoomRequest) {
 
@@ -451,7 +451,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO BAN(USER_ID, WORLD_ID) values(?,?)");
             ps.setString(1, user.getUserId().toString());
-            ps.setString(2, world.getContextID().getId());
+            ps.setString(2, world.getContextId().getId());
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -466,7 +466,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         try {
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM BAN WHERE (USER_ID = '"
-                    + user.getUserId().toString() + "' AND WORLD_ID = '" + world.getContextID().getId() + "')");
+                    + user.getUserId().toString() + "' AND WORLD_ID = '" + world.getContextId().getId() + "')");
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {

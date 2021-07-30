@@ -67,7 +67,7 @@ public abstract class Context implements IContext {
         if (parent == null) {
             this.contextID = new ContextID(contextName);
         } else {
-            this.contextID = new ContextID(parent.getContextID().getId().concat(".").concat(contextName));
+            this.contextID = new ContextID(parent.getContextId().getId().concat(".").concat(contextName));
         }
         this.contextName = contextName;
         this.parent = parent;
@@ -83,7 +83,7 @@ public abstract class Context implements IContext {
     }
 
     @Override
-    public ContextID getContextID() {
+    public ContextID getContextId() {
         return contextID;
     }
 
@@ -122,7 +122,7 @@ public abstract class Context implements IContext {
      * @param child Untergeordneter Kontext.
      */
     public void addChild(SpatialContext child) {
-        children.put(child.getContextID(), child);
+        children.put(child.getContextId(), child);
     }
 
     /**
