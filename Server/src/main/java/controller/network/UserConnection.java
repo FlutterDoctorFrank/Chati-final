@@ -6,18 +6,22 @@ import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
 import controller.network.protocol.PacketInContextInteract;
+import controller.network.protocol.PacketInUserManage;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerIn;
+import controller.network.protocol.PacketProfileAction;
+import controller.network.protocol.PacketProfileAction.Action;
 import controller.network.protocol.PacketWorldAction;
 import model.exception.ContextNotFoundException;
+import model.exception.IllegalAccountActionException;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalPositionException;
 import model.exception.IllegalWorldActionException;
 import model.exception.NoPermissionException;
 import model.exception.UserNotFoundException;
+import model.user.AdministrativeAction;
 import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -103,64 +107,129 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
     public void handle(@NotNull final PacketWorldAction packet) {
         if (this.user != null) {
             try {
-                if (packet.getAction() != PacketWorldAction.Action.CREATE) {
-                    if (packet.getContextId() == null) {
-                        return;
-                    }
+                if (packet.getAction() == PacketWorldAction.Action.CREATE) {
+                    if (packet.getMap() != null && packet.getName() != null) {
+                        this.manager.getGlobal().createWorld(this.user.getUserId(), packet.getName(), packet.getMap());
 
-                    try {
+                        // Erstellung erfolgreich. Sende Bestätigung.
+                        this.send(new PacketWorldAction(packet, null, true));
+                    } else {
+                        LOGGER.warning("Received world-create action with missing map/name from user: " + this.user.getUsername());
+                    }
+                } else {
+                    if (packet.getContextId() != null) {
                         switch (packet.getAction()) {
                             case JOIN:
                                 this.user.joinWorld(packet.getContextId());
-                                break;
+                                return; // #joinWorld() verschickt über den ClientSender die Bestätigung.
 
                             case LEAVE:
                                 this.user.leaveWorld();
-                                break;
+                                return; // #leaveWorld() verschickt über den ClientSender die Bestätigung.
 
                             case DELETE:
                                 this.manager.getGlobal().removeWorld(this.user.getUserId(), packet.getContextId());
-
-                                // Löschung erfolgreich. Sende Bestätigung.
-                                this.send(new PacketWorldAction(packet.getAction(), packet.getContextId(), null, true));
                                 break;
                         }
-                    } catch (IllegalWorldActionException ex) {
-                        // Illegale Welt-Aktion.
-                        LOGGER.fine("User " + this.user.getUsername() + " tried an illegal world action: " + ex.getMessage());
 
-                        this.send(new PacketWorldAction(packet.getAction(), packet.getContextId(), ex.getClientMessageKey(), false));
-                    } catch (NoPermissionException ex) {
-                        // Unzureichende Berechtigung. Sende zugehörige Fehlermeldung.
-                        LOGGER.fine("User " + this.user.getUsername() + " is missing permission: " + ex.getPermission());
-
-                        this.send(new PacketWorldAction(packet.getAction(), packet.getContextId(), "", false));
-                    } catch (ContextNotFoundException ex) {
-                        LOGGER.warning("Received illegal action from user " + this.user.getUsername() + ": " + ex.getMessage());
-
-                        this.send(new PacketWorldAction(packet.getAction(), packet.getContextId(), null, false));
-                    }
-                } else {
-                    if (packet.getMap() != null && packet.getName() != null) {
-                        try {
-                            this.manager.getGlobal().createWorld(this.user.getUserId(), packet.getName(), packet.getMap());
-
-                            // Erstellung erfolgreich. Sende Bestätigung.
-                            this.send(new PacketWorldAction(packet.getMap(), packet.getName(), null, true));
-                        } catch (IllegalWorldActionException ex) {
-                            // Welt existiert bereits.
-                            this.send(new PacketWorldAction(packet.getMap(), packet.getName(), ex.getClientMessageKey(), false));
-                        } catch (NoPermissionException ex) {
-                            // Unzureichende Berechtigung. Sende zugehörige Fehlermeldung.
-                            LOGGER.fine("User " + this.user.getUsername() + " is missing permission: " + ex.getPermission());
-
-                            this.send(new PacketWorldAction(packet.getMap(), packet.getName(), "", false));
-                        }
+                        //Aktion erfolgreich. Sende Bestätigung
+                        this.send(new PacketWorldAction(packet, null, true));
+                    } else {
+                        LOGGER.warning("Received world action with missing context-id from user: " + this.user.getUsername());
                     }
                 }
+            } catch (IllegalWorldActionException ex) {
+                // Illegale Welt-Aktion.
+                LOGGER.warning("Received illegal world action from user " + this.user.getUsername() + ": " + ex.getMessage());
+                this.send(new PacketWorldAction(packet, ex.getClientMessageKey(), false));
+            } catch (NoPermissionException ex) {
+                // Unzureichende Berechtigung. Sende zugehörige Fehlermeldung.
+                LOGGER.fine("User " + this.user.getUsername() + " is missing permission " + ex.getPermission() + " for world action: " + packet.getAction().name());
+                this.send(new PacketWorldAction(packet, "missing.permission", false));
+            } catch (ContextNotFoundException ex) {
+                // Ungültige Welt, auf die Zugegriffen wird.
+                LOGGER.fine("User " + this.user.getUsername() + " tried to access non-existing world");
             } catch (UserNotFoundException ex) {
                 // Sollte niemals der Fall sein.
-                LOGGER.log(Level.WARNING, "Failed to provide corresponding user-id: ", ex);
+                throw new IllegalStateException("Failed to provide corresponding user-id", ex);
+            }
+        }
+    }
+
+    @Override
+    public void handle(@NotNull final PacketProfileAction packet) {
+        if (packet.getAction() == Action.LOGIN || packet.getAction() == Action.REGISTER) {
+            if (this.user == null) {
+                if (packet.getName() != null && packet.getPassword() != null) {
+                    try {
+                        switch (packet.getAction()) {
+                            case REGISTER:
+                                this.manager.getAccountManager().registerUser(packet.getName(), packet.getPassword());
+                                break;
+
+                            case LOGIN:
+                                this.user = this.manager.getAccountManager().loginUser(packet.getName(), packet.getPassword(), this);
+                                break;
+                        }
+
+                        this.send(new PacketProfileAction(packet, null, true));
+                    } catch (IllegalAccountActionException ex) {
+                        LOGGER.warning("Received illegal profile action from connection " + this.connection.getID() + ": " + ex.getMessage());
+                        this.send(new PacketProfileAction(packet, ex.getClientMessageKey(), false));
+                    }
+                } else {
+                    LOGGER.warning("Received login/register action with missing name/password from connection: " + this.connection.getID());
+                }
+            } else {
+                LOGGER.fine("User " + this.user.getUsername() + " tried to login/register while already logged in");
+            }
+        } else {
+            if (this.user != null) {
+                try {
+                    switch (packet.getAction()) {
+                        case CHANGE_PASSWORD:
+                            if (packet.getPassword() != null && packet.getNewPassword() != null) {
+                                this.manager.getAccountManager().changePassword(this.user.getUserId(), packet.getPassword(), packet.getNewPassword());
+                            } else {
+                                LOGGER.warning("Received change-password action with missing passwords from user: " + this.user.getUsername());
+                                return;
+                            }
+                            break;
+
+                        case CHANGE_AVATAR:
+                            if (packet.getAvatar() != null) {
+                                this.user.setAvatar(packet.getAvatar());
+                            } else {
+                                LOGGER.warning("Received change-avatar action with missing avatar from user: " + this.user.getUsername());
+                                return;
+                            }
+                            break;
+
+                        case DELETE:
+                            if (packet.getPassword() != null) {
+                                this.manager.getAccountManager().deleteUser(this.user.getUserId(), packet.getPassword());
+                            } else {
+                                LOGGER.warning("Received change-password action with missing password from user: " + this.user.getUsername());
+                                return;
+                            }
+                            break;
+
+                        case LOGOUT:
+                            this.manager.getAccountManager().logoutUser(this.user.getUserId());
+                            break;
+                    }
+
+                    // Aktion erfolgreich. Sende Bestätigung.
+                    this.send(new PacketProfileAction(packet, null, true));
+                } catch (IllegalAccountActionException ex) {
+                    LOGGER.warning("Received illegal profile action from user " + this.user.getUsername() + ": " + ex.getMessage());
+                    this.send(new PacketProfileAction(packet, ex.getClientMessageKey(), false));
+                } catch (UserNotFoundException ex) {
+                    // Sollte niemals der Fall sein.
+                    throw new IllegalStateException("Failed to provide corresponding user-id", ex);
+                }
+            } else {
+                LOGGER.fine("Connection " + this.connection.getID() + " tried to logout/delete while not logged in");
             }
         }
     }
@@ -174,6 +243,28 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 // Objekt wurde nicht gefunden oder der Benutzer interagiert bereits mit einem Objekt.
                 // Verbindung trennen?
             }
+        }
+    }
+
+    @Override
+    public void handle(@NotNull final PacketInUserManage packet) {
+        if (this.user != null) {
+            try {
+                final AdministrativeAction action = AdministrativeAction.valueOf(packet.getAction().name());
+
+                this.user.executeAdministrativeAction(packet.getUserId(), action, packet.getArguments());
+            } catch (NoPermissionException ex) {
+                // Unzureichende Berechtigung.
+                LOGGER.fine("User " + this.user.getUsername() + " is missing permission " + ex.getPermission() + " for managing user: " + packet.getAction().name());
+            } catch (UserNotFoundException ex) {
+                // Ungültiger Benutzer, der verwaltet werden soll.
+                LOGGER.fine("User " + this.user.getUsername() + " tried to manage non-existing user");
+            } catch (IllegalArgumentException ex) {
+                // Sollte niemals der Fall sein.
+                throw new IllegalStateException("Failed to provide corresponding administrative-action", ex);
+            }
+        } else {
+            LOGGER.fine("Connection " + this.connection.getID() + " tried to manage user while not logged in");
         }
     }
 }

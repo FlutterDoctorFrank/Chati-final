@@ -16,23 +16,40 @@ public class PacketWorldActionTest extends PacketTest<PacketWorldAction> {
 
         this.serialize();
         this.equals();
+    }
 
-        this.before = new PacketWorldAction(randomEnum(SpatialMap.class), randomString(), randomString(), randomBoolean());
+    @Test
+    public void otherSerializationTest() {
+        this.before = new PacketWorldAction(randomEnum(PacketWorldAction.Action.class, PacketWorldAction.Action.CREATE), randomContextId());
 
         this.serialize();
         this.equals();
     }
 
     @Test
-    public void otherSerializationTest() {
-        this.before = new PacketWorldAction(randomEnum(PacketWorldAction.Action.class), randomContextId());
+    public void responseSerializationTest() {
+        this.before = new PacketWorldAction(randomEnum(PacketWorldAction.Action.class, PacketWorldAction.Action.CREATE),
+                randomContextId(), randomString(), randomBoolean());
 
         this.serialize();
         this.equals();
 
-        this.before = new PacketWorldAction(randomEnum(PacketWorldAction.Action.class), randomContextId(), randomString(), randomBoolean());
+        // Vergleiche Fehlermeldung
+        if (this.before.getMessage() != null) {
+            Assert.assertNotNull(this.after.getMessage());
+            Assert.assertEquals(this.before.getMessage(), this.after.getMessage());
+        } else {
+            Assert.assertNull(this.after.getMessage());
+        }
 
-        this.serialize();
+        Assert.assertEquals(this.before.isSuccess(), this.after.isSuccess());
+    }
+
+    @Test
+    public void responseCreationTest() {
+        this.before = new PacketWorldAction(randomEnum(PacketWorldAction.Action.class, PacketWorldAction.Action.CREATE), randomContextId());
+        this.after = new PacketWorldAction(this.before, randomString(), randomBoolean());
+
         this.equals();
     }
 
@@ -64,15 +81,5 @@ public class PacketWorldActionTest extends PacketTest<PacketWorldAction> {
         } else {
             Assert.assertNull(this.after.getName());
         }
-
-        // Vergleiche Fehlermeldung
-        if (this.before.getMessage() != null) {
-            Assert.assertNotNull(this.after.getMessage());
-            Assert.assertEquals(this.before.getMessage(), this.after.getMessage());
-        } else {
-            Assert.assertNull(this.after.getMessage());
-        }
-
-        Assert.assertEquals(this.before.isSuccess(), this.after.isSuccess());
     }
 }

@@ -42,7 +42,9 @@ public class PacketWorldAction implements Packet<PacketListener> {
      * @param name der Name der zur erstellenden Welt.
      */
     public PacketWorldAction(@NotNull final SpatialMap map, @NotNull final String name) {
-        this(map, name, null, false);
+        this.action = Action.CREATE;
+        this.map = map;
+        this.name = name;
     }
 
     /**
@@ -58,21 +60,7 @@ public class PacketWorldAction implements Packet<PacketListener> {
     }
 
     /**
-     * Ausschließlich für die Erzeugung des Netzwerkpakets zur erfolgreichen Erstellung einer Welt von der Server-Anwendung.
-     * @param map die Karte der erstellten Welt.
-     * @param name der Name der erstellten Welt.
-     */
-    public PacketWorldAction(@NotNull final SpatialMap map, @NotNull final String name,
-                             @Nullable final String message, final boolean success) {
-        this.action = Action.CREATE;
-        this.map = map;
-        this.name = name;
-        this.message = message;
-        this.success = success;
-    }
-
-    /**
-     * Ausschließlich für die Erzeugung des Netzwerkpakets von der Server-Anwendung.
+     * Ausschließlich für die Erzeugung einer Antwort des Netzwerkpakets von der Server-Anwendung.
      * <p><i>
      *     Dieser Konstruktor erlaubt nicht die Erzeugung des WorldCreate-Pakets. Siehe {@link PacketWorldAction(SpatialMap, String)}
      * </i></p>
@@ -89,6 +77,22 @@ public class PacketWorldAction implements Packet<PacketListener> {
 
         this.action = action;
         this.contextId = contextId;
+        this.message = message;
+        this.success = success;
+    }
+
+    /**
+     * Ausschließlich für die Erzeugung einer Antwort des Netzwerkpakets von der Server-Anwendung.
+     * @param previous das Netzwerkpaket auf das geantwortet werden soll.
+     * @param message die Nachricht, die durch die Aktion erzeugt wurde. Null, falls keine erzeugt wurde.
+     * @param success true, wenn die Aktion erfolgreich war, ansonsten false.
+     */
+    public PacketWorldAction(@NotNull final PacketWorldAction previous,
+                             @Nullable final String message, final boolean success) {
+        this.action = previous.getAction();
+        this.contextId = previous.getContextId();
+        this.map = previous.getMap();
+        this.name = previous.getName();
         this.message = message;
         this.success = success;
     }

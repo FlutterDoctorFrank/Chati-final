@@ -14,9 +14,11 @@ import model.context.ContextID;
 import model.role.Role;
 import model.user.Avatar;
 import model.user.Status;
+import view.Screens.IModelObserver;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,6 +42,7 @@ public class User implements IUserController, IUserView{
     private Map<ContextID, Context> banned;
     private Location location;
     private Avatar avatar;
+    private IModelObserver iModelObserver;
 
 
     public User(UUID userId) {
@@ -50,36 +53,43 @@ public class User implements IUserController, IUserView{
     @Override
     public void setUsername(String username) {
         this.username = username;
+        iModelObserver.setUserInfoChanged();
     }
 
     @Override
     public void setStatus(Status status) {
         this.status = status;
+        iModelObserver.setUserInfoChanged();
     }
 
     @Override
     public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
+        iModelObserver.setUserInfoChanged();
     }
 
     @Override
     public void setCurrentWorld(boolean inWorld) {
         inCurrentWorld = inWorld;
+        iModelObserver.setUserInfoChanged();
     }
 
     @Override
     public void setCurrentRoom(boolean inRoom) {
         inCurrentRoom = inRoom;
+        iModelObserver.setUserInfoChanged();
     }
 
     @Override
     public void setFriend(boolean isFriend) {
         friend = isFriend;
+        iModelObserver.setUserInfoChanged();
     }
 
     @Override
     public void setIgnored(boolean isIgnored) {
         ignored = isIgnored;
+        iModelObserver.setUserInfoChanged();
     }
 
     @Override
@@ -87,6 +97,7 @@ public class User implements IUserController, IUserView{
         if(!(reported.put(contextId, GlobalContext.getInstance().getContext(contextId)) == null)){
             reported.remove(contextId);
         }
+        iModelObserver.setUserInfoChanged();
     }
 
     @Override
@@ -94,6 +105,7 @@ public class User implements IUserController, IUserView{
         if(!(muted.put(contextId, GlobalContext.getInstance().getContext(contextId)) == null)){
             muted.remove(contextId);
         }
+        iModelObserver.setUserInfoChanged();
     }
 
     @Override
@@ -101,6 +113,7 @@ public class User implements IUserController, IUserView{
         if(!(banned.put(contextId, GlobalContext.getInstance().getContext(contextId)) == null)){
             banned.remove(contextId);
         }
+        iModelObserver.setUserInfoChanged();
     }
 
     @Override
@@ -117,6 +130,7 @@ public class User implements IUserController, IUserView{
                 }
             });
         }
+        iModelObserver.setUserInfoChanged();
     }
 
     @Override
@@ -127,6 +141,7 @@ public class User implements IUserController, IUserView{
         }
         notifications.put(notificationId, new Notification(notificationId, timestamp, isRequest,
                 new MessageBundle(messageKey, args), GlobalContext.getInstance().getContext(contextId)));
+        iModelObserver.setUserNotificationChanged();
     }
 
     @Override
@@ -134,11 +149,13 @@ public class User implements IUserController, IUserView{
         if(notifications.remove(notificationId) == null){
             throw new NotificationNotFoundException("This notificationId doesn't map to any Notification", notificationId);
         }
+        iModelObserver.setUserNotificationChanged();
     }
 
     @Override
     public void setPosition(int posX, int posY) {
         location = new Location(posX, posY);
+        iModelObserver.setUserPositionChanged();
     }
 
     @Override
@@ -221,5 +238,18 @@ public class User implements IUserController, IUserView{
     public Map<UUID, INotificationView> getWorldNotifications() {
         return notifications.entrySet().stream().filter(context -> context.getValue().getContext().equals(GlobalContext.
                 getInstance().getWorld())).collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(userId, user.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId);
     }
 }

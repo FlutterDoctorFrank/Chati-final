@@ -16,6 +16,7 @@ import java.util.UUID;
  * Benutzerdaten bereitstellt. Wird von {@link User} implementiert.
  */
 public interface IUser {
+
     /**
      * Lässt den Benutzer eine Welt betreten.
      * @param worldId Die ID der zu betretenden Welt.
@@ -24,13 +25,13 @@ public interface IUser {
      * @throws IllegalWorldActionException wenn der Benutzer in der Welt gesperrt ist.
      * @see model.context.spatial.SpatialContext
      */
-    public void joinWorld(ContextID worldId) throws IllegalStateException, ContextNotFoundException, IllegalWorldActionException;
+    void joinWorld(ContextID worldId) throws IllegalStateException, ContextNotFoundException, IllegalWorldActionException;
 
     /**
      * Lässt den Benutzer seine aktuelle Welt verlassen.
      * @throws IllegalStateException wenn der Benutzer in keiner Welt ist.
      */
-    public void leaveWorld() throws IllegalStateException;
+    void leaveWorld() throws IllegalStateException;
 
     /**
      * Verändert die Position eines Benutzers.
@@ -41,7 +42,7 @@ public interface IUser {
      * keine Bewegung erlaubt ist.
      * @see model.context.spatial.Location
      */
-    public void move(int posX, int posY) throws IllegalPositionException, IllegalStateException;
+    void move(int posX, int posY) throws IllegalPositionException, IllegalStateException;
 
     /**
      * Sendet eine Nachricht im Namen des Benutzers, von dem sie erhalten wurde gemäß
@@ -51,16 +52,16 @@ public interface IUser {
      * @see model.communication.message.TextMessage
      * @see model.communication.CommunicationRegion
      */
-    public void chat(String message);
+    void chat(String message);
 
     /**
      * Sendet eine Sprachnachricht im Namen des Benutzers, von dem sie erhalten wurde
-     * gemäÿ der geltenden Kommunikationsform an andere Benutzer.
+     * gemäß der geltenden Kommunikationsform an andere Benutzer.
      * @param voicedata Audiodaten.
      * @see model.communication.message.VoiceMessage
      * @see model.communication.CommunicationRegion
      */
-    public void talk(byte[] voicedata);
+    void talk(byte[] voicedata);
 
     /**
      * Führt im Namen des Benutzers eine administrative Aktion auf einen anderen Benutzer
@@ -72,17 +73,17 @@ public interface IUser {
      * @throws NoPermissionException wenn der durchführende Benutzer nicht die nötige Berechtigung besitzt.
      * @throws IllegalStateException wenn eine nicht durchführbare Aktion durchgeführt werden soll.
      */
-    public void executeAdministrativeAction(UUID targetId, AdministrativeAction action, String[] args) throws UserNotFoundException, NoPermissionException, IllegalStateException;
+    void executeAdministrativeAction(UUID targetId, AdministrativeAction action, String[] args) throws UserNotFoundException, NoPermissionException, IllegalStateException;
 
     /**
      * Lässt den Benutzer mit einem räumlichen Kontext interagieren.
      * @param spatialId ID des räumlichen Kontexts, mit dem interagiert werden soll.
      * @throws IllegalInteractionException wenn der Benutzer sich nicht in unmittelbarer
      * Nähe eines Kontextes mit der ID befindet, mit dem Kontext keine Interaktion
-     * möglich ist, oder der Benutzer das Menü eines Kontextes gerade geöffnet hat.
+     * möglich ist, oder der Benutzer gerade bereits mit einem Kontext interagiert.
      * @see model.context.spatial.SpatialContext
      */
-    public void interact(ContextID spatialId) throws IllegalInteractionException;
+    void interact(ContextID spatialId) throws IllegalInteractionException;
 
     /**
      * Lässt den Benutzer eine Menüoption eines räumlichen Kontextes durchführen.
@@ -98,7 +99,7 @@ public interface IUser {
      * Menüoption unterstützt oder die Argumente ungültig sind.
      * @see model.context.spatial.SpatialContext
      */
-    public void executeOption(ContextID spatialId, int menuOption, String[] args) throws IllegalInteractionException, IllegalMenuActionException;
+    void executeOption(ContextID spatialId, int menuOption, String[] args) throws IllegalInteractionException, IllegalMenuActionException;
 
     /**
      * Löscht eine Benachrichtigung des Benutzers.
@@ -107,7 +108,7 @@ public interface IUser {
      * mit der ID besitzt.
      * @see model.notification.Notification
      */
-    public void deleteNotification(UUID notificationId) throws NotificationNotFoundException;
+    void deleteNotification(UUID notificationId) throws NotificationNotFoundException;
 
     /**
      * Akzeptiert die in einer Benachrichtigung enthaltenen Anfrage, oder lehnt diese ab.
@@ -117,82 +118,75 @@ public interface IUser {
      * @throws NotificationNotFoundException wenn der Benutzer keine Benachrichtigung
      * mit der ID besitzt.
      * @throws IllegalNotificationActionException wenn die Benachrichtigung keine
-     * Anfrage ist oder das Annehmen oder Ablehnen dieser zur Durchführung einer
-     * nicht erlaubten Aktion führt.
+     * Anfrage ist.
      * @see model.notification.Notification
      */
-    public void manageNotification(UUID notificationId, boolean accept) throws NotificationNotFoundException, IllegalNotificationActionException;
-
-    /**
-     * Ändert den Status eines Benutzers.
-     * @param status Neuer Status des Benutzers.
-     */
-    public void setStatus(Status status);
+    void manageNotification(UUID notificationId, boolean accept) throws NotificationNotFoundException, IllegalNotificationActionException;
 
     /**
      * Ändert den Avatar des Benutzers.
      * @param avatar Neuer Avatar des Benutzers.
      */
-    public void setAvatar(Avatar avatar);
+    void setAvatar(Avatar avatar);
 
     /**
      * Gibt die ID des Benutzers zurück.
      * @return ID des Benutzers.
      */
-    public UUID getUserId();
+    UUID getUserId();
 
     /**
      * Gibt den Benutzernamen des Benutzers zurück.
      * @return Benutzername des Benutzers.
      */
-    public String getUsername();
+    String getUsername();
 
     /**
      * Gibt den aktuellen Status des Benutzers zurück.
      * @return Status des Benutzers.
      */
-    public Status getStatus();
+    Status getStatus();
 
     /**
      * Gibt den aktuell ausgewählten Avatar des Benutzers zurück.
      * @return Avatar des Benutzers.
      */
-    public Avatar getAvatar();
+    Avatar getAvatar();
 
     /**
      * Gibt die aktuelle Welt, in der sich der Benutzer bendet, zurück.
      * @return Aktuelle Welt des Benutzers.
      */
-    public ISpatialContext getWorld();
+    ISpatialContext getWorld();
 
     /**
      * Gibt die aktuelle Position innerhalb des Raumes, in dem sich der Benutzer bendet,
      * zurück.
      * @return Aktuelle Position des Benutzers.
      */
-    public ILocation getLocation();
+    ILocation getLocation();
 
     /**
      * Gibt die Freunde des Benutzers zurück.
      * @return Menge der Freunde des Benutzers.
      */
-    public Map<UUID, IUser> getFriends();
+    Map<UUID, IUser> getFriends();
 
     /**
      * Gibt die von diesem Benutzer ignorierten Benutzer zurück.
      * @return Menge der vom Benutzer ignorierten Benutzer.
      */
-    public Map<UUID, IUser> getIgnoredUsers();
+    Map<UUID, IUser> getIgnoredUsers();
 
     /**
      * Gibt die Rollen des Benutzers im globalen Kontext zurück.
      * @return Menge der globalen Rollen des Benutzers.
      */
-    public Map<IContext, IContextRole> getGlobalRoles();
+    Map<IContext, IContextRole> getGlobalRoles();
 
     /**
      * Gibt die Benachrichtigungen des Benutzers im globalen Kontext zurück.
      * @return Menge der globalen Benachrichtigungen des Benutzers.
      */
-    public Map<UUID, INotification> getGlobalNotifications();
+    Map<UUID, INotification> getGlobalNotifications();
 }

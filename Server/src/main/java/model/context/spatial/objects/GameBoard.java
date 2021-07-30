@@ -14,7 +14,7 @@ public class GameBoard extends SpatialContext {
 
     @Override
     public void interact(User user) {
-        user.setCurrentInteractable(this);
+        //user.setCurrentInteractable(this);
         user.getClientSender().send(ClientSender.SendAction.OPEN_MENU, this);
     }
 

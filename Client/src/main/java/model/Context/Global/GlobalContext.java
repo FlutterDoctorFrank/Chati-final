@@ -7,9 +7,11 @@ import model.Exceptions.ContextNotFoundException;
 import model.context.ContextID;
 import model.context.spatial.Music;
 import model.context.spatial.SpatialMap;
+import view.Screens.IModelObserver;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -22,14 +24,12 @@ public class GlobalContext extends Context implements IGlobalContextView, IGloba
     private Map<ContextID, SpatialContext> worlds;
     private SpatialContext currentWorld;
     private SpatialContext currentRoom;
+    private IModelObserver iModelObserver;
 
 
-    public GlobalContext(String contextName, Context parent, ContextID contextId, Map<ContextID, SpatialContext> worlds,
-                         SpatialContext currentWorld, SpatialContext currentRoom) {
-        super(contextName, parent, contextId);
-        this.worlds = worlds;
-        this.currentWorld = currentWorld;
-        this.currentRoom = currentRoom;
+    private GlobalContext() {
+        super("global", null, new ContextID("global"));
+        this.worlds = new HashMap<>();
     }
 
 
@@ -38,6 +38,7 @@ public class GlobalContext extends Context implements IGlobalContextView, IGloba
         this.worlds.clear();
         worlds.forEach((worldId, world) -> this.worlds.put(worldId, new SpatialContext(world,
                 GlobalContext.getInstance(), worldId)));
+
     }
 
     @Override
@@ -47,12 +48,14 @@ public class GlobalContext extends Context implements IGlobalContextView, IGloba
         privateRooms.forEach((roomId, room) -> rooms.put(worldId, new SpatialContext(room,
                 worlds.get(worldId), roomId)));
         worlds.get(worldId).setRooms(rooms);
+        iModelObserver.setRoomInfoChanged();
     }
 
     @Override
     public void setWorld(ContextID worldId) throws ContextNotFoundException {
         checkContextExistIn(worldId, worlds, "world with this id doesn't exist!");
         currentWorld = worlds.get(worldId);
+        iModelObserver.setMapChanged();
     }
 
     @Override
@@ -60,6 +63,7 @@ public class GlobalContext extends Context implements IGlobalContextView, IGloba
         checkContextExistIn(roomId, currentWorld.getRooms(), "room with this id doesn't exist!");
         currentRoom = currentWorld.getRooms().get(roomId);
         currentRoom.setMap(map);
+        iModelObserver.setMapChanged();
     }
 
     @Override
@@ -92,6 +96,9 @@ public class GlobalContext extends Context implements IGlobalContextView, IGloba
      * @return Die Instanz von GlobalContext.
      */
     public static GlobalContext getInstance(){
+        if (global == null){
+            global = new GlobalContext();
+        }
         return global;
     }
 
@@ -102,6 +109,9 @@ public class GlobalContext extends Context implements IGlobalContextView, IGloba
 
     public SpatialContext getRoom() { return currentRoom; }
 
+    public void setIModelObserver(IModelObserver iModelObserver) {
+        this.iModelObserver = iModelObserver;
+    }
 
     /**
      * Wirft eine ContextNotFoundException mit der Nachricht message, wenn contectId nicht in contextMap enthalten

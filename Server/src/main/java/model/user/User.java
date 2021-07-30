@@ -1,9 +1,7 @@
 package model.user;
 
 import controller.network.ClientSender;
-import model.MessageBundle;
 import model.communication.CommunicationHandler;
-import model.communication.message.TextMessage;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.IContext;
@@ -22,6 +20,7 @@ import model.role.Role;
 import model.user.account.UserAccountManager;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -136,7 +135,7 @@ public class User implements IUser {
         // Sende die entsprechenden Pakete an den Benutzer und an andere Benutzer.
         clientSender.send(ClientSender.SendAction.WORLD_ACTION, currentWorld);
         clientSender.send(ClientSender.SendAction.CONTEXT_JOIN, currentWorld);
-        clientSender.send(ClientSender.SendAction.CONTEXT_ROLE, contextRoles);
+        clientSender.send(ClientSender.SendAction.CONTEXT_ROLE, getWorldRoles());
         clientSender.send(ClientSender.SendAction.NOTIFICATION, getWorldNotifications());
         currentWorld.getUsers().forEach((userID, user) -> {
             user.getClientSender().send(ClientSender.SendAction.USER_INFO, this);
@@ -172,19 +171,16 @@ public class User implements IUser {
         if (currentWorld == null || currentLocation == null) {
             throw new IllegalStateException("User is not in a world.");
         }
-        SpatialContext currentRoom = getRoom();
-        SpatialContext currentArea = getArea();
+        SpatialContext currentRoom = currentLocation.getRoom();
+        SpatialContext currentArea = currentLocation.getArea();
 
-        // Überprüfe, ob im aktuellen Bereich des Benutzers eine Bewegung erlaubt ist und sende ein Paket mit der
-        // aktuellen Position.
+        // Überprüfe, ob im aktuellen Bereich des Benutzers eine Bewegung erlaubt ist.
         if (!currentArea.isMoveable()) {
-            clientSender.send(ClientSender.SendAction.AVATAR_MOVE, this);
             throw new IllegalStateException("Movement is not allowed.");
         }
 
-        // Überprüfe, ob die Zielkoordinaten erlaubt sind und sende ein Paket mit der aktuellen Position.
+        // Überprüfe, ob die Zielkoordinaten erlaubt sind.
         if (!currentRoom.isLegal(posX, posY)) {
-            clientSender.send(ClientSender.SendAction.AVATAR_MOVE, this);
             throw new IllegalPositionException("Position is illegal.", this, posX, posY);
         }
 
@@ -200,7 +196,7 @@ public class User implements IUser {
 
         // Ermittle, ob sich der Bereich des Benutzers geändert hat, und entferne ihn aus den verlassenen Bereichen
         // und füge ihn zu den betretenen Bereichen hinzu.
-        SpatialContext newArea = getArea();
+        SpatialContext newArea = currentLocation.getArea();
         if (!currentArea.equals(newArea)) {
             Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
             lastCommonAncestor.removeUser(this);
@@ -235,11 +231,13 @@ public class User implements IUser {
         }
         SpatialContext currentArea = currentLocation.getArea();
         SpatialContext interactable = currentArea.getChildren().get(spatialID);
+
         // Überprüfe, ob ein Objekt in der Nähe des Benutzers mit dieser ID vorhanden ist und ob der Benutzer mit diesem
         // interagieren kann.
         if (interactable == null || !interactable.canInteract(this)) {
             throw new IllegalInteractionException("There is no interactable context with this ID near the user.", this);
         }
+
         // Interagiere mit dem Objekt.
         interactable.interact(this);
     }
@@ -249,52 +247,56 @@ public class User implements IUser {
             IllegalMenuActionException {
         SpatialContext currentArea = currentLocation.getArea();
         SpatialContext interactable = currentArea.getChildren().get(spatialID);
+
         // Überprüfe, ob ein Objekt in der Nähe des Benutzers mit dieser ID vorhanden ist und ob der Benutzer mit diesem
         // interagieren kann.
         if (interactable == null || !interactable.canInteract(this)) {
             throw new IllegalInteractionException("There is no interactable context with this ID near the user.", this);
         }
+
         // Überprüfe, ob der Benutzer das Menü dieses Objekts geöffnet hat.
         if (!currentInteractable.equals(interactable)) {
             throw new IllegalInteractionException("The user has not opened the menu of this context.", this, interactable);
         }
+
         // Führe die Menü-Option durch.
         currentInteractable.executeMenuOption(this, menuOption, args);
     }
 
     @Override
     public void deleteNotification(UUID notificationID) throws NotificationNotFoundException {
-        if (notifications.remove(notificationID) == null) {
+        Notification notification = notifications.get(notificationID);
+        if (notification == null) {
             throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationID);
         }
+        database.removeNotification(this, notification);
     }
 
     @Override
     public void manageNotification(UUID notificationID, boolean accept) throws NotificationNotFoundException,
             IllegalNotificationActionException {
         Notification notification = notifications.get(notificationID);
+
         // Überprüfe, ob die Benachrichtigung vorhanden ist.
         if (notification == null) {
             throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationID);
         }
+
         // Akzeptiere die Benachrichtigung, oder lehne sie ab.
         if (accept) {
             notification.accept();
         } else {
             notification.decline();
         }
-    }
 
-    @Override
-    public void setStatus(Status status) {
-        this.status = status;
-        // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
-        updateUserInfo();
+        // Lösche die entsprechende Benachrichtigung.
+        deleteNotification(notificationID);
     }
 
     @Override
     public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
+        database.changeAvatar(this, avatar);
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
         updateUserInfo();
     }
@@ -341,33 +343,59 @@ public class User implements IUser {
 
     @Override
     public Map<IContext, IContextRole> getGlobalRoles() {
-        return contextRoles.entrySet().stream()
-                .filter(entry -> entry.getKey().equals(GlobalContext.getInstance()))
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        return contextRoles.values().stream()
+                .filter(contextRole -> contextRole.getContext().equals(GlobalContext.getInstance()))
+                .collect(Collectors.toUnmodifiableMap(ContextRole::getContext, Function.identity()));
     }
-
-    /*
-    @Override
-    public Map<IContext, IContextRole> getWorldRoles() {
-        return contextRoles.entrySet().stream()
-                .filter(entry -> entry.getKey().equals(currentWorld))
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-     */
 
     @Override
     public Map<UUID, INotification> getGlobalNotifications() {
-        return notifications.entrySet().stream()
-                .filter(entry -> entry.getValue().getContext().equals(GlobalContext.getInstance()))
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        return notifications.values().stream()
+                .filter(notification -> notification.getContext().equals(GlobalContext.getInstance()))
+                .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
     }
 
-    public Map<UUID, INotification> getWorldNotifications() {
-        return notifications.entrySet().stream()
-                .filter(entry -> entry.getValue().getContext().equals(currentWorld))
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+    /**
+     * Teleportiert einen Benutzer an die angegebene Position.
+     * @param newLocation Position, an die Benutzer teleportiert werden soll.
+     */
+    public void teleport(Location newLocation) {
+        SpatialContext newRoom = newLocation.getRoom();
+        SpatialContext newArea = newLocation.getArea();
+        // Durchzuführen, wenn der Benutzer bereits eine Position in der Welt hat.
+        if (currentLocation != null) {
+            SpatialContext currentRoom = currentLocation.getRoom();
+            SpatialContext currentArea = currentLocation.getArea();
+            // Durchzuführen, wenn sich durch das Teleportieren der Bereich geändert hat.
+            if (!currentArea.equals(newArea)) {
+                // Entferne Benutzer aus altem Bereich.
+                Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
+                lastCommonAncestor.removeUser(this);
+                // Durchzuführen, wenn sich durch das Teleportieren der Raum geändert hat.
+                if (!currentRoom.equals(newRoom)) {
+                    // Sende Pakete zum entfernen des Avatars im alten Raum.
+                    currentRoom.getUsers().forEach((userId, user) -> {
+                        user.getClientSender().send(ClientSender.SendAction.AVATAR_REMOVE, this);
+                    });
+                }
+            }
+        }
+        // Sende neue Position an andere Benutzer im Raum, und Position anderer Benutzer im Raum an teleportierenden
+        // Benutzer.
+        newRoom.getUsers().forEach((userId, user) -> {
+            user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, this);
+            clientSender.send(ClientSender.SendAction.AVATAR_MOVE, user);
+        });
+        // Betrete neuen Bereich.
+        newArea.addUser(this);
+        // Sende Musikinformationen des neuen Bereichs.
+        clientSender.send(ClientSender.SendAction.CONTEXT_MUSIC, newArea);
     }
 
+    /**
+     * Fügt einen Benutzer in die Liste der Freunde hinzu.
+     * @param user Hinzuzufügender Benutzer.
+     */
     public void addFriend(User user) {
         friends.put(user.getUserId(), user);
         database.addFriendship(this, user);
@@ -375,6 +403,10 @@ public class User implements IUser {
         updateUserInfo();
     }
 
+    /**
+     * Entfernt einen Benutzer aus der Liste der Freunde.
+     * @param user Zu entfernender Benutzer.
+     */
     public void removeFriend(User user) {
         friends.remove(user.getUserId());
         database.removeFriendship(this, user);
@@ -382,6 +414,10 @@ public class User implements IUser {
         updateUserInfo();
     }
 
+    /**
+     * Fügt einen Benutzer in die Liste der ignorierten Benutzer hinzu.
+     * @param user Hinzuzufügender Benutzer.
+     */
     public void ignoreUser(User user) {
         ignoredUsers.put(user.getUserId(), user);
         database.addIgnoredUser(this, user);
@@ -389,6 +425,10 @@ public class User implements IUser {
         updateUserInfo();
     }
 
+    /**
+     * Entfernt einen Benutzer aus der Liste der ignorierten Benutzer.
+     * @param user Zu entfernender Benutzer.
+     */
     public void unignoreUser(User user) {
         ignoredUsers.remove(user.getUserId());
         database.removeIgnoredUser(this, user);
@@ -396,6 +436,12 @@ public class User implements IUser {
         updateUserInfo();
     }
 
+    /**
+     * Fügt dem Benutzer eine Rolle in einem Kontext hinzu.
+     * @param context Kontext, in dem die Rolle hinzugefügt werden soll.
+     * @param role Hinzuzufügende Rolle.
+     * @see ContextRole
+     */
     public void addRole(Context context, Role role) {
         ContextRole contextRole = contextRoles.get(context);
         if (contextRole == null) {
@@ -404,140 +450,173 @@ public class User implements IUser {
             contextRole.addRole(role);
         }
         database.addRole(this, context, role);
-        clientSender.send(ClientSender.SendAction.CONTEXT_ROLE, contextRoles);
+        // Sende geänderte Rolleninformationen an alle relevanten Benutzer.
+        updateRoleInfo();
     }
 
+    /**
+     * Entzieht dem Benutzer eine Rolle in einem Kontext.
+     * @param context Kontext, in dem die Rolle entzogen werden soll.
+     * @param role Zu entziehende Rolle.
+     */
     public void removeRole(Context context, Role role) {
         ContextRole contextRole = contextRoles.get(context);
-        contextRole.removeRole(role);
-        if (contextRole.getRoles().isEmpty()) {
-            contextRoles.remove(context);
+        if (contextRole != null) {
+            contextRole.removeRole(role);
+            if (contextRole.getRoles().isEmpty()) {
+                contextRoles.remove(context);
+            }
+            database.removeRole(this, context, role);
+            // Sende geänderte Rolleninformationen an alle relevanten Benutzer.
+            updateRoleInfo();
         }
-        database.removeRole(this, context, role);
-        clientSender.send(ClientSender.SendAction.CONTEXT_ROLE, contextRoles);
     }
 
+    /**
+     * Fügt dem Benutzer eine Benachrichtigung hinzu.
+     * @param notification Hinzuzufügende Benachrichtigung.
+     */
     public void addNotification(Notification notification) {
-        notifications.put(notification.getNotificationID(), notification);
+        notifications.put(notification.getNotificationId(), notification);
         database.addNotification(this, notification);
-        clientSender.send(ClientSender.SendAction.NOTIFICATION, Collections.singletonMap(notification.getNotificationID(), notification));
+        // Sende Benachrichtigung an Benutzer.
+        clientSender.send(ClientSender.SendAction.NOTIFICATION, Collections.singletonMap(notification.getNotificationId(), notification));
     }
 
-    public void removeNotification(Notification notification) {
-        notifications.remove(notification.getNotificationID());
-        database.removeNotification(this, notification);
-    }
-
+    /**
+     * Überprüft, ob ein Benutzer eine Rolle in einem Kontext besitzt.
+     * @param context Zu überprüfender Kontext.
+     * @param role Zu überprüfende Rolle.
+     * @return true, wenn der Benutzer die Rolle in dem Kontext besitzt, sonst false.
+     */
     public boolean hasRole(Context context, Role role) {
         ContextRole contextRole = contextRoles.get(context);
         return contextRole != null && contextRole.hasRole(role);
     }
 
+    /**
+     * Überprüft, ob ein Benutzer eine Berechtigung in einem Kontext, oder einem übergeordneten Kontext besitzt.
+     * @param context Zu überprüfender Kontext.
+     * @param permission Zu überprüfende Berechtigung.
+     * @return true, wenn der Benutzer die Rolle in dem Kontext, oder einem übergeordneten Kontext besitzt, sonst false.
+     */
     public boolean hasPermission(Context context, Permission permission) {
-        ContextRole contextRole = contextRoles.get(context);
-        if (contextRole != null && contextRole.hasPermission(permission)) {
-            return true;
-        } else {
-            return hasPermission(context.getParent(), permission);
+        if (context == null) {
+            return false;
         }
+        ContextRole contextRole = contextRoles.get(context);
+        return contextRole != null && contextRole.hasPermission(permission) || hasPermission(context.getParent(), permission);
     }
 
-    /*
-    public Context getHighestPermittedContext(Context context, Permission permission) {
-        Context highestPermittedContext = null;
-        Context currentContext = context;
-        ContextRole contextRole;
-        do {
-            contextRole = contextRoles.get(currentContext);
-            if (contextRole != null && contextRole.hasPermission(permission)) {
-                highestPermittedContext = currentContext;
-            }
-            currentContext = currentContext.getParent();
-        } while (currentContext != null);
-        return highestPermittedContext;
-    }
-    */
-
+    /**
+     * Überprüft, ob sich ein Benutzer in der Freundesliste befindet.
+     * @param user Zu überprüfender Benutzer.
+     * @return true, wenn sich der Benutzer in der Freundesliste befindet, sonst false.
+     */
     public boolean isFriend(User user) {
         return friends.containsKey(user.getUserId());
     }
 
+    /**
+     * Überprüft, ob ein Benutzer ignoriert wird.
+     * @param user Zu überprüfender Benutzer.
+     * @return true, wenn der Benutzer ignoriert wird, sonst false.
+     */
     public boolean isIgnoring(User user) {
         return ignoredUsers.containsKey(user.getUserId());
     }
 
-    public void teleport(Location newLocation) {
-        SpatialContext currentRoom = getRoom();
-        SpatialContext currentArea = getArea();
-        currentLocation = newLocation;
-        SpatialContext newRoom = getRoom();
-        SpatialContext newArea = getArea();
-        // check if user entered a new area
-        if (!currentArea.equals(newArea)) {
-            // check if user entered a new room
-            if (!currentRoom.equals(newRoom)) {
-                // Remove avatar from all other users in the old room
-                currentRoom.getUsers().forEach((userID, user) -> {
-                    user.getClientSender().send(ClientSender.SendAction.AVATAR_REMOVE, this);
-                });
-                // Send room join information to user
-                clientSender.send(ClientSender.SendAction.CONTEXT_JOIN, this);
-                // Send position of user to other users in new room & position of others in new room to joining user
-                newRoom.getUsers().forEach((userID, user) -> {
-                    clientSender.send(ClientSender.SendAction.AVATAR_MOVE, user);
-                    user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, this);
-                });
-                // check if user entered a private room
-                if (newRoom.isPrivate()) {
-                    MessageBundle messageBundle = new MessageBundle("PrivateRoomEnterMessageKey", new Object[]{username});
-                    TextMessage info = new TextMessage(messageBundle);
-                    // send message to users in private room
-                    newRoom.getUsers().forEach((userID, user) -> {
-                        user.getClientSender().send(ClientSender.SendAction.MESSAGE, info);
-                    });
-                }
-            }
-            Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
-            lastCommonAncestor.removeUser(this);
-            newArea.addUser(this);
-            // Send music info of new context
-            clientSender.send(ClientSender.SendAction.CONTEXT_MUSIC, newArea);
-        }
-    }
-
+    /**
+     * Überprüft, ob ein Benutzer gerade mit dem übergebenen Kontext interagiert.
+     * @param interactable Zu überprüfender Kontext.
+     * @return true, wenn Benutzer mit dem Kontext interagiert, sonst false.
+     */
     public boolean isInteractingWith(SpatialContext interactable) {
         return currentInteractable.equals(interactable);
     }
 
-    public void setCurrentInteractable(SpatialContext interactable) {
-        this.currentInteractable = interactable;
-    }
-
+    /**
+     * Überprüft, ob ein Benutzer gerade online ist.
+     * @return true, wenn der Benutzer online ist, sonst false.
+     */
     public boolean isOnline() {
         return !status.equals(Status.OFFLINE);
     }
 
+    /**
+     * Ändert den Status eines Benutzers.
+     * @param status Neuer Status des Benutzers.
+     */
+    public void setStatus(Status status) {
+        this.status = status;
+        // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
+        updateUserInfo();
+    }
+
+    /**
+     * Setzt die Instanz des ClientSenders.
+     * @param clientSender Instanz des ClientSenders.
+     */
     public void setClientSender(ClientSender clientSender) {
         this.clientSender = clientSender;
     }
 
+    /**
+     * Gibt die Rollen des Benutzers innerhalb seiner aktuellen Welt zurück.
+     * @return Menge der Rollen des Benutzers in seiner aktuellen Welt.
+     * @throws IllegalStateException wenn sich der Benutzer in keiner Welt befindet.
+     */
+    public Map<IContext, IContextRole> getWorldRoles() throws IllegalStateException {
+        // Prüfe, ob Benutzer in einer Welt ist.
+        if (currentWorld == null) {
+            throw new IllegalStateException("User is not in a world.");
+        }
+        return contextRoles.values().stream()
+                .filter(contextRole -> contextRole.getContext().equals(currentWorld))
+                .collect(Collectors.toUnmodifiableMap(ContextRole::getContext, Function.identity()));
+    }
+
+    /**
+     * Gibt die Benachrichtigungen des Benutzers innerhalb seiner aktuellen Welt zurück.
+     * @return Menge der Benachrichtigungen des Benutzers in seiner aktuellen Welt.
+     * @throws IllegalStateException wenn sich der Benutzer in keiner Welt befindet.
+     */
+    public Map<UUID, INotification> getWorldNotifications() throws IllegalStateException {
+        // Prüfe, ob Benutzer in einer Welt ist.
+        if (currentWorld == null) {
+            throw new IllegalStateException("User is not in a world.");
+        }
+        return notifications.values().stream()
+                .filter(notification -> notification.getContext().equals(currentWorld))
+                .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
+    }
+
+    /**
+     * @return ClientSender.
+     */
     public ClientSender getClientSender() {
         return clientSender;
     }
 
-    public SpatialContext getArea() {
-        return currentLocation != null ? currentLocation.getArea() : null;
-    }
-
-    public SpatialContext getRoom() {
-        return currentLocation != null ? currentLocation.getRoom() : null;
-    }
-
+    /**
+     * Sendet Pakete an alle relevanten Benutzer mit der aktualisierten Benutzerinformation.
+     */
     public void updateUserInfo() {
         Map<UUID, User> receivers = getWorld().getUsers();
         receivers.putAll(friends);
-        receivers.forEach((userID, user) -> {
+        receivers.values().forEach(user -> {
             user.getClientSender().send(ClientSender.SendAction.USER_INFO, this);
+        });
+    }
+
+    /**
+     * Sendet Pakete an alle relevanten Benutzer mit der aktualisierten Rolleninformation.
+     */
+    public void updateRoleInfo() {
+        Map<UUID, User> receivers = getWorld().getUsers();
+        receivers.putAll(friends);
+        receivers.values().forEach(user -> {
+            user.getClientSender().send(ClientSender.SendAction.CONTEXT_ROLE, this);
         });
     }
 }

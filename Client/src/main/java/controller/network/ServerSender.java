@@ -3,10 +3,17 @@ package controller.network;
 import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketInContextInteract;
+import controller.network.protocol.PacketInUserManage;
+import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketWorldAction;
+import model.User.AdministrativeAction;
 import model.context.ContextID;
 import model.context.spatial.SpatialMap;
+import model.user.Avatar;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.UUID;
 
 /**
  * Eine Schnittstelle, welche als Beobachter für die View dient.
@@ -28,34 +35,87 @@ public interface ServerSender {
 
         /**
          * Information, dass der Benutzer eingeloggt werden soll.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@link String}, der Benutzername des anzumeldenden Benutzers<br>
+         *     - {@code 1}: {@link String}, das Passwort des anzumeldenden Benutzers<br>
+         *     - {@code 2}: {@link Boolean}, true, wenn der Benutzer registriert werden soll, ansonsten false
+         * </p>
          */
         PROFILE_LOGIN {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des ProfileAction-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (objects.length != 3) {
+                    if (objects[0] instanceof String && objects[1] instanceof String && objects[2] instanceof Boolean) {
+                        // Sende Paket zum anmelden oder registrieren.
+                        return new PacketProfileAction((String) objects[0], (String) objects[1], (boolean) objects[2]);
+                    }
+
+                    throw new IllegalArgumentException("Expected String, String and Boolean, got "
+                            + objects[0].getClass() + ", " + objects[1].getClass() + " and " + objects[2].getClass());
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 3, got " + objects.length);
+                }
             }
         },
 
         /**
          * Information, dass das Profil des Benutzers geändert werden soll.
+         * <p>
+         *     Zum Ändern des Passworts wird folgendes Objekt Array erwartet:<br>
+         *     - {@code 0}: {@link String}, das aktuelle Password des Benutzers<br>
+         *     - {@code 1}: {@link String}, das neue Password für den Benutzer
+         * </p>
+         * <p>
+         *     Zum Ändern des Avatars wird folgendes Objekt Array erwartet:<br>
+         *     - {@code 0}: {@link Avatar}, der neue Avatar für den Benutzer
+         * </p>
          */
         PROFILE_CHANGE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des ProfileAction-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (objects.length == 2) {
+                    if (objects[0] instanceof String && objects[1] instanceof String) {
+                        // Sende Paket zum Ändern des Passworts.
+                        return new PacketProfileAction((String) objects[0], (String) objects[1]);
+                    }
+
+                    throw new IllegalArgumentException("Expected String and String, got "
+                            + objects[0].getClass() + ", " + objects[1].getClass());
+                } else if (objects.length == 1) {
+                    if (objects[0] instanceof Avatar) {
+                        // Sende Paket zum Ändern des Avatars.
+                        return new PacketProfileAction((Avatar) objects[0]);
+                    }
+
+                    throw new IllegalArgumentException("Expected Avatar, got " + objects[0].getClass());
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 1 to 2, got " + objects.length);
+                }
             }
         },
 
         /**
-         * Information, dass der Benutzer ausgeloggt werden soll.
+         * Information, dass der Benutzer ausgeloggt oder gelöscht werden soll.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@link String}, das aktuelle Password wenn der Benutzer gelöscht werden soll, ansonsten ein leerer String<br>
+         *     - {@code 1}: {@link Boolean}, true, wenn der Benutzer gelöscht werden soll, ansonsten false
+         * </p>
          */
         PROFILE_LOGOUT {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des ProfileAction-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (objects.length != 2) {
+                    if (objects[0] instanceof String && objects[1] instanceof Boolean) {
+                        return new PacketProfileAction((String) objects[0], (boolean) objects[1]);
+                    } else {
+                        throw new IllegalArgumentException("Expected String and Boolean, got "
+                                + objects[0].getClass() + " and " + objects[1].getClass());
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 2, got " + objects.length);
+                }
             }
         },
 
@@ -71,14 +131,14 @@ public interface ServerSender {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
                 if (objects.length != 2) {
-                    try {
+                    if (objects[0] instanceof ContextID && objects[1] instanceof Boolean) {
                         final ContextID contextId = (ContextID) objects[0];
                         final boolean join = (boolean) objects[1];
 
                         return new PacketWorldAction(join ? PacketWorldAction.Action.JOIN : PacketWorldAction.Action.LEAVE, contextId);
-                    } catch (ClassCastException ex) {
+                    } else {
                         throw new IllegalArgumentException("Expected ContextID and Boolean, got "
-                                + objects[0].getClass() + " and " + objects[1].getClass(), ex);
+                                + objects[0].getClass() + " and " + objects[1].getClass());
                     }
                 } else {
                     throw new IllegalArgumentException("Expected Array size of 2, got " + objects.length);
@@ -98,11 +158,11 @@ public interface ServerSender {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
                 if (objects.length != 2) {
-                    try {
+                    if (objects[0] instanceof SpatialMap && objects[1] instanceof String) {
                         return new PacketWorldAction((SpatialMap) objects[0], (String) objects[1]);
-                    } catch (ClassCastException ex) {
+                    } else {
                         throw new IllegalArgumentException("Expected SpatialMap and String, got "
-                                + objects[0].getClass() + " and " + objects[1].getClass(), ex);
+                                + objects[0].getClass() + " and " + objects[1].getClass());
                     }
                 } else {
                     throw new IllegalArgumentException("Expected Array size of 2, got " + objects.length);
@@ -121,9 +181,9 @@ public interface ServerSender {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
                 if (objects.length != 1) {
-                    try {
+                    if (objects[0] instanceof ContextID) {
                         return new PacketWorldAction(PacketWorldAction.Action.DELETE, (ContextID) objects[0]);
-                    } catch (ClassCastException ex) {
+                    } else {
                         throw new IllegalArgumentException("Expected ContextID, got " + objects[0].getClass());
                     }
                 } else {
@@ -144,14 +204,14 @@ public interface ServerSender {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
                 if (objects.length == 2) {
-                    try {
+                    if (objects[0] instanceof Integer && objects[1] instanceof Integer) {
                         final int posX = (int) objects[0];
                         final int posY = (int) objects[1];
 
                         return new PacketAvatarMove(posX, posY);
-                    } catch (ClassCastException ex) {
+                    } else {
                         throw new IllegalArgumentException("Expected Integer and Integer, got "
-                                + objects[0].getClass() + " and " + objects[1].getClass(), ex);
+                                + objects[0].getClass() + " and " + objects[1].getClass());
                     }
                 } else {
                     throw new IllegalArgumentException("Expected Array size of 2, got " + objects.length);
@@ -170,9 +230,9 @@ public interface ServerSender {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
                 if (objects.length != 1) {
-                    try {
+                    if (objects[0] instanceof ContextID) {
                         return new PacketInContextInteract((ContextID) objects[0]);
-                    } catch (ClassCastException ex) {
+                    } else {
                         throw new IllegalArgumentException("Expected ContextID, got " + objects[0].getClass());
                     }
                 } else {
@@ -209,8 +269,23 @@ public interface ServerSender {
         USER_MANAGE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des UserManage-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (objects.length != 3) {
+                    if (objects[0] instanceof UUID && objects[1] instanceof AdministrativeAction) {
+                        try {
+                            final PacketInUserManage.Action action = PacketInUserManage.Action.valueOf(((AdministrativeAction) objects[1]).name());
+                            final String[] arguments = Arrays.copyOfRange(objects, 2, objects.length, String[].class);
+
+                            return new PacketInUserManage((UUID) objects[0], action, arguments);
+                        } catch (IllegalArgumentException ex) {
+                            throw new IllegalStateException("Failed to provide corresponding administrative-action", ex);
+                        }
+                    } else {
+                        throw new IllegalArgumentException("Expected UUID, AdministrativeAction and String, got "
+                                + objects[0].getClass() + "," + objects[1].getClass() + " and " + objects[2].getClass());
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 3, got " + objects.length);
+                }
             }
         },
 
