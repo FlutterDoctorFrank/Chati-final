@@ -20,6 +20,10 @@ public class UserManager implements IUserManagerController, IUserManagerView{
     private User intern;
     private Map<UUID, User> externs;
 
+    private UserManager(){
+        this.userManager = new UserManager();
+    }
+
 
     @Override
     public void setInternUser(UUID userId) {
