@@ -60,7 +60,7 @@ public class LoginTable extends UIComponentTable {
                 } else if (!password.getText().matches("[A-Za-z0-9]{1,16}")) {
                     infoLabel.setText("Kein gültiges Passwort");
                 } else {
-                    String[] credentials = {username.getText(), password.getText()};
+                    Object[] credentials = {username.getText(), password.getText(), false};
                     hud.sendLoginRequest(credentials);
                     waitingLoginResponse = true;
                     infoLabel.setText("Auf Antwort warten");
@@ -78,7 +78,16 @@ public class LoginTable extends UIComponentTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (!username.getText().isEmpty() && !password.getText().isEmpty()) {
-                    hud.addTable(new StartScreenTable(hud));
+                    if (!username.getText().matches("[A-Za-z0-9]{1,16}")) {
+                        infoLabel.setText("Kein gültigen Name");
+                    } else if (!password.getText().matches("[A-Za-z0-9]{1,16}")) {
+                        infoLabel.setText("Kein gültiges Passwort");
+                    } else {
+                        Object[] credentials = {username.getText(), password.getText(), true};
+                        hud.sendRegisterRequest(credentials);
+                        waitingRegResponse = true;
+                        infoLabel.setText("Auf Antwort warten");
+                    }
                 }
             }
         });
@@ -116,6 +125,16 @@ public class LoginTable extends UIComponentTable {
     public void receiveLoginResponse(@NotNull boolean success, @NotNull String message) {
         if (waitingLoginResponse && success) {
             waitingLoginResponse = false;
+            hud.addTable(new StartScreenTable(hud));
+        }
+        if (!success) {
+            infoLabel.setText(message);
+        }
+    }
+
+    public void receiveRegResponse(@NotNull boolean success, @NotNull String message) {
+        if (waitingLoginResponse && success) {
+            waitingRegResponse = false;
             hud.addTable(new StartScreenTable(hud));
         }
         if (!success) {

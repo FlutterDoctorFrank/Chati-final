@@ -93,7 +93,11 @@ public class Hud implements IModelObserver, ViewControllerInterface {
 
     @Override
     public void registrationResponse(boolean success, String messageKey) {
-
+        for (Actor actor : stage.getActors()) {
+            if(actor.getClass().equals(LoginTable.class)) {
+                ((LoginTable) actor).receiveLoginResponse(success, messageKey);
+            }
+        }
     }
 
     @Override
@@ -165,6 +169,11 @@ public class Hud implements IModelObserver, ViewControllerInterface {
     }
 
     public void sendLoginRequest(Object[] credentials) {
+        ServerSender serverSender = hud.getApplicationScreen().getGame().getServerSender();
+        serverSender.send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
+    }
+
+    public void sendRegisterRequest(Object[] credentials) {
         ServerSender serverSender = hud.getApplicationScreen().getGame().getServerSender();
         serverSender.send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
     }
