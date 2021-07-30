@@ -8,6 +8,7 @@ import model.context.ContextID;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,19 +35,19 @@ public class GlobalContextTest {
     void updateWorldsAndGetWorlds() {
         globalContext = GlobalContext.getInstance();
 
-        Map<ContextID, ISpatialContextView> worldsISpatialContextView = new HashMap();
-        Map<ContextID, String> worldsString = new HashMap();
+        Map<ContextID, SpatialContext> worldsISpatialContextView = new HashMap<>();
+        Map<ContextID, String> worldsString = new HashMap<>();
         ContextID contextID1 = new ContextID("global.world1");
-        ISpatialContextView world1 = new SpatialContext("world1", globalContext, contextID1);
+        SpatialContext world1 = new SpatialContext("world1", globalContext, contextID1);
         worldsISpatialContextView.put(contextID1, world1);
         worldsString.put(contextID1, world1.getContextName());
         ContextID contextID2 = new ContextID("global.world2");
-        ISpatialContextView world2 = new SpatialContext("world1", globalContext, contextID1);
+        SpatialContext world2 = new SpatialContext("world1", globalContext, contextID2);
         worldsISpatialContextView.put(contextID2, world2);
         worldsString.put(contextID2, world2.getContextName());
 
         globalContext.updateWorlds(worldsString);
-        worldsISpatialContextView.forEach((ID, world) -> Assert.assertEquals(globalContext.getWorlds().get(ID),
+        worldsISpatialContextView.forEach((ID, world) -> Assertions.assertEquals(globalContext.getWorlds().get(ID),
                 worldsISpatialContextView.get(ID) ));
     }
 
@@ -54,10 +55,10 @@ public class GlobalContextTest {
     void updateRooms() {
         ContextID contextId1 = new ContextID("affe");
         ContextID contextId2 = new ContextID("affe");
-        Context context1 = new SpatialContext(null, null, contextId1);
-        Context context2 = new SpatialContext(null, null, contextId2);
-        Assert.assertEquals(contextId1, contextId2);
-        Assert.assertEquals(context1, context2);
+        SpatialContext context1 = new SpatialContext(null, null, contextId1);
+        SpatialContext context2 = new SpatialContext(null, null, contextId2);
+        Assertions.assertEquals(contextId1, contextId2);
+        Assertions.assertEquals(context1, context2);
     }
 
     @Test

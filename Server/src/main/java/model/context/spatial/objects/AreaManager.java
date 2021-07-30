@@ -1,6 +1,8 @@
 package model.context.spatial.objects;
 
 import controller.network.ClientSender;
+import model.communication.CommunicationMedium;
+import model.communication.CommunicationRegion;
 import model.context.spatial.Location;
 import model.context.spatial.Menu;
 import model.context.spatial.SpatialContext;
@@ -14,12 +16,14 @@ import model.user.account.UserAccountManager;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class AreaManager extends SpatialContext {
 
-    public AreaManager(String contextName, SpatialContext parent, Menu menu, Location interactionLocation) {
-        super(contextName, parent, menu, interactionLocation);
+    public AreaManager(String contextName, SpatialContext parent, Menu menu, Location interactionLocation,
+                       CommunicationRegion region, Set<CommunicationMedium> communicationMedia) {
+        super(contextName, parent, menu, interactionLocation, region, communicationMedia);
     }
 
     @Override
