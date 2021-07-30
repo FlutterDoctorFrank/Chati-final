@@ -11,6 +11,7 @@ import model.user.Avatar;
 import model.user.User;
 
 import java.sql.*;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
@@ -282,7 +283,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     //alle
     @Override
     public Map<UUID, User> getUsers() {
-        return null; // TODO
+        return new HashMap<>(); // TODO
     }
 
     @Override
