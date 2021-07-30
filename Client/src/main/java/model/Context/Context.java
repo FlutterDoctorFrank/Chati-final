@@ -10,6 +10,7 @@ import view.Screens.IModelObserver;
 
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -97,5 +98,18 @@ public abstract class Context implements IContextView{
 
     public void setMusic(Music music) {
         this.music = music;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Context context = (Context) o;
+        return Objects.equals(contextId, context.contextId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(contextId);
     }
 }
