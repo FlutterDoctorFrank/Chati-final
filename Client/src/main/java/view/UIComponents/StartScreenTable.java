@@ -1,28 +1,23 @@
 package view.UIComponents;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import view.Screens.PlayScreen;
-import view.Screens.ScreenHandler;
 
-import java.awt.*;
 
 public class StartScreenTable extends UIComponentTable {
 
-    public StartScreenTable(Hud hud, ScreenHandler screenHandler) {
+    public StartScreenTable(Hud hud) {
         super();
-        create(hud, screenHandler);
+        this.hud = hud;
+        create();
     }
 
-    public void create(Hud hud, ScreenHandler screenHandler) {
+    public void create() {
         int spacing = 5;
 
         add(dropDownMenus(hud)).right().padRight(10).padTop(10);
@@ -38,8 +33,8 @@ public class StartScreenTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new PlayScreenTable(hud, screenHandler));
-                screenHandler.setScreen(new PlayScreen(hud, screenHandler));
+                hud.addTable(new PlayScreenTable(hud));
+                hud.getApplicationScreen().getGame().setScreen(new PlayScreen(hud.getApplicationScreen().getGame()));
             }
         });
 
@@ -60,7 +55,7 @@ public class StartScreenTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new AvatarSelectTable(hud, screenHandler));
+                hud.addTable(new AvatarSelectTable(hud));
             }
         });
         TextButton logout = new TextButton("Abmelden", skin);
@@ -73,7 +68,7 @@ public class StartScreenTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new ProfileSettingsTable(hud, screenHandler));
+                hud.addTable(new ProfileSettingsTable(hud));
             }
         });
 

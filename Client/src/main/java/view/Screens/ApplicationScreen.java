@@ -6,14 +6,20 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import view.Chati;
 import view.UIComponents.Hud;
 
 public abstract class ApplicationScreen implements Screen {
-
+    protected Chati game;
     protected SpriteBatch spriteBatch = new SpriteBatch();
     protected OrthographicCamera gamecam;
     protected Viewport gamePort;
     protected Hud hud;
+
+    public ApplicationScreen(Chati game) {
+        this.game = game;
+        hud = new Hud(spriteBatch, this);
+    }
 
     @Override
     public void show() {
@@ -28,6 +34,14 @@ public abstract class ApplicationScreen implements Screen {
         hud.getStage().act();
         hud.getStage().draw();
 
+    }
+
+    public Chati getGame() {
+        return game;
+    }
+
+    public Hud getHud() {
+        return hud;
     }
 
     @Override
@@ -53,5 +67,4 @@ public abstract class ApplicationScreen implements Screen {
     public void dispose() {
 
     }
-
 }

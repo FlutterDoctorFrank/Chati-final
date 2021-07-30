@@ -5,10 +5,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import view.Screens.ScreenHandler;
 
 public abstract class UIComponentTable extends Table {
     protected Skin skin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
+    protected Hud hud;
 
     public UIComponentTable() {
         setFillParent(true);
@@ -25,15 +25,5 @@ public abstract class UIComponentTable extends Table {
         dropDownMenus.add(users);
         dropDownMenus.add(settings);
         return dropDownMenus;
-    }
-
-    protected float maxComponentHight() {
-        float result = 0;
-        return result;
-    }
-
-    protected float maxComponentWidth() {
-        float result = 0;
-        return result;
     }
 }

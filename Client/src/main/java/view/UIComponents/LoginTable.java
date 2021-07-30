@@ -8,19 +8,25 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import view.Screens.ScreenHandler;
+import controller.network.ServerSender;
+import org.jetbrains.annotations.NotNull;
 
 public class LoginTable extends UIComponentTable {
+    private boolean waitingLoginResponse = false;
+    private boolean waitingRegResponse = false;
+    private TextField password;
+    private Label infoLabel;
+    private TextField username;
 
-    public LoginTable(Hud hud, ScreenHandler screenHandler) {
+    public LoginTable(Hud hud) {
         super();
-        create(hud, screenHandler);
+        create(hud);
     }
 
-    private void create(Hud hud, ScreenHandler screenHandler) {
+    private void create(Hud hud) {
         int spacing = 5;
-        Label infoLabel = new Label("", skin);
-        TextField username = new TextField("Benutzername", skin);
+        infoLabel = new Label("", skin);
+        username = new TextField("Benutzername", skin);
         username.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -37,6 +43,8 @@ public class LoginTable extends UIComponentTable {
                 super.clicked(event, x, y);
                 password.setText("");
             }
+
+
         });
         TextButton login = new TextButton("Login", skin);
         login.addListener(new InputListener() {
@@ -47,8 +55,16 @@ public class LoginTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (!username.getText().isEmpty() && !password.getText().isEmpty())
-                    hud.addTable(new StartScreenTable(hud, screenHandler));
+                if (!username.getText().matches("[A-Za-z0-9]{1,16}")) {
+                    infoLabel.setText("Kein gültigen Name");
+                } else if (!password.getText().matches("[A-Za-z0-9]{1,16}")) {
+                    infoLabel.setText("Kein gültiges Passwort");
+                } else {
+                    String[] credentials = {username.getText(), password.getText()};
+                    hud.sendLoginRequest(credentials);
+                    waitingLoginResponse = true;
+                    infoLabel.setText("Auf Antwort warten");
+                }
             }
         });
 
@@ -62,7 +78,7 @@ public class LoginTable extends UIComponentTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (!username.getText().isEmpty() && !password.getText().isEmpty()) {
-                    hud.addTable(new StartScreenTable(hud, screenHandler));
+                    hud.addTable(new StartScreenTable(hud));
                 }
             }
         });
@@ -95,6 +111,16 @@ public class LoginTable extends UIComponentTable {
             }
         });
         add(exit).width(logRegButtonsWidth);
+    }
+
+    public void receiveLoginResponse(@NotNull boolean success, @NotNull String message) {
+        if (waitingLoginResponse && success) {
+            waitingLoginResponse = false;
+            hud.addTable(new StartScreenTable(hud));
+        }
+        if (!success) {
+            infoLabel.setText(message);
+        }
     }
 
 

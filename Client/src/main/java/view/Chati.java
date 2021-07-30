@@ -1,18 +1,22 @@
 package view;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import controller.network.ServerSender;
 import view.Screens.*;
 import view.UIComponents.LoginTable;
 
 public class Chati extends Game {
+    private ServerSender serverSender;
+    private ApplicationScreen currentScreen;
     public static final int V_WIDTH = 1280;
     public static final int V_HEIGHT = 680;
     public static final float PPM = 10; //pixels per meter
-    private ScreenHandler screenHandler = new ScreenHandler(this);
 
-    public Chati() {
+    public Chati(ServerSender serverSender) {
+        this.serverSender = serverSender;
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setIdleFPS(60);
         config.useVsync(true);
@@ -25,7 +29,12 @@ public class Chati extends Game {
     }
 
     public void create() {
-        setScreen(new MenuScreen(screenHandler));
+        setScreen(new MenuScreen(this));
+    }
+
+    @Override
+    public ApplicationScreen getScreen() {
+        return currentScreen;
     }
 
     @Override
@@ -33,4 +42,7 @@ public class Chati extends Game {
         super.render();
     }
 
+    public ServerSender getServerSender() {
+        return serverSender;
+    }
 }

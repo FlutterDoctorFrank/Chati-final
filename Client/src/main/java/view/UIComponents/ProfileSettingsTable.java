@@ -4,16 +4,17 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import view.Screens.ScreenHandler;
 
 
 public class ProfileSettingsTable extends UIComponentTable {
+    private Hud hud;
 
-    public ProfileSettingsTable(Hud hud, ScreenHandler screenHandler) {
-        create(hud, screenHandler);
+    public ProfileSettingsTable(Hud hud) {
+        this.hud = hud;
+        create();
     }
 
-    private void create(Hud hud, ScreenHandler screenHandler) {
+    private void create() {
         Label infoLabel = new Label("", skin);
         TextButton changePassword = new TextButton("Passwort ändern", skin);
         changePassword.addListener(new InputListener() {
@@ -24,7 +25,7 @@ public class ProfileSettingsTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new ChangePasswordTable(hud, screenHandler));
+                hud.addTable(new ChangePasswordTable(hud));
             }
         });
 
@@ -37,7 +38,7 @@ public class ProfileSettingsTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new DeleteAccountTable(hud, screenHandler));
+                hud.addTable(new DeleteAccountTable(hud));
             }
         });
 
@@ -50,12 +51,11 @@ public class ProfileSettingsTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new StartScreenTable(hud, screenHandler));
+                hud.addTable(new StartScreenTable(hud));
             }
         });
 
-
-
+        defaults().width(changePassword.getWidth());
         add(infoLabel);
         row();
         add(changePassword);
@@ -64,4 +64,6 @@ public class ProfileSettingsTable extends UIComponentTable {
         row();
         add(back);
     }
+
+
 }

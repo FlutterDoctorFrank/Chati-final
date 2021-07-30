@@ -4,22 +4,24 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import model.communication.message.MessageType;
+import model.context.spatial.Menu;
 import view.Chati;
 import view.Sprites.Avatar;
 import view.UIComponents.Hud;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class PlayScreen extends ApplicationScreen {
 
@@ -34,10 +36,11 @@ public class PlayScreen extends ApplicationScreen {
 
     private Avatar avatar;
 
-    public PlayScreen(Hud hud, ScreenHandler screenHandler) {
+    public PlayScreen(Chati game) {
+        super(game);
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Chati.V_WIDTH / Chati.PPM, Chati.V_HEIGHT/ Chati.PPM, gamecam);
-        this.hud = hud;
+        this.hud = new Hud(spriteBatch, this);
 
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("maps/map.tmx");
@@ -187,7 +190,4 @@ public class PlayScreen extends ApplicationScreen {
             body.createFixture(fdef);
         }
     }
-
-
-
 }

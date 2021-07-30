@@ -5,18 +5,16 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import view.Screens.ScreenHandler;
-
-import java.awt.*;
 
 
 public class AvatarSelectTable extends UIComponentTable {
 
-    public AvatarSelectTable(Hud hud, ScreenHandler screenHandler) {
-        create(hud, screenHandler);
+    public AvatarSelectTable(Hud hud) {
+        this.hud = hud;
+        create();
     }
 
-    private void create(Hud hud, ScreenHandler screenHandler) {
+    private void create() {
         int spacing = 5;
 
         Label infoLabel = new Label("", skin);
@@ -31,7 +29,7 @@ public class AvatarSelectTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new StartScreenTable(hud, screenHandler));
+                hud.addTable(new StartScreenTable(hud));
             }
         });
         TextButton abort = new TextButton("Abbrechen", skin);
@@ -43,7 +41,7 @@ public class AvatarSelectTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new StartScreenTable(hud, screenHandler));
+                hud.addTable(new StartScreenTable(hud));
             }
         });
         Table buttons = new Table();
