@@ -29,7 +29,7 @@ public abstract class Context implements IContextView{
     private Music music;
 
 
-    public Context(String contextName, Context parent, ContextID contextId) {
+    protected Context(String contextName, Context parent, ContextID contextId) {
         this.contextName = contextName;
         this.parent = parent;
         this.contextId = contextId;

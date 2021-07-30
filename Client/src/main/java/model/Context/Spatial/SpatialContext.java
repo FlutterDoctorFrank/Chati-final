@@ -6,6 +6,7 @@ import model.context.spatial.SpatialContextType;
 import model.context.spatial.SpatialMap;
 import view.Screens.IModelObserver;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class SpatialContext extends Context implements ISpatialContextView{
 
     @Override
     public Map<ContextID, ISpatialContextView> getPrivateRooms() {
-        return rooms.entrySet().stream().collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        return Collections.unmodifiableMap(rooms);
     }
 
     @Override
@@ -58,8 +59,8 @@ public class SpatialContext extends Context implements ISpatialContextView{
      */
     public SpatialContext getArea(int posX, int posY) {
         try {
-            return children.entrySet().stream().filter(entry -> entry.getValue().getExpanse().isIn(posX, posY))
-                    .findFirst().orElseThrow().getValue().getArea(posX, posY);
+            return children.values().stream().filter(child -> child.getExpanse().isIn(posX, posY))
+                    .findFirst().orElseThrow().getArea(posX, posY);
         } catch (NoSuchElementException e) {
             return this;
         }

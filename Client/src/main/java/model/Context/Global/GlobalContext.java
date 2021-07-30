@@ -9,6 +9,7 @@ import model.context.spatial.Music;
 import model.context.spatial.SpatialMap;
 import view.Screens.IModelObserver;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -76,7 +77,7 @@ public class GlobalContext extends Context implements IGlobalContextView, IGloba
 
     @Override
     public Map<ContextID, ISpatialContextView> getWorlds() {
-        return worlds.entrySet().stream().collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        return Collections.unmodifiableMap(worlds);
     }
 
     @Override

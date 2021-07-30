@@ -8,6 +8,7 @@ import model.Exceptions.UserNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -18,10 +19,11 @@ public class UserManager implements IUserManagerController, IUserManagerView{
 
     static UserManager userManager;
     private User intern;
-    private Map<UUID, User> externs;
+    private final Map<UUID, User> externs;
 
     private UserManager(){
-        externs = new HashMap<>();
+        this.intern = null;
+        this.externs = new HashMap<>();
     }
 
 
@@ -73,8 +75,8 @@ public class UserManager implements IUserManagerController, IUserManagerView{
     @Override
     public Map<UUID, IUserView> getActiveUsers() throws NotInWorldException {
         CheckUserIsInWorld();
-        return externs.entrySet().stream().filter(user -> user.getValue().isInCurrentWorld())
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        return externs.values().stream().filter(User::isInCurrentWorld)
+                .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
 
     @Override

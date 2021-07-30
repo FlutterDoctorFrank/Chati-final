@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Ein Interface, welche dem Controller Methoden zur Verwaltung vom globalen Kontext
- * bereitstellt.
+ * Ein Interface, welche dem Controller Methoden zur Verwaltung vom globalen Kontext bereitstellt. Wird von
+ * {@link GlobalContext} implementiert.
  */
 public interface IGlobalContext extends IContext {
 

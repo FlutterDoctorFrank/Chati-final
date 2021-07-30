@@ -1,5 +1,10 @@
 package model.context.spatial;
 
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.utils.Array;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.Context;
@@ -13,17 +18,31 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class SpatialContext extends Context implements ISpatialContext {
+
+    /** Die maximale Distanz, über die eine Interaktion erfolgen darf. */
     protected static final int INTERACTION_DISTANCE = 1;
+
     /*
         General Context parameters
      */
+
+    /** Typ des räumlichen Kontextes. */
     private final SpatialContextType spatialContextType;
+
     /*
         Parameters only relevant for type 'AREA' and 'OBJECT'
      */
+
+    /** Die Information, ob eine Bewegung in diesem räumlichen Kontext erlaubt ist. */
     private boolean isMoveable;
+
+    /** Die Information, ob eine Interaktion mit diesem räumlichen Kontext möglich ist. */
     private boolean isInteractable;
+
+    /** Das Menü, dass beim Benutzer bei einer Interaktion mit diesem Kontext geöffnet werden soll. */
     private Menu menu;
+
+    /** Die Po*/
     protected Location interactionLocation;
     private Set<AreaReservation> areaReservations;
     /*
@@ -108,6 +127,11 @@ public class SpatialContext extends Context implements ISpatialContext {
     }
 
     @Override
+    public SpatialContextType getSpatialContextType() {
+        return null;
+    }
+
+    @Override
     public java.util.Map<ContextID, SpatialContext> getPrivateRooms() {
         return Collections.unmodifiableMap(privateRooms);
     }
@@ -180,6 +204,21 @@ public class SpatialContext extends Context implements ISpatialContext {
 
     public void initializeMap() {
         // TODO
+
+        TmxMapLoader mapLoader = new TmxMapLoader();
+        TiledMap tiledMap = mapLoader.load("maps/map.tmx");
+        //Array<RectangleMapObject> contexts = tiledMap.getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class);
+
+        int levels = (int) tiledMap.getProperties().get("levels");
+        int offset = (int) tiledMap.getProperties().get("offset");
+        for (int i = offset; i < offset + levels; i++) {
+            MapLayer layer = tiledMap.getLayers().get(i);
+            Array<RectangleMapObject> contexts = layer.getObjects().getByType(RectangleMapObject.class);
+            contexts.forEach(context -> {
+
+            });
+        }
+
     }
 
     public void addReservation(User user, LocalDateTime from, LocalDateTime to) {
