@@ -61,7 +61,7 @@ public class LoginTable extends UIComponentTable {
                     infoLabel.setText("Kein gültiges Passwort");
                 } else {
                     Object[] credentials = {username.getText(), password.getText(), false};
-                    hud.sendLoginRequest(credentials);
+                    hud.sendRequest(credentials);
                     waitingLoginResponse = true;
                     infoLabel.setText("Auf Antwort warten");
                 }
@@ -84,7 +84,7 @@ public class LoginTable extends UIComponentTable {
                         infoLabel.setText("Kein gültiges Passwort");
                     } else {
                         Object[] credentials = {username.getText(), password.getText(), true};
-                        hud.sendRegisterRequest(credentials);
+                        hud.sendRequest(credentials);
                         waitingRegResponse = true;
                         infoLabel.setText("Auf Antwort warten");
                     }
@@ -123,8 +123,8 @@ public class LoginTable extends UIComponentTable {
     }
 
     public void receiveLoginResponse(@NotNull boolean success, @NotNull String message) {
+        waitingLoginResponse = false;
         if (waitingLoginResponse && success) {
-            waitingLoginResponse = false;
             hud.addTable(new StartScreenTable(hud));
         }
         if (!success) {
@@ -133,8 +133,8 @@ public class LoginTable extends UIComponentTable {
     }
 
     public void receiveRegResponse(@NotNull boolean success, @NotNull String message) {
+        waitingRegResponse = false;
         if (waitingLoginResponse && success) {
-            waitingRegResponse = false;
             hud.addTable(new StartScreenTable(hud));
         }
         if (!success) {

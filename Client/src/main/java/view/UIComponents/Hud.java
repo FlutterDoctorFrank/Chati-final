@@ -168,12 +168,7 @@ public class Hud implements IModelObserver, ViewControllerInterface {
         return hud;
     }
 
-    public void sendLoginRequest(Object[] credentials) {
-        ServerSender serverSender = hud.getApplicationScreen().getGame().getServerSender();
-        serverSender.send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
-    }
-
-    public void sendRegisterRequest(Object[] credentials) {
+    public void sendRequest(Object[] credentials) {
         ServerSender serverSender = hud.getApplicationScreen().getGame().getServerSender();
         serverSender.send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
     }

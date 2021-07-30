@@ -15,8 +15,7 @@ public class Chati extends Game {
     public static final int V_HEIGHT = 680;
     public static final float PPM = 10; //pixels per meter
 
-    public Chati(ServerSender serverSender) {
-        this.serverSender = serverSender;
+    public Chati() {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setIdleFPS(60);
         config.useVsync(true);
@@ -42,7 +41,7 @@ public class Chati extends Game {
         super.render();
     }
 
-    public ServerSender getServerSender() {
-        return serverSender;
+    public void setServerSender(ServerSender serverSender) {
+        this.setServerSender(serverSender);
     }
 }
