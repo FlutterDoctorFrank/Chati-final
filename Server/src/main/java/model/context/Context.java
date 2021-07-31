@@ -3,7 +3,6 @@ package model.context;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
-import model.context.spatial.ContextReservation;
 import model.context.spatial.Music;
 import model.context.spatial.SpatialContext;
 import model.database.Database;
@@ -11,7 +10,6 @@ import model.database.IContextDatabase;
 import model.user.IUser;
 import model.user.User;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -45,17 +43,14 @@ public abstract class Context implements IContext {
     /** Die in diesem Kontext gesperrten Benutzer. */
     private final Map<UUID, User> bannedUsers;
 
+    /** Die in diesem Kontext laufende Musik.*/
+    private Music music;
+
     /** Die in diesem Kontext geltende Kommunikationsform. */
     private final CommunicationRegion communicationRegion;
 
     /** Die in diesem Kontext verwendbaren Kommunikationsmedien. */
     private final Set<CommunicationMedium> communicationMedia;
-
-    /** Reservierungen zum Erhalt der Rolle des Bereichsberechtigten in diesem Kontext. */
-    protected final Set<ContextReservation> contextReservations;
-
-    /** Die in diesem Kontext laufende Musik.*/
-    private Music music;
 
     /** Ermöglicht Zugriff auf die Datenbank */
     protected final IContextDatabase database;
@@ -64,8 +59,6 @@ public abstract class Context implements IContext {
      * Erzeugt eine Instanz eines Kontextes.
      * @param contextName Name des Kontextes.
      * @param parent Übergeordneter Kontext.
-     * @param communicationRegion Die Kommunikationsform des Kontextes.
-     * @param communicationMedia Die verwendbaren Kommunikationsmedien des Kontextes.
      */
     protected Context(String contextName, Context parent, CommunicationRegion communicationRegion,
                       Set<CommunicationMedium> communicationMedia) {
@@ -81,10 +74,9 @@ public abstract class Context implements IContext {
         this.reportedUsers = new HashMap<>();
         this.mutedUsers = new HashMap<>();
         this.bannedUsers = new HashMap<>();
+        this.music = null;
         this.communicationRegion = communicationRegion;
         this.communicationMedia = communicationMedia;
-        this.music = null;
-        this.contextReservations = new HashSet<>();
         this.database = Database.getContextDatabase();
     }
 
@@ -260,13 +252,21 @@ public abstract class Context implements IContext {
     }
 
     /**
-     * Fügt eine Reservierung zum Erhalt der Rolle des Bereichsberechtigten zu diesem Kontext hinzu.
-     * @param user Reservierter Benutzer.
-     * @param from Reservierter Anfangszeitpunkt.
-     * @param to Reservierter Endzeitpunkt.
+     * Ermittelt alle Benutzer, mit denen ein übergebener Benutzer in diesem Kontext kommunizieren kann.
+     * @param communicatingUser Kommunizierender Benutzer.
+     * @return Menge der Benutzer, mit denen der Benutzer kommunizieren kann.
      */
-    public void addReservation(User user, LocalDateTime from, LocalDateTime to) {
-        contextReservations.add(new ContextReservation(user, from, to));
+    public Map<UUID, User> getCommunicableUsers(User communicatingUser) {
+        return communicationRegion.getCommunicableUsers(communicatingUser);
+    }
+
+    /**
+     * Überprüft, ob in diesem Kontext mit einem übergebenen Medium kommuniziert werden kann.
+     * @param medium Zu überprüfender Medium.
+     * @return true, wenn mit dem Medium kommuniziert werden kann, sonst false.
+     */
+    public boolean canCommunicateWith(CommunicationMedium medium) {
+        return communicationMedia.contains(medium);
     }
 
     /**
@@ -322,56 +322,6 @@ public abstract class Context implements IContext {
      */
     public Context lastCommonAncestor(Context context) {
         return isInContext(context) ? context : (context.isInContext(this) ? this : parent.lastCommonAncestor(context));
-    }
-
-    /**
-     * Ermittelt alle Benutzer, mit denen ein übergebener Benutzer in diesem Kontext kommunizieren kann.
-     * @param communicatingUser Kommunizierender Benutzer.
-     * @return Menge der Benutzer, mit denen der Benutzer kommunizieren kann.
-     */
-    public Map<UUID, User> getCommunicableUsers(User communicatingUser) {
-        return communicationRegion.getCommunicableUsers(communicatingUser);
-    }
-
-    /**
-     * Überprüft, ob in diesem Kontext mit einem übergebenen Medium kommuniziert werden kann.
-     * @param medium Zu überprüfender Medium.
-     * @return true, wenn mit dem Medium kommuniziert werden kann, sonst false.
-     */
-    public boolean canCommunicateWith(CommunicationMedium medium) {
-        return communicationMedia.contains(medium);
-    }
-
-    /**
-     * Überprüft, ob dieser Kontext von einem Benutzer reserviert ist.
-     * @param user Zu überprüfender Benutzer.
-     * @return true, wenn der Kontext von dem Benutzer reserviert ist, sonst false.
-     */
-    public boolean isReservedBy(User user) {
-        return contextReservations.stream().anyMatch(reservation -> reservation.getReserver().equals(user));
-    }
-
-    /**
-     * Überprüft, ob dieser Kontext in einem bestimmten Zeitraum reserviert ist.
-     * @param from Zu überprüfender Anfangszeitpunkt.
-     * @param to Zu überprüfender Endzeitpunkt.
-     * @return true, wenn der Kontext in dem Zeitraum reserviert ist, sonst false.
-     */
-    public boolean isReservedAt(LocalDateTime from, LocalDateTime to) {
-        return contextReservations.stream().anyMatch(reservation -> reservation.getFrom().equals(from)
-                && reservation.getTo().equals(to));
-    }
-
-    /**
-     * Überprüft, ob dieser Kontext von einem Benutzer in einem bestimmten Zeitraum reserviert ist.
-     * @param user Zu überprüfender Benutzer.
-     * @param from Zu überprüfender Anfangszeitpunkt.
-     * @param to Zu überprüfender Endzeitpunkt.
-     * @return true, wenn der Kontext von dem Benutzer in dem Zeitraum reserviert ist, sonst false.
-     */
-    public boolean isReservedAtBy(User user, LocalDateTime from, LocalDateTime to) {
-        return contextReservations.stream().anyMatch(reservation -> reservation.getReserver().equals(user)
-                && reservation.getFrom().equals(from) && reservation.getTo().equals(to));
     }
 
     /**

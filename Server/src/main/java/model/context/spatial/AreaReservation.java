@@ -4,12 +4,16 @@ import model.user.User;
 
 import java.time.LocalDateTime;
 
-public class ContextReservation {
+/**
+ * Repräsentiert die Reservierung eines Bereichs zum Erhalt der Rolle des Bereichsberechtigten.
+ */
+public class AreaReservation {
+
     private User reserver;
     private LocalDateTime from;
     private LocalDateTime to;
 
-    public ContextReservation(User reserver, LocalDateTime from, LocalDateTime to) {
+    public AreaReservation(User reserver, LocalDateTime from, LocalDateTime to) {
         this.reserver = reserver;
         this.from = from;
         this.to = to;

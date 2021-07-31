@@ -11,8 +11,6 @@ import model.role.Permission;
 import model.user.Status;
 import model.user.User;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -24,10 +22,10 @@ import java.util.stream.Collectors;
  * Eine Klasse, welche der Verwaltung von Benutzerkonten dient. Kann nur einmal instanziiert
  * werden.
  */
-public class UserAccountManager extends Thread implements IUserAccountManager {
+public class UserAccountManager implements IUserAccountManager {
 
     /** Zeit in Monaten, nach deren Ablauf ohne ein Einloggen in das Benutzerkonto dieses gelöscht wird. */
-    private static final int ACCOUNT_DELETION_TIME = 3;
+    public static final int ACCOUNT_DELETION_TIME = 3;
 
     /** Regulärer Ausdruck für das Format von Benutzernamen */
     private static final String USERNAME_FORMAT = "^\\w{2,16}";
@@ -51,7 +49,6 @@ public class UserAccountManager extends Thread implements IUserAccountManager {
     private UserAccountManager() {
         database = Database.getUserAccountManagerDatabase();
         registeredUsers = Collections.synchronizedMap(database.getUsers());
-        super.start();
     }
 
     @Override
@@ -212,6 +209,7 @@ public class UserAccountManager extends Thread implements IUserAccountManager {
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
 
+    /*
     @Override
     public void run() {
         for (;;) { // ever
@@ -238,13 +236,14 @@ public class UserAccountManager extends Thread implements IUserAccountManager {
             }
         }
     }
+    */
 
     /**
      * Löscht das Benutzerkonto eines Benutzers.
      * @param user Zu löschender Benutzer.
      * @throws UserNotFoundException wenn der Benutzer nicht existiert.
      */
-    private void deleteUser(User user) throws UserNotFoundException {
+    public void deleteUser(User user) throws UserNotFoundException {
         logoutUser(user.getUserId());
         registeredUsers.remove(user.getUserId());
         // database.deleteAccount(user);

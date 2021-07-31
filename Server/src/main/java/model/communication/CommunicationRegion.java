@@ -27,7 +27,7 @@ public abstract class CommunicationRegion {
      * Setzt den Kontext, der diese Kommunikationsform nutzt.
      * @param context Kontext, der diese Kommunikationsform nutzt.
      */
-    public void setSpatialContext(SpatialContext context) {
+    public void setSpatialContext(Context context) {
         this.context = context;
     }
 }

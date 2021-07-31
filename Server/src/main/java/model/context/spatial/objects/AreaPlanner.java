@@ -27,6 +27,9 @@ import java.util.UUID;
  */
 public class AreaPlanner extends SpatialContext {
 
+    /** Übergeordneter räumlicher Kontext. */
+    private final SpatialContext parent;
+
     /**
      * Erzeugt eines neue Instanz des AreaPlanner.
      * @param objectName Name des Objekts.
@@ -34,6 +37,7 @@ public class AreaPlanner extends SpatialContext {
      */
     public AreaPlanner(String objectName, SpatialContext parent) {
         super(objectName, parent, Menu.AREA_PLANNER_MENU, null, new HashSet<>());
+        this.parent = parent;
     }
 
     @Override
@@ -85,6 +89,6 @@ public class AreaPlanner extends SpatialContext {
 
     @Override
     public SpatialContext getParent() {
-        return (SpatialContext) parent;
+        return parent;
     }
 }

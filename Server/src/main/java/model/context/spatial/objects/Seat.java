@@ -16,6 +16,8 @@ import java.util.HashSet;
  */
 public class Seat extends SpatialContext {
 
+    private final SpatialContext parent;
+
     /**
      * Erzeugt eines neue Instanz des Seat.
      * @param objectName Name des Objekts.
@@ -23,6 +25,7 @@ public class Seat extends SpatialContext {
      */
     public Seat(String objectName, SpatialContext parent) {
         super(objectName, parent, Menu.SEAT_MENU, null, new HashSet<>());
+        this.parent = parent;
     }
 
     @Override
@@ -69,5 +72,10 @@ public class Seat extends SpatialContext {
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
         }
+    }
+
+    @Override
+    public SpatialContext getParent() {
+        return parent;
     }
 }

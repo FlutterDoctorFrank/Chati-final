@@ -77,7 +77,6 @@ public class RoomReception extends SpatialContext {
                 // Rauminhabers und teleportiere ihn in den privaten Raum.
                 SpatialContext world = user.getWorld();
                 SpatialContext privateRoom = new SpatialContext(roomname, world, map, password, null, new HashSet<>());
-                world.addChild(privateRoom);
                 world.addPrivateRoom(privateRoom);
                 user.addRole(privateRoom, Role.ROOM_OWNER);
                 user.teleport(privateRoom.getSpawnLocation());

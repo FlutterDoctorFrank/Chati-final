@@ -17,6 +17,9 @@ import model.role.ContextRole;
 import model.role.IContextRole;
 import model.role.Permission;
 import model.role.Role;
+import model.timedEvents.AccountDeletion;
+import model.timedEvents.TimedEventScheduler;
+import model.timedEvents.UserBusyChange;
 import model.user.account.UserAccountManager;
 
 import java.time.LocalDateTime;
@@ -407,16 +410,8 @@ public class User implements IUser {
                 }
             }
         }
-        // Sende neue Position an andere Benutzer im Raum, und Position anderer Benutzer im Raum an teleportierenden
-        // Benutzer.
-        newRoom.getUsers().forEach((userId, user) -> {
-            user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, this);
-            clientSender.send(ClientSender.SendAction.AVATAR_MOVE, user);
-        });
         // Betrete neuen Bereich.
         newArea.addUser(this);
-        // Sende Musikinformationen des neuen Bereichs.
-        clientSender.send(ClientSender.SendAction.CONTEXT_MUSIC, newArea);
     }
 
     /**
@@ -594,6 +589,7 @@ public class User implements IUser {
     public void updateLastLogoutTime() {
         setStatus(Status.OFFLINE);
         this.lastLogoutTime = LocalDateTime.now();
+        TimedEventScheduler.getInstance().put(new AccountDeletion(this));
     }
 
     /**
@@ -604,6 +600,7 @@ public class User implements IUser {
             setStatus(Status.ONLINE);
         }
         this.lastActivity = LocalDateTime.now();
+        TimedEventScheduler.getInstance().put(new UserBusyChange(this));
     }
 
     /**

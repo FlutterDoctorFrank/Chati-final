@@ -5,13 +5,20 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.Array;
+import controller.network.ClientSender;
+import model.MessageBundle;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
+import model.communication.message.TextMessage;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
+import model.role.Role;
+import model.timedEvents.AreaManagerAssignment;
+import model.timedEvents.AreaManagerWithdrawal;
+import model.timedEvents.TimedEventScheduler;
 import model.user.User;
 
 import java.time.LocalDateTime;
@@ -29,9 +36,15 @@ public class SpatialContext extends Context implements ISpatialContext {
     /** Typ des räumlichen Kontextes. */
     private final SpatialContextType spatialContextType;
 
+    /** Die diesem räumlichen Kontext übergeordnete Welt. */
+    private final SpatialContext world;
+
     /*
      * Parameters only relevant for type 'AREA' and 'OBJECT'
      */
+
+    /** Reservierungen zum Erhalt der Rolle des Bereichsberechtigten in diesem Kontext. */
+    protected final Set<AreaReservation> areaReservations;
 
     /** Die Information, ob eine Interaktion mit diesem räumlichen Kontext möglich ist. */
     private final boolean isInteractable;
@@ -77,6 +90,8 @@ public class SpatialContext extends Context implements ISpatialContext {
         super(worldName, GlobalContext.getInstance(), communicationRegion, communicationMedia);
         GlobalContext.getInstance().addChild(this);
         this.spatialContextType = SpatialContextType.WORLD;
+        this.world = this;
+        this.areaReservations = new HashSet<>();
         this.isInteractable = false;
         this.menu = null;
         this.map = map;
@@ -101,6 +116,8 @@ public class SpatialContext extends Context implements ISpatialContext {
         super(roomName, world, communicationRegion, communicationMedia);
         world.addChild(this);
         this.spatialContextType = SpatialContextType.ROOM;
+        this.world = world;
+        this.areaReservations = new HashSet<>();
         this.isInteractable = false;
         this.menu = null;
         this.map = map;
@@ -123,6 +140,8 @@ public class SpatialContext extends Context implements ISpatialContext {
         super(areaName, parent, communicationRegion, communicationMedia);
         parent.addChild(this);
         this.spatialContextType = SpatialContextType.AREA;
+        this.world = parent.getWorld();
+        this.areaReservations = new HashSet<>();
         this.isInteractable = false;
         this.menu = null;
         this.map = null;
@@ -145,6 +164,8 @@ public class SpatialContext extends Context implements ISpatialContext {
         super(objectName, parent, communicationRegion, communicationMedia);
         parent.addChild(this);
         this.spatialContextType = SpatialContextType.OBJECT;
+        this.world = parent.getWorld();
+        this.areaReservations = new HashSet<>();
         this.isInteractable = true;
         this.menu = menu;
         this.map = null;
@@ -198,6 +219,7 @@ public class SpatialContext extends Context implements ISpatialContext {
      */
     public void addPrivateRoom(SpatialContext privateRoom) {
         privateRooms.put(privateRoom.getContextId(), privateRoom);
+        children.put(privateRoom.getContextId(), privateRoom);
         // Hier noch an alle clienten neue Liste senden...
     }
 
@@ -207,7 +229,29 @@ public class SpatialContext extends Context implements ISpatialContext {
      */
     public void removePrivateRoom(SpatialContext privateRoom) {
         privateRooms.remove(privateRoom.getContextId());
+        children.remove(privateRoom.getContextId());
         // Hier noch alle clienten neue Liste senden...
+    }
+
+    /**
+     * Fügt eine Reservierung zum Erhalt der Rolle des Bereichsberechtigten zu diesem Kontext hinzu.
+     * @param user Reservierter Benutzer.
+     * @param from Reservierter Anfangszeitpunkt.
+     * @param to Reservierter Endzeitpunkt.
+     */
+    public void addReservation(User user, LocalDateTime from, LocalDateTime to) {
+        AreaReservation reservation = new AreaReservation(user, from, to);
+        areaReservations.add(reservation);
+        TimedEventScheduler.getInstance().put(new AreaManagerAssignment(this, reservation));
+    }
+
+    /**
+     * Entfernt eine Reservierung zum Erhalt der Rolle des Bereichsberechtigten.
+     * @param reservation
+     */
+    public void removeReservation(AreaReservation reservation) {
+        areaReservations.remove(reservation);
+        TimedEventScheduler.getInstance().put(new AreaManagerWithdrawal(this, reservation));
     }
 
     /**
@@ -250,6 +294,46 @@ public class SpatialContext extends Context implements ISpatialContext {
      */
     public SpatialContext getPrivateRoom(ContextID roomID) {
         return privateRooms.get(roomID);
+    }
+
+    /**
+     * Überprüft, ob dieser Kontext von einem Benutzer reserviert ist.
+     * @param user Zu überprüfender Benutzer.
+     * @return true, wenn der Kontext von dem Benutzer reserviert ist, sonst false.
+     */
+    public boolean isReservedBy(User user) {
+        return areaReservations.stream().anyMatch(reservation -> reservation.getReserver().equals(user));
+    }
+
+    /**
+     * Überprüft, ob dieser Kontext in einem bestimmten Zeitraum reserviert ist.
+     * @param from Zu überprüfender Anfangszeitpunkt.
+     * @param to Zu überprüfender Endzeitpunkt.
+     * @return true, wenn der Kontext in dem Zeitraum reserviert ist, sonst false.
+     */
+    public boolean isReservedAt(LocalDateTime from, LocalDateTime to) {
+        return areaReservations.stream().anyMatch(reservation -> reservation.getFrom().equals(from)
+                && reservation.getTo().equals(to));
+    }
+
+    /**
+     * Überprüft, ob dieser Kontext von einem Benutzer in einem bestimmten Zeitraum reserviert ist.
+     * @param user Zu überprüfender Benutzer.
+     * @param from Zu überprüfender Anfangszeitpunkt.
+     * @param to Zu überprüfender Endzeitpunkt.
+     * @return true, wenn der Kontext von dem Benutzer in dem Zeitraum reserviert ist, sonst false.
+     */
+    public boolean isReservedAtBy(User user, LocalDateTime from, LocalDateTime to) {
+        return areaReservations.stream().anyMatch(reservation -> reservation.getReserver().equals(user)
+                && reservation.getFrom().equals(from) && reservation.getTo().equals(to));
+    }
+
+    /**
+     * Gibt die diesem räumlichen Kontext übergeordnete Welt zurück.
+     * @return Diesem räumlichen Kontext übergeordnete Welt.
+     */
+    public SpatialContext getWorld() {
+        return world;
     }
 
     /**
@@ -312,6 +396,45 @@ public class SpatialContext extends Context implements ISpatialContext {
             Array<RectangleMapObject> contexts = layer.getObjects().getByType(RectangleMapObject.class);
             contexts.forEach(context -> {
             });
+        }
+    }
+
+    @Override
+    public void addUser(User user) {
+        // Wenn ein neuer Raum betreten wird, sende Positionsinformationen.
+        if (spatialContextType.equals(SpatialContextType.WORLD) || spatialContextType.equals(SpatialContextType.ROOM)) {
+            containedUsers.values().forEach(containedUser -> {
+                containedUser.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, null);
+                user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, containedUser);
+                });
+            if (isPrivate) {
+                TextMessage infoMessage = new TextMessage(new MessageBundle("key"));
+                containedUsers.values().forEach(containedUser -> {
+                    containedUser.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
+                });
+            }
+        }
+        super.addUser(user);
+    }
+
+    @Override
+    public void removeUser(User user) {
+        super.removeUser(user);
+        // Sende Pakete zum entfernen des Avatars im alten Raum.7
+        if (spatialContextType.equals(SpatialContextType.WORLD) || spatialContextType.equals(SpatialContextType.ROOM)) {
+            containedUsers.values().forEach(containedUser -> {
+                containedUser.getClientSender().send(ClientSender.SendAction.AVATAR_REMOVE, null);
+            });
+            if (isPrivate) {
+                if (user.hasRole(this, Role.ROOM_OWNER)) {
+                    user.removeRole(this, Role.ROOM_OWNER);
+                    if (containedUsers.isEmpty()) {
+                        world.removePrivateRoom(this);
+                    } else {
+                        containedUsers.values().stream().findFirst().get().addRole(this, Role.ROOM_OWNER);
+                    }
+                }
+            }
         }
     }
 }
