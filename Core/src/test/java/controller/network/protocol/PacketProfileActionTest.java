@@ -74,6 +74,14 @@ public class PacketProfileActionTest extends PacketTest<PacketProfileAction> {
         // Vergleiche Profil-Aktion
         Assert.assertEquals(this.before.getAction(), this.after.getAction());
 
+        // Vergleiche Benutzer-ID
+        if (this.before.getUserId() != null) {
+            Assert.assertNotNull(this.after.getUserId());
+            Assert.assertEquals(this.before.getUserId(), this.after.getUserId());
+        } else {
+            Assert.assertNull(this.after.getUserId());
+        }
+
         // Vergleiche Benutzername
         if (this.before.getName() != null) {
             Assert.assertNotNull(this.after.getName());

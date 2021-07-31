@@ -173,7 +173,9 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
                             case LOGIN:
                                 this.user = this.manager.getAccountManager().loginUser(packet.getName(), packet.getPassword(), this);
-                                break;
+
+                                this.send(new PacketProfileAction(packet, this.user.getUserId(), null, true));
+                                return;
                         }
 
                         this.send(new PacketProfileAction(packet, null, true));

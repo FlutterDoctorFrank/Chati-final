@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.io.Output;
 import model.user.Avatar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.UUID;
 
 /**
  * Ein Paket, das Informationen über die verschiedenen Aktionen auf ein Benutzerprofil enthält.
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class PacketProfileAction implements Packet<PacketListener> {
 
+    private UUID userId;
     private String name;
     private String password;
     private String newPassword;
@@ -96,6 +98,20 @@ public class PacketProfileAction implements Packet<PacketListener> {
         this.success = success;
     }
 
+    /**
+     * Ausschließlich für die Erzeugung einer Antwort des Netzwerkpakets zum Login von der Server-Anwendung.
+     * @param previous das Netzwerkpaket auf das geantwortet werden soll.
+     * @param userId die Benutzer-ID des angemeldeten Benutzers.
+     * @param message die Nachricht, die durch die Aktion erzeugt wurde. Null, falls keine erzeugt wurde.
+     * @param success true, wenn die Aktion erfolgreich war, ansonsten false.
+     */
+    public PacketProfileAction(@NotNull final PacketProfileAction previous, @NotNull final UUID userId,
+                               @Nullable final String message, final boolean success) {
+        this(previous, message, success);
+
+        this.userId = userId;
+    }
+
     @Override
     public void call(@NotNull final PacketListener listener) {
         listener.handle(this);
@@ -103,6 +119,7 @@ public class PacketProfileAction implements Packet<PacketListener> {
 
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
+        PacketUtils.writeNullableUniqueId(output, this.userId);
         output.writeAscii(this.name);
         output.writeString(this.password);
         output.writeString(this.newPassword);
@@ -114,6 +131,7 @@ public class PacketProfileAction implements Packet<PacketListener> {
 
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
+        this.userId = PacketUtils.readNullableUniqueId(input);
         this.name = input.readString();
         this.password = input.readString();
         this.newPassword = input.readString();
@@ -121,6 +139,14 @@ public class PacketProfileAction implements Packet<PacketListener> {
         this.action = PacketUtils.readEnum(input, Action.class);
         this.message = input.readString();
         this.success = input.readBoolean();
+    }
+
+    /**
+     * Gibt die Benutzer-ID des Benutzerprofils zurück.
+     * @return die ID des Benutzers, oder null.
+     */
+    public @Nullable UUID getUserId() {
+        return this.userId;
     }
 
     /**
