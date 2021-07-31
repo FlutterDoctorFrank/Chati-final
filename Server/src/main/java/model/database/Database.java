@@ -96,7 +96,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 ps.setString(1, user.getUserId().toString());
                 ps.setString(2, username);
                 ps.setString(3, password);
-                ps.setString(4, null);
+                Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+                ps.setString(4, currentTime.toString());
                 ps.setString(5, null);
                 ps.executeUpdate();
 
@@ -125,7 +126,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             while (res.next()){
                 row ++;
             }
-            System.out.println(row);
 
             if (row == 1) {
                 res.first();
@@ -178,12 +178,11 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public void updateLastOnlineTime(User user) {
 
-        //!!!!!!Timestamp noch zu bearbeiten
-        //now
         try {
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET LAST_ONLINE_TIME = " + null +
-                    "WHERE USER_ID = " + "'" + user.getUserId().toString() + "'");
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET LAST_ONLINE_TIME = " +
+                    currentTime.toString() + "WHERE USER_ID = " + "'" + user.getUserId().toString() + "'");
             ps.executeUpdate();
             con.close();
         } catch (SQLException e) {
@@ -227,7 +226,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 res.first();
                 String user_name = res.getString("USER_NAME");
                 String avatar_name = res.getString("AVATAR_NAME");
-                Avatar user_avatar = Avatar.valueOf(avatar_name);
+                //TODO
+                Avatar user_avatar = null;
 
 
                 //!!! noch nicht bearbeitet!!!
@@ -269,7 +269,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 String user_id = res.getString("USER_ID");
                 String avatar_name = res.getString("AVATAR_NAME");
 
-                //!!!
+                //TODO
                 Avatar user_avatar = null;
 
                 //!!! noch nicht bearbeitet!!!

@@ -91,14 +91,11 @@ public class UserAccountManagerDatabaseTest {
 
     //getUser(username)
     @Test
-
     public void getUserTest(){
 
         User test = this.database.createAccount("getUserTest", "111");
-        System.out.println("build User test success");
 
         User real = this.database.getUser("getUserTest");
-        System.out.println("build User real success");
 
         Assert.assertEquals(test.getUserId(), real.getUserId());
 
@@ -126,9 +123,32 @@ public class UserAccountManagerDatabaseTest {
         real = this.database.getUser("getUserTest");
         */
 
+    }
+
+    //getUser(userID)
+    @Test
+    public void getUserTest2(){
+
+        User test = this.database.createAccount("getUserTest", "111");
+        UUID testID = test.getUserId();
+
+        User real = this.database.getUser(testID);
+
+        Assert.assertEquals(test.getUserId(), real.getUserId());
+        Assert.assertEquals(test.getUsername(), real.getUsername());
 
 
+    }
 
+    //checkPassword(String username, String password)
+    @Test
+    public void checkPasswordTest(){
+        User test = this.database.createAccount("checkPassword", "111");
+        boolean realResult = this.database.checkPassword("checkPassword", "111");
+        boolean wrongSituation = this.database.checkPassword("checkPassword", "222");
+
+        Assert.assertEquals(true, realResult);
+        Assert.assertEquals(false, wrongSituation);
     }
 
 }
