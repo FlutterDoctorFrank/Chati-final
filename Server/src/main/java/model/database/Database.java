@@ -76,7 +76,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public User createAccount(String username, String password) {
         try {
-            Connection con = DriverManager.getConnection("jdbc:derby:E:/DBTest;create=true");
+            Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
             //Pruefe ob username schon besitzt
@@ -95,7 +95,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 ps.setString(2, username);
                 ps.setString(3, password);
                 ps.setString(4, null);
-                ps.setString(5, user.getAvatar().getName());
+                ps.setString(5, null);
                 ps.executeUpdate();
 
             } else {
@@ -111,10 +111,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
     @Override
     public boolean checkPassword(String username, String password) {
-        return true;
-        /*
         try{
-            Connection con = DriverManager.getConnection("jdbc:derby:E:/DBTest;create=true");
+            Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
             ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_NAME = " + "'" + username + "'");
@@ -142,7 +140,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
         }
         return false;
-        */
     }
     @Override
     public void setPassword(User user, String newPassword) {
@@ -505,44 +502,44 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
             //Pruefe ob alle tables existieren, falls nicht dann create
             if (!set.contains("USER_ACCOUNT")) {
-                String sql = "CREATE TABLE USER_ACCOUNT(USER_ID CHAR, USER_NAME VARCHAR(16) not null, USER_PSW VARCHAR(128) not null, " +
+                    String sql = "CREATE TABLE USER_ACCOUNT(USER_ID VARCHAR(36), USER_NAME VARCHAR(16) not null, USER_PSW VARCHAR(128) not null, " +
                         "LAST_ONLINE_TIME TIMESTAMP, AVATAR_NAME CHAR)";
                 statement.execute(sql);
 
             }
             if (!set.contains("WORLDS")) {
-                String sql = "CREATE TABLE WORLDS(WORLD_ID CHAR, WORLD_NAME CHAR)";
+                String sql = "CREATE TABLE WORLDS(WORLD_ID VARCHAR(36), WORLD_NAME CHAR)";
                 statement.execute(sql);
 
             }
             if (!set.contains("BAN")) {
-                String sql = "CREATE TABLE BAN(USER_ID CHAR, WORLD_ID CHAR)";
+                String sql = "CREATE TABLE BAN(USER_ID VARCHAR(36), WORLD_ID VARCHAR(36))";
                 statement.execute(sql);
 
             }
             if (!set.contains("IGNORE")) {
-                String sql = "CREATE TABLE IGNORE(USER_ID CHAR, IGNORED_ID CHAR)";
+                String sql = "CREATE TABLE IGNORE(USER_ID VARCHAR(36), IGNORED_ID VARCHAR(36))";
                 statement.execute(sql);
 
             }
             if (!set.contains("FRIENDSHIP")) {
-                String sql = "CREATE TABLE FRIENDSHIP(USER_ID1 CHAR, USER_ID2 CHAR)";
+                String sql = "CREATE TABLE FRIENDSHIP(USER_ID1 VARCHAR(36), USER_ID2 VARCHAR(36))";
                 statement.execute(sql);
 
             }
             if (!set.contains("USER_RESERVATION")) {
-                String sql = "CREATE TABLE USER_RESERVATION(USER_ID CHAR, START_TIME TIMESTAMP, END_TIME TIMESTAMP, CONTEXT_ID CHAR)";
+                String sql = "CREATE TABLE USER_RESERVATION(USER_ID VARCHAR(36), START_TIME TIMESTAMP, END_TIME TIMESTAMP, CONTEXT_ID VARCHAR(36))";
                 statement.execute(sql);
 
             }
             if (!set.contains("ROLE_WITH_CONTEXT")) {
-                String sql = "CREATE TABLE ROLE_WITH_CONTEXT(USER_ID CHAR, ROLE CHAR, CONTEXT_ID CHAR)";
+                String sql = "CREATE TABLE ROLE_WITH_CONTEXT(USER_ID VARCHAR(36), ROLE CHAR, CONTEXT_ID VARCHAR(36))";
                 statement.execute(sql);
 
             }
             if (!set.contains("NOTIFICATION")) {
-                String sql = "CREATE TABLE NOTIFICATION(USER_ID CHAR, NOTIFICATION_ID CHAR, OWING_CONTEXT_ID CHAR, " +
-                        "REQUESTER_ID CHAR, MESSAGE_KEY CHAR, ARGUMENTS CHAR, SEND_TIME TIMESTAMP, REQUESTING_CONTEXT_ID CHAR, " +
+                String sql = "CREATE TABLE NOTIFICATION(USER_ID VARCHAR(36), NOTIFICATION_ID VARCHAR(36), OWING_CONTEXT_ID VARCHAR(36), " +
+                        "REQUESTER_ID VARCHAR(36), MESSAGE_KEY CHAR, ARGUMENTS CHAR, SEND_TIME TIMESTAMP, REQUESTING_CONTEXT_ID VARCHAR(36), " +
                         "REQUEST_TYPE CHAR)";
                 statement.execute(sql);
 
