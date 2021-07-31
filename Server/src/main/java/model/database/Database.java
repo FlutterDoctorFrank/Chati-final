@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
+import static java.sql.Connection.TRANSACTION_NONE;
+
 public class Database implements IUserAccountManagerDatabase, IUserDatabase, IContextDatabase {
     private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
     private static Database database;
@@ -101,8 +103,9 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             } else {
                 System.out.println("Name ist besitzt");
             }
-            res.close();
-            st.close();
+            //res.close();
+            //st.close();
+            //con.commit();
             con.close();
             return user;
         } catch (SQLException e) {
@@ -238,6 +241,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             }
             res.close();
             st.close();
+            con.commit();
             con.close();
         } catch(SQLException e){
             System.out.println(e);
@@ -264,8 +268,9 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 res.first();
                 String user_id = res.getString("USER_ID");
                 String avatar_name = res.getString("AVATAR_NAME");
-                Avatar user_avatar = Avatar.valueOf(avatar_name);
 
+                //!!!
+                Avatar user_avatar = null;
 
                 //!!! noch nicht bearbeitet!!!
                 //TODO
@@ -273,12 +278,16 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
                 return user;
 
+            } else if (row == 0){
+                System.out.println("User not exist");
             } else {
-                System.out.println("mehr als 1 or not exist");
+                System.out.println("mehr als 1 exist");
             }
-            res.close();
-            st.close();
+            //res.close();
+            //st.close();
+            //con.commit();
             con.close();
+
         } catch(SQLException e){
             System.out.println(e);
 

@@ -15,14 +15,19 @@ public class UserAccountManagerDatabaseTest {
     @Before
     public void setUp(){
 
+        //System.out.println("set up start");
         this.database = Database.getUserAccountManagerDatabase();
+        //System.out.println("set up success");
     }
 
-    private void dropTable(String tableName){
+
+    //!!!!!!!!!dropTable problem!!!!!!!!
+    private void deleteData(String tableName){
         try {
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("DROP TABLE " + tableName);
-            ps.executeUpdate();
+            Statement st = con.createStatement();
+            st.executeUpdate("DELETE FROM " + tableName);
+            st.close();
             con.close();
         } catch (SQLException e) {
             System.out.print("Fehler in deleteData: " + e);
@@ -31,14 +36,14 @@ public class UserAccountManagerDatabaseTest {
 
     @After
     public void tearDown() {
-        dropTable("USER_ACCOUNT");
-        dropTable("WORLDS");
-        dropTable("BAN");
-        dropTable("IGNORE");
-        dropTable("FRIENDSHIP");
-        dropTable("USER_RESERVATION");
-        dropTable("ROLE_WITH_CONTEXT");
-        dropTable("NOTIFICATION");
+        deleteData("USER_ACCOUNT");
+        deleteData("WORLDS");
+        deleteData("BAN");
+        deleteData("IGNORE");
+        deleteData("FRIENDSHIP");
+        deleteData("USER_RESERVATION");
+        deleteData("ROLE_WITH_CONTEXT");
+        deleteData("NOTIFICATION");
 
     }
 
@@ -86,11 +91,17 @@ public class UserAccountManagerDatabaseTest {
 
     //getUser(username)
     @Test
-    @Ignore
+
     public void getUserTest(){
 
         User test = this.database.createAccount("getUserTest", "111");
+        System.out.println("build User test success");
+
         User real = this.database.getUser("getUserTest");
+        System.out.println("build User real success");
+
+        Assert.assertEquals(test.getUserId(), real.getUserId());
+
         //Erstellen ein Benutzer und direkt speichern in Datenbank
         /*
         User test = new User("getUserTest");
@@ -116,7 +127,7 @@ public class UserAccountManagerDatabaseTest {
         */
 
 
-        Assert.assertEquals(test.getUserId(), real.getUserId());
+
 
     }
 
