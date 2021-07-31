@@ -2,10 +2,12 @@ package controller.network;
 
 import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
+import controller.network.protocol.PacketChatMessage;
 import controller.network.protocol.PacketInContextInteract;
 import controller.network.protocol.PacketInUserManage;
 import controller.network.protocol.PacketMenuOption;
 import controller.network.protocol.PacketProfileAction;
+import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
 import model.User.AdministrativeAction;
 import model.context.ContextID;
@@ -321,12 +323,45 @@ public interface ServerSender {
 
         /**
          * Information, dass eine Chat-Nachricht gesendet werden soll.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@link String}, Die im Chat eingegebene Nachricht
+         * </p>
          */
         MESSAGE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des ChatMessage-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (objects.length == 1) {
+                    if (objects[0] instanceof String) {
+                        return new PacketChatMessage((String) objects[0]);
+                    } else {
+                        throw new IllegalArgumentException("Expected String, got " + objects[0].getClass());
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 1, got " + objects.length);
+                }
+            }
+        },
+
+        /**
+         * Information, dass eine Chat-Nachricht gesendet werden soll.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@code byte[]}, Die im Sprachdaten der Sprachnachricht
+         * </p>
+         */
+        VOICE {
+            @Override
+            protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
+                if (objects.length == 1) {
+                    if (objects[0] instanceof byte[]) {
+                        return new PacketVoiceMessage((byte[]) objects[0]);
+                    } else {
+                        throw new IllegalArgumentException("Expected byte[], got " + objects[0].getClass());
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 1, got " + objects.length);
+                }
             }
         };
 

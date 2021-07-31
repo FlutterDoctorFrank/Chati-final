@@ -18,6 +18,18 @@ public interface PacketListener {
      * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.
      * @param packet Das zu verarbeitende Paket.
      */
+    void handle(@NotNull final PacketChatMessage packet);
+
+    /**
+     * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.
+     * @param packet Das zu verarbeitende Paket.
+     */
+    void handle(@NotNull final PacketVoiceMessage packet);
+
+    /**
+     * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.
+     * @param packet Das zu verarbeitende Paket.
+     */
     void handle(@NotNull final PacketMenuOption packet);
 
     /**

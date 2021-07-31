@@ -3,6 +3,7 @@ package controller.network.protocol;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import model.MessageBundle;
 import model.context.ContextID;
 import net.bytebuddy.utility.RandomString;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,14 @@ public abstract class PacketTest<T extends Packet<?>> {
 
     public PacketTest(@NotNull final Class<T> clazz) {
         this.clazz = clazz;
+    }
+
+    public PacketTest(@NotNull final Class<T> clazz, @NotNull final Class<?>... registers) {
+        this.clazz = clazz;
+
+        for (final Class<?> register : registers) {
+            KRYO.register(register);
+        }
     }
 
     @Before
@@ -67,6 +76,20 @@ public abstract class PacketTest<T extends Packet<?>> {
         }
 
         return clazz.getEnumConstants()[RANDOM.nextInt(clazz.getEnumConstants().length)];
+    }
+
+    public static @NotNull MessageBundle randomBundle() {
+        final Object[] arguments = new Object[randomInt(3)];
+
+        for (int index = 0; index < arguments.length; index++) {
+            if (randomBoolean()) {
+                arguments[index] = randomBoolean() ? randomUniqueId() : randomContextId();
+            } else {
+                arguments[index] = randomString();
+            }
+        }
+
+        return new MessageBundle(randomString(), arguments);
     }
 
     public static @NotNull ContextID randomContextId() {

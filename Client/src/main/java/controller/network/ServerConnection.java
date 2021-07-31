@@ -4,6 +4,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
+import controller.network.protocol.PacketChatMessage;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerOut;
 import controller.network.protocol.PacketMenuOption;
@@ -14,6 +15,7 @@ import controller.network.protocol.PacketOutContextRole;
 import controller.network.protocol.PacketOutMenuAction;
 import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketProfileAction;
+import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,7 +76,17 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     }
 
     @Override
-    public void handle(@NotNull PacketMenuOption packet) {
+    public void handle(@NotNull final PacketChatMessage packet) {
+        //TODO Verarbeitung des ChatMessage-Pakets implementieren.
+    }
+
+    @Override
+    public void handle(@NotNull final PacketVoiceMessage packet) {
+        //TODO Verarbeitung des ChatVoice-Pakets implementieren.
+    }
+
+    @Override
+    public void handle(@NotNull final PacketMenuOption packet) {
         //TODO Verarbeitung des MenuOption-Pakets implementieren.
     }
 

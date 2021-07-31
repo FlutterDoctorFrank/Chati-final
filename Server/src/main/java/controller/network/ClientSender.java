@@ -3,6 +3,7 @@ package controller.network;
 import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
+import controller.network.protocol.PacketChatMessage;
 import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextMusic;
@@ -11,7 +12,11 @@ import controller.network.protocol.PacketOutMenuAction;
 import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.Action;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
+import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
+import model.communication.message.ITextMessage;
+import model.communication.message.IVoiceMessage;
+import model.communication.message.MessageType;
 import model.context.IContext;
 import model.context.global.IGlobalContext;
 import model.context.spatial.ISpatialContext;
@@ -326,12 +331,44 @@ public interface ClientSender {
 
         /**
          * Information, dass eine Chat-Nachricht gesendet werden soll.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link ITextMessage}
+         * </p>
          */
         MESSAGE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                //TODO Verpackung des ChatMessage-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (object instanceof ITextMessage) {
+                    final ITextMessage message = (ITextMessage) object;
+
+                    if (message.getMessageType() != MessageType.INFO) {
+                        return new PacketChatMessage(message.getMessageType(), message.getSender().getUserId(),
+                                message.getTextMessage(), message.getTimestamp());
+                    }
+
+                    return new PacketChatMessage(message.getMessageBundle(), message.getTimestamp());
+                } else {
+                    throw new IllegalArgumentException("Expected ITextMessage, got " + object.getClass());
+                }
+            }
+        },
+
+        /**
+         * Information, dass eine Sprach-Nachricht gesendet werden soll.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link IVoiceMessage}
+         * </p>
+         */
+        VOICE {
+            @Override
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
+                if (object instanceof IVoiceMessage) {
+                    final IVoiceMessage message = (IVoiceMessage) object;
+
+                    return new PacketVoiceMessage(message.getSender().getUserId(), message.getTimestamp(), message.getVoiceData());
+                } else {
+                    throw new IllegalArgumentException("Expected IVoiceMessage, got " + object.getClass());
+                }
             }
         };
 

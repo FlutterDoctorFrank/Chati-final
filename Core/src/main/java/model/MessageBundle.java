@@ -1,6 +1,9 @@
 package model;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Eine Klasse, welche eine übersetzbare Nachricht repräsentiert.
@@ -8,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class MessageBundle {
 
     private final String messageKey;
-    private final Object[] arguments;
+    private Object[] arguments;
 
     public MessageBundle(@NotNull final String messageKey) {
         this.messageKey = messageKey;
@@ -34,5 +37,36 @@ public class MessageBundle {
      */
     public @NotNull Object[] getArguments() {
         return arguments;
+    }
+
+    /**
+     * Sets die Argumente zum Formatieren der Nachricht.
+     * @param arguments die neuen Argumente.
+     */
+    public void setArguments(@NotNull final Object[] arguments) {
+        this.arguments = arguments;
+    }
+
+    @Override
+    public boolean equals(@Nullable final Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+
+        final MessageBundle other = (MessageBundle) object;
+        return this.messageKey.equals(other.messageKey) && Arrays.equals(this.arguments, other.arguments);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(this.messageKey);
+
+        result = 31 * result + Arrays.hashCode(this.arguments);
+
+        return result;
     }
 }

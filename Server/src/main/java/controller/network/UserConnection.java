@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Listener;
 import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
+import controller.network.protocol.PacketChatMessage;
 import controller.network.protocol.PacketInContextInteract;
 import controller.network.protocol.PacketInUserManage;
 import controller.network.protocol.PacketListener;
@@ -16,6 +17,7 @@ import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketProfileAction.Action;
+import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
 import model.context.spatial.ISpatialContext;
 import model.exception.ContextNotFoundException;
@@ -114,6 +116,47 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                     this.send(new PacketAvatarMove(AvatarAction.UPDATE_AVATAR, this.user.getUserId(), posX, posY));
                 }
             }
+        }
+    }
+
+    @Override
+    public void handle(@NotNull final PacketChatMessage packet) {
+        if (this.user != null) {
+            if (this.user.getWorld() != null) {
+                // Überprüfung, ob gegebenenfalls eine falsche User-ID versendet wurde.
+                if (packet.getSenderId() != null && !packet.getSenderId().equals(this.user.getUserId())) {
+                    return;
+                }
+
+                // Überprüfung, ob das Netzwerkpaket eine Nachricht enthält.
+                if (packet.getMessage() == null) {
+                    return;
+                }
+
+                this.user.chat(packet.getMessage());
+            } else {
+                LOGGER.fine("User " + this.user.getUsername() + " tried to chat while not in world");
+            }
+        } else {
+            LOGGER.fine("Connection " + this.connection.getID() + " tried to chat while not logged in");
+        }
+    }
+
+    @Override
+    public void handle(@NotNull final PacketVoiceMessage packet) {
+        if (this.user != null) {
+            if (this.user.getWorld() != null) {
+                // Überprüfung, ob gegebenenfalls eine falsche User-ID versendet wurde.
+                if (packet.getSenderId() != null && !packet.getSenderId().equals(this.user.getUserId())) {
+                    return;
+                }
+
+                this.user.talk(packet.getVoiceData());
+            } else {
+                LOGGER.fine("User " + this.user.getUsername() + " tried to talk while not in world");
+            }
+        } else {
+            LOGGER.fine("Connection " + this.connection.getID() + " tried to talk while not logged in");
         }
     }
 
