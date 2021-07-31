@@ -9,11 +9,13 @@ import java.util.UUID;
 
 /**
  * Ein Paket, das Information über die Bewegung eines Avatars auf einer Karte, enthält.
- * Das Paket wird von einem Client mit der neuen Position des Avatars erzeugt und an den Server gesendet.
- * Nach der Verarbeitung des Pakets vom Server, wird die Benutzer-ID des Avatars und die Avatar Aktion gesetzt und das
- * Paket wird an all die Clients der Benutzer verteilt, die sich innerhalb des gleichen Raums befinden.
- * Das Paket wird ebenfalls vom Server erzeugt und an einen Client gesendet, um dem Client die Position der anderen
- * Avatare mitzuteilen.
+ * <p>
+ *     Das Paket wird von einem Client mit der neuen Position des Avatars erzeugt und an den Server gesendet.
+ *     Nach der Verarbeitung des Pakets vom Server, wird die Benutzer-ID des Avatars und die Avatar Aktion gesetzt und
+ *     das Paket wird an all die Clients der Benutzer verteilt, die sich innerhalb des gleichen Raums befinden.
+ *     Das Paket wird ebenfalls vom Server erzeugt und an einen Client gesendet, um dem Client die Position der anderen
+ *     Avatare mitzuteilen.
+ * </p>
  */
 public class PacketAvatarMove implements Packet<PacketListener> {
 
@@ -61,7 +63,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeEnum(output, this.action);
-        PacketUtils.writeUniqueId(output, this.userId);
+        PacketUtils.writeNullableUniqueId(output, this.userId);
         output.writeInt(this.posX, true);
         output.writeInt(this.posY, true);
     }
@@ -69,7 +71,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.action = PacketUtils.readEnum(input, AvatarAction.class);
-        this.userId = PacketUtils.readUniqueId(input);
+        this.userId = PacketUtils.readNullableUniqueId(input);
         this.posX = input.readInt(true);
         this.posY = input.readInt(true);
     }

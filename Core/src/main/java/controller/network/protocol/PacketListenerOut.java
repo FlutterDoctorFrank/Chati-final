@@ -32,4 +32,10 @@ public interface PacketListenerOut extends PacketListener {
      * @param packet Das zu verarbeitende Paket.
      */
     void handle(@NotNull final PacketOutContextRole packet);
+
+    /**
+     * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.
+     * @param packet Das zu verarbeitende Paket.
+     */
+    void handle(@NotNull final PacketOutUserInfo packet);
 }

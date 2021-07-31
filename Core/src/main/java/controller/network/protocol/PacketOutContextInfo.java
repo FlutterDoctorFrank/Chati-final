@@ -12,8 +12,10 @@ import java.util.Objects;
 /**
  * Ein Paket, das Informationen über die verfügbaren Welten oder über die privaten Räume
  * innerhalb einer Welt enthält.
- * Das Paket wird vom Server erzeugt und an einen Client gesendet. Das Paket teilt dem
- * Client die verfügbaren Welten bzw die verfügbaren privaten Räume mit.
+ * <p>
+ *     Das Paket wird vom Server erzeugt und an einen Client gesendet. Das Paket teilt dem
+ *     Client die verfügbaren Welten bzw die verfügbaren privaten Räume mit.
+ * </p>
  */
 public class PacketOutContextInfo implements Packet<PacketListenerOut> {
 
@@ -39,7 +41,7 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
 
     @Override
     public void call(@NotNull final PacketListenerOut listener) {
-
+        listener.handle(this);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
 
         for (final Info info : this.infos) {
             PacketUtils.writeContextId(output, info.getContextId());
-            output.writeString(info.getName());
+            output.writeAscii(info.getName());
         }
     }
 

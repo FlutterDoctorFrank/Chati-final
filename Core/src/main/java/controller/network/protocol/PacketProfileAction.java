@@ -9,9 +9,11 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Ein Paket, das Informationen über die verschiedenen Aktionen auf ein Benutzerprofil enthält.
- * Das Paket wird von einem Client mit den benötigten Informationen erzeugt und an den Server gesendet.
- * Nach der Verarbeitung des Pakets vom Server werden die Informationen des Pakets aktualisiert und das Paket zurück
- * an den Client gesendet.
+ * <p>
+ *     Das Paket wird von einem Client mit den benötigten Informationen erzeugt und an den Server gesendet.
+ *     Nach der Verarbeitung des Pakets vom Server werden die Informationen des Pakets aktualisiert und das Paket
+ *     zurück an den Client gesendet.
+ * </p>
  */
 public class PacketProfileAction implements Packet<PacketListener> {
 
@@ -101,17 +103,10 @@ public class PacketProfileAction implements Packet<PacketListener> {
 
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
-        output.writeString(this.name);
+        output.writeAscii(this.name);
         output.writeString(this.password);
         output.writeString(this.newPassword);
-
-        if (this.avatar != null) {
-            output.writeBoolean(true);
-            PacketUtils.writeEnum(output, this.avatar);
-        } else {
-            output.writeBoolean(false);
-        }
-
+        PacketUtils.writeNullableEnum(output, this.avatar);
         PacketUtils.writeEnum(output, this.action);
         output.writeString(this.message);
         output.writeBoolean(this.success);
@@ -122,11 +117,7 @@ public class PacketProfileAction implements Packet<PacketListener> {
         this.name = input.readString();
         this.password = input.readString();
         this.newPassword = input.readString();
-
-        if (input.readBoolean()) {
-            this.avatar = PacketUtils.readEnum(input, Avatar.class);
-        }
-
+        this.avatar = PacketUtils.readNullableEnum(input, Avatar.class);
         this.action = PacketUtils.readEnum(input, Action.class);
         this.message = input.readString();
         this.success = input.readBoolean();

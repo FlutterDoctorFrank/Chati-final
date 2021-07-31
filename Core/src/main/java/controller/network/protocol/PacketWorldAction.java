@@ -104,30 +104,20 @@ public class PacketWorldAction implements Packet<PacketListener> {
 
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
+        PacketUtils.writeNullableContextId(output, this.contextId);
         PacketUtils.writeEnum(output, this.action);
-
-        if (this.action == Action.CREATE) {
-            PacketUtils.writeEnum(output, this.map);
-            output.writeString(this.name);
-        } else {
-            PacketUtils.writeContextId(output, this.contextId);
-        }
-
+        PacketUtils.writeNullableEnum(output, this.map);
+        output.writeAscii(this.name);
         output.writeString(this.message);
         output.writeBoolean(this.success);
     }
 
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
+        this.contextId = PacketUtils.readNullableContextId(input);
         this.action = PacketUtils.readEnum(input, Action.class);
-
-        if (this.action == Action.CREATE) {
-            this.map = PacketUtils.readEnum(input, SpatialMap.class);
-            this.name = input.readString();
-        } else {
-            this.contextId = PacketUtils.readContextId(input);
-        }
-
+        this.map = PacketUtils.readNullableEnum(input, SpatialMap.class);
+        this.name = input.readString();
         this.message = input.readString();
         this.success = input.readBoolean();
     }

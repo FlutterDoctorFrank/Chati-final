@@ -7,6 +7,9 @@ import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextMusic;
 import controller.network.protocol.PacketOutContextRole;
+import controller.network.protocol.PacketOutUserInfo;
+import controller.network.protocol.PacketOutUserInfo.Action;
+import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketWorldAction;
 import model.context.IContext;
 import model.context.global.IGlobalContext;
@@ -41,7 +44,6 @@ public interface ClientSender {
         USER_INFO {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                /*
                 if (object instanceof IUser) {
                     final IUser other = (IUser) object;
 
@@ -66,16 +68,16 @@ public interface ClientSender {
 
                             //TODO Kontexte in Benutzerinformation setzen, in denen der Benutzer stumm geschaltet ist
 
-                            return new PacketOutUserInfo(world.getContextID(), Action.UPDATE_USER, info);
+                            return new PacketOutUserInfo(world.getContextId(), Action.UPDATE_USER, info);
                         }
 
                         if (world.getBannedUsers().containsKey(other.getUserId())) {
                             info.addFlag(UserInfo.Flag.BANNED);
 
-                            return new PacketOutUserInfo(world.getContextID(), Action.UPDATE_USER, info);
+                            return new PacketOutUserInfo(world.getContextId(), Action.UPDATE_USER, info);
                         }
 
-                        return new PacketOutUserInfo(world.getContextID(), Action.REMOVE_USER, info);
+                        return new PacketOutUserInfo(world.getContextId(), Action.REMOVE_USER, info);
                     } else {
                         if (user.getFriends().containsKey(other.getUserId())) {
                             final UserInfo info = new UserInfo(other.getUserId(), other.getUsername());
@@ -91,10 +93,6 @@ public interface ClientSender {
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }
-                 */
-
-                //TODO Verpackung des MenuAction-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
             }
         },
 
@@ -169,7 +167,8 @@ public interface ClientSender {
                 if (object instanceof IContextRole) {
                     final IContextRole role = (IContextRole) object;
 
-                    return new PacketOutContextRole(role.getContext().getContextId(), null, role.getRoles());
+                    //TODO Die korrekte Benutzer-ID setzen, für den die Rolle gilt. (IContextRole braucht einen Benutzer?)
+                    return new PacketOutContextRole(role.getContext().getContextId(), user.getUserId(), role.getRoles());
                 } else {
                     throw new IllegalArgumentException("Expected IContextRole, got " + object.getClass());
                 }

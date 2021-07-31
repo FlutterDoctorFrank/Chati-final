@@ -10,8 +10,10 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Ein Paket, das Informationen über die Musik innerhalb eines Kontexts enthält.
- * Das Paket wird vom Server erzeugt und an einen Client gesendet.
- * Das Paket teilt dem Client, die zu spielende Hintergrundmusik eines Kontextes, mit.
+ * <p>
+ *     Das Paket wird vom Server erzeugt und an einen Client gesendet.
+ *     Das Paket teilt dem Client, die zu spielende Hintergrundmusik eines Kontextes, mit.
+ * </p>
  */
 public class PacketOutContextMusic implements Packet<PacketListenerOut> {
 
@@ -27,8 +29,8 @@ public class PacketOutContextMusic implements Packet<PacketListenerOut> {
 
     /**
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Server-Anwendung.
-     * @param contextId die ID des Kontexts in der die Musik gesetzt wird..
-     * @param music die neue Musik die gesetzt werden soll, oder null wenn die Musik entfernt werden soll.
+     * @param contextId die ID des Kontexts in der die Musik gesetzt wird.
+     * @param music die neue Musik die gesetzt werden soll, oder null, wenn die Musik entfernt werden soll.
      */
     public PacketOutContextMusic(@NotNull final ContextID contextId, @Nullable final Music music) {
         this.contextId = contextId;
@@ -43,22 +45,13 @@ public class PacketOutContextMusic implements Packet<PacketListenerOut> {
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeContextId(output, this.contextId);
-
-        if (this.music != null) {
-            output.writeBoolean(true);
-            PacketUtils.writeEnum(output, this.music);
-        } else {
-            output.writeBoolean(false);
-        }
+        PacketUtils.writeNullableEnum(output, this.music);
     }
 
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.contextId = PacketUtils.readContextId(input);
-
-        if (input.readBoolean()) {
-            this.music = PacketUtils.readEnum(input, Music.class);
-        }
+        this.music = PacketUtils.readNullableEnum(input, Music.class);
     }
 
     /**

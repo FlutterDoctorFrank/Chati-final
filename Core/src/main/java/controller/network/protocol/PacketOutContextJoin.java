@@ -10,9 +10,11 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Ein Paket, das Informationen über den Beitritt eines Kontexts enthält.
- * Das Paket wird vom Server erzeugt und an einen Client gesendet. Das Paket teilt dem
- * Client beim Betreten einer Welt oder eines Raums mit, das eine neue Karte geladen werden soll.
- * Das Paket wird zusätzlich genutzt, um einem Client mitzuteilen, das keine Karte angezeigt werden soll.
+ * <p>
+ *     Das Paket wird vom Server erzeugt und an einen Client gesendet. Das Paket teilt dem
+ *     Client beim Betreten einer Welt oder eines Raums mit, das eine neue Karte geladen werden soll.
+ *     Das Paket wird zusätzlich genutzt, um einem Client mitzuteilen, das keine Karte angezeigt werden soll.
+ * </p>
  */
 public class PacketOutContextJoin implements Packet<PacketListenerOut> {
 
@@ -44,22 +46,13 @@ public class PacketOutContextJoin implements Packet<PacketListenerOut> {
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeContextId(output, this.contextId);
-
-        if (this.map != null) {
-            output.writeBoolean(true);
-            PacketUtils.writeEnum(output, this.map);
-        } else {
-            output.writeBoolean(false);
-        }
+        PacketUtils.writeNullableEnum(output, this.map);
     }
 
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.contextId = PacketUtils.readContextId(input);
-
-        if (input.readBoolean()) {
-            this.map = PacketUtils.readEnum(input, SpatialMap.class);
-        }
+        this.map = PacketUtils.readNullableEnum(input, SpatialMap.class);
     }
 
     /**

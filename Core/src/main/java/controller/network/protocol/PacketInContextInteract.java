@@ -8,8 +8,10 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Ein Paket, das Informationen über die Interaktion eines Avatars mit einem Kontext enthält.
- * Das Paket wird von einem Client erzeugt und an den Server gesendet. Das Paket teilt dem Server mit, dass der
- * Benutzer mit einem Bereich oder einem Objekt interagieren möchte.
+ * <p>
+ *     Das Paket wird von einem Client erzeugt und an den Server gesendet. Das Paket teilt dem Server mit, dass der
+ *     Benutzer mit einem Bereich oder einem Objekt interagieren möchte.
+ * </p>
  */
 public class PacketInContextInteract implements Packet<PacketListenerIn> {
 
