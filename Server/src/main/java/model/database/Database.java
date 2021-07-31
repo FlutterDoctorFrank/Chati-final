@@ -515,11 +515,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 statement.execute(sql);
 
             }
-            if (!set.contains("USER_IN_WORLD")) {
-                String sql = "CREATE TABLE USER_IN_WORLD(WORLD_ID CHAR, USER_ID CHAR)";
-                statement.execute(sql);
-
-            }
             if (!set.contains("BAN")) {
                 String sql = "CREATE TABLE BAN(USER_ID CHAR, WORLD_ID CHAR)";
                 statement.execute(sql);
