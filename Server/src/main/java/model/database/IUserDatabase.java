@@ -1,8 +1,6 @@
 package model.database;
 
 import model.context.Context;
-import model.context.spatial.AreaReservation;
-import model.context.spatial.SpatialContext;
 import model.notification.Notification;
 import model.role.Role;
 import model.user.Avatar;

@@ -1,25 +1,32 @@
 package model.context.spatial.objects;
 
 import controller.network.ClientSender;
-import model.communication.CommunicationMedium;
-import model.communication.CommunicationRegion;
-import model.context.spatial.Location;
 import model.context.spatial.Menu;
 import model.context.spatial.SpatialContext;
 import model.user.User;
 
-import java.util.Set;
+import java.util.HashSet;
 
+/**
+ * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer ein Minispiel spielen kann. Ist immer vom
+ * Typ {@link model.context.spatial.SpatialContextType#OBJECT}.
+ */
 public class GameBoard extends SpatialContext {
 
-    protected GameBoard(String contextName, SpatialContext parent, Menu menu, Location interactionLocation,
-                        CommunicationRegion region, Set<CommunicationMedium> communicationMedia) {
-        super(contextName, parent, menu, interactionLocation, region, communicationMedia);
+    /**
+     * Erzeugt eines neue Instanz des Gameboard.
+     * @param objectName Name des Objekts.
+     * @param parent Übergeordneter Kontext.
+     */
+    public GameBoard(String objectName, SpatialContext parent) {
+        super(objectName, parent, Menu.GAME_BOARD_MENU, null, new HashSet<>());
     }
 
     @Override
     public void interact(User user) {
-        //user.setCurrentInteractable(this);
+        // Öffne das Menü beim Benutzer.
+        user.setCurrentInteractable(this);
+        user.setMoveable(false);
         user.getClientSender().send(ClientSender.SendAction.OPEN_MENU, this);
     }
 

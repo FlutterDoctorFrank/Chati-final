@@ -16,10 +16,9 @@ public class ParentCommunication extends CommunicationRegion {
 
     /**
      * Erzeugt eine neue Instanz der ParentCommunication
-     * @param context Kontext, der die Instanz dieser Kommunikationsform nutzt.
      */
-    public ParentCommunication(SpatialContext context) {
-        super(context);
+    public ParentCommunication() {
+        super();
     }
 
     @Override

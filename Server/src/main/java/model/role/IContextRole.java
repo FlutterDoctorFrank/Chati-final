@@ -1,6 +1,7 @@
 package model.role;
 
 import model.context.Context;
+import model.user.User;
 
 import java.util.Set;
 
@@ -9,6 +10,12 @@ import java.util.Set;
  * {@link ContextRole} implementiert.
  */
 public interface IContextRole {
+
+    /**
+     * Gibt den Benutzer zurück, dem diese Rollen gehören.
+     * @return Benutzer, dem diese Rollen gehören.
+     */
+    User getUser();
 
     /**
      * Gibt den Kontext zurück, in dem die Rolle gilt.

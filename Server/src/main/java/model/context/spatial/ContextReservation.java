@@ -4,12 +4,12 @@ import model.user.User;
 
 import java.time.LocalDateTime;
 
-public class AreaReservation {
+public class ContextReservation {
     private User reserver;
     private LocalDateTime from;
     private LocalDateTime to;
 
-    public AreaReservation(User reserver, LocalDateTime from, LocalDateTime to) {
+    public ContextReservation(User reserver, LocalDateTime from, LocalDateTime to) {
         this.reserver = reserver;
         this.from = from;
         this.to = to;

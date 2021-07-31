@@ -3,7 +3,7 @@ package model.context.spatial.objects;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
-import model.context.spatial.Location;
+import model.communication.ParentCommunication;
 import model.context.spatial.Menu;
 import model.context.spatial.SpatialContext;
 import model.exception.IllegalInteractionException;
@@ -15,31 +15,45 @@ import model.user.account.UserAccountManager;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class AreaManager extends SpatialContext {
+/**
+ * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer die Rolle des Bereichsberechtigten für einen
+ * zukünftigen Zeitpunkt für einen festgelegten räumlichen Kontext beantragen kann. Ist immer vom Typ
+ * {@link model.context.spatial.SpatialContextType#OBJECT}.
+ */
+public class AreaPlanner extends SpatialContext {
 
-    public AreaManager(String contextName, SpatialContext parent, Menu menu, Location interactionLocation,
-                       CommunicationRegion region, Set<CommunicationMedium> communicationMedia) {
-        super(contextName, parent, menu, interactionLocation, region, communicationMedia);
+    /**
+     * Erzeugt eines neue Instanz des AreaPlanner.
+     * @param objectName Name des Objekts.
+     * @param parent Übergeordneter Kontext.
+     */
+    public AreaPlanner(String objectName, SpatialContext parent) {
+        super(objectName, parent, Menu.AREA_PLANNER_MENU, null, new HashSet<>());
     }
 
     @Override
     public void interact(User user) {
-        //user.setCurrentInteractable(this);
+        // Öffne das Menü beim Benutzer.
+        user.setCurrentInteractable(this);
+        user.setMoveable(false);
         user.getClientSender().send(ClientSender.SendAction.OPEN_MENU, this);
     }
 
     @Override
     public void executeMenuOption(User user, int menuOption, String[] args) throws IllegalInteractionException, IllegalMenuActionException {
         switch (menuOption) {
-            case 0:
-                //user.setCurrentInteractable(null);
+            case 0: // Schließt das Menü.
+                user.setCurrentInteractable(null);
+                user.setMoveable(true);
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
-            case 1:
+            case 1: // Stellt eine Anfrage zur Reservierung zum Erhalt der Rolle des Bereichsberechtigten im übergeordneten
+                    // Kontext.
                 LocalDateTime from;
                 LocalDateTime to;
                 try {

@@ -3,6 +3,7 @@ package model.context;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
+import model.context.spatial.ContextReservation;
 import model.context.spatial.Music;
 import model.context.spatial.SpatialContext;
 import model.database.Database;
@@ -10,6 +11,7 @@ import model.database.IContextDatabase;
 import model.user.IUser;
 import model.user.User;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -32,7 +34,7 @@ public abstract class Context implements IContext {
     protected final Map<ContextID, SpatialContext> children;
 
     /** Die in diesem Kontext enthaltenen Benutzer. */
-    private final Map<UUID, User> containedUsers;
+    protected final Map<UUID, User> containedUsers;
 
     /** Die in diesem Kontext gemeldeten Benutzer. */
     private final Map<UUID, User> reportedUsers;
@@ -48,6 +50,9 @@ public abstract class Context implements IContext {
 
     /** Die in diesem Kontext verwendbaren Kommunikationsmedien. */
     private final Set<CommunicationMedium> communicationMedia;
+
+    /** Reservierungen zum Erhalt der Rolle des Bereichsberechtigten in diesem Kontext. */
+    protected final Set<ContextReservation> contextReservations;
 
     /** Die in diesem Kontext laufende Musik.*/
     private Music music;
@@ -79,6 +84,7 @@ public abstract class Context implements IContext {
         this.communicationRegion = communicationRegion;
         this.communicationMedia = communicationMedia;
         this.music = null;
+        this.contextReservations = new HashSet<>();
         this.database = Database.getContextDatabase();
     }
 
@@ -254,6 +260,16 @@ public abstract class Context implements IContext {
     }
 
     /**
+     * Fügt eine Reservierung zum Erhalt der Rolle des Bereichsberechtigten zu diesem Kontext hinzu.
+     * @param user Reservierter Benutzer.
+     * @param from Reservierter Anfangszeitpunkt.
+     * @param to Reservierter Endzeitpunkt.
+     */
+    public void addReservation(User user, LocalDateTime from, LocalDateTime to) {
+        contextReservations.add(new ContextReservation(user, from, to));
+    }
+
+    /**
      * Überprüft, ob ein Benutzer in diesem Kontext enthalten ist.
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn der Benutzer enthalten ist, sonst false.
@@ -324,6 +340,38 @@ public abstract class Context implements IContext {
      */
     public boolean canCommunicateWith(CommunicationMedium medium) {
         return communicationMedia.contains(medium);
+    }
+
+    /**
+     * Überprüft, ob dieser Kontext von einem Benutzer reserviert ist.
+     * @param user Zu überprüfender Benutzer.
+     * @return true, wenn der Kontext von dem Benutzer reserviert ist, sonst false.
+     */
+    public boolean isReservedBy(User user) {
+        return contextReservations.stream().anyMatch(reservation -> reservation.getReserver().equals(user));
+    }
+
+    /**
+     * Überprüft, ob dieser Kontext in einem bestimmten Zeitraum reserviert ist.
+     * @param from Zu überprüfender Anfangszeitpunkt.
+     * @param to Zu überprüfender Endzeitpunkt.
+     * @return true, wenn der Kontext in dem Zeitraum reserviert ist, sonst false.
+     */
+    public boolean isReservedAt(LocalDateTime from, LocalDateTime to) {
+        return contextReservations.stream().anyMatch(reservation -> reservation.getFrom().equals(from)
+                && reservation.getTo().equals(to));
+    }
+
+    /**
+     * Überprüft, ob dieser Kontext von einem Benutzer in einem bestimmten Zeitraum reserviert ist.
+     * @param user Zu überprüfender Benutzer.
+     * @param from Zu überprüfender Anfangszeitpunkt.
+     * @param to Zu überprüfender Endzeitpunkt.
+     * @return true, wenn der Kontext von dem Benutzer in dem Zeitraum reserviert ist, sonst false.
+     */
+    public boolean isReservedAtBy(User user, LocalDateTime from, LocalDateTime to) {
+        return contextReservations.stream().anyMatch(reservation -> reservation.getReserver().equals(user)
+                && reservation.getFrom().equals(from) && reservation.getTo().equals(to));
     }
 
     /**

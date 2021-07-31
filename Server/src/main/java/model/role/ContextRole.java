@@ -1,6 +1,7 @@
 package model.role;
 
 import model.context.Context;
+import model.user.User;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -9,6 +10,9 @@ import java.util.Set;
  * Eine Klasse, welche die Zusammengehörigkeit von Rollen mit Kontexten repräsentiert.
  */
 public class ContextRole implements IContextRole {
+
+    /** Benutzer, der diese Rollen besitzt. */
+    private User user;
 
     /** Der Kontext, in dem ein Benutzer die Rollen besitzt. */
     private Context context;
@@ -21,7 +25,8 @@ public class ContextRole implements IContextRole {
      * @param context Kontext, in dem der Benutzer die Rolle besitzen soll.
      * @param role Rolle, die der Benutzer besitzen soll.
      */
-    public ContextRole(Context context, Role role) {
+    public ContextRole(User user, Context context, Role role) {
+        this.user = user;
         this.context = context;
         this.roles = EnumSet.of(role);
     }
@@ -34,6 +39,11 @@ public class ContextRole implements IContextRole {
     public ContextRole(Context context, Set<Role> roles) {
         this.context = context;
         this.roles = roles;
+    }
+
+    @Override
+    public User getUser() {
+        return user;
     }
 
     @Override

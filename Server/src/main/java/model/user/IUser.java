@@ -38,8 +38,7 @@ public interface IUser {
      * @param posX Neue X-Koordinate.
      * @param posY Neue Y-Koordinate.
      * @throws IllegalPositionException wenn die übergebenen Koordinaten ungültig sind oder eine Kollision verursachen.
-     * @throws IllegalStateException wenn der Benutzer nicht in einer Welt ist oder im aktuellen Kontext des Benutzers
-     * keine Bewegung erlaubt ist.
+     * @throws IllegalStateException wenn der Benutzer nicht in einer Welt ist.
      * @see model.context.spatial.Location
      */
     void move(int posX, int posY) throws IllegalPositionException, IllegalStateException;

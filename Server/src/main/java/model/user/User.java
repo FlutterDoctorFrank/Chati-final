@@ -52,6 +52,9 @@ public class User implements IUser {
     /** Das Objekt, mit dem der Benutzer aktuell interagiert. */
     private SpatialContext currentInteractable;
 
+    /** Information, ob sich ein Benutzer momentan bewegen darf. */
+    private boolean moveable;
+
     /** Wird zum abwickeln der Kommunikation verwendet. */
     private final CommunicationHandler communicationHandler;
 
@@ -82,6 +85,7 @@ public class User implements IUser {
         this.username = username;
         this.status = Status.OFFLINE;
         this.avatar = DEFAULT_AVATAR;
+        this.moveable = true;
         this.communicationHandler = new CommunicationHandler(this);
         this.friends = new HashMap<>();
         this.ignoredUsers = new HashMap<>();
@@ -106,6 +110,7 @@ public class User implements IUser {
         this.username = username;
         this.status = Status.OFFLINE;
         this.avatar = avatar;
+        this.moveable = true;
         this.communicationHandler = new CommunicationHandler(this);
         this.friends = friends;
         this.ignoredUsers = ignoredUsers;
@@ -174,9 +179,9 @@ public class User implements IUser {
         SpatialContext currentRoom = currentLocation.getRoom();
         SpatialContext currentArea = currentLocation.getArea();
 
-        // Überprüfe, ob im aktuellen Bereich des Benutzers eine Bewegung erlaubt ist.
-        if (!currentArea.isMoveable()) {
-            throw new IllegalStateException("Movement is not allowed.");
+        // Überprüfe, ob sich der Benutzer bewegen darf.
+        if (!moveable) {
+            return;
         }
 
         // Überprüfe, ob die Zielkoordinaten erlaubt sind.
@@ -445,7 +450,7 @@ public class User implements IUser {
     public void addRole(Context context, Role role) {
         ContextRole contextRole = contextRoles.get(context);
         if (contextRole == null) {
-            contextRoles.put(context, new ContextRole(context, role));
+            contextRoles.put(context, new ContextRole(this, context, role));
         } else {
             contextRole.addRole(role);
         }
@@ -544,6 +549,14 @@ public class User implements IUser {
     }
 
     /**
+     * Setzt das Objekt, mit dem der Benutzer momentan interagiert.
+     * @param interactable Objekt, mit dem der Benutzer momentan interagiert.
+     */
+    public void setCurrentInteractable(SpatialContext interactable) {
+        this.currentInteractable = interactable;
+    }
+
+    /**
      * Ändert den Status eines Benutzers.
      * @param status Neuer Status des Benutzers.
      */
@@ -551,6 +564,14 @@ public class User implements IUser {
         this.status = status;
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
         updateUserInfo();
+    }
+
+    /**
+     * Setzt die Information, ob der Benutzer sich momentan bewegen darf.
+     * @param moveable true, wenn der Benutzer sich bewegen darf, sonst false.
+     */
+    public void setMoveable(boolean moveable) {
+        this.moveable = moveable;
     }
 
     /**
@@ -592,6 +613,15 @@ public class User implements IUser {
     }
 
     /**
+     * Gibt zurück, ob der Benutzer sich momentan bewegen darf.
+     * @return true, wenn der Benutzer sich bewegen darf, sonst false.
+     */
+    public boolean canMove() {
+        return moveable;
+    }
+
+    /**
+     * Gibt den ClientSender des Benutzers zurück.
      * @return ClientSender.
      */
     public ClientSender getClientSender() {

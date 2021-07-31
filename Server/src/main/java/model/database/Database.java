@@ -2,7 +2,7 @@ package model.database;
 
 import model.context.Context;
 import model.context.ContextID;
-import model.context.spatial.AreaReservation;
+import model.context.spatial.ContextReservation;
 import model.context.spatial.SpatialContext;
 import model.notification.Notification;
 import model.notification.RoomRequest;
@@ -477,12 +477,12 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void addAreaReservation(AreaReservation areaReservation) {
+    public void addAreaReservation(ContextReservation contextReservation) {
         // TODO
     }
 
     @Override
-    public void removeAreaReservation(AreaReservation areaReservation) {
+    public void removeAreaReservation(ContextReservation contextReservation) {
         // TODO
     }
 

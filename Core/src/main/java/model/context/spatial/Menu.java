@@ -29,5 +29,10 @@ public enum Menu {
     /**
      * Repräsentiert das Menü, dass durch die Interaktion mit dem Spieltisch beim Benutzer geöffnet werden soll.
      */
-    GAME_BOARD_MENU
+    GAME_BOARD_MENU,
+
+    /**
+     * Repräsentiert das Menü, dass durch die Interaktion mit dem Sitzplatz beim Benutzer geöffnet werden soll.
+     */
+    SEAT_MENU
 }

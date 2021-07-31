@@ -13,10 +13,9 @@ public class AreaCommunication extends CommunicationRegion {
 
     /**
      * Erzeugt eine neue Instanz der AreaCommunication.
-     * @param context Kontext, der die Instanz dieser Kommunikationsform nutzt.
      */
-    public AreaCommunication(SpatialContext context) {
-        super(context);
+    public AreaCommunication() {
+        super();
     }
 
     @Override

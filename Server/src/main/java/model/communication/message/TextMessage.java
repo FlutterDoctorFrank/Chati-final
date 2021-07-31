@@ -9,14 +9,14 @@ import model.user.User;
 public class TextMessage extends Message implements ITextMessage {
 
     /** Der Text der Nachricht. */
-    private String textMessage;
+    private final String textMessage;
 
     /** Der Schlüssel einer übersetzbaren Nachricht. Wird nur für TextNachrichten verwendet, die vom System generiert
      * werden und den Typ {@link MessageType#INFO} besitzen. */
-    private MessageBundle messageBundle;
+    private final MessageBundle messageBundle;
 
     /** Der Typ dieser Nachricht. Bestimmt, wie die Nachricht beim Benutzer angezeigt werden soll. */
-    private MessageType messageType;
+    private final MessageType messageType;
 
     /**
      * Erzeugt eine neue Instanz der Textnachricht. Wird verwendet, um von Benutzern gesendete Nachrichten zu erzeugen.

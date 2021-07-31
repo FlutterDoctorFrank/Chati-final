@@ -1,6 +1,5 @@
 package model.communication;
 
-import model.context.Context;
 import model.context.spatial.SpatialContext;
 import model.user.User;
 
@@ -22,10 +21,9 @@ public class RadiusCommunication extends CommunicationRegion {
 
     /**
      * Erzeugt eine neue Instanz der RadiusCommunication.
-     * @param context Kontext, der die Instanz dieser Kommunikationsform nutzt.
      */
-    public RadiusCommunication(SpatialContext context) {
-        super(context);
+    public RadiusCommunication() {
+        super();
         this.radius = DEFAULT_RADIUS;
     }
 
@@ -42,4 +40,5 @@ public class RadiusCommunication extends CommunicationRegion {
                 .filter(otherUser -> user.getLocation().distance(otherUser.getLocation()) <= radius)
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
+
 }
