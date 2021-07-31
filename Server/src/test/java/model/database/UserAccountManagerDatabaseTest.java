@@ -84,5 +84,40 @@ public class UserAccountManagerDatabaseTest {
 
     }
 
+    //getUser(username)
+    @Test
+    @Ignore
+    public void getUserTest(){
+
+        User test = this.database.createAccount("getUserTest", "111");
+        User real = this.database.getUser("getUserTest");
+        //Erstellen ein Benutzer und direkt speichern in Datenbank
+        /*
+        User test = new User("getUserTest");
+        User real = null;
+        try {
+            Connection con = DriverManager.getConnection(dbURL);
+            String sql = "INSERT INTO USER_ACCOUNT(USER_ID, USER_NAME, USER_PSW, LAST_ONLINE_TIME, AVATAR_NAME) values(?,?,?,?,?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, test.getUserId().toString());
+            ps.setString(2, test.getUsername());
+            //Angenommen Password = "000"
+            ps.setString(3, "000");
+            ps.setString(4, null);
+            ps.setString(5, null);
+            ps.executeUpdate();
+            con.close();
+        } catch (SQLException e) {
+            System.out.print("Fehler in getUserTest: " + e);
+        }
+
+        //Erhalten Benutzer mit getUser Methode
+        real = this.database.getUser("getUserTest");
+        */
+
+
+        Assert.assertEquals(test.getUserId(), real.getUserId());
+
+    }
 
 }

@@ -101,6 +101,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             } else {
                 System.out.println("Name ist besitzt");
             }
+            res.close();
+            st.close();
             con.close();
             return user;
         } catch (SQLException e) {
@@ -234,6 +236,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             } else {
                 System.out.println("mehr als 1 or not exist");
             }
+            res.close();
+            st.close();
             con.close();
         } catch(SQLException e){
             System.out.println(e);
@@ -272,6 +276,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             } else {
                 System.out.println("mehr als 1 or not exist");
             }
+            res.close();
+            st.close();
             con.close();
         } catch(SQLException e){
             System.out.println(e);
