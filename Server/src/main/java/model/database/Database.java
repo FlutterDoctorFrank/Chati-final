@@ -226,8 +226,12 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 res.first();
                 String user_name = res.getString("USER_NAME");
                 String avatar_name = res.getString("AVATAR_NAME");
-                //TODO
+
                 Avatar user_avatar = null;
+                if (avatar_name != null){
+                    user_avatar = Avatar.valueOf(avatar_name);
+                    //System.out.println(user_avatar.getName());
+                }
 
 
                 //!!! noch nicht bearbeitet!!!
@@ -267,10 +271,13 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             if (row == 1) {
                 res.first();
                 String user_id = res.getString("USER_ID");
-                String avatar_name = res.getString("AVATAR_NAME");
 
-                //TODO
+                String avatar_name = res.getString("AVATAR_NAME");
                 Avatar user_avatar = null;
+                if (avatar_name != null){
+                    user_avatar = Avatar.valueOf(avatar_name);
+                    //System.out.println(user_avatar.getName());
+                }
 
                 //!!! noch nicht bearbeitet!!!
                 //TODO
