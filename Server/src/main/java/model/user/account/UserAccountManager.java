@@ -13,6 +13,7 @@ import model.user.User;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -49,7 +50,7 @@ public class UserAccountManager extends Thread implements IUserAccountManager {
      */
     private UserAccountManager() {
         database = Database.getUserAccountManagerDatabase();
-        registeredUsers = database.getUsers();
+        registeredUsers = Collections.synchronizedMap(database.getUsers());
         super.start();
     }
 
@@ -229,6 +230,12 @@ public class UserAccountManager extends Thread implements IUserAccountManager {
                     }
                 }
             });
+            // Führe die Überprüfung nur jede 10 Sekunden durch um Ressourcen zu sparen.
+            try {
+                sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
