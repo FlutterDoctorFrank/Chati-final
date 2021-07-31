@@ -7,6 +7,7 @@ import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextMusic;
 import controller.network.protocol.PacketOutContextRole;
+import controller.network.protocol.PacketOutMenuAction;
 import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.Action;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
@@ -40,6 +41,9 @@ public interface ClientSender {
 
         /**
          * Information, dass neue Informationen über Benutzer versendet werden sollen.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link model.user.IUser}
+         * </p>
          */
         USER_INFO {
             @Override
@@ -129,7 +133,7 @@ public interface ClientSender {
         /**
          * Information, dass eine Welt beziehungsweise ein Raum betreten werden soll.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link model.context.spatial.ISpatialContext} mit
+         *     Erwartet als Objekt die Schnittstelle: {@link ISpatialContext} mit
          *     {@link model.context.spatial.SpatialContextType#WORLD} oder
          *     {@link model.context.spatial.SpatialContextType#ROOM}
          * </p>
@@ -158,7 +162,7 @@ public interface ClientSender {
         /**
          * Information, dass sich die Rolle innerhalb eines Kontextes geändert hat.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link model.role.IContextRole}
+         *     Erwartet als Objekt die Schnittstelle: {@link IContextRole}
          * </p>
          */
         CONTEXT_ROLE {
@@ -178,7 +182,7 @@ public interface ClientSender {
         /**
          * Information, dass sich die Musik innerhalb eines Kontextes geändert hat.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link model.context.spatial.ISpatialContext}
+         *     Erwartet als Objekt die Schnittstelle: {@link ISpatialContext}
          * </p>
          */
         CONTEXT_MUSIC {
@@ -245,28 +249,51 @@ public interface ClientSender {
 
         /**
          * Information, dass ein Menü geöffnet werden soll.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link ISpatialContext}
+         * </p>
          */
         OPEN_MENU {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                //TODO Verpackung des MenuAction-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (object instanceof ISpatialContext) {
+                    final ISpatialContext interact = (ISpatialContext) object;
+
+                    //TODO Überprüfung ob es sich bei dem räumlichen Kontext um ein Objekt handelt
+
+                    return new PacketOutMenuAction(interact.getContextId(), null, true);
+                } else {
+                    throw new IllegalArgumentException("Expected ISpatialContext, got " + object.getClass());
+                }
             }
         },
 
         /**
          * Information, dass ein geöffnetes Menü geschlossen werden soll.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link ISpatialContext}
+         * </p>
          */
         CLOSE_MENU {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                //TODO Verpackung des MenuAction-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (object instanceof ISpatialContext) {
+                    final ISpatialContext interact = (ISpatialContext) object;
+
+                    //TODO Überprüfung ob es sich bei dem räumlichen Kontext um ein Objekt handelt
+
+                    return new PacketOutMenuAction(interact.getContextId(), null, false);
+                } else {
+                    throw new IllegalArgumentException("Expected ISpatialContext, got " + object.getClass());
+                }
             }
         },
 
         /**
          * Information, dass eine Welt betreten oder verlassen werden soll.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link ISpatialContext}
+         * </p>
          */
         WORLD_ACTION {
             @Override

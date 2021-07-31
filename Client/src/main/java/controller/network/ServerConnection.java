@@ -6,10 +6,12 @@ import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerOut;
+import controller.network.protocol.PacketMenuOption;
 import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextMusic;
 import controller.network.protocol.PacketOutContextRole;
+import controller.network.protocol.PacketOutMenuAction;
 import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketWorldAction;
@@ -72,6 +74,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     }
 
     @Override
+    public void handle(@NotNull PacketMenuOption packet) {
+        //TODO Verarbeitung des MenuOption-Pakets implementieren.
+    }
+
+    @Override
     public void handle(@NotNull final PacketWorldAction packet) {
         //TODO Verarbeitung des WorldAction-Pakets implementieren.
     }
@@ -99,6 +106,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     @Override
     public void handle(@NotNull final PacketOutContextRole packet) {
         //TODO Verarbeitung des ContextRole-Pakets implementieren.
+    }
+
+    @Override
+    public void handle(@NotNull final PacketOutMenuAction packet) {
+        //TODO Verarbeitung des MenuAction-Pakets implementieren.
     }
 
     @Override

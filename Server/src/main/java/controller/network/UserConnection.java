@@ -9,19 +9,29 @@ import controller.network.protocol.PacketInContextInteract;
 import controller.network.protocol.PacketInUserManage;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerIn;
+import controller.network.protocol.PacketMenuOption;
+import controller.network.protocol.PacketOutContextInfo;
+import controller.network.protocol.PacketOutContextRole;
+import controller.network.protocol.PacketOutUserInfo;
+import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketProfileAction.Action;
 import controller.network.protocol.PacketWorldAction;
+import model.context.spatial.ISpatialContext;
 import model.exception.ContextNotFoundException;
 import model.exception.IllegalAccountActionException;
 import model.exception.IllegalInteractionException;
+import model.exception.IllegalMenuActionException;
 import model.exception.IllegalPositionException;
 import model.exception.IllegalWorldActionException;
 import model.exception.NoPermissionException;
 import model.exception.UserNotFoundException;
+import model.role.IContextRole;
 import model.user.AdministrativeAction;
 import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -108,6 +118,30 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
     }
 
     @Override
+    public void handle(@NotNull final PacketMenuOption packet) {
+        if (this.user != null) {
+            if (this.user.getWorld() != null) {
+                try {
+                    this.user.executeOption(packet.getContextId(), packet.getOption(), packet.getArguments());
+
+                    // Die Menü-Option war erfolgreich. Sende Bestätigung.
+                    this.send(new PacketMenuOption(packet, null, true));
+                }catch (IllegalMenuActionException ex) {
+                    // Die erhaltenen Argumente enthalten ungültige Daten. Sende Fehlernachricht.
+                    this.send(new PacketMenuOption(packet, ex.getClientMessageKey(), false));
+                } catch (IllegalInteractionException ex) {
+                    // Mit dem Objekt kann nicht interagiert werden oder das Objekt existiert nicht.
+                    LOGGER.warning("Received illegal context-interaction from user " + this.user.getUsername() + ": " + ex.getMessage());
+                }
+            } else {
+                LOGGER.fine("User " + this.user.getUsername() + " tried to interact with menu while not in world");
+            }
+        } else {
+            LOGGER.fine("Connection " + this.connection.getID() + " tried to interact with menu while not logged in");
+        }
+    }
+
+    @Override
     public void handle(@NotNull final PacketWorldAction packet) {
         if (this.user != null) {
             try {
@@ -169,16 +203,35 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                         switch (packet.getAction()) {
                             case REGISTER:
                                 this.manager.getAccountManager().registerUser(packet.getName(), packet.getPassword());
+
+                                this.send(new PacketProfileAction(packet, null, true));
                                 break;
 
                             case LOGIN:
                                 this.user = this.manager.getAccountManager().loginUser(packet.getName(), packet.getPassword(), this);
 
+                                // Login erfolgreich. Sende benötigte Informationen.
                                 this.send(new PacketProfileAction(packet, this.user.getUserId(), null, true));
-                                return;
-                        }
 
-                        this.send(new PacketProfileAction(packet, null, true));
+                                // Informationen über die verfügbaren Welten.
+                                final Set<PacketOutContextInfo.Info> worlds = new HashSet<>();
+                                for (final ISpatialContext world : this.manager.getGlobal().getWorlds().values()) {
+                                    worlds.add(new PacketOutContextInfo.Info(world.getContextId(), world.getContextName()));
+                                }
+                                this.send(new PacketOutContextInfo(this.manager.getGlobal().getContextId(), worlds));
+
+                                // Informationen über die globalen Rollen.
+                                for (final IContextRole role : this.user.getGlobalRoles().values()) {
+                                    this.send(new PacketOutContextRole(role.getContext().getContextId(), this.user.getUserId(), role.getRoles()));
+                                }
+
+                                // Informationen über die befreundeten Benutzer.
+                                for (final IUser friend : this.user.getFriends().values()) {
+                                    this.send(new PacketOutUserInfo(null, PacketOutUserInfo.Action.UPDATE_USER,
+                                            new UserInfo(friend.getUserId(), friend.getUsername(), friend.getStatus())));
+                                }
+                                break;
+                        }
                     } catch (IllegalAccountActionException ex) {
                         LOGGER.warning("Received illegal profile action from connection " + this.connection.getID() + ": " + ex.getMessage());
                         this.send(new PacketProfileAction(packet, ex.getClientMessageKey(), false));
@@ -243,12 +296,18 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
     @Override
     public void handle(@NotNull final PacketInContextInteract packet) {
         if (this.user != null) {
-            try {
-                this.user.interact(packet.getContextId());
-            } catch (IllegalInteractionException ex) {
-                // Objekt wurde nicht gefunden oder der Benutzer interagiert bereits mit einem Objekt.
-                // Verbindung trennen?
+            if (this.user.getWorld() != null) {
+                try {
+                    this.user.interact(packet.getContextId());
+                } catch (IllegalInteractionException ex) {
+                    // Mit dem Objekt kann nicht interagiert werden oder das Objekt existiert nicht.
+                    LOGGER.warning("Received illegal context-interaction from user " + this.user.getUsername() + ": " + ex.getMessage());
+                }
+            } else {
+                LOGGER.fine("User " + this.user.getUsername() + " tried to interact with context while not in world");
             }
+        } else {
+            LOGGER.fine("Connection " + this.connection.getID() + " tried to logout/delete while not logged in");
         }
     }
 

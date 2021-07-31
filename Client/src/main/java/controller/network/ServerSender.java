@@ -4,6 +4,7 @@ import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketInContextInteract;
 import controller.network.protocol.PacketInUserManage;
+import controller.network.protocol.PacketMenuOption;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketWorldAction;
 import model.User.AdministrativeAction;
@@ -241,29 +242,37 @@ public interface ServerSender {
         },
 
         /**
-         * Information, dass ein geöffnetes Menü geschlossen wurde.
-         */
-        MENU_ACTION {
-            @Override
-            protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des MenuAction-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
-            }
-        },
-
-        /**
          * Information, dass im geöffneten Menü eine Option ausgewählt wurde.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@link ContextID}, die Kontext-ID des zum Menü zugehörigem Objekts<br>
+         *     - {@code 1}: {@link String[]}, die Eingaben innerhalb des Menüs<br>
+         *     - {@code 2}: {@link Integer}, die ausgewählte Menü-Option
+         * </p>
          */
         MENU_OPTION {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des MenuOption-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (objects.length == 3) {
+                    if (objects[0] instanceof ContextID && objects[1] instanceof String[] && objects[2] instanceof Integer) {
+                        return new PacketMenuOption((ContextID) objects[0], (String[]) objects[1], (int) objects[2]);
+                    } else {
+                        throw new IllegalArgumentException("Expected ContextID, String[] and Integer, got "
+                                + objects[0].getClass() + ", " + objects[1].getClass() + " and " + objects[2].getClass());
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 3, got " + objects.length);
+                }
             }
         },
 
         /**
          * Information, dass eine Verwaltungsmöglichkeit auf einen anderen Benutzer ausgeführt werden soll.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@link UUID}, Die ID des Benutzers, auf dem die Aktion ausgeführt werden soll<br>
+         *     - {@code 1}: {@link AdministrativeAction}, Die administrative Aktion die ausgeführt werden soll
+         * </p>
          */
         USER_MANAGE {
             @Override
