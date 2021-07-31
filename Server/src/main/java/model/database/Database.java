@@ -229,7 +229,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
                 //!!! noch nicht bearbeitet!!!
                 //TODO
-                User user = new User(userID, user_name, user_avatar, null, null, null, null);
+                User user = new User(userID, user_name, user_avatar, null, null, null, null, null);
 
                 return user;
 
@@ -269,7 +269,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
                 //!!! noch nicht bearbeitet!!!
                 //TODO
-                User user = new User(UUID.fromString(user_id), username, user_avatar, null, null, null, null);
+                User user = new User(UUID.fromString(user_id), username, user_avatar, null, null, null, null, null);
 
                 return user;
 

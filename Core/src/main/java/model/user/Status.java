@@ -18,5 +18,11 @@ public enum Status {
     /**
      * Status eines nicht eingeloggten Benutzers.
      */
-    OFFLINE
+    OFFLINE;
+
+    /**
+     * Zeit in Minuten, nach deren Ablauf ohne Aktivität des Benutzers dieser auf den Status {@link Status#AWAY}
+     * gesetzt wird.
+     */
+    public static final int AWAY_TIME = 15;
 }

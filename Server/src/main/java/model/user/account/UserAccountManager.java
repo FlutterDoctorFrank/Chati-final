@@ -11,6 +11,8 @@ import model.role.Permission;
 import model.user.Status;
 import model.user.User;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -21,7 +23,10 @@ import java.util.stream.Collectors;
  * Eine Klasse, welche der Verwaltung von Benutzerkonten dient. Kann nur einmal instanziiert
  * werden.
  */
-public class UserAccountManager implements IUserAccountManager {
+public class UserAccountManager extends Thread implements IUserAccountManager {
+
+    /** Zeit in Monaten, nach deren Ablauf ohne ein Einloggen in das Benutzerkonto dieses gelöscht wird. */
+    private static final int ACCOUNT_DELETION_TIME = 3;
 
     /** Regulärer Ausdruck für das Format von Benutzernamen */
     private static final String USERNAME_FORMAT = "^\\w{2,16}";
@@ -45,6 +50,7 @@ public class UserAccountManager implements IUserAccountManager {
     private UserAccountManager() {
         database = Database.getUserAccountManagerDatabase();
         registeredUsers = database.getUsers();
+        super.start();
     }
 
     @Override
@@ -87,6 +93,7 @@ public class UserAccountManager implements IUserAccountManager {
         // Melde den Benutzer an.
         user.setClientSender(sender);
         user.setStatus(Status.ONLINE);
+        user.updateLastActivity();
         GlobalContext.getInstance().addUser(user);
         return user;
     }
@@ -100,7 +107,7 @@ public class UserAccountManager implements IUserAccountManager {
         }
         // Melde den Benutzer ab.
         GlobalContext.getInstance().removeUser(user);
-        user.setStatus(Status.OFFLINE);
+        user.updateLastLogoutTime();
         // database.updateLastOnlineTime(user);
     }
 
@@ -112,14 +119,13 @@ public class UserAccountManager implements IUserAccountManager {
             throw new IllegalAccountActionException("", "Das eingegebene Passwort ist nicht korrekt.");
         }
         // Melde den Benutzer ab und lösche sein Benutzerkonto.
-        logoutUser(userId);
-        registeredUsers.remove(userId);
-        // database.deleteAccount(user);
+        deleteUser(user);
     }
 
     @Override
     public void changePassword(UUID userId, String password, String newPassword) throws UserNotFoundException, IllegalAccountActionException {
         User user = getUser(userId);
+        user.updateLastActivity();
         // Überprüfe, ob das aktuelle Passwort korrekt übergeben wurde.
         if (!database.checkPassword(user.getUsername(), password)) {
             throw new IllegalAccountActionException("", "Das eingegebene Passwort ist nicht korrekt.");
@@ -203,5 +209,37 @@ public class UserAccountManager implements IUserAccountManager {
         return registeredUsers.values().stream()
                 .filter(user -> user.hasPermission(context, permission))
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
+    }
+
+    @Override
+    public void run() {
+        for (;;) { // ever
+            registeredUsers.values().forEach(user -> {
+                // Setze den Status eines Benutzers auf abwesend, wenn dieser eine festgelegte Zeit nicht aktiv war.
+                if (user.isOnline()
+                        && user.getLastActivity().until(LocalDateTime.now(), ChronoUnit.MINUTES) >= Status.AWAY_TIME) {
+                    user.setStatus(Status.AWAY);
+                    // Lösche das Benutzerkonto, wenn dieser für eine festgelegte Zeit nicht eingeloggt war.
+                } else if (!user.isOnline()
+                        && user.getLastLogoutTime().until(LocalDateTime.now(), ChronoUnit.MONTHS) >= ACCOUNT_DELETION_TIME) {
+                    try {
+                        deleteUser(user);
+                    } catch (UserNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Löscht das Benutzerkonto eines Benutzers.
+     * @param user Zu löschender Benutzer.
+     * @throws UserNotFoundException wenn der Benutzer nicht existiert.
+     */
+    private void deleteUser(User user) throws UserNotFoundException {
+        logoutUser(user.getUserId());
+        registeredUsers.remove(user.getUserId());
+        // database.deleteAccount(user);
     }
 }

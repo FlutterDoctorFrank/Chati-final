@@ -19,6 +19,7 @@ import model.role.Permission;
 import model.role.Role;
 import model.user.account.UserAccountManager;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -42,6 +43,12 @@ public class User implements IUser {
 
     /** Der Avatar des Benutzers, der für ihn und andere Spieler auf der Karte sichtbar ist. */
     private Avatar avatar;
+
+    /** Zeitpunkt des letzten Ausloggens eines Benutzers. */
+    private LocalDateTime lastLogoutTime;
+
+    /** Zeitpunkt der letzten Aktivität des Benutzers. */
+    private LocalDateTime lastActivity;
 
     /** Die aktuelle Welt des Benutzers. */
     private SpatialContext currentWorld;
@@ -85,6 +92,8 @@ public class User implements IUser {
         this.username = username;
         this.status = Status.OFFLINE;
         this.avatar = DEFAULT_AVATAR;
+        this.lastLogoutTime = LocalDateTime.now();
+        this.lastActivity = LocalDateTime.now();
         this.moveable = true;
         this.communicationHandler = new CommunicationHandler(this);
         this.friends = new HashMap<>();
@@ -104,12 +113,14 @@ public class User implements IUser {
      * @param contextRoles Menge der Zuordnungen von Kontexten zu den jeweiligen Rollen des Benutzers.
      * @param notifications Menge der Benachrichtigungen des Benutzers.
      */
-    public User(UUID userId, String username, Avatar avatar, Map<UUID, User> friends, Map<UUID, User> ignoredUsers,
-                Map<Context, ContextRole> contextRoles, Map<UUID, Notification> notifications) {
+    public User(UUID userId, String username, Avatar avatar, LocalDateTime lastLogoutTime, Map<UUID, User> friends,
+                Map<UUID, User> ignoredUsers, Map<Context, ContextRole> contextRoles,
+                Map<UUID, Notification> notifications) {
         this.userId = userId;
         this.username = username;
         this.status = Status.OFFLINE;
         this.avatar = avatar;
+        this.lastLogoutTime = lastLogoutTime;
         this.moveable = true;
         this.communicationHandler = new CommunicationHandler(this);
         this.friends = friends;
@@ -122,6 +133,7 @@ public class User implements IUser {
     @Override
     public void joinWorld(ContextID worldID) throws IllegalStateException, ContextNotFoundException,
             IllegalWorldActionException {
+        updateLastActivity();
         // Überprüfe, ob Benutzer bereits in einer Welt ist.
         if (currentWorld != null) {
             throw new IllegalStateException("User is already in a world.");
@@ -152,6 +164,7 @@ public class User implements IUser {
 
     @Override
     public void leaveWorld() throws IllegalStateException {
+        updateLastActivity();
         // Überprüfe, ob Benutzer in einer Welt ist.
         if (currentWorld == null) {
             throw new IllegalStateException("User is not in a world.");
@@ -172,6 +185,7 @@ public class User implements IUser {
 
     @Override
     public void move(int posX, int posY) throws IllegalPositionException, IllegalStateException {
+        updateLastActivity();
         // Überprüfe, ob Benutzer sich in einer Welt befindet.
         if (currentWorld == null || currentLocation == null) {
             throw new IllegalStateException("User is not in a world.");
@@ -213,23 +227,27 @@ public class User implements IUser {
 
     @Override
     public void chat(String message) {
+        updateLastActivity();
         communicationHandler.handleTextMessage(message);
     }
 
     @Override
     public void talk(byte[] voicedata) {
+        updateLastActivity();
         communicationHandler.handleVoiceMessage(voicedata);
     }
 
     @Override
     public void executeAdministrativeAction(UUID targetID, AdministrativeAction administrativeAction, String[] args)
             throws UserNotFoundException, IllegalStateException, NoPermissionException {
+        updateLastActivity();
         User target = UserAccountManager.getInstance().getUser(targetID);
         administrativeAction.execute(this, target, args);
     }
 
     @Override
     public void interact(ContextID spatialID) throws IllegalInteractionException {
+        updateLastActivity();
         // Überprüfe, ob der Benutzer bereits mit einem Objekt interagiert.
         if (currentInteractable != null) {
             throw new IllegalInteractionException("User is already interacting with a context.", this);
@@ -250,6 +268,7 @@ public class User implements IUser {
     @Override
     public void executeOption(ContextID spatialID, int menuOption, String[] args) throws IllegalInteractionException,
             IllegalMenuActionException {
+        updateLastActivity();
         SpatialContext currentArea = currentLocation.getArea();
         SpatialContext interactable = currentArea.getChildren().get(spatialID);
 
@@ -270,6 +289,7 @@ public class User implements IUser {
 
     @Override
     public void deleteNotification(UUID notificationID) throws NotificationNotFoundException {
+        updateLastActivity();
         Notification notification = notifications.get(notificationID);
         if (notification == null) {
             throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationID);
@@ -280,6 +300,7 @@ public class User implements IUser {
     @Override
     public void manageNotification(UUID notificationID, boolean accept) throws NotificationNotFoundException,
             IllegalNotificationActionException {
+        updateLastActivity();
         Notification notification = notifications.get(notificationID);
 
         // Überprüfe, ob die Benachrichtigung vorhanden ist.
@@ -300,6 +321,7 @@ public class User implements IUser {
 
     @Override
     public void setAvatar(Avatar avatar) {
+        updateLastActivity();
         this.avatar = avatar;
         database.changeAvatar(this, avatar);
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
@@ -567,6 +589,24 @@ public class User implements IUser {
     }
 
     /**
+     * Aktualisiert den Zeitpunkt, an dem der Benutzer sich das letzte mal ausgeloggt hat.
+     */
+    public void updateLastLogoutTime() {
+        setStatus(Status.OFFLINE);
+        this.lastLogoutTime = LocalDateTime.now();
+    }
+
+    /**
+     * Aktualisiert den Zeitpunkt, an dem der Benutzer seine letzte Aktivität gezeigt hat.
+     */
+    public void updateLastActivity() {
+        if (status.equals(Status.AWAY)) {
+            setStatus(Status.ONLINE);
+        }
+        this.lastActivity = LocalDateTime.now();
+    }
+
+    /**
      * Setzt die Information, ob der Benutzer sich momentan bewegen darf.
      * @param moveable true, wenn der Benutzer sich bewegen darf, sonst false.
      */
@@ -612,12 +652,16 @@ public class User implements IUser {
                 .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
     }
 
+    public LocalDateTime getLastLogoutTime() {
+        return lastLogoutTime;
+    }
+
     /**
-     * Gibt zurück, ob der Benutzer sich momentan bewegen darf.
-     * @return true, wenn der Benutzer sich bewegen darf, sonst false.
+     * Gibt den Zeitpunkt zurück, an dem der Benutzer seine letzte Aktivität gezeigt hat.
+     * @return Letzter Zeitpunkt, an dem der Benutzer eine Aktivität gezeigt hat.
      */
-    public boolean canMove() {
-        return moveable;
+    public LocalDateTime getLastActivity() {
+        return lastActivity;
     }
 
     /**

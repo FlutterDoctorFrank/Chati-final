@@ -36,6 +36,7 @@ public class GlobalContext extends Context implements IGlobalContext {
     @Override
     public void createWorld(UUID performerId, String worldname, SpatialMap map) throws UserNotFoundException, NoPermissionException, IllegalWorldActionException {
         User performer = UserAccountManager.getInstance().getUser(performerId);
+        performer.updateLastActivity();
         // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung besitzt.
         if (!performer.hasPermission(GlobalContext.getInstance(), Permission.MANAGE_WORLDS)) {
             throw new NoPermissionException("no permission", performer, Permission.MANAGE_WORLDS);
@@ -58,6 +59,7 @@ public class GlobalContext extends Context implements IGlobalContext {
     @Override
     public void removeWorld(UUID performerId, ContextID worldId) throws UserNotFoundException, NoPermissionException, ContextNotFoundException {
         User performer = UserAccountManager.getInstance().getUser(performerId);
+        performer.updateLastActivity();
         // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung besitzt.
         if (!performer.hasPermission(GlobalContext.getInstance(), Permission.MANAGE_WORLDS)) {
             throw new NoPermissionException("no permission", performer, Permission.MANAGE_WORLDS);
