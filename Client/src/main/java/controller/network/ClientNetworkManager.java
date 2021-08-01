@@ -6,6 +6,8 @@ import model.Context.Global.IGlobalContextController;
 import model.User.IUserManagerController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import view.Screens.ViewControllerInterface;
+
 import java.io.IOException;
 
 /**
@@ -13,7 +15,7 @@ import java.io.IOException;
  */
 public class ClientNetworkManager extends NetworkManager<Client> {
 
-    //private final ViewControllerInterface view;
+    private ViewControllerInterface view;
     private final IGlobalContextController global;
     private final IUserManagerController userManager;
 
@@ -27,6 +29,14 @@ public class ClientNetworkManager extends NetworkManager<Client> {
         this.global = global;
         this.userManager = userManager;
         //this.view = view;
+    }
+
+    public void setView(ViewControllerInterface view) {
+        this.view = view;
+    }
+
+    public ViewControllerInterface getView() {
+        return view;
     }
 
     public @Nullable ServerConnection getConnection() {

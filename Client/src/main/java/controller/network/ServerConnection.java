@@ -98,6 +98,10 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     @Override
     public void handle(@NotNull final PacketProfileAction packet) {
         //TODO Verarbeitung des ProfileAction-Pakets implementieren.
+
+        if (manager.getView() != null) {
+            System.out.println("penis");
+        }
     }
 
     @Override

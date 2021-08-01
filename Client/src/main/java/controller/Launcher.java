@@ -13,6 +13,6 @@ public class Launcher {
         final ClientNetworkManager network = new ClientNetworkManager(global, userManager);
 
         network.start();
-        global.setIModelObserver(new Chati(network.getConnection()).getScreen().getHud());
+        global.setIModelObserver(new Chati(network).getScreen().getHud());
     }
 }
