@@ -46,7 +46,7 @@ public class GlobalContext extends Context implements IGlobalContext {
             throw new IllegalWorldActionException("", "Eine Welt mit diesem Namen existiert bereits");
         }
         // Erzeuge die Welt und füge sie
-        SpatialContext newWorld = new SpatialContext(worldname, map, null, null); // Die nulls hier müssen noch ersetzt werden.
+        SpatialContext newWorld = SpatialContext.initializeMap(map); // Die nulls hier müssen noch ersetzt werden.
         worlds.put(newWorld.getContextId(), newWorld);
         // Sende allen Benutzern, die sich im Menübildschirm befinden die aktualisierte Liste der Welten.
         Map<UUID, User> usersInMenuScreen = getUsers();

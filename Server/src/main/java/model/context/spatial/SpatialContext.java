@@ -1,6 +1,7 @@
 package model.context.spatial;
 
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -39,6 +40,9 @@ public class SpatialContext extends Context implements ISpatialContext {
     /** Die diesem räumlichen Kontext übergeordnete Welt. */
     private final SpatialContext world;
 
+    /** Räumliche Ausdehnung des Kontextes. */
+    protected final Expanse expanse;
+
     /*
      * Parameters only relevant for type 'AREA' and 'OBJECT'
      */
@@ -50,7 +54,7 @@ public class SpatialContext extends Context implements ISpatialContext {
     private final boolean isInteractable;
 
     /** Das Menü, dass beim Benutzer bei einer Interaktion mit diesem Kontext geöffnet werden soll. */
-    private Menu menu;
+    private final Menu menu;
 
     /*
      * Parameters relevant for type 'ROOM' and 'WORLD'
@@ -61,9 +65,6 @@ public class SpatialContext extends Context implements ISpatialContext {
 
     /** Enthält Information über erlaubte Positionen auf der Karte. */
     private boolean[][] collisionMap;
-
-    /** Räumliche Ausdehnung des Kontextes. */
-    protected Expanse expanse;
 
     /** Information, ob dieser Kontext privat, oder öffentlich zugänglich ist. */
     private final boolean isPrivate;
@@ -85,7 +86,7 @@ public class SpatialContext extends Context implements ISpatialContext {
      * @param communicationRegion Kommunikationsform der Welt.
      * @param communicationMedia Benutzbare Kommunikationsmedien der Welt.
      */
-    public SpatialContext(String worldName, SpatialMap map, CommunicationRegion communicationRegion,
+    private SpatialContext(String worldName, SpatialMap map, Expanse expanse, CommunicationRegion communicationRegion,
                           Set<CommunicationMedium> communicationMedia) {
         super(worldName, GlobalContext.getInstance(), communicationRegion, communicationMedia);
         GlobalContext.getInstance().addChild(this);
@@ -95,10 +96,10 @@ public class SpatialContext extends Context implements ISpatialContext {
         this.isInteractable = false;
         this.menu = null;
         this.map = map;
+        this.expanse = expanse;
         this.isPrivate = false;
         this.password = null;
         this.privateRooms = new HashMap<>();
-        initializeMap();
     }
 
     /**
@@ -111,7 +112,7 @@ public class SpatialContext extends Context implements ISpatialContext {
      * @param communicationRegion Kommunikationsform des Raums.
      * @param communicationMedia Benutzbare Kommunikationsmedien des Raums.
      */
-    public SpatialContext(String roomName, SpatialContext world, SpatialMap map, String password,
+    private SpatialContext(String roomName, SpatialContext world, SpatialMap map, String password, Expanse expanse,
                           CommunicationRegion communicationRegion, Set<CommunicationMedium> communicationMedia) {
         super(roomName, world, communicationRegion, communicationMedia);
         world.addChild(this);
@@ -121,10 +122,10 @@ public class SpatialContext extends Context implements ISpatialContext {
         this.isInteractable = false;
         this.menu = null;
         this.map = map;
+        this.expanse = expanse;
         this.isPrivate = true;
         this.password = password;
         this.privateRooms = null;
-        initializeMap();
     }
 
     /**
@@ -135,8 +136,8 @@ public class SpatialContext extends Context implements ISpatialContext {
      * @param communicationRegion Kommunikationsform des Bereichs.
      * @param communicationMedia Benutzbare Kommunikationsmedien des Bereichs.
      */
-    public SpatialContext(String areaName, SpatialContext parent, CommunicationRegion communicationRegion,
-                          Set<CommunicationMedium> communicationMedia) {
+    private SpatialContext(String areaName, SpatialContext parent, Expanse expanse,
+                          CommunicationRegion communicationRegion, Set<CommunicationMedium> communicationMedia) {
         super(areaName, parent, communicationRegion, communicationMedia);
         parent.addChild(this);
         this.spatialContextType = SpatialContextType.AREA;
@@ -145,6 +146,7 @@ public class SpatialContext extends Context implements ISpatialContext {
         this.isInteractable = false;
         this.menu = null;
         this.map = null;
+        this.expanse = expanse;
         this.isPrivate = false;
         this.password = null;
         this.privateRooms = null;
@@ -159,8 +161,8 @@ public class SpatialContext extends Context implements ISpatialContext {
      * @param communicationRegion Kommunikationsform des Bereichs.
      * @param communicationMedia Benutzbare Kommunikationsmedien des Bereichs.
      */
-    protected SpatialContext(String objectName, SpatialContext parent, Menu menu, CommunicationRegion communicationRegion,
-                             Set<CommunicationMedium> communicationMedia) {
+    protected SpatialContext(String objectName, SpatialContext parent, Menu menu, Expanse expanse,
+                             CommunicationRegion communicationRegion, Set<CommunicationMedium> communicationMedia) {
         super(objectName, parent, communicationRegion, communicationMedia);
         parent.addChild(this);
         this.spatialContextType = SpatialContextType.OBJECT;
@@ -169,6 +171,7 @@ public class SpatialContext extends Context implements ISpatialContext {
         this.isInteractable = true;
         this.menu = menu;
         this.map = null;
+        this.expanse = expanse;
         this.isPrivate = false;
         this.password = null;
         this.privateRooms = null;
@@ -240,9 +243,9 @@ public class SpatialContext extends Context implements ISpatialContext {
      * @param to Reservierter Endzeitpunkt.
      */
     public void addReservation(User user, LocalDateTime from, LocalDateTime to) {
-        AreaReservation reservation = new AreaReservation(user, from, to);
+        AreaReservation reservation = new AreaReservation(user, this, from, to);
         areaReservations.add(reservation);
-        TimedEventScheduler.getInstance().put(new AreaManagerAssignment(this, reservation));
+        TimedEventScheduler.getInstance().put(new AreaManagerAssignment(reservation));
     }
 
     /**
@@ -251,7 +254,7 @@ public class SpatialContext extends Context implements ISpatialContext {
      */
     public void removeReservation(AreaReservation reservation) {
         areaReservations.remove(reservation);
-        TimedEventScheduler.getInstance().put(new AreaManagerWithdrawal(this, reservation));
+        TimedEventScheduler.getInstance().put(new AreaManagerWithdrawal(reservation));
     }
 
     /**
@@ -382,12 +385,16 @@ public class SpatialContext extends Context implements ISpatialContext {
     /**
      * Initialisiert die Kontexthierarchie dieses Kontextes anhand der Karte.
      */
-    private void initializeMap() {
-        // TODO
-
+    public static SpatialContext initializeMap(SpatialMap map) {
         TmxMapLoader mapLoader = new TmxMapLoader();
-        TiledMap tiledMap = mapLoader.load("maps/map.tmx");
-        //Array<RectangleMapObject> contexts = tiledMap.getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class);
+        TiledMap tiledMap = mapLoader.load(map.getPath());
+        MapProperties properties = tiledMap.getProperties();
+
+        String worldName = properties.get("name", String.class);
+        int width = properties.get("width", Integer.class);
+        int height = properties.get("height", Integer.class);
+        Expanse expanse = new Expanse(new Location(null, 0, 0), width, height);
+        String communicationRegion = properties.get("communicationRegion", String.class);
 
         int levels = (int) tiledMap.getProperties().get("levels");
         int offset = (int) tiledMap.getProperties().get("offset");
@@ -395,8 +402,10 @@ public class SpatialContext extends Context implements ISpatialContext {
             MapLayer layer = tiledMap.getLayers().get(i);
             Array<RectangleMapObject> contexts = layer.getObjects().getByType(RectangleMapObject.class);
             contexts.forEach(context -> {
+
             });
         }
+        return null;
     }
 
     @Override

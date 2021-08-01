@@ -9,18 +9,24 @@ import java.time.LocalDateTime;
  */
 public class AreaReservation {
 
-    private User reserver;
-    private LocalDateTime from;
-    private LocalDateTime to;
+    private final User reserver;
+    private final SpatialContext context;
+    private final LocalDateTime from;
+    private final LocalDateTime to;
 
-    public AreaReservation(User reserver, LocalDateTime from, LocalDateTime to) {
+    public AreaReservation(User reserver, SpatialContext context, LocalDateTime from, LocalDateTime to) {
         this.reserver = reserver;
+        this.context = context;
         this.from = from;
         this.to = to;
     }
 
     public User getReserver() {
         return reserver;
+    }
+
+    public SpatialContext getContext() {
+        return context;
     }
 
     public LocalDateTime getFrom() {

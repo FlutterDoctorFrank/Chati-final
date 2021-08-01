@@ -9,31 +9,41 @@ import model.user.User;
 
 import java.time.LocalDateTime;
 
+/**
+ * Repräsentiert das Ereignis, einem Benutzer nach Eintreffen des Endzeitpunkts einer {@link AreaReservation} die Rolle
+ * des Bereichsberechtigten zu entziehen, ihn über den Verlust der Rolle zu informieren und die Reservierung zu
+ * entfernen.
+ */
 public class AreaManagerWithdrawal extends TimedEvent {
 
-    private final SpatialContext context;
+    /** Reservierung des Bereichs. */
     private final AreaReservation reservation;
 
-    public AreaManagerWithdrawal(SpatialContext context, AreaReservation reservation) {
+    /**
+     * Erzeugt eine neue Instanz des TimedEvent.
+     * @param reservation Reservierung des Bereichs.
+     */
+    public AreaManagerWithdrawal(AreaReservation reservation) {
         super(reservation.getTo());
-        this.context = context;
         this.reservation = reservation;
     }
 
     @Override
     public void execute() {
         User reserver = reservation.getReserver();
-        reserver.removeRole(context, Role.AREA_MANAGER);
-        Notification roleLoseNotification = new Notification(reserver, context.getWorld(), new MessageBundle("key"));
+        SpatialContext reservedContext = reservation.getContext();
+        reserver.removeRole(reservedContext, Role.AREA_MANAGER);
+        Notification roleLoseNotification = new Notification(reserver, reservedContext.getWorld(), new MessageBundle("key"));
         reserver.addNotification(roleLoseNotification);
-        context.removeReservation(reservation);
+        reservedContext.removeReservation(reservation);
     }
 
     @Override
     public boolean isValid() {
         User reserver = reservation.getReserver();
+        SpatialContext reservedContext = reservation.getContext();
         LocalDateTime from = reservation.getFrom();
         LocalDateTime to = reservation.getTo();
-        return context.isReservedAtBy(reserver, from, to) && reserver.hasRole(context, Role.AREA_MANAGER);
+        return reservedContext.isReservedAtBy(reserver, from, to) && reserver.hasRole(reservedContext, Role.AREA_MANAGER);
     }
 }

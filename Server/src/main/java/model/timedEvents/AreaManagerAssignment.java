@@ -9,30 +9,39 @@ import model.user.User;
 
 import java.time.LocalDateTime;
 
+/**
+ * Repräsentiert das Ereignis, einem Benutzer nach Eintreffen des Anfangszeitpunkts einer {@link AreaReservation} die
+ * Rolle des Bereichsberechtigten zu übergeben und ihn über den Erhalt der Rolle zu informieren.
+ */
 public class AreaManagerAssignment extends TimedEvent {
 
-    private final SpatialContext context;
+    /** Reservierung eines Bereichs. */
     private final AreaReservation reservation;
 
-    public AreaManagerAssignment(SpatialContext context, AreaReservation reservation) {
+    /**
+     * Erzeugt eine neue Instanz des TimedEvent.
+     * @param reservation Reservierung des Bereichs.
+     */
+    public AreaManagerAssignment(AreaReservation reservation) {
         super(reservation.getFrom());
-        this.context = context;
         this.reservation = reservation;
     }
 
     @Override
     public void execute() {
         User reserver = reservation.getReserver();
-        reserver.addRole(context, Role.AREA_MANAGER);
-        Notification roleReceiveNotification = new Notification(reserver, context.getWorld(), new MessageBundle("key"));
+        SpatialContext reservedContext = reservation.getContext();
+        reserver.addRole(reservedContext, Role.AREA_MANAGER);
+        Notification roleReceiveNotification = new Notification(reserver, reservedContext.getWorld(), new MessageBundle("key"));
         reserver.addNotification(roleReceiveNotification);
     }
 
     @Override
     public boolean isValid() {
         User reserver = reservation.getReserver();
+        SpatialContext reservedContext = reservation.getContext();
         LocalDateTime from = reservation.getFrom();
         LocalDateTime to = reservation.getTo();
-        return context.isReservedAtBy(reserver, from, to) && !reserver.hasRole(context, Role.AREA_MANAGER);
+        return reservedContext.isReservedAtBy(reserver, from, to) && !reserver.hasRole(reservedContext, Role.AREA_MANAGER);
     }
 }

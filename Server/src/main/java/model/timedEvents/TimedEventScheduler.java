@@ -6,14 +6,14 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.function.Predicate;
 
 /**
- * Eine Klasse die benutzt wird um Ereignisse abzuarbeiten, die in der Zukunft stattfinden sollen.
+ * Eine Klasse die benutzt wird um Ereignisse auszuführen, die in der Zukunft stattfinden sollen.
  */
 public class TimedEventScheduler extends Thread {
 
     /** Singleton-Instanz der Klasse. */
     private static TimedEventScheduler scheduler;
 
-    /** Queue der abzuarbeitenden Ereignisse. */
+    /** Queue der auszuführenden Ereignisse. */
     private final PriorityBlockingQueue<TimedEvent> timedEvents;
 
     /**
@@ -56,7 +56,6 @@ public class TimedEventScheduler extends Thread {
             timedEvents.removeIf(Predicate.not(TimedEvent::isValid));
         }
     }
-
 
     /**
      * Füge ein Ereignis hinzu.

@@ -19,7 +19,7 @@ import model.role.Permission;
 import model.role.Role;
 import model.timedEvents.AccountDeletion;
 import model.timedEvents.TimedEventScheduler;
-import model.timedEvents.UserBusyChange;
+import model.timedEvents.SetUserAwayStatus;
 import model.user.account.UserAccountManager;
 
 import java.time.LocalDateTime;
@@ -600,7 +600,7 @@ public class User implements IUser {
             setStatus(Status.ONLINE);
         }
         this.lastActivity = LocalDateTime.now();
-        TimedEventScheduler.getInstance().put(new UserBusyChange(this));
+        TimedEventScheduler.getInstance().put(new SetUserAwayStatus(this));
     }
 
     /**

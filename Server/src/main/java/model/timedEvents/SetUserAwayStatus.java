@@ -5,11 +5,20 @@ import model.user.User;
 
 import java.time.temporal.ChronoUnit;
 
-public class UserBusyChange extends TimedEvent {
+/**
+ * Repräsentiert das Ereignis, einem Benutzer nach einer bestimmten Zeit der Inaktivität den Status {@link Status#AWAY}
+ * zuzuweisen.
+ */
+public class SetUserAwayStatus extends TimedEvent {
 
+    /** Benutzer, dem der Status zugewiesen werden soll. */
     private final User user;
 
-    public UserBusyChange(User user) {
+    /**
+     * Erzeugt eine neue Instanz des TimedEvent.
+     * @param user Benutzer, dem der Status zugewiesen werden soll.
+     */
+    public SetUserAwayStatus(User user) {
         super(user.getLastActivity().plus(Status.AWAY_TIME, ChronoUnit.MINUTES));
         this.user = user;
     }
