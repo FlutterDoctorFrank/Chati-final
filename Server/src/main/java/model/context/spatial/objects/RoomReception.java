@@ -4,10 +4,7 @@ import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.ContextID;
-import model.context.spatial.Expanse;
-import model.context.spatial.SpatialMap;
-import model.context.spatial.Menu;
-import model.context.spatial.SpatialContext;
+import model.context.spatial.*;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.notification.RoomRequest;
@@ -83,7 +80,7 @@ public class RoomReception extends SpatialContext {
                 // Erzeuge den privaten Raum, füge ihn der Welt hinzu, gebe dem erzeugenden Benutzer die Rolle des
                 // Rauminhabers und teleportiere ihn in den privaten Raum.
                 SpatialContext world = user.getWorld();
-                SpatialContext privateRoom = SpatialContext.initializeMap(map);
+                SpatialContext privateRoom = MapInitializer.buildMap(roomname, map);
                 world.addPrivateRoom(privateRoom);
                 user.addRole(privateRoom, Role.ROOM_OWNER);
                 user.teleport(privateRoom.getSpawnLocation());

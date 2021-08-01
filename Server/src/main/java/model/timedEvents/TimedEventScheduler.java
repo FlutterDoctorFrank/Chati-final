@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 /**
  * Eine Klasse die benutzt wird um Ereignisse auszuführen, die in der Zukunft stattfinden sollen.
  */
-public class TimedEventScheduler implements Runnable {
+public class TimedEventScheduler extends Thread {
 
     /** Singleton-Instanz der Klasse. */
     private static TimedEventScheduler scheduler;
@@ -24,8 +24,13 @@ public class TimedEventScheduler implements Runnable {
      */
     private TimedEventScheduler() {
         this.timedEvents = new PriorityBlockingQueue<>();
+        this.isRunning = false;
+    }
+
+    @Override
+    public void start() {
         this.isRunning = true;
-        this.run();
+        super.start();
     }
 
     @Override
@@ -54,7 +59,7 @@ public class TimedEventScheduler implements Runnable {
                 }
                 timedEvents.poll();
             } else {
-                // Wenn die Zeit nicht erreicht ist, warte, bis die Zeit zum Abarbeiten des ersten Ereignisses
+                // Wenn die Zeit nicht erreicht ist, warte bis die Zeit zum Abarbeiten des ersten Ereignisses
                 // eingetroffen ist.
                 try {
                     wait(now.until(first.getTime(), ChronoUnit.MILLIS));
@@ -76,20 +81,16 @@ public class TimedEventScheduler implements Runnable {
         notifyAll();
     }
 
-    public void stop() {
-        isRunning = false;
-    }
-
     /**
-     * Gibt die Singleton-Instanz des TimedEventScheduler zurück
+     * Gibt die Singleton-Instanz des TimedEventScheduler zurück.
      * @return Singleton-Instanz des TimedEventScheduler.
      */
     public static TimedEventScheduler getInstance() {
         if (scheduler == null) {
             scheduler = new TimedEventScheduler();
-        } else if (scheduler.isRunning = false)  {
-            scheduler.isRunning = true;
-            scheduler.run();
+        }
+        if (scheduler.isRunning = false)  {
+            scheduler.start();
         }
         return scheduler;
     }

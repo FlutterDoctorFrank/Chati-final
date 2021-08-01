@@ -382,41 +382,6 @@ public class SpatialContext extends Context implements ISpatialContext {
         return isPrivate;
     }
 
-    /**
-     * Initialisiert die Kontexthierarchie dieses Kontextes anhand der Karte.
-     */
-    public static SpatialContext initializeMap(SpatialMap map) {
-        TmxMapLoader mapLoader = new TmxMapLoader();
-        TiledMap tiledMap = mapLoader.load(map.getPath());
-        MapProperties properties = tiledMap.getProperties();
-
-        String worldName = properties.get("name", String.class);
-        int width = properties.get("width", Integer.class);
-        int height = properties.get("height", Integer.class);
-        Expanse expanse = new Expanse(new Location(null, 0, 0), width, height);
-        String communicationRegion = properties.get("communicationRegion", String.class);
-
-        int offset = (int) tiledMap.getProperties().get("offset");
-            MapLayer layer = tiledMap.getLayers().get(offset);
-            Array<RectangleMapObject> contexts = layer.getObjects().getByType(RectangleMapObject.class);
-            contexts.forEach(context -> {
-                float posX = context.getRectangle().getX();
-                float posY = context.getRectangle().getY();
-                float contextWidth = context.getRectangle().getWidth();
-                float contextHeight = context.getRectangle().getHeight();
-                Expanse contextExpanse = new Expanse(new Location(null, (int)posX, (int)posY),
-                        (int)contextWidth, (int)contextHeight);
-                MapProperties contextProperties = context.getProperties();
-                String name = contextProperties.get("name", String.class);
-                String contextCommunicationRegion = contextProperties.get("communicationRegion", String.class);
-
-
-
-
-            });
-        return null;
-    }
-
     @Override
     public void addUser(User user) {
         // Wenn ein neuer Raum betreten wird, sende Positionsinformationen.

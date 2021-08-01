@@ -3,6 +3,7 @@ package model.context.global;
 import controller.network.ClientSender;
 import model.context.Context;
 import model.context.ContextID;
+import model.context.spatial.MapInitializer;
 import model.context.spatial.SpatialMap;
 import model.context.spatial.SpatialContext;
 import model.exception.*;
@@ -46,7 +47,7 @@ public class GlobalContext extends Context implements IGlobalContext {
             throw new IllegalWorldActionException("", "Eine Welt mit diesem Namen existiert bereits");
         }
         // Erzeuge die Welt und füge sie
-        SpatialContext newWorld = SpatialContext.initializeMap(map); // Die nulls hier müssen noch ersetzt werden.
+        SpatialContext newWorld = MapInitializer.buildMap(worldname, map); // Die nulls hier müssen noch ersetzt werden.
         worlds.put(newWorld.getContextId(), newWorld);
         // Sende allen Benutzern, die sich im Menübildschirm befinden die aktualisierte Liste der Welten.
         Map<UUID, User> usersInMenuScreen = getUsers();
