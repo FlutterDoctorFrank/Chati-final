@@ -90,7 +90,7 @@ public class Hud implements IModelObserver, ViewControllerInterface {
     public void registrationResponse(boolean success, String messageKey) {
         for (Actor actor : stage.getActors()) {
             if(actor.getClass().equals(LoginTable.class)) {
-                ((LoginTable) actor).receiveLoginResponse(success, messageKey);
+                ((LoginTable) actor).receiveRegResponse(success, messageKey);
             }
         }
     }
