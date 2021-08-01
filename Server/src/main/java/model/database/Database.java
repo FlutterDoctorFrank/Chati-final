@@ -23,6 +23,17 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     private static Database database;
 
     private Database() {
+        /*
+        dropTable("USER_ACCOUNT");
+        dropTable("WORLDS");
+        dropTable("BAN");
+        dropTable("IGNORE");
+        dropTable("FRIENDSHIP");
+        dropTable("USER_RESERVATION");
+        dropTable("ROLE_WITH_CONTEXT");
+        dropTable("NOTIFICATION");
+         */
+
         initialize();
     }
 
@@ -34,9 +45,10 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("INSERT INTO WORLDS(NAME, ID) values(?,?)");
+            PreparedStatement ps = con.prepareStatement("INSERT INTO WORLDS(WORLD_ID, WORLD_NAME, MAP_NAME) values(?,?,?)");
             ps.setString(1, world.getContextName());
             ps.setString(2, world.getContextId().getId());
+            ps.setString(3, world.getMap().getName());
             ps.executeUpdate();
             con.close();
         } catch (Exception e) {
@@ -553,7 +565,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
             }
             if (!set.contains("WORLDS")) {
-                String sql = "CREATE TABLE WORLDS(WORLD_ID VARCHAR(36), WORLD_NAME CHAR/*, MAP_NAME*/)";
+                String sql = "CREATE TABLE WORLDS(WORLD_ID VARCHAR(36), WORLD_NAME CHAR, MAP_NAME CHAR)";
                 statement.execute(sql);
 
             }
@@ -598,6 +610,18 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         }
 
         // TODO
+    }
+
+    private void dropTable(String tableName){
+        try {
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement();
+            st.executeUpdate("DROP TABLE " + tableName);
+            st.close();
+            con.close();
+        } catch (SQLException e) {
+            System.out.print("Fehler in deleteData: " + e);
+        }
     }
 
     private static Database getInstance() {
