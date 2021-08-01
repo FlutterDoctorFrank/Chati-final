@@ -86,7 +86,7 @@ public class SpatialContext extends Context implements ISpatialContext {
      * @param communicationRegion Kommunikationsform der Welt.
      * @param communicationMedia Benutzbare Kommunikationsmedien der Welt.
      */
-    private SpatialContext(String worldName, SpatialMap map, Expanse expanse, CommunicationRegion communicationRegion,
+    public SpatialContext(String worldName, SpatialMap map, Expanse expanse, CommunicationRegion communicationRegion,
                           Set<CommunicationMedium> communicationMedia) {
         super(worldName, GlobalContext.getInstance(), communicationRegion, communicationMedia);
         GlobalContext.getInstance().addChild(this);
@@ -136,8 +136,8 @@ public class SpatialContext extends Context implements ISpatialContext {
      * @param communicationRegion Kommunikationsform des Bereichs.
      * @param communicationMedia Benutzbare Kommunikationsmedien des Bereichs.
      */
-    private SpatialContext(String areaName, SpatialContext parent, Expanse expanse,
-                          CommunicationRegion communicationRegion, Set<CommunicationMedium> communicationMedia) {
+    SpatialContext(String areaName, SpatialContext parent, Expanse expanse,
+                   CommunicationRegion communicationRegion, Set<CommunicationMedium> communicationMedia) {
         super(areaName, parent, communicationRegion, communicationMedia);
         parent.addChild(this);
         this.spatialContextType = SpatialContextType.AREA;

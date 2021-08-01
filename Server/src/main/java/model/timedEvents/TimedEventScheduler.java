@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 /**
  * Eine Klasse die benutzt wird um Ereignisse auszuführen, die in der Zukunft stattfinden sollen.
  */
-public class TimedEventScheduler extends Thread {
+public class TimedEventScheduler implements Runnable {
 
     /** Singleton-Instanz der Klasse. */
     private static TimedEventScheduler scheduler;
@@ -16,16 +16,21 @@ public class TimedEventScheduler extends Thread {
     /** Queue der auszuführenden Ereignisse. */
     private final PriorityBlockingQueue<TimedEvent> timedEvents;
 
+    /** Information, ob der TimedEventScheduler gerade aktiv ist. */
+    private boolean isRunning;
+
     /**
      * Erzeugt eine neue Instanz des TimedEventScheduler.
      */
     private TimedEventScheduler() {
         this.timedEvents = new PriorityBlockingQueue<>();
+        this.isRunning = true;
+        this.run();
     }
 
     @Override
     public void run() {
-        for (;;) { // ever
+        while (isRunning) {
             // Warte, solange es keine abzuarbeitenden Ereignisse gibt.
             while (timedEvents.isEmpty()) {
                 try {
@@ -36,6 +41,11 @@ public class TimedEventScheduler extends Thread {
             }
             LocalDateTime now = LocalDateTime.now();
             TimedEvent first = timedEvents.peek();
+            // Sollte nicht eintreffen.
+            if (first == null) {
+                timedEvents.poll();
+                continue;
+            }
             // Prüfe, ob das erste Ereignis jetzt abzuarbeiten ist.
             if (!now.isBefore(first.getTime())) {
                 // Prüfe, ob das Ereignis noch gültig ist.
@@ -66,6 +76,10 @@ public class TimedEventScheduler extends Thread {
         notifyAll();
     }
 
+    public void stop() {
+        isRunning = false;
+    }
+
     /**
      * Gibt die Singleton-Instanz des TimedEventScheduler zurück
      * @return Singleton-Instanz des TimedEventScheduler.
@@ -73,6 +87,9 @@ public class TimedEventScheduler extends Thread {
     public static TimedEventScheduler getInstance() {
         if (scheduler == null) {
             scheduler = new TimedEventScheduler();
+        } else if (scheduler.isRunning = false)  {
+            scheduler.isRunning = true;
+            scheduler.run();
         }
         return scheduler;
     }
