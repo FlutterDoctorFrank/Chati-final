@@ -513,6 +513,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
     public static void initialize() {
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();;;
+            //DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
             Connection con = DriverManager.getConnection(dbURL);
             Statement statement = con.createStatement();
 
@@ -533,7 +535,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
             }
             if (!set.contains("WORLDS")) {
-                String sql = "CREATE TABLE WORLDS(WORLD_ID VARCHAR(36), WORLD_NAME CHAR)";
+                String sql = "CREATE TABLE WORLDS(WORLD_ID VARCHAR(36), WORLD_NAME CHAR, MAP_NAME)";
                 statement.execute(sql);
 
             }
@@ -572,8 +574,9 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             statement.close();
             con.close();
             //DriverManager.getConnection("jdbc:derby:E:/DBTest;shutdown=true");
-        } catch (SQLException e){
+        } catch (Exception e){
             System.out.print("Fehler in Database-init " + e );
+            e.printStackTrace();
         }
 
         // TODO
