@@ -32,13 +32,14 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void addWorld(SpatialContext world) {
 
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO WORLDS(NAME, ID) values(?,?)");
             ps.setString(1, world.getContextName());
             ps.setString(2, world.getContextId().getId());
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-addWorld: " + e);
         }
 
@@ -48,12 +49,13 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void removeWorld(SpatialContext world) {
 
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             String worldId = world.getContextId().getId();
             PreparedStatement ps = con.prepareStatement("DELETE FROM WORLDS WHERE ID = " + "'" + worldId + "'");
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-removeWorld: " + e);
         }
 
@@ -78,6 +80,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public User createAccount(String username, String password) {
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
@@ -109,7 +112,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             //con.commit();
             con.close();
             return user;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-createAccount: " + e);
         }
         return null;
@@ -152,11 +155,12 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public void setPassword(User user, String newPassword) {
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
 
             //TODO
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-setPassword: " + e);
         }
 
@@ -166,12 +170,13 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void changeAvatar(User user, Avatar avatar) {
 
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET AVATAR_NAME = " + "'" + avatar.getName() + "'" +
                     "WHERE USER_ID = " + "'" + user.getUserId().toString() + "'");
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-changeAvatar: " + e);
         }
 
@@ -182,13 +187,14 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void updateLastOnlineTime(User user) {
 
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET LAST_ONLINE_TIME = " +
                     currentTime.toString() + "WHERE USER_ID = " + "'" + user.getUserId().toString() + "'");
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-updateLastOnlineTime: " + e);
         }
 
@@ -199,12 +205,13 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void deleteAccount(User user) {
 
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM USER_ACCOUNT WHERE USER_ID = '"
                         + user.getUserId().toString() + "'");
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-deleteAccount: " + e);
         }
 
@@ -214,6 +221,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public User getUser(UUID userID) {
         try{
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
@@ -250,7 +258,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             st.close();
             con.commit();
             con.close();
-        } catch(SQLException e){
+        } catch(Exception e){
             System.out.println(e);
 
         }
@@ -260,6 +268,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public User getUser(String username) {
         try{
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
@@ -298,7 +307,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             //con.commit();
             con.close();
 
-        } catch(SQLException e){
+        } catch(Exception e){
             System.out.println(e);
 
         }
@@ -315,13 +324,14 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void addFriendship(User first, User second) {
 
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO FRIENDSHIP(USER_ID1, USER_ID2) values(?,?)");
             ps.setString(1, first.getUserId().toString());
             ps.setString(2, second.getUserId().toString());
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-addFriendship: " + e);
         }
 
@@ -331,13 +341,14 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void removeFriendship(User first, User second) {
 
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM FRIENDSHIP WHERE (USER_ID1 = '"
                     + first.getUserId().toString() + "'" + " AND USER_ID2 = '" + second.getUserId().toString()
                     + "') OR (USER_ID1 = '" + second.getUserId().toString() + "'" + " AND USER_ID2 = '" + first.getUserId().toString() + "')");
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-removeFriendship: " + e);
         }
 
@@ -349,13 +360,14 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
 
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO IGNORE(USER_ID, IGNORED_ID) values(?,?)");
             ps.setString(1, ignoringUser.getUserId().toString());
             ps.setString(2, ignoredUser.getUserId().toString());
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-addIgnoredUser: " + e);
         }
 
@@ -369,12 +381,13 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
 
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM IGNORE WHERE (USER_ID = '"
                     + ignoringUser.getUserId().toString() + "'" + " AND IGNORED_ID = '" + ignoredUser.getUserId().toString() + "')");
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-removeIgnoredUser: " + e);
         }
 
@@ -387,6 +400,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void addRole(User user, Context context, Role role) {
 
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO ROLE_WITH_CONTEXT " +
                     "(USER_ID, ROLE, CONTEXT_ID) values(?,?,?)");
@@ -395,7 +409,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             ps.setString(3, context.getContextId().getId());
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-addRole: " + e);
         }
 
@@ -406,13 +420,14 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void removeRole(User user, Context context, Role role) {
 
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM ROLE_WITH_CONTEXT WHERE (USER_ID = '"
                     + user.getUserId().toString() + "' AND ROLE = '" + role.name()
                     + "' AND CONTEXT_ID = '" + context.getContextId().getId() + "')");
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-removeRole: " + e);
         }
 
@@ -422,6 +437,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public void addNotification(User user, Notification notification) {
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO NOTIFICATION " +
                     "(USER_ID CHAR, NOTIFICATION_ID CHAR, OWING_CONTEXT_ID CHAR, " +
@@ -450,7 +466,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-addNotification: " + e);
         }
 
@@ -459,12 +475,13 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public void removeNotification(User user, Notification notification) {
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM NOTIFICATION WHERE NOTIFICATION_ID = '"
                     + notification.getNotificationId().toString() + "'");
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-removeNotification: " + e);
         }
     }
@@ -473,13 +490,14 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void addBannedUser(User user, Context world) {
 
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO BAN(USER_ID, WORLD_ID) values(?,?)");
             ps.setString(1, user.getUserId().toString());
             ps.setString(2, world.getContextId().getId());
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-addBannedUser: " + e);
         }
 
@@ -489,12 +507,13 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     @Override
     public void removeBannedUser(User user, Context world) {
         try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM BAN WHERE (USER_ID = '"
                     + user.getUserId().toString() + "' AND WORLD_ID = '" + world.getContextId().getId() + "')");
             ps.executeUpdate();
             con.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.print("Fehler in Database-addBannedUser: " + e);
         }
 
@@ -513,8 +532,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
     public static void initialize() {
         try {
-            Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();;;
-            //DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             Statement statement = con.createStatement();
 
