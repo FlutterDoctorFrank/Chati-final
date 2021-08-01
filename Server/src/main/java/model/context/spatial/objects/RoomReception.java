@@ -1,7 +1,10 @@
 package model.context.spatial.objects;
 
 import controller.network.ClientSender;
+import model.communication.CommunicationMedium;
+import model.communication.CommunicationRegion;
 import model.context.ContextID;
+import model.context.spatial.Expanse;
 import model.context.spatial.SpatialMap;
 import model.context.spatial.Menu;
 import model.context.spatial.SpatialContext;
@@ -34,9 +37,13 @@ public class RoomReception extends SpatialContext {
      * Erzeugt eines neue Instanz der RoomReception.
      * @param objectName Name des Objekts.
      * @param parent Übergeordneter Kontext.
+     * @param expanse Räumliche Ausdehnung des Kontexts.
+     * @param communicationRegion Geltende Kommunikationsform.
+     * @param communicationMedia Benutzbare Kommunikationsmedien.
      */
-    public RoomReception(String objectName, SpatialContext parent) {
-        super(objectName, parent, Menu.ROOM_RECEPTION_MENU, null, new HashSet<>());
+    public RoomReception(String objectName, SpatialContext parent, Expanse expanse,
+                         CommunicationRegion communicationRegion, Set<CommunicationMedium> communicationMedia) {
+        super(objectName, parent, Menu.ROOM_RECEPTION_MENU, expanse, communicationRegion, communicationMedia);
     }
 
     @Override
@@ -76,7 +83,7 @@ public class RoomReception extends SpatialContext {
                 // Erzeuge den privaten Raum, füge ihn der Welt hinzu, gebe dem erzeugenden Benutzer die Rolle des
                 // Rauminhabers und teleportiere ihn in den privaten Raum.
                 SpatialContext world = user.getWorld();
-                SpatialContext privateRoom = new SpatialContext(roomname, world, map, password, null, new HashSet<>());
+                SpatialContext privateRoom = SpatialContext.initializeMap(map);
                 world.addPrivateRoom(privateRoom);
                 user.addRole(privateRoom, Role.ROOM_OWNER);
                 user.teleport(privateRoom.getSpawnLocation());

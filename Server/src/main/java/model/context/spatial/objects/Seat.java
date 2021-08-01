@@ -2,13 +2,16 @@ package model.context.spatial.objects;
 
 import controller.network.ClientSender;
 import model.MessageBundle;
+import model.communication.CommunicationMedium;
+import model.communication.CommunicationRegion;
 import model.communication.message.TextMessage;
+import model.context.spatial.Expanse;
 import model.context.spatial.Menu;
 import model.context.spatial.SpatialContext;
 import model.exception.IllegalInteractionException;
 import model.user.User;
 
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Eine Klasse, welche ein Objekt repräsentiert, durch welches der Benutzer an eine Stelle bewegt wird und mit anderen
@@ -22,9 +25,13 @@ public class Seat extends SpatialContext {
      * Erzeugt eines neue Instanz des Seat.
      * @param objectName Name des Objekts.
      * @param parent Übergeordneter Kontext.
+     * @param expanse Räumliche Ausdehnung des Kontexts.
+     * @param communicationRegion Geltende Kommunikationsform.
+     * @param communicationMedia Benutzbare Kommunikationsmedien.
      */
-    public Seat(String objectName, SpatialContext parent) {
-        super(objectName, parent, Menu.SEAT_MENU, null, new HashSet<>());
+    public Seat(String objectName, SpatialContext parent, Expanse expanse, CommunicationRegion communicationRegion,
+                Set<CommunicationMedium> communicationMedia) {
+        super(objectName, parent, Menu.SEAT_MENU, expanse, communicationRegion, communicationMedia);
         this.parent = parent;
     }
 

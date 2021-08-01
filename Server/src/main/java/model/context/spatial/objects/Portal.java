@@ -1,6 +1,9 @@
 package model.context.spatial.objects;
 
 import controller.network.ClientSender;
+import model.communication.CommunicationMedium;
+import model.communication.CommunicationRegion;
+import model.context.spatial.Expanse;
 import model.context.spatial.Location;
 import model.context.spatial.Menu;
 import model.context.spatial.SpatialContext;
@@ -8,6 +11,7 @@ import model.exception.IllegalInteractionException;
 import model.user.User;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer zu einer festgelegten Position teleportiert
@@ -22,9 +26,13 @@ public class Portal extends SpatialContext {
      * Erzeugt eines neue Instanz des MusicPlayer.
      * @param objectName Name des Objekts.
      * @param parent Übergeordneter Kontext.
+     * @param expanse Räumliche Ausdehnung des Kontexts.
+     * @param communicationRegion Geltende Kommunikationsform.
+     * @param communicationMedia Benutzbare Kommunikationsmedien.
      */
-    public Portal(String objectName, SpatialContext parent) {
-        super(objectName, parent, Menu.PORTAL_MENU, null, new HashSet<>());
+    public Portal(String objectName, SpatialContext parent, Expanse expanse, CommunicationRegion communicationRegion,
+                  Set<CommunicationMedium> communicationMedia) {
+        super(objectName, parent, Menu.PORTAL_MENU, expanse, communicationRegion, communicationMedia);
     }
 
     @Override

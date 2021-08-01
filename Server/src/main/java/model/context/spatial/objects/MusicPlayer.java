@@ -1,6 +1,9 @@
 package model.context.spatial.objects;
 
 import controller.network.ClientSender;
+import model.communication.CommunicationMedium;
+import model.communication.CommunicationRegion;
+import model.context.spatial.Expanse;
 import model.context.spatial.Menu;
 import model.context.spatial.Music;
 import model.context.spatial.SpatialContext;
@@ -9,6 +12,7 @@ import model.exception.IllegalMenuActionException;
 import model.user.User;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer ein Musikstück in einem räumlichen Kontext
@@ -21,9 +25,13 @@ public class MusicPlayer extends SpatialContext {
      * Erzeugt eines neue Instanz des MusicPlayer.
      * @param objectName Name des Objekts.
      * @param parent Übergeordneter Kontext.
+     * @param expanse Räumliche Ausdehnung des Kontexts.
+     * @param communicationRegion Geltende Kommunikationsform.
+     * @param communicationMedia Benutzbare Kommunikationsmedien.
      */
-    public MusicPlayer(String objectName, SpatialContext parent) {
-        super(objectName, parent, Menu.MUSIC_PLAYER_MENU, null, new HashSet<>());
+    public MusicPlayer(String objectName, SpatialContext parent, Expanse expanse,
+                       CommunicationRegion communicationRegion, Set<CommunicationMedium> communicationMedia) {
+        super(objectName, parent, Menu.MUSIC_PLAYER_MENU, expanse, communicationRegion, communicationMedia);
     }
 
     @Override

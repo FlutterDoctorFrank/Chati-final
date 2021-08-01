@@ -4,6 +4,7 @@ import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.communication.ParentCommunication;
+import model.context.spatial.Expanse;
 import model.context.spatial.Menu;
 import model.context.spatial.SpatialContext;
 import model.exception.IllegalInteractionException;
@@ -34,9 +35,13 @@ public class AreaPlanner extends SpatialContext {
      * Erzeugt eines neue Instanz des AreaPlanner.
      * @param objectName Name des Objekts.
      * @param parent Übergeordneter Kontext.
+     * @param expanse Räumliche Ausdehnung des Kontexts.
+     * @param communicationRegion Geltende Kommunikationsform.
+     * @param communicationMedia Benutzbare Kommunikationsmedien.
      */
-    public AreaPlanner(String objectName, SpatialContext parent) {
-        super(objectName, parent, Menu.AREA_PLANNER_MENU, null, new HashSet<>());
+    public AreaPlanner(String objectName, SpatialContext parent, Expanse expanse,
+                       CommunicationRegion communicationRegion, Set<CommunicationMedium> communicationMedia) {
+        super(objectName, parent, Menu.AREA_PLANNER_MENU, expanse, communicationRegion, communicationMedia);
         this.parent = parent;
     }
 
