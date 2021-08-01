@@ -535,7 +535,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
             }
             if (!set.contains("WORLDS")) {
-                String sql = "CREATE TABLE WORLDS(WORLD_ID VARCHAR(36), WORLD_NAME CHAR)";
+                String sql = "CREATE TABLE WORLDS(WORLD_ID VARCHAR(36), WORLD_NAME CHAR/*, MAP_NAME*/)";
                 statement.execute(sql);
 
             }
