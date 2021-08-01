@@ -1,13 +1,36 @@
 package view.Screens;
 
+import model.Context.Spatial.SpatialContext;
+import model.Exceptions.ContextNotFoundException;
 import model.communication.message.MessageType;
+import model.context.ContextID;
 import model.context.spatial.Menu;
+import model.context.spatial.SpatialContextType;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 public interface ViewControllerInterface {
+    /**
+     * Aktualisiert die Liste aller Welten.
+     * @param worlds: Ein HashSet mit der Menge der IDs aller Welten, sowie dem
+     * zugehörigen Namen der Welten.
+     * @see SpatialContext
+     * @see SpatialContextType#WORLD
+     */
+    public void updateWorlds(Map<ContextID, String> worlds);
 
+    /**
+     * Aktualisiert die Liste aller privaten Räume in einer Welt.
+     * @param worldId: ID der Welt, in der die Liste der privaten Räume aktualisiert
+     * werden soll.
+     * @param privateRooms: Ein HashSet mit der Menge der IDs aller privaten Räume, sowie dem zugehörigen Namen des Raums.
+     * @throws ContextNotFoundException : wenn keine Welt mit der ID existiert.
+     * @see SpatialContext
+     * @see SpatialContextType#ROOM
+     */
+    public void updateRooms(ContextID worldId, Map<ContextID,String> privateRooms) throws ContextNotFoundException;
     void registrationResponse(boolean success, String messageKey);
     void loginResponse(boolean success, String messageKey);
     void passwordChangeResponse(boolean success, String messageKey);
