@@ -99,7 +99,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     public void handle(@NotNull final PacketProfileAction packet) {
         //TODO Verarbeitung des ProfileAction-Pakets implementieren.
 
-        manager.getView().registrationResponse(true, "penis");
+        manager.getView().registrationResponse(false, "penis");
     }
 
     @Override
