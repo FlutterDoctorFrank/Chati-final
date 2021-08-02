@@ -168,7 +168,7 @@ public class User implements IUserController, IUserView{
     public void setRoles(ContextID contextId, Set<Role> roles) {
         ContextRole contextRole = this.roles.get(contextId);
         if (contextRole == null) {
-            this.roles.put(contextId, new ContextRole(GlobalContext.getInstance().getContext(contextId), roles));
+            this.roles.put(contextId, new ContextRole(roles));
         } else {
             roles.forEach(role -> {
                 try {

@@ -1,6 +1,5 @@
 package model.Role;
 
-import model.Context.Context;
 import model.Exceptions.IllegalActionException;
 import model.role.Permission;
 import model.role.Role;
@@ -17,7 +16,7 @@ public class ContextRole {
     private final Set<Role> roles;
 
 
-    public ContextRole(Context context, Set<Role> roles) {
+    public ContextRole(Set<Role> roles) {
         this.roles = roles;
     }
 
