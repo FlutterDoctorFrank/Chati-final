@@ -3,8 +3,8 @@ package model.context;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
+import model.context.spatial.Area;
 import model.context.spatial.Music;
-import model.context.spatial.SpatialContext;
 import model.database.Database;
 import model.database.IContextDatabase;
 import model.user.IUser;
@@ -20,7 +20,7 @@ import java.util.*;
 public abstract class Context implements IContext {
 
     /** Dient der eindeutigen Identifikation eines Kontextes.*/
-    protected final ContextID contextID;
+    protected final ContextID contextId;
 
     /** Der Name eines Kontextes. */
     protected final String contextName;
@@ -29,7 +29,7 @@ public abstract class Context implements IContext {
     protected final Context parent;
 
     /** Die Menge aller untergeordneter (räumlicher) Kontexte. */
-    protected final Map<ContextID, SpatialContext> children;
+    protected final Map<ContextID, Area> children;
 
     /** Die in diesem Kontext enthaltenen Benutzer. */
     protected final Map<UUID, User> containedUsers;
@@ -43,15 +43,6 @@ public abstract class Context implements IContext {
     /** Die in diesem Kontext gesperrten Benutzer. */
     private final Map<UUID, User> bannedUsers;
 
-    /** Die in diesem Kontext laufende Musik.*/
-    private Music music;
-
-    /** Die in diesem Kontext geltende Kommunikationsform. */
-    private final CommunicationRegion communicationRegion;
-
-    /** Die in diesem Kontext verwendbaren Kommunikationsmedien. */
-    private final Set<CommunicationMedium> communicationMedia;
-
     /** Ermöglicht Zugriff auf die Datenbank */
     protected final IContextDatabase database;
 
@@ -60,12 +51,11 @@ public abstract class Context implements IContext {
      * @param contextName Name des Kontextes.
      * @param parent Übergeordneter Kontext.
      */
-    protected Context(String contextName, Context parent, CommunicationRegion communicationRegion,
-                      Set<CommunicationMedium> communicationMedia) {
+    protected Context(String contextName, Context parent) {
         if (parent == null) {
-            this.contextID = new ContextID(contextName);
+            this.contextId = new ContextID(contextName);
         } else {
-            this.contextID = new ContextID(parent.getContextId().getId().concat(".").concat(contextName));
+            this.contextId = new ContextID(parent.getContextId().getId().concat(".").concat(contextName));
         }
         this.contextName = contextName;
         this.parent = parent;
@@ -74,15 +64,12 @@ public abstract class Context implements IContext {
         this.reportedUsers = new HashMap<>();
         this.mutedUsers = new HashMap<>();
         this.bannedUsers = new HashMap<>();
-        this.music = null;
-        this.communicationRegion = communicationRegion;
-        this.communicationMedia = communicationMedia;
         this.database = Database.getContextDatabase();
     }
 
     @Override
     public ContextID getContextId() {
-        return contextID;
+        return contextId;
     }
 
     @Override
@@ -110,16 +97,11 @@ public abstract class Context implements IContext {
         return Collections.unmodifiableMap(bannedUsers);
     }
 
-    @Override
-    public Music getMusic() {
-        return music;
-    }
-
     /**
      * Fügt einen untergeordneten räumlichen Kontext hinzu.
      * @param child Untergeordneter Kontext.
      */
-    public void addChild(SpatialContext child) {
+    public void addChild(Area child) {
         children.put(child.getContextId(), child);
     }
 
@@ -132,9 +114,6 @@ public abstract class Context implements IContext {
         containedUsers.put(user.getUserId(), user);
         if (parent != null && !parent.contains(user)) {
             parent.addUser(user);
-        } else {
-            // Sende Musikinformationen an den Benutzer.
-            user.getClientSender().send(ClientSender.SendAction.CONTEXT_MUSIC, this);
         }
     }
 
@@ -233,41 +212,18 @@ public abstract class Context implements IContext {
     }
 
     /**
-     * Setzt die momentan abzuspielende Musik in diesem Kontext.
-     * @param music Abzuspielende Musik.
-     */
-    public void playMusic(Music music) {
-        this.music = music;
-        // Sende Information über geänderte Musik an alle Benutzer im Kontext.
-        containedUsers.values().forEach(user -> {
-            user.getClientSender().send(ClientSender.SendAction.CONTEXT_MUSIC, this);
-        });
-    }
-
-    /**
-     * Stoppt die momentan abzuspielende Musik in diesem Kontext.
-     */
-    public void stopMusic() {
-        playMusic(null);
-    }
-
-    /**
      * Ermittelt alle Benutzer, mit denen ein übergebener Benutzer in diesem Kontext kommunizieren kann.
      * @param communicatingUser Kommunizierender Benutzer.
      * @return Menge der Benutzer, mit denen der Benutzer kommunizieren kann.
      */
-    public Map<UUID, User> getCommunicableUsers(User communicatingUser) {
-        return communicationRegion.getCommunicableUsers(communicatingUser);
-    }
+    public abstract Map<UUID, User> getCommunicableUsers(User communicatingUser);
 
     /**
      * Überprüft, ob in diesem Kontext mit einem übergebenen Medium kommuniziert werden kann.
      * @param medium Zu überprüfender Medium.
      * @return true, wenn mit dem Medium kommuniziert werden kann, sonst false.
      */
-    public boolean canCommunicateWith(CommunicationMedium medium) {
-        return communicationMedia.contains(medium);
-    }
+    public abstract boolean canCommunicateWith(CommunicationMedium medium);
 
     /**
      * Überprüft, ob ein Benutzer in diesem Kontext enthalten ist.
@@ -336,7 +292,7 @@ public abstract class Context implements IContext {
      * Gibt die Menge aller untergeordneter Kontexte zurück.
      * @return Menge aller untergeordneter Kontexte.
      */
-    public Map<ContextID, SpatialContext> getChildren() {
+    public Map<ContextID, Area> getChildren() {
         return Collections.unmodifiableMap(children);
     }
 

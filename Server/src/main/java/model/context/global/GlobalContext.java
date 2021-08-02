@@ -1,19 +1,19 @@
 package model.context.global;
 
 import controller.network.ClientSender;
+import model.communication.CommunicationMedium;
 import model.context.Context;
 import model.context.ContextID;
-import model.context.spatial.MapInitializer;
+import model.context.spatial.IWorld;
+import model.context.spatial.RoomBuilder;
 import model.context.spatial.SpatialMap;
-import model.context.spatial.SpatialContext;
+import model.context.spatial.World;
 import model.exception.*;
 import model.role.Permission;
 import model.user.User;
 import model.user.account.UserAccountManager;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 
 /**
  * Eine Klasse, welche den globalen Kontext der Anwendung repräsentiert. Kann nur einmal instanziiert werden.
@@ -24,13 +24,13 @@ public class GlobalContext extends Context implements IGlobalContext {
     private static GlobalContext globalContext;
 
     /** Menge aller Welten. */
-    private final Map<ContextID, SpatialContext> worlds;
+    private final Map<ContextID, World> worlds;
 
     /**
      * Erzeugt eine neue Instanz des globalen Kontexts.
      */
     private GlobalContext() {
-        super("Global", null, null, new HashSet<>());
+        super("Global", null);
         worlds = database.getWorlds();
     }
 
@@ -47,7 +47,7 @@ public class GlobalContext extends Context implements IGlobalContext {
             throw new IllegalWorldActionException("", "Eine Welt mit diesem Namen existiert bereits");
         }
         // Erzeuge die Welt und füge sie
-        SpatialContext newWorld = MapInitializer.buildMap(worldname, map); // Die nulls hier müssen noch ersetzt werden.
+        World newWorld = new World(worldname, map);
         worlds.put(newWorld.getContextId(), newWorld);
         // Sende allen Benutzern, die sich im Menübildschirm befinden die aktualisierte Liste der Welten.
         Map<UUID, User> usersInMenuScreen = getUsers();
@@ -66,7 +66,7 @@ public class GlobalContext extends Context implements IGlobalContext {
             throw new NoPermissionException("no permission", performer, Permission.MANAGE_WORLDS);
         }
         // Überprüfe, ob die zu löschende Welt existiert.
-        SpatialContext deleteWorld = worlds.get(worldId);
+        World deleteWorld = worlds.get(worldId);
         if (deleteWorld == null) {
             throw new ContextNotFoundException("no such context", worldId);
         }
@@ -89,7 +89,7 @@ public class GlobalContext extends Context implements IGlobalContext {
     }
 
     @Override
-    public Map<ContextID, SpatialContext> getWorlds() {
+    public Map<ContextID, IWorld> getWorlds() {
         return Collections.unmodifiableMap(worlds);
     }
 
@@ -99,8 +99,8 @@ public class GlobalContext extends Context implements IGlobalContext {
      * @return Welt mit der übergebenen ID.
      * @throws ContextNotFoundException: wenn keine Welt mit der übergebenen ID existiert.
      */
-    public SpatialContext getWorld(ContextID worldId) throws ContextNotFoundException {
-        SpatialContext world = worlds.get(worldId);
+    public World getWorld(ContextID worldId) throws ContextNotFoundException {
+        World world = worlds.get(worldId);
         if (world == null) {
             throw new ContextNotFoundException("Context does not exist.", worldId);
         }
@@ -116,5 +116,15 @@ public class GlobalContext extends Context implements IGlobalContext {
             globalContext = new GlobalContext();
         }
         return globalContext;
+    }
+
+    @Override
+    public Map<UUID, User> getCommunicableUsers(User communicatingUser) {
+        return new HashMap<>();
+    }
+
+    @Override
+    public boolean canCommunicateWith(CommunicationMedium medium) {
+        return false;
     }
 }

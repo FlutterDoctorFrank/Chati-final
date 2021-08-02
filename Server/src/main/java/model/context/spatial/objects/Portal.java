@@ -3,21 +3,17 @@ package model.context.spatial.objects;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
-import model.context.spatial.Expanse;
-import model.context.spatial.Location;
-import model.context.spatial.Menu;
-import model.context.spatial.SpatialContext;
+import model.context.spatial.*;
 import model.exception.IllegalInteractionException;
 import model.user.User;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer zu einer festgelegten Position teleportiert
  * wird. Ist immer vom Typ {@link model.context.spatial.SpatialContextType#OBJECT}.
  */
-public class Portal extends SpatialContext {
+public class Portal extends Interactable {
 
     /** Position, an die man teleportiert wird. */
     private Location destination;
@@ -30,9 +26,9 @@ public class Portal extends SpatialContext {
      * @param communicationRegion Geltende Kommunikationsform.
      * @param communicationMedia Benutzbare Kommunikationsmedien.
      */
-    public Portal(String objectName, SpatialContext parent, Expanse expanse, CommunicationRegion communicationRegion,
-                  Set<CommunicationMedium> communicationMedia) {
-        super(objectName, parent, Menu.PORTAL_MENU, expanse, communicationRegion, communicationMedia);
+    public Portal(String objectName, Area parent, CommunicationRegion communicationRegion,
+                  Set<CommunicationMedium> communicationMedia, Expanse expanse) {
+        super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.PORTAL_MENU);
     }
 
     @Override

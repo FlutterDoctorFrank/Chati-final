@@ -12,7 +12,6 @@ import model.role.Permission;
 import model.role.Role;
 import model.user.User;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -22,7 +21,7 @@ import java.util.regex.Pattern;
  * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer private Räume erstellen, diesen beitreten
  * oder den Beitritt in diesen anfragen kann. Ist immer vom Typ {@link model.context.spatial.SpatialContextType#OBJECT}.
  */
-public class RoomReception extends SpatialContext {
+public class RoomReception extends Interactable {
 
     /** Regulärer Ausdruck der das Format eines Raumnamens festlegt. */
     private static final Pattern ROOMNAME_PATTERN = Pattern.compile("^\\w{2,16}");
@@ -38,9 +37,9 @@ public class RoomReception extends SpatialContext {
      * @param communicationRegion Geltende Kommunikationsform.
      * @param communicationMedia Benutzbare Kommunikationsmedien.
      */
-    public RoomReception(String objectName, SpatialContext parent, Expanse expanse,
-                         CommunicationRegion communicationRegion, Set<CommunicationMedium> communicationMedia) {
-        super(objectName, parent, Menu.ROOM_RECEPTION_MENU, expanse, communicationRegion, communicationMedia);
+    public RoomReception(String objectName, Area parent, CommunicationRegion communicationRegion,
+                         Set<CommunicationMedium> communicationMedia, Expanse expanse) {
+        super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.ROOM_RECEPTION_MENU);
     }
 
     @Override
@@ -79,8 +78,8 @@ public class RoomReception extends SpatialContext {
                 }
                 // Erzeuge den privaten Raum, füge ihn der Welt hinzu, gebe dem erzeugenden Benutzer die Rolle des
                 // Rauminhabers und teleportiere ihn in den privaten Raum.
-                SpatialContext world = user.getWorld();
-                SpatialContext privateRoom = MapInitializer.buildMap(roomname, map);
+                World world = user.getWorld();
+                Room privateRoom = new Room(roomname, world, world, map, password);
                 world.addPrivateRoom(privateRoom);
                 user.addRole(privateRoom, Role.ROOM_OWNER);
                 user.teleport(privateRoom.getSpawnLocation());
@@ -117,7 +116,7 @@ public class RoomReception extends SpatialContext {
                 }
                 // Ermittle den Rauminhaber.
                 Map<UUID, User> users = privateRoom.getUsers();
-                SpatialContext finalPrivateRoom = privateRoom;
+                Room finalPrivateRoom = privateRoom;
                 User roomOwner = users.values().stream()
                         .filter(containedUser -> containedUser.hasPermission(finalPrivateRoom, Permission.MANAGE_PRIVATE_ROOM))
                         .findFirst().orElseThrow();

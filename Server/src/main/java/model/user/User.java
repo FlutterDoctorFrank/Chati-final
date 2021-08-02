@@ -6,8 +6,7 @@ import model.context.Context;
 import model.context.ContextID;
 import model.context.IContext;
 import model.context.global.GlobalContext;
-import model.context.spatial.Location;
-import model.context.spatial.SpatialContext;
+import model.context.spatial.*;
 import model.database.Database;
 import model.database.IUserDatabase;
 import model.exception.*;
@@ -19,10 +18,11 @@ import model.role.Permission;
 import model.role.Role;
 import model.timedEvents.AccountDeletion;
 import model.timedEvents.TimedEventScheduler;
-import model.timedEvents.SetUserAwayStatus;
+import model.timedEvents.AbsentUser;
 import model.user.account.UserAccountManager;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -54,13 +54,13 @@ public class User implements IUser {
     private LocalDateTime lastActivity;
 
     /** Die aktuelle Welt des Benutzers. */
-    private SpatialContext currentWorld;
+    private World currentWorld;
 
     /** Die aktuelle Position des Benutzers. */
     private Location currentLocation;
 
     /** Das Objekt, mit dem der Benutzer aktuell interagiert. */
-    private SpatialContext currentInteractable;
+    private Interactable currentInteractable;
 
     /** Information, ob sich ein Benutzer momentan bewegen darf. */
     private boolean moveable;
@@ -97,6 +97,9 @@ public class User implements IUser {
         this.avatar = DEFAULT_AVATAR;
         this.lastLogoutTime = LocalDateTime.now();
         this.lastActivity = LocalDateTime.now();
+        this.currentWorld = null;
+        this.currentLocation = null;
+        this.currentInteractable = null;
         this.moveable = true;
         this.communicationHandler = new CommunicationHandler(this);
         this.friends = new HashMap<>();
@@ -124,6 +127,9 @@ public class User implements IUser {
         this.status = Status.OFFLINE;
         this.avatar = avatar;
         this.lastLogoutTime = lastLogoutTime;
+        this.currentWorld = null;
+        this.currentLocation = null;
+        this.currentInteractable = null;
         this.moveable = true;
         this.communicationHandler = new CommunicationHandler(this);
         this.friends = friends;
@@ -134,33 +140,20 @@ public class User implements IUser {
     }
 
     @Override
-    public void joinWorld(ContextID worldID) throws IllegalStateException, ContextNotFoundException,
-            IllegalWorldActionException {
+    public void joinWorld(ContextID worldID) throws IllegalStateException, ContextNotFoundException, IllegalWorldActionException {
         updateLastActivity();
         // Überprüfe, ob Benutzer bereits in einer Welt ist.
         if (currentWorld != null) {
             throw new IllegalStateException("User is already in a world.");
         }
-        SpatialContext world = GlobalContext.getInstance().getWorld(worldID);
-
+        World world = GlobalContext.getInstance().getWorld(worldID);
         // Überprüfe, ob Benutzer in der Welt gesperrt ist.
         if (world.isBanned(this)) {
             throw new IllegalWorldActionException("", "Du bist in dieser Welt gesperrt.");
         }
-
         // Betrete die Welt.
         currentWorld = world;
         currentWorld.addUser(this);
-
-        // Sende die entsprechenden Pakete an den Benutzer und an andere Benutzer.
-        clientSender.send(ClientSender.SendAction.WORLD_ACTION, currentWorld);
-        clientSender.send(ClientSender.SendAction.CONTEXT_JOIN, currentWorld);
-        clientSender.send(ClientSender.SendAction.CONTEXT_ROLE, getWorldRoles());
-        clientSender.send(ClientSender.SendAction.NOTIFICATION, getWorldNotifications());
-        currentWorld.getUsers().forEach((userID, user) -> {
-            user.getClientSender().send(ClientSender.SendAction.USER_INFO, this);
-        });
-
         // Positioniere den Avatar an der Anfangsposition der Karte der Welt und schicke die entsprechenden Pakete.
         teleport(currentWorld.getSpawnLocation());
     }
@@ -172,14 +165,6 @@ public class User implements IUser {
         if (currentWorld == null) {
             throw new IllegalStateException("User is not in a world.");
         }
-
-        // Sende die entsprechenden Pakete an den Benutzer und an andere Benutzer.
-        currentWorld.getUsers().forEach((userID, user) -> {
-            user.getClientSender().send(ClientSender.SendAction.AVATAR_REMOVE, this);
-            user.getClientSender().send(ClientSender.SendAction.USER_INFO, this);
-        });
-        clientSender.send(ClientSender.SendAction.WORLD_ACTION, null); // Hier is noch unklar wie das gehen soll?
-
         // Verlasse die Welt.
         currentLocation = null;
         currentWorld.removeUser(this);
@@ -187,45 +172,23 @@ public class User implements IUser {
     }
 
     @Override
-    public void move(int posX, int posY) throws IllegalPositionException, IllegalStateException {
+    public void tryMove(int posX, int posY) throws IllegalPositionException, IllegalStateException {
         updateLastActivity();
         // Überprüfe, ob Benutzer sich in einer Welt befindet.
         if (currentWorld == null || currentLocation == null) {
             throw new IllegalStateException("User is not in a world.");
         }
-        SpatialContext currentRoom = currentLocation.getRoom();
-        SpatialContext currentArea = currentLocation.getArea();
-
         // Überprüfe, ob sich der Benutzer bewegen darf.
         if (!moveable) {
-            return;
+            throw new IllegalStateException("User is not allowed to move.");
         }
-
+        Room currentRoom = currentLocation.getRoom();
         // Überprüfe, ob die Zielkoordinaten erlaubt sind.
         if (!currentRoom.isLegal(posX, posY)) {
             throw new IllegalPositionException("Position is illegal.", this, posX, posY);
         }
-
         // Setze die neue Position des Benutzers.
-        currentLocation.setPosition(posX, posY);
-
-        // Sende die entsprechenden Pakete an diesen Benutzer und an andere Benutzer.
-        // ANMERKUNG: Hier muss evtl. der eigene Benutzer herausgefiltert werden, falls dieser nicht das Paket erhalten
-        // soll.
-        currentRoom.getUsers().forEach((userID, user) -> {
-            user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, this);
-        });
-
-        // Ermittle, ob sich der Bereich des Benutzers geändert hat, und entferne ihn aus den verlassenen Bereichen
-        // und füge ihn zu den betretenen Bereichen hinzu.
-        SpatialContext newArea = currentLocation.getArea();
-        if (!currentArea.equals(newArea)) {
-            Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
-            lastCommonAncestor.removeUser(this);
-            newArea.addUser(this);
-            // Sende Information über laufende Musik im neu betretenen Kontext.
-            clientSender.send(ClientSender.SendAction.CONTEXT_MUSIC, newArea);
-        }
+        move(posX, posY);
     }
 
     @Override
@@ -236,7 +199,6 @@ public class User implements IUser {
 
     @Override
     public void talk(byte[] voicedata) {
-        updateLastActivity();
         communicationHandler.handleVoiceMessage(voicedata);
     }
 
@@ -255,37 +217,31 @@ public class User implements IUser {
         if (currentInteractable != null) {
             throw new IllegalInteractionException("User is already interacting with a context.", this);
         }
-        SpatialContext currentArea = currentLocation.getArea();
-        SpatialContext interactable = currentArea.getChildren().get(spatialID);
-
+        Area currentArea = currentLocation.getArea();
+        Interactable interactable = currentArea.getInteractable(spatialID);
         // Überprüfe, ob ein Objekt in der Nähe des Benutzers mit dieser ID vorhanden ist und ob der Benutzer mit diesem
         // interagieren kann.
         if (interactable == null || !interactable.canInteract(this)) {
             throw new IllegalInteractionException("There is no interactable context with this ID near the user.", this);
         }
-
         // Interagiere mit dem Objekt.
         interactable.interact(this);
     }
 
     @Override
-    public void executeOption(ContextID spatialID, int menuOption, String[] args) throws IllegalInteractionException,
-            IllegalMenuActionException {
+    public void executeOption(ContextID spatialID, int menuOption, String[] args) throws IllegalInteractionException, IllegalMenuActionException {
         updateLastActivity();
-        SpatialContext currentArea = currentLocation.getArea();
-        SpatialContext interactable = currentArea.getChildren().get(spatialID);
-
+        Area currentArea = currentLocation.getArea();
+        Interactable interactable = currentArea.getInteractable(spatialID);
         // Überprüfe, ob ein Objekt in der Nähe des Benutzers mit dieser ID vorhanden ist und ob der Benutzer mit diesem
         // interagieren kann.
         if (interactable == null || !interactable.canInteract(this)) {
             throw new IllegalInteractionException("There is no interactable context with this ID near the user.", this);
         }
-
         // Überprüfe, ob der Benutzer das Menü dieses Objekts geöffnet hat.
         if (!currentInteractable.equals(interactable)) {
             throw new IllegalInteractionException("The user has not opened the menu of this context.", this, interactable);
         }
-
         // Führe die Menü-Option durch.
         currentInteractable.executeMenuOption(this, menuOption, args);
     }
@@ -305,19 +261,16 @@ public class User implements IUser {
             IllegalNotificationActionException {
         updateLastActivity();
         Notification notification = notifications.get(notificationID);
-
         // Überprüfe, ob die Benachrichtigung vorhanden ist.
         if (notification == null) {
             throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationID);
         }
-
         // Akzeptiere die Benachrichtigung, oder lehne sie ab.
         if (accept) {
             notification.accept();
         } else {
             notification.decline();
         }
-
         // Lösche die entsprechende Benachrichtigung.
         deleteNotification(notificationID);
     }
@@ -352,7 +305,7 @@ public class User implements IUser {
     }
 
     @Override
-    public SpatialContext getWorld() {
+    public World getWorld() {
         return currentWorld;
     }
 
@@ -385,33 +338,35 @@ public class User implements IUser {
                 .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
     }
 
+    public void move(int posX, int posY) {
+        Room currentRoom = currentLocation.getRoom();
+        Area currentArea = currentLocation.getArea();
+        currentLocation.setPosition(posX, posY);
+        // Ermittle, ob sich der Bereich des Benutzers geändert hat, und entferne ihn aus den verlassenen Bereichen
+        // und füge ihn zu den betretenen Bereichen hinzu.
+        Area newArea = currentLocation.getArea();
+        if (!currentArea.equals(newArea)) {
+            Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
+            lastCommonAncestor.getChildren().values().forEach(child -> child.removeUser(this));
+            newArea.addUser(this);
+        }
+        // Sende die entsprechenden Pakete an diesen Benutzer und an andere Benutzer.
+        // ANMERKUNG: Hier muss evtl. der eigene Benutzer herausgefiltert werden, falls dieser nicht das Paket erhalten
+        // soll.
+        currentRoom.getUsers().forEach((userID, user) -> {
+            user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, this);
+        });
+    }
+
     /**
      * Teleportiert einen Benutzer an die angegebene Position.
      * @param newLocation Position, an die Benutzer teleportiert werden soll.
      */
     public void teleport(Location newLocation) {
-        SpatialContext newRoom = newLocation.getRoom();
-        SpatialContext newArea = newLocation.getArea();
-        // Durchzuführen, wenn der Benutzer bereits eine Position in der Welt hat.
-        if (currentLocation != null) {
-            SpatialContext currentRoom = currentLocation.getRoom();
-            SpatialContext currentArea = currentLocation.getArea();
-            // Durchzuführen, wenn sich durch das Teleportieren der Bereich geändert hat.
-            if (!currentArea.equals(newArea)) {
-                // Entferne Benutzer aus altem Bereich.
-                Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
-                lastCommonAncestor.removeUser(this);
-                // Durchzuführen, wenn sich durch das Teleportieren der Raum geändert hat.
-                if (!currentRoom.equals(newRoom)) {
-                    // Sende Pakete zum entfernen des Avatars im alten Raum.
-                    currentRoom.getUsers().forEach((userId, user) -> {
-                        user.getClientSender().send(ClientSender.SendAction.AVATAR_REMOVE, this);
-                    });
-                }
-            }
+        if (currentLocation == null || !currentLocation.getRoom().equals(newLocation.getRoom())) {
+            currentLocation = newLocation;
         }
-        // Betrete neuen Bereich.
-        newArea.addUser(this);
+        move(currentLocation.getPosX(), currentLocation.getPosY());
     }
 
     /**
@@ -553,7 +508,7 @@ public class User implements IUser {
      * @param interactable Zu überprüfender Kontext.
      * @return true, wenn Benutzer mit dem Kontext interagiert, sonst false.
      */
-    public boolean isInteractingWith(SpatialContext interactable) {
+    public boolean isInteractingWith(Interactable interactable) {
         return currentInteractable.equals(interactable);
     }
 
@@ -569,7 +524,7 @@ public class User implements IUser {
      * Setzt das Objekt, mit dem der Benutzer momentan interagiert.
      * @param interactable Objekt, mit dem der Benutzer momentan interagiert.
      */
-    public void setCurrentInteractable(SpatialContext interactable) {
+    public void setCurrentInteractable(Interactable interactable) {
         this.currentInteractable = interactable;
     }
 
@@ -599,8 +554,12 @@ public class User implements IUser {
         if (status.equals(Status.AWAY)) {
             setStatus(Status.ONLINE);
         }
-        this.lastActivity = LocalDateTime.now();
-        TimedEventScheduler.getInstance().put(new SetUserAwayStatus(this));
+        LocalDateTime now = LocalDateTime.now();
+        // Aktualisiere diesen Wert nur alle 15 Sekunden, um Ressourcen zu sparen.
+        if (lastActivity.until(now, ChronoUnit.SECONDS) >= 15) {
+            this.lastActivity = LocalDateTime.now();
+            TimedEventScheduler.getInstance().put(new AbsentUser(this));
+        }
     }
 
     /**

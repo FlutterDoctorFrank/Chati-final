@@ -6,7 +6,9 @@ import model.communication.message.MessageType;
 import model.communication.message.TextMessage;
 import model.communication.message.VoiceMessage;
 import model.context.Context;
-import model.context.spatial.SpatialContext;
+import model.context.spatial.Area;
+import model.context.spatial.Room;
+import model.context.spatial.World;
 import model.exception.UserNotFoundException;
 import model.role.Permission;
 import model.user.User;
@@ -98,7 +100,7 @@ public class CommunicationHandler {
     public void handleVoiceMessage(byte[] voicedata) {
         // Überprüfe, ob in dem Bereich des Benutzers Sprachnachrichten versendet werden können, oder der sendende
         // Benutzer in dem Kontext stummgeschaltet ist.
-        SpatialContext communicationContext = communicator.getLocation().getArea();
+        Area communicationContext = communicator.getLocation().getArea();
         if (!communicationContext.canCommunicateWith(CommunicationMedium.VOICE)
             || communicationContext.isMuted(communicator)) {
             return;
@@ -122,7 +124,7 @@ public class CommunicationHandler {
      */
     private void handleStandardMessage(String message) {
         // Überprüfe, ob in dem Bereich des Benutzers Textnachrichten versendet werden können.
-        SpatialContext communicationContext = communicator.getLocation().getArea();
+        Area communicationContext = communicator.getLocation().getArea();
         if (!communicationContext.canCommunicateWith(CommunicationMedium.TEXT)) {
             MessageBundle messageBundle = new MessageBundle("In diesem Bereich ist keine Kommunikation in Schriftform möglich.");
             TextMessage infoMessage = new TextMessage(messageBundle);
@@ -167,7 +169,7 @@ public class CommunicationHandler {
             communicator.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
             return;
         }
-        SpatialContext communicationContext = communicator.getLocation().getArea();
+        Area communicationContext = communicator.getLocation().getArea();
         Map<UUID, User> communicableUsers = communicationContext.getCommunicableUsers(communicator);
         // Überprüfe, ob die Benutzer gemäß der Kommunikationsform kommunizieren können, ob sich beide Benutzer
         // innerhalb eines Kontextes befinden in dem einer der beiden Benutzer die Berechtigung zum Kontaktieren
@@ -198,7 +200,7 @@ public class CommunicationHandler {
     private void handleRoomMessage(String message) {
         // Überprüfe, ob sich der kommunizierende Benutzer in einem Raum befindet, für den er die nötige Berechtigung
         // besitzt.
-        SpatialContext communicationRoom = communicator.getLocation().getRoom();
+        Room communicationRoom = communicator.getLocation().getRoom();
         if (!communicator.hasPermission(communicationRoom, Permission.CONTACT_CONTEXT)) {
             // Informiere den kommunizierenden Benutzer darüber, dass er nicht die Berechtigung besitzt, um diesen
             // Chatbefehl zu verwenden.
@@ -234,7 +236,7 @@ public class CommunicationHandler {
     private void handleWorldMessage(String message) {
         // Überprüfe, ob sich der kommunizierende Benutzer in einer Welt befindet, für die er die nötige Berechtigung
         // besitzt.
-        SpatialContext communicationWorld = communicator.getWorld();
+        World communicationWorld = communicator.getWorld();
         if (!communicator.hasPermission(communicationWorld, Permission.CONTACT_CONTEXT)) {
             // Informiere den kommunizierenden Benutzer darüber, dass er nicht die Berechtigung besitzt, um diesen
             // Chatbefehl zu verwenden.

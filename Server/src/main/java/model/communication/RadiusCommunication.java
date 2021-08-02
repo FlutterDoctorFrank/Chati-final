@@ -1,6 +1,5 @@
 package model.communication;
 
-import model.context.spatial.SpatialContext;
 import model.user.User;
 
 import java.util.Map;
@@ -36,7 +35,7 @@ public class RadiusCommunication extends CommunicationRegion {
                 .filter(otherUser -> user.getLocation().distance(otherUser.getLocation()) <= radius)
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
          */
-        return context.getUsers().values().stream()
+        return area.getUsers().values().stream()
                 .filter(otherUser -> user.getLocation().distance(otherUser.getLocation()) <= radius)
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }

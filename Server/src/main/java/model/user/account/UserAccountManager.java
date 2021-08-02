@@ -30,7 +30,7 @@ public class UserAccountManager implements IUserAccountManager {
     /** Regulärer Ausdruck für das Format von Benutzernamen */
     private static final String USERNAME_FORMAT = "^\\w{2,16}";
 
-    /** Regulärer Ausdruck für das Format des Passwortds */
+    /** Regulärer Ausdruck für das Format des Passworts */
     private static final String PASSWORD_FORMAT = "^.{4,32}";
 
     /** Singleton-Instanz der Klasse */
@@ -48,7 +48,7 @@ public class UserAccountManager implements IUserAccountManager {
      */
     private UserAccountManager() {
         database = Database.getUserAccountManagerDatabase();
-        registeredUsers = Collections.synchronizedMap(database.getUsers());
+        registeredUsers = database.getUsers();
     }
 
     @Override
@@ -208,35 +208,6 @@ public class UserAccountManager implements IUserAccountManager {
                 .filter(user -> user.hasPermission(context, permission))
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
-
-    /*
-    @Override
-    public void run() {
-        for (;;) { // ever
-            registeredUsers.values().forEach(user -> {
-                // Setze den Status eines Benutzers auf abwesend, wenn dieser eine festgelegte Zeit nicht aktiv war.
-                if (user.isOnline()
-                        && user.getLastActivity().until(LocalDateTime.now(), ChronoUnit.MINUTES) >= Status.AWAY_TIME) {
-                    user.setStatus(Status.AWAY);
-                    // Lösche das Benutzerkonto, wenn dieser für eine festgelegte Zeit nicht eingeloggt war.
-                } else if (!user.isOnline()
-                        && user.getLastLogoutTime().until(LocalDateTime.now(), ChronoUnit.MONTHS) >= ACCOUNT_DELETION_TIME) {
-                    try {
-                        deleteUser(user);
-                    } catch (UserNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            // Führe die Überprüfung nur jede 10 Sekunden durch um Ressourcen zu sparen.
-            try {
-                sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    */
 
     /**
      * Löscht das Benutzerkonto eines Benutzers.

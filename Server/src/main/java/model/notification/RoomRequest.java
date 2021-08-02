@@ -3,7 +3,7 @@ package model.notification;
 import controller.network.ClientSender;
 import model.MessageBundle;
 import model.communication.message.TextMessage;
-import model.context.spatial.SpatialContext;
+import model.context.spatial.Room;
 import model.role.Permission;
 import model.user.User;
 import model.user.account.UserAccountManager;
@@ -17,7 +17,7 @@ public class RoomRequest extends Notification {
     private final User requestingUser;
 
     /** Der angefragte Raum. */
-    private final SpatialContext requestedRoom;
+    private final Room requestedRoom;
 
     /**
      * Erzeugt eine neue Instanz der Raumanfrage.
@@ -26,7 +26,7 @@ public class RoomRequest extends Notification {
      * @param requestingUser Benutzer, der die Raumanfrage stellt.
      * @param requestedRoom Der angefragte Raum.
      */
-    public RoomRequest(User owner, String userMessage, User requestingUser, SpatialContext requestedRoom) {
+    public RoomRequest(User owner, String userMessage, User requestingUser, Room requestedRoom) {
         super(NotificationType.ROOM_REQUEST, owner, requestingUser.getWorld(),
                 new MessageBundle("roomRequestKey", requestingUser.getUsername(), requestedRoom.getContextName(), userMessage));
         this.requestingUser = requestingUser;

@@ -3,7 +3,7 @@ package model.user;
 import model.context.ContextID;
 import model.context.IContext;
 import model.context.spatial.ILocation;
-import model.context.spatial.ISpatialContext;
+import model.context.spatial.IWorld;
 import model.exception.*;
 import model.notification.INotification;
 import model.role.IContextRole;
@@ -23,7 +23,7 @@ public interface IUser {
      * @throws IllegalStateException wenn der Benutzer bereits in einer Welt ist.
      * @throws ContextNotFoundException wenn keine Welt mit der ID existiert.
      * @throws IllegalWorldActionException wenn der Benutzer in der Welt gesperrt ist.
-     * @see model.context.spatial.SpatialContext
+     * @see model.context.spatial.Area
      */
     void joinWorld(ContextID worldId) throws IllegalStateException, ContextNotFoundException, IllegalWorldActionException;
 
@@ -41,7 +41,7 @@ public interface IUser {
      * @throws IllegalStateException wenn der Benutzer nicht in einer Welt ist.
      * @see model.context.spatial.Location
      */
-    void move(int posX, int posY) throws IllegalPositionException, IllegalStateException;
+    void tryMove(int posX, int posY) throws IllegalPositionException, IllegalStateException;
 
     /**
      * Sendet eine Nachricht im Namen des Benutzers, von dem sie erhalten wurde gemäß
@@ -75,36 +75,33 @@ public interface IUser {
     void executeAdministrativeAction(UUID targetId, AdministrativeAction action, String[] args) throws UserNotFoundException, NoPermissionException, IllegalStateException;
 
     /**
-     * Lässt den Benutzer mit einem räumlichen Kontext interagieren.
-     * @param spatialId ID des räumlichen Kontexts, mit dem interagiert werden soll.
-     * @throws IllegalInteractionException wenn der Benutzer sich nicht in unmittelbarer
-     * Nähe eines Kontextes mit der ID befindet, mit dem Kontext keine Interaktion
-     * möglich ist, oder der Benutzer gerade bereits mit einem Kontext interagiert.
-     * @see model.context.spatial.SpatialContext
+     * Lässt den Benutzer mit einem Kontext interagieren.
+     * @param interactableId ID des Kontexts, mit dem interagiert werden soll.
+     * @throws IllegalInteractionException wenn der Benutzer sich nicht in unmittelbarer Nähe eines Kontexts mit der ID
+     * befindet, mit dem eine Interaktion möglich ist, oder der Benutzer gerade bereits mit einem anderen Objekt
+     * interagiert.
+     * @see model.context.spatial.Interactable
      */
-    void interact(ContextID spatialId) throws IllegalInteractionException;
+    void interact(ContextID interactableId) throws IllegalInteractionException;
 
     /**
-     * Lässt den Benutzer eine Menüoption eines räumlichen Kontextes durchführen.
-     * @param spatialId ID des räumlichen Kontexts, dessen Menüoption ausgeführt
-     * werden soll.
-     * @param menuOption Menüoption die ausgeführt werden soll.
-     * @param args Argumente, mit denen die Menüoption ausgeführt werden soll.
-     * @throws IllegalInteractionException wenn der Benutzer sich nicht in unmittelbarer
-     * Nähe eines Kontextes mit der ID befindet, mit dem Kontext keine Interaktion
-     * möglich ist, dieses kein Menü hat, oder der Benutzer nicht das Menü dieses
+     * Lässt den Benutzer eine Menüoption eines Kontexts durchführen.
+     * @param interactableId ID des Kontexts, dessen Menü-Option ausgeführt werden soll.
+     * @param menuOption Menü-Option die ausgeführt werden soll.
+     * @param args Argumente, mit denen die Menü-Option ausgeführt werden soll.
+     * @throws IllegalInteractionException wenn der Benutzer sich nicht in unmittelbarer Nähe eines Kontexts mit der ID
+     * befindet, mit dem eine Interaktion möglich ist, dieses kein Menü hat, oder der Benutzer nicht das Menü dieses
      * Kontextes geöffnet hat.
-     * @throws IllegalMenuActionException wenn der räumliche Kontext nicht die
-     * Menüoption unterstützt oder die Argumente ungültig sind.
-     * @see model.context.spatial.SpatialContext
+     * @throws IllegalMenuActionException wenn der Kontext nicht die Menü-Option unterstützt oder die Argumente ungültig
+     * sind.
+     * @see model.context.spatial.Interactable
      */
-    void executeOption(ContextID spatialId, int menuOption, String[] args) throws IllegalInteractionException, IllegalMenuActionException;
+    void executeOption(ContextID interactableId, int menuOption, String[] args) throws IllegalInteractionException, IllegalMenuActionException;
 
     /**
      * Löscht eine Benachrichtigung des Benutzers.
      * @param notificationId ID der zu löschenden Benachrichtigung.
-     * @throws NotificationNotFoundException wenn der Benutzer keine Benachrichtigung
-     * mit der ID besitzt.
+     * @throws NotificationNotFoundException wenn der Benutzer keine Benachrichtigung mit der ID besitzt.
      * @see model.notification.Notification
      */
     void deleteNotification(UUID notificationId) throws NotificationNotFoundException;
@@ -156,7 +153,7 @@ public interface IUser {
      * Gibt die aktuelle Welt, in der sich der Benutzer bendet, zurück.
      * @return Aktuelle Welt des Benutzers.
      */
-    ISpatialContext getWorld();
+    IWorld getWorld();
 
     /**
      * Gibt die aktuelle Position innerhalb des Raumes, in dem sich der Benutzer bendet,

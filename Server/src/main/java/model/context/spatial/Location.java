@@ -6,7 +6,7 @@ package model.context.spatial;
 public class Location implements ILocation {
 
     /** Der Raum, auf den sich diese Position bezieht. */
-    private SpatialContext room;
+    private Room room;
 
     /** X-Koordinate der Position. */
     private int posX;
@@ -20,7 +20,7 @@ public class Location implements ILocation {
      * @param posX Die X-Koordinate der Position.
      * @param posY Die Y-Koordinate der Position.
      */
-    public Location(SpatialContext room, int posX, int posY) {
+    public Location(Room room, int posX, int posY) {
         this.room = room;
         setPosition(posX, posY);
     }
@@ -36,12 +36,12 @@ public class Location implements ILocation {
     }
 
     @Override
-    public SpatialContext getRoom() {
+    public Room getRoom() {
         return room;
     }
 
     @Override
-    public SpatialContext getArea() {
+    public Area getArea() {
         return room.getArea(posX, posY);
     }
 

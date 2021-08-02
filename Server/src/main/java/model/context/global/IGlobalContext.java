@@ -2,8 +2,8 @@ package model.context.global;
 
 import model.context.ContextID;
 import model.context.IContext;
+import model.context.spatial.IWorld;
 import model.context.spatial.SpatialMap;
-import model.context.spatial.SpatialContext;
 import model.exception.ContextNotFoundException;
 import model.exception.IllegalWorldActionException;
 import model.exception.NoPermissionException;
@@ -26,7 +26,7 @@ public interface IGlobalContext extends IContext {
      * @throws UserNotFoundException wenn kein Benutzer mit der ID existiert.
      * @throws NoPermissionException wenn der ausführende Benutzer nicht die nötige Berechtigung besitzt.
      * @throws IllegalWorldActionException wenn der Name der Welt bereits existiert oder nicht das richtige Format hat.
-     * @see model.context.spatial.ISpatialContext
+     * @see model.context.spatial.IArea
      * @see model.role.Permission#MANAGE_WORLDS
      */
     void createWorld(UUID performerId, String worldname, SpatialMap map) throws UserNotFoundException, NoPermissionException, IllegalWorldActionException;
@@ -38,7 +38,7 @@ public interface IGlobalContext extends IContext {
      * @throws UserNotFoundException wenn kein Benutzer mit der ID existiert.
      * @throws ContextNotFoundException wenn keine Welt mit der ID existiert.
      * @throws NoPermissionException wenn der Benutzer nicht die nötige Berechtigung besitzt.
-     * @see model.context.spatial.ISpatialContext
+     * @see model.context.spatial.IArea
      * @see model.role.Permission#MANAGE_WORLDS
      */
     void removeWorld(UUID performerId, ContextID worldId) throws UserNotFoundException, NoPermissionException, ContextNotFoundException;
@@ -47,5 +47,5 @@ public interface IGlobalContext extends IContext {
      * Gibt die Menge aller Welten zurück.
      * @return Menge aller Welten.
      */
-    Map<ContextID, SpatialContext> getWorlds();
+    Map<ContextID, IWorld> getWorlds();
 }

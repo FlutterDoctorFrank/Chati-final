@@ -1,7 +1,6 @@
 package model.communication;
 
-import model.context.Context;
-import model.context.spatial.SpatialContext;
+import model.context.spatial.Area;
 import model.user.User;
 
 import java.util.Map;
@@ -14,7 +13,7 @@ import java.util.UUID;
 public abstract class CommunicationRegion {
 
     /** Kontext, der die Instanz dieser Kommunikationsform nutzt. */
-    protected Context context;
+    protected Area area;
 
     /**
      * Gibt die Menge aller Benutzer zurück, die eine Nachricht des kommunizierenden Benutzers empfangen können.
@@ -25,9 +24,9 @@ public abstract class CommunicationRegion {
 
     /**
      * Setzt den Kontext, der diese Kommunikationsform nutzt.
-     * @param context Kontext, der diese Kommunikationsform nutzt.
+     * @param area Kontext, der diese Kommunikationsform nutzt.
      */
-    public void setSpatialContext(Context context) {
-        this.context = context;
+    public void setArea(Area area) {
+        this.area = area;
     }
 }

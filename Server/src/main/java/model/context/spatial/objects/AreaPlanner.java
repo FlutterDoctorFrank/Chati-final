@@ -3,10 +3,10 @@ package model.context.spatial.objects;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
-import model.communication.ParentCommunication;
+import model.context.spatial.Area;
 import model.context.spatial.Expanse;
+import model.context.spatial.Interactable;
 import model.context.spatial.Menu;
-import model.context.spatial.SpatialContext;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.notification.AreaManagingRequest;
@@ -26,10 +26,7 @@ import java.util.UUID;
  * zukünftigen Zeitpunkt für einen festgelegten räumlichen Kontext beantragen kann. Ist immer vom Typ
  * {@link model.context.spatial.SpatialContextType#OBJECT}.
  */
-public class AreaPlanner extends SpatialContext {
-
-    /** Übergeordneter räumlicher Kontext. */
-    private final SpatialContext parent;
+public class AreaPlanner extends Interactable {
 
     /**
      * Erzeugt eines neue Instanz des AreaPlanner.
@@ -39,10 +36,9 @@ public class AreaPlanner extends SpatialContext {
      * @param communicationRegion Geltende Kommunikationsform.
      * @param communicationMedia Benutzbare Kommunikationsmedien.
      */
-    public AreaPlanner(String objectName, SpatialContext parent, Expanse expanse,
-                       CommunicationRegion communicationRegion, Set<CommunicationMedium> communicationMedia) {
-        super(objectName, parent, Menu.AREA_PLANNER_MENU, expanse, communicationRegion, communicationMedia);
-        this.parent = parent;
+    public AreaPlanner(String objectName, Area parent, CommunicationRegion communicationRegion,
+                       Set<CommunicationMedium> communicationMedia, Expanse expanse) {
+        super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.AREA_PLANNER_MENU);
     }
 
     @Override
@@ -90,10 +86,5 @@ public class AreaPlanner extends SpatialContext {
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
         }
-    }
-
-    @Override
-    public SpatialContext getParent() {
-        return parent;
     }
 }

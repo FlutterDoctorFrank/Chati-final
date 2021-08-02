@@ -1,7 +1,6 @@
 package model.communication;
 
 import model.context.Context;
-import model.context.spatial.SpatialContext;
 import model.user.User;
 
 import java.util.HashMap;
@@ -23,7 +22,7 @@ public class ParentCommunication extends CommunicationRegion {
 
     @Override
     public Map<UUID, User> getCommunicableUsers(User user) {
-        Context parent = context.getParent();
+        Context parent = area.getParent();
         if (parent == null) {
             return new HashMap<>();
         }

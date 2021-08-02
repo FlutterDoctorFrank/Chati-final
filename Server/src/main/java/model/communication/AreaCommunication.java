@@ -1,6 +1,5 @@
 package model.communication;
 
-import model.context.spatial.SpatialContext;
 import model.user.User;
 
 import java.util.Map;
@@ -20,6 +19,6 @@ public class AreaCommunication extends CommunicationRegion {
 
     @Override
     public Map<UUID, User> getCommunicableUsers(User user) {
-        return context.getUsers();
+        return area.getUsers();
     }
 }

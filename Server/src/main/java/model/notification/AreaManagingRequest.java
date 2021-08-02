@@ -3,7 +3,7 @@ package model.notification;
 import controller.network.ClientSender;
 import model.MessageBundle;
 import model.communication.message.TextMessage;
-import model.context.spatial.SpatialContext;
+import model.context.spatial.Area;
 import model.role.Permission;
 import model.user.User;
 import model.user.account.UserAccountManager;
@@ -19,7 +19,7 @@ public class AreaManagingRequest extends Notification {
     private final User requestingUser;
 
     /** Bereich, in dem die Rolle des Bereichsberechtigten angefragt wurde. */
-    private final SpatialContext requestedArea;
+    private final Area requestedArea;
 
     /** Zeitpunkt, ab dem der Benutzer die Rolle des Bereichsberechtigten haben soll. */
     private final LocalDateTime from;
@@ -31,11 +31,11 @@ public class AreaManagingRequest extends Notification {
      * Erzeugt eine neue Instanz der Anfrage zum Erhalt der Rolle des Bereichsberechtigten.
      * @param owner Der Eigentümer dieser Benachrichtigung.
      * @param requestingUser Benutzer, der die Anfrage zum Erhalt der Rolle des Bereichsberechtigten stellt.
-     * @param requestedArea Bereich, in dem die Rolle des Bereichsberechtigten angefragt wurde.
+     * @param requestedArea Bereich, für den die Rolle des Bereichsberechtigten angefragt wurde.
      * @param from Zeitpunkt, ab dem der Benutzer die Rolle des Bereichsberechtigten haben soll.
      * @param to Zeitpunkt, bis zu dem der Benutzer die Rolle des Bereichsberechtigten haben soll.
      */
-    public AreaManagingRequest(User owner, User requestingUser, SpatialContext requestedArea, LocalDateTime from, LocalDateTime to) {
+    public AreaManagingRequest(User owner, User requestingUser, Area requestedArea, LocalDateTime from, LocalDateTime to) {
         super(NotificationType.AREA_MANAGING_REQUEST, owner, requestingUser.getWorld(),
                 new MessageBundle("key", requestingUser.getUsername(), requestedArea.getContextName(), from, to));
         this.requestingUser = requestingUser;

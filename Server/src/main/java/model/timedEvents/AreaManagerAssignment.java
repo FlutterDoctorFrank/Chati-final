@@ -1,8 +1,8 @@
 package model.timedEvents;
 
 import model.MessageBundle;
+import model.context.spatial.Area;
 import model.context.spatial.AreaReservation;
-import model.context.spatial.SpatialContext;
 import model.notification.Notification;
 import model.role.Role;
 import model.user.User;
@@ -30,7 +30,7 @@ public class AreaManagerAssignment extends TimedEvent {
     @Override
     public void execute() {
         User reserver = reservation.getReserver();
-        SpatialContext reservedContext = reservation.getContext();
+        Area reservedContext = reservation.getArea();
         reserver.addRole(reservedContext, Role.AREA_MANAGER);
         Notification roleReceiveNotification = new Notification(reserver, reservedContext.getWorld(), new MessageBundle("key"));
         reserver.addNotification(roleReceiveNotification);
@@ -39,7 +39,7 @@ public class AreaManagerAssignment extends TimedEvent {
     @Override
     public boolean isValid() {
         User reserver = reservation.getReserver();
-        SpatialContext reservedContext = reservation.getContext();
+        Area reservedContext = reservation.getArea();
         LocalDateTime from = reservation.getFrom();
         LocalDateTime to = reservation.getTo();
         return reservedContext.isReservedAtBy(reserver, from, to) && !reserver.hasRole(reservedContext, Role.AREA_MANAGER);

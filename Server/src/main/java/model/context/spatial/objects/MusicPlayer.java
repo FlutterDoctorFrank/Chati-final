@@ -3,15 +3,11 @@ package model.context.spatial.objects;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
-import model.context.spatial.Expanse;
-import model.context.spatial.Menu;
-import model.context.spatial.Music;
-import model.context.spatial.SpatialContext;
+import model.context.spatial.*;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.user.User;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -19,7 +15,7 @@ import java.util.Set;
  * auswählen und abspielen lassen kann, oder das Abspielen beenden kann. Ist immer vom Typ
  * {@link model.context.spatial.SpatialContextType#OBJECT}.
  */
-public class MusicPlayer extends SpatialContext {
+public class MusicPlayer extends Interactable {
 
     /**
      * Erzeugt eines neue Instanz des MusicPlayer.
@@ -29,9 +25,9 @@ public class MusicPlayer extends SpatialContext {
      * @param communicationRegion Geltende Kommunikationsform.
      * @param communicationMedia Benutzbare Kommunikationsmedien.
      */
-    public MusicPlayer(String objectName, SpatialContext parent, Expanse expanse,
-                       CommunicationRegion communicationRegion, Set<CommunicationMedium> communicationMedia) {
-        super(objectName, parent, Menu.MUSIC_PLAYER_MENU, expanse, communicationRegion, communicationMedia);
+    public MusicPlayer(String objectName, Area parent, CommunicationRegion communicationRegion,
+                       Set<CommunicationMedium> communicationMedia, Expanse expanse) {
+        super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.MUSIC_PLAYER_MENU);
     }
 
     @Override

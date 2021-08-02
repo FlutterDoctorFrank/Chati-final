@@ -9,7 +9,7 @@ import java.time.temporal.ChronoUnit;
  * Repräsentiert das Ereignis, einem Benutzer nach einer bestimmten Zeit der Inaktivität den Status {@link Status#AWAY}
  * zuzuweisen.
  */
-public class SetUserAwayStatus extends TimedEvent {
+public class AbsentUser extends TimedEvent {
 
     /** Benutzer, dem der Status zugewiesen werden soll. */
     private final User user;
@@ -18,7 +18,7 @@ public class SetUserAwayStatus extends TimedEvent {
      * Erzeugt eine neue Instanz des TimedEvent.
      * @param user Benutzer, dem der Status zugewiesen werden soll.
      */
-    public SetUserAwayStatus(User user) {
+    public AbsentUser(User user) {
         super(user.getLastActivity().plus(Status.AWAY_TIME, ChronoUnit.MINUTES));
         this.user = user;
     }

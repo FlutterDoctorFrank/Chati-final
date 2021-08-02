@@ -1,11 +1,11 @@
 package model.exception;
 
-import model.context.spatial.SpatialContext;
+import model.context.spatial.Interactable;
 import model.user.User;
 
 public class IllegalInteractionException extends Exception {
     private final User user;
-    private SpatialContext interactable;
+    private Interactable interactable;
 
     public IllegalInteractionException(String errorMessage, User user) {
         super(errorMessage);
@@ -17,13 +17,13 @@ public class IllegalInteractionException extends Exception {
         this.user = user;
     }
 
-    public IllegalInteractionException(String errorMessage, User user, SpatialContext interactable) {
+    public IllegalInteractionException(String errorMessage, User user, Interactable interactable) {
         super(errorMessage);
         this.user = user;
         this.interactable = interactable;
     }
 
-    public IllegalInteractionException(String errorMessage, User user, SpatialContext interactable, Throwable cause) {
+    public IllegalInteractionException(String errorMessage, User user, Interactable interactable, Throwable cause) {
         super(errorMessage, cause);
         this.user = user;
         this.interactable = interactable;
@@ -33,7 +33,7 @@ public class IllegalInteractionException extends Exception {
         return user;
     }
 
-    public SpatialContext getInteractable() {
+    public Interactable getInteractable() {
         return interactable;
     }
 }

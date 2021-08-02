@@ -5,9 +5,10 @@ import model.MessageBundle;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.communication.message.TextMessage;
+import model.context.spatial.Area;
 import model.context.spatial.Expanse;
+import model.context.spatial.Interactable;
 import model.context.spatial.Menu;
-import model.context.spatial.SpatialContext;
 import model.exception.IllegalInteractionException;
 import model.user.User;
 
@@ -17,9 +18,7 @@ import java.util.Set;
  * Eine Klasse, welche ein Objekt repräsentiert, durch welches der Benutzer an eine Stelle bewegt wird und mit anderen
  * Benutzern kommunizieren kann. Hat immer den Typ {@link model.context.spatial.SpatialContextType#OBJECT}.
  */
-public class Seat extends SpatialContext {
-
-    private final SpatialContext parent;
+public class Seat extends Interactable {
 
     /**
      * Erzeugt eines neue Instanz des Seat.
@@ -29,10 +28,9 @@ public class Seat extends SpatialContext {
      * @param communicationRegion Geltende Kommunikationsform.
      * @param communicationMedia Benutzbare Kommunikationsmedien.
      */
-    public Seat(String objectName, SpatialContext parent, Expanse expanse, CommunicationRegion communicationRegion,
-                Set<CommunicationMedium> communicationMedia) {
-        super(objectName, parent, Menu.SEAT_MENU, expanse, communicationRegion, communicationMedia);
-        this.parent = parent;
+    public Seat(String objectName, Area parent, CommunicationRegion communicationRegion,
+                Set<CommunicationMedium> communicationMedia, Expanse expanse) {
+        super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.SEAT_MENU);
     }
 
     @Override
@@ -70,7 +68,7 @@ public class Seat extends SpatialContext {
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 try {
                     user.setMoveable(true);
-                    user.move(expanse.getBottomLeft().getPosX(), expanse.getBottomLeft().getPosY());
+                    user.tryMove(expanse.getBottomLeft().getPosX(), expanse.getBottomLeft().getPosY());
                     user.setMoveable(false);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -79,10 +77,5 @@ public class Seat extends SpatialContext {
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
         }
-    }
-
-    @Override
-    public SpatialContext getParent() {
-        return parent;
     }
 }

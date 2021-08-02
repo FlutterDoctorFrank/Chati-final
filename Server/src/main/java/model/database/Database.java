@@ -3,7 +3,7 @@ package model.database;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.AreaReservation;
-import model.context.spatial.SpatialContext;
+import model.context.spatial.World;
 import model.notification.Notification;
 import model.notification.RoomRequest;
 import model.role.Role;
@@ -40,7 +40,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
 
     @Override
-    public void addWorld(SpatialContext world) {
+    public void addWorld(World world) {
 
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -58,7 +58,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void removeWorld(SpatialContext world) {
+    public void removeWorld(World world) {
 
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -75,13 +75,13 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public SpatialContext getWorld(ContextID worldID) {
+    public World getWorld(ContextID worldID) {
         // TODO
         return null;
     }
 
     @Override
-    public Map<ContextID, SpatialContext> getWorlds() {
+    public Map<ContextID, World> getWorlds() {
         return null; // TODO
     }
 

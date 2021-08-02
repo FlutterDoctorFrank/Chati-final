@@ -3,19 +3,19 @@ package model.context.spatial.objects;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
+import model.context.spatial.Area;
 import model.context.spatial.Expanse;
+import model.context.spatial.Interactable;
 import model.context.spatial.Menu;
-import model.context.spatial.SpatialContext;
 import model.user.User;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer ein Minispiel spielen kann. Ist immer vom
  * Typ {@link model.context.spatial.SpatialContextType#OBJECT}.
  */
-public class GameBoard extends SpatialContext {
+public class GameBoard extends Interactable {
 
     /**
      * Erzeugt eines neue Instanz des Gameboard.
@@ -25,9 +25,9 @@ public class GameBoard extends SpatialContext {
      * @param communicationRegion Geltende Kommunikationsform.
      * @param communicationMedia Benutzbare Kommunikationsmedien.
      */
-    public GameBoard(String objectName, SpatialContext parent, Expanse expanse, CommunicationRegion communicationRegion,
-                     Set<CommunicationMedium> communicationMedia) {
-        super(objectName, parent, Menu.GAME_BOARD_MENU, expanse, communicationRegion, communicationMedia);
+    public GameBoard(String objectName, Area parent, CommunicationRegion communicationRegion,
+                     Set<CommunicationMedium> communicationMedia, Expanse expanse) {
+        super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.GAME_BOARD_MENU);
     }
 
     @Override

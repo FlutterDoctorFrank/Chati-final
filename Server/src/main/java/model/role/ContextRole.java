@@ -15,10 +15,10 @@ public class ContextRole implements IContextRole {
     private User user;
 
     /** Der Kontext, in dem ein Benutzer die Rollen besitzt. */
-    private Context context;
+    private final Context context;
 
     /** Die Rollen, die ein Benutzer in dem entsprechenden Kontext besitzt. */
-    private Set<Role> roles;
+    private final Set<Role> roles;
 
     /**
      * Erzeugt eine Instanz der ContextRole mit einer Rolle.

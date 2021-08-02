@@ -10,23 +10,23 @@ public interface ILocation {
      * Gibt die X-Koordinate der Position im räumlichen Kontext zurück.
      * @return X-Koordinate der Position.
      */
-    public int getPosX();
+    int getPosX();
 
     /**
      * Gibt die Y-Koordinate der Position im räumlichen Kontext zurück.
      * @return Y-Koordinate der Position.
      */
-    public int getPosY();
+    int getPosY();
 
     /**
      * Gibt den räumlichen Kontext dieser Position zurück.
      * @return Raum der Position.
      */
-    public ISpatialContext getRoom();
+    IRoom getRoom();
 
     /**
      * Gibt den innersten Bereich der Position im räumlichen Kontext zurück.
      * @return Innerster Bereich der Position.
      */
-    public ISpatialContext getArea();
+    IArea getArea();
 }
