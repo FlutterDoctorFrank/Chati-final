@@ -1,15 +1,12 @@
 package model.Context.Spatial;
 
+import model.Communication.CommunicationRegion;
 import model.Context.Context;
-import model.context.ContextID;
-import model.context.spatial.SpatialContextType;
+import model.communication.CommunicationMedium;
 import model.context.spatial.SpatialMap;
-import view.Screens.IModelObserver;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 /**
  * Eine Klasse, welche einen räumlichen Kontext der Anwendung repräsentiert.
@@ -17,32 +14,12 @@ import java.util.stream.Collectors;
 public class SpatialContext extends Context implements ISpatialContextView{
 
     private SpatialMap map;
-    private Map<ContextID, SpatialContext> rooms;
-    private SpatialContextType spatialContextType;
-    private boolean moveable;
-    private boolean interactable;
-    private SpatialContext[][] areaMap;
-    private Expanse expanse;
+    private final Expanse expanse;
 
-
-    public SpatialContext(String contextName, Context parent, ContextID contextId) {
-        super(contextName, parent, contextId);
-    }
-
-
-    @Override
-    public boolean canMoveIn() {
-        return moveable;
-    }
-
-    @Override
-    public boolean canInteractWith() {
-        return interactable;
-    }
-
-    @Override
-    public Map<ContextID, ISpatialContextView> getPrivateRooms() {
-        return Collections.unmodifiableMap(rooms);
+    public SpatialContext(String contextName, Context parent, CommunicationRegion communicationRegion,
+                          Set<CommunicationMedium> communicationMedia, Expanse expanse) {
+        super(contextName, parent, communicationRegion, communicationMedia);
+        this.expanse = expanse;
     }
 
     @Override
@@ -69,16 +46,7 @@ public class SpatialContext extends Context implements ISpatialContextView{
     public Expanse getExpanse() {
         return expanse;
     }
-    public void setRooms(Map<ContextID, SpatialContext> rooms) {
-        this.rooms = rooms;
-    }
     public void setMap(SpatialMap map) {
         this.map = map;
-    }
-    public Map<ContextID, SpatialContext> getRooms() {
-        return rooms;
-    }
-    public SpatialContext[][] getAreaMap() {
-        return areaMap;
     }
 }

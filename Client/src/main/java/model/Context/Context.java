@@ -6,8 +6,6 @@ import model.Context.Spatial.SpatialContext;
 import model.communication.CommunicationMedium;
 import model.context.ContextID;
 import model.context.spatial.Music;
-import view.Screens.IModelObserver;
-
 
 import java.util.Map;
 import java.util.Objects;
@@ -20,19 +18,26 @@ import java.util.Set;
  */
 public abstract class Context implements IContextView{
 
-    private String contextName;
+    private final String contextName;
     protected Map<ContextID, SpatialContext> children;
-    private Context parent;
-    private ContextID contextId;
-    private CommunicationRegion communicationRegion;
-    private Set<CommunicationMedium> communicationMedia;
+    private final Context parent;
+    private final ContextID contextId;
+    private final CommunicationRegion communicationRegion;
+    private final Set<CommunicationMedium> communicationMedia;
     private Music music;
 
 
-    protected Context(String contextName, Context parent, ContextID contextId) {
+    protected Context(String contextName, Context parent, CommunicationRegion communicationRegion,
+                      Set<CommunicationMedium> communicationMedia) {
         this.contextName = contextName;
         this.parent = parent;
-        this.contextId = contextId;
+        this.communicationRegion = communicationRegion;
+        this.communicationMedia = communicationMedia;
+        if (parent == null) {
+            this.contextId = new ContextID(contextName);
+        } else {
+            this.contextId = new ContextID(parent.getContextId().getId().concat(".").concat(contextName));
+        }
     }
 
 
@@ -70,9 +75,9 @@ public abstract class Context implements IContextView{
      */
     public boolean isInContext(Context context){
         if(this.equals(GlobalContext.getInstance())){
-            return this.equals(context) ? true : false;
+            return this.equals(context);
         }
-        return this.equals(context) ? parent.isInContext(context) : true;
+        return !this.equals(context) || parent.isInContext(context);
     }
 
     /**
@@ -101,10 +106,10 @@ public abstract class Context implements IContextView{
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Context context = (Context) o;
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Context context = (Context) object;
         return Objects.equals(contextId, context.contextId);
     }
 
