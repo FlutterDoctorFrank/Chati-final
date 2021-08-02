@@ -6,24 +6,24 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import model.Context.Global.IGlobalContextView;
 import view.Screens.PlayScreen;
+
+import java.util.HashMap;
 
 
 public class StartScreenTable extends UIComponentTable {
 
     public StartScreenTable(Hud hud) {
-        super();
-        this.hud = hud;
+        super(hud);
+        setName("start-screen-table");
         create();
     }
 
     public void create() {
         int spacing = 5;
 
-        add(dropDownMenus(hud)).right().padRight(10).padTop(10);
-        row();
-
-        Label infoLabel = new Label("", skin);
+        infoLabel = new Label("", skin);
         TextButton play = new TextButton("Beitreten", skin);
         play.addListener(new InputListener() {
             @Override
@@ -33,19 +33,20 @@ public class StartScreenTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new PlayScreenTable(hud));
-                hud.getApplicationScreen().getGame().setScreen(new PlayScreen(hud.getApplicationScreen().getGame()));
+                hud.getApplicationScreen().getGame().setScreen(new PlayScreen(hud.getApplicationScreen().getGame(), hud));
             }
         });
 
         SelectBox<String> worlds = new SelectBox<String>(skin);
+        IGlobalContextView global = hud.getApplicationScreen().getGame().getGlobalContext();
+        //HashMap map = global.getWorlds();
         worlds.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
                 worlds.setSelected(worlds.getSelected());
             }
         });
-        worlds.setItems("Welt auswählen", "a", "b", "c", "d");
+
         TextButton changeAvatar = new TextButton("Avatar ändern", skin);
         changeAvatar.addListener(new InputListener() {
             @Override
@@ -55,10 +56,22 @@ public class StartScreenTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new AvatarSelectTable(hud));
+                hud.addMenuTable(new AvatarSelectTable(hud));
             }
         });
         TextButton logout = new TextButton("Abmelden", skin);
+        logout.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                hud.addMenuTable(new LoginTable(hud));
+            }
+        });
+
         TextButton profileSettings = new TextButton("Benutzerkonto \n bearbeiten", skin);
         profileSettings.addListener(new InputListener(){
             @Override
@@ -68,7 +81,7 @@ public class StartScreenTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new ProfileSettingsTable(hud));
+                hud.addMenuTable(new ProfileSettingsTable(hud));
             }
         });
 

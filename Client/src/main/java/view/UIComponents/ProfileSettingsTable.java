@@ -7,15 +7,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 
 public class ProfileSettingsTable extends UIComponentTable {
-    private Hud hud;
 
     public ProfileSettingsTable(Hud hud) {
-        this.hud = hud;
+        super(hud);
+        setName("profile-settings-table");
         create();
     }
 
     private void create() {
-        Label infoLabel = new Label("", skin);
+        infoLabel = new Label("", skin);
         TextButton changePassword = new TextButton("Passwort ändern", skin);
         changePassword.addListener(new InputListener() {
             @Override
@@ -25,7 +25,7 @@ public class ProfileSettingsTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new ChangePasswordTable(hud));
+                hud.addMenuTable(new ChangePasswordTable(hud));
             }
         });
 
@@ -38,7 +38,7 @@ public class ProfileSettingsTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new DeleteAccountTable(hud));
+                hud.addMenuTable(new DeleteAccountTable(hud));
             }
         });
 
@@ -51,7 +51,7 @@ public class ProfileSettingsTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addTable(new StartScreenTable(hud));
+                hud.addMenuTable(new StartScreenTable(hud));
             }
         });
 

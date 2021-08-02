@@ -8,22 +8,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import controller.network.ServerSender;
 import org.jetbrains.annotations.NotNull;
 
 public class LoginTable extends UIComponentTable {
     private boolean waitingLoginResponse = false;
     private boolean waitingRegResponse = false;
     private TextField password;
-    private Label infoLabel;
     private TextField username;
 
     public LoginTable(Hud hud) {
-        super();
-        create(hud);
+        super(hud);
+        setName("login-table");
+        create();
     }
 
-    private void create(Hud hud) {
+    private void create() {
         int spacing = 5;
         infoLabel = new Label("", skin);
         username = new TextField("Benutzername", skin);
@@ -34,7 +33,7 @@ public class LoginTable extends UIComponentTable {
                 username.setText("");
             }
         });
-        TextField password = new TextField("Passwort", skin);
+        password = new TextField("Passwort", skin);
         password.setPasswordCharacter('*');
         password.setPasswordMode(true);
         password.addListener(new ClickListener() {
@@ -61,9 +60,7 @@ public class LoginTable extends UIComponentTable {
                     infoLabel.setText("Kein gültiges Passwort");
                 } else {
                     Object[] credentials = {username.getText(), password.getText(), false};
-                    hud.sendRequest(credentials);
-                    waitingLoginResponse = true;
-                    infoLabel.setText("Auf Antwort warten");
+                    hud.sendLoginRequest(credentials);
                 }
             }
         });
@@ -84,9 +81,7 @@ public class LoginTable extends UIComponentTable {
                         infoLabel.setText("Kein gültiges Passwort");
                     } else {
                         Object[] credentials = {username.getText(), password.getText(), true};
-                        hud.sendRequest(credentials);
-                        waitingRegResponse = true;
-                        infoLabel.setText("Auf Antwort warten");
+                        hud.sendRegistrationRequest(credentials);
                     }
                 }
             }
@@ -121,26 +116,4 @@ public class LoginTable extends UIComponentTable {
         });
         add(exit).width(logRegButtonsWidth);
     }
-
-    public void receiveLoginResponse(@NotNull boolean success, @NotNull String message) {
-        if (waitingLoginResponse && success) {
-            hud.addTable(new StartScreenTable(hud));
-        }
-        if (!success) {
-            infoLabel.setText(message);
-        }
-        waitingLoginResponse = false;
-    }
-
-    public void receiveRegResponse(@NotNull boolean success, @NotNull String message) {
-        if (waitingLoginResponse && success) {
-            hud.addTable(new StartScreenTable(hud));
-        }
-        if (!success) {
-            infoLabel.setText(message);
-        }
-        waitingRegResponse = false;
-    }
-
-
 }

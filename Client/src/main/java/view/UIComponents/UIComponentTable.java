@@ -2,15 +2,20 @@ package view.UIComponents;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public abstract class UIComponentTable extends Table {
-    protected Skin skin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
+    protected Skin skin;
     protected Hud hud;
+    protected Label infoLabel;
 
-    public UIComponentTable() {
+    public UIComponentTable(Hud hud) {
+        setWidth(hud.getWidth());
+        setHeight(hud.getHeight());
+        this.hud = hud;
+        skin =  new Skin(Gdx.files.internal("shadeui/uiskin.json"));
         setFillParent(true);
         defaults().space(5);
     }
@@ -24,6 +29,11 @@ public abstract class UIComponentTable extends Table {
         dropDownMenus.add(notifications);
         dropDownMenus.add(users);
         dropDownMenus.add(settings);
+
         return dropDownMenus;
+    }
+
+    public void displayMessage(String text) {
+        infoLabel.setText(text);
     }
 }

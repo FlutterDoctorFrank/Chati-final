@@ -18,7 +18,6 @@ public abstract class ApplicationScreen implements Screen {
 
     public ApplicationScreen(Chati game) {
         this.game = game;
-        hud = new Hud(spriteBatch, this);
     }
 
     @Override
@@ -31,8 +30,8 @@ public abstract class ApplicationScreen implements Screen {
         Gdx.gl.glClearColor(0, 102/255f, 102/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        hud.getStage().act();
-        hud.getStage().draw();
+        hud.act();
+        hud.draw();
 
     }
 
