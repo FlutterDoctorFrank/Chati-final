@@ -62,7 +62,7 @@ public class ServerNetworkManager extends NetworkManager<Server> {
     public void start() {
         try {
             this.endPoint.start();
-            this.endPoint.bind(HOST_PORT);
+            this.endPoint.bind(HOST_TCP_PORT, HOST_UDP_PORT);
             System.out.println("Hosted Server.");
         } catch (IOException ex) {
             System.out.println("Failed to host server.");

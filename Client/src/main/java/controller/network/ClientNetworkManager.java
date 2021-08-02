@@ -7,7 +7,6 @@ import model.User.IUserManagerController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view.Screens.ViewControllerInterface;
-
 import java.io.IOException;
 
 /**
@@ -40,22 +39,11 @@ public class ClientNetworkManager extends NetworkManager<Client> {
     }
 
     public @Nullable ServerConnection getConnection() {
-        try {
-            while (this.connection == null) {
-                System.out.println("ServerConnection is null");
-                Thread.sleep(100);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(this.connection);
         return this.connection;
     }
 
     @Override
     public void connected(@NotNull final Connection connection) {
-        System.out.println("Methode connected() beim ClientNetworkManager aufgerufen");
         this.connection = new ServerConnection(this);
     }
 
@@ -98,7 +86,7 @@ public class ClientNetworkManager extends NetworkManager<Client> {
     public void start() {
         try {
             this.endPoint.start();
-            this.endPoint.connect(5000, HOST_IP, HOST_PORT);
+            this.endPoint.connect(5000, HOST_IP, HOST_TCP_PORT, HOST_UDP_PORT);
 
             System.out.println("Connected to Server.");
         } catch (IOException ex) {

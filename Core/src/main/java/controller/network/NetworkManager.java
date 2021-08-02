@@ -22,7 +22,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class NetworkManager<T extends EndPoint> extends Listener {
 
     protected static final String HOST_IP = "127.0.0.1";
-    protected static final int HOST_PORT = 54777;
+    protected static final int HOST_TCP_PORT = 54777;
+    protected static final int HOST_UDP_PORT = 59001;
 
     protected final T endPoint;
 

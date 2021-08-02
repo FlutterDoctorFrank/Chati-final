@@ -35,6 +35,12 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
     public void send(@NotNull final Packet<?> packet) {
         if (this.manager.getEndPoint().isConnected()) {
+            // Das Netzwerkpaket für die Sprachnachrichten wird über UDP anstatt TCP versendet.
+            if (packet instanceof PacketVoiceMessage) {
+                this.manager.getEndPoint().sendUDP(packet);
+                return;
+            }
+
             this.manager.getEndPoint().sendTCP(packet);
         }
     }
@@ -130,7 +136,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
     @Override
     public void handle(@NotNull final PacketOutNotification packet) {
-        //TODO Verarbeitung des MenuAction-Pakets implementieren.
+        //TODO Verarbeitung des Notification-Pakets implementieren.
     }
 
     @Override

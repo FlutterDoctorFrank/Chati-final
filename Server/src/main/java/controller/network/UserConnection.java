@@ -67,6 +67,12 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
     public void send(@NotNull final Packet<?> packet) {
         if (this.connection.isConnected()) {
+            // Das Netzwerkpaket für die Sprachnachrichten wird über UDP anstatt TCP versendet.
+            if (packet instanceof PacketVoiceMessage) {
+                this.connection.sendUDP(packet);
+                return;
+            }
+
             this.connection.sendTCP(packet);
         }
     }
