@@ -13,7 +13,13 @@ import java.util.Set;
  */
 public class SpatialContext extends Context implements ISpatialContextView{
 
+    /**
+     * Karte der Welt oder eines Raumes
+     */
     private SpatialMap map;
+    /**
+     * Ausdehnung des räumlichen Kontexts
+     */
     private final Expanse expanse;
 
     public SpatialContext(String contextName, Context parent, CommunicationRegion communicationRegion,

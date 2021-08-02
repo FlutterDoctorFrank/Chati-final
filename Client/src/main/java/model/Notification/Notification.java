@@ -10,10 +10,25 @@ import java.util.UUID;
  * Eine Klasse, welche eine Benachrichtigung repräsentiert.
  */
 public class Notification implements INotificationView{
+    /**
+     * eindeutige ID der Benachrichtigung
+     */
     private final UUID notificationId;
+    /**
+     * Zeitpunkt, an dem die Benachrichtigung generiert wurde
+     */
     private final LocalDateTime timestamp;
+    /**
+     * gibt an, ob die Benachrichtigung eine Anfrage ist
+     */
     private final boolean isRequest;
+    /**
+     * Nachricht der Benachrichtigung
+     */
     private final MessageBundle messageBundle;
+    /**
+     * Kontext, in dem die Benachrichtigung generiert wurde
+     */
     private final Context context;
 
     public Notification(UUID notificationId, LocalDateTime timestamp, boolean isRequest, MessageBundle messageBundle, Context context) {

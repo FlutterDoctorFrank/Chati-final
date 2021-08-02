@@ -11,12 +11,13 @@ import java.util.Set;
  * Eine Klasse, welche die Zusammengehörigkeit von Rollen mit Kontexten repräsentiert.
  */
 public class ContextRole {
-    private final Context context;
+    /**
+     * enthaltene Rollen
+     */
     private final Set<Role> roles;
 
 
     public ContextRole(Context context, Set<Role> roles) {
-        this.context = context;
         this.roles = roles;
     }
 

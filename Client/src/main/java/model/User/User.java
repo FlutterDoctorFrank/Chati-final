@@ -25,20 +25,65 @@ import java.util.stream.Collectors;
  */
 public class User implements IUserController, IUserView{
 
+    /**
+     * eindeutige ID des Benutzers
+     */
     private final UUID userId;
+    /**
+     * Name des Benutzers
+     */
     private String username;
+    /**
+     * gibt an, ob sich der Benutzer in der aktuellen Welt befindet
+     */
     private boolean inCurrentWorld;
+    /**
+     * gibt an, ob sich der Benutezr im aktuellen Raum befindet
+     */
     private boolean inCurrentRoom;
+    /**
+     * gibt an, ob der Benutzer mit dem lokalen Benutzer befreundet ist
+     */
     private boolean friend;
+    /**
+     * gibt an, ob der Benutzer vom lokalen Benutzern ignoriert wird
+     */
     private boolean ignored;
+    /**
+     * gibt den Status des Benutzers an
+     */
     private Status status;
+    /**
+     * alle Benachrichtigungen des Benutzers
+     */
     private final Map<UUID, Notification> notifications;
+    /**
+     * alle Rollen des Benutzers
+     */
     private final Map<ContextID, ContextRole> roles;
+    /**
+     * Kontexte, in denen der Benutzer gemeldet ist
+     */
     private final Map<ContextID, Context> reported;
+    /**
+     * Kontexte, in denen der Benutzer stumm geschalten ist
+     */
     private final Map<ContextID, Context> muted;
+    /**
+     * Kontexte, in denen der Benutzer gebannt ist
+     */
     private final Map<ContextID, Context> banned;
+    /**
+     * aktuelle Position des Benutzers
+     */
     private Location location;
+    /**
+     * Avatar des Benutzers
+     */
     private Avatar avatar;
+    /**
+     * Beobachterschnittstelle, um View über Änderungen zu informieren
+     */
     private final IModelObserver iModelObserver;
 
 

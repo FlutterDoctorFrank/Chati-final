@@ -8,7 +8,13 @@ import java.util.Objects;
  * Eine Klasse, welche Positionen repräsentiert.
  */
 public class Location implements ILocationView{
+    /**
+     * x-Koordinate der Location
+     */
     private final int posX;
+    /**
+     * Y-Koordinate der Location
+     */
     private final int posY;
 
     public Location(int posX, int posY) {

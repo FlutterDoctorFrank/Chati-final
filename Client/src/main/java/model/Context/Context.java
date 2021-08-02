@@ -18,12 +18,33 @@ import java.util.Set;
  */
 public abstract class Context implements IContextView{
 
+    /**
+     * Name des Kontexts
+     */
     private final String contextName;
+    /**
+     * Kind-Kontexte
+     */
     protected Map<ContextID, SpatialContext> children;
+    /**
+     * Eltern-Kontext
+     */
     private final Context parent;
+    /**
+     * eindeutige ID des Kontexts
+     */
     private final ContextID contextId;
+    /**
+     * auf dem Kontext herrschende Kommunikationsform
+     */
     private final CommunicationRegion communicationRegion;
+    /**
+     * auf dem Kontext erlaubte Kommunikationsmedien
+     */
     private final Set<CommunicationMedium> communicationMedia;
+    /**
+     * Musik, die auf dem KOntext abgespielt wird
+     */
     private Music music;
 
 

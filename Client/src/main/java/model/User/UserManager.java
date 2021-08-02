@@ -17,8 +17,17 @@ import java.util.stream.Collectors;
  */
 public class UserManager implements IUserManagerController, IUserManagerView{
 
+    /**
+     * Singleton-Instanz der Klasse.
+     */
     static UserManager userManager;
+    /**
+     * lokaler Benutzer
+     */
     private User intern;
+    /**
+     * alle anderen Benutzer
+     */
     private final Map<UUID, User> externs;
 
     private UserManager(){

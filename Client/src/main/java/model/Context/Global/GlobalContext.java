@@ -29,10 +29,25 @@ import java.util.Set;
  */
 public class GlobalContext extends Context implements IGlobalContextView, IGlobalContextController {
 
+    /**
+     * Singleton-Instanz der Klasse.
+     */
     private static GlobalContext global;
+    /**
+     * festgelegter Name des globalen Kontexts
+     */
     private static final String GLOBALNAME = "global";
+    /**
+     * Welt, in der sich der Nutzer aktuell befindet
+     */
     private SpatialContext currentWorld;
+    /**
+     * Raum, in dem sich der Nutzer aktuell befindet
+     */
     private SpatialContext currentRoom;
+    /**
+     * Beobachterschnittstelle, um View über Änderungen zu informieren
+     */
     private IModelObserver iModelObserver;
 
     private GlobalContext() {
