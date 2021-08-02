@@ -8,7 +8,7 @@ import model.user.User;
 
 import java.util.Set;
 
-public abstract class Interactable extends Area {
+public abstract class Interactable extends Area implements IInteractable {
 
     /** Die maximale Distanz, über die eine Interaktion erfolgen darf. */
     protected static final int INTERACTION_DISTANCE = 1;
@@ -29,7 +29,7 @@ public abstract class Interactable extends Area {
      */
     protected Interactable(String contextName, Area parent, CommunicationRegion communicationRegion,
                            Set<CommunicationMedium> communicationMedia, Expanse expanse, Menu menu) {
-        super(contextName, parent, communicationRegion, communicationMedia, expanse);
+        super(contextName, parent, parent.getWorld(), communicationRegion, communicationMedia, expanse);
         this.parent = parent;
         this.menu = menu;
     }
@@ -61,8 +61,13 @@ public abstract class Interactable extends Area {
      */
     public boolean canInteract(User user) {
         Location userLocation = user.getLocation();
-        return user.isInteractingWith(null)
+        return (user.isInteractingWith(null) || user.isInteractingWith(this))
                 && expanse.isAround(userLocation.getPosX(), userLocation.getPosY(), INTERACTION_DISTANCE);
+    }
+
+    @Override
+    public Menu getMenu() {
+        return menu;
     }
 
     @Override

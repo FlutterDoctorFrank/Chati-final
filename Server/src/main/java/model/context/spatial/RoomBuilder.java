@@ -60,7 +60,7 @@ public class RoomBuilder {
 
         switch (className) {
             case "area":
-                Area area = new Area(areaName, parent, room.getWorld(), communicationRegion, communicationMedia, expanse);
+                new Area(areaName, parent, room.getWorld(), communicationRegion, communicationMedia, expanse);
                 break;
             case "areaPlanner":
                 AreaPlanner areaPlanner = new AreaPlanner(areaName, parent, communicationRegion, communicationMedia, expanse);
