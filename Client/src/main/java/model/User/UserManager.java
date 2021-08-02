@@ -95,7 +95,6 @@ public class UserManager implements IUserManagerController, IUserManagerView{
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-
     /**
      * Gibt die Singleton-Instanz der Klasse zurück.
      * @return Instanz des UserManager.
@@ -107,7 +106,6 @@ public class UserManager implements IUserManagerController, IUserManagerView{
 
         return userManager;
     }
-
 
     /**
      * wirft eine Exeption, wenn der Benutzer in keiner Welt ist

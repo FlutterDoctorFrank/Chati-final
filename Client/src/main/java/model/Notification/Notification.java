@@ -10,11 +10,11 @@ import java.util.UUID;
  * Eine Klasse, welche eine Benachrichtigung repräsentiert.
  */
 public class Notification implements INotificationView{
-    private UUID notificationId;
-    private LocalDateTime timestamp;
-    private boolean isRequest;
-    private MessageBundle messageBundle;
-    private Context context;
+    private final UUID notificationId;
+    private final LocalDateTime timestamp;
+    private final boolean isRequest;
+    private final MessageBundle messageBundle;
+    private final Context context;
 
     public Notification(UUID notificationId, LocalDateTime timestamp, boolean isRequest, MessageBundle messageBundle, Context context) {
         this.notificationId = notificationId;
@@ -50,10 +50,10 @@ public class Notification implements INotificationView{
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Notification that = (Notification) o;
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Notification that = (Notification) object;
         return Objects.equals(notificationId, that.notificationId);
     }
 

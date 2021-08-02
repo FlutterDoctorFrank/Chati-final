@@ -13,14 +13,14 @@ public interface IUserManagerController {
      * Setzt den intern angemeldeten Benutzer dieses Clients.
      * @param userId ID des internen Benutzers.
      */
-    public void setInternUser(UUID userId);
+    void setInternUser(UUID userId);
 
     /**
      * Fügt einen externen Benutzer in die Liste der bekannten externen Benutzer hinzu,
      * falls dieser in der Liste noch nicht enthalten ist.
      * @param userId ID des externen Benutzers.
      */
-    public void addExternUser(UUID userId);
+    void addExternUser(UUID userId);
 
     /**
      * Entfernt einen externen Benutzer aus der Liste der bekannten externen Benutzer.
@@ -28,14 +28,14 @@ public interface IUserManagerController {
      * @throws UserNotFoundException falls dem Client kein externer Benutzer mit
      * der ID bekannt ist.
      */
-    public void removeExternUser(UUID userId) throws UserNotFoundException;
+    void removeExternUser(UUID userId) throws UserNotFoundException;
 
     /**
      * Gibt den intern angemeldeten Benutzer zurück.
      * @return Die Instanz des intern angemeldeten Benutzers.
      * @throws NotLoggedInException falls kein Benutzer auf diesem Client angemeldet ist
      */
-    public IUserController getInternUser() throws NotLoggedInException;
+    IUserController getInternUser() throws NotLoggedInException;
 
     /**
      * @param userId ID des externen Benutzers.
@@ -43,5 +43,5 @@ public interface IUserManagerController {
      * @throws UserNotFoundException falls dem Client kein externer Benutzer mit
      * der ID bekannt ist.
      */
-    public IUserController getExternUser(UUID userId) throws UserNotFoundException;
+    IUserController getExternUser(UUID userId) throws UserNotFoundException;
 }

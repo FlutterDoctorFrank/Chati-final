@@ -17,10 +17,7 @@ import model.user.Status;
 import view.Screens.IModelObserver;
 
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -28,25 +25,31 @@ import java.util.stream.Collectors;
  */
 public class User implements IUserController, IUserView{
 
-    private UUID userId;
+    private final UUID userId;
     private String username;
     private boolean inCurrentWorld;
     private boolean inCurrentRoom;
     private boolean friend;
     private boolean ignored;
     private Status status;
-    private Map<UUID, Notification> notifications;
-    private Map<ContextID, ContextRole> roles;
-    private Map<ContextID, Context> reported;
-    private Map<ContextID, Context> muted;
-    private Map<ContextID, Context> banned;
+    private final Map<UUID, Notification> notifications;
+    private final Map<ContextID, ContextRole> roles;
+    private final Map<ContextID, Context> reported;
+    private final Map<ContextID, Context> muted;
+    private final Map<ContextID, Context> banned;
     private Location location;
     private Avatar avatar;
-    private IModelObserver iModelObserver;
+    private final IModelObserver iModelObserver;
 
 
     public User(UUID userId) {
         this.userId = userId;
+        iModelObserver = GlobalContext.getInstance().getIModelObserver();
+        notifications = new HashMap<>();
+        roles = new HashMap<>();
+        reported = new HashMap<>();
+        muted = new HashMap<>();
+        banned = new HashMap<>();
     }
 
 
@@ -134,7 +137,7 @@ public class User implements IUserController, IUserView{
     }
 
     @Override
-    public void addNotification(ContextID contextId, UUID notificationId, String messageKey, String[] args,
+    public void addNotification(ContextID contextId, UUID notificationId, String messageKey, Object[] args,
                                 LocalDateTime timestamp, boolean isRequest) throws IllegalActionException {
         if (notifications.containsKey(notificationId)){
             throw new IllegalActionException("this notificationId maps already to a notification!");
@@ -220,12 +223,12 @@ public class User implements IUserController, IUserView{
 
     @Override
     public Set<Role> getGlobalRoles() {
-        return roles.get(GlobalContext.getInstance()).getRoles();
+        return roles.get(GlobalContext.getInstance().getContextId()).getRoles();
     }
 
     @Override
     public Set<Role> getWorldRoles() {
-        return roles.get(GlobalContext.getInstance().getWorld()).getRoles();
+        return roles.get(GlobalContext.getInstance().getWorld().getContextId()).getRoles();
     }
 
     @Override

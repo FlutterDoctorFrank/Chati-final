@@ -12,23 +12,23 @@ public interface INotificationView {
      * Gibt die ID der Benachrichtigung zurück.
      * @return ID der Benachrichtigung.
      */
-    public UUID getNotificationId();
+    UUID getNotificationId();
 
     /**
      * Gibt die Nachricht der Benachrichtigung zurück.
      * @return Nachricht der Benachrichtigung.
      */
-    public MessageBundle getMessageBundle();
+    MessageBundle getMessageBundle();
 
     /**
      * Gibt den Zeitpunkt zurück, an dem die Benachrichtigung erhalten wurde.
      * @return Zeitstempel der Benachrichtigung.
      */
-    public LocalDateTime getTimestamp();
+    LocalDateTime getTimestamp();
 
     /**
      * Gibt zurück, ob die Benachrichtigung eine Anfrage repräsentiert.
      * @return true wenn die Benachrichtigung eine Anfrage ist, sonst false.
      */
-    public boolean isRequest();
+    boolean isRequest();
 }

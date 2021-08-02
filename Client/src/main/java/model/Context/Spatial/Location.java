@@ -8,8 +8,8 @@ import java.util.Objects;
  * Eine Klasse, welche Positionen repräsentiert.
  */
 public class Location implements ILocationView{
-    private int posX;
-    private int posY;
+    private final int posX;
+    private final int posY;
 
     public Location(int posX, int posY) {
         this.posX = posX;

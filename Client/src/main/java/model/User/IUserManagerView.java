@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Eine Schnittstelle, welche der View Methoden zum Zugri auf den intern angemeldeten
+ * Eine Schnittstelle, welche der View Methoden zum Zugriff auf den intern angemeldeten
  * sowie auf die externen Benutzer zur Verfügung stellt.
  */
 public interface IUserManagerView {
@@ -16,7 +16,7 @@ public interface IUserManagerView {
      * @return Die Instanz des intern angemeldeten Benutzers.
      * @throws NotLoggedInException falls kein Benutzer auf diesem Client angemeldet ist
      */
-    public IUserView getInternUserView() throws NotLoggedInException;
+    IUserView getInternUserView() throws NotLoggedInException;
 
     /**
      * Gibt einen externen Benutzer zurück.
@@ -24,7 +24,7 @@ public interface IUserManagerView {
      * @throws UserNotFoundException falls dem Client kein externer Benutzer mit
      * der ID bekannt ist.
      */
-    public IUserView getExternUserView(UUID userId) throws UserNotFoundException;
+    IUserView getExternUserView(UUID userId) throws UserNotFoundException;
 
     /**
      * Gibt die externen Benutzer zurück, die in der aktuellen Welt als aktiv hinterlegt
@@ -32,14 +32,14 @@ public interface IUserManagerView {
      * @return Aktive Benutzer der aktuellen Welt.
      * @throws NotInWorldException wenn es keine aktuelle Welt gibt.
      */
-    public Map<UUID, IUserView> getActiveUsers() throws NotInWorldException;
+    Map<UUID, IUserView> getActiveUsers() throws NotInWorldException;
 
     /**
      * Gibt die externen Benutzer zurück, mit denen der interne Benutzer befreundet ist.
      * @return externer Benutzer
      * @throws NotLoggedInException falls kein Benutzer auf diesem Client angemeldet ist
      */
-    public Map<UUID, IUserView> getFriends() throws NotLoggedInException;
+    Map<UUID, IUserView> getFriends() throws NotLoggedInException;
 
     /**
      * Gibt die externen Benutzer zurück, die in der aktuellen Welt als gesperrt hinterlegt
@@ -47,5 +47,5 @@ public interface IUserManagerView {
      * @return externer Benutzer
      * @throws NotInWorldException wenn es keine aktuelle Welt gibt.
      */
-    public Map<UUID, IUserView> getBannedUsers() throws NotInWorldException;
+    Map<UUID, IUserView> getBannedUsers() throws NotInWorldException;
 }

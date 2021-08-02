@@ -4,8 +4,6 @@ import model.Context.Context;
 import model.Exceptions.IllegalActionException;
 import model.role.Permission;
 import model.role.Role;
-import org.lwjgl.system.CallbackI;
-import view.Screens.IModelObserver;
 
 import java.util.Set;
 
@@ -13,9 +11,8 @@ import java.util.Set;
  * Eine Klasse, welche die Zusammengehörigkeit von Rollen mit Kontexten repräsentiert.
  */
 public class ContextRole {
-    private Context context;
-    private Set<Role> roles;
-    private IModelObserver iModelObserver;
+    private final Context context;
+    private final Set<Role> roles;
 
 
     public ContextRole(Context context, Set<Role> roles) {
@@ -32,7 +29,7 @@ public class ContextRole {
     public void addRole(Role role) throws IllegalActionException{
         if(!roles.add(role)){
             throw new IllegalActionException("This Role is already added!");
-        };
+        }
     }
 
     /**
@@ -43,7 +40,7 @@ public class ContextRole {
     public void removeRole(Role role) throws IllegalActionException {
         if(!roles.remove(role)){
             throw new IllegalActionException("This Role isn't in roles-set!");
-        };
+        }
     }
 
     /**

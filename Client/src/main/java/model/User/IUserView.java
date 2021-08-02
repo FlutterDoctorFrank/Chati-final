@@ -6,6 +6,7 @@ import model.Context.Spatial.Location;
 import model.Context.Spatial.SpatialContext;
 import model.Notification.INotificationView;
 import model.Notification.Notification;
+import model.context.spatial.SpatialContextType;
 import model.role.Role;
 import model.user.Avatar;
 import model.user.Status;
@@ -22,57 +23,57 @@ public interface IUserView {
      * Gibt die ID des Benutzers zurück.
      * @return ID des Benutzer
      */
-    public UUID getUserId();
+    UUID getUserId();
 
     /**
      * Gibt den aktuellen Benutzernamen des Benutzers zurück.
      * @return Benutzername des Benutzers
      */
-    public String getUsername();
+    String getUsername();
 
     /**
      * Gibt den aktuellen Status des Benutzers zurück.
      * @return Status des Benutzers
      */
-    public Status getStatus();
+    Status getStatus();
 
     /**
      * Gibt den aktuell ausgewählten Avatar des Benutzers zurück.
      * @return Avatar des Benutzers
      */
-    public Avatar getAvatar();
+    Avatar getAvatar();
 
     /**
      * Gibt zurück, ob der Benutzer als Freund markiert ist.
      * @return  true, wenn der Benutzer als Freund markiert ist, sonst false.
      */
-    public boolean isFriend();
+    boolean isFriend();
 
     /**
      * Gibt zurück, ob der Benutzer als ignoriert markiert ist.
      * @return true, wenn der Benutzer als ignoriert markiert ist, sonst false.
      */
-    public boolean isIgnored();
+    boolean isIgnored();
 
     /**
      * Gibt zurück, ob der Benutzer im aktuellen räumlichen Kontext des internen Benutzers als gemeldet markiert ist.
      * @return true, wenn der Benutzer im aktuellen räumlichen Kontext als gemeldet
      * markiert ist, sonst false.
      */
-    public boolean isReported();
+    boolean isReported();
 
     /**
      * Gibt zurück, ob der Benutzer im aktuellen räumlichen Kontext des internen Benutzers als stummgeschaltet markiert ist.
      * @return true, wenn der Benutzer im aktuellen Kontext als stummgeschaltet markiert ist, sonst false.
      */
-    public boolean isMuted();
+    boolean isMuted();
 
     /**
      * Gibt zurück, ob der Benutzer im aktuellen räumlichen Kontext des internen Benutzers als gesperrt markiert ist
      * @return true, wenn der Benutzer im aktuellen Kontext als gesperrt markiert ist,
      * sonst false.
      */
-    public boolean isBanned();
+    boolean isBanned();
 
     /**
      * Gibt zurück, ob sich der Benutzer in der aktuellen Welt des internen Benutzers
@@ -81,7 +82,7 @@ public interface IUserView {
      * @see SpatialContext
      * @see SpatialContextType#WORLD
      */
-    public boolean isInCurrentWorld();
+    boolean isInCurrentWorld();
 
     /**
      * Gibt zurück, ob sich der Benutzer im aktuellen Raum des internen Benutzers be-
@@ -90,21 +91,21 @@ public interface IUserView {
      * @see SpatialContext
      * @see SpatialContextType#ROOM
      */
-    public boolean isInCurrentRoom();
+    boolean isInCurrentRoom();
 
     /**
      * Gibt die aktuelle Position des Benutzers innerhalb des aktuellen Raumes zurück.
      * @return die Position des Benutzers.
      * @see Location
      */
-    public ILocationView getCurrentLocation();
+    ILocationView getCurrentLocation();
 
     /**
      * Gibt die Rollen des Benutzers im globalen Kontext zurück.
      * @return die Rollen des Benutzers.
      * @see GlobalContext
      */
-    public Set<Role> getGlobalRoles();
+    Set<Role> getGlobalRoles();
 
     /**
      * Gibt die Rollen des Benutzers in der aktuellen Welt des internen Benutzers zurück.
@@ -112,7 +113,7 @@ public interface IUserView {
      * @see SpatialContext
      * @see SpatialContextType#WORLD
      */
-    public Set<Role> getWorldRoles();
+    Set<Role> getWorldRoles();
 
     /**
      * Gibt die Benachrichtigungen des Benutzers im globalen Kontext zurück.
@@ -120,7 +121,7 @@ public interface IUserView {
      * @see Notification
      * @see GlobalContext
      */
-    public Map<UUID, INotificationView> getGlobalNotifications();
+    Map<UUID, INotificationView> getGlobalNotifications();
 
 
     /**
@@ -130,5 +131,5 @@ public interface IUserView {
      * @see SpatialContext
      * @see SpatialContextType#WORLD
      */
-    public Map<UUID, INotificationView> getWorldNotifications();
+    Map<UUID, INotificationView> getWorldNotifications();
 }

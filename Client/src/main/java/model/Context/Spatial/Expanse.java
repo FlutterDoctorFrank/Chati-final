@@ -1,11 +1,9 @@
 package model.Context.Spatial;
 
-import model.Context.Spatial.Location;
-
 public class Expanse {
-    private Location bottomLeft;
-    private int width;
-    private int height;
+    private final Location bottomLeft;
+    private final int width;
+    private final int height;
 
     public Expanse(Location bottomLeft, int width, int height) {
         this.bottomLeft = bottomLeft;
