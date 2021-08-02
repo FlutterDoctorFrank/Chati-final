@@ -41,8 +41,8 @@ public class PacketMenuOptionTest extends PacketTest<PacketMenuOption> {
 
     @Test
     public void responseSerializationTest() {
-        this.before = new PacketMenuOption(new PacketMenuOption(randomContextId(), new String[]{randomString()}, randomInt(3)),
-                randomString(), randomBoolean());
+        this.before = new PacketMenuOption(new PacketMenuOption(randomContextId(),
+                new String[]{randomString()}, randomInt(3)), randomString(), randomBoolean());
 
         this.serialize();
         this.equals();

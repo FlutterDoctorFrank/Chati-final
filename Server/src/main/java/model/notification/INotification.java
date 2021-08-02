@@ -35,4 +35,10 @@ public interface INotification {
      * @return Zeitstempel der Benachrichtigung.
      */
     LocalDateTime getTimestamp();
+
+    /**
+     * Gibt zurück, ob es sich bei der Benachrichtigung um eine Anfrage handelt.
+     * @return true, wenn die Benachrichtigung eine Anfrage ist, sonst false.
+     */
+    boolean isRequest();
 }

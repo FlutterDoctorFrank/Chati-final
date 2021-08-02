@@ -7,27 +7,33 @@ import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
 import controller.network.protocol.PacketChatMessage;
 import controller.network.protocol.PacketInContextInteract;
+import controller.network.protocol.PacketInNotificationReply;
 import controller.network.protocol.PacketInUserManage;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerIn;
 import controller.network.protocol.PacketMenuOption;
 import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextRole;
+import controller.network.protocol.PacketOutNotification;
+import controller.network.protocol.PacketOutNotification.Notification;
 import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketProfileAction.Action;
 import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
-import model.context.spatial.ISpatialContext;
+import model.context.spatial.IWorld;
 import model.exception.ContextNotFoundException;
 import model.exception.IllegalAccountActionException;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
+import model.exception.IllegalNotificationActionException;
 import model.exception.IllegalPositionException;
 import model.exception.IllegalWorldActionException;
 import model.exception.NoPermissionException;
+import model.exception.NotificationNotFoundException;
 import model.exception.UserNotFoundException;
+import model.notification.INotification;
 import model.role.IContextRole;
 import model.user.AdministrativeAction;
 import model.user.IUser;
@@ -105,7 +111,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 }
 
                 try {
-                    this.user.move(packet.getPosX(), packet.getPosY());
+                    this.user.tryMove(packet.getPosX(), packet.getPosY());
                 } catch (IllegalPositionException ex) {
                     // Illegale Position. Sende vorherige Position.
                     LOGGER.warning("Received illegal movement from user " + this.user.getUsername() + ": " + ex.getMessage());
@@ -257,9 +263,9 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                                 this.send(new PacketProfileAction(packet, this.user.getUserId(), null, true));
 
                                 // Informationen über die verfügbaren Welten.
-                                final Set<PacketOutContextInfo.Info> worlds = new HashSet<>();
-                                for (final ISpatialContext world : this.manager.getGlobal().getWorlds().values()) {
-                                    worlds.add(new PacketOutContextInfo.Info(world.getContextId(), world.getContextName()));
+                                final Set<PacketOutContextInfo.ContextInfo> worlds = new HashSet<>();
+                                for (final IWorld world : this.manager.getGlobal().getWorlds().values()) {
+                                    worlds.add(new PacketOutContextInfo.ContextInfo(world.getContextId(), world.getContextName()));
                                 }
                                 this.send(new PacketOutContextInfo(this.manager.getGlobal().getContextId(), worlds));
 
@@ -272,6 +278,13 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                                 for (final IUser friend : this.user.getFriends().values()) {
                                     this.send(new PacketOutUserInfo(null, PacketOutUserInfo.Action.UPDATE_USER,
                                             new UserInfo(friend.getUserId(), friend.getUsername(), friend.getStatus())));
+                                }
+
+                                // Informationen über die erhaltenen globalen Benachrichtigungen.
+                                for (final INotification notification : this.user.getGlobalNotifications().values()) {
+                                    this.send(new PacketOutNotification(new Notification(notification.getNotificationId(),
+                                            notification.getContext().getContextId(), notification.getMessageBundle(),
+                                            notification.getTimestamp(), notification.isRequest())));
                                 }
                                 break;
                         }
@@ -351,6 +364,34 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             }
         } else {
             LOGGER.fine("Connection " + this.connection.getID() + " tried to logout/delete while not logged in");
+        }
+    }
+
+    @Override
+    public void handle(@NotNull final PacketInNotificationReply packet) {
+        if (this.user != null) {
+            try {
+                switch (packet.getAction()) {
+                    case ACCEPT:
+                        this.user.manageNotification(packet.getNotificationId(), true);
+                        break;
+
+                    case DECLINE:
+                        this.user.manageNotification(packet.getNotificationId(), false);
+                        break;
+
+                    case DELETE:
+                        this.user.deleteNotification(packet.getNotificationId());
+                        break;
+                }
+            } catch (IllegalNotificationActionException ex) {
+                LOGGER.warning("Received illegal notification action from user " + this.user.getUsername() + ": " + ex.getMessage());
+            } catch (NotificationNotFoundException ex) {
+                // Ungültige Welt, auf die Zugegriffen wird.
+                LOGGER.fine("User " + this.user.getUsername() + " tried to access non-existing notification");
+            }
+        } else {
+            LOGGER.fine("Connection " + this.connection.getID() + " tried to interact with notification while not logged in");
         }
     }
 

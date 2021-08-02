@@ -25,7 +25,7 @@ public class PacketInUserManage implements Packet<PacketListenerIn> {
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
     public PacketInUserManage() {
-
+        this.arguments = new String[0];
     }
 
     /**
@@ -37,12 +37,12 @@ public class PacketInUserManage implements Packet<PacketListenerIn> {
     public PacketInUserManage(@NotNull final UUID userId, @NotNull final Action action, @Nullable final String[] arguments) {
         this.userId = userId;
         this.action = action;
-        this.arguments = arguments;
+        this.arguments = arguments != null ? arguments : new String[0];
     }
 
     @Override
     public void call(@NotNull final PacketListenerIn listener) {
-
+        listener.handle(this);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package controller.network.protocol;
 
+import controller.network.protocol.PacketInUserManage.Action;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,7 +12,7 @@ public class PacketInUserManageTest extends PacketTest<PacketInUserManage> {
 
     @Test
     public void emptySerializationTest() {
-        this.before = new PacketInUserManage(randomUniqueId(), randomEnum(PacketInUserManage.Action.class), null);
+        this.before = new PacketInUserManage(randomUniqueId(), randomEnum(Action.class), null);
 
         this.serialize();
         this.equals();
@@ -19,7 +20,7 @@ public class PacketInUserManageTest extends PacketTest<PacketInUserManage> {
 
     @Test
     public void singleSerializationTest() {
-        this.before = new PacketInUserManage(randomUniqueId(), randomEnum(PacketInUserManage.Action.class), new String[]{randomString()});
+        this.before = new PacketInUserManage(randomUniqueId(), randomEnum(Action.class), new String[]{randomString()});
 
         this.serialize();
         this.equals();

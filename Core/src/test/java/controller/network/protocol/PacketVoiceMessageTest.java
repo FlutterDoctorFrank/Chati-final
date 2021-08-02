@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class PacketVoiceMessageTest extends PacketTest<PacketVoiceMessage> {
 
     public PacketVoiceMessageTest() {
-        super(PacketVoiceMessage.class);
+        super(PacketVoiceMessage.class, LocalDateTime.class);
     }
 
     @Test

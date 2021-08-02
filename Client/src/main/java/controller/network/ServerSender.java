@@ -4,6 +4,7 @@ import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketChatMessage;
 import controller.network.protocol.PacketInContextInteract;
+import controller.network.protocol.PacketInNotificationReply;
 import controller.network.protocol.PacketInUserManage;
 import controller.network.protocol.PacketMenuOption;
 import controller.network.protocol.PacketProfileAction;
@@ -301,23 +302,48 @@ public interface ServerSender {
 
         /**
          * Information, dass eine Benachrichtigung gelöscht wurde.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@link UUID}, Die ID der Benachrichtigung, die gelöscht wurde.
+         * </p>
          */
         NOTIFICATION_DELETE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des NotificationReply-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (objects.length == 1) {
+                    if (objects[0] instanceof UUID) {
+                        return new PacketInNotificationReply((UUID) objects[0], PacketInNotificationReply.Action.DELETE);
+                    } else {
+                        throw new IllegalArgumentException("Expected UUID, got " + objects[0].getClass());
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 1, got " + objects.length);
+                }
             }
         },
 
         /**
          * Information, dass auf eine Anfrage reagiert wurde.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@link UUID}, Die ID der Benachrichtigungs-Anfrage, die akzeptiert oder abgelehnt werden soll
+         *     - {@code 1}: {@link Boolean}, true, wenn die Benachrichtigungs-Anfrage akzeptiert werden soll, ansonsten false
+         * </p>
          */
         NOTIFICATION_RESPONSE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                //TODO Verpackung des NotificationReply-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (objects.length == 2) {
+                    if (objects[0] instanceof UUID && objects[1] instanceof Boolean) {
+                        return new PacketInNotificationReply((UUID) objects[0], (boolean) objects[1] ?
+                                PacketInNotificationReply.Action.ACCEPT : PacketInNotificationReply.Action.DECLINE);
+                    } else {
+                        throw new IllegalArgumentException("Expected UUID and Boolean, got " + objects[0].getClass()
+                                + " and " + objects[1].getClass());
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 2, got " + objects.length);
+                }
             }
         },
 

@@ -13,6 +13,7 @@ import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextMusic;
 import controller.network.protocol.PacketOutContextRole;
 import controller.network.protocol.PacketOutMenuAction;
+import controller.network.protocol.PacketOutNotification;
 import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketVoiceMessage;
@@ -124,6 +125,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
     @Override
     public void handle(@NotNull final PacketOutMenuAction packet) {
+        //TODO Verarbeitung des MenuAction-Pakets implementieren.
+    }
+
+    @Override
+    public void handle(@NotNull final PacketOutNotification packet) {
         //TODO Verarbeitung des MenuAction-Pakets implementieren.
     }
 

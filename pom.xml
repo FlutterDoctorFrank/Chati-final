@@ -17,6 +17,7 @@
     <properties>
         <gdx.version>1.10.0</gdx.version>
         <java.version>11</java.version>
+        <file.encoding>UTF-8</file.encoding>
     </properties>
 
     <repositories>

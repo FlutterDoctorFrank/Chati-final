@@ -21,6 +21,7 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <encoding>${file.encoding}</encoding>
                 </configuration>
             </plugin>
         </plugins>

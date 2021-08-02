@@ -1,5 +1,6 @@
 package controller.network.protocol;
 
+import controller.network.protocol.PacketWorldAction.Action;
 import model.context.spatial.SpatialMap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,7 +21,7 @@ public class PacketWorldActionTest extends PacketTest<PacketWorldAction> {
 
     @Test
     public void otherSerializationTest() {
-        this.before = new PacketWorldAction(randomEnum(PacketWorldAction.Action.class, PacketWorldAction.Action.CREATE), randomContextId());
+        this.before = new PacketWorldAction(randomEnum(Action.class, Action.CREATE), randomContextId());
 
         this.serialize();
         this.equals();
@@ -28,8 +29,8 @@ public class PacketWorldActionTest extends PacketTest<PacketWorldAction> {
 
     @Test
     public void responseSerializationTest() {
-        this.before = new PacketWorldAction(randomEnum(PacketWorldAction.Action.class, PacketWorldAction.Action.CREATE),
-                randomContextId(), randomString(), randomBoolean());
+        this.before = new PacketWorldAction(randomEnum(Action.class, Action.CREATE), randomContextId(),
+                randomString(), randomBoolean());
 
         this.serialize();
         this.equals();
@@ -47,7 +48,7 @@ public class PacketWorldActionTest extends PacketTest<PacketWorldAction> {
 
     @Test
     public void responseCreationTest() {
-        this.before = new PacketWorldAction(randomEnum(PacketWorldAction.Action.class, PacketWorldAction.Action.CREATE), randomContextId());
+        this.before = new PacketWorldAction(randomEnum(Action.class, Action.CREATE), randomContextId());
         this.after = new PacketWorldAction(this.before, randomString(), randomBoolean());
 
         this.equals();

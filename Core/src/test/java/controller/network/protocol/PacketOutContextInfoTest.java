@@ -1,5 +1,6 @@
 package controller.network.protocol;
 
+import controller.network.protocol.PacketOutContextInfo.ContextInfo;
 import org.junit.Assert;
 import org.junit.Test;
 import java.util.Collections;
@@ -23,7 +24,7 @@ public class PacketOutContextInfoTest extends PacketTest<PacketOutContextInfo> {
     @Test
     public void singleSerializationTest() {
         this.before = new PacketOutContextInfo(randomContextId(),
-                Collections.singleton(new PacketOutContextInfo.Info(randomContextId(), randomString())));
+                Collections.singleton(new ContextInfo(randomContextId(), randomString())));
 
         this.serialize();
         this.equals();
@@ -31,11 +32,11 @@ public class PacketOutContextInfoTest extends PacketTest<PacketOutContextInfo> {
 
     @Test
     public void multipleSerializationTest() {
-        final Set<PacketOutContextInfo.Info> infos = new HashSet<>();
+        final Set<ContextInfo> infos = new HashSet<>();
         final int size = randomInt(8) + 1;
 
         while (infos.size() < size) {
-            infos.add(new PacketOutContextInfo.Info(randomContextId(), randomString()));
+            infos.add(new ContextInfo(randomContextId(), randomString()));
         }
 
         this.before = new PacketOutContextInfo(randomContextId(), infos);

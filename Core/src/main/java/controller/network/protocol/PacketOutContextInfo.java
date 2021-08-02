@@ -20,7 +20,7 @@ import java.util.Objects;
 public class PacketOutContextInfo implements Packet<PacketListenerOut> {
 
     private ContextID contextId;
-    private Info[] infos;
+    private ContextInfo[] infos;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -34,9 +34,9 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
      * @param contextId die ID des übergeordneten Kontexts.
      * @param infos die Informationen der untergeordneten Kontexte.
      */
-    public PacketOutContextInfo(@NotNull final ContextID contextId, @NotNull final Collection<Info> infos) {
+    public PacketOutContextInfo(@NotNull final ContextID contextId, @NotNull final Collection<ContextInfo> infos) {
         this.contextId = contextId;
-        this.infos = infos.toArray(new Info[0]);
+        this.infos = infos.toArray(new ContextInfo[0]);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
         PacketUtils.writeContextId(output, this.contextId);
         output.writeInt(this.infos.length, true);
 
-        for (final Info info : this.infos) {
+        for (final ContextInfo info : this.infos) {
             PacketUtils.writeContextId(output, info.getContextId());
             output.writeAscii(info.getName());
         }
@@ -58,10 +58,10 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.contextId = PacketUtils.readContextId(input);
-        this.infos = new Info[input.readInt(true)];
+        this.infos = new ContextInfo[input.readInt(true)];
 
         for (int index = 0; index < this.infos.length; index++) {
-            this.infos[index] = new Info(PacketUtils.readContextId(input), input.readString());
+            this.infos[index] = new ContextInfo(PacketUtils.readContextId(input), input.readString());
         }
     }
 
@@ -81,19 +81,19 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
      * Gibt ein Array mit den verfügbaren Welten bzw den verfügbaren privaten Räumen zurück.
      * @return die Informationen der untergeordneten Kontexte.
      */
-    public @NotNull Info[] getInfos() {
+    public @NotNull ContextInfo[] getInfos() {
         return infos;
     }
 
     /**
      * Eine Klasse, die die Informationen eines einzelnen Kontextes enthält.
      */
-    public static class Info {
+    public static class ContextInfo {
 
         private final ContextID contextId;
         private final String name;
 
-        public Info(@NotNull final ContextID contextId, @NotNull final String name) {
+        public ContextInfo(@NotNull final ContextID contextId, @NotNull final String name) {
             this.contextId = contextId;
             this.name = name;
         }
@@ -124,7 +124,7 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
                 return false;
             }
 
-            final Info other = (Info) object;
+            final ContextInfo other = (ContextInfo) object;
 
             return this.contextId.equals(other.contextId) && this.name.equals(other.name);
         }

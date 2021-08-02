@@ -105,6 +105,7 @@ public class Notification implements INotification {
      * Lediglich Instanzen erbender Unterklassen können Anfragen sein.
      * @return true, wenn die Benachrichtigung eine Anfrage ist, sonst false.
      */
+    @Override
     public boolean isRequest() {
         return false;
     }

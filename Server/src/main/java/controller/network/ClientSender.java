@@ -9,6 +9,8 @@ import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextMusic;
 import controller.network.protocol.PacketOutContextRole;
 import controller.network.protocol.PacketOutMenuAction;
+import controller.network.protocol.PacketOutNotification;
+import controller.network.protocol.PacketOutNotification.Notification;
 import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.Action;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
@@ -19,7 +21,11 @@ import model.communication.message.IVoiceMessage;
 import model.communication.message.MessageType;
 import model.context.IContext;
 import model.context.global.IGlobalContext;
-import model.context.spatial.ISpatialContext;
+import model.context.spatial.IArea;
+import model.context.spatial.IInteractable;
+import model.context.spatial.IRoom;
+import model.context.spatial.IWorld;
+import model.notification.INotification;
 import model.role.IContextRole;
 import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +53,7 @@ public interface ClientSender {
         /**
          * Information, dass neue Informationen über Benutzer versendet werden sollen.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link model.user.IUser}
+         *     Erwartet als Objekt die Schnittstelle: {@link IUser}
          * </p>
          */
         USER_INFO {
@@ -57,7 +63,7 @@ public interface ClientSender {
                     final IUser other = (IUser) object;
 
                     if (user.getWorld() != null) {
-                        final ISpatialContext world = user.getWorld();
+                        final IWorld world = user.getWorld();
                         final UserInfo info = new UserInfo(other.getUserId(), other.getUsername(), other.getStatus());
 
                         if (user.getFriends().containsKey(other.getUserId())) {
@@ -108,29 +114,28 @@ public interface ClientSender {
         /**
          * Information, dass die verfügbaren Welten oder private Räume an den Client versendet werden sollen.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link IGlobalContext} oder {@link ISpatialContext} mit
-         *     {@link model.context.spatial.SpatialContextType#WORLD}
+         *     Erwartet als Objekt die Schnittstelle: {@link IGlobalContext} oder {@link IWorld}
          * </p>
          */
         CONTEXT_INFO {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 if (object instanceof IContext) {
-                    final Set<PacketOutContextInfo.Info> infos = new HashSet<>();
+                    final Set<PacketOutContextInfo.ContextInfo> infos = new HashSet<>();
 
                     if (object instanceof IGlobalContext) {
-                        for (final ISpatialContext world : ((IGlobalContext) object).getWorlds().values()) {
-                            infos.add(new PacketOutContextInfo.Info(world.getContextId(), world.getContextName()));
+                        for (final IWorld world : ((IGlobalContext) object).getWorlds().values()) {
+                            infos.add(new PacketOutContextInfo.ContextInfo(world.getContextId(), world.getContextName()));
                         }
                     } else {
-                        for (final ISpatialContext room : ((ISpatialContext) object).getPrivateRooms().values()) {
-                            infos.add(new PacketOutContextInfo.Info(room.getContextId(), room.getContextName()));
+                        for (final IRoom room : ((IWorld) object).getPrivateRooms().values()) {
+                            infos.add(new PacketOutContextInfo.ContextInfo(room.getContextId(), room.getContextName()));
                         }
                     }
 
                     return new PacketOutContextInfo(((IContext) object).getContextId(), infos);
                 } else {
-                    throw new IllegalArgumentException("Expected IGlobalContext or ISpatialContext, got " + object.getClass());
+                    throw new IllegalArgumentException("Expected IGlobalContext or IWorld, got " + object.getClass());
                 }
             }
         },
@@ -138,7 +143,7 @@ public interface ClientSender {
         /**
          * Information, dass eine Welt beziehungsweise ein Raum betreten werden soll.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link ISpatialContext} mit
+         *     Erwartet als Objekt die Schnittstelle: {@link IRoom} mit
          *     {@link model.context.spatial.SpatialContextType#WORLD} oder
          *     {@link model.context.spatial.SpatialContextType#ROOM}
          * </p>
@@ -146,8 +151,8 @@ public interface ClientSender {
         CONTEXT_JOIN {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                if (object instanceof ISpatialContext) {
-                    final ISpatialContext room = (ISpatialContext) object;
+                if (object instanceof IRoom) {
+                    final IRoom room = (IRoom) object;
 
                     if (user.getWorld() != null) {
                         if (room.getMap() == null) {
@@ -159,7 +164,7 @@ public interface ClientSender {
 
                     return new PacketOutContextJoin(room.getContextId(), null);
                 } else {
-                    throw new IllegalArgumentException("Expected ISpatialContext, got " + object.getClass());
+                    throw new IllegalArgumentException("Expected IRoom, got " + object.getClass());
                 }
             }
         },
@@ -176,8 +181,7 @@ public interface ClientSender {
                 if (object instanceof IContextRole) {
                     final IContextRole role = (IContextRole) object;
 
-                    //TODO Die korrekte Benutzer-ID setzen, für den die Rolle gilt. (IContextRole braucht einen Benutzer?)
-                    return new PacketOutContextRole(role.getContext().getContextId(), user.getUserId(), role.getRoles());
+                    return new PacketOutContextRole(role.getContext().getContextId(), role.getUser().getUserId(), role.getRoles());
                 } else {
                     throw new IllegalArgumentException("Expected IContextRole, got " + object.getClass());
                 }
@@ -187,18 +191,18 @@ public interface ClientSender {
         /**
          * Information, dass sich die Musik innerhalb eines Kontextes geändert hat.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link ISpatialContext}
+         *     Erwartet als Objekt die Schnittstelle: {@link IArea}
          * </p>
          */
         CONTEXT_MUSIC {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                if (object instanceof ISpatialContext) {
-                    final ISpatialContext area = (ISpatialContext) object;
+                if (object instanceof IArea) {
+                    final IArea area = (IArea) object;
 
                     return new PacketOutContextMusic(area.getContextId(), area.getMusic());
                 } else {
-                    throw new IllegalArgumentException("Expected ISpatialContext, got " + object.getClass());
+                    throw new IllegalArgumentException("Expected IArea, got " + object.getClass());
                 }
             }
         },
@@ -255,20 +259,18 @@ public interface ClientSender {
         /**
          * Information, dass ein Menü geöffnet werden soll.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link ISpatialContext}
+         *     Erwartet als Objekt die Schnittstelle: {@link IInteractable}
          * </p>
          */
         OPEN_MENU {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                if (object instanceof ISpatialContext) {
-                    final ISpatialContext interact = (ISpatialContext) object;
+                if (object instanceof IInteractable) {
+                    final IInteractable interactable = (IInteractable) object;
 
-                    //TODO Überprüfung ob es sich bei dem räumlichen Kontext um ein Objekt handelt
-
-                    return new PacketOutMenuAction(interact.getContextId(), null, true);
+                    return new PacketOutMenuAction(interactable.getContextId(), interactable.getMenu(), true);
                 } else {
-                    throw new IllegalArgumentException("Expected ISpatialContext, got " + object.getClass());
+                    throw new IllegalArgumentException("Expected IInteractable, got " + object.getClass());
                 }
             }
         },
@@ -276,18 +278,16 @@ public interface ClientSender {
         /**
          * Information, dass ein geöffnetes Menü geschlossen werden soll.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link ISpatialContext}
+         *     Erwartet als Objekt die Schnittstelle: {@link IInteractable}
          * </p>
          */
         CLOSE_MENU {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                if (object instanceof ISpatialContext) {
-                    final ISpatialContext interact = (ISpatialContext) object;
+                if (object instanceof IInteractable) {
+                    final IInteractable interactable = (IInteractable) object;
 
-                    //TODO Überprüfung ob es sich bei dem räumlichen Kontext um ein Objekt handelt
-
-                    return new PacketOutMenuAction(interact.getContextId(), null, false);
+                    return new PacketOutMenuAction(interactable.getContextId(), interactable.getMenu(), false);
                 } else {
                     throw new IllegalArgumentException("Expected ISpatialContext, got " + object.getClass());
                 }
@@ -297,35 +297,42 @@ public interface ClientSender {
         /**
          * Information, dass eine Welt betreten oder verlassen werden soll.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link ISpatialContext}
+         *     Erwartet als Objekt die Schnittstelle: {@link IWorld}
          * </p>
          */
         WORLD_ACTION {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                if (object instanceof ISpatialContext) {
-                    final ISpatialContext world = (ISpatialContext) object;
-
-                    //TODO: Check for Context-Type
-
+                if (object instanceof IWorld) {
+                    final IWorld world = (IWorld) object;
                     final PacketWorldAction.Action action = world.getIUsers().containsKey(user.getUserId())
                             ? PacketWorldAction.Action.JOIN : PacketWorldAction.Action.LEAVE;
 
                     return new PacketWorldAction(action, world.getContextId(), null, true);
                 } else {
-                    throw new IllegalArgumentException("Expected ISpatialContext, got " + object.getClass());
+                    throw new IllegalArgumentException("Expected IWorld, got " + object.getClass());
                 }
             }
         },
 
         /**
          * Information, dass eine neue Benachrichtigung gesendet werden soll.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link INotification}
+         * </p>
          */
         NOTIFICATION {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                //TODO Verpackung des Notification-Pakets implementieren.
-                throw new UnsupportedOperationException("Not implemented yet");
+                if (object instanceof INotification) {
+                    final INotification notification = (INotification) object;
+
+                    return new PacketOutNotification(new Notification(notification.getNotificationId(),
+                            notification.getContext().getContextId(), notification.getMessageBundle(),
+                            notification.getTimestamp(), notification.isRequest()));
+                } else {
+                    throw new IllegalArgumentException("Expected INotification, got " + object.getClass());
+                }
             }
         },
 
