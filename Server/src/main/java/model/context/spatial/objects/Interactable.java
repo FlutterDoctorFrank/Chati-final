@@ -1,7 +1,8 @@
-package model.context.spatial;
+package model.context.spatial.objects;
 
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
+import model.context.spatial.*;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.user.User;
@@ -19,17 +20,18 @@ public abstract class Interactable extends Area implements IInteractable {
     private Menu menu;
 
     /**
-     * Erzeugt eine Instanz eines Kontextes.
+     * Erzeugt eine Instanz eines Interaktionsobjekts.
      *
-     * @param contextName            Name des Kontextes.
-     * @param parent              Übergeordneter Kontext.
-     * @param communicationRegion
-     * @param communicationMedia
-     * @param expanse
+     * @param interactableName Name des Interaktionsobjekts.
+     * @param parent Übergeordneter Bereich.
+     * @param communicationRegion Kommunikationsform des Objekts.
+     * @param communicationMedia Benutzbare Kommunikationsmedien des Objekts.
+     * @param expanse Räumliche Ausdehnung des Objekts.
+     * @param menu Menü des Objekts.
      */
-    protected Interactable(String contextName, Area parent, CommunicationRegion communicationRegion,
+    protected Interactable(String interactableName, Area parent, CommunicationRegion communicationRegion,
                            Set<CommunicationMedium> communicationMedia, Expanse expanse, Menu menu) {
-        super(contextName, parent, parent.getWorld(), communicationRegion, communicationMedia, expanse);
+        super(interactableName, parent, parent.getWorld(), communicationRegion, communicationMedia, expanse);
         this.parent = parent;
         this.menu = menu;
     }

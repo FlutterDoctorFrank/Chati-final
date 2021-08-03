@@ -56,7 +56,8 @@ public class FriendRequest extends Notification {
         owner.addFriend(requestingUser);
         requestingUser.addFriend(owner);
         // Benachrichtige den anfragenden Benutzer über die Annahme der Freundschaftsanfrage.
-        Notification acceptNotification = new Notification(requestingUser, GlobalContext.getInstance(), new MessageBundle("messageKey"));
+        Notification acceptNotification = new Notification(requestingUser, GlobalContext.getInstance(),
+                new MessageBundle("messageKey"));
         requestingUser.addNotification(acceptNotification);
     }
 
@@ -77,7 +78,8 @@ public class FriendRequest extends Notification {
             return;
         }
         // Benachrichtige den anfragenden Benutzer über die Ablehnung der Freundschaftsanfrage.
-        Notification declineNotification = new Notification(requestingUser, GlobalContext.getInstance(), new MessageBundle("messageKey"));
+        Notification declineNotification = new Notification(requestingUser, GlobalContext.getInstance(),
+                new MessageBundle("messageKey"));
         requestingUser.addNotification(declineNotification);
     }
 

@@ -4,6 +4,7 @@ import model.context.ContextID;
 import model.context.IContext;
 import model.context.spatial.ILocation;
 import model.context.spatial.IWorld;
+import model.context.spatial.objects.Interactable;
 import model.exception.*;
 import model.notification.INotification;
 import model.role.IContextRole;
@@ -20,16 +21,16 @@ public interface IUser {
     /**
      * Lässt den Benutzer eine Welt betreten.
      * @param worldId Die ID der zu betretenden Welt.
-     * @throws IllegalStateException wenn der Benutzer bereits in einer Welt ist.
+     * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder bereits in einer Welt ist.
      * @throws ContextNotFoundException wenn keine Welt mit der ID existiert.
      * @throws IllegalWorldActionException wenn der Benutzer in der Welt gesperrt ist.
-     * @see model.context.spatial.Area
+     * @see model.context.spatial.World
      */
-    void joinWorld(ContextID worldId) throws IllegalStateException, ContextNotFoundException, IllegalWorldActionException;
+    void joinWorld(ContextID worldId) throws ContextNotFoundException, IllegalWorldActionException;
 
     /**
      * Lässt den Benutzer seine aktuelle Welt verlassen.
-     * @throws IllegalStateException wenn der Benutzer in keiner Welt ist.
+     * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      */
     void leaveWorld() throws IllegalStateException;
 
@@ -38,41 +39,43 @@ public interface IUser {
      * @param posX Neue X-Koordinate.
      * @param posY Neue Y-Koordinate.
      * @throws IllegalPositionException wenn die übergebenen Koordinaten ungültig sind oder eine Kollision verursachen.
-     * @throws IllegalStateException wenn der Benutzer nicht in einer Welt ist.
+     * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      * @see model.context.spatial.Location
      */
-    void tryMove(int posX, int posY) throws IllegalPositionException, IllegalStateException;
+    void move(int posX, int posY) throws IllegalPositionException;
 
     /**
-     * Sendet eine Nachricht im Namen des Benutzers, von dem sie erhalten wurde gemäß
-     * des entsprechenden Nachrichtentyps und der geltenden Kommunikationsform an
-     * andere Benutzer.
+     * Sendet eine Nachricht im Namen des Benutzers, von dem sie erhalten wurde gemäß des entsprechenden Nachrichtentyps
+     * und der geltenden Kommunikationsform an andere Benutzer.
      * @param message Die vom Benutzer erhaltene Nachricht.
+     * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      * @see model.communication.message.TextMessage
      * @see model.communication.CommunicationRegion
      */
     void chat(String message);
 
     /**
-     * Sendet eine Sprachnachricht im Namen des Benutzers, von dem sie erhalten wurde
-     * gemäß der geltenden Kommunikationsform an andere Benutzer.
+     * Sendet eine Sprachnachricht im Namen des Benutzers, von dem sie erhalten wurde gemäß der geltenden
+     * Kommunikationsform an andere Benutzer.
      * @param voicedata Audiodaten.
+     * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      * @see model.communication.message.VoiceMessage
      * @see model.communication.CommunicationRegion
      */
     void talk(byte[] voicedata);
 
     /**
-     * Führt im Namen des Benutzers eine administrative Aktion auf einen anderen Benutzer
-     * aus.
+     * Führt im Namen des Benutzers eine administrative Aktion auf einen anderen Benutzer aus.
      * @param targetId ID des Benutzers, auf den die Aktion ausgeführt werden soll.
      * @param action Auszuführende Aktion.
      * @param args Argumente der durchzuführenden Aktion.
      * @throws UserNotFoundException wenn kein Benutzer mit der ID existiert.
      * @throws NoPermissionException wenn der durchführende Benutzer nicht die nötige Berechtigung besitzt.
-     * @throws IllegalStateException wenn eine nicht durchführbare Aktion durchgeführt werden soll.
+     * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist oder eine nicht
+     * durchführbare Aktion durchgeführt werden soll.
      */
-    void executeAdministrativeAction(UUID targetId, AdministrativeAction action, String[] args) throws UserNotFoundException, NoPermissionException, IllegalStateException;
+    void executeAdministrativeAction(UUID targetId, AdministrativeAction action, String[] args)
+            throws UserNotFoundException, NoPermissionException;
 
     /**
      * Lässt den Benutzer mit einem Kontext interagieren.
@@ -80,28 +83,34 @@ public interface IUser {
      * @throws IllegalInteractionException wenn der Benutzer sich nicht in unmittelbarer Nähe eines Kontexts mit der ID
      * befindet, mit dem eine Interaktion möglich ist, oder der Benutzer gerade bereits mit einem anderen Objekt
      * interagiert.
-     * @see model.context.spatial.Interactable
+     * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
+     * @see Interactable
      */
-    void interact(ContextID interactableId) throws IllegalInteractionException;
+    void interact(ContextID interactableId) throws IllegalInteractionException, ContextNotFoundException;
 
     /**
      * Lässt den Benutzer eine Menüoption eines Kontexts durchführen.
      * @param interactableId ID des Kontexts, dessen Menü-Option ausgeführt werden soll.
      * @param menuOption Menü-Option die ausgeführt werden soll.
      * @param args Argumente, mit denen die Menü-Option ausgeführt werden soll.
+     * @throws ContextNotFoundException wenn kein (interagierbarer) Kontext mit der ID in der Nähe des Benutzers
+     * gefunden wurde.
      * @throws IllegalInteractionException wenn der Benutzer sich nicht in unmittelbarer Nähe eines Kontexts mit der ID
      * befindet, mit dem eine Interaktion möglich ist, dieses kein Menü hat, oder der Benutzer nicht das Menü dieses
      * Kontextes geöffnet hat.
      * @throws IllegalMenuActionException wenn der Kontext nicht die Menü-Option unterstützt oder die Argumente ungültig
      * sind.
-     * @see model.context.spatial.Interactable
+     * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
+     * @see Interactable
      */
-    void executeOption(ContextID interactableId, int menuOption, String[] args) throws IllegalInteractionException, IllegalMenuActionException;
+    void executeOption(ContextID interactableId, int menuOption, String[] args) throws ContextNotFoundException,
+            IllegalInteractionException, IllegalMenuActionException;
 
     /**
      * Löscht eine Benachrichtigung des Benutzers.
      * @param notificationId ID der zu löschenden Benachrichtigung.
      * @throws NotificationNotFoundException wenn der Benutzer keine Benachrichtigung mit der ID besitzt.
+     * @throws IllegalStateException wenn der Benutzer nicht angemeldet ist.
      * @see model.notification.Notification
      */
     void deleteNotification(UUID notificationId) throws NotificationNotFoundException;
@@ -115,9 +124,11 @@ public interface IUser {
      * mit der ID besitzt.
      * @throws IllegalNotificationActionException wenn die Benachrichtigung keine
      * Anfrage ist.
+     * @throws IllegalStateException wenn der Benutzer nicht angemeldet ist.
      * @see model.notification.Notification
      */
-    void manageNotification(UUID notificationId, boolean accept) throws NotificationNotFoundException, IllegalNotificationActionException;
+    void manageNotification(UUID notificationId, boolean accept) throws NotificationNotFoundException,
+            IllegalNotificationActionException;
 
     /**
      * Ändert den Avatar des Benutzers.
@@ -156,8 +167,7 @@ public interface IUser {
     IWorld getWorld();
 
     /**
-     * Gibt die aktuelle Position innerhalb des Raumes, in dem sich der Benutzer bendet,
-     * zurück.
+     * Gibt die aktuelle Position innerhalb des Raumes, in dem sich der Benutzer befindet, zurück.
      * @return Aktuelle Position des Benutzers.
      */
     ILocation getLocation();

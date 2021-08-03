@@ -5,6 +5,8 @@ import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.Context;
 import model.context.ContextID;
+import model.context.spatial.objects.Interactable;
+import model.exception.ContextNotFoundException;
 import model.timedEvents.AreaManagerAssignment;
 import model.timedEvents.AreaManagerWithdrawal;
 import model.timedEvents.TimedEventScheduler;
@@ -15,8 +17,8 @@ import java.util.*;
 
 public class Area extends Context implements IArea {
 
-    /** Die diesem räumlichen Kontext übergeordnete Welt. */
-    protected World world;
+    /** Die diesem Kontext übergeordnete Welt. */
+    private final World world;
 
     /** Menge aller enthaltenen Interaktionsobjekte. */
     private final Map<ContextID, Interactable> interactables;
@@ -37,12 +39,13 @@ public class Area extends Context implements IArea {
     private Music music;
 
     /**
-     * Erzeugt eine Instanz eines Kontextes.
-     *
-     * @param areaName         Name des Kontextes.
-     * @param parent              Übergeordneter Kontext.
-     * @param communicationRegion
-     * @param communicationMedia
+     * Erzeugt eine Instanz eines Bereichs.
+     * @param areaName Name des Bereichs..
+     * @param parent Übergeordneter Kontext.
+     * @param world Übergeordnete Welt.
+     * @param communicationRegion Kommunikationsform des Bereichs.
+     * @param communicationMedia Benutzbare Kommunikationsmedien des Bereichs.
+     * @param expanse Räumliche Ausdehnung des Bereichs.
      */
     protected Area(String areaName, Context parent, World world, CommunicationRegion communicationRegion,
                    Set<CommunicationMedium> communicationMedia, Expanse expanse) {
@@ -113,8 +116,8 @@ public class Area extends Context implements IArea {
     }
 
     /**
-     *
-     * @param interactable
+     * Fügt ein Interaktionsobjekt zu diesem Bereich hinzu.
+     * @param interactable Hinzuzufügendes Interaktionsobjekt.
      */
     public void addInteractable(Interactable interactable) {
         interactables.put(interactable.getContextId(), interactable);
@@ -152,8 +155,18 @@ public class Area extends Context implements IArea {
                 && reservation.getFrom().equals(from) && reservation.getTo().equals(to));
     }
 
-    public Interactable getInteractable(ContextID interactableId) {
-        return interactables.get(interactableId);
+    /**
+     * Gibt das Interaktionsobjekt mit der gegebenen ID zurück.
+     * @param interactableId ID des Interaktionsobjekts.
+     * @return Interaktionsobjekt.
+     * @throws ContextNotFoundException wenn es in diesem Bereich kein Interaktionsobjekt mit dieser ID gibt.
+     */
+    public Interactable getInteractable(ContextID interactableId) throws ContextNotFoundException {
+        Interactable interactable = interactables.get(interactableId);
+        if (interactable == null) {
+            throw new ContextNotFoundException("key", interactableId);
+        }
+        return interactable;
     }
 
     /**
@@ -168,7 +181,7 @@ public class Area extends Context implements IArea {
             return children.values().stream().filter(child -> child.expanse.isIn(posX, posY))
                     .findFirst().orElseThrow().getArea(posX, posY);
         } catch (NoSuchElementException e) {
-            // Kein untergeordneter Kontext vorhanden.
+            // Dieser Kontext ist der untergeordnetste, auf dem sich die übergebenen Koordinaten befinden.
             return this;
         }
     }
@@ -179,18 +192,6 @@ public class Area extends Context implements IArea {
      */
     public World getWorld() {
         return world;
-    }
-
-    public void setExpanse(Expanse expanse) {
-        this.expanse = expanse;
-    }
-
-    public void setCommunicationRegion(CommunicationRegion communicationRegion) {
-        this.communicationRegion = communicationRegion;
-    }
-
-    public void setCommunicationMedia(Set<CommunicationMedium> communicationMedia) {
-        this.communicationMedia = communicationMedia;
     }
 
     @Override

@@ -3,6 +3,7 @@ package model.context.spatial;
 import controller.network.ClientSender;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
+import model.exception.ContextNotFoundException;
 import model.user.User;
 
 import java.util.HashMap;
@@ -14,13 +15,12 @@ public class World extends Room implements IWorld {
     private final Map<ContextID, Room> privateRooms;
 
     /**
-     * Erzeugt eine Instanz eines Kontextes.
-     *
-     * @param worldName            Name des Kontextes.
+     * Erzeugt eine Instanz einer Welt.
+     * @param worldName Name der Welt.
+     * @param map Karte der Welt.
      */
     public World(String worldName, SpatialMap map) {
         super(worldName, GlobalContext.getInstance(), null, map);
-        this.world = this;
         this.privateRooms = new HashMap<>();
     }
 
@@ -55,11 +55,15 @@ public class World extends Room implements IWorld {
 
     /**
      * Gibt einen privaten Raum zu übergebener ID zurück.
-     * @param roomID ID des privaten Raums.
+     * @param roomId ID des privaten Raums.
      * @return Privater Raum.
      */
-    public Room getPrivateRoom(ContextID roomID) {
-        return privateRooms.get(roomID);
+    public Room getPrivateRoom(ContextID roomId) throws ContextNotFoundException {
+        Room privateRoom = privateRooms.get(roomId);
+        if (privateRoom == null) {
+            throw new ContextNotFoundException("key", roomId);
+        }
+        return privateRoom;
     }
 
     @Override
@@ -89,5 +93,10 @@ public class World extends Room implements IWorld {
             containedUser.getClientSender().send(ClientSender.SendAction.USER_INFO, this);
         });
         user.getClientSender().send(ClientSender.SendAction.WORLD_ACTION, null); // Hier is noch unklar wie das gehen soll?
+    }
+
+    @Override
+    public World getWorld() {
+        return this;
     }
 }

@@ -5,6 +5,7 @@ import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.ContextID;
 import model.context.spatial.*;
+import model.exception.ContextNotFoundException;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.notification.RoomRequest;
@@ -91,10 +92,11 @@ public class RoomReception extends Interactable {
                 break;
             case 2: // Betrete einen existierenden privaten Raum.
                 ContextID roomID = new ContextID(args[0]);
-                privateRoom = user.getWorld().getPrivateRoom(roomID);
                 // Prüfe, ob der zu betretende Raum existiert.
-                if (privateRoom == null) {
-                    throw new IllegalMenuActionException("", "Der zu betretende private Raum existiert nicht.");
+                try {
+                    privateRoom = user.getWorld().getPrivateRoom(roomID);
+                } catch (ContextNotFoundException e) {
+                    throw new IllegalMenuActionException("", "Der zu betretende private Raum existiert nicht.", e);
                 }
                 password = args[2];
                 // Prüfe, ob das Passwort korrekt übergeben wurde.
@@ -109,10 +111,10 @@ public class RoomReception extends Interactable {
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
             case 3: // Stelle eine Anfrage zum Beitritt eines privaten Raums.
                 roomID = new ContextID(args[0]);
-                privateRoom = user.getWorld().getPrivateRoom(roomID);
-                // Prüfe, ob der angefragte Raum existiert.
-                if (privateRoom == null) {
-                    throw new IllegalMenuActionException("", "Der angefragte private Raum existiert nicht.");
+                try {
+                    privateRoom = user.getWorld().getPrivateRoom(roomID);
+                } catch (ContextNotFoundException e) {
+                    throw new IllegalMenuActionException("", "Der angefragte private Raum existiert nicht.", e);
                 }
                 // Ermittle den Rauminhaber.
                 Map<UUID, User> users = privateRoom.getUsers();

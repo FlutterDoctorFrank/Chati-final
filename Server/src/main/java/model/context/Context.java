@@ -1,10 +1,7 @@
 package model.context;
 
-import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
-import model.communication.CommunicationRegion;
 import model.context.spatial.Area;
-import model.context.spatial.Music;
 import model.database.Database;
 import model.database.IContextDatabase;
 import model.user.IUser;
@@ -118,17 +115,14 @@ public abstract class Context implements IContext {
     }
 
     /**
-     * Entfernt einen Benutzer aus einem Kontext. Stellt sicher, dass dieser Benutzer auch aus allen untergeordneten
-     * Kontexten entfernt wird, sofern er dort enthalten ist.
+     * Entfernt einen Benutzer aus einem Kontext, wenn dieser enthalten ist. Stellt sicher, dass dieser Benutzer auch
+     * aus allen untergeordneten Kontexten entfernt wird.
      * @param user Zu entfernender Benutzer.
      */
     public void removeUser(User user) {
-        containedUsers.remove(user.getUserId());
-        children.values().forEach(child -> {
-            if (child.contains(user)) {
-                child.removeUser(user);
-            }
-        });
+        if (containedUsers.remove(user.getUserId()) != null) {
+            children.values().forEach(child -> child.removeUser(user));
+        }
     }
 
     /**
@@ -220,7 +214,7 @@ public abstract class Context implements IContext {
 
     /**
      * Überprüft, ob in diesem Kontext mit einem übergebenen Medium kommuniziert werden kann.
-     * @param medium Zu überprüfender Medium.
+     * @param medium Zu überprüfendes Medium.
      * @return true, wenn mit dem Medium kommuniziert werden kann, sonst false.
      */
     public abstract boolean canCommunicateWith(CommunicationMedium medium);
@@ -262,7 +256,7 @@ public abstract class Context implements IContext {
     }
 
     /**
-     * Überprüft, ob der übergebene Kontext ein übergeordneter Kontext ist.
+     * Überprüft, ob dieser Kontext im übergebenen Kontext enthalten ist.
      * @param context Zu überprüfender Kontext.
      * @return true, wenn der übergebene Kontext übergeordnet ist, sonst false.
      */
@@ -289,7 +283,7 @@ public abstract class Context implements IContext {
     }
 
     /**
-     * Gibt die Menge aller untergeordneter Kontexte zurück.
+     * Gibt die Menge aller untergeordneter (räumlicher) Kontexte zurück.
      * @return Menge aller untergeordneter Kontexte.
      */
     public Map<ContextID, Area> getChildren() {
@@ -302,5 +296,18 @@ public abstract class Context implements IContext {
      */
     public Map<UUID, User> getUsers() {
         return Collections.unmodifiableMap(containedUsers);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Context context = (Context) o;
+        return contextId.equals(context.contextId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(contextId);
     }
 }

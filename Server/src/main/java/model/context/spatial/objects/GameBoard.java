@@ -5,7 +5,6 @@ import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.spatial.Area;
 import model.context.spatial.Expanse;
-import model.context.spatial.Interactable;
 import model.context.spatial.Menu;
 import model.user.User;
 

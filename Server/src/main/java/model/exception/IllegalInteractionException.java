@@ -1,6 +1,6 @@
 package model.exception;
 
-import model.context.spatial.Interactable;
+import model.context.spatial.objects.Interactable;
 import model.user.User;
 
 public class IllegalInteractionException extends Exception {

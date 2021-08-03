@@ -10,5 +10,5 @@ public interface IVoiceMessage extends IMessage {
      * Gibt die Sprachdaten der Sprachnachricht zurück.
      * @return Enthaltene Sprachdaten.
      */
-    public byte[] getVoiceData();
+    byte[] getVoiceData();
 }

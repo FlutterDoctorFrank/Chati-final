@@ -106,7 +106,7 @@ public class UserAccountManager implements IUserAccountManager {
         // Melde den Benutzer ab.
         GlobalContext.getInstance().removeUser(user);
         user.updateLastLogoutTime();
-        // database.updateLastOnlineTime(user);
+        database.updateLastOnlineTime(user);
     }
 
     @Override
@@ -121,7 +121,8 @@ public class UserAccountManager implements IUserAccountManager {
     }
 
     @Override
-    public void changePassword(UUID userId, String password, String newPassword) throws UserNotFoundException, IllegalAccountActionException {
+    public void changePassword(UUID userId, String password, String newPassword) throws UserNotFoundException,
+            IllegalAccountActionException {
         User user = getUser(userId);
         user.updateLastActivity();
         // Überprüfe, ob das aktuelle Passwort korrekt übergeben wurde.
@@ -133,7 +134,7 @@ public class UserAccountManager implements IUserAccountManager {
             throw new IllegalAccountActionException("", "Das neue Passwort hat nicht das richtige Format.");
         }
         // Ändere das Passwort.
-        // database.setPassword(user, newPassword);
+        database.setPassword(user, newPassword);
     }
 
     /**
@@ -217,6 +218,6 @@ public class UserAccountManager implements IUserAccountManager {
     public void deleteUser(User user) throws UserNotFoundException {
         logoutUser(user.getUserId());
         registeredUsers.remove(user.getUserId());
-        // database.deleteAccount(user);
+        database.deleteAccount(user);
     }
 }

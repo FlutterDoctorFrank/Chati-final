@@ -7,7 +7,6 @@ import model.communication.CommunicationRegion;
 import model.communication.message.TextMessage;
 import model.context.spatial.Area;
 import model.context.spatial.Expanse;
-import model.context.spatial.Interactable;
 import model.context.spatial.Menu;
 import model.exception.IllegalInteractionException;
 import model.user.User;
@@ -68,7 +67,7 @@ public class Seat extends Interactable {
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 try {
                     user.setMoveable(true);
-                    user.tryMove(expanse.getBottomLeft().getPosX(), expanse.getBottomLeft().getPosY());
+                    user.move(expanse.getBottomLeft().getPosX(), expanse.getBottomLeft().getPosY());
                     user.setMoveable(false);
                 } catch (Exception e) {
                     e.printStackTrace();

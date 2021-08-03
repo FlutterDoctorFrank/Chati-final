@@ -44,7 +44,8 @@ public class RoomRequest extends Notification {
         }
         // Überprüfe, ob der angefragte private Raum noch existiert und der Eigentümer dieser Benachrichtigung noch
         // Raumbesitzer ist.
-        if (!owner.getWorld().containsPrivateRoom(requestedRoom) || !owner.hasPermission(requestedRoom, Permission.MANAGE_PRIVATE_ROOM)) {
+        if (!owner.getWorld().containsPrivateRoom(requestedRoom) || !owner.hasPermission(requestedRoom,
+                Permission.MANAGE_PRIVATE_ROOM)) {
             MessageBundle messageBundle = new MessageBundle("Du hast nicht die nötige Berechtigung für den angefragten Raum.");
             TextMessage infoMessage = new TextMessage(messageBundle);
             owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
@@ -66,14 +67,16 @@ public class RoomRequest extends Notification {
         }
         // Überprüfe, ob der angefragte private Raum noch existiert und der Eigentümer dieser Benachrichtigung noch
         // Raumbesitzer ist.
-        if (!owner.getWorld().containsPrivateRoom(requestedRoom) || !owner.hasPermission(requestedRoom, Permission.MANAGE_PRIVATE_ROOM)) {
+        if (!owner.getWorld().containsPrivateRoom(requestedRoom) || !owner.hasPermission(requestedRoom,
+                Permission.MANAGE_PRIVATE_ROOM)) {
             MessageBundle messageBundle = new MessageBundle("Du hast nicht die nötige Berechtigung für den angefragten Raum.");
             TextMessage infoMessage = new TextMessage(messageBundle);
             owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
             return;
         }
         // Benachrichtige den anfragenden Benutzer über die abgelehnte Raumanfrage
-        Notification declineNotification = new Notification(requestingUser, owner.getWorld(), new MessageBundle("messageKey"));
+        Notification declineNotification = new Notification(requestingUser, owner.getWorld(),
+                new MessageBundle("messageKey"));
         requestingUser.addNotification(declineNotification);
     }
 

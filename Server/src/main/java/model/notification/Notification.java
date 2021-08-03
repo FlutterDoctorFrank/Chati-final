@@ -6,6 +6,7 @@ import model.exception.IllegalNotificationActionException;
 import model.user.User;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -112,5 +113,18 @@ public class Notification implements INotification {
 
     public NotificationType getNotificationType() {
         return notificationType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Notification that = (Notification) o;
+        return notificationId.equals(that.notificationId) && owner.equals(that.owner);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(notificationId, owner);
     }
 }

@@ -58,11 +58,13 @@ public class Location implements ILocation {
     /**
      * Ermittelt die Distanz zu einer anderen Position.
      * @param location Zu überprüfende andere Position.
-     * @return Distanz zur anderen Position, oder -1 wenn die Positionen sich nicht auf den selben Raum beziehen.
+     * @return Distanz zur anderen Position.
      */
+
     public int distance(Location location) {
+        // Sollte niemals eintreffen.
         if (!room.equals(location.getRoom())) {
-            return -1;
+            throw new IllegalArgumentException("Location is in a different room.");
         }
         return (int) Math.sqrt(Math.pow((posX - location.posX), 2) + Math.pow((posY - location.posY), 2));
     }

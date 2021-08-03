@@ -7,6 +7,7 @@ import model.context.ContextID;
 import model.context.IContext;
 import model.context.global.GlobalContext;
 import model.context.spatial.*;
+import model.context.spatial.objects.Interactable;
 import model.database.Database;
 import model.database.IUserDatabase;
 import model.exception.*;
@@ -127,6 +128,7 @@ public class User implements IUser {
         this.status = Status.OFFLINE;
         this.avatar = avatar;
         this.lastLogoutTime = lastLogoutTime;
+        this.lastActivity = LocalDateTime.now();
         this.currentWorld = null;
         this.currentLocation = null;
         this.currentInteractable = null;
@@ -140,13 +142,14 @@ public class User implements IUser {
     }
 
     @Override
-    public void joinWorld(ContextID worldID) throws IllegalStateException, ContextNotFoundException, IllegalWorldActionException {
+    public void joinWorld(ContextID worldId) throws ContextNotFoundException, IllegalWorldActionException {
+        throwIfNotOnline();
         updateLastActivity();
         // Überprüfe, ob Benutzer bereits in einer Welt ist.
         if (currentWorld != null) {
             throw new IllegalStateException("User is already in a world.");
         }
-        World world = GlobalContext.getInstance().getWorld(worldID);
+        World world = GlobalContext.getInstance().getWorld(worldId);
         // Überprüfe, ob Benutzer in der Welt gesperrt ist.
         if (world.isBanned(this)) {
             throw new IllegalWorldActionException("", "Du bist in dieser Welt gesperrt.");
@@ -154,30 +157,26 @@ public class User implements IUser {
         // Betrete die Welt.
         currentWorld = world;
         currentWorld.addUser(this);
-        // Positioniere den Avatar an der Anfangsposition der Karte der Welt und schicke die entsprechenden Pakete.
+        // Positioniere den Avatar an der Anfangsposition der Welt.
         teleport(currentWorld.getSpawnLocation());
     }
 
     @Override
     public void leaveWorld() throws IllegalStateException {
+        throwIfNotOnline();
+        throwIfNotInWorld();
         updateLastActivity();
-        // Überprüfe, ob Benutzer in einer Welt ist.
-        if (currentWorld == null) {
-            throw new IllegalStateException("User is not in a world.");
-        }
         // Verlasse die Welt.
-        currentLocation = null;
         currentWorld.removeUser(this);
+        currentLocation = null;
         currentWorld = null;
     }
 
     @Override
-    public void tryMove(int posX, int posY) throws IllegalPositionException, IllegalStateException {
+    public void move(int posX, int posY) throws IllegalPositionException {
+        throwIfNotOnline();
+        throwIfNotInWorld();
         updateLastActivity();
-        // Überprüfe, ob Benutzer sich in einer Welt befindet.
-        if (currentWorld == null || currentLocation == null) {
-            throw new IllegalStateException("User is not in a world.");
-        }
         // Überprüfe, ob sich der Benutzer bewegen darf.
         if (!moveable) {
             throw new IllegalStateException("User is not allowed to move.");
@@ -188,30 +187,37 @@ public class User implements IUser {
             throw new IllegalPositionException("Position is illegal.", this, posX, posY);
         }
         // Setze die neue Position des Benutzers.
-        move(posX, posY);
+        setPosition(posX, posY);
     }
 
     @Override
-    public void chat(String message) {
+    public void chat(String message) throws IllegalStateException {
+        throwIfNotOnline();
+        throwIfNotInWorld();
         updateLastActivity();
         communicationHandler.handleTextMessage(message);
     }
 
     @Override
     public void talk(byte[] voicedata) {
+        throwIfNotOnline();
+        throwIfNotInWorld();
         communicationHandler.handleVoiceMessage(voicedata);
     }
 
     @Override
     public void executeAdministrativeAction(UUID targetID, AdministrativeAction administrativeAction, String[] args)
-            throws UserNotFoundException, IllegalStateException, NoPermissionException {
+            throws UserNotFoundException, NoPermissionException {
+        throwIfNotOnline();
         updateLastActivity();
         User target = UserAccountManager.getInstance().getUser(targetID);
         administrativeAction.execute(this, target, args);
     }
 
     @Override
-    public void interact(ContextID spatialID) throws IllegalInteractionException {
+    public void interact(ContextID spatialID) throws IllegalInteractionException, ContextNotFoundException {
+        throwIfNotOnline();
+        throwIfNotInWorld();
         updateLastActivity();
         // Überprüfe, ob der Benutzer bereits mit einem Objekt interagiert.
         if (currentInteractable != null) {
@@ -229,7 +235,10 @@ public class User implements IUser {
     }
 
     @Override
-    public void executeOption(ContextID spatialID, int menuOption, String[] args) throws IllegalInteractionException, IllegalMenuActionException {
+    public void executeOption(ContextID spatialID, int menuOption, String[] args) throws IllegalInteractionException,
+            IllegalMenuActionException, ContextNotFoundException {
+        throwIfNotOnline();
+        throwIfNotInWorld();
         updateLastActivity();
         Area currentArea = currentLocation.getArea();
         Interactable interactable = currentArea.getInteractable(spatialID);
@@ -240,7 +249,8 @@ public class User implements IUser {
         }
         // Überprüfe, ob der Benutzer das Menü dieses Objekts geöffnet hat.
         if (!currentInteractable.equals(interactable)) {
-            throw new IllegalInteractionException("The user has not opened the menu of this context.", this, interactable);
+            throw new IllegalInteractionException("The user has not opened the menu of this context.", this,
+                    interactable);
         }
         // Führe die Menü-Option durch.
         currentInteractable.executeMenuOption(this, menuOption, args);
@@ -248,10 +258,12 @@ public class User implements IUser {
 
     @Override
     public void deleteNotification(UUID notificationID) throws NotificationNotFoundException {
+        throwIfNotOnline();
         updateLastActivity();
         Notification notification = notifications.get(notificationID);
         if (notification == null) {
-            throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationID);
+            throw new NotificationNotFoundException("This user has no notification with this ID.", this,
+                    notificationID);
         }
         database.removeNotification(this, notification);
     }
@@ -259,11 +271,13 @@ public class User implements IUser {
     @Override
     public void manageNotification(UUID notificationID, boolean accept) throws NotificationNotFoundException,
             IllegalNotificationActionException {
+        throwIfNotOnline();
         updateLastActivity();
         Notification notification = notifications.get(notificationID);
         // Überprüfe, ob die Benachrichtigung vorhanden ist.
         if (notification == null) {
-            throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationID);
+            throw new NotificationNotFoundException("This user has no notification with this ID.", this,
+                    notificationID);
         }
         // Akzeptiere die Benachrichtigung, oder lehne sie ab.
         if (accept) {
@@ -277,6 +291,7 @@ public class User implements IUser {
 
     @Override
     public void setAvatar(Avatar avatar) {
+        throwIfNotOnline();
         updateLastActivity();
         this.avatar = avatar;
         database.changeAvatar(this, avatar);
@@ -338,12 +353,12 @@ public class User implements IUser {
                 .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
     }
 
-    public void move(int posX, int posY) {
+    public void setPosition(int posX, int posY) {
         Room currentRoom = currentLocation.getRoom();
         Area currentArea = currentLocation.getArea();
         currentLocation.setPosition(posX, posY);
-        // Ermittle, ob sich der Bereich des Benutzers geändert hat, und entferne ihn aus den verlassenen Bereichen
-        // und füge ihn zu den betretenen Bereichen hinzu.
+        // Ermittle, ob sich der Bereich des Benutzers geändert hat, entferne ihn aus den verlassenen Bereichen und
+        // füge ihn zu den betretenen Bereichen hinzu.
         Area newArea = currentLocation.getArea();
         if (!currentArea.equals(newArea)) {
             Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
@@ -366,7 +381,7 @@ public class User implements IUser {
         if (currentLocation == null || !currentLocation.getRoom().equals(newLocation.getRoom())) {
             currentLocation = newLocation;
         }
-        move(currentLocation.getPosX(), currentLocation.getPosY());
+        setPosition(currentLocation.getPosX(), currentLocation.getPosY());
     }
 
     /**
@@ -551,13 +566,13 @@ public class User implements IUser {
      * Aktualisiert den Zeitpunkt, an dem der Benutzer seine letzte Aktivität gezeigt hat.
      */
     public void updateLastActivity() {
-        if (status.equals(Status.AWAY)) {
-            setStatus(Status.ONLINE);
-        }
         LocalDateTime now = LocalDateTime.now();
-        // Aktualisiere diesen Wert nur alle 15 Sekunden, um Ressourcen zu sparen.
-        if (lastActivity.until(now, ChronoUnit.SECONDS) >= 15) {
-            this.lastActivity = LocalDateTime.now();
+        // Aktualisiere diesen Wert nur alle 30 Sekunden, um Ressourcen des TimedEventScheduler zu sparen.
+        if (lastActivity.until(now, ChronoUnit.SECONDS) >= 30) {
+            if (status.equals(Status.AWAY)) {
+                setStatus(Status.ONLINE);
+            }
+            this.lastActivity = now;
             TimedEventScheduler.getInstance().put(new AbsentUser(this));
         }
     }
@@ -608,6 +623,10 @@ public class User implements IUser {
                 .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
     }
 
+    /**
+     * Gibt den Zeitpunkt zurück, an dem sich der Benutzer das letzte mal abgemeldet hat.
+     * @return Letzter Zeitpunkt, an dem der Benutzer sich abgemeldet hat.
+     */
     public LocalDateTime getLastLogoutTime() {
         return lastLogoutTime;
     }
@@ -648,5 +667,36 @@ public class User implements IUser {
         receivers.values().forEach(user -> {
             user.getClientSender().send(ClientSender.SendAction.CONTEXT_ROLE, this);
         });
+    }
+
+    /**
+     * Wirft eine Exception wenn der Benutzer nicht angemeldet ist.
+     */
+    private void throwIfNotOnline() {
+        if (!isOnline()) {
+            throw new IllegalStateException("User is not logged in.");
+        }
+    }
+
+    /**
+     * Wirft eine Exception wenn der Benutzer nicht in einer Welt ist.
+     */
+    private void throwIfNotInWorld() {
+        if (currentWorld == null || currentLocation == null) {
+            throw new IllegalStateException("User is not in world.");
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return userId.equals(user.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId);
     }
 }

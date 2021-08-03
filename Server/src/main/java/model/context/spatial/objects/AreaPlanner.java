@@ -5,7 +5,6 @@ import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.spatial.Area;
 import model.context.spatial.Expanse;
-import model.context.spatial.Interactable;
 import model.context.spatial.Menu;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
@@ -16,7 +15,6 @@ import model.user.account.UserAccountManager;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;

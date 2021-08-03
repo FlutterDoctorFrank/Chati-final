@@ -30,7 +30,6 @@ public class AbsentUser extends TimedEvent {
 
     @Override
     public boolean isValid() {
-        return user.isOnline()
-                && user.getLastActivity().plus(Status.AWAY_TIME, ChronoUnit.MINUTES).equals(time);
+        return user.isOnline() && user.getLastActivity().plus(Status.AWAY_TIME, ChronoUnit.MINUTES).equals(time);
     }
 }

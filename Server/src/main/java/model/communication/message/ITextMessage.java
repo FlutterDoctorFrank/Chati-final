@@ -12,17 +12,17 @@ public interface ITextMessage extends IMessage {
      * Gibt den Text der Nachricht zurück.
      * @return Enthaltene Textnachricht.
      */
-    public String getTextMessage();
+    String getTextMessage();
 
     /**
      * Gibt den Nachrichtentyp der Nachricht zurück.
      * @return Nachrichtentyp der Textnachricht.
      */
-    public MessageBundle getMessageBundle();
+    MessageBundle getMessageBundle();
 
     /**
      * Gibt den Schlüssel einer übersetzbaren Nachricht und deren Argumente zurück.
      * @return Den Nachrichtenschlüssel wenn die Nachricht einen enthält, sonst null.
      */
-    public MessageType getMessageType();
+    MessageType getMessageType();
 }

@@ -117,7 +117,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 }
 
                 try {
-                    this.user.tryMove(packet.getPosX(), packet.getPosY());
+                    this.user.move(packet.getPosX(), packet.getPosY());
                 } catch (IllegalPositionException ex) {
                     // Illegale Position. Sende vorherige Position.
                     LOGGER.warning("Received illegal movement from user " + this.user.getUsername() + ": " + ex.getMessage());

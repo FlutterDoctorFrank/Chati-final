@@ -1,5 +1,7 @@
 package model.context.spatial;
 
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import controller.network.ClientSender;
 import model.MessageBundle;
 import model.communication.message.TextMessage;
@@ -7,9 +9,11 @@ import model.context.Context;
 import model.role.Role;
 import model.user.User;
 
+import java.util.Set;
+
 public class Room extends Area implements IRoom {
 
-    /** Karte dieses räumlichen Kontextes. */
+    /** Karte dieses Raums. */
     private final SpatialMap map;
 
     /** Enthält Information über erlaubte Positionen auf der Karte. */
@@ -25,31 +29,34 @@ public class Room extends Area implements IRoom {
     private String password;
 
     /**
-     * Erzeugt eine Instanz eines Kontextes.
-     *
-     * @param roomName            Name des Kontextes.
-     * @param parent              Übergeordneter Kontext.
+     * Erzeugt eine Instanz eines (öffentlichen) Raums.
+     * @param roomName Name des Raums.
+     * @param parent Übergeordneter Kontext.
+     * @param world Übergeordnete Welt.
+     * @param map Karte des Raums.
      */
     protected Room(String roomName, Context parent, World world, SpatialMap map) {
         super(roomName, parent, world, null, null, null);
         this.map = map;
         this.isPrivate = false;
         this.password = null;
-        RoomBuilder.build(this);
+        create();
     }
 
     /**
-     * Erzeugt eine Instanz eines Kontextes.
-     *
-     * @param roomName            Name des Kontextes.
-     * @param parent              Übergeordneter Kontext.
+     * Erzeugt eine Instanz eines (privaten) Raums.
+     * @param roomName Name des Raums.
+     * @param parent Übergeordneter Kontext.
+     * @param world Übergeordnete Welt.
+     * @param map Karte des Raums.
+     * @param password Passwort des Raums.
      */
     public Room(String roomName, Context parent, World world, SpatialMap map, String password) {
         super(roomName, parent, world, null, null, null);
         this.map = map;
         this.isPrivate = true;
         this.password = password;
-        RoomBuilder.build(this);
+        create();
     }
 
     @Override
@@ -64,10 +71,7 @@ public class Room extends Area implements IRoom {
      * übereinstimmt.
      */
     public boolean checkPassword(String password) {
-        if (password == null) {
-            return false;
-        }
-        return this.password.equals(password);
+        return !(this.password == null) && this.password.equals(password);
     }
 
     /**
@@ -77,7 +81,7 @@ public class Room extends Area implements IRoom {
      * @return true, wenn die Position erlaubt ist, sonst false.
      */
     public boolean isLegal(int posX, int posY) {
-        return collisionMap[posX][posY];
+        return !collisionMap[posX][posY];
     }
 
     /**
@@ -121,18 +125,24 @@ public class Room extends Area implements IRoom {
         if (isPrivate && user.hasRole(this, Role.ROOM_OWNER)) {
             user.removeRole(this, Role.ROOM_OWNER);
             if (containedUsers.isEmpty()) {
-                world.removePrivateRoom(this);
+                getWorld().removePrivateRoom(this);
             } else {
                 containedUsers.values().stream().findAny().get().addRole(this, Role.ROOM_OWNER);
             }
         }
     }
 
-    public void setCollisionMap(boolean[][] collisionMap) {
-        this.collisionMap = collisionMap;
-    }
-
-    public void setSpawnLocation(Location spawnLocation) {
-        this.spawnLocation = spawnLocation;
+    /**
+     * Setzt die Parameter dieses Raums, die in der Datenstruktur der Karte enthalten sind.
+     * @see MapUtils
+     */
+    private void create() {
+        TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
+        this.communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
+        this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
+        this.expanse = new Expanse(new Location(this, 0, 0), MapUtils.getWidth(tiledMap), MapUtils.getHeight(tiledMap));
+        this.collisionMap = MapUtils.getCollisionMap(tiledMap);
+        this.spawnLocation = new Location(this, MapUtils.getSpawnPosX(tiledMap), MapUtils.getSpawnPosY(tiledMap));
+        MapUtils.buildChildTree(this, tiledMap);
     }
 }

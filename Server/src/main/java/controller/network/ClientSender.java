@@ -22,7 +22,7 @@ import model.communication.message.MessageType;
 import model.context.IContext;
 import model.context.global.IGlobalContext;
 import model.context.spatial.IArea;
-import model.context.spatial.IInteractable;
+import model.context.spatial.objects.IInteractable;
 import model.context.spatial.IRoom;
 import model.context.spatial.IWorld;
 import model.notification.INotification;
