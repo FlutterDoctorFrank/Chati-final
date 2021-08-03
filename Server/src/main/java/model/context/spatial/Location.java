@@ -1,5 +1,7 @@
 package model.context.spatial;
 
+import java.util.Objects;
+
 /**
  * Eine Klasse, welche Positionen repräsentiert.
  */
@@ -67,5 +69,18 @@ public class Location implements ILocation {
             throw new IllegalArgumentException("Location is in a different room.");
         }
         return (int) Math.sqrt(Math.pow((posX - location.posX), 2) + Math.pow((posY - location.posY), 2));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Location location = (Location) o;
+        return posX == location.posX && posY == location.posY && room.equals(location.room);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(room, posX, posY);
     }
 }

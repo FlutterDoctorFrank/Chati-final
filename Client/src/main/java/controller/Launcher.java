@@ -1,8 +1,8 @@
 package controller;
 
 import controller.network.ClientNetworkManager;
-import model.Context.Global.GlobalContext;
-import model.User.UserManager;
+import model.context.global.GlobalContext;
+import model.user.UserManager;
 import view.Chati;
 
 public class Launcher {

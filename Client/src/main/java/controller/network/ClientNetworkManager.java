@@ -2,8 +2,8 @@ package controller.network;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
-import model.Context.Global.IGlobalContextController;
-import model.User.IUserManagerController;
+import model.context.global.IGlobalContextController;
+import model.user.IUserManagerController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view.Screens.ViewControllerInterface;

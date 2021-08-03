@@ -1,7 +1,7 @@
 package view.Screens;
 
-import model.Context.Spatial.SpatialContext;
-import model.Exceptions.ContextNotFoundException;
+import model.context.spatial.SpatialContext;
+import model.exception.ContextNotFoundException;
 import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.Menu;

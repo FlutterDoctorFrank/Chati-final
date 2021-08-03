@@ -10,7 +10,7 @@ import controller.network.protocol.PacketMenuOption;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
-import model.User.AdministrativeAction;
+import model.user.AdministrativeAction;
 import model.context.ContextID;
 import model.context.spatial.SpatialMap;
 import model.user.Avatar;
