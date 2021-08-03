@@ -1,8 +1,10 @@
 package model.database;
 
+import com.badlogic.gdx.utils.SortedIntList;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.AreaReservation;
+import model.context.spatial.SpatialMap;
 import model.context.spatial.World;
 import model.notification.Notification;
 import model.notification.RoomRequest;
@@ -16,7 +18,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
-import static java.sql.Connection.TRANSACTION_NONE;
 
 public class Database implements IUserAccountManagerDatabase, IUserDatabase, IContextDatabase {
     private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
@@ -76,13 +77,73 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
     @Override
     public World getWorld(ContextID worldID) {
-        // TODO
+        try{
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            //Suche die Welt in Datenbank
+            ResultSet res = st.executeQuery("SELECT * FROM WORLDS WHERE WORLD_ID = " + "'" + worldID.getId()+ "'");
+            int row = 0;
+            while (res.next()){
+                row ++;
+            }
+            //Falls diese Welt existiert
+            if (row == 1) {
+                res.first();
+                String world_name = res.getString("WORLD_NAME");
+                String map_name = res.getString("MAP_NAME");
+                SpatialMap world_map = SpatialMap.valueOf(map_name);
+
+                World world = new World(world_name, world_map);
+
+                return world;
+
+            } else {
+                System.out.println("mehr als 1 or not exist");
+            }
+            res.close();
+            st.close();
+            con.commit();
+            con.close();
+        } catch(Exception e){
+            System.out.println("Fehler in getWorld: " + e);
+
+        }
         return null;
     }
 
     @Override
     public Map<ContextID, World> getWorlds() {
-        return null; // TODO
+
+        Map<ContextID, World> worlds = new HashMap<ContextID, World>();
+        try{
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            //Suche alle Welt in Datenbank
+            ResultSet res = st.executeQuery("SELECT * FROM WORLDS");
+            while(res.next()) {
+                res.first();
+                String id_name = res.getString("WORLD_ID");
+                String world_name = res.getString("WORLD_NAME");
+                String map_name = res.getString("MAP_NAME");
+                SpatialMap world_map = SpatialMap.valueOf(map_name);
+
+                ContextID world_id = new ContextID(id_name);
+                World world = new World(world_name, world_map);
+                worlds.put(world_id, world);
+            }
+            res.close();
+            st.close();
+            con.commit();
+            con.close();
+        } catch(Exception e){
+            System.out.println("Fehler in getWorlds: " + e);
+
+        }
+        return worlds;
     }
 
 
@@ -132,8 +193,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
     @Override
     public boolean checkPassword(String username, String password) {
-        return true;
-        /*
         try{
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -162,15 +221,16 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
         }
         return false;
-        */
+
     }
     @Override
     public void setPassword(User user, String newPassword) {
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
-
-            //TODO
+            PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET USER_PSW = " + "'" + newPassword + "'" +
+                    " WHERE USER_ID = " + "'" + user.getUserId().toString() + "'");
+            ps.executeUpdate();
             con.close();
         } catch (Exception e) {
             System.out.print("Fehler in Database-setPassword: " + e);
@@ -185,14 +245,12 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET AVATAR_NAME = " + "'" + avatar.getName() + "'" +
-                    "WHERE USER_ID = " + "'" + user.getUserId().toString() + "'");
+                    " WHERE USER_ID = " + "'" + user.getUserId().toString() + "'");
             ps.executeUpdate();
             con.close();
         } catch (Exception e) {
             System.out.print("Fehler in Database-changeAvatar: " + e);
         }
-
-
     }
 
     @Override
@@ -259,7 +317,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
                 //!!! noch nicht bearbeitet!!!
                 //TODO
-                User user = new User(userID, user_name, user_avatar, null, null, null, null, null);
+                User user = new User(userID, user_name, user_avatar, null,
+                        null, null, null, null);
 
                 return user;
 
@@ -271,7 +330,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             con.commit();
             con.close();
         } catch(Exception e){
-            System.out.println(e);
+            System.out.println("Fehler in Database-getUser(userID): " +e);
 
         }
         return null;
@@ -320,7 +379,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             con.close();
 
         } catch(Exception e){
-            System.out.println(e);
+            System.out.println("Fehler in Database-getUser(username): " + e);
 
         }
         return null;
@@ -329,7 +388,39 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     //alle
     @Override
     public Map<UUID, User> getUsers() {
-        return new HashMap<>(); // TODO
+        Map<UUID, User> users = new HashMap<UUID, User>();
+        try{
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            //Suche alle Benutzer in Datenbank
+            ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT");
+            while(res.next()) {
+                res.first();
+                String id = res.getString("USER_ID");
+                UUID user_ID = UUID.fromString(id);
+                String user_name = res.getString("USER_NAME");
+                String avatar_name = res.getString("AVATAR_NAME");
+
+                Avatar user_avatar = null;
+                if (avatar_name != null){
+                    user_avatar = Avatar.valueOf(avatar_name);
+                }
+                //TODO
+                User user = new User(user_ID, user_name, user_avatar, null, null,
+                        null, null, null);
+                users.put(user_ID, user);
+            }
+            res.close();
+            st.close();
+            con.commit();
+            con.close();
+        } catch(Exception e){
+            System.out.println("Fehler in getUsers: " + e);
+
+        }
+        return users;
     }
 
     @Override
@@ -369,7 +460,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
     @Override
     public void addIgnoredUser(User ignoringUser, User ignoredUser) {
-
 
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -415,7 +505,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO ROLE_WITH_CONTEXT " +
-                    "(USER_ID, ROLE, CONTEXT_ID) values(?,?,?)");
+                    "(USER_ID, USER_ROLE, CONTEXT_ID) values(?,?,?)");
             ps.setString(1, user.getUserId().toString());
             ps.setString(2, role.name());
             ps.setString(3, context.getContextId().getId());
@@ -435,7 +525,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("DELETE FROM ROLE_WITH_CONTEXT WHERE (USER_ID = '"
-                    + user.getUserId().toString() + "' AND ROLE = '" + role.name()
+                    + user.getUserId().toString() + "' AND USER_ROLE = '" + role.name()
                     + "' AND CONTEXT_ID = '" + context.getContextId().getId() + "')");
             ps.executeUpdate();
             con.close();
@@ -460,10 +550,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             ps.setString(3, notification.getContext().getContextId().getId());
             if (notification.isRequest() == true){
                 if (notification instanceof RoomRequest) {
-
                     //TODO
-                    //vielleicht noch ein paar getter in Request-Klassen?
-
                 }
             } else {
                 ps.setString(4, null);
@@ -534,12 +621,41 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
     @Override
     public void addAreaReservation(AreaReservation contextReservation) {
-        // TODO
+        try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+            Connection con = DriverManager.getConnection(dbURL);
+            PreparedStatement ps = con.prepareStatement("INSERT INTO USER_RESERVATION(USER_ID, START_TIME, END_TIME, CONTEXT_ID) " +
+                    "values(?,?,?,?)");
+            ps.setString(1, contextReservation.getReserver().getUserId().toString());
+            ps.setTimestamp(2, Timestamp.valueOf(contextReservation.getFrom()));
+            ps.setTimestamp(3, Timestamp.valueOf(contextReservation.getTo()));
+            ps.setString(4, contextReservation.getArea().getContextId().getId());
+            ps.executeUpdate();
+            con.close();
+        } catch (Exception e) {
+            System.out.print("Fehler in Database-addAreaReservation: " + e);
+        }
+
     }
 
     @Override
     public void removeAreaReservation(AreaReservation contextReservation) {
-        // TODO
+        try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+            Connection con = DriverManager.getConnection(dbURL);
+            String user_id = contextReservation.getReserver().getUserId().toString();
+            String context_id = contextReservation.getArea().getContextId().getId();
+            Timestamp from = Timestamp.valueOf(contextReservation.getFrom());
+            Timestamp to = Timestamp.valueOf(contextReservation.getTo());
+
+            PreparedStatement ps = con.prepareStatement("DELETE FROM USER_RESERVATION WHERE (USER_ID = '"
+                    + user_id + "' AND START_TIME = " + from + " AND END_TIME = " + to +
+                    " AND CONTEXT_ID = '" + context_id + "')");
+            ps.executeUpdate();
+            con.close();
+        } catch (Exception e) {
+            System.out.print("Fehler in Database-addBannedUser: " + e);
+        }
     }
 
     public static void initialize() {
@@ -590,7 +706,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
             }
             if (!set.contains("ROLE_WITH_CONTEXT")) {
-                String sql = "CREATE TABLE ROLE_WITH_CONTEXT(USER_ID VARCHAR(36), ROLE CHAR, CONTEXT_ID VARCHAR(36))";
+                String sql = "CREATE TABLE ROLE_WITH_CONTEXT(USER_ID VARCHAR(36), USER_ROLE CHAR, CONTEXT_ID VARCHAR(36))";
                 statement.execute(sql);
 
             }
