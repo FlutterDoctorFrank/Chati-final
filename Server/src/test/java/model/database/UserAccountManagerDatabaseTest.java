@@ -100,17 +100,79 @@ public class UserAccountManagerDatabaseTest {
 
     @Test
     public void setPasswordTest() {
+        //Erstelle ein Benutzer
+        User test = this.database.createAccount("setPassword", "111");
+        //aendern Password zu 222
+        this.database.setPassword(test, "222");
+
+        //Suche direkt in Datenbank
+        String real_psw = null;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            //Suche der User in Datenbank und erhalte Password
+            ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_NAME = 'setPassword'");
+            res.first();
+            real_psw = res.getString("USER_PSW");
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+        Assert.assertEquals("222", real_psw);
 
     }
 
     @Test
     public void updateLastOnlineTime() {
+        //Erstelle ein Benutzer
+        User test = this.database.createAccount("updateTime", "111");
+        Timestamp current_time = new Timestamp(System.currentTimeMillis());
+        this.database.updateLastOnlineTime(test);
 
+        Timestamp real_time = null;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            //Suche der User in Datenbank und erhalte UpdateTime
+            ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_NAME = 'updateTime'");
+            res.first();
+            real_time = res.getTimestamp("LAST_ONLINE_TIME");
+            con.close();
+        } catch(SQLException e){
+            System.out.println("Test" + e);
+        }
+
+        //Wegen laufendes Program
+        //+1s
+        Timestamp sss = new Timestamp(current_time.getTime() + 1000);
+        boolean result = sss.after(real_time);
+        Assert.assertEquals(true, result);
+        //Assert.assertEquals(current_time, real_time);
     }
 
     @Test
     public void deleteAccount() {
+        //Erstelle ein Benutzer
+        User test = this.database.createAccount("deleteAccount", "111");
+        this.database.deleteAccount(test);
 
+        int row = 0;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_NAME = 'deleteAccount'");
+
+            while (res.next()){
+                row ++;
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+        Assert.assertEquals(0, row);
     }
 
     //getUser(username)

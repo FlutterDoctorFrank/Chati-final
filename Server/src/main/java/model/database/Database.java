@@ -260,8 +260,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET LAST_ONLINE_TIME = " +
-                    currentTime.toString() + "WHERE USER_ID = " + "'" + user.getUserId().toString() + "'");
+            PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET LAST_ONLINE_TIME = '" +
+                    currentTime.toString() + "' WHERE USER_ID = '" + user.getUserId().toString() + "'");
             ps.executeUpdate();
             con.close();
         } catch (Exception e) {
@@ -307,12 +307,14 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 res.first();
                 String user_name = res.getString("USER_NAME");
                 String avatar_name = res.getString("AVATAR_NAME");
-
+                Timestamp last_logout_time = res.getTimestamp("LAST_ONLINE_TIME");
+                //Avatar
                 Avatar user_avatar = null;
                 if (avatar_name != null){
                     user_avatar = Avatar.valueOf(avatar_name);
-                    //System.out.println(user_avatar.getName());
                 }
+
+                //
 
 
                 //!!! noch nicht bearbeitet!!!
@@ -354,7 +356,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             if (row == 1) {
                 res.first();
                 String user_id = res.getString("USER_ID");
-
+                Timestamp last_logout_time = res.getTimestamp("LAST_ONLINE_TIME");
                 String avatar_name = res.getString("AVATAR_NAME");
                 Avatar user_avatar = null;
                 if (avatar_name != null){
@@ -364,7 +366,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
                 //!!! noch nicht bearbeitet!!!
                 //TODO
-                User user = new User(UUID.fromString(user_id), username, user_avatar, null, null, null, null, null);
+                User user = new User(UUID.fromString(user_id), username, user_avatar, null, null,
+                        null, null, null);
 
                 return user;
 
@@ -402,7 +405,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 UUID user_ID = UUID.fromString(id);
                 String user_name = res.getString("USER_NAME");
                 String avatar_name = res.getString("AVATAR_NAME");
-
+                Timestamp last_logout_time = res.getTimestamp("LAST_ONLINE_TIME");
                 Avatar user_avatar = null;
                 if (avatar_name != null){
                     user_avatar = Avatar.valueOf(avatar_name);
