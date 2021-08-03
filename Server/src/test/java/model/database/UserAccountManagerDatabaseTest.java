@@ -1,6 +1,5 @@
 package model.database;
 
-import model.user.Avatar;
 import model.user.User;
 import org.junit.*;
 
@@ -21,7 +20,6 @@ public class UserAccountManagerDatabaseTest {
     }
 
 
-    //!!!!!!!!!dropTable problem!!!!!!!!
     private void deleteData(String tableName){
         try {
             Connection con = DriverManager.getConnection(dbURL);
@@ -89,6 +87,32 @@ public class UserAccountManagerDatabaseTest {
 
     }
 
+    //checkPassword(String username, String password)
+    @Test
+    public void checkPasswordTest(){
+        User test = this.database.createAccount("checkPassword", "111");
+        boolean realResult = this.database.checkPassword("checkPassword", "111");
+        boolean wrongSituation = this.database.checkPassword("checkPassword", "222");
+
+        Assert.assertEquals(true, realResult);
+        Assert.assertEquals(false, wrongSituation);
+    }
+
+    @Test
+    public void setPasswordTest() {
+
+    }
+
+    @Test
+    public void updateLastOnlineTime() {
+
+    }
+
+    @Test
+    public void deleteAccount() {
+
+    }
+
     //getUser(username)
     @Test
     public void getUserTest(){
@@ -140,15 +164,13 @@ public class UserAccountManagerDatabaseTest {
 
     }
 
-    //checkPassword(String username, String password)
     @Test
-    public void checkPasswordTest(){
-        User test = this.database.createAccount("checkPassword", "111");
-        boolean realResult = this.database.checkPassword("checkPassword", "111");
-        boolean wrongSituation = this.database.checkPassword("checkPassword", "222");
+    public void getUsers() {
 
-        Assert.assertEquals(true, realResult);
-        Assert.assertEquals(false, wrongSituation);
     }
+
+
+
+
 
 }
