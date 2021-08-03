@@ -59,8 +59,7 @@ public class LoginTable extends UIComponentTable {
                 } else if (!password.getText().matches("[A-Za-z0-9]{1,16}")) {
                     infoLabel.setText("Kein gültiges Passwort");
                 } else {
-                    Object[] credentials = {username.getText(), password.getText(), false};
-                    hud.sendLoginRequest(credentials);
+                    hud.sendLoginRequest(username.getText(), password.getText());
                 }
             }
         });
@@ -80,8 +79,7 @@ public class LoginTable extends UIComponentTable {
                     } else if (!password.getText().matches("[A-Za-z0-9]{1,16}")) {
                         infoLabel.setText("Kein gültiges Passwort");
                     } else {
-                        Object[] credentials = {username.getText(), password.getText(), true};
-                        hud.sendRegistrationRequest(credentials);
+                        hud.sendRegistrationRequest(username.getText(), password.getText());
                     }
                 }
             }

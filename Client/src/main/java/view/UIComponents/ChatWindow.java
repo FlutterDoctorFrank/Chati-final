@@ -19,6 +19,8 @@ public class ChatWindow extends Window {
         this.hud = hud;
         setResizable(true);
         setSize(300, 350);
+        setPosition(hud.getWidth() - getWidth(), 0);
+        setName("chat-window");
         create();
     }
 

@@ -42,7 +42,6 @@ public class PlayScreen extends ApplicationScreen {
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Chati.V_WIDTH / Chati.PPM, Chati.V_HEIGHT / Chati.PPM, gamecam);
         this.hud = hud;
-        hud.addMenuTable(null);
 
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("maps/map.tmx");
@@ -65,10 +64,7 @@ public class PlayScreen extends ApplicationScreen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if(hud.isUserPositionChanged()) {
-            for(Avatar avatar : avatars) {
-            }
-        }
+
 
         mapRenderer.render();
         box2DDebugRenderer.render(world, gamecam.combined);

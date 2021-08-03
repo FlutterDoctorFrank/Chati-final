@@ -15,14 +15,16 @@ public class DropDownMenus extends HorizontalGroup {
     private String currentButtonPressed;
 
     public DropDownMenus (Hud hud) {
-        setFillParent(true);
-        right().top();
+        this.hud = hud;
         create();
+        setName("drop-down-menus");
+        top().right();
+        setFillParent(true);
     }
 
     private void create() {
-        this.settings = new DropDownMenuButton(new Texture("icons/settings_img.png"), "settings", new UsersListTable(hud), hud, this);
-        this.notifications = new DropDownMenuButton(new Texture("icons/speech_bubble_img.png"), "notifications", new UsersListTable(hud), hud, this);
+        this.settings = new DropDownMenuButton(new Texture("icons/settings_img.png"), "settings", new SettingsTable(hud), hud, this);
+        this.notifications = new DropDownMenuButton(new Texture("icons/speech_bubble_img.png"), "notifications", new NotificationsTable(hud), hud, this);
         this.users = new DropDownMenuButton(new Texture("icons/user_img.png"), "users", new UsersListTable(hud), hud, this);
 
         addActor(notifications);

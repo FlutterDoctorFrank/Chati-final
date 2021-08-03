@@ -33,7 +33,7 @@ public class StartScreenTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.getApplicationScreen().getGame().setScreen(new PlayScreen(hud.getApplicationScreen().getGame(), hud));
+                hud.addMenuTable(null);
             }
         });
 

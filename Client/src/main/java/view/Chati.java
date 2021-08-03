@@ -4,28 +4,41 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import controller.network.ClientNetworkManager;
 import controller.network.ServerSender;
+import model.Context.Global.GlobalContext;
+import model.User.UserManager;
 import view.Screens.ApplicationScreen;
 import view.Screens.MenuScreen;
 
 public class Chati extends Game {
     private ServerSender serverSender;
-    private ClientNetworkManager manager;
+    private GlobalContext globalContext;
+    private UserManager userManager;
     private ApplicationScreen currentScreen;
     public static final int V_WIDTH = 1280;
     public static final int V_HEIGHT = 680;
     public static final float PPM = 10; //pixels per meter
 
-    public Chati(ClientNetworkManager manager) {
+    public Chati(ServerSender serverSender, GlobalContext globalContext, UserManager userManager) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setIdleFPS(60);
         config.useVsync(true);
         config.setTitle("Chati");
 
-        this.manager = manager;
-        this.serverSender = manager.getConnection();
+        this.globalContext = globalContext;
+        this.serverSender = serverSender;
+        this.serverSender = serverSender;
 
+        config.setMaximized(true);
+        config.setResizable(false);
+        new Lwjgl3Application(this, config);
+    }
+
+    public Chati () {
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        config.setIdleFPS(60);
+        config.useVsync(true);
+        config.setTitle("Chati");
         config.setMaximized(true);
         config.setResizable(true);
         new Lwjgl3Application(this, config);
@@ -33,7 +46,6 @@ public class Chati extends Game {
 
     public void create() {
         setScreen(new MenuScreen(this));
-        manager.setView(getScreen().getHud());
     }
 
     @Override
@@ -52,11 +64,15 @@ public class Chati extends Game {
         super.render();
     }
 
-    public void setServerSender(ServerSender serverSender) {
-        this.serverSender = serverSender;
-    }
-
     public ServerSender getServerSender() {
         return serverSender;
+    }
+
+    public GlobalContext getGlobalContext() {
+        return globalContext;
+    }
+
+    public UserManager getUserManager() {
+        return userManager;
     }
 }
