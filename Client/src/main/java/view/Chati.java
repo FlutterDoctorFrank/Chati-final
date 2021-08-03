@@ -5,8 +5,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import controller.network.ServerSender;
-import model.Context.Global.GlobalContext;
-import model.User.UserManager;
+import model.context.global.GlobalContext;
+import model.user.UserManager;
 import view.Screens.ApplicationScreen;
 import view.Screens.MenuScreen;
 

@@ -1,5 +1,6 @@
 package model.context.global;
 
+import model.context.global.GlobalContext;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

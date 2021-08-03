@@ -6,10 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import model.Context.Global.IGlobalContextView;
-import view.Screens.PlayScreen;
-
-import java.util.HashMap;
+import model.context.global.IGlobalContextView;
 
 
 public class StartScreenTable extends UIComponentTable {
