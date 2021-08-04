@@ -1,23 +1,19 @@
 package model.user;
 
-import model.context.global.GlobalContext;
 import model.context.spatial.ILocationView;
 import model.context.spatial.Location;
 import model.context.spatial.SpatialContext;
-import model.notification.INotificationView;
-import model.notification.Notification;
 import model.context.spatial.SpatialContextType;
 import model.role.Role;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 /**
- * Eine Schnittstelle, welche der View Zugriff auf Parameter eines Benutzers zur Verfügung
- * stellt.
+ * Ein Interface, welche der View Zugriff auf Parameter eines Benutzers zur Verfügung stellt.
  */
 public interface IUserView {
+
     /**
      * Gibt die ID des Benutzers zurück.
      * @return ID des Benutzer
@@ -44,7 +40,7 @@ public interface IUserView {
 
     /**
      * Gibt zurück, ob der Benutzer als Freund markiert ist.
-     * @return  true, wenn der Benutzer als Freund markiert ist, sonst false.
+     * @return true, wenn der Benutzer als Freund markiert ist, sonst false.
      */
     boolean isFriend();
 
@@ -55,46 +51,47 @@ public interface IUserView {
     boolean isIgnored();
 
     /**
+     * Gibt zurück, ob sich der intern angemeldete Benutzer zu diesem Benutzer teleportieren kann.
+     * @return true, wenn eine Teleportation möglich ist, sonst false.
+     */
+    boolean canTeleportTo();
+
+    /**
      * Gibt zurück, ob der Benutzer im aktuellen räumlichen Kontext des internen Benutzers als gemeldet markiert ist.
-     * @return true, wenn der Benutzer im aktuellen räumlichen Kontext als gemeldet
-     * markiert ist, sonst false.
+     * @return true, wenn der Benutzer im aktuellen räumlichen Kontext als gemeldet markiert ist, sonst false.
      */
     boolean isReported();
 
     /**
-     * Gibt zurück, ob der Benutzer im aktuellen räumlichen Kontext des internen Benutzers als stummgeschaltet markiert ist.
+     * Gibt zurück, ob der Benutzer im aktuellen räumlichen Kontext des internen Benutzers als stummgeschaltet markiert
+     * ist.
      * @return true, wenn der Benutzer im aktuellen Kontext als stummgeschaltet markiert ist, sonst false.
      */
     boolean isMuted();
 
     /**
-     * Gibt zurück, ob der Benutzer im aktuellen räumlichen Kontext des internen Benutzers als gesperrt markiert ist
-     * @return true, wenn der Benutzer im aktuellen Kontext als gesperrt markiert ist,
-     * sonst false.
+     * Gibt zurück, ob der Benutzer im aktuellen räumlichen Kontext des internen Benutzers als gesperrt markiert ist.
+     * @return true, wenn der Benutzer im aktuellen Kontext als gesperrt markiert ist, sonst false.
      */
     boolean isBanned();
 
     /**
-     * Gibt zurück, ob sich der Benutzer in der aktuellen Welt des internen Benutzers
-     * befindet.
+     * Gibt zurück, ob sich der Benutzer in der aktuellen Welt des internen Benutzers befindet.
      * @return true, wenn der Benutzer in derselben Welt ist, sonst false.
      * @see SpatialContext
-     * @see SpatialContextType#WORLD
      */
     boolean isInCurrentWorld();
 
     /**
-     * Gibt zurück, ob sich der Benutzer im aktuellen Raum des internen Benutzers be-
-     * findet.
+     * Gibt zurück, ob sich der Benutzer im aktuellen Raum des internen Benutzers befindet.
      * @return true, wenn der Benutzer im selben Raum ist, sonst false.
      * @see SpatialContext
-     * @see SpatialContextType#ROOM
      */
     boolean isInCurrentRoom();
 
     /**
      * Gibt die aktuelle Position des Benutzers innerhalb des aktuellen Raumes zurück.
-     * @return die Position des Benutzers.
+     * @return Die Position des Benutzers.
      * @see Location
      */
     ILocationView getCurrentLocation();
@@ -102,33 +99,13 @@ public interface IUserView {
     /**
      * Gibt die Rollen des Benutzers im globalen Kontext zurück.
      * @return die Rollen des Benutzers.
-     * @see GlobalContext
      */
     Set<Role> getGlobalRoles();
 
     /**
-     * Gibt die Rollen des Benutzers in der aktuellen Welt des internen Benutzers zurück.
+     * Gibt die Rollen des Benutzers in der aktuellen Welt und allen untergeordneten Kontexten dieser Welt zurück.
      * @return die Rollen des Benutzers in der aktuellen Welt.
      * @see SpatialContext
-     * @see SpatialContextType#WORLD
      */
     Set<Role> getWorldRoles();
-
-    /**
-     * Gibt die Benachrichtigungen des Benutzers im globalen Kontext zurück.
-     * @return die globalen Benachrichtigungen des Benutzers.
-     * @see Notification
-     * @see GlobalContext
-     */
-    Map<UUID, INotificationView> getGlobalNotifications();
-
-
-    /**
-     * Gibt die Benachrichtigungen des Benutzers in der aktuellen Welt zurück.
-     * @return die lokalen Benachrichtigungen des Benutzers.
-     * @see Notification
-     * @see SpatialContext
-     * @see SpatialContextType#WORLD
-     */
-    Map<UUID, INotificationView> getWorldNotifications();
 }

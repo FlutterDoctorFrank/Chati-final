@@ -5,9 +5,10 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Eine Schnittstelle, welche der View Zugriff auf Parameter einer Benachrichtigung ermöglicht.
+ * Ein Interface, welche der View Zugriff auf Parameter einer Benachrichtigung ermöglicht.
  */
 public interface INotificationView {
+
     /**
      * Gibt die ID der Benachrichtigung zurück.
      * @return ID der Benachrichtigung.

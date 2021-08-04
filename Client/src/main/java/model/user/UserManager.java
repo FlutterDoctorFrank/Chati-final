@@ -1,9 +1,7 @@
 package model.user;
 
-import model.context.global.GlobalContext;
-import model.exception.NotInWorldException;
-import model.exception.NotLoggedInException;
 import model.exception.UserNotFoundException;
+import view.Screens.IModelObserver;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,138 +10,156 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Eine Klasse, über welche der intern angemeldete Benutzer sowie aller bekannten externen
- * Benutzer verwaltet werden können.
+ * Eine Klasse, über welche der intern angemeldete Benutzer sowie aller bekannten externen Benutzer verwaltet werden
+ * können.
  */
 public class UserManager implements IUserManagerController, IUserManagerView{
 
-    /**
-     * Singleton-Instanz der Klasse.
-     */
-    static UserManager userManager;
-    /**
-     * lokaler Benutzer
-     */
-    private User intern;
-    /**
-     * alle anderen Benutzer
-     */
-    private final Map<UUID, User> externs;
+    /** Singleton-Instanz der Klasse. */
+    private static UserManager userManager;
 
-    private UserManager(){
-        this.intern = null;
-        this.externs = new HashMap<>();
-    }
+    /** Der auf diesem Client angemeldete Benutzer. */
+    private InternUser internUser;
 
+    /** Bekannte externe Benutzer. */
+    private final Map<UUID, User> externUsers;
 
-    @Override
-    public void setInternUser(UUID userId) {
-        intern = new User(userId);
+    /** Wird verwendet, um die View über Änderungen im Modell zu informieren. */
+    protected IModelObserver modelObserver;
+
+    /**
+     * Erzeugt eine neue Instanz des UserManager.
+     */
+    private UserManager() {
+        this.internUser = null;
+        this.externUsers = new HashMap<>();
     }
 
     @Override
-    public void addExternUser(UUID userId) {
-        externs.put(userId, new User(userId));
+    public void setInternUser(UUID userId, String username, Status status, Avatar avatar) {
+        internUser = new InternUser(userId, username, status, avatar);
+    }
+
+    @Override
+    public void addExternUser(UUID userId, String username, Status status, Avatar avatar) {
+        externUsers.put(userId, new User(userId, username, status, avatar));
     }
 
     @Override
     public void removeExternUser(UUID userId) throws UserNotFoundException {
-        if(externs.remove(userId)==null){
-            throw new UserNotFoundException("Client don't know this user", userId);
+        if (externUsers.remove(userId) == null) {
+            throw new UserNotFoundException("Tried to remove an unknown extern User.", userId);
         }
     }
 
     @Override
-    public IUserController getInternUser() throws NotLoggedInException {
-        if (intern==null){
-            throw new NotLoggedInException();
-        }
-        return intern;
+    public InternUser getInternUserController() {
+        throwIfNotLoggedIn();
+        return internUser;
     }
 
     @Override
-    public IUserController getExternUser(UUID userId) throws UserNotFoundException {
-        checkExternContains(userId);
-        return externs.get(userId);
+    public User getExternUserController(UUID userId) throws UserNotFoundException {
+        throwIfNotExists(userId);
+        return externUsers.get(userId);
     }
 
     @Override
-    public IUserView getInternUserView() throws NotLoggedInException {
-        if (intern==null){
-            throw new NotLoggedInException();
-        }
-        return intern;
+    public InternUser getInternUserView() {
+        throwIfNotLoggedIn();
+        return internUser;
     }
 
     @Override
-    public IUserView getExternUserView(UUID userId) throws UserNotFoundException {
-        checkExternContains(userId);
-        return externs.get(userId);
+    public User getExternUserView(UUID userId) throws UserNotFoundException {
+        throwIfNotExists(userId);
+        return externUsers.get(userId);
     }
 
     @Override
-    public Map<UUID, IUserView> getActiveUsers() throws NotInWorldException {
-        CheckUserIsInWorld();
-        return externs.values().stream().filter(User::isInCurrentWorld)
+    public Map<UUID, IUserView> getActiveUsers() {
+        throwIfNotInWorld();
+        return externUsers.values().stream().filter(User::isInCurrentWorld)
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
 
     @Override
-    public Map<UUID, IUserView> getFriends() throws NotLoggedInException {
-        checkIsNotLoggedIn();
-        return externs.entrySet().stream()
-                .filter(user -> user.getValue().isFriend())
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+    public Map<UUID, IUserView> getFriends() {
+        throwIfNotLoggedIn();
+        return externUsers.values().stream().filter(User::isFriend)
+                .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
 
     @Override
-    public Map<UUID, IUserView> getBannedUsers() throws NotInWorldException {
-        CheckUserIsInWorld();
-        return externs.entrySet().stream()
-                .filter(user -> user.getValue().isBanned())
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+    public Map<UUID, IUserView> getBannedUsers() {
+        throwIfNotInWorld();
+        return externUsers.values().stream().filter(User::isBanned)
+                .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
 
     /**
      * Gibt die Singleton-Instanz der Klasse zurück.
      * @return Instanz des UserManager.
      */
-    public static UserManager getInstance(){
+    public static UserManager getInstance() {
         if (userManager == null) {
-            return userManager = new UserManager();
+            userManager = new UserManager();
         }
-
         return userManager;
     }
 
     /**
-     * wirft eine Exeption, wenn der Benutzer in keiner Welt ist
-     * @throws NotInWorldException wenn der Benutzer keiner welt beigetreten ist.
+     * Gibt den an diesem Client angemeldeten Benutzer zurück.
+     * @return An diesem Client angemeldeten Benutzer.
      */
-    private void CheckUserIsInWorld() throws NotInWorldException {
-        if (GlobalContext.getInstance().getCurrentWold()==null){
-            throw new NotInWorldException("user hasn't joined a world");
+    public InternUser getInternUser() {
+        return internUser;
+    }
+
+    /**
+     * Wirft eine Exeption, wenn auf diesem Client kein Benutzer angemeldet ist.
+     * @throws IllegalStateException wenn auf diesem Client kein Benutzer angemeldet ist.
+     */
+    private void throwIfNotLoggedIn() {
+        if (internUser == null) {
+            throw new IllegalStateException("There is no user logged in on this client.");
         }
     }
 
     /**
-     * wirft eine Exeption, wenn niemand eingeloggt ist
-     * @throws NotLoggedInException wenn niemand eingeloggt ist
+     * Wirft eine Exeption, wenn der intern angemeldete Benutzer in keiner Welt ist.
+     * @throws IllegalStateException wenn der intern angemeldete Benutzer in keiner Welt ist.
      */
-    private void checkIsNotLoggedIn() throws NotLoggedInException {
-        if (intern==null){
-            throw new NotLoggedInException();
+    private void throwIfNotInWorld() {
+        if (internUser.getCurrentWorld() == null) {
+            throw new IllegalStateException("User is not in world.");
         }
     }
 
     /**
-     * wirft eine Exeption, wenn ein Benutzer dem KLienten nicht bekannt ist
-     * @param userId ID des Benutzers
-     * @throws UserNotFoundException wenn der Benutzer nicht in externs enthalten ist
+     * Wirft eine Exeption, wenn dem Client kein externer Benutzer mit der ID bekannt ist.
+     * @param userId ID des gesuchten Benutzers.
+     * @throws UserNotFoundException wenn dem Client kein externer Benutzer mit der ID bekannt ist.
      */
-    private void checkExternContains(UUID userId) throws UserNotFoundException {
-        if(!externs.containsKey(userId)){
-            throw new UserNotFoundException("Client don't know this user", userId);
+    private void throwIfNotExists(UUID userId) throws UserNotFoundException {
+        if (!externUsers.containsKey(userId)) {
+            throw new UserNotFoundException("No user with this ID was found.", userId);
         }
+    }
+
+    /**
+     * Setzt den Beobachter des Modells, über den die View über Änderungen benachrichtigt werden kann.
+     * @param modelObserver Beobachter des Modells.
+     */
+    public void setModelObserver(IModelObserver modelObserver) {
+        this.modelObserver = modelObserver;
+    }
+
+    /**
+     * Gibt den Beobachter des Modells zurück.
+     * @return Beobachter des Modells.
+     */
+    public IModelObserver getModelObserver() {
+        return modelObserver;
     }
 }

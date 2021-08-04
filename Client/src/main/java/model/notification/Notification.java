@@ -10,35 +10,30 @@ import java.util.UUID;
  * Eine Klasse, welche eine Benachrichtigung repräsentiert.
  */
 public class Notification implements INotificationView{
-    /**
-     * eindeutige ID der Benachrichtigung
-     */
+
+    /** Die eindeutige ID der Benachrichtigung. */
     private final UUID notificationId;
-    /**
-     * Zeitpunkt, an dem die Benachrichtigung generiert wurde
-     */
-    private final LocalDateTime timestamp;
-    /**
-     * gibt an, ob die Benachrichtigung eine Anfrage ist
-     */
-    private final boolean isRequest;
-    /**
-     * Nachricht der Benachrichtigung
-     */
-    private final MessageBundle messageBundle;
-    /**
-     * Kontext, in dem die Benachrichtigung generiert wurde
-     */
+
+    /** Kontext, in dem der Benutzer diese Benachrichtigung besitzt. */
     private final Context context;
 
-    public Notification(UUID notificationId, LocalDateTime timestamp, boolean isRequest, MessageBundle messageBundle, Context context) {
+    /** Übersetzbare Nachricht der Benachrichtigung zusammen mit ihren Argumenten. */
+    private final MessageBundle messageBundle;
+
+    /** Zeitpunkt, an dem die Benachrichtigung generiert wurde. */
+    private final LocalDateTime timestamp;
+
+    /** Die Information, ob diese Benachrichtigung als Anfrage dargestellt werden soll. */
+    private final boolean isRequest;
+
+    public Notification(UUID notificationId, Context context, MessageBundle messageBundle, LocalDateTime timestamp,
+                        boolean isRequest) {
         this.notificationId = notificationId;
+        this.context = context;
+        this.messageBundle = messageBundle;
         this.timestamp = timestamp;
         this.isRequest = isRequest;
-        this.messageBundle = messageBundle;
-        this.context = context;
     }
-
 
     @Override
     public UUID getNotificationId() {
@@ -60,15 +55,19 @@ public class Notification implements INotificationView{
         return isRequest;
     }
 
+    /**
+     * Gibt den Kontext zurück, in dem der Benutzer diese Benachrichtigung besitzt.
+     * @return Kontext, in dem der Benutzer diese Benachrichtigung besitzt.
+     */
     public Context getContext() {
         return context;
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        Notification that = (Notification) object;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Notification that = (Notification) o;
         return Objects.equals(notificationId, that.notificationId);
     }
 

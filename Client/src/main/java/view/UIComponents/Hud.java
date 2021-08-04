@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import controller.network.ServerSender;
-import model.Exceptions.ContextNotFoundException;
+import model.exception.ContextNotFoundException;
 import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.Menu;

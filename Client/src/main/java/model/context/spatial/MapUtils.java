@@ -5,12 +5,12 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.Array;
-import model.communication.*;
-import model.context.spatial.objects.*;
+import model.communication.CommunicationMedium;
+import model.communication.CommunicationRegion;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Eine Hilfsklasse, die Methoden bereitstellt, die mit Hilfe von Informationen einer TiledMap einen Raum initialisiert
@@ -30,11 +30,11 @@ public class MapUtils {
         String className = properties.get("communicationRegion", String.class);
         switch (className) {
             case "areaCommunication":
-                return new AreaCommunication();
+                return CommunicationRegion.AREA;
             case "radiusCommunication":
-                return new RadiusCommunication();
+                return CommunicationRegion.RADIAL;
             case "parentCommunication":
-                return new ParentCommunication();
+                return CommunicationRegion.PARENT;
             default:
                 throw new IllegalArgumentException();
         }
@@ -66,40 +66,12 @@ public class MapUtils {
         return layer.getHeight();
     }
 
-    public static boolean[][] getCollisionMap(TiledMap tiledMap) {
-        TiledMapTileLayer collisionLayer = (TiledMapTileLayer) tiledMap.getLayers().get("collision");
-        int width = collisionLayer.getWidth();
-        int height = collisionLayer.getHeight();
-        boolean[][] collisionMap = new boolean[width][height];
-        Array<RectangleMapObject> collisionRectangles = collisionLayer.getObjects().getByType(RectangleMapObject.class);
-        collisionRectangles.forEach(rectangle -> {
-            int startPosX = (int) rectangle.getRectangle().getX();
-            int startPosY = (int) rectangle.getRectangle().getY();
-            int rectWidth = (int) rectangle.getRectangle().getWidth();
-            int rectHeight = (int) rectangle.getRectangle().getHeight();
-            for (int i = startPosX; i < startPosX + rectWidth; i++) {
-                for (int j = startPosY; j < startPosY + rectHeight; j++) {
-                    collisionMap[i][j] = true;
-                }
-            }
-        });
-        return collisionMap;
-    }
-
-    public static int getSpawnPosX(TiledMap tiledMap) {
-        return tiledMap.getProperties().get("spawnPosX", Integer.class);
-    }
-
-    public static int getSpawnPosY(TiledMap tiledMap) {
-        return tiledMap.getProperties().get("spawnPosY", Integer.class);
-    }
-
     /**
      * Methode, mit der alle untergeordneten Kontexte eines Raums erzeugt werden.
      * @param room Raum, dessen untergeordnete Kontexte erzeugt werden sollen.
      * @param tiledMap TiledMap, in der die nötigen Daten enthalten sind.
      */
-    public static void buildChildTree(Room room, TiledMap tiledMap) {
+    public static void buildChildTree(SpatialContext room, TiledMap tiledMap) {
         // Hole die Quadrate der Kontexte aus der TiledMap.
         MapLayer contextLayer = tiledMap.getLayers().get("contextLayer");
         Array<RectangleMapObject> contextRectangles = contextLayer.getObjects().getByType(RectangleMapObject.class);
@@ -112,7 +84,7 @@ public class MapUtils {
         });
         // Erzeuge alle Kontexte nacheinander.
         contextRectangles.forEach(contextRectangle -> {
-            createByType(room, contextRectangle);
+            create(room, contextRectangle);
         });
     }
 
@@ -122,51 +94,19 @@ public class MapUtils {
      * @param room Übergeordneter Raum der zu erzeugenden Kontexte.
      * @param contextRectangle Quadrat der TiledMap, das die Informationen über den Kontext enthält.
      */
-    private static void createByType(Room room, RectangleMapObject contextRectangle) {
+    private static void create(SpatialContext room, RectangleMapObject contextRectangle) {
         // Ermittle alle Parameter zur Erzeugung des Kontextes.
-        String areaName = contextRectangle.getName();
+        String contextName = contextRectangle.getName();
         CommunicationRegion communicationRegion = getCommunicationRegion(contextRectangle.getProperties());
         Set<CommunicationMedium> communicationMedia = getCommunicationMedia(contextRectangle.getProperties());
         int posX = (int) contextRectangle.getRectangle().getX();
         int posY = (int) contextRectangle.getRectangle().getY();
         int width = (int) contextRectangle.getRectangle().getWidth();
         int height = (int) contextRectangle.getRectangle().getHeight();
-        Expanse expanse = new Expanse(new Location(room, posX, posY), width, height);
+        Expanse expanse = new Expanse(new Location(posX, posY), width, height);
         // Ermittle den übergeordneten Kontext. Da die Quadrate absteigend ihrer Grö0e sortiert eingefügt werden,
         // befindet sich der übergeordnete Kontext immer bereits in der Kontexthierarchie.
-        Area parent = room.getArea(posX, posY);
-        String className = contextRectangle.getProperties().get("contextType", String.class);
-        switch (className) {
-            case "area": // Erzeuge einfachen Bereich.
-                new Area(areaName, parent, room.getWorld(), communicationRegion, communicationMedia, expanse);
-                break;
-            case "areaPlanner": // Erzeuge AreaPlanner.
-                AreaPlanner areaPlanner = new AreaPlanner(areaName, parent, communicationRegion, communicationMedia, expanse);
-                parent.addInteractable(areaPlanner);
-                break;
-            case "gameBoard": // Erzeuge GameBoard.
-                GameBoard gameBoard = new GameBoard(areaName, parent, communicationRegion, communicationMedia, expanse);
-                parent.addInteractable(gameBoard);
-                break;
-            case "musicPlayer": // Erzeuge MusicPlayer.
-                MusicPlayer musicPlayer = new MusicPlayer(areaName, parent, communicationRegion, communicationMedia, expanse);
-                parent.addInteractable(musicPlayer);
-                break;
-            case "portal": // Erzeuge Portal.
-                Portal portal = new Portal(areaName, parent, communicationRegion, communicationMedia, expanse);
-                parent.addInteractable(portal);
-                break;
-            case "roomReception": // Erzeuge RoomReception.
-                RoomReception roomReception = new RoomReception(areaName, parent, communicationRegion, communicationMedia, expanse);
-                parent.addInteractable(roomReception);
-                break;
-            case "seat": // Erzeuge Seat.
-                Seat seat = new Seat(areaName, parent, communicationRegion, communicationMedia, expanse);
-                parent.addInteractable(seat);
-                break;
-            default: // Zu erzeugender Kontext existiert nicht.
-                throw new IllegalArgumentException();
-        }
-
+        SpatialContext parent = room.getArea(posX, posY);
+        new SpatialContext(contextName, parent, communicationRegion, communicationMedia, expanse);
     }
 }

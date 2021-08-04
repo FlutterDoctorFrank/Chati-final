@@ -1,65 +1,65 @@
 package model.context;
 
-import model.communication.CommunicationRegion;
-import model.context.global.GlobalContext;
 import model.context.spatial.SpatialContext;
-import model.communication.CommunicationMedium;
-import model.context.spatial.Music;
+import model.exception.ContextNotFoundException;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
- * Eine Klasse, welche einen Kontext der Anwendung repräsentiert. Ein Kontext legt den
- * Umfang fest, in welchem Benutzer Benachrichtigungen empfangen können, Rollen haben
- * können, kommunizieren können und sonstige Benutzeraktionen durchführen können.
+ * Eine Klasse, welche einen Kontext der Anwendung repräsentiert. Ein Kontext legt den Umfang fest, in welchem Benutzer
+ * Benachrichtigungen empfangen können, Rollen haben können, kommunizieren können und sonstige Benutzeraktionen
+ * durchführen können.
  */
-public abstract class Context implements IContextView{
+public class Context implements IContextView {
+
+    /** Der Name des übergeordnetsten Kontextes. */
+    private static final String ROOT_NAME = "Global";
+
+    /** Der übergeordnetste Kontext. */
+    private static Context global;
+
+    /** Die eindeutige ID dieses Kontextes. */
+    protected final ContextID contextId;
+
+    /** Name des Kontextes. */
+    protected final String contextName;
+
+    /** Übergeordneter Kontext dieses Kontextes. */
+    protected final Context parent;
+
+    /** Untergeordnete (räumliche) Kontexte dieses Kontextes. */
+    protected final Map<ContextID, SpatialContext> children;
 
     /**
-     * Name des Kontexts
+     * Erzeugt eine neue Instanz eines Kontextes.
+     * @param contextName Name des Kontextes.
+     * @param parent Übergeordneter Kontext.
      */
-    private final String contextName;
-    /**
-     * Kind-Kontexte
-     */
-    protected Map<ContextID, SpatialContext> children;
-    /**
-     * Eltern-Kontext
-     */
-    private final Context parent;
-    /**
-     * eindeutige ID des Kontexts
-     */
-    private final ContextID contextId;
-    /**
-     * auf dem Kontext herrschende Kommunikationsform
-     */
-    private final CommunicationRegion communicationRegion;
-    /**
-     * auf dem Kontext erlaubte Kommunikationsmedien
-     */
-    private final Set<CommunicationMedium> communicationMedia;
-    /**
-     * Musik, die auf dem KOntext abgespielt wird
-     */
-    private Music music;
-
-
-    protected Context(String contextName, Context parent, CommunicationRegion communicationRegion,
-                      Set<CommunicationMedium> communicationMedia) {
-        this.contextName = contextName;
-        this.parent = parent;
-        this.communicationRegion = communicationRegion;
-        this.communicationMedia = communicationMedia;
+    protected Context(String contextName, Context parent) {
         if (parent == null) {
             this.contextId = new ContextID(contextName);
         } else {
             this.contextId = new ContextID(parent.getContextId().getId().concat(".").concat(contextName));
         }
+        this.contextName = contextName;
+        this.parent = parent;
+        this.children = new HashMap<>();
     }
 
+    /**
+     * Erzeugt eine neue Instanz eines Kontextes.
+     * @param contextId ID des Kontextes.
+     * @param contextName Name des Kontextes.
+     * @param parent Übergeordneter Kontext.
+     */
+    protected Context(ContextID contextId, String contextName, Context parent) {
+        this.contextId = contextId;
+        this.contextName = contextName;
+        this.parent = parent;
+        this.children = new HashMap<>();
+    }
 
     @Override
     public ContextID getContextId() {
@@ -71,58 +71,63 @@ public abstract class Context implements IContextView{
         return contextName;
     }
 
-    @Override
-    public Music getMusic() {
-        return music;
-    }
-
-    @Override
-    public CommunicationRegion getCommunicationRegion() {
-        return communicationRegion;
-    }
-
-    @Override
-    public Set<CommunicationMedium> getCommunicationMedia() {
-        return communicationMedia;
-    }
-
-
     /**
-     * Prüft, ob dieser Kontext in einem anderen Kontext enthalten ist.
-     * @param context: Zu überprüfender Kontext.
-     * @return Gibt truezurück, wenn der Kontext im übergebenen Kontext enthalten
-     * ist, sonst false.
+     * Fügt einen untergeordneten Kontext hinzu.
+     * @param context Hinzuzufügender Kontext.
      */
-    public boolean isInContext(Context context){
-        if(this.equals(GlobalContext.getInstance())){
-            return this.equals(context);
-        }
-        return !this.equals(context) || parent.isInContext(context);
+    public void addChild(SpatialContext context) {
+        this.children.put(context.getContextId(), context);
     }
 
     /**
-     * gibt den Context einer contextId zurück, wenn sich dieser im Unterbaum des aktuellen Kontextes befindet
-     * @param contextId Id des gesuchten Kontextes
-     * @return Context, wenn im Unterbaum enthalten, ansonsten null
+     * Entfernt einen untergeordneten Kontext.
+     * @param context Zu entfernender Kontext.
      */
-    public Context getContext(ContextID contextId) {
+    public void removeChild(SpatialContext context) {
+        this.children.remove(context.getContextId());
+    }
+
+    /**
+     * Gibt den übergeordneten Kontext zurück.
+     * @return Übergeordneter Kontext.
+     */
+    public Context getParent() {
+        return parent;
+    }
+
+    /**
+     * Gibt einen untergeordneten Kontext zu gegebener ID zurück.
+     * @param contextId ID des gesuchten Kontextes.
+     * @return Kontext mit der übergebenen ID.
+     * @throws ContextNotFoundException wenn kein untergeordneter Kontext mit der ID gefunden wurde.
+     */
+    public Context getContext(ContextID contextId) throws ContextNotFoundException {
         Context found = null;
-        if (getContextId().equals(contextId)) {
-            found = this;
+        if (this.contextId.equals(contextId)) {
+            return this;
         } else {
-            for (Map.Entry<ContextID, SpatialContext> entry : children.entrySet()) {
-                Context child = entry.getValue();
+            for (SpatialContext child : children.values()) {
                 found = child.getContext(contextId);
                 if (found != null) {
                     break;
                 }
             }
         }
+        if (parent == null && found == null) {
+            throw new ContextNotFoundException("Context with this ID not found.", contextId);
+        }
         return found;
     }
 
-    public void setMusic(Music music) {
-        this.music = music;
+    /**
+     * Gibt den übergeordnetsten Kontext zurück.
+     * @return Übergeordnetster Kontext.
+     */
+    public static Context getGlobal() {
+        if (global == null) {
+            global = new Context(ROOT_NAME, null);
+        }
+        return global;
     }
 
     @Override

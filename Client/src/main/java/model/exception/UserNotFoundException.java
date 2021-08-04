@@ -4,7 +4,6 @@ import java.util.UUID;
 
 public class UserNotFoundException extends Exception {
     private UUID userID;
-    private String username;
 
     public UserNotFoundException(String errorMessage, UUID userID) {
         super(errorMessage);
@@ -13,9 +12,5 @@ public class UserNotFoundException extends Exception {
 
     public UUID getUserID() {
         return userID;
-    }
-
-    public String getUsername() {
-        return username;
     }
 }

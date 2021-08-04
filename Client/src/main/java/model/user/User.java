@@ -1,207 +1,161 @@
 package model.user;
 
 import model.context.Context;
-import model.context.global.GlobalContext;
-import model.context.spatial.ILocationView;
 import model.context.spatial.Location;
-import model.exception.IllegalActionException;
-import model.exception.NotificationNotFoundException;
-import model.MessageBundle;
-import model.notification.INotificationView;
-import model.notification.Notification;
-import model.role.ContextRole;
+import model.exception.ContextNotFoundException;
 import model.context.ContextID;
 import model.role.Role;
-import view.Screens.IModelObserver;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Eine Klasse, welche einen Benutzer der Anwendung repräsentiert.
  */
-public class User implements IUserController, IUserView{
+public class User implements IUserController, IUserView {
 
-    /**
-     * eindeutige ID des Benutzers
-     */
+    /** Die eindeutige ID des Benutzers */
     private final UUID userId;
-    /**
-     * Name des Benutzers
-     */
+
+    /** Der Name eines Benutzers. */
     private String username;
-    /**
-     * gibt an, ob sich der Benutzer in der aktuellen Welt befindet
-     */
-    private boolean inCurrentWorld;
-    /**
-     * gibt an, ob sich der Benutezr im aktuellen Raum befindet
-     */
-    private boolean inCurrentRoom;
-    /**
-     * gibt an, ob der Benutzer mit dem lokalen Benutzer befreundet ist
-     */
-    private boolean friend;
-    /**
-     * gibt an, ob der Benutzer vom lokalen Benutzern ignoriert wird
-     */
-    private boolean ignored;
-    /**
-     * gibt den Status des Benutzers an
-     */
+
+    /** Der Online-Status des Benutzers. */
     private Status status;
-    /**
-     * alle Benachrichtigungen des Benutzers
-     */
-    private final Map<UUID, Notification> notifications;
-    /**
-     * alle Rollen des Benutzers
-     */
-    private final Map<ContextID, ContextRole> roles;
-    /**
-     * Kontexte, in denen der Benutzer gemeldet ist
-     */
-    private final Map<ContextID, Context> reported;
-    /**
-     * Kontexte, in denen der Benutzer stumm geschalten ist
-     */
-    private final Map<ContextID, Context> muted;
-    /**
-     * Kontexte, in denen der Benutzer gebannt ist
-     */
-    private final Map<ContextID, Context> banned;
-    /**
-     * aktuelle Position des Benutzers
-     */
-    private Location location;
-    /**
-     * Avatar des Benutzers
-     */
+
+    /** Der Avatar des Benutzers. */
     private Avatar avatar;
+
+    /** Die Information, ob sich der Benutzer gerade in der aktuellen Welt des intern angemeldeten Benutzers dieses
+        Clients befindet.*/
+    protected boolean isInCurrentWorld;
+
+    /** Die Information, ob sich der Benutzer gerade im aktuellen Raum des intern angemeldeten Benutzers dieses
+        Clients befindet. */
+    protected boolean isInCurrentRoom;
+
+    /** Die aktuelle Position des Benutzers auf der Karte des aktuell angezeigten Raums. */
+    protected Location currentLocation;
+
+    /** Die Information, ob der Benutzer mit dem intern angemeldeten Benutzer dieses Clients befreundet ist. */
+    private boolean isFriend;
+
+    /** Die Information, ob der Benutzer von dem intern angemeldeten Benutzer dieses Clients ignoriert wird. */
+    private boolean isIgnored;
+
+    /** Die Information, ob sich der intern angemeldete Benutzer zu diesem Benutzer teleportieren kann. */
+    private boolean canTeleportTo;
+
+    /** Die Kontexte, in denen der Benutzer gemeldet ist. */
+    private final Map<ContextID, Context> reportedContexts;
+
+    /** Die Kontexte, in denen der Benutzer stummgeschaltet ist. */
+    private final Map<ContextID, Context> mutedContexts;
+
+    /** Die Kontexte, in denen der Benutzer gesperrt ist. */
+    private final Map<ContextID, Context> bannedContexts;
+
+    /** Die Rollen eines Benutzer in den jeweiligen Kontexten. */
+    private final Map<Context, Set<Role>> contextRoles;
+
     /**
-     * Beobachterschnittstelle, um View über Änderungen zu informieren
+     * Erzeugt eine neue Instanz eines Benutzers.
+     * @param userId Die eindeutige ID des Benutzers.
      */
-    private final IModelObserver iModelObserver;
-
-
-    public User(UUID userId) {
+    public User(UUID userId, String username, Status status, Avatar avatar) {
         this.userId = userId;
-        iModelObserver = GlobalContext.getInstance().getIModelObserver();
-        notifications = new HashMap<>();
-        roles = new HashMap<>();
-        reported = new HashMap<>();
-        muted = new HashMap<>();
-        banned = new HashMap<>();
+        this.username = username;
+        this.status = status;
+        this.avatar = avatar;
+        this.isInCurrentWorld = false;
+        this.isInCurrentRoom = false;
+        this.currentLocation = null;
+        this.isFriend = false;
+        this.isIgnored = false;
+        this.canTeleportTo = false;
+        this.reportedContexts = new HashMap<>();
+        this.mutedContexts = new HashMap<>();
+        this.bannedContexts = new HashMap<>();
+        this.contextRoles = new HashMap<>();
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
-
 
     @Override
     public void setUsername(String username) {
         this.username = username;
-        iModelObserver.setUserInfoChanged();
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
     public void setStatus(Status status) {
         this.status = status;
-        iModelObserver.setUserInfoChanged();
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
     public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
-        iModelObserver.setUserInfoChanged();
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void setCurrentWorld(boolean inWorld) {
-        inCurrentWorld = inWorld;
-        iModelObserver.setUserInfoChanged();
+    public void setInCurrentWorld(boolean isInCurrentWorld) {
+        this.isInCurrentWorld = isInCurrentWorld;
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void setCurrentRoom(boolean inRoom) {
-        inCurrentRoom = inRoom;
-        iModelObserver.setUserInfoChanged();
+    public void setInCurrentRoom(boolean isInCurrentRoom) {
+        this.isInCurrentRoom = isInCurrentRoom;
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
     public void setFriend(boolean isFriend) {
-        friend = isFriend;
-        iModelObserver.setUserInfoChanged();
+        this.isFriend = isFriend;
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
     public void setIgnored(boolean isIgnored) {
-        ignored = isIgnored;
-        iModelObserver.setUserInfoChanged();
+        this.isIgnored = isIgnored;
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void setReport(ContextID contextId, boolean isReported) {
-        if(!(reported.put(contextId, GlobalContext.getInstance().getContext(contextId)) == null)){
-            reported.remove(contextId);
-        }
-        iModelObserver.setUserInfoChanged();
+    public void setTeleportable(boolean canTeleportTo) {
+        this.canTeleportTo = canTeleportTo;
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void setMute(ContextID contextId, boolean isMuted) {
-        if(!(muted.put(contextId, GlobalContext.getInstance().getContext(contextId)) == null)){
-            muted.remove(contextId);
-        }
-        iModelObserver.setUserInfoChanged();
+    public void setReport(ContextID contextId, boolean isReported) throws ContextNotFoundException {
+        reportedContexts.put(contextId, Context.getGlobal().getContext(contextId));
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void setBan(ContextID contextId, boolean isBanned) {
-        if(!(banned.put(contextId, GlobalContext.getInstance().getContext(contextId)) == null)){
-            banned.remove(contextId);
-        }
-        iModelObserver.setUserInfoChanged();
+    public void setMute(ContextID contextId, boolean isMuted) throws ContextNotFoundException {
+        mutedContexts.put(contextId, Context.getGlobal().getContext(contextId));
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void setRoles(ContextID contextId, Set<Role> roles) {
-        ContextRole contextRole = this.roles.get(contextId);
-        if (contextRole == null) {
-            this.roles.put(contextId, new ContextRole(roles));
-        } else {
-            roles.forEach(role -> {
-                try {
-                    contextRole.addRole(role);
-                } catch (IllegalActionException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-        iModelObserver.setUserInfoChanged();
+    public void setBan(ContextID contextId, boolean isBanned) throws ContextNotFoundException {
+        bannedContexts.put(contextId, Context.getGlobal().getContext(contextId));
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void addNotification(ContextID contextId, UUID notificationId, String messageKey, Object[] args,
-                                LocalDateTime timestamp, boolean isRequest) throws IllegalActionException {
-        if (notifications.containsKey(notificationId)){
-            throw new IllegalActionException("this notificationId maps already to a notification!");
-        }
-        notifications.put(notificationId, new Notification(notificationId, timestamp, isRequest,
-                new MessageBundle(messageKey, args), GlobalContext.getInstance().getContext(contextId)));
-        iModelObserver.setUserNotificationChanged();
-    }
-
-    @Override
-    public void removeNotification(UUID notificationId) throws NotificationNotFoundException{
-        if(notifications.remove(notificationId) == null){
-            throw new NotificationNotFoundException("This notificationId doesn't map to any Notification", notificationId);
-        }
-        iModelObserver.setUserNotificationChanged();
+    public void setRoles(ContextID contextId, Set<Role> roles) throws ContextNotFoundException {
+        Context context = Context.getGlobal().getContext(contextId);
+        contextRoles.put(context, roles);
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
     public void setPosition(int posX, int posY) {
-        location = new Location(posX, posY);
-        iModelObserver.setUserPositionChanged();
+        currentLocation = new Location(posX, posY);
+        UserManager.getInstance().getModelObserver().setUserPositionChanged();
     }
 
     @Override
@@ -226,64 +180,78 @@ public class User implements IUserController, IUserView{
 
     @Override
     public boolean isFriend() {
-        return friend;
+        return isFriend;
     }
 
     @Override
     public boolean isIgnored() {
-        return ignored;
+        return isIgnored;
+    }
+
+    @Override
+    public boolean canTeleportTo() {
+        return canTeleportTo;
     }
 
     @Override
     public boolean isReported() {
-        return reported.containsKey(location.getArea().getContextId());
+        Context current = UserManager.getInstance().getInternUser().getCurrentLocation().getArea();
+        do {
+            if (reportedContexts.containsKey(current.getContextId())) {
+                return true;
+            }
+            current = current.getParent();
+        } while (current != null);
+        return false;
     }
 
     @Override
     public boolean isMuted() {
-        return muted.containsKey(location.getArea().getContextId());
+        Context current = UserManager.getInstance().getInternUser().getCurrentLocation().getArea();
+        do {
+            if (mutedContexts.containsKey(current.getContextId())) {
+                return true;
+            }
+            current = current.getParent();
+        } while (current != null);
+        return false;
     }
 
     @Override
     public boolean isBanned() {
-        return banned.containsKey(location.getArea().getContextId());
+        Context current = UserManager.getInstance().getInternUser().getCurrentLocation().getArea();
+        do {
+            if (bannedContexts.containsKey(current.getContextId())) {
+                return true;
+            }
+            current = current.getParent();
+        } while (current != null);
+        return false;
     }
 
     @Override
     public boolean isInCurrentWorld() {
-        return inCurrentWorld;
+        return isInCurrentWorld;
     }
 
     @Override
     public boolean isInCurrentRoom() {
-        return inCurrentRoom;
+        return isInCurrentRoom;
     }
 
     @Override
-    public ILocationView getCurrentLocation() {
-        return location;
+    public Location getCurrentLocation() {
+        return currentLocation;
     }
 
     @Override
     public Set<Role> getGlobalRoles() {
-        return roles.get(GlobalContext.getInstance().getContextId()).getRoles();
+        return contextRoles.get(Context.getGlobal());
     }
 
     @Override
     public Set<Role> getWorldRoles() {
-        return roles.get(GlobalContext.getInstance().getWorld().getContextId()).getRoles();
-    }
-
-    @Override
-    public Map<UUID, INotificationView> getGlobalNotifications() {
-        return notifications.entrySet().stream().filter(context -> context.getValue().getContext().equals(GlobalContext.
-                getInstance())).collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    @Override
-    public Map<UUID, INotificationView> getWorldNotifications() {
-        return notifications.entrySet().stream().filter(context -> context.getValue().getContext().equals(GlobalContext.
-                getInstance().getWorld())).collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+        return contextRoles.get(UserManager.getInstance().getInternUser().getCurrentWorld());
     }
 
     @Override

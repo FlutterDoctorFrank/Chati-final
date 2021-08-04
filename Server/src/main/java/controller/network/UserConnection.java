@@ -187,6 +187,8 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 } catch (IllegalInteractionException ex) {
                     // Mit dem Objekt kann nicht interagiert werden oder das Objekt existiert nicht.
                     LOGGER.warning("Received illegal context-interaction from user " + this.user.getUsername() + ": " + ex.getMessage());
+                } catch (ContextNotFoundException e) {
+
                 }
             } else {
                 LOGGER.fine("User " + this.user.getUsername() + " tried to interact with menu while not in world");
@@ -364,6 +366,8 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 } catch (IllegalInteractionException ex) {
                     // Mit dem Objekt kann nicht interagiert werden oder das Objekt existiert nicht.
                     LOGGER.warning("Received illegal context-interaction from user " + this.user.getUsername() + ": " + ex.getMessage());
+                } catch (ContextNotFoundException ex) {
+
                 }
             } else {
                 LOGGER.fine("User " + this.user.getUsername() + " tried to interact with context while not in world");

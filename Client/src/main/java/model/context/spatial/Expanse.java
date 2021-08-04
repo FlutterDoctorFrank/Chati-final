@@ -1,22 +1,25 @@
 package model.context.spatial;
 
 /**
- * diese Klasse repräsentiert eine 2-dimensionale Ausdehnung an einer Position
+ * Repräsentiert die räumliche Ausdehnung eines Kontextes.
  */
 public class Expanse {
-    /**
-     * linke, untere Ecke der Ausdehnung
-     */
+
+    /** Position der unteren linken Ecke des Kontextes. */
     private final Location bottomLeft;
-    /**
-     * Breite der Ausdehnung
-     */
+
+    /** Breite des Kontextes. */
     private final int width;
-    /**
-     * Höhe der Ausdehnung
-     */
+
+    /** Höhe des Kontextes. */
     private final int height;
 
+    /**
+     * Erzeugt eine neue Instanz der räumlichen Ausdehnung eines Kontextes.
+     * @param bottomLeft Position der unteren linken Ecke des Kontextes.
+     * @param width Breite des Kontextes.
+     * @param height Höhe des Kontextes.
+     */
     public Expanse(Location bottomLeft, int width, int height) {
         this.bottomLeft = bottomLeft;
         this.width = width;
@@ -24,10 +27,10 @@ public class Expanse {
     }
 
     /**
-     * prüft, ob ein Punkt innerhalb der Ausdehnung ist
-     * @param posX X-Koordinate des Punktes
-     * @param posY Y-Koordinate des Punktes
-     * @return true, wenn der Punkt innerhalb der Ausdehnung ist, sonst false
+     * Überprüft, ob sich gegebene Koordinaten in der räumlichen Ausdehnung eines Kontextes befinden.
+     * @param posX Zu überprüfende X-Koordinate.
+     * @param posY Zu überprüfende Y-Koordinate.
+     * @return true, wenn sich die Koordinaten in der Ausdehnung befinden, sonst false.
      */
     public boolean isIn(int posX, int posY) {
         return bottomLeft.getPosX() <= posX && posX <= bottomLeft.getPosX() + width
