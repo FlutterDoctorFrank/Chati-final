@@ -75,6 +75,7 @@ public class World extends Room implements IWorld {
     public void addUser(User user) {
         // Sende die entsprechenden Pakete an den Benutzer und an andere Benutzer.
         user.getClientSender().send(ClientSender.SendAction.WORLD_ACTION, this);
+
         super.addUser(user);
 
         user.getWorldRoles().values().forEach(contextRole -> {

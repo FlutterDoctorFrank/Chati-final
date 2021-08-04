@@ -61,6 +61,10 @@ public class SpatialContext extends Context implements ISpatialContextView {
     }
 
     public void buildContextTree(SpatialMap map) {
+        // Raum wurde bereits initialisiert.
+        if (this.map != null) {
+            return;
+        }
         this.map = map;
         TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
         this.communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());

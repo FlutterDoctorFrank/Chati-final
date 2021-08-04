@@ -51,20 +51,41 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void setWorld(ContextID worldId, String worldName) {
+    public void joinWorld(ContextID worldId, String worldName) {
         this.currentWorld = new SpatialContext(worldId, worldName, Context.getGlobal());
         this.isInCurrentWorld = true;
         UserManager.getInstance().getModelObserver().setWorldChanged();
     }
 
     @Override
-    public void setRoom(ContextID roomId, String roomName, SpatialMap map) {
+    public void leaveWorld() {
+        if (currentWorld == null) {
+            throw new IllegalStateException("User is not in a world.");
+        }
+        // Entferne alle Referenzen auf die Welt und alle untergeordneten Kontexte.
+        reportedContexts.values().removeIf(context -> !context.equals(Context.getGlobal()));
+        mutedContexts.values().removeIf(context -> !context.equals(Context.getGlobal()));
+        bannedContexts.values().removeIf(context -> !context.equals(Context.getGlobal()));
+        contextRoles.keySet().removeIf(context -> !context.equals(Context.getGlobal()));
+        notifications.values().removeIf(notification -> !notification.getContext().equals(Context.getGlobal()));
+        currentLocation = null;
+        currentRoom = null;
+        isInCurrentRoom = false;
+        currentWorld = null;
+        isInCurrentWorld = false;
+        music = null;
+    }
+
+    @Override
+    public void joinRoom(ContextID roomId, String roomName, SpatialMap map) {
         if (currentWorld == null) {
             throw new IllegalStateException("User is not in world.");
         }
+        currentLocation = null;
+        music = null;
         // Entferne alten Raum aus der Kontexthierarchie, sofern er nicht die Welt selbst ist.
         if (currentRoom != null && !currentWorld.equals(currentRoom)) {
-            currentWorld.removeChild(currentRoom);
+            leaveRoom();
         }
         // Überprüfe, ob zu betretender Raum der Welt entspricht, sonst erzeuge neuen Raum.
         if (currentWorld.getContextId().equals(roomId)) {
@@ -73,8 +94,8 @@ public class InternUser extends User implements IInternUserController, IInternUs
             this.currentRoom = new SpatialContext(roomId, roomName, currentWorld);
         }
         // Erzeuge die Kontexthierarchie des Raums anhand der Karte.
-        this.currentRoom.buildContextTree(map);
-        this.isInCurrentRoom = true;
+        currentRoom.buildContextTree(map);
+        isInCurrentRoom = true;
         UserManager.getInstance().getModelObserver().setRoomChanged();
     }
 
@@ -138,5 +159,23 @@ public class InternUser extends User implements IInternUserController, IInternUs
     @Override
     public Music getMusic() {
         return music;
+    }
+
+    /**
+     * Entfernt alle Referenzen auf einen verlassen (privaten) Raum.
+     */
+    public void leaveRoom() {
+        // Entferne alle Referenzen auf den Raum und allen untergeordneten Kontexten.
+        reportedContexts.values()
+                .removeIf(context -> !context.equals(Context.getGlobal()) || !context.equals(currentWorld));
+        mutedContexts.values()
+                .removeIf(context -> !context.equals(Context.getGlobal()) || !context.equals(currentWorld));
+        bannedContexts.values()
+                .removeIf(context -> !context.equals(Context.getGlobal()) || !context.equals(currentWorld));
+        contextRoles.keySet()
+                .removeIf(context -> !context.equals(Context.getGlobal()) || !context.equals(currentWorld));
+        currentWorld.removeChild(currentRoom);
+        currentRoom = null;
+        isInCurrentRoom = false;
     }
 }

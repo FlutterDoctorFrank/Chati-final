@@ -13,7 +13,12 @@ public interface IUserManagerController {
      * Setzt den intern angemeldeten Benutzer dieses Clients.
      * @param userId ID des internen Benutzers.
      */
-    void setInternUser(UUID userId, String userName, Status status, Avatar avatar);
+    void login(UUID userId, String userName, Status status, Avatar avatar);
+
+    /**
+     * Verwirft alle initialisierten Benutzer und Kontexte im Modell.
+     */
+    void logout();
 
     /**
      * Fügt einen externen Benutzer in die Liste der bekannten externen Benutzer hinzu, falls dieser in der Liste noch

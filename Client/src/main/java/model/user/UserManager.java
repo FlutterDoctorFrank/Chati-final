@@ -33,16 +33,23 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     private UserManager() {
         this.internUser = null;
         this.externUsers = new HashMap<>();
+        this.modelObserver = null;
     }
 
     @Override
-    public void setInternUser(UUID userId, String username, Status status, Avatar avatar) {
-        internUser = new InternUser(userId, username, status, avatar);
+    public void login(UUID userId, String username, Status status, Avatar avatar) {
+        this.internUser = new InternUser(userId, username, status, avatar);
+    }
+
+    @Override
+    public void logout() {
+        internUser = null;
+        externUsers.clear();
     }
 
     @Override
     public void addExternUser(UUID userId, String username, Status status, Avatar avatar) {
-        externUsers.put(userId, new User(userId, username, status, avatar));
+        this.externUsers.put(userId, new User(userId, username, status, avatar));
     }
 
     @Override

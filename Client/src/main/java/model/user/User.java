@@ -47,16 +47,16 @@ public class User implements IUserController, IUserView {
     private boolean canTeleportTo;
 
     /** Die Kontexte, in denen der Benutzer gemeldet ist. */
-    private final Map<ContextID, Context> reportedContexts;
+    protected final Map<ContextID, Context> reportedContexts;
 
     /** Die Kontexte, in denen der Benutzer stummgeschaltet ist. */
-    private final Map<ContextID, Context> mutedContexts;
+    protected final Map<ContextID, Context> mutedContexts;
 
     /** Die Kontexte, in denen der Benutzer gesperrt ist. */
-    private final Map<ContextID, Context> bannedContexts;
+    protected final Map<ContextID, Context> bannedContexts;
 
     /** Die Rollen eines Benutzer in den jeweiligen Kontexten. */
-    private final Map<Context, Set<Role>> contextRoles;
+    protected final Map<Context, Set<Role>> contextRoles;
 
     /**
      * Erzeugt eine neue Instanz eines Benutzers.

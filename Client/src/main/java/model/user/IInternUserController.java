@@ -23,7 +23,12 @@ public interface IInternUserController extends IUserController {
      * @param worldName Name der Welt.
      * @see SpatialContext
      */
-    void setWorld(ContextID worldId, String worldName);
+    void joinWorld(ContextID worldId, String worldName);
+
+    /**
+     * Verwirft alle initialisierten Kontexte im Modell.
+     */
+    void leaveWorld();
 
     /**
      * Setzt den Raum des internen Benutzers und erzeugt die gesamte Kontexthierarchie anhand einer Karte.
@@ -33,7 +38,7 @@ public interface IInternUserController extends IUserController {
      * @throws IllegalStateException wenn es keine aktuelle Welt gibt.
      * @see SpatialContext
      */
-    void setRoom(ContextID roomId, String roomName, SpatialMap map);
+    void joinRoom(ContextID roomId, String roomName, SpatialMap map);
 
     /**
      * Setzt die Musik, die in einem Kontext abgespielt werden soll.
