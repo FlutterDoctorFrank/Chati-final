@@ -12,7 +12,7 @@ import java.util.Set;
 public class ContextRole implements IContextRole {
 
     /** Benutzer, der diese Rollen besitzt. */
-    private User user;
+    private final User user;
 
     /** Der Kontext, in dem ein Benutzer die Rollen besitzt. */
     private final Context context;
@@ -36,7 +36,8 @@ public class ContextRole implements IContextRole {
      * @param context Kontext, in dem der Benutzer die Rollen besitzen soll.
      * @param roles Rollen, die der Benutzer besitzen soll.
      */
-    public ContextRole(Context context, Set<Role> roles) {
+    public ContextRole(User user, Context context, Set<Role> roles) {
+        this.user = user;
         this.context = context;
         this.roles = roles;
     }

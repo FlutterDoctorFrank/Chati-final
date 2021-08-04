@@ -188,7 +188,7 @@ public interface IUser {
      * Gibt die Rollen des Benutzers im globalen Kontext zurück.
      * @return Menge der globalen Rollen des Benutzers.
      */
-    Map<IContext, IContextRole> getGlobalRoles();
+    IContextRole getGlobalRoles();
 
     /**
      * Gibt die Benachrichtigungen des Benutzers im globalen Kontext zurück.

@@ -75,24 +75,33 @@ public class World extends Room implements IWorld {
     public void addUser(User user) {
         // Sende die entsprechenden Pakete an den Benutzer und an andere Benutzer.
         user.getClientSender().send(ClientSender.SendAction.WORLD_ACTION, this);
-        user.getClientSender().send(ClientSender.SendAction.CONTEXT_JOIN, this);
-        user.getClientSender().send(ClientSender.SendAction.CONTEXT_ROLE, user.getWorldRoles());
-        user.getClientSender().send(ClientSender.SendAction.NOTIFICATION, user.getWorldNotifications());
-        getUsers().values().forEach(containedUser -> {
-            containedUser.getClientSender().send(ClientSender.SendAction.USER_INFO, user);
-        });
         super.addUser(user);
+
+        user.getWorldRoles().values().forEach(contextRole -> {
+            user.getClientSender().send(ClientSender.SendAction.CONTEXT_ROLE, contextRole);
+        });
+        user.getWorldNotifications().values().forEach(notification -> {
+            user.getClientSender().send(ClientSender.SendAction.NOTIFICATION, notification);
+        });
+        getUsers().values().forEach(containedUser -> {
+            if (!user.equals(containedUser)) {
+                containedUser.getClientSender().send(ClientSender.SendAction.USER_INFO, user);
+                user.getClientSender().send(ClientSender.SendAction.USER_INFO, containedUser);
+            }
+        });
+        getBannedUsers().values().forEach(bannedUser -> {
+            user.getClientSender().send(ClientSender.SendAction.USER_INFO, bannedUser);
+        });
     }
 
     @Override
     public void removeUser(User user) {
         super.removeUser(user);
         // Sende die entsprechenden Pakete an den Benutzer und an andere Benutzer.
-        getUsers().forEach((userID, containedUser) -> {
-            containedUser.getClientSender().send(ClientSender.SendAction.AVATAR_REMOVE, this);
-            containedUser.getClientSender().send(ClientSender.SendAction.USER_INFO, this);
+        getUsers().values().forEach(containedUser -> {
+            containedUser.getClientSender().send(ClientSender.SendAction.USER_INFO, user);
         });
-        user.getClientSender().send(ClientSender.SendAction.WORLD_ACTION, null); // Hier is noch unklar wie das gehen soll?
+        user.getClientSender().send(ClientSender.SendAction.WORLD_ACTION, this);
     }
 
     @Override

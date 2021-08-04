@@ -112,7 +112,7 @@ public class CommunicationHandler {
         // Versende die Sprachnachricht.
         VoiceMessage voiceMessage = new VoiceMessage(communicator, voicedata);
         receivers.values().forEach(user -> {
-            user.getClientSender().send(ClientSender.SendAction.MESSAGE, voiceMessage);
+            user.getClientSender().send(ClientSender.SendAction.VOICE, voiceMessage);
         });
     }
 

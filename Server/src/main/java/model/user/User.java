@@ -167,9 +167,10 @@ public class User implements IUser {
         throwIfNotInWorld();
         updateLastActivity();
         // Verlasse die Welt.
-        currentWorld.removeUser(this);
-        currentLocation = null;
+        World oldWorld = currentWorld;
         currentWorld = null;
+        currentLocation = null;
+        oldWorld.removeUser(this);
     }
 
     @Override
@@ -340,10 +341,14 @@ public class User implements IUser {
     }
 
     @Override
-    public Map<IContext, IContextRole> getGlobalRoles() {
-        return contextRoles.values().stream()
-                .filter(contextRole -> contextRole.getContext().equals(GlobalContext.getInstance()))
-                .collect(Collectors.toUnmodifiableMap(ContextRole::getContext, Function.identity()));
+    public ContextRole getGlobalRoles() {
+        try {
+            return contextRoles.values().stream()
+                    .filter(contextRole -> contextRole.getContext().equals(GlobalContext.getInstance()))
+                    .findFirst().orElseThrow();
+        } catch (NoSuchElementException e) {
+            return new ContextRole(this, GlobalContext.getInstance(), new HashSet<>());
+        }
     }
 
     @Override
@@ -368,7 +373,7 @@ public class User implements IUser {
         // Sende die entsprechenden Pakete an diesen Benutzer und an andere Benutzer.
         // ANMERKUNG: Hier muss evtl. der eigene Benutzer herausgefiltert werden, falls dieser nicht das Paket erhalten
         // soll.
-        currentRoom.getUsers().forEach((userID, user) -> {
+        currentRoom.getUsers().values().forEach(user -> {
             user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, this);
         });
     }
@@ -443,7 +448,7 @@ public class User implements IUser {
         }
         database.addRole(this, context, role);
         // Sende geänderte Rolleninformationen an alle relevanten Benutzer.
-        updateRoleInfo();
+        updateRoleInfo(contextRole);
     }
 
     /**
@@ -460,7 +465,7 @@ public class User implements IUser {
             }
             database.removeRole(this, context, role);
             // Sende geänderte Rolleninformationen an alle relevanten Benutzer.
-            updateRoleInfo();
+            updateRoleInfo(contextRole);
         }
     }
 
@@ -472,7 +477,7 @@ public class User implements IUser {
         notifications.put(notification.getNotificationId(), notification);
         database.addNotification(this, notification);
         // Sende Benachrichtigung an Benutzer.
-        clientSender.send(ClientSender.SendAction.NOTIFICATION, Collections.singletonMap(notification.getNotificationId(), notification));
+        clientSender.send(ClientSender.SendAction.NOTIFICATION, notification);
     }
 
     /**
@@ -594,18 +599,31 @@ public class User implements IUser {
     }
 
     /**
-     * Gibt die Rollen des Benutzers innerhalb seiner aktuellen Welt zurück.
-     * @return Menge der Rollen des Benutzers in seiner aktuellen Welt.
+     * Gibt die Rollen des Benutzers innerhalb seiner aktuellen Welt und allen untergeordneten Kontexten zurück.
+     * @return Menge der Rollen des Benutzers in seiner aktuellen Welt und allen untergeordneten Kontexten.
      * @throws IllegalStateException wenn sich der Benutzer in keiner Welt befindet.
      */
-    public Map<IContext, IContextRole> getWorldRoles() throws IllegalStateException {
+    public Map<Context, ContextRole> getWorldRoles() throws IllegalStateException {
         // Prüfe, ob Benutzer in einer Welt ist.
         if (currentWorld == null) {
             throw new IllegalStateException("User is not in a world.");
         }
-        return contextRoles.values().stream()
-                .filter(contextRole -> contextRole.getContext().equals(currentWorld))
-                .collect(Collectors.toUnmodifiableMap(ContextRole::getContext, Function.identity()));
+        Map<Context, ContextRole> worldRoles = new HashMap<>();
+        addChildRoles(worldRoles, currentWorld);
+        return worldRoles;
+    }
+
+    /**
+     * Fügt zu einer Menge von Rollen in Kontexten die Rollen von allen untergeordneten Kontexten hinzu.
+     * @param contextRoles Menge von Rollen in Kontexten.
+     * @param context Kontext, von dem die Rollen der untergeordneten Kontexte hinzugefügt werden sollen.
+     */
+    private void addChildRoles(Map<Context, ContextRole> contextRoles, Context context) {
+        Map<Context, ContextRole> found = this.contextRoles.values().stream()
+                .filter(contextRole -> contextRole.getContext().equals(context))
+                .collect(Collectors.toMap(ContextRole::getContext, Function.identity()));
+        contextRoles.putAll(found);
+        context.getChildren().values().forEach(child -> addChildRoles(contextRoles, child));
     }
 
     /**
@@ -651,8 +669,11 @@ public class User implements IUser {
      * Sendet Pakete an alle relevanten Benutzer mit der aktualisierten Benutzerinformation.
      */
     public void updateUserInfo() {
-        Map<UUID, User> receivers = getWorld().getUsers();
-        receivers.putAll(friends);
+        Map<UUID, User> receivers = friends;
+        receivers.put(userId, this);
+        if (currentWorld != null) {
+            receivers.putAll(currentWorld.getUsers());
+        }
         receivers.values().forEach(user -> {
             user.getClientSender().send(ClientSender.SendAction.USER_INFO, this);
         });
@@ -661,11 +682,14 @@ public class User implements IUser {
     /**
      * Sendet Pakete an alle relevanten Benutzer mit der aktualisierten Rolleninformation.
      */
-    public void updateRoleInfo() {
-        Map<UUID, User> receivers = getWorld().getUsers();
-        receivers.putAll(friends);
+    public void updateRoleInfo(ContextRole contextRole) {
+        Map<UUID, User> receivers = friends;
+        receivers.put(userId, this);
+        if (currentWorld != null) {
+            receivers.putAll(currentWorld.getUsers());
+        }
         receivers.values().forEach(user -> {
-            user.getClientSender().send(ClientSender.SendAction.CONTEXT_ROLE, this);
+            user.getClientSender().send(ClientSender.SendAction.CONTEXT_ROLE, contextRole);
         });
     }
 

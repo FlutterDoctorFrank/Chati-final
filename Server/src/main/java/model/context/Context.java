@@ -85,11 +85,6 @@ public abstract class Context implements IContext {
     }
 
     @Override
-    public Map<UUID, IUser> getMutedUsers() {
-        return Collections.unmodifiableMap(mutedUsers);
-    }
-
-    @Override
     public Map<UUID, IUser> getBannedUsers() {
         return Collections.unmodifiableMap(bannedUsers);
     }

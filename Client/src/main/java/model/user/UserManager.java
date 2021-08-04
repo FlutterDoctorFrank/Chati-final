@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * Eine Klasse, über welche der intern angemeldete Benutzer sowie aller bekannten externen Benutzer verwaltet werden
  * können.
  */
-public class UserManager implements IUserManagerController, IUserManagerView{
+public class UserManager implements IUserManagerController, IUserManagerView {
 
     /** Singleton-Instanz der Klasse. */
     private static UserManager userManager;

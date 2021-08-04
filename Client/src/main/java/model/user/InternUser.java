@@ -29,7 +29,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
     /** Der Raum, in dem sich der interne Benutzer befindet. */
     private SpatialContext currentRoom;
 
-    /** Die Benachrichtigungen des Benutzers. */
+    /** Die Benachrichtigungen des internen Benutzers. */
     private final Map<UUID, Notification> notifications;
 
     /** Die Musik, die gerade abgespielt werden soll. */

@@ -1,7 +1,5 @@
 package model.context;
 
-import model.context.spatial.Music;
-
 /**
  * Ein Interface, welche der View Zugriff auf Parameter eines Kontextes ermöglicht.
  */

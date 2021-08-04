@@ -36,12 +36,6 @@ public interface IContext {
     Map<UUID, IUser> getReportedUsers();
 
     /**
-     * Gibt die Benutzer zurück, die in diesem Kontext stummgeschaltet sind.
-     * @return Stummgeschaltete Benutzer.
-     */
-    Map<UUID, IUser> getMutedUsers();
-
-    /**
      * Gibt die Benutzer zurück, die in diesem Kontext gesperrt sind.
      * @return Gesperrte Benutzer.
      */

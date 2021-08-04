@@ -103,8 +103,8 @@ public class Room extends Area implements IRoom {
     @Override
     public void addUser(User user) {
         // Wenn ein neuer Raum betreten wird, sende Positionsinformationen.
+        user.getClientSender().send(ClientSender.SendAction.CONTEXT_JOIN, this);
         containedUsers.values().forEach(containedUser -> {
-            containedUser.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, user);
             user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, containedUser);
         });
         if (isPrivate) {
