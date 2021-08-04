@@ -5,6 +5,7 @@ import model.context.spatial.Location;
 import model.exception.ContextNotFoundException;
 import model.context.ContextID;
 import model.role.Role;
+import view.Screens.IModelObserver;
 
 import java.util.*;
 

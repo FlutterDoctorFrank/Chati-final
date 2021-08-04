@@ -25,7 +25,7 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     private final Map<UUID, User> externUsers;
 
     /** Wird verwendet, um die View über Änderungen im Modell zu informieren. */
-    protected IModelObserver modelObserver;
+    private IModelObserver modelObserver;
 
     /**
      * Erzeugt eine neue Instanz des UserManager.
