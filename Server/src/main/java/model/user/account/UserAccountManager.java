@@ -11,7 +11,6 @@ import model.role.Permission;
 import model.user.Status;
 import model.user.User;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;

@@ -1,5 +1,6 @@
 package model.user;
 
+import model.context.Context;
 import model.context.ContextID;
 import model.context.IContext;
 import model.context.spatial.ILocation;
@@ -183,6 +184,12 @@ public interface IUser {
      * @return Menge der vom Benutzer ignorierten Benutzer.
      */
     Map<UUID, IUser> getIgnoredUsers();
+
+    /**
+     * Gibt die Menge aller Kontexte zurück, in denen der Benutzer stummgeschaltet ist.
+     * @return Menge der Kontexte, in denen der Benutzer stummgeschaltet ist.
+     */
+    Map<ContextID, Context> getMutedContexts();
 
     /**
      * Gibt die Rollen des Benutzers im globalen Kontext zurück.

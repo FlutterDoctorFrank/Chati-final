@@ -1,10 +1,7 @@
 package model.context.global;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
-import model.communication.CommunicationRegion;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.*;
