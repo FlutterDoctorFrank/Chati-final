@@ -1,12 +1,15 @@
 package model.database;
 
 import com.badlogic.gdx.utils.SortedIntList;
+import model.MessageBundle;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.AreaReservation;
 import model.context.spatial.SpatialMap;
 import model.context.spatial.World;
+import model.notification.AreaManagingRequest;
 import model.notification.Notification;
+import model.notification.NotificationType;
 import model.notification.RoomRequest;
 import model.role.Role;
 import model.user.Avatar;
@@ -547,26 +550,33 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("INSERT INTO NOTIFICATION " +
-                    "(USER_ID CHAR, NOTIFICATION_ID CHAR, OWING_CONTEXT_ID CHAR, " +
-                    "REQUESTER_ID CHAR, MESSAGE_KEY CHAR, ARGUMENTS CHAR, SEND_TIME TIMESTAMP , REQUESTING_CONTEXT_ID CHAR, " +
-                    "REQUEST_TYPE CHAR) values(?,?,?,?,?,?,?,?,?)");
+            PreparedStatement ps = con.prepareStatement("INSERT INTO NOTIFICATION" +
+                    "(USER_ID, NOTIFICATION_ID, OWING_CONTEXT_ID, " +
+                    "SEND_TIME, MESSAGE_KEY, ARGUMENT1, ARGUMENT2, ARGUMENT3, ARGUMENT4) " +
+                    "values(?,?,?,?,?,?,?,?,?)");
             ps.setString(1, user.getUserId().toString());
             ps.setString(2, notification.getNotificationId().toString());
             ps.setString(3, notification.getContext().getContextId().getId());
-            if (notification.isRequest() == true){
-                if (notification instanceof RoomRequest) {
-                    //TODO
-                }
-            } else {
-                ps.setString(4, null);
-                ps.setString(5, null);
-                ps.setString(6, null);
-                //send_time noch zu bearbeiten
-                ps.setString(7, null);
-                ps.setString(8, null);
-                ps.setString(9, null);
+            long timestamp = notification.getTimestamp().toInstant(ZoneOffset.of("+8")).toEpochMilli();
+            ps.setTimestamp(4, new Timestamp(timestamp));
 
+            MessageBundle messageBundle = notification.getMessageBundle();
+
+            //Speichern Message_key
+            ps.setString(5, messageBundle.getMessageKey());
+
+            //Anzahl der Arguments
+            int argu_count = messageBundle.getArguments().length;
+            if (argu_count > 5) {
+                //wegen bei Notification-Table nur 4 Plaetze fuer Arguments
+                System.out.println("Notification Argument mehr als 4");
+            }
+
+            //speichern andere Arguments
+            int i = 0;
+            while(i < argu_count) {
+                ps.setString(6 + i, messageBundle.getArguments()[i].toString());
+                i++;
             }
 
             ps.executeUpdate();
@@ -681,8 +691,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
             //Pruefe ob alle tables existieren, falls nicht dann create
             if (!set.contains("USER_ACCOUNT")) {
-                    String sql = "CREATE TABLE USER_ACCOUNT(USER_ID VARCHAR(36), USER_NAME VARCHAR(16) not null, USER_PSW VARCHAR(128) not null, " +
-                        "LAST_ONLINE_TIME TIMESTAMP, AVATAR_NAME VARCHAR(16))";
+                    String sql = "CREATE TABLE USER_ACCOUNT(USER_ID VARCHAR(36), USER_NAME VARCHAR(16) not null, " +
+                            "USER_PSW VARCHAR(128) not null, LAST_ONLINE_TIME TIMESTAMP, AVATAR_NAME VARCHAR(16))";
                 statement.execute(sql);
 
             }
@@ -707,19 +717,22 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
             }
             if (!set.contains("USER_RESERVATION")) {
-                String sql = "CREATE TABLE USER_RESERVATION(USER_ID VARCHAR(36), START_TIME TIMESTAMP, END_TIME TIMESTAMP, CONTEXT_ID VARCHAR(36))";
+                String sql = "CREATE TABLE USER_RESERVATION(USER_ID VARCHAR(36), START_TIME TIMESTAMP, " +
+                        "END_TIME TIMESTAMP, CONTEXT_ID VARCHAR(36))";
                 statement.execute(sql);
 
             }
             if (!set.contains("ROLE_WITH_CONTEXT")) {
-                String sql = "CREATE TABLE ROLE_WITH_CONTEXT(USER_ID VARCHAR(36), USER_ROLE CHAR(10), CONTEXT_ID VARCHAR(36))";
+                String sql = "CREATE TABLE ROLE_WITH_CONTEXT(USER_ID VARCHAR(36), USER_ROLE CHAR(10), " +
+                        "CONTEXT_ID VARCHAR(36))";
                 statement.execute(sql);
 
             }
             if (!set.contains("NOTIFICATION")) {
-                String sql = "CREATE TABLE NOTIFICATION(USER_ID VARCHAR(36), NOTIFICATION_ID VARCHAR(36), OWING_CONTEXT_ID VARCHAR(36), " +
-                        "REQUESTER_ID VARCHAR(36), MESSAGE_KEY VARCHAR(16), ARGUMENTS VARCHAR(128), SEND_TIME TIMESTAMP, REQUESTING_CONTEXT_ID VARCHAR(36), " +
-                        "REQUEST_TYPE VARCHAR(16))";
+                String sql = "CREATE TABLE NOTIFICATION(USER_ID VARCHAR(36), NOTIFICATION_ID VARCHAR(36), " +
+                        "OWING_CONTEXT_ID VARCHAR(36), SEND_TIME TIMESTAMP, MESSAGE_KEY VARCHAR(16), " +
+                        "ARGUMENT1 VARCHAR(128), ARGUMENT2 VARCHAR(128), ARGUMENT3 VARCHAR(128), " +
+                        "ARGUMENT4 VARCHAR(128))";
                 statement.execute(sql);
 
             }
