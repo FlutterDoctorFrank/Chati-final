@@ -6,4 +6,5 @@ public interface IModelObserver {
     void setUserPositionChanged();
     void setWorldChanged();
     void setRoomChanged();
+    void setMusicChanged();
 }

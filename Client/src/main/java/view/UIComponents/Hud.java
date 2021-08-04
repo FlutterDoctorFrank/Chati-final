@@ -37,6 +37,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     private boolean userPositionChanged = false;
     private boolean worldChanged = false;
     private boolean roomChanged = false;
+    private boolean musicChanged = false;
 
     private boolean waitingLoginResponse = false;
     private boolean waitingRegistrationResponse = false;
@@ -113,6 +114,11 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     @Override
     public void setRoomChanged() {
         roomChanged = true;
+    }
+
+    @Override
+    public void setMusicChanged() {
+        musicChanged = true;
     }
 
     @Override
