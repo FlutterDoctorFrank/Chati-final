@@ -13,6 +13,9 @@ import model.user.Avatar;
 import model.user.User;
 
 import java.sql.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,7 +27,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     private static Database database;
 
     private Database() {
-        /*
+
         dropTable("USER_ACCOUNT");
         dropTable("WORLDS");
         dropTable("BAN");
@@ -33,7 +36,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         dropTable("USER_RESERVATION");
         dropTable("ROLE_WITH_CONTEXT");
         dropTable("NOTIFICATION");
-         */
 
         initialize();
     }
@@ -307,19 +309,20 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 res.first();
                 String user_name = res.getString("USER_NAME");
                 String avatar_name = res.getString("AVATAR_NAME");
+                //Last logout time
                 Timestamp last_logout_time = res.getTimestamp("LAST_ONLINE_TIME");
+                long time = last_logout_time.getTime();
+                LocalDateTime localDateTime = Instant.ofEpochMilli(time).atZone(ZoneOffset.ofHours(8)).toLocalDateTime();
                 //Avatar
                 Avatar user_avatar = null;
                 if (avatar_name != null){
                     user_avatar = Avatar.valueOf(avatar_name);
                 }
 
-                //
-
 
                 //!!! noch nicht bearbeitet!!!
                 //TODO
-                User user = new User(userID, user_name, user_avatar, null,
+                User user = new User(userID, user_name, user_avatar, localDateTime,
                         null, null, null, null);
 
                 return user;
@@ -679,12 +682,12 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             //Pruefe ob alle tables existieren, falls nicht dann create
             if (!set.contains("USER_ACCOUNT")) {
                     String sql = "CREATE TABLE USER_ACCOUNT(USER_ID VARCHAR(36), USER_NAME VARCHAR(16) not null, USER_PSW VARCHAR(128) not null, " +
-                        "LAST_ONLINE_TIME TIMESTAMP, AVATAR_NAME CHAR)";
+                        "LAST_ONLINE_TIME TIMESTAMP, AVATAR_NAME VARCHAR(16))";
                 statement.execute(sql);
 
             }
             if (!set.contains("WORLDS")) {
-                String sql = "CREATE TABLE WORLDS(WORLD_ID VARCHAR(36), WORLD_NAME CHAR, MAP_NAME CHAR)";
+                String sql = "CREATE TABLE WORLDS(WORLD_ID VARCHAR(36), WORLD_NAME VARCHAR(16), MAP_NAME VARCHAR(16))";
                 statement.execute(sql);
 
             }
@@ -709,14 +712,14 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
             }
             if (!set.contains("ROLE_WITH_CONTEXT")) {
-                String sql = "CREATE TABLE ROLE_WITH_CONTEXT(USER_ID VARCHAR(36), USER_ROLE CHAR, CONTEXT_ID VARCHAR(36))";
+                String sql = "CREATE TABLE ROLE_WITH_CONTEXT(USER_ID VARCHAR(36), USER_ROLE CHAR(10), CONTEXT_ID VARCHAR(36))";
                 statement.execute(sql);
 
             }
             if (!set.contains("NOTIFICATION")) {
                 String sql = "CREATE TABLE NOTIFICATION(USER_ID VARCHAR(36), NOTIFICATION_ID VARCHAR(36), OWING_CONTEXT_ID VARCHAR(36), " +
-                        "REQUESTER_ID VARCHAR(36), MESSAGE_KEY CHAR, ARGUMENTS CHAR, SEND_TIME TIMESTAMP, REQUESTING_CONTEXT_ID VARCHAR(36), " +
-                        "REQUEST_TYPE CHAR)";
+                        "REQUESTER_ID VARCHAR(36), MESSAGE_KEY VARCHAR(16), ARGUMENTS VARCHAR(128), SEND_TIME TIMESTAMP, REQUESTING_CONTEXT_ID VARCHAR(36), " +
+                        "REQUEST_TYPE VARCHAR(16))";
                 statement.execute(sql);
 
             }
@@ -739,7 +742,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             st.close();
             con.close();
         } catch (SQLException e) {
-            System.out.print("Fehler in deleteData: " + e);
+            System.out.print("Fehler in dropTable: " + e);
         }
     }
 

@@ -13,7 +13,6 @@ public class UserAccountManagerDatabaseTest {
 
     @Before
     public void setUp(){
-
         //System.out.println("set up start");
         this.database = Database.getUserAccountManagerDatabase();
         //System.out.println("set up success");
