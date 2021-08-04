@@ -35,9 +35,8 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     private boolean userInfoChanged = false;
     private boolean userNotificationChanged = false;
     private boolean userPositionChanged = false;
-    private boolean worldInfoChanged = false;
-    private boolean roomInfoChanged = false;
-    private boolean mapChanged = false;
+    private boolean worldChanged = false;
+    private boolean roomChanged = false;
 
     private boolean waitingLoginResponse = false;
     private boolean waitingRegistrationResponse = false;
@@ -107,18 +106,13 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
-    public void setWorldInfoChanged() {
-        worldInfoChanged = true;
+    public void setWorldChanged() {
+        worldChanged = true;
     }
 
     @Override
-    public void setRoomInfoChanged() {
-        roomInfoChanged = true;
-    }
-
-    @Override
-    public void setMapChanged() {
-        mapChanged = true;
+    public void setRoomChanged() {
+        roomChanged = true;
     }
 
     @Override
