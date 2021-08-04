@@ -1,14 +1,21 @@
 package model.database;
 
 
+import model.MessageBundle;
+import model.context.Context;
+import model.context.global.GlobalContext;
+import model.context.spatial.SpatialMap;
+import model.context.spatial.World;
+import model.notification.AreaManagingRequest;
+import model.notification.FriendRequest;
+import model.notification.Notification;
+import model.notification.NotificationType;
 import model.user.Avatar;
 import model.user.User;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.sql.*;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 public class UserDatabaseTest {
@@ -220,11 +227,160 @@ public class UserDatabaseTest {
 
     @Test
     public void addNotificationTest() {
+        User test = this.account_database.createAccount("addNotif", "111");
+        User requester = this.account_database.createAccount("friend_requester", "222");
+        Context test_context = GlobalContext.getInstance();
 
+        //verschiedene NotificationType
+        MessageBundle notif_messageBundle = new MessageBundle("notification");
+        //Notification
+        Notification test_notif = new Notification(test, test_context, notif_messageBundle);
+        String expected_notif_id = test_notif.getNotificationId().toString();
+        //FriendRequest
+        FriendRequest test_friendRequest = new FriendRequest(test, "bitte bitte", requester);
+        String expected_friendRequest_id = test_friendRequest.getNotificationId().toString();
+
+        //AreaManagingRequest
+        //World world = new World("test", SpatialMap.PLACEHOLDER);
+        //AreaManagingRequest test_areaRequest = new AreaManagingRequest(test, requester,)
+
+        //Fuege Notifikationen mit Methode addNotification
+        this.user_database.addNotification(test, test_notif);
+        this.user_database.addNotification(test, test_friendRequest);
+
+
+        //normale Notification
+        //Suche der User in Datenbank
+        String actual_user_id = null;
+        String actual_owing_context_id = null;
+        Timestamp actual_send_time = null;
+        String actual_message_key = null;
+
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            ResultSet res = st.executeQuery("SELECT * FROM NOTIFICATION WHERE NOTIFICATION_ID = '" +
+                    expected_notif_id + "'");
+            int notif_row = 0;
+            while (res.next()){
+                notif_row ++;
+            }
+            if (notif_row == 1) {
+                res.first();
+                actual_user_id = res.getString("USER_ID");
+                actual_owing_context_id = res.getString("OWING_CONTEXT_ID");
+                actual_send_time = res.getTimestamp("SEND_TIME");
+                actual_message_key = res.getString("MESSAGE_KEY");
+            } else {
+                System.out.println("wrong");
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+
+        Assert.assertEquals(test.getUserId().toString(), actual_user_id);
+        Assert.assertEquals(test_notif.getContext().getContextId().getId(), actual_owing_context_id);
+        long timestamp = test_notif.getTimestamp().toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        Assert.assertEquals(new Timestamp(timestamp), actual_send_time);
+        Assert.assertEquals(test_notif.getMessageBundle().getMessageKey(), actual_message_key);
+
+
+        //FriendRequest
+        actual_user_id = null;
+        actual_owing_context_id = null;
+        actual_send_time = null;
+        actual_message_key = null;
+        timestamp = 0;
+
+        String actual_requester_id = null;
+        String actual_user_message = null;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            ResultSet res = st.executeQuery("SELECT * FROM NOTIFICATION WHERE NOTIFICATION_ID = '" +
+                    expected_friendRequest_id + "'");
+            int request_row = 0;
+            while (res.next()){
+                request_row ++;
+            }
+            if (request_row == 1) {
+                res.first();
+                actual_user_id = res.getString("USER_ID");
+                actual_owing_context_id = res.getString("OWING_CONTEXT_ID");
+                actual_send_time = res.getTimestamp("SEND_TIME");
+                actual_message_key = res.getString("MESSAGE_KEY");
+                actual_requester_id = res.getString("ARGUMENT1");
+                actual_user_message = res.getString("ARGUMENT2");
+            } else {
+                System.out.println("wrong");
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+
+        Assert.assertEquals(test.getUserId().toString(), actual_user_id);
+        Assert.assertEquals(test_friendRequest.getContext().getContextId().getId(), actual_owing_context_id);
+        timestamp = test_friendRequest.getTimestamp().toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        Assert.assertEquals(new Timestamp(timestamp), actual_send_time);
+        Assert.assertEquals(test_friendRequest.getMessageBundle().getMessageKey(), actual_message_key);
+        Assert.assertEquals(test_friendRequest.getMessageBundle().getArguments()[0].toString(), actual_requester_id);
+        Assert.assertEquals(test_friendRequest.getMessageBundle().getArguments()[1].toString(), actual_user_message);
     }
 
     @Test
     public void removeNotificationTest() {
+        User test = this.account_database.createAccount("removeNotif", "111");
+        Context test_context = GlobalContext.getInstance();
+        MessageBundle notif_messageBundle = new MessageBundle("notification");
+        //Erstelle eine Notification
+        Notification test_notif = new Notification(test, test_context, notif_messageBundle);
+        String test_notif_id = test_notif.getNotificationId().toString();
+        this.user_database.addNotification(test, test_notif);
+
+        //Pruefe, ob echt eine Notifikation hinzufuegen
+        int add_row = 0;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            ResultSet res = st.executeQuery("SELECT * FROM NOTIFICATION WHERE NOTIFICATION_ID = '" +
+                    test_notif_id + "'");
+
+            while (res.next()){
+                add_row ++;
+            }
+
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+        Assert.assertEquals(1, add_row);
+
+
+        this.user_database.removeNotification(test, test_notif);
+        //Suche in Datenbank, ob diese Notifikation geloescht
+        int notif_row = 0;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            ResultSet res = st.executeQuery("SELECT * FROM NOTIFICATION WHERE NOTIFICATION_ID = '" +
+                    test_notif_id + "'");
+
+            while (res.next()){
+                notif_row ++;
+            }
+
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+
+        Assert.assertEquals(0, notif_row);
 
     }
 

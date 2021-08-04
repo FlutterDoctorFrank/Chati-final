@@ -31,6 +31,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
     private Database() {
 
+            /*
         dropTable("USER_ACCOUNT");
         dropTable("WORLDS");
         dropTable("BAN");
@@ -39,7 +40,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         dropTable("USER_RESERVATION");
         dropTable("ROLE_WITH_CONTEXT");
         dropTable("NOTIFICATION");
-
+             */
         initialize();
     }
 
@@ -561,13 +562,11 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             ps.setTimestamp(4, new Timestamp(timestamp));
 
             MessageBundle messageBundle = notification.getMessageBundle();
-
             //Speichern Message_key
             ps.setString(5, messageBundle.getMessageKey());
-
             //Anzahl der Arguments
             int argu_count = messageBundle.getArguments().length;
-            if (argu_count > 5) {
+            if (argu_count > 4) {
                 //wegen bei Notification-Table nur 4 Plaetze fuer Arguments
                 System.out.println("Notification Argument mehr als 4");
             }
@@ -575,7 +574,12 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             //speichern andere Arguments
             int i = 0;
             while(i < argu_count) {
-                ps.setString(6 + i, messageBundle.getArguments()[i].toString());
+                ps.setString((6 + i), messageBundle.getArguments()[i].toString());
+                i++;
+            }
+            //Stelle in anderen unbenoetigen Plaetze null
+            while(i < 4) {
+                ps.setString(6 + i, null);
                 i++;
             }
 
