@@ -3,9 +3,7 @@ package model.context.spatial.objects;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
-import model.context.ContextID;
 import model.context.spatial.*;
-import model.exception.ContextNotFoundException;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.notification.RoomRequest;
@@ -14,6 +12,7 @@ import model.role.Role;
 import model.user.User;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -60,9 +59,9 @@ public class RoomReception extends Interactable {
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
             case 1: // Erzeuge einen privaten Raum.
-                String roomname = args[0];
+                String createRoomName = args[0];
                 // Prüfe, ob der übergebene Raumname das richtige Format hat.
-                if (!ROOMNAME_PATTERN.matcher(roomname).matches()) {
+                if (!ROOMNAME_PATTERN.matcher(createRoomName).matches()) {
                     throw new IllegalMenuActionException("", "Die eingegebene Raumbezeichnung hat nicht das richtige Format.");
                 }
                 String password = args[1];
@@ -80,7 +79,7 @@ public class RoomReception extends Interactable {
                 // Erzeuge den privaten Raum, füge ihn der Welt hinzu, gebe dem erzeugenden Benutzer die Rolle des
                 // Rauminhabers und teleportiere ihn in den privaten Raum.
                 World world = user.getWorld();
-                Room privateRoom = new Room(roomname, world, world, map, password);
+                Room privateRoom = new Room(createRoomName, world, world, map, password);
                 world.addPrivateRoom(privateRoom);
                 user.addRole(privateRoom, Role.ROOM_OWNER);
                 user.teleport(privateRoom.getSpawnLocation());
@@ -90,12 +89,14 @@ public class RoomReception extends Interactable {
                 user.setMoveable(true);
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
-            case 2: // Betrete einen existierenden privaten Raum.
-                ContextID roomID = new ContextID(args[0]);
+            case 2: // Betrete einen existierenden privaten Raum. ;
                 // Prüfe, ob der zu betretende Raum existiert.
+                String joinRoomName = args[0];
                 try {
-                    privateRoom = user.getWorld().getPrivateRoom(roomID);
-                } catch (ContextNotFoundException e) {
+                    privateRoom = user.getWorld().getPrivateRooms().values().stream()
+                            .filter(room -> room.getContextName().equals(joinRoomName))
+                            .findFirst().orElseThrow();
+                } catch (NoSuchElementException e) {
                     throw new IllegalMenuActionException("", "Der zu betretende private Raum existiert nicht.", e);
                 }
                 password = args[2];
@@ -110,20 +111,27 @@ public class RoomReception extends Interactable {
                 user.setMoveable(true);
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
             case 3: // Stelle eine Anfrage zum Beitritt eines privaten Raums.
-                roomID = new ContextID(args[0]);
+                String requestedRoomName = args[0];
+                Room requestedPrivateRoom;
                 try {
-                    privateRoom = user.getWorld().getPrivateRoom(roomID);
-                } catch (ContextNotFoundException e) {
+                    requestedPrivateRoom = user.getWorld().getPrivateRooms().values().stream()
+                            .filter(room -> room.getContextName().equals(requestedRoomName))
+                            .findFirst().orElseThrow();
+                } catch (NoSuchElementException e) {
                     throw new IllegalMenuActionException("", "Der angefragte private Raum existiert nicht.", e);
                 }
                 // Ermittle den Rauminhaber.
-                Map<UUID, User> users = privateRoom.getUsers();
-                Room finalPrivateRoom = privateRoom;
-                User roomOwner = users.values().stream()
-                        .filter(containedUser -> containedUser.hasPermission(finalPrivateRoom, Permission.MANAGE_PRIVATE_ROOM))
-                        .findFirst().orElseThrow();
+                Map<UUID, User> users = requestedPrivateRoom.getUsers();
+                User roomOwner;
+                try {
+                    roomOwner = users.values().stream()
+                            .filter(containedUser -> containedUser.hasPermission(requestedPrivateRoom, Permission.MANAGE_PRIVATE_ROOM))
+                            .findFirst().orElseThrow();
+                } catch (NoSuchElementException e) {
+                    throw new IllegalStateException("This private room does not have a room owner.", e);
+                }
                 // Sende dem Rauminhaber die Beitrittsanfrage.
-                RoomRequest roomRequest = new RoomRequest(roomOwner, args[1], user, privateRoom);
+                RoomRequest roomRequest = new RoomRequest(roomOwner, args[1], user, requestedPrivateRoom);
                 roomOwner.addNotification(roomRequest);
             default:
                 throw new IllegalInteractionException("No valid menu option", user);

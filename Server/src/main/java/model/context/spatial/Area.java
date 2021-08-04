@@ -18,10 +18,10 @@ import java.util.*;
 public class Area extends Context implements IArea {
 
     /** Die diesem Kontext übergeordnete Welt. */
-    private final World world;
+    protected final World world;
 
     /** Menge aller enthaltenen Interaktionsobjekte. */
-    private final Map<ContextID, Interactable> interactables;
+    protected final Map<ContextID, Interactable> interactables;
 
     /** Räumliche Ausdehnung des Kontextes. */
     protected Expanse expanse;
@@ -57,7 +57,6 @@ public class Area extends Context implements IArea {
         this.areaReservations = new HashSet<>();
         this.interactables = new HashMap<>();
         this.music = null;
-        parent.addChild(this);
     }
 
     @Override
@@ -121,6 +120,7 @@ public class Area extends Context implements IArea {
      */
     public void addInteractable(Interactable interactable) {
         interactables.put(interactable.getContextId(), interactable);
+        addChild(interactable);
     }
 
     /**

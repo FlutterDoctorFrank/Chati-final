@@ -102,11 +102,12 @@ public class Room extends Area implements IRoom {
 
     @Override
     public void addUser(User user) {
-        // Wenn ein neuer Raum betreten wird, sende Positionsinformationen.
+        // Wenn ein neuer Raum betreten wird, sende die entsprechenden Pakete.
         user.getClientSender().send(ClientSender.SendAction.CONTEXT_JOIN, this);
         containedUsers.values().forEach(containedUser -> {
             user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, containedUser);
         });
+        // Wenn der betrene Raum privat ist, informiere alle anderen Benutzer in dem Raum darüber.
         if (isPrivate) {
             TextMessage infoMessage = new TextMessage(new MessageBundle("key"));
             containedUsers.values().forEach(containedUser -> {
@@ -122,10 +123,13 @@ public class Room extends Area implements IRoom {
         containedUsers.values().forEach(containedUser -> {
             containedUser.getClientSender().send(ClientSender.SendAction.AVATAR_REMOVE, user);
         });
+        // Wenn dieser Raum privat ist und der zu entfernende Benutzer der Raumbesitzer, entziehe ihm die Rolle.
         if (isPrivate && user.hasRole(this, Role.ROOM_OWNER)) {
             user.removeRole(this, Role.ROOM_OWNER);
+            // Wenn der private Raum nach seinem Verlassen leer ist, entferne den privaten Raum, sonst übergebe die
+            // Rolle jemand anderem in dem Raum.
             if (containedUsers.isEmpty()) {
-                getWorld().removePrivateRoom(this);
+                world.removePrivateRoom(this);
             } else {
                 containedUsers.values().stream().findAny().get().addRole(this, Role.ROOM_OWNER);
             }

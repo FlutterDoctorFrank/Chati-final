@@ -53,6 +53,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
     @Override
     public void joinWorld(ContextID worldId, String worldName) {
         this.currentWorld = new SpatialContext(worldId, worldName, Context.getGlobal());
+        Context.getGlobal().addChild(currentWorld);
         this.isInCurrentWorld = true;
         UserManager.getInstance().getModelObserver().setWorldChanged();
     }
@@ -68,6 +69,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
         bannedContexts.values().removeIf(context -> !context.equals(Context.getGlobal()));
         contextRoles.keySet().removeIf(context -> !context.equals(Context.getGlobal()));
         notifications.values().removeIf(notification -> !notification.getContext().equals(Context.getGlobal()));
+        Context.getGlobal().removeChild(currentWorld);
         currentLocation = null;
         currentRoom = null;
         isInCurrentRoom = false;
@@ -92,6 +94,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
             this.currentRoom = currentWorld;
         } else {
             this.currentRoom = new SpatialContext(roomId, roomName, currentWorld);
+            currentWorld.addChild(currentRoom);
         }
         // Erzeuge die Kontexthierarchie des Raums anhand der Karte.
         currentRoom.buildContextTree(map);

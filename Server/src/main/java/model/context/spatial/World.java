@@ -30,7 +30,7 @@ public class World extends Room implements IWorld {
      */
     public void addPrivateRoom(Room privateRoom) {
         privateRooms.put(privateRoom.getContextId(), privateRoom);
-        children.put(privateRoom.getContextId(), privateRoom);
+        addChild(privateRoom);
         // Hier noch an alle clienten neue Liste senden...
     }
 
@@ -40,7 +40,7 @@ public class World extends Room implements IWorld {
      */
     public void removePrivateRoom(Room privateRoom) {
         privateRooms.remove(privateRoom.getContextId());
-        children.remove(privateRoom.getContextId());
+        removeChild(privateRoom);
         // Hier noch alle clienten neue Liste senden...
     }
 
@@ -51,19 +51,6 @@ public class World extends Room implements IWorld {
      */
     public boolean containsPrivateRoom(Room privateRoom) {
         return privateRooms.containsKey(privateRoom.getContextId());
-    }
-
-    /**
-     * Gibt einen privaten Raum zu übergebener ID zurück.
-     * @param roomId ID des privaten Raums.
-     * @return Privater Raum.
-     */
-    public Room getPrivateRoom(ContextID roomId) throws ContextNotFoundException {
-        Room privateRoom = privateRooms.get(roomId);
-        if (privateRoom == null) {
-            throw new ContextNotFoundException("key", roomId);
-        }
-        return privateRoom;
     }
 
     @Override

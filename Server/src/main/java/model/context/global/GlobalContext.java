@@ -17,6 +17,8 @@ import java.util.*;
  */
 public class GlobalContext extends Context implements IGlobalContext {
 
+    private static final String CONTEXT_NAME = "Global";
+
     /** Singleton-Instanz der Klasse. */
     private static GlobalContext globalContext;
 
@@ -27,7 +29,7 @@ public class GlobalContext extends Context implements IGlobalContext {
      * Erzeugt eine neue Instanz des globalen Kontexts.
      */
     private GlobalContext() {
-        super("Global", null);
+        super(CONTEXT_NAME, null);
         worlds = database.getWorlds();
     }
 
@@ -44,14 +46,8 @@ public class GlobalContext extends Context implements IGlobalContext {
             throw new IllegalWorldActionException("", "Eine Welt mit diesem Namen existiert bereits");
         }
         // Erzeuge die Welt und füge sie
-        World newWorld = new World(worldname, map);
-        worlds.put(newWorld.getContextId(), newWorld);
-        // Sende allen Benutzern, die sich im Menübildschirm befinden die aktualisierte Liste der Welten.
-        Map<UUID, User> usersInMenuScreen = getUsers();
-        worlds.values().forEach(world -> usersInMenuScreen.values().removeAll(world.getUsers().values()));
-        usersInMenuScreen.values().forEach((user -> {
-            user.getClientSender().send(ClientSender.SendAction.CONTEXT_INFO, worlds);
-        }));
+        World createdWorld = new World(worldname, map);
+        addChild(createdWorld);
     }
 
     @Override
@@ -77,12 +73,7 @@ public class GlobalContext extends Context implements IGlobalContext {
         });
         // Entferne die Welt.
         worlds.remove(worldId);
-        // Sende allen Benutzern, die sich im Menübildschirm befinden die aktualisierte Liste der Welten.
-        Map<UUID, User> usersInMenuScreen = getUsers();
-        worlds.values().forEach(world -> usersInMenuScreen.values().removeAll(world.getUsers().values()));
-        usersInMenuScreen.values().forEach((user -> {
-            user.getClientSender().send(ClientSender.SendAction.CONTEXT_INFO, worlds);
-        }));
+        removeChild(deleteWorld);
     }
 
     @Override

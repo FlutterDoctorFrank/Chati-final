@@ -38,7 +38,6 @@ public class SpatialContext extends Context implements ISpatialContextView {
     public SpatialContext(String contextName, Context parent, CommunicationRegion communicationRegion,
                           Set<CommunicationMedium> communicationMedia, Expanse expanse) {
         super(contextName, parent);
-        parent.addChild(this);
         this.communicationRegion = communicationRegion;
         this.communicationMedia = communicationMedia;
         this.expanse = expanse;

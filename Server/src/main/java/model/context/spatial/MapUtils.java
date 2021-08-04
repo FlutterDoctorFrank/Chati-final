@@ -138,7 +138,8 @@ public class MapUtils {
         String className = contextRectangle.getProperties().get("contextType", String.class);
         switch (className) {
             case "area": // Erzeuge einfachen Bereich.
-                new Area(areaName, parent, room.getWorld(), communicationRegion, communicationMedia, expanse);
+                Area area = new Area(areaName, parent, room.getWorld(), communicationRegion, communicationMedia, expanse);
+                parent.addChild(area);
                 break;
             case "areaPlanner": // Erzeuge AreaPlanner.
                 AreaPlanner areaPlanner = new AreaPlanner(areaName, parent, communicationRegion, communicationMedia, expanse);

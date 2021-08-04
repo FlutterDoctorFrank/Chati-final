@@ -87,10 +87,18 @@ public abstract class Context implements IContext {
 
     /**
      * Fügt einen untergeordneten räumlichen Kontext hinzu.
-     * @param child Untergeordneter Kontext.
+     * @param child Hinzuzufügender Kontext.
      */
     public void addChild(Area child) {
         children.put(child.getContextId(), child);
+    }
+
+    /**
+     * Entfernt einen untergeordneten räumlichen Kontext.
+     * @param child Zu entfernender Kontext.
+     */
+    public void removeChild(Area child) {
+        children.remove(child.getContextId());
     }
 
     /**
