@@ -31,7 +31,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
     private Database() {
 
-            /*
+/*
         dropTable("USER_ACCOUNT");
         dropTable("WORLDS");
         dropTable("BAN");
@@ -40,7 +40,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         dropTable("USER_RESERVATION");
         dropTable("ROLE_WITH_CONTEXT");
         dropTable("NOTIFICATION");
-             */
+*/
         initialize();
     }
 
@@ -727,7 +727,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
             }
             if (!set.contains("ROLE_WITH_CONTEXT")) {
-                String sql = "CREATE TABLE ROLE_WITH_CONTEXT(USER_ID VARCHAR(36), USER_ROLE CHAR(10), " +
+                String sql = "CREATE TABLE ROLE_WITH_CONTEXT(USER_ID VARCHAR(36), USER_ROLE VARCHAR(10), " +
                         "CONTEXT_ID VARCHAR(36))";
                 statement.execute(sql);
 

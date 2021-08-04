@@ -10,6 +10,8 @@ import model.notification.AreaManagingRequest;
 import model.notification.FriendRequest;
 import model.notification.Notification;
 import model.notification.NotificationType;
+import model.role.ContextRole;
+import model.role.Role;
 import model.user.Avatar;
 import model.user.User;
 import org.junit.*;
@@ -60,6 +62,34 @@ public class UserDatabaseTest {
 
     @Test
     public void changeAvatarTest() {
+        User test = this.account_database.createAccount("changeAvatar", "111");
+        String test_id = test.getUserId().toString();
+        this.user_database.changeAvatar(test, Avatar.PLACEHOLDER);
+
+        //pruefe ob Avatar in Datenbank geaendert ist
+        String actual_avatar_name = null;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            //Suche der User in Datenbank
+            ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_ID = '" + test_id + "'");
+            int row = 0;
+            while (res.next()){
+                row ++;
+            }
+            if (row == 1) {
+                res.first();
+                actual_avatar_name = res.getString("AVATAR_NAME");
+            } else {
+                System.out.println("wrong");
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+
+        Assert.assertEquals(Avatar.PLACEHOLDER.getName(), actual_avatar_name);
 
     }
 
@@ -217,12 +247,80 @@ public class UserDatabaseTest {
 
     @Test
     public void addRoleTest() {
+        User test = this.account_database.createAccount("addRole", "111");
+        Context test_context = GlobalContext.getInstance();
+        //ContextRole test_context_role = new ContextRole(test, test_context, Role.OWNER);
+        this.user_database.addRole(test, test_context, Role.OWNER);
+        String actual_user_id = test.getUserId().toString();
+
+        //Suche in Datenbank, ob erfolgreich hinzufuegt
+        String actual_context_id = null;
+        String actual_role = null;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            ResultSet res = st.executeQuery("SELECT * FROM ROLE_WITH_CONTEXT WHERE USER_ID = '" + actual_user_id + "'");
+            int row = 0;
+            while (res.next()){
+                row ++;
+            }
+            if (row == 1) {
+                res.first();
+                actual_context_id = res.getString("CONTEXT_ID");
+                actual_role = res.getString("USER_ROLE");
+            } else {
+                System.out.println("wrong");
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+
+        Assert.assertEquals(test_context.getContextId().getId(), actual_context_id);
+        Assert.assertEquals(Role.OWNER.name(), actual_role);
 
     }
 
     @Test
     public void removeRoleTest() {
+        User test = this.account_database.createAccount("removeRole", "111");
+        Context test_context = GlobalContext.getInstance();
+        this.user_database.addRole(test, test_context, Role.OWNER);
+        String actual_user_id = test.getUserId().toString();
 
+        //Pruefe ob echt hinzufuegen
+        int add_row = 0;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            ResultSet res = st.executeQuery("SELECT * FROM ROLE_WITH_CONTEXT WHERE USER_ID = '" + actual_user_id + "'");
+            while (res.next()){
+                add_row ++;
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+        Assert.assertEquals(1, add_row);
+
+        this.user_database.removeRole(test, test_context, Role.OWNER);
+        //Pruefe ob geloescht
+        int row = 0;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            ResultSet res = st.executeQuery("SELECT * FROM ROLE_WITH_CONTEXT WHERE USER_ID = '" + actual_user_id + "'");
+            while (res.next()){
+                add_row ++;
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+        Assert.assertEquals(0, row);
     }
 
     @Test
