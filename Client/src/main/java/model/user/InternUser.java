@@ -75,6 +75,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
         // Erzeuge die Kontexthierarchie des Raums anhand der Karte.
         this.currentRoom.buildContextTree(map);
         this.isInCurrentRoom = true;
+        UserManager.getInstance().getModelObserver().setRoomChanged();
     }
 
     @Override
@@ -87,6 +88,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
             current = current.getParent();
         } while (current != null);
         this.music = music;
+        UserManager.getInstance().getModelObserver().setMusicChanged();
     }
 
     @Override
