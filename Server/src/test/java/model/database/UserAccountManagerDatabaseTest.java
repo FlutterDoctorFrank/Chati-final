@@ -1,5 +1,9 @@
 package model.database;
 
+import model.context.Context;
+import model.context.global.GlobalContext;
+import model.role.ContextRole;
+import model.role.Role;
 import model.user.User;
 import org.junit.*;
 
@@ -9,12 +13,14 @@ import java.util.UUID;
 public class UserAccountManagerDatabaseTest {
 
     private IUserAccountManagerDatabase database;
+    private IUserDatabase user_database;
     private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
 
     @Before
     public void setUp(){
         //System.out.println("set up start");
         this.database = Database.getUserAccountManagerDatabase();
+        this.user_database = Database.getUserDatabase();
         //System.out.println("set up success");
     }
 
@@ -221,6 +227,22 @@ public class UserAccountManagerDatabaseTest {
 
         Assert.assertEquals(test.getUserId(), real.getUserId());
         Assert.assertEquals(test.getUsername(), real.getUsername());
+
+        //Fuege eine Role hinzu und pruefe, ob mit getUser korrekte Rolen bekommen kann
+        Context test_context = GlobalContext.getInstance();
+        this.user_database.addRole(test, test_context, Role.OWNER);
+        User real_after_add_role = this.database.getUser(testID);
+        ContextRole actual_context_role = real_after_add_role.getGlobalRoles();
+        int count = actual_context_role.getRoles().size();
+        Assert.assertEquals(1,count);
+
+        //Fuege zwei Rolen hiinzu, die in gleichem Context sind
+        this.user_database.addRole(test, test_context, Role.ADMINISTRATOR);
+        real_after_add_role = this.database.getUser(testID);
+        actual_context_role = real_after_add_role.getGlobalRoles();
+        count = actual_context_role.getRoles().size();
+        Assert.assertEquals(2,count);
+
 
 
     }

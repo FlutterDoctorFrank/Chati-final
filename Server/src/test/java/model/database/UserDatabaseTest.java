@@ -249,7 +249,6 @@ public class UserDatabaseTest {
     public void addRoleTest() {
         User test = this.account_database.createAccount("addRole", "111");
         Context test_context = GlobalContext.getInstance();
-        //ContextRole test_context_role = new ContextRole(test, test_context, Role.OWNER);
         this.user_database.addRole(test, test_context, Role.OWNER);
         String actual_user_id = test.getUserId().toString();
 

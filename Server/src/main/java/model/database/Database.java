@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.SortedIntList;
 import model.MessageBundle;
 import model.context.Context;
 import model.context.ContextID;
+import model.context.global.GlobalContext;
 import model.context.spatial.AreaReservation;
 import model.context.spatial.SpatialMap;
 import model.context.spatial.World;
@@ -20,10 +21,7 @@ import java.sql.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 public class Database implements IUserAccountManagerDatabase, IUserDatabase, IContextDatabase {
@@ -32,7 +30,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
     private Database() {
 
-/*
+
         dropTable("USER_ACCOUNT");
         dropTable("WORLDS");
         dropTable("BAN");
@@ -41,7 +39,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         dropTable("USER_RESERVATION");
         dropTable("ROLE_WITH_CONTEXT");
         dropTable("NOTIFICATION");
-*/
+
         initialize();
     }
 
@@ -323,19 +321,29 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 if (avatar_name != null){
                     user_avatar = Avatar.valueOf(avatar_name);
                 }
-                res.close();
-                st.close();
+
+                //Probiere
+                User half_user = new User(userID, user_name, user_avatar, localDateTime);
 
                 //Context_Role
-                Statement st_cr = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
                 ResultSet res_cr = st.executeQuery("SELECT * FROM ROLE_WITH_CONTEXT WHERE USER_ID = " + "'" +
                         userID.toString()+ "'");
-                Map<Context, ContextRole> contextRoles = null;
+                Map<Context, ContextRole> contextRoles = new HashMap<>();
                 while (res_cr.next()) {
                     Role role = Role.valueOf(res_cr.getString("USER_ROLE"));
                     ContextID context_id = new ContextID(res_cr.getString("CONTEXT_ID"));
+                    Context context = GlobalContext.getInstance().getContext(context_id);
+
+                    if (contextRoles.containsKey(context)) {
+                        ContextRole already_add = contextRoles.get(context);
+                        already_add.addRole(role);
+                    } else {
+                        ContextRole context_role = new ContextRole(half_user, context, role);
+                        contextRoles.put(context, context_role);
+                    }
+
                 }
-                User user = new User(userID, user_name, user_avatar, localDateTime, null, null);
+                User user = new User(userID, user_name, user_avatar, localDateTime, contextRoles, null);
 
                 return user;
 
@@ -747,7 +755,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
             }
             if (!set.contains("ROLE_WITH_CONTEXT")) {
-                String sql = "CREATE TABLE ROLE_WITH_CONTEXT(USER_ID VARCHAR(36), USER_ROLE VARCHAR(10), " +
+                String sql = "CREATE TABLE ROLE_WITH_CONTEXT(USER_ID VARCHAR(36), USER_ROLE VARCHAR(16), " +
                         "CONTEXT_ID VARCHAR(36))";
                 statement.execute(sql);
 

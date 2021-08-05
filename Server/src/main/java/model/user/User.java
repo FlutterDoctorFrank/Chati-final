@@ -141,6 +141,34 @@ public class User implements IUser {
         this.database = Database.getUserDatabase();
     }
 
+    //Yujie Hu: Mache für Datenbank getUser. Falls man Konstruktor User(userId, username, avatar, lastLogoutTime,
+    //          contextRoles, notifications) verwenden möchte, um ein schon existierten User zu bekommen, muss dann
+    //          Map<Context, ContextRole> contextRoles und Map<UUID, Notification> notifications erhalten. Aber bei
+    //          Konstruktor von ContextRole und Notification braucht man User. Deswegen mache ich hier ein anderer
+    //          Konstruktor für User, nur habe this.contextRoles = new HashMap<>() und
+    //          this.notifications = new HashMap<>() geändert.
+    //          Ich habe dann probiert bei getUser(userID) und auch Test gemacht (getUser2 in
+    //          UserAccountManagerDatabaseTest), aber ich weiss nicht, ob das andere Methode negativ beeinflusst
+    public User(UUID userId, String username, Avatar avatar, LocalDateTime lastLogoutTime) {
+        this.userId = userId;
+        this.username = username;
+        this.status = Status.OFFLINE;
+        this.avatar = avatar;
+        this.lastLogoutTime = lastLogoutTime;
+        this.lastActivity = LocalDateTime.now();
+        this.currentWorld = null;
+        this.currentLocation = null;
+        this.currentInteractable = null;
+        this.moveable = true;
+        this.communicationHandler = new CommunicationHandler(this);
+        this.friends = new HashMap<>();
+        this.ignoredUsers = new HashMap<>();
+        this.mutedContexts = new HashMap<>();
+        this.contextRoles = new HashMap<>();
+        this.notifications = new HashMap<>();
+        this.database = Database.getUserDatabase();
+    }
+
     @Override
     public void joinWorld(ContextID worldId) throws ContextNotFoundException, IllegalWorldActionException {
         throwIfNotOnline();
