@@ -38,11 +38,15 @@ public class UserManager implements IUserManagerController, IUserManagerView {
 
     @Override
     public void login(UUID userId, String username, Status status, Avatar avatar) {
+        if (internUser != null) {
+            throw new IllegalStateException("There is already a user logged in on this client.");
+        }
         this.internUser = new InternUser(userId, username, status, avatar);
     }
 
     @Override
     public void logout() {
+        throwIfNotLoggedIn();
         internUser = null;
         externUsers.clear();
     }
@@ -54,9 +58,8 @@ public class UserManager implements IUserManagerController, IUserManagerView {
 
     @Override
     public void removeExternUser(UUID userId) throws UserNotFoundException {
-        if (externUsers.remove(userId) == null) {
-            throw new UserNotFoundException("Tried to remove an unknown extern User.", userId);
-        }
+        throwIfNotExists(userId);
+        externUsers.remove(userId);
     }
 
     @Override
