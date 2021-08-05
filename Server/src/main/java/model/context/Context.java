@@ -4,6 +4,7 @@ import model.communication.CommunicationMedium;
 import model.context.spatial.Area;
 import model.database.Database;
 import model.database.IContextDatabase;
+import model.exception.ContextNotFoundException;
 import model.user.IUser;
 import model.user.User;
 
@@ -248,6 +249,26 @@ public abstract class Context implements IContext {
      */
     public Map<ContextID, Area> getChildren() {
         return Collections.unmodifiableMap(children);
+    }
+
+    /**
+     * Gibt einen untergeordneten Kontext zu gegebener ID zurück.
+     * @param contextId ID des gesuchten Kontextes.
+     * @return Kontext mit der übergebenen ID.
+     */
+    public Context getContext(ContextID contextId) throws ContextNotFoundException {
+        Context found = null;
+        if (this.contextId.equals(contextId)) {
+            return this;
+        } else {
+            for (Area child : children.values()) {
+                found = child.getContext(contextId);
+                if (found != null) {
+                    break;
+                }
+            }
+        }
+        return found;
     }
 
     /**

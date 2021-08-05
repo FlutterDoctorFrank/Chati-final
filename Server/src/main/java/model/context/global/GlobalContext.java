@@ -95,6 +95,15 @@ public class GlobalContext extends Context implements IGlobalContext {
         return world;
     }
 
+    @Override
+    public Context getContext(ContextID contextId) throws ContextNotFoundException {
+        Context found = super.getContext(contextId);
+        if (found == null) {
+            throw new ContextNotFoundException("There is no context with this ID.", contextId);
+        }
+        return found;
+    }
+
     /**
      * Gibt die Singleton-Instanz der Klasse zurück.
      * @return Die Instanz von GlobalContext.
