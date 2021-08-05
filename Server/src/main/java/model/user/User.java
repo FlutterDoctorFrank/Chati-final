@@ -117,14 +117,11 @@ public class User implements IUser {
      * @param userId ID des Benutzers.
      * @param username Benutzername des Benutzers.
      * @param avatar Avatar des Benutzers.
-     * @param friends Menge der befreundeten Benutzer.
-     * @param ignoredUsers Menge der ignorierten Benutzer.
      * @param contextRoles Menge der Zuordnungen von Kontexten zu den jeweiligen Rollen des Benutzers.
      * @param notifications Menge der Benachrichtigungen des Benutzers.
      */
-    public User(UUID userId, String username, Avatar avatar, LocalDateTime lastLogoutTime, Map<UUID, User> friends,
-                Map<UUID, User> ignoredUsers, Map<Context, ContextRole> contextRoles,
-                Map<UUID, Notification> notifications) {
+    public User(UUID userId, String username, Avatar avatar, LocalDateTime lastLogoutTime, Map<Context,
+            ContextRole> contextRoles, Map<UUID, Notification> notifications) {
         this.userId = userId;
         this.username = username;
         this.status = Status.OFFLINE;
@@ -136,8 +133,8 @@ public class User implements IUser {
         this.currentInteractable = null;
         this.moveable = true;
         this.communicationHandler = new CommunicationHandler(this);
-        this.friends = friends;
-        this.ignoredUsers = ignoredUsers;
+        this.friends = new HashMap<>();
+        this.ignoredUsers = new HashMap<>();
         this.mutedContexts = new HashMap<>();
         this.contextRoles = contextRoles;
         this.notifications = notifications;
@@ -395,6 +392,22 @@ public class User implements IUser {
             currentLocation = newLocation;
         }
         setPosition(currentLocation.getPosX(), currentLocation.getPosY());
+    }
+
+    /**
+     * Wird von der Datenbank verwendet, um die initiale Menge von Freunden hinzuzufügen..
+     * @param friends Hinzuzufügende Benutzer.
+     */
+    public void addFriends(Map<UUID, User> friends) {
+        this.friends.putAll(friends);
+    }
+
+    /**
+     * Wird von der Datenbank verwendet, um die initiale Menge von ignorierten Benutzern hinzuzufügen.
+     * @param ignoredUsers Hinzuzufügende Benutzer.
+     */
+    public void addIgnoredUsers(Map<UUID, User> ignoredUsers) {
+        this.ignoredUsers.putAll(ignoredUsers);
     }
 
     /**
