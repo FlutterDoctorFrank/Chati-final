@@ -11,6 +11,7 @@ import model.notification.AreaManagingRequest;
 import model.notification.Notification;
 import model.notification.NotificationType;
 import model.notification.RoomRequest;
+import model.role.ContextRole;
 import model.role.Role;
 import model.user.Avatar;
 import model.user.User;
@@ -322,12 +323,19 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 if (avatar_name != null){
                     user_avatar = Avatar.valueOf(avatar_name);
                 }
+                res.close();
+                st.close();
 
-
-                //!!! noch nicht bearbeitet!!!
-                //TODO
-                User user = new User(userID, user_name, user_avatar, localDateTime,
-                        null, null, null, null);
+                //Context_Role
+                Statement st_cr = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+                ResultSet res_cr = st.executeQuery("SELECT * FROM ROLE_WITH_CONTEXT WHERE USER_ID = " + "'" +
+                        userID.toString()+ "'");
+                Map<Context, ContextRole> contextRoles = null;
+                while (res_cr.next()) {
+                    Role role = Role.valueOf(res_cr.getString("USER_ROLE"));
+                    ContextID context_id = new ContextID(res_cr.getString("CONTEXT_ID"));
+                }
+                User user = new User(userID, user_name, user_avatar, localDateTime, null, null);
 
                 return user;
 
@@ -363,7 +371,11 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             if (row == 1) {
                 res.first();
                 String user_id = res.getString("USER_ID");
+                //Last logout time
                 Timestamp last_logout_time = res.getTimestamp("LAST_ONLINE_TIME");
+                long time = last_logout_time.getTime();
+                LocalDateTime localDateTime = Instant.ofEpochMilli(time).atZone(ZoneOffset.ofHours(8)).toLocalDateTime();
+                //Avatar
                 String avatar_name = res.getString("AVATAR_NAME");
                 Avatar user_avatar = null;
                 if (avatar_name != null){
@@ -373,7 +385,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
                 //!!! noch nicht bearbeitet!!!
                 //TODO
-                User user = new User(UUID.fromString(user_id), username, user_avatar, null, null,
+                User user = new User(UUID.fromString(user_id), username, user_avatar,
                         null, null, null);
 
                 return user;
@@ -411,14 +423,19 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 String id = res.getString("USER_ID");
                 UUID user_ID = UUID.fromString(id);
                 String user_name = res.getString("USER_NAME");
-                String avatar_name = res.getString("AVATAR_NAME");
+
+                //Last logout time
                 Timestamp last_logout_time = res.getTimestamp("LAST_ONLINE_TIME");
+                long time = last_logout_time.getTime();
+                LocalDateTime localDateTime = Instant.ofEpochMilli(time).atZone(ZoneOffset.ofHours(8)).toLocalDateTime();
+                //Avatar
+                String avatar_name = res.getString("AVATAR_NAME");
                 Avatar user_avatar = null;
                 if (avatar_name != null){
                     user_avatar = Avatar.valueOf(avatar_name);
                 }
                 //TODO
-                User user = new User(user_ID, user_name, user_avatar, null, null,
+                User user = new User(user_ID, user_name, user_avatar,
                         null, null, null);
                 users.put(user_ID, user);
             }
@@ -553,17 +570,20 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO NOTIFICATION" +
                     "(USER_ID, NOTIFICATION_ID, OWING_CONTEXT_ID, " +
-                    "SEND_TIME, MESSAGE_KEY, ARGUMENT1, ARGUMENT2, ARGUMENT3, ARGUMENT4) " +
-                    "values(?,?,?,?,?,?,?,?,?)");
+                    "SEND_TIME, MESSAGE_KEY, NOTIFICATION_TYPE, ARGUMENT1, ARGUMENT2, ARGUMENT3, ARGUMENT4) " +
+                    "values(?,?,?,?,?,?,?,?,?,?)");
             ps.setString(1, user.getUserId().toString());
             ps.setString(2, notification.getNotificationId().toString());
             ps.setString(3, notification.getContext().getContextId().getId());
             long timestamp = notification.getTimestamp().toInstant(ZoneOffset.of("+8")).toEpochMilli();
             ps.setTimestamp(4, new Timestamp(timestamp));
+            //Timestamp time = Timestamp.valueOf(notification.getTimestamp());
+            //ps.setTimestamp(4, time);
 
             MessageBundle messageBundle = notification.getMessageBundle();
             //Speichern Message_key
             ps.setString(5, messageBundle.getMessageKey());
+            ps.setString(6, notification.getNotificationType().name());
             //Anzahl der Arguments
             int argu_count = messageBundle.getArguments().length;
             if (argu_count > 4) {
@@ -574,12 +594,12 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             //speichern andere Arguments
             int i = 0;
             while(i < argu_count) {
-                ps.setString((6 + i), messageBundle.getArguments()[i].toString());
+                ps.setString((7 + i), messageBundle.getArguments()[i].toString());
                 i++;
             }
             //Stelle in anderen unbenoetigen Plaetze null
             while(i < 4) {
-                ps.setString(6 + i, null);
+                ps.setString(7 + i, null);
                 i++;
             }
 
@@ -735,7 +755,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             if (!set.contains("NOTIFICATION")) {
                 String sql = "CREATE TABLE NOTIFICATION(USER_ID VARCHAR(36), NOTIFICATION_ID VARCHAR(36), " +
                         "OWING_CONTEXT_ID VARCHAR(36), SEND_TIME TIMESTAMP, MESSAGE_KEY VARCHAR(16), " +
-                        "ARGUMENT1 VARCHAR(128), ARGUMENT2 VARCHAR(128), ARGUMENT3 VARCHAR(128), " +
+                        "NOTIFICATION_TYPE VARCHAR(16), ARGUMENT1 VARCHAR(128), ARGUMENT2 VARCHAR(128), ARGUMENT3 VARCHAR(128), " +
                         "ARGUMENT4 VARCHAR(128))";
                 statement.execute(sql);
 

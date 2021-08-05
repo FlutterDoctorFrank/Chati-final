@@ -338,9 +338,6 @@ public class UserDatabaseTest {
         FriendRequest test_friendRequest = new FriendRequest(test, "bitte bitte", requester);
         String expected_friendRequest_id = test_friendRequest.getNotificationId().toString();
 
-        //AreaManagingRequest
-        //World world = new World("test", SpatialMap.PLACEHOLDER);
-        //AreaManagingRequest test_areaRequest = new AreaManagingRequest(test, requester,)
 
         //Fuege Notifikationen mit Methode addNotification
         this.user_database.addNotification(test, test_notif);
@@ -353,6 +350,7 @@ public class UserDatabaseTest {
         String actual_owing_context_id = null;
         Timestamp actual_send_time = null;
         String actual_message_key = null;
+        String actual_notification_type = null;
 
         try{
             Connection con = DriverManager.getConnection(dbURL);
@@ -370,6 +368,7 @@ public class UserDatabaseTest {
                 actual_owing_context_id = res.getString("OWING_CONTEXT_ID");
                 actual_send_time = res.getTimestamp("SEND_TIME");
                 actual_message_key = res.getString("MESSAGE_KEY");
+                actual_notification_type = res.getString("NOTIFICATION_TYPE");
             } else {
                 System.out.println("wrong");
             }
@@ -383,6 +382,7 @@ public class UserDatabaseTest {
         long timestamp = test_notif.getTimestamp().toInstant(ZoneOffset.of("+8")).toEpochMilli();
         Assert.assertEquals(new Timestamp(timestamp), actual_send_time);
         Assert.assertEquals(test_notif.getMessageBundle().getMessageKey(), actual_message_key);
+        Assert.assertEquals(test_notif.getNotificationType().name(), actual_notification_type);
 
 
         //FriendRequest
