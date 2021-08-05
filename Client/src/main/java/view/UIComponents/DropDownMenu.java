@@ -7,15 +7,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
-public class DropDownMenus extends HorizontalGroup {
+public class DropDownMenu extends HorizontalGroup {
     private DropDownMenuButton settings;
     private DropDownMenuButton notifications;
     private DropDownMenuButton users;
     private Hud hud;
-    private String currentButtonPressed;
+    private DropDownMenuButton currentButtonPressed;
 
-    public DropDownMenus (Hud hud) {
+    public DropDownMenu(Hud hud) {
         this.hud = hud;
+        setHeight(35);
+        setWidth(35);
         create();
         setName("drop-down-menus");
         top().right();
@@ -23,20 +25,25 @@ public class DropDownMenus extends HorizontalGroup {
     }
 
     private void create() {
-        this.settings = new DropDownMenuButton(new Texture("icons/settings_img.png"), "settings", new SettingsTable(hud), hud, this);
-        this.notifications = new DropDownMenuButton(new Texture("icons/speech_bubble_img.png"), "notifications", new NotificationsTable(hud), hud, this);
-        this.users = new DropDownMenuButton(new Texture("icons/user_img.png"), "users", new UsersListTable(hud), hud, this);
+        this.settings = new DropDownMenuButton(new Texture("icons/settings_img.png"), "settings", new SettingsTable(this));
+        this.notifications = new DropDownMenuButton(new Texture("icons/speech_bubble_img.png"), "notifications", new NotificationsTable(this));
+        this.users = new DropDownMenuButton(new Texture("icons/user_img.png"), "users", new UsersListTable(this));
 
         addActor(notifications);
         addActor(users);
         addActor(settings);
     }
 
-    public String getCurrentButtonPressed() {
+    public DropDownMenuButton getCurrentButtonPressed() {
         return currentButtonPressed;
     }
 
-    public void setCurrentButtonPressed(String currentButtonPressed) {
+    public void setCurrentButtonPressed(DropDownMenuButton currentButtonPressed) {
         this.currentButtonPressed = currentButtonPressed;
+
+    }
+
+    public Hud getHud() {
+        return hud;
     }
 }

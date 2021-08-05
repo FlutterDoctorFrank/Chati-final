@@ -13,6 +13,7 @@ public class ChatWindow extends Window {
     private ScrollPane chatScroll;
     private boolean minimized = false;
     private Hud hud;
+    private TextButton minimizeButton;
 
     public ChatWindow(Hud hud) {
         super("Chati", new Skin(Gdx.files.internal("shadeui/uiskin.json")));
@@ -53,8 +54,7 @@ public class ChatWindow extends Window {
                 if (message.length() > 0) {
                     messageField.setText("");
                     String[] messageToSend = {message};
-                    // hud.sendTextMessage(messageToSend);
-                    receiveMessage(message);
+                    hud.sendTextMessage(messageToSend);
                 }
             }
         });
@@ -67,10 +67,39 @@ public class ChatWindow extends Window {
         add(chatScroll).expand().fill();
         row();
         add(inputTable);
+
+        minimizeButton = new TextButton("-", getSkin());
+        minimizeButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                minimize();
+            }
+        });
+
+        getTitleTable().add(minimizeButton).width(20).height(20);
     }
 
     public void receiveMessage(@NotNull String message) {
         chatLable.setText(chatLable.getText() + message + "\n");
         chatScroll.scrollTo(0, 0, 0, 0);
+    }
+
+    private void minimize() {
+        if (!minimized) {
+            setSize(getWidth(), getTitleTable().getHeight());
+            minimizeButton.setText("+");
+            setResizable(false);
+            minimized = true;
+        } else {
+            setSize(getWidth(), 350);
+            minimizeButton.setText("-");
+            setResizable(true);
+            minimized = false;
+        }
     }
 }

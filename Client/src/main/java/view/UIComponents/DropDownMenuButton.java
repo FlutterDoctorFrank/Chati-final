@@ -1,6 +1,5 @@
 package view.UIComponents;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -8,25 +7,21 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
 import java.util.Objects;
 
 public class DropDownMenuButton extends Container {
-    private Table table;
+    private PopupMenu table;
     private boolean isPressed = false;
-    private DropDownMenus buttonGroup;
-    private Hud hud;
 
-    public DropDownMenuButton(Texture texture, String name, Table table, Hud hud, DropDownMenus buttonGroup) {
+    public DropDownMenuButton(Texture texture, String name, PopupMenu table) {
         this.table = table;
-        this.buttonGroup = buttonGroup;
-        this.hud = hud;
+
         setName(name);
         padRight(10);
         padTop(10);
-        width(35);
-        height(35);
+        width(table.getDropDownMenu().getWidth());
+        height(table.getDropDownMenu().getHeight());
 
         Image image = new Image(texture);
         setActor(image);
@@ -38,16 +33,7 @@ public class DropDownMenuButton extends Container {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (Objects.isNull(buttonGroup.getCurrentButtonPressed())) {
-                    buttonGroup.setCurrentButtonPressed(getName());
-                } else if (buttonGroup.getCurrentButtonPressed().equals(getName())){
-                    buttonGroup.setCurrentButtonPressed(null);
-                } else {
-                    DropDownMenuButton old = (DropDownMenuButton) buttonGroup.findActor(buttonGroup.getCurrentButtonPressed());
-                    old.pressed();
-                    buttonGroup.setCurrentButtonPressed(getName());
-                }
-                pressed();
+                handleInput();
             }
         });
     }
@@ -60,15 +46,27 @@ public class DropDownMenuButton extends Container {
 
     }
 
+    private void  handleInput() {
+        if (Objects.isNull(table.getDropDownMenu().getCurrentButtonPressed())) {
+            table.getDropDownMenu().setCurrentButtonPressed(this);
+        } else if (table.getDropDownMenu().getCurrentButtonPressed().equals(this)){
+            table.getDropDownMenu().setCurrentButtonPressed(null);
+        } else {
+            table.getDropDownMenu().getCurrentButtonPressed().pressed();
+            table.getDropDownMenu().setCurrentButtonPressed(this);
+        }
+        pressed();
+    }
+
     public void pressed() {
         if (isPressed) {
             isPressed = false;
             setBackground(null);
-            hud.getGroup().removeActor(hud.getGroup().findActor(table.getName()));
+            table.getDropDownMenu().getHud().addPopupMenu(table, false);
             return;
         }
         isPressed = true;
-        hud.getGroup().addActor(table);
+        table.getDropDownMenu().getHud().addPopupMenu(table, true);
         changeBackgroundColor(0, 1, 0, 0);
     }
 }

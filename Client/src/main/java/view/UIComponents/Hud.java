@@ -3,18 +3,16 @@ package view.UIComponents;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import controller.network.ServerSender;
 import model.exception.ContextNotFoundException;
 import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.Menu;
-import org.jetbrains.annotations.NotNull;
+import model.exception.UserNotFoundException;
 import view.Chati;
 import view.Screens.*;
 
@@ -25,23 +23,18 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Hud extends Stage implements IModelObserver, ViewControllerInterface {
-    private Viewport viewport;
-    private OrthographicCamera camera;
     private ApplicationScreen applicationScreen;
     private LinkedList<Table> waitingResponse;
     private WidgetGroup group;
+    Map<ContextID, String> worlds;
     private ContextID contextID;
 
-    private boolean userInfoChanged = false;
-    private boolean userNotificationChanged = false;
-    private boolean userPositionChanged = false;
-    private boolean worldChanged = false;
-    private boolean roomChanged = false;
-    private boolean musicChanged = false;
+    private boolean isPlaying = false;
+
 
     private boolean waitingLoginResponse = false;
     private boolean waitingRegistrationResponse = false;
-    private boolean waitingJoinWorldResponde = false;
+    private boolean waitingJoinWorldResponse = false;
 
     private String currentMenuTable = null;
 
@@ -62,27 +55,23 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     public void addMenuTable(UIComponentTable table) {
         if (Objects.isNull(table)) {
-            group.clear();
-            applicationScreen.getGame().setScreen(new PlayScreen(applicationScreen.getGame(), this));
-            group.addActor(new DropDownMenus(this));
-            group.addActor(new ChatWindow(this));
-            currentMenuTable = null;
+            playScreenLayout();
         } else if (Objects.isNull(currentMenuTable) || table.getName().equals("login-table")) {
-            if (Objects.isNull(currentMenuTable) && !Objects.isNull(group.findActor("chat-window"))) {
-                applicationScreen.getGame().setScreen(new MenuScreen(applicationScreen.getGame(), this));
-                leaveWorld();
+            if (Objects.isNull(currentMenuTable) && isPlaying) {
+                applicationScreen.getGame().setScreen(new ApplicationScreen(applicationScreen.getHud()));
+                sendLeaveWorld();
             }
             group.clear();
             group.addActor(table);
             currentMenuTable = table.getName();
             if (!table.getName().equals("login-table")) {
-                group.addActor(new DropDownMenus(this));
+                group.addActor(new DropDownMenu(this));
 
             }
         } else if (currentMenuTable.equals("login-table")) {
             group.removeActor(group.findActor(currentMenuTable));
             group.addActor(table);
-            group.addActor(new DropDownMenus(this));
+            group.addActor(new DropDownMenu(this));
             currentMenuTable = table.getName();
         } else {
             group.removeActor(group.findActor(currentMenuTable));
@@ -91,44 +80,84 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
         }
     }
 
+    private void loginLayout() {
+
+    }
+
+    private void playScreenLayout() {
+        group.clear();
+        applicationScreen.getGame().setScreen(new ApplicationScreen(applicationScreen.getHud(), true));
+        group.addActor(new DropDownMenu(this));
+        group.addActor(new ChatWindow(this));
+
+        currentMenuTable = null;
+        isPlaying = true;
+    }
+
+    /**
+     * Fügt eine Popup Tabelle zum Bildschirm hinzu oder löscht diese vom Bildschirm
+     *
+     * @param menu Das Menü, das hinzugefügt oder gelöscht werden muss
+     * @param add  true falls das Menu hinzugefügt werden muss, false zum Löschen
+     */
+    public void addPopupMenu(PopupMenu menu, boolean add) {
+        if (add) {
+            group.addActor(menu);
+        } else {
+            group.removeActor(group.findActor(menu.getName()));
+        }
+    }
+
     @Override
     public void setUserInfoChanged() {
-        userInfoChanged = true;
+
     }
 
     @Override
     public void setUserNotificationChanged() {
-        userNotificationChanged = true;
+
     }
 
     @Override
     public void setUserPositionChanged() {
-        userPositionChanged = true;
+        if(isPlaying) {
+            applicationScreen.updateAvatarsPositions();
+        }
     }
 
+    /**
+     * Benachrichtigt die View, dass der Benutzer ein Spatial Context erfolgreich beigetreten ist.
+     */
     @Override
     public void setWorldChanged() {
-        worldChanged = true;
+        /*
+        if (waitingJoinWorldResponse) {
+            String mapPath = applicationScreen.getGame().getContext().getCurrentWold().getMap().getPath();
+            Map<UUID, IUserView> users = applicationScreen.getGame().getUserManager().getActiveUsers();
+
+            applicationScreen.getGame().setScreen(new ApplicationScreen(applicationScreen.getGame(), this, mapPath, users));
+            addMenuTable(null);
+        }
+        */
     }
 
     @Override
     public void setRoomChanged() {
-        roomChanged = true;
     }
 
-    @Override
     public void setMusicChanged() {
-        musicChanged = true;
+
     }
 
     @Override
     public void updateWorlds(Map<ContextID, String> worlds) {
+        this.worlds = worlds;
 
     }
 
     @Override
-    public void updateRooms(ContextID worldId, Map<ContextID, String> privateRooms) throws ContextNotFoundException {
-
+    public void updateRooms(ContextID worldId, Map<ContextID, String> privateRooms) throws
+            ContextNotFoundException {
     }
 
     @Override
@@ -181,9 +210,17 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
             Object[] credentials = {username, password, false};
             ServerSender serverSender = applicationScreen.getGame().getServerSender();
             serverSender.send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
-            waitingLoginResponse = true; */
+            waitingLoginResponse = true;
+
+             */
             addMenuTable(new StartScreenTable(this));
         }
+    }
+
+    public void sendTextMessage(String[] messageToSend) {
+        Object[] message = {messageToSend};
+        ServerSender serverSender = applicationScreen.getGame().getServerSender();
+        serverSender.send(ServerSender.SendAction.MESSAGE, message);
     }
 
     @Override
@@ -211,36 +248,39 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     }
 
-    public void joinWorldRequest (ContextID id) {
+    public void sendJoinWorldRequest(ContextID id) {
         contextID = id;
-        waitingJoinWorldResponde = true;
+        waitingJoinWorldResponse = true;
         Object[] data = {id, true};
         ServerSender serverSender = applicationScreen.getGame().getServerSender();
         serverSender.send(ServerSender.SendAction.WORLD_ACTION, data);
     }
 
-    public void leaveWorld () {
+    public void sendLeaveWorld() {
         Object[] data = {contextID, false};
         contextID = null;
         ServerSender serverSender = applicationScreen.getGame().getServerSender();
         serverSender.send(ServerSender.SendAction.WORLD_ACTION, data);
     }
 
+
     @Override
     public void joinWorldResponse(boolean success, String messageKey) {
         StartScreenTable table = (StartScreenTable) group.findActor("start-screen-table");
         if (success && !Objects.isNull(contextID)) {
-            applicationScreen.getGame().setScreen(new PlayScreen(applicationScreen.getGame(), this));
+            //applicationScreen.getGame().setScreen(new PlayScreen(applicationScreen.getGame(), this));
         } else {
             table.displayMessage(messageKey);
         }
     }
 
+
     @Override
-    public void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType) {
-        ChatWindow chat = (ChatWindow)group.findActor("chat-window");
-        if(!Objects.isNull(chat)) {
-            chat.receiveMessage(timestamp + " " + userID + ": " + messageType);
+    public void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message) throws UserNotFoundException {
+        ChatWindow chat = (ChatWindow) group.findActor("chat-window");
+        if (!Objects.isNull(chat)) {
+            String name = applicationScreen.getGame().getUserManager().getExternUserView(userID).getUsername();
+            chat.receiveMessage(timestamp + " " + name +  ": " + message);
         }
     }
 
@@ -264,12 +304,15 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     }
 
+    public WidgetGroup getGroup() {
+        return group;
+    }
+
+    public Map<ContextID, String> getWorlds() {
+        return worlds;
+    }
 
     public ApplicationScreen getApplicationScreen() {
         return applicationScreen;
-    }
-
-    public WidgetGroup getGroup() {
-        return group;
     }
 }

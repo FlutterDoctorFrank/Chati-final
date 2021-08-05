@@ -6,8 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import model.context.global.IGlobalContextView;
-
 
 public class StartScreenTable extends UIComponentTable {
 
@@ -19,8 +17,18 @@ public class StartScreenTable extends UIComponentTable {
 
     public void create() {
         int spacing = 5;
-
         infoLabel = new Label("", skin);
+
+        SelectBox<String> worldSelect = new SelectBox<>(skin);
+        updateWorldsList(worldSelect);
+
+        worldSelect.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                worldSelect.setSelected(worldSelect.getSelected());
+            }
+        });
+
         TextButton play = new TextButton("Beitreten", skin);
         play.addListener(new InputListener() {
             @Override
@@ -30,17 +38,18 @@ public class StartScreenTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                hud.addMenuTable(null);
-            }
-        });
+                /*
+                for (var entry : hud.getWorlds().entrySet()) {
+                    if (entry.getValue().equals(worldSelect.getSelected())) {
+                        hud.sendJoinWorldRequest(entry.getKey());
+                        break;
+                    }
+                    infoLabel.setText("Welt nicht mehr verfügbar");
+                    updateWorldsList(worldSelect);
+                }
 
-        SelectBox<String> worlds = new SelectBox<String>(skin);
-        IGlobalContextView global = hud.getApplicationScreen().getGame().getGlobalContext();
-        //HashMap map = global.getWorlds();
-        worlds.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent changeEvent, Actor actor) {
-                worlds.setSelected(worlds.getSelected());
+                 */
+                hud.addMenuTable(null);
             }
         });
 
@@ -70,7 +79,7 @@ public class StartScreenTable extends UIComponentTable {
         });
 
         TextButton profileSettings = new TextButton("Benutzerkonto \n bearbeiten", skin);
-        profileSettings.addListener(new InputListener(){
+        profileSettings.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -95,7 +104,7 @@ public class StartScreenTable extends UIComponentTable {
         menuLayout.row();
         menuLayout.add(play);
         menuLayout.row();
-        menuLayout.add(worlds);
+        menuLayout.add(worldSelect);
         menuLayout.row();
         menuLayout.add(changeAvatar);
         menuLayout.row();
@@ -104,4 +113,12 @@ public class StartScreenTable extends UIComponentTable {
         add(menuLayout).expand();
     }
 
+
+    private void updateWorldsList(SelectBox<String> selectBox) {
+        /*
+        for (var entry : hud.getWorlds().entrySet()) {
+            selectBox.setItems(entry.getValue());
+        }
+         */
+    }
 }
