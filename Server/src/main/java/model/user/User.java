@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public class User implements IUser {
 
     /** Standard-Avatar eines Benutzers */
-    private static final Avatar DEFAULT_AVATAR = null;
+    private static final Avatar DEFAULT_AVATAR = Avatar.PLACEHOLDER;
 
     /** Wird zur eindeutigen Identifikation eines Benutzers verwendet. */
     private final UUID userId;
@@ -117,38 +117,8 @@ public class User implements IUser {
      * @param userId ID des Benutzers.
      * @param username Benutzername des Benutzers.
      * @param avatar Avatar des Benutzers.
-     * @param contextRoles Menge der Zuordnungen von Kontexten zu den jeweiligen Rollen des Benutzers.
-     * @param notifications Menge der Benachrichtigungen des Benutzers.
+     * @param lastLogoutTime Zeitpunkt, an dem sich der Benutzer das letzte mal ausgeloggt hat.
      */
-    public User(UUID userId, String username, Avatar avatar, LocalDateTime lastLogoutTime, Map<Context,
-            ContextRole> contextRoles, Map<UUID, Notification> notifications) {
-        this.userId = userId;
-        this.username = username;
-        this.status = Status.OFFLINE;
-        this.avatar = avatar;
-        this.lastLogoutTime = lastLogoutTime;
-        this.lastActivity = LocalDateTime.now();
-        this.currentWorld = null;
-        this.currentLocation = null;
-        this.currentInteractable = null;
-        this.moveable = true;
-        this.communicationHandler = new CommunicationHandler(this);
-        this.friends = new HashMap<>();
-        this.ignoredUsers = new HashMap<>();
-        this.mutedContexts = new HashMap<>();
-        this.contextRoles = contextRoles;
-        this.notifications = notifications;
-        this.database = Database.getUserDatabase();
-    }
-
-    //Yujie Hu: Mache für Datenbank getUser. Falls man Konstruktor User(userId, username, avatar, lastLogoutTime,
-    //          contextRoles, notifications) verwenden möchte, um ein schon existierten User zu bekommen, muss dann
-    //          Map<Context, ContextRole> contextRoles und Map<UUID, Notification> notifications erhalten. Aber bei
-    //          Konstruktor von ContextRole und Notification braucht man User. Deswegen mache ich hier ein anderer
-    //          Konstruktor für User, nur habe this.contextRoles = new HashMap<>() und
-    //          this.notifications = new HashMap<>() geändert.
-    //          Ich habe dann probiert bei getUser(userID) und auch Test gemacht (getUser2 in
-    //          UserAccountManagerDatabaseTest), aber ich weiss nicht, ob das andere Methode negativ beeinflusst
     public User(UUID userId, String username, Avatar avatar, LocalDateTime lastLogoutTime) {
         this.userId = userId;
         this.username = username;
@@ -509,6 +479,14 @@ public class User implements IUser {
     }
 
     /**
+     * Wird von den Datenbank verwendet, um die initialen Rollen eines Benutzers zu setzen.
+     * @param contextRoles Zu setzende Rollen.
+     */
+    public void addRoles(Map<Context, ContextRole> contextRoles) {
+        this.contextRoles.putAll(contextRoles);
+    }
+
+    /**
      * Fügt dem Benutzer eine Rolle in einem Kontext hinzu.
      * @param context Kontext, in dem die Rolle hinzugefügt werden soll.
      * @param role Hinzuzufügende Rolle.
@@ -542,6 +520,14 @@ public class User implements IUser {
             // Sende geänderte Rolleninformationen an alle relevanten Benutzer.
             updateRoleInfo(contextRole);
         }
+    }
+
+    /**
+     * Wird von der Datenbank verwendet, um die initialen Benachrichtigungen eines Benutzers zu setzen.
+     * @param notifications Zu setzende Benachrichtigungen.
+     */
+    public void addNotifications(Map<UUID, Notification> notifications) {
+        this.notifications.putAll(notifications);
     }
 
     /**
