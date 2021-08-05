@@ -6,6 +6,7 @@ import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.Menu;
 import model.context.spatial.SpatialContextType;
+import model.exception.UserNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -39,7 +40,7 @@ public interface ViewControllerInterface {
     void createWorldResponse(boolean success, String messageKey);
     void deleteWorldResponse(boolean success, String messageKey);
     void joinWorldResponse(boolean success, String messageKey);
-    void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType);
+    void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message) throws UserNotFoundException;
     void playVoiceData(UUID userID, LocalDateTime timestamp, byte[] voiceData);
     void openMenu(Menu menu);
     void closeMenu(Menu menu);
