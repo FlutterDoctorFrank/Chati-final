@@ -65,6 +65,13 @@ public class ClientNetworkManager extends NetworkManager<Client> {
     }
 
     public @Nullable ServerConnection getConnection() {
+        while (this.connection == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         return this.connection;
     }
 
