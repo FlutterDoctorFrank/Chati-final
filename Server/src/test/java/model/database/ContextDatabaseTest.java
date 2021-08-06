@@ -9,10 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class ContextDatabaseTest {
 
@@ -74,12 +71,29 @@ public class ContextDatabaseTest {
          */
 
 
-
-
     }
 
     @Test
     public void removeWorldTest() {
+        /*
+        //Füge eine Welt direkt in Datenbank
+        try {
+            Connection con = DriverManager.getConnection(dbURL);
+            PreparedStatement ps = con.prepareStatement("INSERT INTO WORLDS(WORLD_ID, WORLD_NAME, MAP_NAME) values(?,?,?)");
+            World test = new World("test_world", SpatialMap.PLACEHOLDER);
+            ps.setString(1, "12345");
+            ps.setString(2, "test_world");
+            ps.setString(3, "test_map_name");
+            ps.executeUpdate();
+            con.close();
+        } catch (Exception e) {
+            System.out.print(e);
+        }
+
+        //löschen mit removeWorld
+
+         */
+
 
     }
 

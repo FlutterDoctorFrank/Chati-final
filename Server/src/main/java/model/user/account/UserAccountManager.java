@@ -65,8 +65,8 @@ public class UserAccountManager implements IUserAccountManager {
             throw new IllegalAccountActionException("errorMsg console", "Ein Konto mit dem Benutzernamen existiert bereits. - key");
         }
         // Erzeuge Benutzer und füge ihn zu den registrierten Benutzern hinzu.
-        // User createdUser = database.createAccount(username, password);
-        User createdUser = new User(username);
+        User createdUser = database.createAccount(username, password);
+        //User createdUser = new User(username);
         registeredUsers.put(createdUser.getUserId(), createdUser);
     }
 

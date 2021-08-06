@@ -21,6 +21,7 @@ import java.sql.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -105,7 +106,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 return world;
 
             } else {
-                System.out.println("mehr als 1 or not exist");
+                System.out.println("world mehr als 1 or not exist");
             }
             res.close();
             st.close();
@@ -441,7 +442,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 }
                 user.addIgnoredUsers(ignores);
 
-                //!!!Notification
+                //Notification
                 ResultSet res_notif = st.executeQuery("SELECT * FROM NOTIFICATION WHERE USER_ID = " + "'" +
                         userID.toString()+ "'");
                 Map<UUID, Notification> notifications = new HashMap<>();
@@ -454,20 +455,26 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
                     //Arguments
                     int count = 0;
-                    while (res.getString(7 + count) != null) {
+                    while (res_notif.getString(7 + count) != null) {
                         count ++;
                     }
                     Object[] argus = new Object[count];
+                    /*
                     //AreaManagingRequest
                     if (count == 4) {
                         String requester_name = res.getString("AEGUMENT1");
                         String area_name = res.getString("ARGUMENT2");
                         String from_string = res.getString("ARGUMENT3");
-
+                        LocalDateTime from = LocalDateTime.parse(from_string);
                         String to_string = res.getString("ARGUMENT4");
+                        LocalDateTime to = LocalDateTime.parse(to_string);
 
+                        //Notification notif = new AreaManagingRequest(user, )
                     }
-                    if (count != 0) {
+
+                     */
+                    if (count == 0) {
+                        MessageBundle notif = new MessageBundle(message_key);
                         String argument_i;
                     }
                 }
