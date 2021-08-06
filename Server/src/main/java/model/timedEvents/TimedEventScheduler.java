@@ -6,7 +6,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.function.Predicate;
 
 /**
- * Eine Klasse die benutzt wird um Ereignisse auszuführen, die in der Zukunft stattfinden sollen.
+ * Eine Klasse die benutzt wird, um Ereignisse auszuführen, die in der Zukunft stattfinden sollen.
  */
 public class TimedEventScheduler extends Thread {
 
@@ -25,6 +25,8 @@ public class TimedEventScheduler extends Thread {
     private TimedEventScheduler() {
         this.timedEvents = new PriorityBlockingQueue<>();
         this.isRunning = false;
+
+        this.setDaemon(true);
     }
 
     @Override

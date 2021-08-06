@@ -2,44 +2,31 @@ package controller.network;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
-import model.context.global.IGlobalContextController;
 import model.user.IUserManagerController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view.Screens.ViewControllerInterface;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Verwaltet die Verbindung zum Server und hält die Referenzen auf das Model und die View.
  */
 public class ClientNetworkManager extends NetworkManager<Client> {
 
-    private ViewControllerInterface view;
-    private final IGlobalContextController global;
+    private static final Logger LOGGER = Logger.getLogger("Chati-Network");
+
     private final IUserManagerController userManager;
+    private ViewControllerInterface view;
 
     private ServerConnection connection;
 
     public ClientNetworkManager(/*@NotNull final ViewControllerInterface view,*/
-                                @NotNull final IGlobalContextController global,
                                 @NotNull final IUserManagerController userManager) {
         super(new Client());
 
-        this.global = global;
         this.userManager = userManager;
         //this.view = view;
-    }
-
-    public void setView(ViewControllerInterface view) {
-        this.view = view;
-    }
-
-    public ViewControllerInterface getView() {
-        return view;
-    }
-
-    public @Nullable ServerConnection getConnection() {
-        return this.connection;
     }
 
     @Override
@@ -52,26 +39,21 @@ public class ClientNetworkManager extends NetworkManager<Client> {
         if (connection.equals(this.endPoint)) {
             this.endPoint.removeListener(this.connection);
             this.connection = null;
+            this.userManager.logout();
+            this.view.logout();
         }
     }
 
-    /*
+    /**
      * Gibt die Instanz auf die View zurück.
      * @return die ViewControllerInterface-Instanz
      */
-
-    /*
     public @NotNull ViewControllerInterface getView() {
-        return view;
+        return this.view;
     }
-     */
 
-    /**
-     * Gibt die Instanz auf den globalen Kontext zurück.
-     * @return die IGlobalContextController-Instanz
-     */
-    public @NotNull IGlobalContextController getGlobal() {
-        return global;
+    public void setView(ViewControllerInterface view) {
+        this.view = view;
     }
 
     /**
@@ -82,21 +64,31 @@ public class ClientNetworkManager extends NetworkManager<Client> {
         return userManager;
     }
 
+    public @Nullable ServerConnection getConnection() {
+        return this.connection;
+    }
+
     @Override
     public void start() {
-        try {
-            this.endPoint.start();
-            this.endPoint.connect(5000, HOST_IP, HOST_TCP_PORT, HOST_UDP_PORT);
+        this.endPoint.start();
+        this.active = true;
 
-            System.out.println("Connected to Server.");
-        } catch (IOException ex) {
-            System.out.println("Failed to connect to server");
-            ex.fillInStackTrace();
+        while (this.active && !this.endPoint.isConnected()) {
+            try {
+                this.endPoint.connect(60000, HOST_IP, HOST_TCP_PORT, HOST_UDP_PORT);
+
+                LOGGER.info(String.format("Connect to server over ip %s and ports: %d, %d (TCP, UDP)",
+                        HOST_IP, HOST_TCP_PORT, HOST_UDP_PORT));
+            } catch (IOException ex) {
+                LOGGER.warning(String.format("Failed to connect to server with ip %s and ports: %d, %d (TCP, UDP)",
+                        HOST_IP, HOST_TCP_PORT, HOST_UDP_PORT));
+            }
         }
     }
 
     @Override
     public void stop() {
-
+        this.active = false;
+        this.endPoint.stop();
     }
 }

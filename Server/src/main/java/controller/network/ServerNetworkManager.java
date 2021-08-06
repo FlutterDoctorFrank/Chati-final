@@ -8,29 +8,36 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /**
  * Reagiert auf eingehende Verbindungen und verwaltet die bestehenden Verbindungen.
  */
 public class ServerNetworkManager extends NetworkManager<Server> {
 
+    private static final Logger LOGGER = Logger.getLogger("Chati-Network");
     private final Map<Integer, UserConnection> connections;
 
-    private final IGlobalContext global;
     private final IUserAccountManager accountManager;
+    private final IGlobalContext global;
 
-    public ServerNetworkManager(@NotNull final IGlobalContext global,
-                                @NotNull final IUserAccountManager accountManager) {
+    public ServerNetworkManager(@NotNull final IUserAccountManager accountManager,
+                                @NotNull final IGlobalContext global) {
         super(new Server());
 
         this.connections = new ConcurrentHashMap<>();
-        this.global = global;
         this.accountManager = accountManager;
+        this.global = global;
     }
 
     @Override
     public void connected(@NotNull final Connection connection) {
+        if (this.connections.containsKey(connection.getID())) {
+            return;
+        }
+
         this.connections.put(connection.getID(), new UserConnection(this, connection));
+        LOGGER.info(String.format("Received new connection with id: %s", connection.getID()));
     }
 
     @Override
@@ -43,14 +50,6 @@ public class ServerNetworkManager extends NetworkManager<Server> {
     }
 
     /**
-     * Gibt die Instanz auf den globalen Kontext zurück.
-     * @return die IGlobalContext-Instanz.
-     */
-    public @NotNull IGlobalContext getGlobal() {
-        return this.global;
-    }
-
-    /**
      * Gibt die Instanz des Account Managers zurück.
      * @return die IUserAccountManager-Instanz.
      */
@@ -58,19 +57,34 @@ public class ServerNetworkManager extends NetworkManager<Server> {
         return this.accountManager;
     }
 
+    /**
+     * Gibt die Instanz auf den globalen Kontext zurück.
+     * @return die IGlobalContext-Instanz.
+     */
+    public @NotNull IGlobalContext getGlobal() {
+        return this.global;
+    }
+
     @Override
     public void start() {
         try {
             this.endPoint.start();
             this.endPoint.bind(HOST_TCP_PORT, HOST_UDP_PORT);
-            System.out.println("Hosted Server.");
+            this.active = true;
+
+            LOGGER.info(String.format("Hosted Server on following Ports: %d, %d (TCP, UDP)", HOST_TCP_PORT, HOST_UDP_PORT));
         } catch (IOException ex) {
-            System.out.println("Failed to host server.");
+            this.active = false;
+
+            LOGGER.info(String.format("Failed to host Server on Ports: %d, %d (TCP, UDP)", HOST_TCP_PORT, HOST_UDP_PORT));
         }
     }
 
     @Override
     public void stop() {
+        this.endPoint.stop();
+        this.active = false;
 
+        LOGGER.info("Closed Server-Connection");
     }
 }
