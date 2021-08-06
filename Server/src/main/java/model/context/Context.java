@@ -1,6 +1,7 @@
 package model.context;
 
 import model.communication.CommunicationMedium;
+import model.context.global.GlobalContext;
 import model.context.spatial.Area;
 import model.database.Database;
 import model.database.IContextDatabase;
@@ -33,13 +34,13 @@ public abstract class Context implements IContext {
     protected final Map<UUID, User> containedUsers;
 
     /** Die in diesem Kontext gemeldeten Benutzer. */
-    private final Map<UUID, User> reportedUsers;
+    protected final Map<UUID, User> reportedUsers;
 
     /** Die in diesem Kontext stummgeschalteten Benutzer. */
-    private final Map<UUID, User> mutedUsers;
+    protected final Map<UUID, User> mutedUsers;
 
     /** Die in diesem Kontext gesperrten Benutzer. */
-    private final Map<UUID, User> bannedUsers;
+    protected final Map<UUID, User> bannedUsers;
 
     /** Ermöglicht Zugriff auf die Datenbank */
     protected final IContextDatabase database;
@@ -135,11 +136,13 @@ public abstract class Context implements IContext {
     }
 
     /**
-     * Fügt einen Benutzer zu den gemeldeten Benutzern in diesem Kontext hinzu.
+     * Fügt einen Benutzer zu den gemeldeten Benutzern in diesem Kontext hinzu. Stellt sicher, dass der Benutzer in
+     * allen untergeordneten Kontexten als gemeldeter Benutzer hinzugefügt wird.
      * @param user Hinzuzufügender Benutzer.
      */
     public void addReportedUser(User user) {
         reportedUsers.put(user.getUserId(), user);
+        children.values().forEach(child -> child.addReportedUser(user));
         user.updateUserInfo();
     }
 
@@ -150,11 +153,7 @@ public abstract class Context implements IContext {
      */
     public void removeReportedUser(User user) {
         reportedUsers.remove(user.getUserId());
-        children.values().forEach(child -> {
-            if (child.isReported(user)) {
-                child.removeReportedUser(user);
-            }
-        });
+        children.values().forEach(child -> child.removeReportedUser(user));
         user.updateUserInfo();
     }
 
@@ -179,13 +178,17 @@ public abstract class Context implements IContext {
     }
 
     /**
-     * Fügt einen Benutzer zu den gesperrten Benutzern in diesem Kontext hinzu.
+     * Fügt einen Benutzer zu den gesperrten Benutzern in diesem Kontext hinzu. Stellt sicher, dass der Benutzer in
+     * allen untergeordneten Kontexten als gesperrter Benutzer hinzugefügt wird.
      * @param user Hinzuzufügender Benutzer.
      */
     public void addBannedUser(User user) {
         bannedUsers.put(user.getUserId(), user);
-        database.addBannedUser(user, this);
-        user.updateUserInfo();
+        children.values().forEach(child -> child.addBannedUser(user));
+        if (parent.equals(GlobalContext.getInstance())) {
+            user.updateUserInfo();
+            database.addBannedUser(user, this);
+        }
     }
 
     /**
@@ -196,8 +199,10 @@ public abstract class Context implements IContext {
     public void removeBannedUser(User user) {
         bannedUsers.remove(user.getUserId());
         children.values().forEach(child -> child.removeBannedUser(user));
-        database.removeBannedUser(user, this);
-        user.updateUserInfo();
+        if (parent.equals(GlobalContext.getInstance())) {
+            database.removeBannedUser(user, this);
+            user.updateUserInfo();
+        }
     }
 
     /**

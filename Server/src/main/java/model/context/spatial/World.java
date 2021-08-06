@@ -4,10 +4,12 @@ import controller.network.ClientSender;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
 import model.exception.ContextNotFoundException;
+import model.role.Permission;
 import model.user.User;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class World extends Room implements IWorld {
 
@@ -71,14 +73,15 @@ public class World extends Room implements IWorld {
         user.getWorldNotifications().values().forEach(notification -> {
             user.getClientSender().send(ClientSender.SendAction.NOTIFICATION, notification);
         });
-        getUsers().values().forEach(containedUser -> {
+        Map<UUID, User> usersToSend = containedUsers;
+        if (user.hasPermission(this, Permission.BAN_USER) || user.hasPermission(this, Permission.BAN_MODERATOR)) {
+            usersToSend.putAll(bannedUsers);
+        }
+        usersToSend.values().forEach(containedUser -> {
             if (!user.equals(containedUser)) {
                 containedUser.getClientSender().send(ClientSender.SendAction.USER_INFO, user);
                 user.getClientSender().send(ClientSender.SendAction.USER_INFO, containedUser);
             }
-        });
-        getBannedUsers().values().forEach(bannedUser -> {
-            user.getClientSender().send(ClientSender.SendAction.USER_INFO, bannedUser);
         });
     }
 

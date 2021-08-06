@@ -15,7 +15,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer private Räume erstellen, diesen beitreten
@@ -88,8 +90,14 @@ public class RoomReception extends Interactable {
                 user.setCurrentInteractable(null);
                 user.setMoveable(true);
                 user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
+
+                // Sende an alle Benutzer, die gerade das Menü einer Rezeption geöffnet haben, die Liste aller
+                // privaten Räume.
+                world.getUsers().values().stream()
+                        .filter(receiver -> receiver.getCurrentMenu() == Menu.ROOM_RECEPTION_MENU)
+                        .forEach(receiver -> receiver.getClientSender().send(ClientSender.SendAction.CONTEXT_LIST, world));
                 break;
-            case 2: // Betrete einen existierenden privaten Raum. ;
+            case 2: // Betrete einen existierenden privaten Raum.
                 // Prüfe, ob der zu betretende Raum existiert.
                 String joinRoomName = args[0];
                 try {

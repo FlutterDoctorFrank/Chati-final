@@ -9,7 +9,11 @@ import model.context.Context;
 import model.role.Role;
 import model.user.User;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Room extends Area implements IRoom {
 
@@ -130,6 +134,12 @@ public class Room extends Area implements IRoom {
             // Rolle jemand anderem in dem Raum.
             if (containedUsers.isEmpty()) {
                 world.removePrivateRoom(this);
+                world.removeChild(this);
+                // Sende an alle Benutzer, die gerade das Menü einer Rezeption geöffnet haben, die neue Liste aller
+                // privaten Räume.
+                world.getUsers().values().stream()
+                        .filter(receiver -> receiver.getCurrentMenu() == Menu.ROOM_RECEPTION_MENU)
+                        .forEach(receiver -> receiver.getClientSender().send(ClientSender.SendAction.CONTEXT_LIST, world));
             } else {
                 containedUsers.values().stream().findAny().get().addRole(this, Role.ROOM_OWNER);
             }

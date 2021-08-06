@@ -11,6 +11,9 @@ import model.user.User;
 import model.user.account.UserAccountManager;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Eine Klasse, welche den globalen Kontext der Anwendung repräsentiert. Kann nur einmal instanziiert werden.
@@ -48,6 +51,8 @@ public class GlobalContext extends Context implements IGlobalContext {
         // Erzeuge die Welt und füge sie
         World createdWorld = new World(worldname, map);
         addChild(createdWorld);
+        // Sende neue Liste der Welten an alle Benutzer im Startbildschirm.
+        sendWorldList();
     }
 
     @Override
@@ -74,6 +79,8 @@ public class GlobalContext extends Context implements IGlobalContext {
         // Entferne die Welt.
         worlds.remove(worldId);
         removeChild(deleteWorld);
+        // Sende neue Liste der Welten an alle Benutzer im Startbildschirm.
+        sendWorldList();
     }
 
     @Override
@@ -123,5 +130,13 @@ public class GlobalContext extends Context implements IGlobalContext {
     @Override
     public boolean canCommunicateWith(CommunicationMedium medium) {
         return false;
+    }
+
+    /**
+     * Sendet die Liste aller existierenden Welten an alle Benutzer im Startbildschirm.
+     */
+    private void sendWorldList() {
+        containedUsers.values().stream().filter(Predicate.not(User::isInWorld))
+                .forEach(receiver -> receiver.getClientSender().send(ClientSender.SendAction.CONTEXT_LIST, this));
     }
 }

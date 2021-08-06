@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Location implements ILocation {
 
     /** Der Raum, auf den sich diese Position bezieht. */
-    private Room room;
+    private final Room room;
 
     /** X-Koordinate der Position. */
     private int posX;

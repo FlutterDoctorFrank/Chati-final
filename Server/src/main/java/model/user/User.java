@@ -566,6 +566,14 @@ public class User implements IUser {
     }
 
     /**
+     * Überprüft, ob ein Benutzer gerade in einer Welt ist.
+     * @return true, wenn der Benutzer in einer Welt ist, sonst false.
+     */
+    public boolean isInWorld() {
+        return currentWorld != null;
+    }
+
+    /**
      * Setzt das Objekt, mit dem der Benutzer momentan interagiert.
      * @param interactable Objekt, mit dem der Benutzer momentan interagiert.
      */
@@ -667,6 +675,14 @@ public class User implements IUser {
     }
 
     /**
+     * Gibt das Menü zurück, dass der Benutzer gerade geöffnet hat.
+     * @return Interaktionsobjekt, mit dem der Benutzer gerade interagiert.
+     */
+    public Menu getCurrentMenu() {
+        return currentInteractable == null ? null : currentInteractable.getMenu();
+    }
+
+    /**
      * Gibt den Zeitpunkt zurück, an dem sich der Benutzer das letzte mal abgemeldet hat.
      * @return Letzter Zeitpunkt, an dem der Benutzer sich abgemeldet hat.
      */
@@ -731,7 +747,7 @@ public class User implements IUser {
      * Wirft eine Exception wenn der Benutzer nicht in einer Welt ist.
      */
     private void throwIfNotInWorld() {
-        if (currentWorld == null || currentLocation == null) {
+        if (!isInWorld()) {
             throw new IllegalStateException("User is not in world.");
         }
     }
