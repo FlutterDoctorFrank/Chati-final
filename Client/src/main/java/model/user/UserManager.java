@@ -75,6 +75,11 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     }
 
     @Override
+    public Map<UUID, IUserController> getExternUsers() {
+        return externUsers.values().stream().collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
+    }
+
+    @Override
     public InternUser getInternUserView() {
         throwIfNotLoggedIn();
         return internUser;

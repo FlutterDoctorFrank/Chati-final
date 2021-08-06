@@ -1,6 +1,7 @@
 package model.user;
 
 import model.exception.UserNotFoundException;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -47,4 +48,10 @@ public interface IUserManagerController {
      * @throws UserNotFoundException falls dem Client kein externer Benutzer mit der ID bekannt ist.
      */
     IUserController getExternUserController(UUID userId) throws UserNotFoundException;
+
+    /**
+     * Gibt die externen Benutzer zurück.
+     * @return die externen Benutzer.
+     */
+    Map<UUID, IUserController> getExternUsers();
 }

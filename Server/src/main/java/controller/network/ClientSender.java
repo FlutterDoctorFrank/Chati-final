@@ -126,6 +126,8 @@ public interface ClientSender {
                         for (final IWorld world : ((IGlobalContext) object).getWorlds().values()) {
                             infos.add(new PacketOutContextList.ContextInfo(world.getContextId(), world.getContextName()));
                         }
+
+                        return new PacketOutContextList(null, infos);
                     } else {
                         for (final IRoom room : ((IWorld) object).getPrivateRooms().values()) {
                             infos.add(new PacketOutContextList.ContextInfo(room.getContextId(), room.getContextName()));

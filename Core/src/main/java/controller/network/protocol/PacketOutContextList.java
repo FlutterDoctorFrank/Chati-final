@@ -34,7 +34,7 @@ public class PacketOutContextList implements Packet<PacketListenerOut> {
      * @param contextId die ID des übergeordneten Kontexts.
      * @param infos die Informationen der untergeordneten Kontexte.
      */
-    public PacketOutContextList(@NotNull final ContextID contextId, @NotNull final Collection<ContextInfo> infos) {
+    public PacketOutContextList(@Nullable final ContextID contextId, @NotNull final Collection<ContextInfo> infos) {
         this.contextId = contextId;
         this.infos = infos.toArray(new ContextInfo[0]);
     }
@@ -46,7 +46,7 @@ public class PacketOutContextList implements Packet<PacketListenerOut> {
 
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
-        PacketUtils.writeContextId(output, this.contextId);
+        PacketUtils.writeNullableContextId(output, this.contextId);
         output.writeInt(this.infos.length, true);
 
         for (final ContextInfo info : this.infos) {
@@ -57,7 +57,7 @@ public class PacketOutContextList implements Packet<PacketListenerOut> {
 
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
-        this.contextId = PacketUtils.readContextId(input);
+        this.contextId = PacketUtils.readNullableContextId(input);
         this.infos = new ContextInfo[input.readInt(true)];
 
         for (int index = 0; index < this.infos.length; index++) {
@@ -67,13 +67,12 @@ public class PacketOutContextList implements Packet<PacketListenerOut> {
 
     /**
      * Gibt die Kontext-ID des übergeordneten Kontexts zurück.
-     * Enthält das Paket Informationen über die verfügbaren Welten, so wird die Kontext-ID des Globalen Kontextes
-     * zurückgegeben.
+     * Enthält das Paket Informationen über die verfügbaren Welten, so wird null zurückgegeben.
      * Enthält das Paket Informationen über die verfügbaren privaten Räume, so wird die Kontext-ID der übergeordneten
      * Welt zurückgegeben.
      * @return die ID des übergeordneten Kontexts.
      */
-    public @NotNull ContextID getContextId() {
+    public @Nullable ContextID getContextId() {
         return contextId;
     }
 

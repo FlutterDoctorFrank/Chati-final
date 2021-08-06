@@ -26,7 +26,6 @@ public class Chati extends Game {
 
         this.context = context;
         this.serverSender = serverSender;
-        this.serverSender = serverSender;
 
         config.setMaximized(true);
         config.setResizable(false);

@@ -339,7 +339,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             }
         } else {
             if (this.user == null) {
-                this.logUnexpectedPacket(packet, "Can not logout/delete user while not logged in");
+                this.logUnexpectedPacket(packet, "Can not change/logout/delete user while not logged in");
                 return;
             }
 
