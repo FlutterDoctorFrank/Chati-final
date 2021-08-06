@@ -239,7 +239,9 @@ public class ApplicationScreen implements Screen {
         sendPositionToServer(body.getPosition().x, body.getPosition().y);
     }
 
-    private void sendPositionToServer(float positionX, float positionY) {
+    private void sendPositionToServer(float posX, float posY) {
+        int positionX = (int) posX;
+        int positionY = (int) posY;
         Object[] position = {positionX, positionY};
         game.getServerSender().send(ServerSender.SendAction.AVATAR_MOVE, position);
     }
