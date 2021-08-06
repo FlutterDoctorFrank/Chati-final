@@ -1,5 +1,8 @@
 package view.Sprites;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
@@ -10,12 +13,13 @@ import view.Chati;
 
 import java.util.UUID;
 
-public class Avatar {
+public class Avatar extends Sprite {
     private World world;
     private Body body;
     private BodyDef bdef;
     private FixtureDef fdef;
     private UUID user;
+    private TextureRegion texture;
 
     public Avatar(World world) {
         this.bdef = new BodyDef();
@@ -29,9 +33,13 @@ public class Avatar {
 
         FixtureDef fdef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(1, 1);
+        shape.setAsBox(0.5f, 0.5f);
         fdef.shape = shape;
         body.createFixture(fdef);
+
+        texture = new TextureRegion(new Texture("skins/Adam_32x32.png"), 0, 0, 32, 64);
+        setBounds(0,0,32 / Chati.PPM,32 / Chati.PPM);
+        setRegion(texture);
     }
 
     public Avatar(World world, IUserView userView) {
@@ -50,6 +58,10 @@ public class Avatar {
         shape.setAsBox(1, 1);
         fdef.shape = shape;
         body.createFixture(fdef);
+
+        texture = new TextureRegion(new Texture("skins/Adam_32x32.png"), 0, 0, 32, 64);
+        setBounds(0,0,32 / Chati.PPM,32 / Chati.PPM);
+        setRegion(texture);
     }
 
     public Body getBody() {

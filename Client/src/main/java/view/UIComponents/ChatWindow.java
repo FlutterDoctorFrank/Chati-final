@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
+import controller.network.ServerSender;
 import org.jetbrains.annotations.NotNull;
 
 public class ChatWindow extends Window {
@@ -53,8 +54,9 @@ public class ChatWindow extends Window {
                 String message = messageField.getText();
                 if (message.length() > 0) {
                     messageField.setText("");
-                    String[] messageToSend = {message};
-                    hud.sendTextMessage(messageToSend);
+                    Object[] messageToSend = {message};
+                    ServerSender serverSender = hud.getApplicationScreen().getGame().getServerSender();
+                    serverSender.send(ServerSender.SendAction.MESSAGE, messageToSend);
                 }
             }
         });

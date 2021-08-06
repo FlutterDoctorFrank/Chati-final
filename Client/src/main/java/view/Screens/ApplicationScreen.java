@@ -102,12 +102,20 @@ public class ApplicationScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (!Objects.isNull(mapRenderer) && !Objects.isNull(box2DDebugRenderer)) {
-            spriteBatch.setProjectionMatrix(hud.getCamera().combined);
+
             mapRenderer.render();
             box2DDebugRenderer.render(world, gamecam.combined);
+            spriteBatch.setProjectionMatrix(gamecam.combined);
+            spriteBatch.begin();
+            for( Avatar avatar :  avatars) {
+                avatar.draw(spriteBatch);
+                avatar.setPosition(avatar.getBody().getPosition().x - avatar.getWidth() / 2, avatar.getBody().getPosition().y - avatar.getHeight() / 2);
+            }
+            spriteBatch.end();
             update(delta);
         }
 
+        spriteBatch.setProjectionMatrix(hud.getCamera().combined);
         hud.act();
         hud.draw();
     }

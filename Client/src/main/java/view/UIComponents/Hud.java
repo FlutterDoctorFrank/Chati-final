@@ -217,12 +217,6 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
         }
     }
 
-    public void sendTextMessage(String[] messageToSend) {
-        Object[] message = {messageToSend};
-        ServerSender serverSender = applicationScreen.getGame().getServerSender();
-        serverSender.send(ServerSender.SendAction.MESSAGE, message);
-    }
-
     @Override
     public void passwordChangeResponse(boolean success, String messageKey) {
 
