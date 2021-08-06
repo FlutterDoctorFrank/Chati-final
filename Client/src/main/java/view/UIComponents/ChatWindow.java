@@ -96,12 +96,15 @@ public class ChatWindow extends Window {
             setSize(getWidth(), getTitleTable().getHeight());
             minimizeButton.setText("+");
             setResizable(false);
+            setMovable(false);
+            setPosition(hud.getWidth() - getTitleTable().getWidth(), 0);
             minimized = true;
         } else {
             setSize(getWidth(), 350);
             minimizeButton.setText("-");
             setResizable(true);
             minimized = false;
+            setMovable(true);
         }
     }
 }

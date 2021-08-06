@@ -13,6 +13,7 @@ import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.Menu;
 import model.exception.UserNotFoundException;
+import model.user.IUserView;
 import view.Chati;
 import view.Screens.*;
 
@@ -26,7 +27,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     private ApplicationScreen applicationScreen;
     private LinkedList<Table> waitingResponse;
     private WidgetGroup group;
-    Map<ContextID, String> worlds;
+    private Map<ContextID, String> worlds;
     private ContextID contextID;
 
     private boolean isPlaying = false;
@@ -86,7 +87,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     private void playScreenLayout() {
         group.clear();
-        applicationScreen.getGame().setScreen(new ApplicationScreen(applicationScreen.getHud(), true));
+       // applicationScreen.getGame().setScreen(new ApplicationScreen(applicationScreen.getHud(), applicationScreen.getGame().getContext().));
         group.addActor(new DropDownMenu(this));
         group.addActor(new ChatWindow(this));
 
@@ -130,15 +131,13 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
      */
     @Override
     public void setWorldChanged() {
-        /*
         if (waitingJoinWorldResponse) {
-            String mapPath = applicationScreen.getGame().getContext().getCurrentWold().getMap().getPath();
+            String mapPath = applicationScreen.getGame().getUserManager().getInternUserView().getCurrentWorld().getMap().getPath();
             Map<UUID, IUserView> users = applicationScreen.getGame().getUserManager().getActiveUsers();
 
-            applicationScreen.getGame().setScreen(new ApplicationScreen(applicationScreen.getGame(), this, mapPath, users));
+            applicationScreen.getGame().setScreen(new ApplicationScreen(this, mapPath, users));
             addMenuTable(null);
         }
-        */
     }
 
     @Override
@@ -206,14 +205,12 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
         if (waitingLoginResponse) {
             table.displayMessage("Auf Antwort warten");
         } else {
-            /*
             Object[] credentials = {username, password, false};
             ServerSender serverSender = applicationScreen.getGame().getServerSender();
             serverSender.send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
             waitingLoginResponse = true;
 
-             */
-            addMenuTable(new StartScreenTable(this));
+            //addMenuTable(new StartScreenTable(this));
         }
     }
 
@@ -295,6 +292,11 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     @Override
     public void menuActionResponse(boolean success, String messageKey) {
+
+    }
+
+    @Override
+    public void logout() {
 
     }
 

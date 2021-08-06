@@ -20,7 +20,10 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import controller.network.ServerSender;
+import model.context.spatial.ILocationView;
+import model.user.IUserManagerView;
 import model.user.IUserView;
+import model.user.InternUser;
 import view.Chati;
 import view.Sprites.Avatar;
 import view.UIComponents.Hud;
@@ -67,28 +70,34 @@ public class ApplicationScreen implements Screen {
     }
 
 
-    public ApplicationScreen(Hud hud, boolean a) { //String mapPath , Map<UUID, IUserView> users
+    public ApplicationScreen(Hud hud, String mapPath , Map<UUID, IUserView> users) {
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Chati.V_WIDTH / Chati.PPM, Chati.V_HEIGHT / Chati.PPM, gamecam);
         this.hud = hud;
 
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("maps/map.tmx"); //mapPath
+        map = mapLoader.load("mapPath");   //maps/map.tmx
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / Chati.PPM);
         world = new World(new Vector2(0, 0), true);
         box2DDebugRenderer = new Box2DDebugRenderer();
 
         avatars = new ArrayList<>();
 
+        /*
         Avatar userAvatar = new Avatar(world);
         avatars.add(userAvatarIndex,userAvatar);
+        */
 
-        /*
+        InternUser user = game.getUserManager().getInternUserView();
         for (var entry : users.entrySet()) {
-            Avatar avatar = new Avatar(world, entry.getValue());
+            if (entry.getKey().equals(user.getUserId())) {
+                Avatar userAvatar = new Avatar(world, user.getAvatar().getPath(), user.getUserId(), user.getCurrentLocation().getPosX(), user.getCurrentLocation().getPosY());
+                avatars.add(userAvatarIndex,userAvatar);
+            }
+            ILocationView position = entry.getValue().getCurrentLocation();
+            Avatar avatar = new Avatar(world, entry.getValue().getAvatar().getPath(), entry.getKey(), position.getPosX(), position.getPosY());
             avatars.add(avatar);
         }
-         */
 
         addBorders(map.getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class), false);
         addBorders(map.getLayers().get("Interactable").getObjects().getByType(RectangleMapObject.class), true);
@@ -231,21 +240,21 @@ public class ApplicationScreen implements Screen {
     }
 
     private void sendPositionToServer(float positionX, float positionY) {
-        /*
         Object[] position = {positionX, positionY};
         game.getServerSender().send(ServerSender.SendAction.AVATAR_MOVE, position);
-         */
     }
 
     public void updateAvatarsPositions() {
-        for(var entry : game.getUserManager().getActiveUsers().entrySet()) {
-           for(Avatar avatar : avatars) {
-               if(avatar.getUser().equals(entry.getValue().getUserId())) {
-                   Vector2 newPosition = new Vector2(entry.getValue().getCurrentLocation().getPosX(), entry.getValue().getCurrentLocation().getPosY());
-                   new Thread(() -> moveAvatar(avatar, newPosition, false));
-               }
-           }
-        }
+        new Thread(() -> {
+            for(var entry : game.getUserManager().getActiveUsers().entrySet()) {
+                for(Avatar avatar : avatars) {
+                    if(avatar.getUser().equals(entry.getValue().getUserId())) {
+                        Vector2 newPosition = new Vector2(entry.getValue().getCurrentLocation().getPosX(), entry.getValue().getCurrentLocation().getPosY());
+                        moveAvatar(avatar, newPosition, false);
+                    }
+                }
+            }
+        });
     }
 
     public void moveAvatar(Avatar avatar, Vector2 endPosition, boolean teleport) {

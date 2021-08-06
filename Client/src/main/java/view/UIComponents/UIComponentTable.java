@@ -20,19 +20,6 @@ public abstract class UIComponentTable extends Table {
         defaults().space(5);
     }
 
-    protected Table dropDownMenus(Hud hud) {
-        Table dropDownMenus = new Table();
-        dropDownMenus.defaults().width(35).height(35).space(5);
-        Image settings = new Image(new Texture("icons/settings_img.png"));
-        Image users = new Image(new Texture("icons/user_img.png"));
-        Image notifications = new Image(new Texture("icons/speech_bubble_img.png"));
-        dropDownMenus.add(notifications);
-        dropDownMenus.add(users);
-        dropDownMenus.add(settings);
-
-        return dropDownMenus;
-    }
-
     public void displayMessage(String text) {
         infoLabel.setText(text);
     }

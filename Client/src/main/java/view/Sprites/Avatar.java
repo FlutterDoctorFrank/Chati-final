@@ -42,14 +42,14 @@ public class Avatar extends Sprite {
         setRegion(texture);
     }
 
-    public Avatar(World world, IUserView userView) {
+    public Avatar(World world, String avatarPath, UUID id, int posX, int posY) {
         this.bdef = new BodyDef();
         this.fdef = new FixtureDef();
         this.world = world;
-        this.user = userView.getUserId();
+        this.user = id;
 
         bdef = new BodyDef();
-        bdef.position.set(userView.getCurrentLocation().getPosX(), userView.getCurrentLocation().getPosY());
+        bdef.position.set(posX, posY);
         bdef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bdef);
 

@@ -18,13 +18,13 @@ public class Chati extends Game {
     public static final int V_HEIGHT = 680;
     public static final float PPM = 10; //pixels per meter
 
-    public Chati(ServerSender serverSender, Context globalContext, UserManager userManager) {
+    public Chati(ServerSender serverSender, Context context, UserManager userManager) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setIdleFPS(60);
         config.useVsync(true);
         config.setTitle("Chati");
 
-        this.context = globalContext;
+        this.context = context;
         this.serverSender = serverSender;
         this.serverSender = serverSender;
 
