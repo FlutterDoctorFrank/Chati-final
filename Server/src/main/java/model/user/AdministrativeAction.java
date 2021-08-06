@@ -234,11 +234,11 @@ public enum AdministrativeAction {
                         Permission.MUTE);
             }
             // Überprüfe, ob der stummzuschaltende Benutzer in dem Kontext bereits stummgeschaltet ist.
-            if (target.isMuted(commonContext)) {
+            if (commonContext.isMuted(target)) {
                 throw new IllegalStateException("Target is already muted in this context.");
             }
             // Schalte den Benutzer stumm.
-            target.addMutedContext(commonContext);
+            commonContext.addMutedUser(target);
         }
     },
 
@@ -260,16 +260,12 @@ public enum AdministrativeAction {
             }
             // Überprüfe, ob der Benutzer, dessen Stummschaltung aufgehoben werden soll, in dem Kontext stummgeschaltet
             // ist.
-            if (!target.isMuted(commonContext)) {
+            if (!commonContext.isMuted(target)) {
                 throw new IllegalStateException("Target is not muted in this context.");
             }
             // Hebe die Stummschaltung in dem Kontext und allen übergeordneten Kontexten, bis zu dem größten Kontext,
             // in dem sich der ausführende Benutzer befindet und die Berechtigung besitzt, auf.
-            Context context = targetArea;
-            do {
-                target.removeMutedContext(context);
-                context = context.getParent();
-            } while (context != null && !context.equals(commonContext));
+            commonContext.removeMutedUser(target);
         }
     },
 

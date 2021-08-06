@@ -102,7 +102,7 @@ public class CommunicationHandler {
         // Benutzer in dem Kontext stummgeschaltet ist.
         Area communicationContext = communicator.getLocation().getArea();
         if (!communicationContext.canCommunicateWith(CommunicationMedium.VOICE)
-            || communicator.isMuted(communicationContext)) {
+            || communicationContext.isMuted(communicator)) {
             return;
         }
         // Ermittle die empfangsberechtigten Benutzer gemäß der Kommunikationsform, ohne den sendenden Benutzer.
@@ -132,7 +132,7 @@ public class CommunicationHandler {
             return;
         }
         // Überprüfe, ob der sendende Benutzer in dem Kontext stummgeschaltet ist.
-        if (communicator.isMuted(communicationContext)) {
+        if (communicationContext.isMuted(communicator)) {
             // Informiere den kommunizierenden Benutzer darüber, dass er in dem Kontext stummgeschaltet ist.
             MessageBundle messageBundle = new MessageBundle("Du bist in diesem Bereich stummgeschaltet.");
             TextMessage infoMessage = new TextMessage(messageBundle);
@@ -210,7 +210,7 @@ public class CommunicationHandler {
             return;
         }
         // Überprüfe, ob der kommunizierende Benutzer in dem Raum oder einem übergeordneten Kontext stummgeschaltet ist.
-        if (communicator.isMuted(communicationRoom)) {
+        if (communicationRoom.isMuted(communicator)) {
             // Informiere den kommunizierenden Benutzer darüber, dass er in dem Kontext stummgeschaltet ist.
             MessageBundle messageBundle = new MessageBundle("Du bist in diesem Bereich stummgeschaltet.");
             TextMessage infoMessage = new TextMessage(messageBundle);
@@ -246,7 +246,7 @@ public class CommunicationHandler {
             return;
         }
         // Überprüfe, ob der kommunizierende Benutzer in dem Raum oder einem übergeordneten Kontext stummgeschaltet ist.
-        if (communicator.isMuted(communicationWorld)) {
+        if (communicationWorld.isMuted(communicator)) {
             // Informiere den kommunizierenden Benutzer darüber, dass er in dem Kontext stummgeschaltet ist.
             MessageBundle messageBundle = new MessageBundle("Du bist in diesem Bereich stummgeschaltet.");
             TextMessage infoMessage = new TextMessage(messageBundle);

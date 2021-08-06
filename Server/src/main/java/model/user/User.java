@@ -73,9 +73,6 @@ public class User implements IUser {
     /** Menge der ignorierten Benutzer. */
     private final Map<UUID, User> ignoredUsers;
 
-    /** Menge aller Kontexte, in denen der Benutzer stummgeschaltet ist. */
-    private final Map<ContextID, Context> mutedContexts;
-
     /** Menge der Zuordnungen von Kontexten zu den jeweiligen Rollen des Benutzers. */
     private final Map<Context, ContextRole> contextRoles;
 
@@ -106,7 +103,6 @@ public class User implements IUser {
         this.communicationHandler = new CommunicationHandler(this);
         this.friends = new HashMap<>();
         this.ignoredUsers = new HashMap<>();
-        this.mutedContexts = new HashMap<>();
         this.contextRoles = new HashMap<>();
         this.notifications = new HashMap<>();
         this.database = Database.getUserDatabase();
@@ -133,7 +129,6 @@ public class User implements IUser {
         this.communicationHandler = new CommunicationHandler(this);
         this.friends = new HashMap<>();
         this.ignoredUsers = new HashMap<>();
-        this.mutedContexts = new HashMap<>();
         this.contextRoles = new HashMap<>();
         this.notifications = new HashMap<>();
         this.database = Database.getUserDatabase();
@@ -339,11 +334,6 @@ public class User implements IUser {
     }
 
     @Override
-    public Map<ContextID, Context> getMutedContexts() {
-        return Collections.unmodifiableMap(mutedContexts);
-    }
-
-    @Override
     public ContextRole getGlobalRoles() {
         try {
             return contextRoles.values().stream()
@@ -453,32 +443,6 @@ public class User implements IUser {
     }
 
     /**
-     * Fügt einen Kontext zur Liste aller Kontexte hinzu, in denen der Benutzer stummgeschaltet ist. Stellt sicher, dass
-     * alle untergeordneten Kontexte von diesem enthalten sind.
-     * @param context Hinzuzufügender Kontext.
-     */
-    public void addMutedContext(Context context) {
-        mutedContexts.put(context.getContextId(), context);
-        context.getChildren().values().forEach(child -> {
-            mutedContexts.put(child.getContextId(), child);
-        });
-        updateUserInfo();
-    }
-
-    /**
-     * Entfernt einen Kontext aus der Liste aller Kontexte, in denen der Benutzer stummgeschaltet ist. Stellt sicher,
-     * dass alle untergeordneten Kontexte entfernt werden.
-     * @param context Zu entfernender Kontext.
-     */
-    public void removeMutedContext(Context context) {
-        mutedContexts.remove(context.getContextId());
-        context.getChildren().values().forEach(child -> {
-            mutedContexts.remove(child.getContextId());
-        });
-        updateUserInfo();
-    }
-
-    /**
      * Wird von den Datenbank verwendet, um die initialen Rollen eines Benutzers zu setzen.
      * @param contextRoles Zu setzende Rollen.
      */
@@ -582,16 +546,6 @@ public class User implements IUser {
      */
     public boolean isIgnoring(User user) {
         return ignoredUsers.containsKey(user.getUserId());
-    }
-
-    /**
-     * Überprüft, ob der Benutzer in einem Kontext, oder einem übergeordneten Kontext stummgeschaltet ist.
-     * @param context Zu überprüfender Kontext.
-     * @return true, wenn der Benutzer in dem Kontext stummgeschaltet ist, sonst false.
-     */
-    public boolean isMuted(Context context) {
-        return mutedContexts.containsKey(context.getContextId())
-                || mutedContexts.containsKey(context.getParent().getContextId());
     }
 
     /**

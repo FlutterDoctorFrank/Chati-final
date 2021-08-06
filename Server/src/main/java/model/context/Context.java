@@ -35,6 +35,9 @@ public abstract class Context implements IContext {
     /** Die in diesem Kontext gemeldeten Benutzer. */
     private final Map<UUID, User> reportedUsers;
 
+    /** Die in diesem Kontext stummgeschalteten Benutzer. */
+    private final Map<UUID, User> mutedUsers;
+
     /** Die in diesem Kontext gesperrten Benutzer. */
     private final Map<UUID, User> bannedUsers;
 
@@ -57,6 +60,7 @@ public abstract class Context implements IContext {
         this.children = new HashMap<>();
         this.containedUsers = new HashMap<>();
         this.reportedUsers = new HashMap<>();
+        this.mutedUsers = new HashMap<>();
         this.bannedUsers = new HashMap<>();
         this.database = Database.getContextDatabase();
     }
@@ -79,6 +83,11 @@ public abstract class Context implements IContext {
     @Override
     public Map<UUID, IUser> getReportedUsers() {
         return Collections.unmodifiableMap(reportedUsers);
+    }
+
+    @Override
+    public Map<UUID, IUser> getMutedUsers() {
+        return Collections.unmodifiableMap(mutedUsers);
     }
 
     @Override
@@ -150,6 +159,26 @@ public abstract class Context implements IContext {
     }
 
     /**
+     * Fügt einen Benutzer zu den stummgeschalteten Benutzern in diesem Kontext hinzu. Stellt sicher, dass der Benutzer
+     * in allen untergeordneten Kontexten als stummgeschalteter Benutzer hinzugefügt wird.
+     * @param user Hinzuzufügender Benutzer.
+     */
+    public void addMutedUser(User user) {
+        mutedUsers.put(user.getUserId(), user);
+        children.values().forEach(child -> child.addMutedUser(user));
+    }
+
+    /**
+     * Entfernt einen Benutzer aus den stummgeschalteten Benutzern in diesem Kontext. Stellt sicher, dass der Benutzer
+     * in allen untergeordneten Kontexten als stummgeschalteter Benutzer entfernt wird.
+     * @param user Zu entfernender Benutzer.
+     */
+    public void removeMutedUser(User user) {
+        mutedUsers.remove(user.getUserId());
+        children.values().forEach(child -> child.removeMutedUser(user));
+    }
+
+    /**
      * Fügt einen Benutzer zu den gesperrten Benutzern in diesem Kontext hinzu.
      * @param user Hinzuzufügender Benutzer.
      */
@@ -166,11 +195,7 @@ public abstract class Context implements IContext {
      */
     public void removeBannedUser(User user) {
         bannedUsers.remove(user.getUserId());
-        children.values().forEach(child -> {
-            if (child.isBanned(user)) {
-                child.removeBannedUser(user);
-            }
-        });
+        children.values().forEach(child -> child.removeBannedUser(user));
         database.removeBannedUser(user, this);
         user.updateUserInfo();
     }
@@ -199,7 +224,7 @@ public abstract class Context implements IContext {
     }
 
     /**
-     * Überprüft, ob ein Benutzer in diesem Kontext, oder einem übergeordneten Kontext, gemeldet ist.
+     * Überprüft, ob ein Benutzer in diesem Kontext oder einem übergeordneten Kontext gemeldet ist.
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn der Benutzer gemeldet ist, sonst false.
      */
@@ -208,7 +233,16 @@ public abstract class Context implements IContext {
     }
 
     /**
-     * Überprüft, ob ein Benutzer in diesem Kontext, oder einem übergeordneten Kontext gesperrt ist.
+     * Überprüft, ob ein Benutzer in diesem Kontext oder einem übergeordneten Kontext stummgeschaltet ist.
+     * @param user Zu überprüfender Benutzer.
+     * @return true, wenn der Benutzer stummgeschaltet ist, sonst false.
+     */
+    public boolean isMuted(User user) {
+        return mutedUsers.containsKey(user.getUserId()) || parent.isMuted(user);
+    }
+
+    /**
+     * Überprüft, ob ein Benutzer in diesem Kontext oder einem übergeordneten Kontext gesperrt ist.
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn der Benutzer gesperrt ist, sonst false.
      */

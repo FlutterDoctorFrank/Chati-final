@@ -186,12 +186,6 @@ public interface IUser {
     Map<UUID, IUser> getIgnoredUsers();
 
     /**
-     * Gibt die Menge aller Kontexte zurück, in denen der Benutzer stummgeschaltet ist.
-     * @return Menge der Kontexte, in denen der Benutzer stummgeschaltet ist.
-     */
-    Map<ContextID, Context> getMutedContexts();
-
-    /**
      * Gibt die Rollen des Benutzers im globalen Kontext zurück.
      * @return Menge der globalen Rollen des Benutzers.
      */
