@@ -322,8 +322,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                     user_avatar = Avatar.valueOf(avatar_name);
                 }
 
-                //Probiere
-                User half_user = new User(userID, user_name, user_avatar, localDateTime);
+                //noch ohne ContextRole, Freundesliste, ignoredUser, Notifikationen
+                User user = new User(userID, user_name, user_avatar, localDateTime);
 
                 //Context_Role
                 ResultSet res_cr = st.executeQuery("SELECT * FROM ROLE_WITH_CONTEXT WHERE USER_ID = " + "'" +
@@ -338,12 +338,140 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                         ContextRole already_add = contextRoles.get(context);
                         already_add.addRole(role);
                     } else {
-                        ContextRole context_role = new ContextRole(half_user, context, role);
+                        ContextRole context_role = new ContextRole(user, context, role);
                         contextRoles.put(context, context_role);
                     }
-
                 }
-                User user = new User(userID, user_name, user_avatar, localDateTime, contextRoles, null);
+                user.addRoles(contextRoles);
+
+
+                //Freundesliste
+                ResultSet res_fr = st.executeQuery("SELECT * FROM FRIENDSHIP WHERE USER_ID1 = " + "'" +
+                        userID.toString()+ "' OR USER_ID2 = '" + userID.toString() + "'");
+                Map<UUID, User> friends = new HashMap<>();
+
+                Set<UUID> friends_id = new HashSet<>();
+                while (res_fr.next()) {
+                    UUID friend_id = null;
+                    if (res_fr.getString("USER_ID1").equals(userID.toString())) {
+                        friend_id = UUID.fromString(res_fr.getString("USER_ID2"));
+                    } else if (res_fr.getString("USER_ID2").equals(userID.toString())) {
+                        friend_id = UUID.fromString(res_fr.getString("USER_ID1"));
+                    }
+                    if (friends_id != null && !friends_id.contains(friend_id)) {
+                        friends_id.add(friend_id);
+                    }
+                }
+                //erzeuge friend
+                if (friends_id.size() != 0) {
+                    for (UUID id : friends_id) {
+                        User friend = null;
+                        ResultSet friend_res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_ID = " + "'" +
+                                id.toString()+ "'");
+                        int f = 0;
+                        while (friend_res.next()){
+                            f ++;
+                        }
+                        if (f == 1) {
+                            friend_res.first();
+
+                            String friend_name = friend_res.getString("USER_NAME");
+                            String friend_avatar_name = friend_res.getString("AVATAR_NAME");
+                            //Last logout time
+                            Timestamp friend_last_logout_time = friend_res.getTimestamp("LAST_ONLINE_TIME");
+                            long friend_time = friend_last_logout_time.getTime();
+                            LocalDateTime friend_localDateTime = Instant.ofEpochMilli(friend_time).atZone(ZoneOffset.ofHours(8)).toLocalDateTime();
+                            //Avatar
+                            Avatar friend_avatar = null;
+                            if (avatar_name != null) {
+                                friend_avatar = Avatar.valueOf(friend_avatar_name);
+                            }
+
+                            friend = new User(id, friend_name, friend_avatar, friend_localDateTime);
+                        }
+                        if (!friends.containsKey(id)) {
+                            friends.put(id, friend);
+                        }
+                    }
+                }
+                user.addFriends(friends);
+
+                //IgnoredUser
+                ResultSet res_ig = st.executeQuery("SELECT * FROM IGNORE WHERE USER_ID = " + "'" +
+                        userID.toString() + "'");
+                Map<UUID, User> ignores = new HashMap<>();
+
+                Set<UUID> ignores_id = new HashSet<>();
+                while (res_ig.next()) {
+                    UUID ignore_id = UUID.fromString(res_ig.getString("IGNORED_ID"));
+                    if (!ignores_id.contains(ignore_id)) {
+                        ignores_id.add(ignore_id);
+                    }
+                }
+                //erzeuge ignoredUser
+                if (ignores_id.size() != 0) {
+                    for (UUID id : ignores_id) {
+                        User ignore_user = null;
+                        ResultSet ignore_res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_ID = " + "'" +
+                                id.toString()+ "'");
+                        int f = 0;
+                        while (ignore_res.next()){
+                            f ++;
+                        }
+                        if (f == 1) {
+                            ignore_res.first();
+                            String ignore_name = ignore_res.getString("USER_NAME");
+                            String ignore_avatar_name = ignore_res.getString("AVATAR_NAME");
+                            //Last logout time
+                            Timestamp ignore_last_logout_time = ignore_res.getTimestamp("LAST_ONLINE_TIME");
+                            long ignore_time = ignore_last_logout_time.getTime();
+                            LocalDateTime ignore_localDateTime = Instant.ofEpochMilli(ignore_time).atZone(ZoneOffset.ofHours(8)).toLocalDateTime();
+                            //Avatar
+                            Avatar ignore_avatar = null;
+
+                            if (ignore_avatar_name != null) {
+                                ignore_avatar = Avatar.valueOf(ignore_avatar_name);
+                            }
+                            ignore_user = new User(id, ignore_name, ignore_avatar, ignore_localDateTime);
+                        }
+                        if (!ignores.containsKey(id)) {
+                            ignores.put(id, ignore_user);
+                        }
+                    }
+                }
+                user.addIgnoredUsers(ignores);
+
+                //!!!Notification
+                ResultSet res_notif = st.executeQuery("SELECT * FROM NOTIFICATION WHERE USER_ID = " + "'" +
+                        userID.toString()+ "'");
+                Map<UUID, Notification> notifications = new HashMap<>();
+                while (res_notif.next()) {
+                    UUID notif_id = UUID.fromString(res.getString("NOTIFICATION_ID"));
+                    ContextID owing_context_id = new ContextID(res_notif.getString("OWING_CONTEXT_ID"));
+                    LocalDateTime send_time = res.getTimestamp("SEND_TIME").toLocalDateTime();
+                    String message_key = res.getString("MESSAGE_KEY");
+                    String notif_type = res.getString("NOTIFICATION_TYPE");
+
+                    //Arguments
+                    int count = 0;
+                    while (res.getString(7 + count) != null) {
+                        count ++;
+                    }
+                    Object[] argus = new Object[count];
+                    //AreaManagingRequest
+                    if (count == 4) {
+                        String requester_name = res.getString("AEGUMENT1");
+                        String area_name = res.getString("ARGUMENT2");
+                        String from_string = res.getString("ARGUMENT3");
+
+                        String to_string = res.getString("ARGUMENT4");
+
+                    }
+                    if (count != 0) {
+                        String argument_i;
+                    }
+                }
+                user.addNotifications(notifications);
 
                 return user;
 
@@ -394,7 +522,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 //!!! noch nicht bearbeitet!!!
                 //TODO
                 User user = new User(UUID.fromString(user_id), username, user_avatar,
-                        null, null, null);
+                        localDateTime);
 
                 return user;
 
@@ -444,7 +572,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 }
                 //TODO
                 User user = new User(user_ID, user_name, user_avatar,
-                        null, null, null);
+                        localDateTime);
                 users.put(user_ID, user);
             }
             res.close();

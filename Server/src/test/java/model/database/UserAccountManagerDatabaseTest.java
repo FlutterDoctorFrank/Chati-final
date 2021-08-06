@@ -235,6 +235,7 @@ public class UserAccountManagerDatabaseTest {
         ContextRole actual_context_role = real_after_add_role.getGlobalRoles();
         int count = actual_context_role.getRoles().size();
         Assert.assertEquals(1,count);
+        Assert.assertEquals(true, actual_context_role.getRoles().contains(Role.OWNER));
 
         //Fuege zwei Rolen hiinzu, die in gleichem Context sind
         this.user_database.addRole(test, test_context, Role.ADMINISTRATOR);
@@ -242,8 +243,55 @@ public class UserAccountManagerDatabaseTest {
         actual_context_role = real_after_add_role.getGlobalRoles();
         count = actual_context_role.getRoles().size();
         Assert.assertEquals(2,count);
+        Assert.assertEquals(true, actual_context_role.getRoles().contains(Role.OWNER));
+        Assert.assertEquals(true, actual_context_role.getRoles().contains(Role.ADMINISTRATOR));
 
+        //Freundesliste
+        User friend = this.database.createAccount("friend", "222");
+        String friend_id = friend.getUserId().toString();
+        this.user_database.addFriendship(test, friend);
+        //Prüfe ob echt hinzufügen
+        int friend_count = 0;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 
+            ResultSet res = st.executeQuery("SELECT * FROM FRIENDSHIP WHERE USER_ID2 = '" + friend_id + "'");
+            while (res.next()){
+                friend_count ++;
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+        Assert.assertEquals(1, friend_count);
+        //Pruefe ob man mit getUser Freundesliste richtig bekommen kann
+        real = this.database.getUser(testID);
+        Assert.assertEquals(1, real.getFriends().size());
+        Assert.assertEquals("friend", real.getFriends().get(friend.getUserId()).getUsername());
+
+        //IgnoredUser
+        User ignore = this.database.createAccount("ignore", "222");
+        String ignore_id = ignore.getUserId().toString();
+        this.user_database.addIgnoredUser(test, ignore);
+        int ignore_count = 0;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            ResultSet res = st.executeQuery("SELECT * FROM IGNORE WHERE IGNORED_ID = '" + ignore_id + "'");
+            while (res.next()){
+                ignore_count ++;
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+        Assert.assertEquals(1, ignore_count);
+        //Pruefe ob man mit getUser Freundesliste richtig bekommen kann
+        real = this.database.getUser(testID);
+        Assert.assertEquals(1, real.getIgnoredUsers().size());
+        Assert.assertEquals("ignore", real.getIgnoredUsers().get(ignore.getUserId()).getUsername());
 
     }
 
