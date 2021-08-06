@@ -13,7 +13,7 @@ public interface PacketListenerOut extends PacketListener {
      * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.
      * @param packet Das zu verarbeitende Paket.
      */
-    void handle(@NotNull final PacketOutContextInfo packet);
+    void handle(@NotNull final PacketOutContextList packet);
 
     /**
      * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.
@@ -25,7 +25,7 @@ public interface PacketListenerOut extends PacketListener {
      * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.
      * @param packet Das zu verarbeitende Paket.
      */
-    void handle(@NotNull final PacketOutContextMusic packet);
+    void handle(@NotNull final PacketOutContextInfo packet);
 
     /**
      * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.

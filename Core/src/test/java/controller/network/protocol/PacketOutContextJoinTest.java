@@ -12,7 +12,7 @@ public class PacketOutContextJoinTest extends PacketTest<PacketOutContextJoin> {
 
     @Test
     public void joinSerializationTest() {
-        this.before = new PacketOutContextJoin(randomContextId(), randomEnum(SpatialMap.class));
+        this.before = new PacketOutContextJoin(randomContextId(), randomString(), randomEnum(SpatialMap.class));
 
         this.serialize();
         this.equals();
@@ -20,7 +20,7 @@ public class PacketOutContextJoinTest extends PacketTest<PacketOutContextJoin> {
 
     @Test
     public void leaveSerializationTest() {
-        this.before = new PacketOutContextJoin(randomContextId(), null);
+        this.before = new PacketOutContextJoin(randomContextId(), null, null);
 
         this.serialize();
         this.equals();
@@ -28,8 +28,14 @@ public class PacketOutContextJoinTest extends PacketTest<PacketOutContextJoin> {
 
     @Override
     public void equals() {
-        // Vergleiche Kontext-ID
+        // Vergleiche Kontext-ID und Name
         Assert.assertEquals(this.before.getContextId(), this.after.getContextId());
+        if (this.before.getName() != null) {
+            Assert.assertNotNull(this.after.getName());
+            Assert.assertEquals(this.before.getName(), this.after.getName());
+        } else {
+            Assert.assertNull(this.after.getName());
+        }
 
         // Vergleiche die Karte
         if (this.before.getMap() != null) {

@@ -42,6 +42,15 @@ public class PacketAvatarMove implements Packet<PacketListener> {
     }
 
     /**
+     * Ausschließlich für die Erzeugung des Netzwerkpakets zum Entfernen des Benutzers von der Server-Anwendung.
+     * @param userId Die ID des zu entfernenden Benutzers.
+     */
+    public PacketAvatarMove(@NotNull final UUID userId) {
+        this.action = AvatarAction.REMOVE_AVATAR;
+        this.userId = userId;
+    }
+
+    /**
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Server-Anwendung.
      * @param action Die Aktion auf den Avatar des Benutzers.
      * @param userId Die ID des bewegenden Benutzers.

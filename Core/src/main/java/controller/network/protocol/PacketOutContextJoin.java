@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 public class PacketOutContextJoin implements Packet<PacketListenerOut> {
 
     private ContextID contextId;
+    private String name;
     private SpatialMap map;
 
     /**
@@ -31,10 +32,12 @@ public class PacketOutContextJoin implements Packet<PacketListenerOut> {
     /**
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Server-Anwendung.
      * @param contextId die ID des Kontexts der Karte, die geladen werden soll.
-     * @param map die Karte die geladen werden soll, oder null wenn die Karte verlassen werden soll.
+     * @param map die Karte die geladen werden soll, oder null, wenn die Karte verlassen werden soll.
      */
-    public PacketOutContextJoin(@NotNull final ContextID contextId, @Nullable final SpatialMap map) {
+    public PacketOutContextJoin(@NotNull final ContextID contextId, @Nullable final String name,
+                                @Nullable final SpatialMap map) {
         this.contextId = contextId;
+        this.name = name;
         this.map = map;
     }
 
@@ -46,12 +49,14 @@ public class PacketOutContextJoin implements Packet<PacketListenerOut> {
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeContextId(output, this.contextId);
+        output.writeString(this.name);
         PacketUtils.writeNullableEnum(output, this.map);
     }
 
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.contextId = PacketUtils.readContextId(input);
+        this.name = input.readString();
         this.map = PacketUtils.readNullableEnum(input, SpatialMap.class);
     }
 
@@ -61,6 +66,14 @@ public class PacketOutContextJoin implements Packet<PacketListenerOut> {
      */
     public @NotNull ContextID getContextId() {
         return this.contextId;
+    }
+
+    /**
+     * Gibt den Namen der Welt bzw des Raumes zurück.
+     * @return der Name des Kontexts.
+     */
+    public @Nullable String getName() {
+        return this.name;
     }
 
     /**

@@ -43,7 +43,7 @@ public abstract class PacketTest<T extends Packet<?>> {
     }
 
     public void serialize() {
-        final Output output = new Output(512);
+        final Output output = new Output(1024);
 
         this.before.write(KRYO, output);
         this.after.read(KRYO, new Input(output.getBuffer()));

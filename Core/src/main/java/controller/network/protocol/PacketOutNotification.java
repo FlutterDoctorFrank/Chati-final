@@ -21,10 +21,8 @@ import java.util.UUID;
 public class PacketOutNotification implements Packet<PacketListenerOut> {
 
     /*
-     * Da KryoNet momentan nur eine maximale Paketgröße von 512 Bytes erlaubt, werden über dieses Netzwerkpaket nur
-     * eine einzelne Benachrichtigung gesendet.
-     * Eine Benachrichtigung benötigt ungefähr ~70 Bytes. Werden mehrere Benachrichtigungen innerhalb eines
-     * Netzwerkpakets versendet, so wird die maximale Paketgröße bereits nach wenigen Benachrichtigungen überschritten.
+     * Um die maximale Paketgröße beim Senden vieler Benachrichtigungen nicht zu überschreiten, wird vorerst über
+     * dieses Netzwerkpaket nur eine Benachrichtigung gesendet.
      */
     private Notification notification;
 

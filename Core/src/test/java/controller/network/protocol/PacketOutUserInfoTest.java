@@ -75,7 +75,6 @@ public class PacketOutUserInfoTest extends PacketTest<PacketOutUserInfo> {
         }
 
         Assert.assertEquals(this.before.getInfo().getTeleportTo(), this.after.getInfo().getTeleportTo());
-        Assert.assertEquals(this.before.getInfo().getMutes(), this.after.getInfo().getMutes());
         Assert.assertEquals(this.before.getInfo().getFlags(), this.after.getInfo().getFlags());
     }
 }

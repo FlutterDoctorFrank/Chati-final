@@ -4,9 +4,9 @@ import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
 import controller.network.protocol.PacketChatMessage;
-import controller.network.protocol.PacketOutContextInfo;
+import controller.network.protocol.PacketOutContextList;
 import controller.network.protocol.PacketOutContextJoin;
-import controller.network.protocol.PacketOutContextMusic;
+import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextRole;
 import controller.network.protocol.PacketOutMenuAction;
 import controller.network.protocol.PacketOutNotification;
@@ -22,15 +22,16 @@ import model.communication.message.MessageType;
 import model.context.IContext;
 import model.context.global.IGlobalContext;
 import model.context.spatial.IArea;
-import model.context.spatial.objects.IInteractable;
 import model.context.spatial.IRoom;
 import model.context.spatial.IWorld;
+import model.context.spatial.objects.IInteractable;
 import model.notification.INotification;
 import model.role.IContextRole;
 import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Eine Schnittstelle, welche als Beobachter für das Model dient.
@@ -81,8 +82,6 @@ public interface ClientSender {
                                 info.addFlag(UserInfo.Flag.REPORTED);
                             }
 
-                            //TODO Kontexte in Benutzerinformation setzen, in denen der Benutzer stumm geschaltet ist
-
                             return new PacketOutUserInfo(world.getContextId(), Action.UPDATE_USER, info);
                         }
 
@@ -117,23 +116,23 @@ public interface ClientSender {
          *     Erwartet als Objekt die Schnittstelle: {@link IGlobalContext} oder {@link IWorld}
          * </p>
          */
-        CONTEXT_INFO {
+        CONTEXT_LIST {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 if (object instanceof IContext) {
-                    final Set<PacketOutContextInfo.ContextInfo> infos = new HashSet<>();
+                    final Set<PacketOutContextList.ContextInfo> infos = new HashSet<>();
 
                     if (object instanceof IGlobalContext) {
                         for (final IWorld world : ((IGlobalContext) object).getWorlds().values()) {
-                            infos.add(new PacketOutContextInfo.ContextInfo(world.getContextId(), world.getContextName()));
+                            infos.add(new PacketOutContextList.ContextInfo(world.getContextId(), world.getContextName()));
                         }
                     } else {
                         for (final IRoom room : ((IWorld) object).getPrivateRooms().values()) {
-                            infos.add(new PacketOutContextInfo.ContextInfo(room.getContextId(), room.getContextName()));
+                            infos.add(new PacketOutContextList.ContextInfo(room.getContextId(), room.getContextName()));
                         }
                     }
 
-                    return new PacketOutContextInfo(((IContext) object).getContextId(), infos);
+                    return new PacketOutContextList(((IContext) object).getContextId(), infos);
                 } else {
                     throw new IllegalArgumentException("Expected IGlobalContext or IWorld, got " + object.getClass());
                 }
@@ -159,10 +158,10 @@ public interface ClientSender {
                             throw new IllegalArgumentException("Context without a Map can not be joined");
                         }
 
-                        return new PacketOutContextJoin(room.getContextId(), room.getMap());
+                        return new PacketOutContextJoin(room.getContextId(), room.getContextName(), room.getMap());
                     }
 
-                    return new PacketOutContextJoin(room.getContextId(), null);
+                    return new PacketOutContextJoin(room.getContextId(), null, null);
                 } else {
                     throw new IllegalArgumentException("Expected IRoom, got " + object.getClass());
                 }
@@ -194,13 +193,18 @@ public interface ClientSender {
          *     Erwartet als Objekt die Schnittstelle: {@link IArea}
          * </p>
          */
-        CONTEXT_MUSIC {
+        CONTEXT_INFO {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 if (object instanceof IArea) {
                     final IArea area = (IArea) object;
+                    final Set<UUID> mutes = new HashSet<>();
 
-                    return new PacketOutContextMusic(area.getContextId(), area.getMusic());
+                    for (final IUser mute : area.getMutedUsers().values()) {
+                        mutes.add(mute.getUserId());
+                    }
+
+                    return new PacketOutContextInfo(area.getContextId(), area.getMusic(), mutes);
                 } else {
                     throw new IllegalArgumentException("Expected IArea, got " + object.getClass());
                 }
@@ -245,11 +249,7 @@ public interface ClientSender {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser self, @NotNull final Object object) {
                 if (object instanceof IUser) {
-                    final IUser other = (IUser) object;
-                    int posX = other.getLocation().getPosX();
-                    int posY = other.getLocation().getPosY();
-
-                    return new PacketAvatarMove(AvatarAction.REMOVE_AVATAR, other.getUserId(), posX, posY);
+                    return new PacketAvatarMove(((IUser) object).getUserId());
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }
@@ -305,7 +305,7 @@ public interface ClientSender {
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 if (object instanceof IWorld) {
                     final IWorld world = (IWorld) object;
-                    final PacketWorldAction.Action action = world.getIUsers().containsKey(user.getUserId())
+                    final PacketWorldAction.Action action = user.getWorld().equals(world)
                             ? PacketWorldAction.Action.JOIN : PacketWorldAction.Action.LEAVE;
 
                     return new PacketWorldAction(action, world.getContextId(), null, true);

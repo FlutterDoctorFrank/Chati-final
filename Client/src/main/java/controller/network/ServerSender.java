@@ -274,7 +274,8 @@ public interface ServerSender {
          * <p>
          *     Erwartet als Objekt Array die Klassen:<br>
          *     - {@code 0}: {@link UUID}, Die ID des Benutzers, auf dem die Aktion ausgeführt werden soll<br>
-         *     - {@code 1}: {@link AdministrativeAction}, Die administrative Aktion die ausgeführt werden soll
+         *     - {@code 1}: {@link AdministrativeAction}, Die administrative Aktion die ausgeführt werden soll<br>
+         *     - {@code 2}: {@link String[]}, Die zur Aktion zugehörigen Argumente, falls vorhanden
          * </p>
          */
         USER_MANAGE {

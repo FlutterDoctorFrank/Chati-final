@@ -72,7 +72,7 @@ public class Area extends Context implements IArea {
         this.music = music;
         // Sende Information über geänderte Musik an alle Benutzer im Kontext.
         containedUsers.values().forEach(user -> {
-            user.getClientSender().send(ClientSender.SendAction.CONTEXT_MUSIC, this);
+            user.getClientSender().send(ClientSender.SendAction.CONTEXT_INFO, this);
         });
     }
 
@@ -199,7 +199,7 @@ public class Area extends Context implements IArea {
         super.addUser(user);
         // Sende Musikinformationen an den Benutzer.
         if (music != null) {
-            user.getClientSender().send(ClientSender.SendAction.CONTEXT_MUSIC, this);
+            user.getClientSender().send(ClientSender.SendAction.CONTEXT_INFO, this);
         }
     }
 }

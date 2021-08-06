@@ -106,10 +106,11 @@ public class PacketProfileAction implements Packet<PacketListener> {
      * @param success true, wenn die Aktion erfolgreich war, ansonsten false.
      */
     public PacketProfileAction(@NotNull final PacketProfileAction previous, @NotNull final UUID userId,
-                               @Nullable final String message, final boolean success) {
+                               @NotNull final Avatar avatar, @Nullable final String message, final boolean success) {
         this(previous, message, success);
 
         this.userId = userId;
+        this.avatar = avatar;
     }
 
     @Override

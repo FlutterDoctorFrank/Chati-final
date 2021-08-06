@@ -9,7 +9,6 @@ import model.user.Status;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -27,11 +26,8 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
     private Action action;
 
     /*
-     * Da KryoNet momentan nur eine maximale Paketgröße von 512 Bytes erlaubt, werden über dieses Netzwerkpaket nur die
-     * Benutzerinformationen eines einzelnen Benutzers gesendet.
-     * Die Benutzerinformationen eines einzelnen Benutzers können bis zu ~64 Bytes benötigen. Werden mehrere
-     * Benutzerinformationen dieser Größe versendet, so wird die maximale Paketgröße bereits nach wenigen Benutzern
-     * überschritten.
+     * Um die maximale Paketgröße beim Senden vieler Benutzerinformationen nicht zu überschreiten, wird vorerst über
+     * dieses Netzwerkpaket nur die Benutzerinformation eines einzelnen Benutzers gesendet.
      */
     private UserInfo info;
 
@@ -70,14 +66,10 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         PacketUtils.writeNullableEnum(output, this.info.avatar);
         PacketUtils.writeNullableEnum(output, this.info.status);
         output.writeBoolean(this.info.teleportTo);
-        output.writeVarInt(this.info.mutes.size(), true);
-        for (final ContextID context : this.info.mutes) {
-            PacketUtils.writeContextId(output, context);
-        }
 
         /*
-         * Durch die Beschränkung der Paketgröße von 512 Bytes werden die gesetzten Flags der Benutzerinformation
-         * in ein Bitfeld geschrieben und versendet. Dadurch können im besten Fall 6 Bytes gespart werden.
+         * Um die gesetzten Flags der Benutzerinformation in serialisierter Form kompakt zu halten, werden die Flags
+         * in ein Bitfeld geschrieben. Dadurch können im besten Fall 6 Bytes gespart werden.
          */
         int bitfield = 0;
 
@@ -99,10 +91,6 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         this.info.avatar = PacketUtils.readNullableEnum(input, Avatar.class);
         this.info.status = PacketUtils.readNullableEnum(input, Status.class);
         this.info.teleportTo = input.readBoolean();
-        this.info.mutes = new HashSet<>();
-        for (int index = 0; index < input.readVarInt(true); index++) {
-            this.info.mutes.add(PacketUtils.readContextId(input));
-        }
 
         /*
          * Wie in der #write()-Methode beschrieben, werden die gesetzten Flags in ein Bitfeld geschrieben und
@@ -154,12 +142,10 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         private Status status;
         private boolean teleportTo;
 
-        private Set<ContextID> mutes;
         private Set<Flag> flags;
 
         public UserInfo(@NotNull final UUID userId) {
             this.userId = userId;
-            this.mutes = new HashSet<>();
             this.flags = EnumSet.noneOf(Flag.class);
         }
 
@@ -217,18 +203,6 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         }
 
         /**
-         * Gibt die Kontext-IDs, in denen der Benutzer stumm geschaltet ist, zurück.
-         * @return die Kontexte in denen der Benutzer stumm geschaltet ist.
-         */
-        public @NotNull Set<ContextID> getMutes() {
-            return this.mutes;
-        }
-
-        public void addMute(@NotNull final ContextID contextId) {
-            this.mutes.add(contextId);
-        }
-
-        /**
          * Gibt die zusätzlichen Flags des Benutzers zurück.
          * @return die gesetzten Flags des Benutzers.
          */
@@ -276,11 +250,6 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         public enum Flag {
 
             /**
-             * Information, dass der Benutzer gemeldet wurde.
-             */
-            REPORTED,
-
-            /**
              * Information, dass der Benutzer ein Freund ist.
              */
             FRIEND,
@@ -294,6 +263,11 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
              * Information, dass der Benutzer aus der Welt gesperrt ist.
              */
             BANNED,
+
+            /**
+             * Information, dass der Benutzer gemeldet wurde.
+             */
+            REPORTED,
         }
     }
 
