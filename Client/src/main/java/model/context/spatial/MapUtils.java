@@ -78,10 +78,11 @@ public class MapUtils {
         // Sortiere die Quadrate ihrer Größe nach absteigend. Dadurch wird garantiert, dass die Kontexte immer an die
         // richtige Stelle in der Kontexthierarchie eingefügt werden.
         contextRectangles.sort((o1, o2) -> {
-            float size1 = o1.getRectangle().getX() * o1.getRectangle().getY();
-            float size2 = o2.getRectangle().getX() * o2.getRectangle().getY();
+            float size1 = o1.getRectangle().getHeight() * o1.getRectangle().getWidth();
+            float size2 = o2.getRectangle().getHeight() * o2.getRectangle().getWidth();
             return Float.compare(size2, size1);
         });
+        contextRectangles.forEach(contextRectangle -> System.out.println(contextRectangle.getName()));
         // Erzeuge alle Kontexte nacheinander.
         contextRectangles.forEach(contextRectangle -> {
             create(room, contextRectangle);
