@@ -1,5 +1,8 @@
 package model.context.spatial;
 
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import model.context.Context;
 import model.context.ContextID;
 import org.junit.After;
@@ -11,7 +14,6 @@ import static org.junit.Assert.*;
 
 public class SpatialContextTest {
 
-    Context global;
     SpatialContext world;
     SpatialMap map;
 
@@ -29,7 +31,14 @@ public class SpatialContextTest {
 
     @Test
     public void buildContextTree() {
-        world.buildContextTree(map);
+        Game game = new Game() {
+            @Override
+            public void create() {
+                world.buildContextTree(map);
+            }
+        };
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        new Lwjgl3Application(game, config);
     }
 
     @Test
