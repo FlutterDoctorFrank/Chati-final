@@ -17,8 +17,8 @@ public class DeleteAccountTable extends MenuTable {
     private TextButton confirmButton;
     private TextButton cancelButton;
 
-    protected DeleteAccountTable(MenuScreen menuScreen) {
-        super(NAME, menuScreen);
+    protected DeleteAccountTable() {
+        super(NAME);
     }
 
     @Override
@@ -55,14 +55,17 @@ public class DeleteAccountTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                String password = passwordField.getText();
-                String confirmPassword = confirmPasswordField.getText();
-                if (password.equals(confirmPassword)) {
-                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE,
-                            password, false /* ? */);
-                } else {
-                    infoLabel.setText("Die Passwörter stimmen nicht überein.");
+                if (passwordField.getText().isEmpty() || confirmPasswordField.getText().isEmpty()) {
+                    infoLabel.setText("Bitte gib dein Passwort in beide Felder ein.");
+                    return;
                 }
+                if (!passwordField.getText().equals(confirmPasswordField.getText())) {
+                    infoLabel.setText("Die Passwörter stimmen nicht überein.");
+                    return;
+                }
+                Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE,
+                        passwordField.getText(), false /* ? */);
+                Chati.getInstance().getMenuScreen().setPendingResponse(Response.DELETE_ACCOUNT);
             }
         });
 
@@ -74,7 +77,7 @@ public class DeleteAccountTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                menuScreen.setTable(new StartTable(menuScreen));
+                Chati.getInstance().getMenuScreen().setTable(new StartTable());
             }
         });
     }

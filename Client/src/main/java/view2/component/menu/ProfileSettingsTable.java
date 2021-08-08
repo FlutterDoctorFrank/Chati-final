@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import view2.Chati;
 
 public class ProfileSettingsTable extends MenuTable {
 
@@ -11,8 +12,8 @@ public class ProfileSettingsTable extends MenuTable {
     private TextButton changePasswordButton;
     private TextButton deleteAccountButton;
 
-    protected ProfileSettingsTable(MenuScreen menuScreen) {
-        super(NAME, menuScreen);
+    protected ProfileSettingsTable() {
+        super(NAME);
     }
 
     @Override
@@ -27,7 +28,7 @@ public class ProfileSettingsTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                menuScreen.setTable(new ChangePasswordTable(menuScreen));
+                Chati.getInstance().getMenuScreen().setTable(new ChangePasswordTable());
             }
         });
 
@@ -39,7 +40,7 @@ public class ProfileSettingsTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                menuScreen.setTable(new DeleteAccountTable(menuScreen));
+                Chati.getInstance().getMenuScreen().setTable(new DeleteAccountTable());
             }
         });
     }

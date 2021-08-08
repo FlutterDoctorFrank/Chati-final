@@ -18,8 +18,8 @@ public class ChangePasswordTable extends MenuTable {
     private TextButton confirmButton;
     private TextButton cancelButton;
 
-    protected ChangePasswordTable(MenuScreen menuScreen) {
-        super(NAME, menuScreen);
+    protected ChangePasswordTable() {
+        super(NAME);
     }
 
     @Override
@@ -67,14 +67,18 @@ public class ChangePasswordTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                String newPassword = newPasswordField.getText();
-                String confirmNewPassword = confirmNewPasswordField.getText();
-                if (newPassword.equals(confirmNewPassword)) {
-                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE,
-                            passwordField.getText(), newPassword, false /* ? */);
-                } else {
-                    infoLabel.setText("Die Passwörter stimmen nicht überein.");
+                if (passwordField.getText().isEmpty() || newPasswordField.getText().isEmpty()
+                    || confirmNewPasswordField.getText().isEmpty()) {
+                    infoLabel.setText("Bitte fülle alle Felder aus.");
+                    return;
                 }
+                if (!newPasswordField.getText().equals(confirmNewPasswordField.getText())) {
+                    infoLabel.setText("Die Passwörter stimmen nicht überein.");
+                    return;
+                }
+                Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE,
+                    passwordField.getText(), newPasswordField.getText(), false /* ? */);
+                Chati.getInstance().getMenuScreen().setPendingResponse(Response.PASSWORD_CHANGE);
             }
         });
 
@@ -86,7 +90,7 @@ public class ChangePasswordTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                menuScreen.setTable(new StartTable(menuScreen));
+                Chati.getInstance().getMenuScreen().setTable(new StartTable());
             }
         });
     }

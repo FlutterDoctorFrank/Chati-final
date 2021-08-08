@@ -16,10 +16,6 @@ public class ContextEntry {
         return contextId;
     }
 
-    public String getContextName() {
-        return contextName;
-    }
-
     @Override
     public String toString() {
         return contextName;

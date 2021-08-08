@@ -2,7 +2,7 @@ package view2.component.game;
 
 import com.badlogic.gdx.ScreenAdapter;
 
-public class GameScreen extends ScreenAdapter {
+public class WorldScreen extends ScreenAdapter {
     @Override
     public void show() {
 

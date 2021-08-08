@@ -20,8 +20,8 @@ public class LoginTable extends MenuTable {
     private TextButton loginButton;
     private TextButton exitButton;
 
-    public LoginTable(MenuScreen menuScreen) {
-        super(NAME, menuScreen);
+    public LoginTable() {
+        super(NAME);
     }
 
     @Override
@@ -57,8 +57,13 @@ public class LoginTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                if (usernameField.getText().isEmpty() || passwordField.getText().isEmpty()) {
+                    infoLabel.setText("Bitte gib deine Logindaten ein.");
+                    return;
+                }
                 Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_LOGIN,
                         usernameField.getText(), passwordField.getText(), false);
+                Chati.getInstance().getMenuScreen().setPendingResponse(Response.LOGIN);
             }
         });
         // Füge Register-Button hinzu.
@@ -71,10 +76,12 @@ public class LoginTable extends MenuTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (usernameField.getText().isEmpty() || passwordField.getText().isEmpty()) {
+                    infoLabel.setText("Bitte gib ein Benutzername und ein Passwort ein.");
                     return;
                 }
                 Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_LOGIN,
                         usernameField.getText(), passwordField.getText(), true);
+                Chati.getInstance().getMenuScreen().setPendingResponse(Response.REGISTRATION);
             }
         });
         // Füge Exit-Button hinzu.

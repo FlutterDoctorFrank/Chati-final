@@ -8,21 +8,22 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import model.context.ContextID;
-import view.Screens.IModelObserver;
 
 import java.util.*;
 
-public class MenuScreen extends ScreenAdapter implements IMenuScreen, IModelObserver {
+public class MenuScreen extends ScreenAdapter {
 
     private final Stage menuTableStage;
 
     private final Set<ContextEntry> worlds;
 
+    private Response pendingResponse;
+
     public MenuScreen() {
         this.menuTableStage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera()));
         Gdx.input.setInputProcessor(menuTableStage);
-        this.menuTableStage.addActor(new LoginTable(this));
         this.worlds = new HashSet<>();
+        this.pendingResponse = Response.NONE;
     }
 
     @Override
@@ -31,84 +32,81 @@ public class MenuScreen extends ScreenAdapter implements IMenuScreen, IModelObse
         menuTableStage.draw();
     }
 
-    @Override
     public void registrationResponse(boolean success, String messageKey) {
-
+        if (pendingResponse != Response.REGISTRATION) {
+            return;
+        }
+        // Code
+        setPendingResponse(Response.NONE);
     }
 
-    @Override
     public void loginResponse(boolean success, String messageKey) {
-
+        if (pendingResponse != Response.LOGIN) {
+            return;
+        }
+        // Code
+        setPendingResponse(Response.NONE);
     }
 
-    @Override
     public void passwordChangeResponse(boolean success, String messageKey) {
-
+        if (pendingResponse != Response.PASSWORD_CHANGE) {
+            return;
+        }
+        // Code
+        setPendingResponse(Response.NONE);
     }
 
-    @Override
     public void deleteAccountResponse(boolean success, String messageKey) {
-
+        if (pendingResponse != Response.DELETE_ACCOUNT) {
+            return;
+        }
+        // Code
+        setPendingResponse(Response.NONE);
     }
 
-    @Override
     public void avatarChangeResponse(boolean success, String messageKey) {
-
+        if (pendingResponse != Response.AVATAR_CHANGE) {
+            return;
+        }
+        // Code
+        setPendingResponse(Response.NONE);
     }
 
-    @Override
     public void createWorldResponse(boolean success, String messageKey) {
-
+        if (pendingResponse != Response.CREATE_WORLD) {
+            return;
+        }
+        // Code
+        setPendingResponse(Response.NONE);
     }
 
-    @Override
     public void deleteWorldResponse(boolean success, String messageKey) {
-
+        if (pendingResponse != Response.DELETE_WORLD) {
+            return;
+        }
+        // Code
+        setPendingResponse(Response.NONE);
     }
 
-    @Override
     public void joinWorldResponse(boolean success, String messageKey) {
-
+        if (pendingResponse != Response.JOIN_WORLD) {
+            return;
+        }
+        // Code
+        setPendingResponse(Response.NONE);
     }
 
-    @Override
     public void updateWorlds(Map<ContextID, String> worlds) {
         worlds.forEach((key, value) -> this.worlds.add(new ContextEntry(key, value)));
     }
 
-    @Override
-    public void setUserInfoChanged() {
-
-    }
-
-    @Override
-    public void setUserNotificationChanged() {
-
-    }
-
-    @Override
-    public void setUserPositionChanged() {
-
-    }
-
-    @Override
-    public void setWorldChanged() {
-
-    }
-
-    @Override
-    public void setRoomChanged() {
-
-    }
-
-    @Override
-    public void setMusicChanged() {
-
-    }
-
-    protected void setTable(Table table) {
+    public void setTable(Table table) {
         menuTableStage.getActors().forEach(Actor::remove);
         menuTableStage.addActor(table);
+    }
+
+    protected void setPendingResponse(Response pendingResponse) {
+        this.pendingResponse = pendingResponse;
     }
 
     protected Set<ContextEntry> getWorlds() {

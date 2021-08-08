@@ -5,12 +5,9 @@ import view2.component.ChatiTable;
 
 public abstract class MenuTable extends ChatiTable {
 
-    protected final MenuScreen menuScreen;
-
     protected Label infoLabel;
 
-    protected MenuTable(String name, MenuScreen menuScreen) {
+    protected MenuTable(String name) {
         super(name);
-        this.menuScreen = menuScreen;
     }
 }
