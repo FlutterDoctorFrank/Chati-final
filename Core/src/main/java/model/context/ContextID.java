@@ -37,4 +37,9 @@ public class ContextID {
     public int hashCode() {
         return Objects.hash(this.contextId);
     }
+
+    @Override
+    public String toString() {
+        return contextId;
+    }
 }
