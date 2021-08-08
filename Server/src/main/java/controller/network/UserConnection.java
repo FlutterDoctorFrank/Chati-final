@@ -126,7 +126,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             }
 
             if (packet.getUserId() != null && !packet.getUserId().equals(this.user.getUserId())) {
-                //this.logInvalidPacket(packet, "User-ID must be the own or null");
+                this.logInvalidPacket(packet, "User-ID must be the own or null");
                 return;
             }
 
@@ -161,7 +161,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             }
 
             if (packet.getSenderId() != null && !packet.getSenderId().equals(this.user.getUserId())) {
-                //this.logInvalidPacket(packet, "User-ID must be the own or null");
+                this.logInvalidPacket(packet, "User-ID must be the own or null");
                 return;
             }
 
@@ -181,7 +181,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         if (this.user.getWorld() != null) {
             // Überprüfung, ob gegebenenfalls eine falsche User-ID versendet wurde.
             if (packet.getSenderId() != null && !packet.getSenderId().equals(this.user.getUserId())) {
-                //this.logInvalidPacket(packet, "User-ID must be the own or null");
+                this.logInvalidPacket(packet, "User-ID must be the own or null");
                 return;
             }
 

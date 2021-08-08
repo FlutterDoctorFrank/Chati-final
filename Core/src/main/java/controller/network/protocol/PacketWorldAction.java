@@ -56,7 +56,12 @@ public class PacketWorldAction implements Packet<PacketListener> {
      * @param contextId die Kontext-ID der Welt, auf die die Aktion ausgeführt werden soll.
      */
     public PacketWorldAction(@NotNull final Action action, @NotNull final ContextID contextId) {
-        this(action, contextId, null, false);
+        if (action == Action.CREATE) {
+            throw new IllegalArgumentException("Invalid Constructor for creating WorldCreate-Packets");
+        }
+
+        this.action = action;
+        this.contextId = contextId;
     }
 
     /**
@@ -70,13 +75,14 @@ public class PacketWorldAction implements Packet<PacketListener> {
      * @param success true, wenn die Aktion erfolgreich war, ansonsten false.
      */
     public PacketWorldAction(@NotNull final Action action, @NotNull final ContextID contextId,
-                             @Nullable final String message, final boolean success) {
+                             @NotNull final String name, @Nullable final String message, final boolean success) {
         if (action == Action.CREATE) {
             throw new IllegalArgumentException("Invalid Constructor for creating WorldCreate-Packets");
         }
 
         this.action = action;
         this.contextId = contextId;
+        this.name = name;
         this.message = message;
         this.success = success;
     }
