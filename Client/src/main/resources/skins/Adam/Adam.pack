@@ -1,0 +1,26 @@
+
+Adam.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Adam_run
+  rotate: false
+  xy: 1, 67
+  size: 768, 64
+  orig: 768, 64
+  offset: 0, 0
+  index: -1
+Adam_sit
+  rotate: false
+  xy: 1, 1
+  size: 384, 64
+  orig: 384, 64
+  offset: 0, 0
+  index: -1
+Adam_idle
+  rotate: false
+  xy: 771, 67
+  size: 128, 64
+  orig: 128, 64
+  offset: 0, 0
+  index: -1

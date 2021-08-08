@@ -1,0 +1,26 @@
+
+Ash.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Ash_run
+  rotate: false
+  xy: 0, 48
+  size: 762, 48
+  orig: 768, 64
+  offset: 4, 0
+  index: -1
+Ash_sit
+  rotate: false
+  xy: 0, 0
+  size: 376, 46
+  orig: 384, 64
+  offset: 4, 2
+  index: -1
+Ash_idle
+  rotate: false
+  xy: 764, 50
+  size: 126, 46
+  orig: 128, 64
+  offset: 2, 0
+  index: -1

@@ -1,0 +1,26 @@
+
+Dan.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Dan_run
+  rotate: false
+  xy: 0, 46
+  size: 764, 46
+  orig: 768, 64
+  offset: 2, 0
+  index: -1
+Dan_sit
+  rotate: false
+  xy: 0, 0
+  size: 376, 44
+  orig: 384, 64
+  offset: 4, 2
+  index: -1
+Dan_idle
+  rotate: false
+  xy: 766, 48
+  size: 126, 44
+  orig: 128, 64
+  offset: 2, 0
+  index: -1
