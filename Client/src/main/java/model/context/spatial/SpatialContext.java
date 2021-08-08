@@ -1,5 +1,6 @@
 package model.context.spatial;
 
+import com.badlogic.gdx.assets.loaders.resolvers.ExternalFileHandleResolver;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import model.communication.CommunicationRegion;
@@ -52,7 +53,6 @@ public class SpatialContext extends Context implements ISpatialContextView {
      */
     public SpatialContext(ContextID contextId, String contextName, Context parent) {
         super(contextId, contextName, parent);
-        parent.addChild(this);
         this.communicationRegion = null;
         this.communicationMedia = null;
         this.expanse = null;
@@ -66,7 +66,8 @@ public class SpatialContext extends Context implements ISpatialContextView {
         }
         this.map = map;
         System.out.println(map.getPath());
-        TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
+        // TiledMap tiledMap = new TmxMapLoader().load("map.tmx");
+        TiledMap tiledMap = new TmxMapLoader(new ExternalFileHandleResolver()).load(map.getPath());
         this.communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
         this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
         this.expanse = new Expanse(new Location(0, 0), MapUtils.getWidth(tiledMap), MapUtils.getHeight(tiledMap));
@@ -74,10 +75,10 @@ public class SpatialContext extends Context implements ISpatialContextView {
     }
 
     /**
-     * ermittelt anhand der X-und Y- Koordinate den innersten Kontext einer Stelle
-     * @param posX X-Koordinate
-     * @param posY Y-Koordinate
-     * @return innersten Kontext
+     * Gibt den untergeordnetsten Kontext zurück, auf dem sich die übergebenen Koordinaten befinden.
+     * @param posX X-Koordinate.
+     * @param posY Y-Koordinate.
+     * @return Untergeordnetster Kontext, auf dem sich die Koordinaten befinden.
      */
     public SpatialContext getArea(int posX, int posY) {
         try {
