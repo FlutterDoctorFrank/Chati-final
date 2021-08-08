@@ -17,14 +17,12 @@ public class SpatialContextTest {
 
     @Before
     public void setUp() throws Exception {
-         global = new Context(new ContextID("global"), "global", null);
-         world = new SpatialContext(new ContextID("global.world"), "world", global);
+         world = new SpatialContext(new ContextID("global.world"), "world", Context.getGlobal());
          map = SpatialMap.MAP;
     }
 
     @After
     public void tearDown() throws Exception {
-        global = null;
         world = null;
         map = null;
     }
