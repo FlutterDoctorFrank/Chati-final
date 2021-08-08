@@ -18,6 +18,10 @@ public class Chati extends Game {
     public static final int V_HEIGHT = 680;
     public static final float PPM = 10; //pixels per meter
 
+    public static final short DEFAULT_BIT = 1;
+    public static final short AVATAR_BIT = 2;
+    public static final short OBJECT_BIT = 4;
+
     public Chati(ServerSender serverSender, Context context, UserManager userManager) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setIdleFPS(60);

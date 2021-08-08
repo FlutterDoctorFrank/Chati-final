@@ -51,6 +51,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
         addActor(group);
 
         waitingResponse = new LinkedList<>();
+        System.out.println("new Hud");
     }
 
 
@@ -79,6 +80,21 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
             group.addActor(table);
             currentMenuTable = table.getName();
         }
+
+        /*
+        if (Objects.isNull(table)) {
+            playScreenLayout();
+        } else if (table.getName().equals("login-table")) {
+            group.clear();
+            group.addActor(table);
+            currentMenuTable = table.getName();
+        } else if (Objects.isNull(group.findActor("drop-down-menu"))){
+            group.removeActor(group.findActor(currentMenuTable));
+            group.addActor(table);
+            group.addActor(new DropDownMenu(this));
+        }
+         */
+
     }
 
     private void loginLayout() {
@@ -87,7 +103,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     private void playScreenLayout() {
         group.clear();
-       // applicationScreen.getGame().setScreen(new ApplicationScreen(applicationScreen.getHud(), applicationScreen.getGame().getContext().));
+        applicationScreen.getGame().setScreen(new ApplicationScreen(applicationScreen.getHud(), true)); // Test DELETE
         group.addActor(new DropDownMenu(this));
         group.addActor(new ChatWindow(this));
 
@@ -131,6 +147,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
      */
     @Override
     public void setWorldChanged() {
+        /*
         if (waitingJoinWorldResponse) {
             String mapPath = applicationScreen.getGame().getUserManager().getInternUserView().getCurrentWorld().getMap().getPath();
             Map<UUID, IUserView> users = applicationScreen.getGame().getUserManager().getActiveUsers();
@@ -138,6 +155,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
             applicationScreen.getGame().setScreen(new ApplicationScreen(this, mapPath, users));
             addMenuTable(null);
         }
+         */
     }
 
     @Override

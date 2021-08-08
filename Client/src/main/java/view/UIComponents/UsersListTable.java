@@ -1,6 +1,5 @@
 package view.UIComponents;
 
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -8,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import controller.network.ServerSender;
 import model.user.AdministrativeAction;
 import model.user.IUserView;
-import org.lwjgl.system.CallbackI;
 
 public class UsersListTable extends PopupMenu {
     private String currentList;
@@ -102,22 +100,6 @@ public class UsersListTable extends PopupMenu {
             private void create() {
                 Image image;
                 if (isBlocked) {
-                    image = new Image(new Texture("icons/sperren.svg"));
-                    image.addListener(new InputListener() {
-                        @Override
-                        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                            return true;
-                        }
-
-                        @Override
-                        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                            Object[] data = {userView.getUserId(), AdministrativeAction.BAN_USER, ""};
-                            dropDownMenu.getHud().getApplicationScreen().getGame().getServerSender().send(ServerSender.SendAction.USER_MANAGE, data);
-                            isBlocked = false;
-                            create();
-                        }
-                    });
-                } else {
                     image = new Image(new Texture("icons/entsperren.svg"));
                     image.addListener(new InputListener() {
                         @Override
@@ -128,6 +110,22 @@ public class UsersListTable extends PopupMenu {
                         @Override
                         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                             Object[] data = {userView.getUserId(), AdministrativeAction.UNBAN_USER, ""};
+                            dropDownMenu.getHud().getApplicationScreen().getGame().getServerSender().send(ServerSender.SendAction.USER_MANAGE, data);
+                            isBlocked = false;
+                            create();
+                        }
+                    });
+                } else {
+                    image = new Image(new Texture("icons/sperren.svg"));
+                    image.addListener(new InputListener() {
+                        @Override
+                        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                            return true;
+                        }
+
+                        @Override
+                        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                            Object[] data = {userView.getUserId(), AdministrativeAction.BAN_USER, ""};
                             dropDownMenu.getHud().getApplicationScreen().getGame().getServerSender().send(ServerSender.SendAction.USER_MANAGE, data);
                             isBlocked = true;
                             create();
@@ -191,10 +189,49 @@ public class UsersListTable extends PopupMenu {
             private boolean isIgnored;
             private IUserView userView;
 
-            public ActionIgnore () {
-
+            public ActionIgnore (IUserView userView) {
+                isIgnored = userView.isIgnored();
+                this.userView = userView;
+                create();
             }
 
+            private void create() {
+                Image image;
+                if(isIgnored) {
+                    image = new Image(new Texture("icons/ignorieren_aufheben.svg"));
+                    image.addListener(new InputListener(){
+                        @Override
+                        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                            return true;
+                        }
+
+                        @Override
+                        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                            Object[] data = {userView.getUserId(), AdministrativeAction.UNIGNORE_USER, ""};
+                            dropDownMenu.getHud().getApplicationScreen().getGame().getServerSender().send(ServerSender.SendAction.USER_MANAGE, data);
+                            isIgnored = false;
+                            create();
+                        }
+                    });
+                } else {
+                    image = new Image(new Texture("icons/ignorieren.svg"));
+                    image.addListener(new InputListener(){
+                        @Override
+                        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                            return true;
+                        }
+
+                        @Override
+                        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                            Object[] data = {userView.getUserId(), AdministrativeAction.INVITE_FRIEND, ""};
+                            dropDownMenu.getHud().getApplicationScreen().getGame().getServerSender().send(ServerSender.SendAction.USER_MANAGE, data);
+                            isIgnored = false;
+                            create();
+                        }
+                    });
+                }
+                setActor(image);
+            }
         }
     }
 }

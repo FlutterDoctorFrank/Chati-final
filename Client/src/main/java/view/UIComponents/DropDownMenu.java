@@ -19,7 +19,7 @@ public class DropDownMenu extends HorizontalGroup {
         setHeight(35);
         setWidth(35);
         create();
-        setName("drop-down-menus");
+        setName("drop-down-menu");
         top().right();
         setFillParent(true);
     }

@@ -41,6 +41,10 @@ public class ApplicationScreen implements Screen {
     protected Viewport gamePort;
     protected Hud hud;
 
+    private enum KEY_PRESS {
+        RIGHT, LEFT, DOWN, UP, NONE
+    }
+
     //Map variables
     private TmxMapLoader mapLoader;
     private TiledMap map;
@@ -70,24 +74,27 @@ public class ApplicationScreen implements Screen {
     }
 
 
-    public ApplicationScreen(Hud hud, String mapPath , Map<UUID, IUserView> users) {
+    public ApplicationScreen(Hud hud, boolean a) {  // String mapPath , Map<UUID, IUserView> users
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Chati.V_WIDTH / Chati.PPM, Chati.V_HEIGHT / Chati.PPM, gamecam);
         this.hud = hud;
 
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("mapPath");   //maps/map.tmx
+        map = mapLoader.load("maps/map.tmx");   //mapPath
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / Chati.PPM);
         world = new World(new Vector2(0, 0), true);
+        world.setContactListener(new WorldContactListener());
         box2DDebugRenderer = new Box2DDebugRenderer();
 
         avatars = new ArrayList<>();
 
-        /*
-        Avatar userAvatar = new Avatar(world);
+        // Test
+        Avatar userAvatar = new Avatar(world, new Vector2(108 , 20));
+        Avatar test = new Avatar(world, new Vector2(40, 80));
+        avatars.add(test);
         avatars.add(userAvatarIndex,userAvatar);
-        */
 
+        /*
         InternUser user = game.getUserManager().getInternUserView();
         for (var entry : users.entrySet()) {
             if (entry.getKey().equals(user.getUserId())) {
@@ -98,10 +105,13 @@ public class ApplicationScreen implements Screen {
             Avatar avatar = new Avatar(world, entry.getValue().getAvatar().getPath(), entry.getKey(), position.getPosX(), position.getPosY());
             avatars.add(avatar);
         }
+         */
 
         addBorders(map.getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class), false);
         addBorders(map.getLayers().get("Interactable").getObjects().getByType(RectangleMapObject.class), true);
         int id = (int) map.getLayers().get("Interactable").getObjects().getByType(RectangleMapObject.class).get(0).getProperties().get("ID");
+
+
     }
 
     @Override
@@ -118,7 +128,7 @@ public class ApplicationScreen implements Screen {
             spriteBatch.begin();
             for( Avatar avatar :  avatars) {
                 avatar.draw(spriteBatch);
-                avatar.setPosition(avatar.getBody().getPosition().x - avatar.getWidth() / 2, avatar.getBody().getPosition().y - avatar.getHeight() / 2);
+                avatar.update(delta);
             }
             spriteBatch.end();
             update(delta);
@@ -236,7 +246,7 @@ public class ApplicationScreen implements Screen {
             gamecam.position.y = cameraBottomBoundary;
         }
 
-        sendPositionToServer(body.getPosition().x, body.getPosition().y);
+       // sendPositionToServer(body.getPosition().x, body.getPosition().y);   //Test DELETE
     }
 
     private void sendPositionToServer(float posX, float posY) {
@@ -298,7 +308,5 @@ public class ApplicationScreen implements Screen {
         }
     }
 
-    private enum KEY_PRESS {
-        RIGHT, LEFT, DOWN, UP, NONE
-    }
+
 }
