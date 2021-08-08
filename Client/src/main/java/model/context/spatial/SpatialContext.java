@@ -65,6 +65,7 @@ public class SpatialContext extends Context implements ISpatialContextView {
             return;
         }
         this.map = map;
+        System.out.println(map.getPath());
         TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
         this.communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
         this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());

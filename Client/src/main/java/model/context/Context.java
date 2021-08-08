@@ -54,7 +54,7 @@ public class Context implements IContextView {
      * @param contextName Name des Kontextes.
      * @param parent Übergeordneter Kontext.
      */
-    protected Context(ContextID contextId, String contextName, Context parent) {
+    public Context(ContextID contextId, String contextName, Context parent) {
         this.contextId = contextId;
         this.contextName = contextName;
         this.parent = parent;

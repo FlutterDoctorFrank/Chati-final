@@ -27,17 +27,12 @@ public class GlobalContextTest {
             }
 
             @Override
-            public void setWorldInfoChanged() {
+            public void setWorldChanged() {
 
             }
 
             @Override
-            public void setRoomInfoChanged() {
-
-            }
-
-            @Override
-            public void setMapChanged() {
+            public void setRoomChanged() {
 
             }
         });
