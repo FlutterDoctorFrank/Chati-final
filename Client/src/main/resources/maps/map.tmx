@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32" infinite="0" nextlayerid="14" nextobjectid="132">
+ <properties>
+  <property name="communicationRegion" value="radiusCommunication"/>
+  <property name="text" type="bool" value="true"/>
+  <property name="voice" type="bool" value="false"/>
+ </properties>
  <tileset firstgid="1" source="pipo-map001_at.tsx"/>
  <tileset firstgid="481" source="0_Everything.tsx"/>
  <tileset firstgid="8313" source="pipo-map001.tsx"/>
@@ -341,6 +346,11 @@
   <object id="120" x="1312" y="1184" width="448" height="416"/>
  </objectgroup>
  <objectgroup id="11" name="Interactable">
+  <properties>
+   <property name="communicationRegion" value="radiusCommunication"/>
+   <property name="text" type="bool" value="true"/>
+   <property name="voice" type="bool" value="false"/>
+  </properties>
   <object id="90" x="320" y="448" width="416" height="256">
    <properties>
     <property name="ID" type="int" value="101"/>
