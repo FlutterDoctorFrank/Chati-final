@@ -1,6 +1,5 @@
 package model.context.spatial;
 
-import com.badlogic.gdx.assets.loaders.resolvers.ExternalFileHandleResolver;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import model.communication.CommunicationRegion;

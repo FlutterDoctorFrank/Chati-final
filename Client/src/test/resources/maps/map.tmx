@@ -341,6 +341,11 @@
   <object id="120" x="1312" y="1184" width="448" height="416"/>
  </objectgroup>
  <objectgroup id="11" name="Interactable">
+  <properties>
+   <property name="communicationRegion" value="radiusCommunication"/>
+   <property name="text" type="bool" value="true"/>
+   <property name="voice" type="bool" value="false"/>
+  </properties>
   <object id="90" x="320" y="448" width="416" height="256">
    <properties>
     <property name="ID" type="int" value="101"/>
