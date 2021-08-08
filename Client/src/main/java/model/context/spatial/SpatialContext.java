@@ -52,7 +52,6 @@ public class SpatialContext extends Context implements ISpatialContextView {
      */
     public SpatialContext(ContextID contextId, String contextName, Context parent) {
         super(contextId, contextName, parent);
-        parent.addChild(this);
         this.communicationRegion = null;
         this.communicationMedia = null;
         this.expanse = null;
@@ -65,6 +64,7 @@ public class SpatialContext extends Context implements ISpatialContextView {
             return;
         }
         this.map = map;
+        System.out.println(map.getPath());
         TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
         this.communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
         this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
@@ -73,10 +73,10 @@ public class SpatialContext extends Context implements ISpatialContextView {
     }
 
     /**
-     * ermittelt anhand der X-und Y- Koordinate den innersten Kontext einer Stelle
-     * @param posX X-Koordinate
-     * @param posY Y-Koordinate
-     * @return innersten Kontext
+     * Gibt den untergeordnetsten Kontext zurück, auf dem sich die übergebenen Koordinaten befinden.
+     * @param posX X-Koordinate.
+     * @param posY Y-Koordinate.
+     * @return Untergeordnetster Kontext, auf dem sich die Koordinaten befinden.
      */
     public SpatialContext getArea(int posX, int posY) {
         try {

@@ -310,7 +310,7 @@ public interface ClientSender {
                     final PacketWorldAction.Action action = user.getWorld().equals(world)
                             ? PacketWorldAction.Action.JOIN : PacketWorldAction.Action.LEAVE;
 
-                    return new PacketWorldAction(action, world.getContextId(), null, true);
+                    return new PacketWorldAction(action, world.getContextId(), world.getContextName(), null, true);
                 } else {
                     throw new IllegalArgumentException("Expected IWorld, got " + object.getClass());
                 }

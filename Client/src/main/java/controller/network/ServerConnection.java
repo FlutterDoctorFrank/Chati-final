@@ -47,12 +47,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
     private final ClientNetworkManager manager;
 
+    private ContextID worldId;
     private UUID userId;
 
     public ServerConnection(@NotNull final ClientNetworkManager manager) {
         this.manager = manager;
-
-        manager.getEndPoint().addListener(this);
     }
 
     public @NotNull IInternUserController getIntern() {
@@ -122,15 +121,21 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             return;
         }
 
-        // Die Server-Anwendung muss die Benutzer-ID setzen.
-        if (packet.getUserId() != null) {
+        if (this.worldId != null) {
+            // Die Server-Anwendung muss die Benutzer-ID setzen.
+            if (packet.getUserId() == null) {
+                this.logInvalidPacket(packet, "User-ID can not be null");
+                return;
+            }
+
             try {
                 final IUserController user = this.getUser(packet.getUserId());
 
                 switch (packet.getAction()) {
                     case SPAWN_AVATAR:
-                    case UPDATE_AVATAR:
                         user.setInCurrentRoom(true);
+
+                    case UPDATE_AVATAR:
                         user.setPosition(packet.getPosX(), packet.getPosY());
                         break;
 
@@ -140,6 +145,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             } catch (UserNotFoundException ex) {
                 LOGGER.warning("Server tried to move unknown user with id: " + packet.getUserId());
             }
+        } else {
+            this.logUnexpectedPacket(packet, "Can not move avatar while user is not in a world");
         }
     }
 
@@ -150,11 +157,50 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             return;
         }
 
-        try {
-            this.manager.getView().showChatMessage(packet.getSenderId(), packet.getTimestamp(), packet.getMessageType(), packet.getMessage());
-        } catch (UserNotFoundException ex) {
-            // Unbekannter Sender.
-            LOGGER.warning("Server tried to send message from unknown sender with id: " + ex.getUserID());
+        if (this.worldId != null) {
+            if (packet.getTimestamp() == null) {
+                this.logInvalidPacket(packet, "Timestamp can not be null");
+                return;
+            }
+
+            if (packet.getMessageType() == null) {
+                this.logInvalidPacket(packet, "MessageType can not be null");
+                return;
+            }
+
+            try {
+                switch (packet.getMessageType()) {
+                    case WORLD:
+                    case ROOM:
+                    case WHISPER:
+                    case STANDARD:
+                        if (packet.getSenderId() == null) {
+                            this.logInvalidPacket(packet, "Sender User-ID can not be null");
+                            return;
+                        }
+
+                        if (packet.getMessage() == null) {
+                            this.logInvalidPacket(packet, "Message can not be null");
+                            return;
+                        }
+
+                        this.manager.getView().showChatMessage(packet.getSenderId(), packet.getTimestamp(), packet.getMessageType(), packet.getMessage());
+                        break;
+
+                    case INFO:
+                        if (packet.getBundle() == null) {
+                            this.logInvalidPacket(packet, "MessageBundle can not be null");
+                            return;
+                        }
+                        //TODO Vielleicht eine showInfoMessage(LocalDateTime timestamp, MessageBundle message) Methode?
+                        break;
+                }
+            } catch (UserNotFoundException ex) {
+                // Unbekannter Sender.
+                LOGGER.warning("Server tried to send message from unknown sender with id: " + ex.getUserID());
+            }
+        } else {
+            this.logUnexpectedPacket(packet, "Can not receive chat message while user is not in a world");
         }
     }
 
@@ -165,7 +211,21 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             return;
         }
 
-        this.manager.getView().playVoiceData(packet.getSenderId(), packet.getTimestamp(), packet.getVoiceData());
+        if (this.worldId != null) {
+            if (packet.getSenderId() == null) {
+                this.logInvalidPacket(packet, "Sender User-ID can not be null");
+                return;
+            }
+
+            if (packet.getTimestamp() == null) {
+                this.logInvalidPacket(packet, "Timestamp can not be null");
+                return;
+            }
+
+            this.manager.getView().playVoiceData(packet.getSenderId(), packet.getTimestamp(), packet.getVoiceData());
+        } else {
+            this.logUnexpectedPacket(packet, "Can not receive voice message while user is not in a world");
+        }
     }
 
     @Override
@@ -175,7 +235,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             return;
         }
 
-        this.manager.getView().menuActionResponse(packet.isSuccess(), packet.getMessage());
+        if (this.worldId != null) {
+            this.manager.getView().menuActionResponse(packet.isSuccess(), packet.getMessage());
+        } else {
+            this.logUnexpectedPacket(packet, "Can not receive menu option while user is not in a world");
+        }
     }
 
     @Override
@@ -185,22 +249,54 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             return;
         }
 
-        switch (packet.getAction()) {
-            case JOIN:
-                this.manager.getView().joinWorldResponse(packet.isSuccess(), packet.getMessage());
-                break;
+        if (packet.getAction() == PacketWorldAction.Action.LEAVE) {
+            if (this.worldId != null) {
+                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction().name() + " while user is in a world");
+                return;
+            }
 
-            case LEAVE:
+            if (packet.getContextId() == null) {
+                this.logInvalidPacket(packet, "Context-ID of the leaving world can not be null");
+                return;
+            }
+
+            if (packet.getContextId().equals(this.worldId)) {
                 this.getIntern().leaveWorld();
-                break;
+                this.worldId = null;
+            } else {
+                this.logUnexpectedPacket(packet, "Can not leave a world that has not been entered");
+            }
+        } else {
+            if (this.worldId != null) {
+                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction().name() + " while user is not in a world");
+                return;
+            }
 
-            case CREATE:
-                this.manager.getView().createWorldResponse(packet.isSuccess(), packet.getMessage());
-                break;
+            switch (packet.getAction()) {
+                case JOIN:
+                    if (packet.getContextId() == null) {
+                        this.logInvalidPacket(packet, "Context-ID of the joining world can not be null");
+                        return;
+                    }
 
-            case DELETE:
-                this.manager.getView().deleteWorldResponse(packet.isSuccess(), packet.getMessage());
-                break;
+                    if (packet.getName() == null) {
+                        this.logInvalidPacket(packet, "Name of the joining world can not be null");
+                        return;
+                    }
+
+                    this.getIntern().joinWorld(packet.getContextId(), packet.getName());
+                    this.manager.getView().joinWorldResponse(packet.isSuccess(), packet.getMessage());
+                    this.worldId = packet.getContextId();
+                    break;
+
+                case CREATE:
+                    this.manager.getView().createWorldResponse(packet.isSuccess(), packet.getMessage());
+                    break;
+
+                case DELETE:
+                    this.manager.getView().deleteWorldResponse(packet.isSuccess(), packet.getMessage());
+                    break;
+            }
         }
     }
 
@@ -219,8 +315,23 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                 case LOGIN:
                     if (packet.isSuccess()) {
-                        this.manager.getUserManager().login(this.userId = packet.getUserId(),
-                                packet.getName(), Status.ONLINE, packet.getAvatar());
+                        if (packet.getUserId() == null) {
+                            this.logInvalidPacket(packet, "User-ID of logged in user can not be null");
+                            return;
+                        }
+
+                        if (packet.getName() == null) {
+                            this.logInvalidPacket(packet, "Name of logged in user can not be null");
+                            return;
+                        }
+
+                        if (packet.getAvatar() == null) {
+                            this.logInvalidPacket(packet, "Avatar of logged in user can not be null");
+                            return;
+                        }
+
+                        this.manager.getUserManager().login(this.userId = packet.getUserId(), packet.getName(),
+                                Status.ONLINE, packet.getAvatar());
                     }
 
                     this.manager.getView().loginResponse(packet.isSuccess(), packet.getMessage());
@@ -235,6 +346,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             switch (packet.getAction()) {
                 case CHANGE_AVATAR:
                     if (packet.isSuccess()) {
+                        if (packet.getAvatar() == null) {
+                            this.logInvalidPacket(packet, "New Avatar of changed user can not be null");
+                            return;
+                        }
+
                         this.getIntern().setAvatar(packet.getAvatar());
                     }
 
@@ -291,8 +407,22 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             return;
         }
 
-        if (packet.isJoin()) {
-            this.getIntern().joinRoom(packet.getContextId(), packet.getName(), packet.getMap());
+        if (this.worldId != null) {
+            if (packet.isJoin()) {
+                if (packet.getName() == null) {
+                    this.logInvalidPacket(packet, "Name of joined context can not be null");
+                    return;
+                }
+
+                if (packet.getMap() == null) {
+                    this.logInvalidPacket(packet, "Map of joined context can not be null");
+                    return;
+                }
+
+                this.getIntern().joinRoom(packet.getContextId(), packet.getName(), packet.getMap());
+            }
+        } else {
+            this.logUnexpectedPacket(packet, "Can not join context while user is not in a world");
         }
     }
 
@@ -303,22 +433,26 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             return;
         }
 
-        try {
-            this.getIntern().setMusic(packet.getContextId(), packet.getMusic());
+        if (this.worldId != null) {
+            try {
+                this.getIntern().setMusic(packet.getContextId(), packet.getMusic());
 
-            for (final IUserController extern : this.manager.getUserManager().getExternUsers().values()) {
-                extern.setMute(packet.getContextId(), false);
-            }
+                for (final IUserController extern : this.manager.getUserManager().getExternUsers().values()) {
+                    extern.setMute(packet.getContextId(), false);
+                }
 
-            for (final UUID mute : packet.getMutes()) {
-                this.getExtern(mute).setMute(packet.getContextId(), true);
+                for (final UUID mute : packet.getMutes()) {
+                    this.getExtern(mute).setMute(packet.getContextId(), true);
+                }
+            } catch (UserNotFoundException ex) {
+                // Ein stumm zuschaltender Benutzer wurde nicht gefunden.
+                LOGGER.warning("Server tried to send mute of unknown user with id: " + ex.getUserID());
+            } catch (ContextNotFoundException ex) {
+                // Context wurde nicht gefunden.
+                LOGGER.warning("Server tried to send context info for unknown context with id: " + ex.getContextID());
             }
-        } catch (UserNotFoundException ex) {
-            // Ein stumm zuschaltender Benutzer wurde nicht gefunden.
-            LOGGER.warning("Server tried to send mute of unknown user with id: " + ex.getUserID());
-        } catch (ContextNotFoundException ex) {
-            // Context wurde nicht gefunden.
-            LOGGER.warning("Server tried to send context info for unknown context with id: " + ex.getContextID());
+        } else {
+            this.logUnexpectedPacket(packet, "Can not receive context info while user is not in a world");
         }
     }
 
@@ -347,12 +481,16 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             return;
         }
 
-        //TODO Die View benötigt die Information zu welchem context das Menü gehört.
+        if (this.worldId != null) {
+            //TODO Die View benötigt die Information zu welchem context das Menü gehört.
 
-        if (packet.isOpen()) {
-            this.manager.getView().openMenu(packet.getMenu());
+            if (packet.isOpen()) {
+                this.manager.getView().openMenu(packet.getMenu());
+            } else {
+                this.manager.getView().closeMenu(packet.getMenu());
+            }
         } else {
-            this.manager.getView().closeMenu(packet.getMenu());
+            this.logUnexpectedPacket(packet, "Can not receive menu action while user is not in a world");
         }
     }
 
@@ -386,6 +524,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
             // Ist eine Kontext-ID im Paket gesetzt, so handelt es sich um einen Benutzer innerhalb der aktuellen Welt.
             if (packet.getContextId() != null) {
+                if (!packet.getContextId().equals(this.worldId)) {
+                    this.logUnexpectedPacket(packet, "Can not receive user info of a world that has not been entered");
+                    return;
+                }
+
                 IUserController user;
 
                 switch (packet.getAction()) {
@@ -490,6 +633,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             // Context wurde nicht gefunden.
             LOGGER.warning("Server tried to send user info for unknown context with id: " + ex.getContextID());
         }
+    }
+
+    private void logInvalidPacket(@NotNull final Packet<?> packet, @NotNull final String message) {
+        LOGGER.warning(String.format("Received invalid packet %s from server: %s",
+                packet.getClass().getSimpleName(), message));
     }
 
     private void logUnexpectedPacket(@NotNull final Packet<?> packet, @NotNull final String message) {

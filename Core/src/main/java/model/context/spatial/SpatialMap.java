@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum SpatialMap implements Resource {
 
-    PLACEHOLDER("placeholder");
+    MAP("map");
 
     private static final String PATH = "maps/";
 
@@ -17,7 +17,7 @@ public enum SpatialMap implements Resource {
 
     SpatialMap(@NotNull final String name) {
         this.name = name;
-        this.path = PATH + this.name().toLowerCase();
+        this.path = PATH + this.name().toLowerCase() + ".tmx";
     }
 
     @Override

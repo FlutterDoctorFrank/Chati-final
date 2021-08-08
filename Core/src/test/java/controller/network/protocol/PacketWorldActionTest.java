@@ -30,7 +30,7 @@ public class PacketWorldActionTest extends PacketTest<PacketWorldAction> {
     @Test
     public void responseSerializationTest() {
         this.before = new PacketWorldAction(randomEnum(Action.class, Action.CREATE), randomContextId(),
-                randomString(), randomBoolean());
+                randomString(), randomString(), randomBoolean());
 
         this.serialize();
         this.equals();

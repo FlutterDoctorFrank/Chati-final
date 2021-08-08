@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import controller.network.ServerSender;
 import model.context.spatial.ILocationView;
+import model.context.spatial.SpatialMap;
 import model.user.IUserManagerView;
 import model.user.IUserView;
 import model.user.InternUser;
@@ -71,6 +72,7 @@ public class ApplicationScreen implements Screen {
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Chati.V_WIDTH / Chati.PPM, Chati.V_HEIGHT / Chati.PPM, gamecam);
         hud.addMenuTable(new LoginTable(hud));
+
     }
 
 
