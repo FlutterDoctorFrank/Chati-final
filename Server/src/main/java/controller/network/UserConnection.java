@@ -69,6 +69,8 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             }
 
             this.connection.sendTCP(packet);
+
+            LOGGER.info(String.format("Sent packet %s to connection: %s", packet.getClass().getSimpleName(), this.connection.getID()));
         }
     }
 
@@ -86,7 +88,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         }
 
         if (object instanceof Packet<?>) {
-            LOGGER.fine(String.format("Received packet %s from connection: %s", object.getClass().getSimpleName(), connection.getID()));
+            LOGGER.info(String.format("Received packet %s from connection: %s", object.getClass().getSimpleName(), connection.getID()));
 
             try {
                 call((Packet<?>) object, this);

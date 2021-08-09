@@ -79,6 +79,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             }
 
             this.manager.getEndPoint().sendTCP(packet);
+
+            LOGGER.info(String.format("Sent packet %s to server", packet.getClass().getSimpleName()));
         }
     }
 
@@ -96,6 +98,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         if (object instanceof Packet<?>) {
+            LOGGER.info(String.format("Received packet %s from server", object.getClass().getSimpleName()));
+
             try {
                 call((Packet<?>) object, this);
             } catch (ClassCastException ex) {
