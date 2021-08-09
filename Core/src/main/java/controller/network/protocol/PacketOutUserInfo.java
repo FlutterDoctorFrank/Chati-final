@@ -57,7 +57,7 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
 
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
-        PacketUtils.writeContextId(output, this.contextId);
+        PacketUtils.writeNullableContextId(output, this.contextId);
         PacketUtils.writeEnum(output, this.action);
 
         // Schreiben der Benutzerinformation
@@ -82,7 +82,7 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
 
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
-        this.contextId = PacketUtils.readContextId(input);
+        this.contextId = PacketUtils.readNullableContextId(input);
         this.action = PacketUtils.readEnum(input, Action.class);
 
         // Lesen der Benutzerinformation
