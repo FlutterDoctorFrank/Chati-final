@@ -19,9 +19,10 @@ public class Chati extends Game {
     public static final int V_HEIGHT = 680;
     public static final float PPM = 10; //pixels per meter
 
-    public static final short DEFAULT_BIT = 1;
+    public static final short GROUND_BIT = 1;
     public static final short AVATAR_BIT = 2;
     public static final short OBJECT_BIT = 4;
+    public static final short INTERACTIVE_AREA_BIT = 8;
 
     public Chati(@NotNull final Launcher launcher, @NotNull final IUserManagerView manager) {
         this.launcher = launcher;

@@ -6,29 +6,36 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import controller.network.ServerSender;
+import model.context.spatial.ILocationView;
+import model.context.spatial.SpatialMap;
+import model.user.IUserManagerView;
+import model.user.IUserView;
+import model.user.InternUser;
 import view.Chati;
 import view.Sprites.Avatar;
+import view.Sprites.InteractiveTileObject;
 import view.UIComponents.Hud;
 import view.UIComponents.LoginTable;
+
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class ApplicationScreen implements Screen {
     protected Chati game;
@@ -71,7 +78,7 @@ public class ApplicationScreen implements Screen {
     }
 
 
-    public ApplicationScreen(Hud hud, boolean a) {  // String mapPath , Map<UUID, IUserView> users
+    public ApplicationScreen(Hud hud, String mapPath , Map<UUID, IUserView> users) {  //
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Chati.V_WIDTH / Chati.PPM, Chati.V_HEIGHT / Chati.PPM, gamecam);
         this.hud = hud;
@@ -85,29 +92,32 @@ public class ApplicationScreen implements Screen {
 
         avatars = new ArrayList<>();
 
-        // Test
-        Avatar userAvatar = new Avatar(world, new Vector2(108 , 20));
+        /*
+        Avatar userAvatar = new Avatar(world, new Vector2(50 , 40));
         Avatar test = new Avatar(world, new Vector2(40, 80));
         avatars.add(test);
         avatars.add(userAvatarIndex,userAvatar);
+         */
 
-        /*
-        IInternUserView user = game.getUserManager().getInternUserView();
+        InternUser user = game.getUserManager().getInternUserView();
         for (var entry : users.entrySet()) {
             if (entry.getKey().equals(user.getUserId())) {
-                Avatar userAvatar = new Avatar(world, user.getAvatar().getPath(), user.getUserId(), user.getCurrentLocation().getPosX(), user.getCurrentLocation().getPosY());
+                Avatar userAvatar = new Avatar(world, user.getUserId(), user.getCurrentLocation().getPosX(), user.getCurrentLocation().getPosY());
                 avatars.add(userAvatarIndex,userAvatar);
             }
             ILocationView position = entry.getValue().getCurrentLocation();
-            Avatar avatar = new Avatar(world, entry.getValue().getAvatar().getPath(), entry.getKey(), position.getPosX(), position.getPosY());
+            Avatar avatar = new Avatar(world, entry.getKey(), position.getPosX(), position.getPosY());
             avatars.add(avatar);
         }
+
+        addBorders(map.getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class));
+
+        /*
+        for (MapObject object: map.getLayers().get("Interactable").getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
+            new InteractiveTileObject(world, rectangle);
+        }
          */
-
-        addBorders(map.getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class), false);
-        addBorders(map.getLayers().get("Interactable").getObjects().getByType(RectangleMapObject.class), true);
-        int id = (int) map.getLayers().get("Interactable").getObjects().getByType(RectangleMapObject.class).get(0).getProperties().get("ID");
-
 
     }
 
@@ -250,7 +260,7 @@ public class ApplicationScreen implements Screen {
         int positionX = (int) posX;
         int positionY = (int) posY;
         Object[] position = {positionX, positionY};
-        this.hud.getSender().send(ServerSender.SendAction.AVATAR_MOVE, position);
+        game.getServerSender().send(ServerSender.SendAction.AVATAR_MOVE, position);
     }
 
     public void updateAvatarsPositions() {
@@ -280,25 +290,18 @@ public class ApplicationScreen implements Screen {
         }
     }
 
-    private void addBorders(Array<RectangleMapObject> borders, boolean isCollidable) {
+    private void addBorders(Array<RectangleMapObject> borders) {
         for (RectangleMapObject object : borders) {
             Rectangle bounds = object.getRectangle();
             BodyDef bdef = new BodyDef();
             PolygonShape shape = new PolygonShape();
             FixtureDef fdef = new FixtureDef();
-            Body body;
-
 
             bdef.type = BodyDef.BodyType.StaticBody;
             bdef.position.set((bounds.getX() + bounds.getWidth() / 2) / Chati.PPM, (bounds.getY() + bounds.getHeight() / 2) / Chati.PPM);
 
-            body = world.createBody(bdef);
-
+            Body body = world.createBody(bdef);
             shape.setAsBox((bounds.getWidth() / 2) / Chati.PPM, (bounds.getHeight() / 2) / Chati.PPM);
-
-            if (isCollidable) {
-                fdef.isSensor = true;
-            }
 
             fdef.shape = shape;
             body.createFixture(fdef);

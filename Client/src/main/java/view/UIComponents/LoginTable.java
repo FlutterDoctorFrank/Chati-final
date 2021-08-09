@@ -54,16 +54,10 @@ public class LoginTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                /*
-                if (!username.getText().matches("[A-Za-z0-9]{1,16}")) {
-                    infoLabel.setText("Kein gültigen Name");
-                } else if (!password.getText().matches("[A-Za-z0-9]{1,16}")) {
-                    infoLabel.setText("Kein gültiges Passwort");
-                } else {
-                    hud.sendLoginRequest(username.getText(), password.getText());
-                }
-                 */
-                hud.addMenuTable(new StartScreenTable(hud));
+
+                hud.sendLoginRequest(username.getText(), password.getText());
+
+                //hud.addMenuTable(new StartScreenTable(hud));
             }
         });
 
@@ -77,13 +71,7 @@ public class LoginTable extends UIComponentTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (!username.getText().isEmpty() && !password.getText().isEmpty()) {
-                    if (!username.getText().matches("[A-Za-z0-9]{1,16}")) {
-                        infoLabel.setText("Kein gültigen Name");
-                    } else if (!password.getText().matches("[A-Za-z0-9]{1,16}")) {
-                        infoLabel.setText("Kein gültiges Passwort");
-                    } else {
                         hud.sendRegistrationRequest(username.getText(), password.getText());
-                    }
                 }
             }
         });

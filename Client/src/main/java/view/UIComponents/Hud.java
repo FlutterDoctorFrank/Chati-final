@@ -54,7 +54,6 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
         addActor(group);
 
         waitingResponse = new LinkedList<>();
-        System.out.println("new Hud");
     }
 
     public synchronized ServerSender getSender() {
@@ -115,7 +114,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     private void playScreenLayout() {
         group.clear();
-        applicationScreen.getGame().setScreen(new ApplicationScreen(applicationScreen.getHud(), true)); // Test DELETE
+       // applicationScreen.getGame().setScreen(new ApplicationScreen(applicationScreen.getHud(), true)); // Test DELETE
         group.addActor(new DropDownMenu(this));
         group.addActor(new ChatWindow(this));
 
@@ -159,7 +158,6 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
      */
     @Override
     public void setWorldChanged() {
-        /*
         if (waitingJoinWorldResponse) {
             String mapPath = applicationScreen.getGame().getUserManager().getInternUserView().getCurrentWorld().getMap().getPath();
             Map<UUID, IUserView> users = applicationScreen.getGame().getUserManager().getActiveUsers();
@@ -167,7 +165,6 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
             applicationScreen.getGame().setScreen(new ApplicationScreen(this, mapPath, users));
             addMenuTable(null);
         }
-         */
     }
 
     @Override

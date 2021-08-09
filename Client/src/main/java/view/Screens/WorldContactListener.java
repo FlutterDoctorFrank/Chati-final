@@ -1,14 +1,12 @@
 package view.Screens;
 
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.*;
 
 public class WorldContactListener implements ContactListener {
     @Override
     public void beginContact(Contact contact) {
-
+        Fixture fixA = contact.getFixtureA();
+        Fixture fixB = contact.getFixtureB();
     }
 
     @Override

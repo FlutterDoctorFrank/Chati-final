@@ -38,7 +38,6 @@ public class StartScreenTable extends UIComponentTable {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                /*
                 for (var entry : hud.getWorlds().entrySet()) {
                     if (entry.getValue().equals(worldSelect.getSelected())) {
                         hud.sendJoinWorldRequest(entry.getKey());
@@ -47,7 +46,6 @@ public class StartScreenTable extends UIComponentTable {
                     infoLabel.setText("Welt nicht mehr verfügbar");
                     updateWorldsList(worldSelect);
                 }
-                */
                 hud.addMenuTable(null);
             }
         });
@@ -114,10 +112,8 @@ public class StartScreenTable extends UIComponentTable {
 
 
     private void updateWorldsList(SelectBox<String> selectBox) {
-        /*
         for (var entry : hud.getWorlds().entrySet()) {
             selectBox.setItems(entry.getValue());
         }
-         */
     }
 }
