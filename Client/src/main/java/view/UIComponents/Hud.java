@@ -188,8 +188,12 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     @Override
     public void updateWorlds(Map<ContextID, String> worlds) {
-        this.worlds = worlds;
-
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                hud.worlds = worlds;
+            }
+        });
     }
 
     @Override
