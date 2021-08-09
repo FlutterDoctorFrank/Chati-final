@@ -305,7 +305,7 @@ public class User implements IUser {
 
     @Override
     public Status getStatus() {
-        return null;
+        return status;
     }
 
     @Override
