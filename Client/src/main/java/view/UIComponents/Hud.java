@@ -25,6 +25,8 @@ import java.util.UUID;
 
 public class Hud extends Stage implements IModelObserver, ViewControllerInterface {
 
+    private static Hud hud;
+
     private ServerSender sender;
 
     private ApplicationScreen applicationScreen;
@@ -44,6 +46,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     public Hud(SpriteBatch spriteBatch, ApplicationScreen applicationScreen) {
         super(new FitViewport(Chati.V_WIDTH, Chati.V_HEIGHT, new OrthographicCamera()), spriteBatch);
+        hud = this;
         Gdx.input.setInputProcessor(this);
         this.applicationScreen = applicationScreen;
 
@@ -148,9 +151,14 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     @Override
     public void setUserPositionChanged() {
-        if(isPlaying) {
-            applicationScreen.updateAvatarsPositions();
-        }
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(isPlaying) {
+                    applicationScreen.updateAvatarsPositions();
+                }
+            }
+        });
     }
 
     /**
@@ -158,13 +166,18 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
      */
     @Override
     public void setWorldChanged() {
-        if (waitingJoinWorldResponse) {
-            String mapPath = applicationScreen.getGame().getUserManager().getInternUserView().getCurrentWorld().getMap().getPath();
-            Map<UUID, IUserView> users = applicationScreen.getGame().getUserManager().getActiveUsers();
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if (waitingJoinWorldResponse) {
+                    String mapPath = applicationScreen.getGame().getUserManager().getInternUserView().getCurrentWorld().getMap().getPath();
+                    Map<UUID, IUserView> users = applicationScreen.getGame().getUserManager().getActiveUsers();
 
-            applicationScreen.getGame().setScreen(new ApplicationScreen(this, mapPath, users));
-            addMenuTable(null);
-        }
+                    applicationScreen.getGame().setScreen(new ApplicationScreen(hud, mapPath, users));
+                    addMenuTable(null);
+                }
+            }
+        });
     }
 
     @Override
@@ -188,6 +201,12 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     @Override
     public void registrationResponse(boolean success, String messageKey) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
         LoginTable table = (LoginTable) group.findActor("login-table");
         if (!Objects.isNull(table) && waitingRegistrationResponse) {
             if (success) {
@@ -214,16 +233,21 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     @Override
     public void loginResponse(boolean success, String messageKey) {
-        LoginTable table = (LoginTable) group.findActor("login-table");
-        if (!Objects.isNull(table) && waitingLoginResponse) {
-            if (success) {
-                addMenuTable(new StartScreenTable(this));
-            } else {
-                table.displayMessage(messageKey);
-            }
-        }
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                LoginTable table = (LoginTable) group.findActor("login-table");
+                if (!Objects.isNull(table) && waitingLoginResponse) {
+                    if (success) {
+                        addMenuTable(new StartScreenTable(hud));
+                    } else {
+                        table.displayMessage(messageKey);
+                    }
+                }
 
-        waitingLoginResponse = false;
+                waitingLoginResponse = false;
+            }
+        });
     }
 
     public void sendLoginRequest(String username, String password) {
@@ -280,22 +304,38 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     @Override
     public void joinWorldResponse(boolean success, String messageKey) {
-        StartScreenTable table = (StartScreenTable) group.findActor("start-screen-table");
-        if (success && !Objects.isNull(contextID)) {
-            //applicationScreen.getGame().setScreen(new PlayScreen(applicationScreen.getGame(), this));
-        } else {
-            table.displayMessage(messageKey);
-        }
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                StartScreenTable table = (StartScreenTable) group.findActor("start-screen-table");
+                if (success && !Objects.isNull(contextID)) {
+                    //applicationScreen.getGame().setScreen(new PlayScreen(applicationScreen.getGame(), this));
+                } else {
+                    table.displayMessage(messageKey);
+                }
+            }
+        });
+
     }
 
 
     @Override
     public void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message) throws UserNotFoundException {
-        ChatWindow chat = (ChatWindow) group.findActor("chat-window");
-        if (!Objects.isNull(chat)) {
-            String name = applicationScreen.getGame().getUserManager().getExternUserView(userID).getUsername();
-            chat.receiveMessage(timestamp + " " + name +  ": " + message);
-        }
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                ChatWindow chat = (ChatWindow) group.findActor("chat-window");
+                if (!Objects.isNull(chat)) {
+                    String name = null;
+                    try {
+                        name = applicationScreen.getGame().getUserManager().getExternUserView(userID).getUsername();
+                    } catch (UserNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    chat.receiveMessage(timestamp + " " + name +  ": " + message);
+                }
+            }
+        });
     }
 
     @Override
