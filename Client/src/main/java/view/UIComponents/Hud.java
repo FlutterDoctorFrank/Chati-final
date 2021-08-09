@@ -18,10 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import view.Chati;
 import view.Screens.*;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class Hud extends Stage implements IModelObserver, ViewControllerInterface {
 
@@ -32,7 +29,8 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     private ApplicationScreen applicationScreen;
     private LinkedList<Table> waitingResponse;
     private WidgetGroup group;
-    private Map<ContextID, String> worlds;
+    private Map<ContextID, String> worlds = new HashMap<>();
+
     private ContextID contextID;
 
     private boolean isPlaying = false;
