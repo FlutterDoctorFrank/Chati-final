@@ -182,7 +182,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 ps.setString(3, password);
                 Timestamp currentTime = new Timestamp(System.currentTimeMillis());
                 ps.setString(4, currentTime.toString());
-                ps.setString(5, user.getAvatar().getName());
+                ps.setString(5, user.getAvatar().name());
                 ps.executeUpdate();
 
             } else {
