@@ -46,7 +46,7 @@ public class StartScreenTable extends UIComponentTable {
                     infoLabel.setText("Welt nicht mehr verfügbar");
                     updateWorldsList(worldSelect);
                 }
-                hud.addMenuTable(null);
+               // hud.addMenuTable(null);
             }
         });
 
