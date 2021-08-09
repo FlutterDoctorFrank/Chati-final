@@ -465,7 +465,7 @@ public class User implements IUser {
         }
         database.addRole(this, context, role);
         // Sende geänderte Rolleninformationen an alle relevanten Benutzer.
-        updateRoleInfo(contextRole);
+        updateRoleInfo(contextRoles.get(context));
     }
 
     /**
