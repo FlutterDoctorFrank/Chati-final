@@ -168,6 +168,5 @@ public class MapUtils {
             default: // Zu erzeugender Kontext existiert nicht.
                 throw new IllegalArgumentException();
         }
-
     }
 }
