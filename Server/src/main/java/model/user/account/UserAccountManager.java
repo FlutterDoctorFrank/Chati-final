@@ -89,7 +89,6 @@ public class UserAccountManager implements IUserAccountManager {
         }
         // Melde den Benutzer an.
         user.setClientSender(sender);
-        user.setStatus(Status.ONLINE);
         user.updateLastActivity();
         GlobalContext.getInstance().addUser(user);
         return user;

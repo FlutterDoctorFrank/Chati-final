@@ -629,6 +629,7 @@ public class User implements IUser {
      */
     public void setClientSender(ClientSender clientSender) {
         this.clientSender = clientSender;
+        this.status = Status.ONLINE;
     }
 
     /**
