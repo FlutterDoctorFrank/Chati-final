@@ -191,7 +191,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
         LoginTable table = (LoginTable) group.findActor("login-table");
         if (!Objects.isNull(table) && waitingRegistrationResponse) {
             if (success) {
-                addMenuTable(new StartScreenTable(this));
+                table.displayMessage(messageKey);
             } else {
                 table.displayMessage(messageKey);
             }

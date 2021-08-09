@@ -20,7 +20,7 @@ public class StartScreenTable extends UIComponentTable {
         infoLabel = new Label("", skin);
 
         SelectBox<String> worldSelect = new SelectBox<>(skin);
-        updateWorldsList(worldSelect);
+        //updateWorldsList(worldSelect);
 
         worldSelect.addListener(new ChangeListener() {
             @Override
