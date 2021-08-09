@@ -31,7 +31,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
     private Database() {
 
-
+/*
         dropTable("USER_ACCOUNT");
         dropTable("WORLDS");
         dropTable("BAN");
@@ -40,6 +40,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         dropTable("USER_RESERVATION");
         dropTable("ROLE_WITH_CONTEXT");
         dropTable("NOTIFICATION");
+
+ */
 
         initialize();
     }
