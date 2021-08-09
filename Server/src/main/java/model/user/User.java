@@ -459,13 +459,14 @@ public class User implements IUser {
     public void addRole(Context context, Role role) {
         ContextRole contextRole = contextRoles.get(context);
         if (contextRole == null) {
-            contextRoles.put(context, new ContextRole(this, context, role));
+            contextRole = new ContextRole(this, context, role);
+            contextRoles.put(context, contextRole);
         } else {
             contextRole.addRole(role);
         }
         database.addRole(this, context, role);
         // Sende geänderte Rolleninformationen an alle relevanten Benutzer.
-        updateRoleInfo(contextRoles.get(context));
+        updateRoleInfo(contextRole);
     }
 
     /**
@@ -716,7 +717,7 @@ public class User implements IUser {
         if (currentWorld != null) {
             receivers.putAll(currentWorld.getUsers());
         }
-        receivers.values().forEach(user -> {
+        receivers.values().stream().filter(User::isOnline).forEach(user -> {
             user.getClientSender().send(ClientSender.SendAction.USER_INFO, this);
         });
     }
@@ -730,7 +731,7 @@ public class User implements IUser {
         if (currentWorld != null) {
             receivers.putAll(currentWorld.getUsers());
         }
-        receivers.values().forEach(user -> {
+        receivers.values().stream().filter(User::isOnline).forEach(user -> {
             user.getClientSender().send(ClientSender.SendAction.CONTEXT_ROLE, contextRole);
         });
     }
