@@ -133,7 +133,7 @@ public class Launcher implements Runnable {
             @Override
             public void execute(@NotNull final Launcher launcher, @NotNull final String[] arguments) {
                 if (arguments.length > 0) {
-                    System.out.println("Too many arguments for the help command.");
+                    System.out.println("Invalid usage: help");
                     return;
                 }
 
@@ -148,12 +148,17 @@ public class Launcher implements Runnable {
             @Override
             public void execute(@NotNull final Launcher launcher, @NotNull final String[] arguments) {
                 if (arguments.length != 1) {
-                    System.out.println("Too few/many arguments for the set-owner command.");
+                    System.out.println("Invalid usage: set-owner <name>");
                     return;
                 }
 
                 try {
                     final User target = launcher.manager.getUser(arguments[0]);
+
+                    if (target.hasRole(launcher.global, Role.OWNER)) {
+                        System.err.println("User " + target.getUsername() + " has already been set as Owner.");
+                        return;
+                    }
 
                     target.addRole(launcher.global, Role.OWNER);
                     System.out.println("User " + target.getUsername() + " has been set as Owner.");
@@ -167,7 +172,7 @@ public class Launcher implements Runnable {
             @Override
             public void execute(@NotNull final Launcher launcher, @NotNull final String[] arguments) {
                 if (arguments.length > 0) {
-                    System.out.println("Too many arguments for the stop command.");
+                    System.out.println("Invalid usage: stop");
                     return;
                 }
 
