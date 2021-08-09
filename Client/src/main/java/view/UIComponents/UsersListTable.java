@@ -216,7 +216,7 @@ public class UsersListTable extends PopupMenu {
                         @Override
                         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                             Object[] data = {userView.getUserId(), AdministrativeAction.UNIGNORE_USER, ""};
-                            dropDownMenu.getHud().getApplicationScreen().getGame().getServerSender().send(ServerSender.SendAction.USER_MANAGE, data);
+                            dropDownMenu.getHud().getSender().send(ServerSender.SendAction.USER_MANAGE, data);
                             isIgnored = false;
                             create();
                         }
@@ -232,7 +232,7 @@ public class UsersListTable extends PopupMenu {
                         @Override
                         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                             Object[] data = {userView.getUserId(), AdministrativeAction.INVITE_FRIEND, ""};
-                            dropDownMenu.getHud().getApplicationScreen().getGame().getServerSender().send(ServerSender.SendAction.USER_MANAGE, data);
+                            dropDownMenu.getHud().getSender().send(ServerSender.SendAction.USER_MANAGE, data);
                             isIgnored = false;
                             create();
                         }
