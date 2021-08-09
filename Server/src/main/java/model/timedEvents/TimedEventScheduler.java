@@ -36,7 +36,7 @@ public class TimedEventScheduler extends Thread {
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         while (isRunning) {
             // Warte, solange es keine abzuarbeitenden Ereignisse gibt.
             while (timedEvents.isEmpty()) {
@@ -78,7 +78,7 @@ public class TimedEventScheduler extends Thread {
      * Füge ein Ereignis hinzu.
      * @param event Hinzuzufügendes Ereignis.
      */
-    public void put(TimedEvent event) {
+    public synchronized void put(TimedEvent event) {
         timedEvents.put(event);
         notifyAll();
     }
