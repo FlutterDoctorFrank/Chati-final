@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import controller.network.ServerSender;
 import model.context.spatial.ILocationView;
 import model.context.spatial.SpatialMap;
+import model.user.IInternUserView;
 import model.user.IUserManagerView;
 import model.user.IUserView;
 import model.user.InternUser;
@@ -99,7 +100,7 @@ public class ApplicationScreen implements Screen {
         avatars.add(userAvatarIndex,userAvatar);
          */
 
-        InternUser user = game.getUserManager().getInternUserView();
+        IInternUserView user = game.getUserManager().getInternUserView();
         for (var entry : users.entrySet()) {
             if (entry.getKey().equals(user.getUserId())) {
                 Avatar userAvatar = new Avatar(world, user.getUserId(), user.getCurrentLocation().getPosX(), user.getCurrentLocation().getPosY());
@@ -260,7 +261,7 @@ public class ApplicationScreen implements Screen {
         int positionX = (int) posX;
         int positionY = (int) posY;
         Object[] position = {positionX, positionY};
-        game.getServerSender().send(ServerSender.SendAction.AVATAR_MOVE, position);
+        hud.getSender().send(ServerSender.SendAction.AVATAR_MOVE, position);
     }
 
     public void updateAvatarsPositions() {

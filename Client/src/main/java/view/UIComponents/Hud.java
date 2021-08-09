@@ -206,7 +206,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
             table.displayMessage("Auf Antwort warten");
         } else {
             Object[] credentials = {username, password, true};
-            this.getSender().send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
+            sender.send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
             waitingRegistrationResponse = true;
         }
     }
@@ -232,7 +232,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
             table.displayMessage("Auf Antwort warten");
         } else {
             Object[] credentials = {username, password, false};
-            this.getSender().send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
+            sender.send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
             waitingLoginResponse = true;
 
             //addMenuTable(new StartScreenTable(this));
