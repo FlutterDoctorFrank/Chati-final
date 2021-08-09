@@ -1,6 +1,6 @@
 **/target/
 **/.idea/
-/ChatiDB/
-/out/
+**/ChatiDB/
+**/out/
 *.iml
 *.log

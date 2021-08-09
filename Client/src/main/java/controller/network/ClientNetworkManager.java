@@ -4,56 +4,51 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import model.user.IUserManagerController;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import view.Screens.ViewControllerInterface;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
  * Verwaltet die Verbindung zum Server und hält die Referenzen auf das Model und die View.
  */
-public class ClientNetworkManager extends NetworkManager<Client> {
+public class ClientNetworkManager extends NetworkManager<Client> implements Runnable {
 
-    private static final Logger LOGGER = Logger.getLogger("Chati-Network");
+    private static final Logger LOGGER = Logger.getLogger("chati.network");
 
     private final IUserManagerController userManager;
     private ViewControllerInterface view;
 
     private ServerConnection connection;
+    private Thread networkThread;
 
-    public ClientNetworkManager(/*@NotNull final ViewControllerInterface view,*/
-                                @NotNull final IUserManagerController userManager) {
+    public ClientNetworkManager(@NotNull final IUserManagerController userManager) {
         super(new Client());
 
         this.userManager = userManager;
-        //this.view = view;
     }
 
     @Override
     public void connected(@NotNull final Connection connection) {
-        this.connection = new ServerConnection(this);
+        if (this.connection == null) {
+            LOGGER.info(String.format("Connected to server on ip %s over ports: %d, %d (TCP, UDP)",
+                    this.host, this.tcp, this.udp));
+
+            this.connection = new ServerConnection(this);
+            this.endPoint.addListener(this.connection);
+            this.view.setSender(this.connection);
+        }
     }
 
     @Override
     public void disconnected(@NotNull final Connection connection) {
-        if (connection.equals(this.endPoint)) {
+        if (this.connection != null) {
+            LOGGER.info(String.format("Disconnected from server on ip: %s", this.host));
+
+            this.view.setSender(null);
             this.endPoint.removeListener(this.connection);
             this.connection = null;
-            this.userManager.logout();
-            this.view.logout();
         }
-    }
-
-    /**
-     * Gibt die Instanz auf die View zurück.
-     * @return die ViewControllerInterface-Instanz
-     */
-    public @NotNull ViewControllerInterface getView() {
-        return this.view;
-    }
-
-    public void setView(ViewControllerInterface view) {
-        this.view = view;
     }
 
     /**
@@ -61,40 +56,75 @@ public class ClientNetworkManager extends NetworkManager<Client> {
      * @return die IUserManagerController-Instanz.
      */
     public @NotNull IUserManagerController getUserManager() {
-        return userManager;
+        return this.userManager;
     }
 
-    public @Nullable ServerConnection getConnection() {
-        while (this.connection == null) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    /**
+     * Gibt die Instanz auf die View zurück.
+     * @return die ViewControllerInterface-Instanz.
+     */
+    public @NotNull ViewControllerInterface getView() {
+        if (this.view == null) {
+            throw new IllegalStateException("View was called before ist was set");
         }
-        return this.connection;
+
+        return this.view;
+    }
+
+    /**
+     * Setzt die Instanz auf die View.
+     * @param view die zu setzende ViewControllerInterface-Instanz.
+     */
+    public void setView(@NotNull final ViewControllerInterface view) {
+        if (this.view != null) {
+            throw new IllegalStateException("View was already set");
+        }
+
+        this.view = view;
     }
 
     @Override
-    public void start() {
+    public void run() {
+        while (this.active) {
+            try {
+                if (this.endPoint.isConnected()) {
+                    TimeUnit.MILLISECONDS.sleep(1000);
+                    continue;
+                }
+
+                this.endPoint.connect(60000, this.host, this.tcp, this.udp);
+            } catch (IOException ex) {
+                LOGGER.warning(String.format("Failed to connect to server on ip: %s", this.host));
+            } catch (InterruptedException ignored) {
+
+            }
+        }
+    }
+
+    @Override
+    public synchronized void start() {
+        if (this.active) {
+            try {
+                this.active = false;
+                this.networkThread.join(5000);
+            } catch (InterruptedException ignored) {
+
+            }
+        }
+
         this.endPoint.start();
         this.active = true;
-
-        while (this.active && !this.endPoint.isConnected()) {
-            try {
-                this.endPoint.connect(60000, HOST_IP, HOST_TCP_PORT, HOST_UDP_PORT);
-
-                LOGGER.info(String.format("Connect to server over ip %s and ports: %d, %d (TCP, UDP)",
-                        HOST_IP, HOST_TCP_PORT, HOST_UDP_PORT));
-            } catch (IOException ex) {
-                LOGGER.warning(String.format("Failed to connect to server with ip %s and ports: %d, %d (TCP, UDP)",
-                        HOST_IP, HOST_TCP_PORT, HOST_UDP_PORT));
-            }
-        }
+        this.networkThread = new Thread(this, "Network-Thread");
+        this.networkThread.setDaemon(true);
+        this.networkThread.start();
     }
 
     @Override
-    public void stop() {
+    public synchronized void stop() {
+        if (!this.active) {
+            return;
+        }
+
         this.active = false;
         this.endPoint.stop();
     }

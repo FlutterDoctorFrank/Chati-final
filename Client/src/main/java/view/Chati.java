@@ -4,15 +4,16 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import controller.network.ServerSender;
-import model.context.Context;
-import model.user.UserManager;
+import controller.Launcher;
+import model.user.IUserManagerView;
+import org.jetbrains.annotations.NotNull;
 import view.Screens.ApplicationScreen;
 
 public class Chati extends Game {
-    private ServerSender serverSender;
-    private Context context;
-    private UserManager userManager;
+
+    private final Launcher launcher;
+    private final IUserManagerView userManager;
+
     private ApplicationScreen currentScreen;
     public static final int V_WIDTH = 1280;
     public static final int V_HEIGHT = 680;
@@ -22,21 +23,10 @@ public class Chati extends Game {
     public static final short AVATAR_BIT = 2;
     public static final short OBJECT_BIT = 4;
 
-    public Chati(ServerSender serverSender, Context context, UserManager userManager) {
-        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setIdleFPS(60);
-        config.useVsync(true);
-        config.setTitle("Chati");
+    public Chati(@NotNull final Launcher launcher, @NotNull final IUserManagerView manager) {
+        this.launcher = launcher;
+        this.userManager = manager;
 
-        this.context = context;
-        this.serverSender = serverSender;
-
-        config.setMaximized(true);
-        config.setResizable(false);
-        new Lwjgl3Application(this, config);
-    }
-
-    public Chati () {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setIdleFPS(60);
         config.useVsync(true);
@@ -46,8 +36,25 @@ public class Chati extends Game {
         new Lwjgl3Application(this, config);
     }
 
+    public Chati() {
+        this.launcher = null;
+        this.userManager = null;
+
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        config.setIdleFPS(60);
+        config.useVsync(true);
+        config.setTitle("Chati");
+        config.setMaximized(true);
+        config.setResizable(true);
+        new Lwjgl3Application(this, config);
+    }
+
+    @Override
     public void create() {
-        setScreen(new ApplicationScreen(this));
+        this.setScreen(new ApplicationScreen(this));
+
+        this.launcher.setModelObserver(this.currentScreen.getHud());
+        this.launcher.setControllerView(this.currentScreen.getHud());
     }
 
     @Override
@@ -66,15 +73,7 @@ public class Chati extends Game {
         super.render();
     }
 
-    public ServerSender getServerSender() {
-        return serverSender;
-    }
-
-    public Context getContext() {
-        return context;
-    }
-
-    public UserManager getUserManager() {
-        return userManager;
+    public @NotNull IUserManagerView getUserManager() {
+        return this.userManager;
     }
 }

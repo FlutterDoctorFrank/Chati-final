@@ -1,5 +1,6 @@
 package view.Screens;
 
+import controller.network.ServerSender;
 import model.context.spatial.SpatialContext;
 import model.exception.ContextNotFoundException;
 import model.communication.message.MessageType;
@@ -7,12 +8,19 @@ import model.context.ContextID;
 import model.context.spatial.Menu;
 import model.context.spatial.SpatialContextType;
 import model.exception.UserNotFoundException;
-
+import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
 public interface ViewControllerInterface {
+
+    /**
+     * Setzt den ServerSender, über den die View den Controller über die zu sendenden Aktionen benachrichtigen kann.
+     * @param sender der sender für die view, oder null, falls keine Verbindung zum Server besteht.
+     */
+    void setSender(@Nullable final ServerSender sender);
+
     /**
      * Aktualisiert die Liste aller Welten.
      * @param worlds: Ein HashSet mit der Menge der IDs aller Welten, sowie dem
@@ -20,7 +28,7 @@ public interface ViewControllerInterface {
      * @see SpatialContext
      * @see SpatialContextType#WORLD
      */
-    public void updateWorlds(Map<ContextID, String> worlds);
+    void updateWorlds(Map<ContextID, String> worlds);
 
     /**
      * Aktualisiert die Liste aller privaten Räume in einer Welt.
@@ -31,7 +39,8 @@ public interface ViewControllerInterface {
      * @see SpatialContext
      * @see SpatialContextType#ROOM
      */
-    public void updateRooms(ContextID worldId, Map<ContextID,String> privateRooms) throws ContextNotFoundException;
+    void updateRooms(ContextID worldId, Map<ContextID,String> privateRooms) throws ContextNotFoundException;
+
     void registrationResponse(boolean success, String messageKey);
     void loginResponse(boolean success, String messageKey);
     void passwordChangeResponse(boolean success, String messageKey);

@@ -29,15 +29,22 @@ import java.time.LocalDateTime;
  */
 public abstract class NetworkManager<T extends EndPoint> extends Listener {
 
-    protected static final String HOST_IP = "127.0.0.1";
-    protected static final int HOST_TCP_PORT = 54777;
-    protected static final int HOST_UDP_PORT = 59001;
+    private static final String HOST_IP = "81.169.218.151";
+    private static final int HOST_TCP_PORT = 54777;
+    private static final int HOST_UDP_PORT = 59001;
 
+    protected volatile boolean active;
     protected final T endPoint;
-    protected boolean active;
+
+    protected String host;
+    protected int tcp;
+    protected int udp;
 
     protected NetworkManager(@NotNull final T endPoint) {
         this.endPoint = endPoint;
+        this.host = HOST_IP;
+        this.tcp = HOST_TCP_PORT;
+        this.udp = HOST_UDP_PORT;
         this.register(endPoint.getKryo());
 
         endPoint.addListener(this);
@@ -67,15 +74,47 @@ public abstract class NetworkManager<T extends EndPoint> extends Listener {
         kryo.register(PacketOutUserInfo.class);
     }
 
+    /**
+     * Gibt den Endpunkt zurück, der von dem Netzwerkmanager verwaltet wird.
+     * @return der Endpunkt des Netzwerkmanagers.
+     */
     public @NotNull T getEndPoint() {
         return this.endPoint;
     }
 
+    /**
+     * Setzt den Hostnamen bzw. die IP-Adresse, die von dem Netzwerkmanager genutzt wird.
+     * @param host die Hostname oder die IP-Adresse.
+     */
+    public void setHost(@NotNull final String host) {
+        this.host = host;
+    }
+
+    /**
+     * Setzt den TCP- und UDP-Port, die von dem Netzwerkmanager genutzt werden.
+     * @param tcp der neue TCP-Port der genutzt werden soll, oder -1.
+     * @param udp der neue UDP-Port der genutzt werden soll, oder -1.
+     */
+    public void setPorts(final int tcp, final int udp) {
+        this.tcp = tcp > 0 ? tcp : this.tcp;
+        this.udp = udp > 0 ? udp : this.udp;
+    }
+
+    /**
+     * Gibt zurück, ob der Netzwerkmanager momentan aktiv ist.
+     * @return true wenn der Netzwerkmanager aktiv ist, ansonsten false.
+     */
     public boolean isActive() {
         return this.active;
     }
 
+    /**
+     * Startet den Netzwerkmanager.
+     */
     public abstract void start();
 
+    /**
+     * Stoppt den Netzwerkmanager.
+     */
     public abstract void stop();
 }

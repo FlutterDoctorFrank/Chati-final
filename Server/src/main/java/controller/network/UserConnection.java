@@ -48,7 +48,7 @@ import java.util.logging.Logger;
  */
 public class UserConnection extends Listener implements PacketListenerIn, ClientSender {
 
-    private static final Logger LOGGER = Logger.getLogger("Chati-Network");
+    private static final Logger LOGGER = Logger.getLogger("chati.network");
 
     private final ServerNetworkManager manager;
     private final Connection connection;
@@ -58,8 +58,6 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
     public UserConnection(@NotNull final ServerNetworkManager manager, @NotNull final Connection connection) {
         this.manager = manager;
         this.connection = connection;
-
-        connection.addListener(this);
     }
 
     public void send(@NotNull final Packet<?> packet) {
@@ -88,6 +86,8 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         }
 
         if (object instanceof Packet<?>) {
+            LOGGER.fine(String.format("Received packet %s from connection: %s", object.getClass().getSimpleName(), connection.getID()));
+
             try {
                 call((Packet<?>) object, this);
             } catch (ClassCastException ex) {
@@ -102,7 +102,21 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
     @Override
     public void disconnected(@NotNull final Connection connection) {
-        System.out.println("Connection " + this.connection.getID() + " disconnected: Received argument: " + connection);
+        // Sollte niemals der Fall sein
+        if (!this.connection.equals(connection)) {
+            connection.removeListener(this);
+            return;
+        }
+
+        if (this.user != null) {
+            try {
+                this.manager.getAccountManager().logoutUser(this.user.getUserId());
+                this.user = null;
+            } catch (UserNotFoundException ex) {
+                // Sollte niemals der Fall sein.
+                throw new IllegalStateException("Failed to provide corresponding user-id", ex);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -205,8 +219,6 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 // Die Menü-Option war erfolgreich. Sende Bestätigung.
                 this.send(new PacketMenuOption(packet, null, true));
             }catch (IllegalMenuActionException ex) {
-                LOGGER.warning("User " + this.user.getUsername() + " tried illegal menu-action: " + ex.getMessage());
-
                 // Die erhaltenen Argumente enthalten ungültige Daten. Sende Fehlernachricht.
                 this.send(new PacketMenuOption(packet, ex.getClientMessageKey(), false));
             } catch (IllegalInteractionException ex) {
@@ -260,8 +272,6 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             // Aktion erfolgreich. Sende Bestätigung
             this.send(new PacketWorldAction(packet, null, true));
         } catch (IllegalWorldActionException ex) {
-            LOGGER.warning("User " + this.user.getUsername() + " tried illegal world action: " + ex.getMessage());
-
             // Illegale Welt-Aktion erhalten. Sende Fehlermeldung
             this.send(new PacketWorldAction(packet, ex.getClientMessageKey(), false));
         } catch (NoPermissionException ex) {
@@ -303,6 +313,8 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                     case LOGIN:
                         this.user = this.manager.getAccountManager().loginUser(packet.getName(), packet.getPassword(), this);
 
+                        LOGGER.info("Connection " + this.connection.getID() + " logged in as: " + this.user.getUsername());
+
                         // Login erfolgreich. Sende benötigte Informationen.
                         this.send(new PacketProfileAction(packet, this.user.getUserId(), this.user.getAvatar(), null, true));
 
@@ -332,8 +344,6 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                         break;
                 }
             } catch (IllegalAccountActionException ex) {
-                LOGGER.warning("Connection " + this.connection.getID() + " tried illegal profile action: " + ex.getMessage());
-
                 // Illegale Profilaktion erhalten. Sende Fehlermeldung.
                 this.send(new PacketProfileAction(packet, ex.getClientMessageKey(), false));
             }
@@ -370,18 +380,18 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                         }
 
                         this.manager.getAccountManager().deleteUser(this.user.getUserId(), packet.getPassword());
+                        this.user = null;
                         break;
 
                     case LOGOUT:
                         this.manager.getAccountManager().logoutUser(this.user.getUserId());
+                        this.user = null;
                         break;
                 }
 
                 // Aktion erfolgreich. Sende Bestätigung.
                 this.send(new PacketProfileAction(packet, null, true));
             } catch (IllegalAccountActionException ex) {
-                LOGGER.warning("User " + this.user.getUsername() + " tried illegal profile action: " + ex.getMessage());
-
                 // Illegale Profilaktion erhalten. Sende Fehlermeldung
                 this.send(new PacketProfileAction(packet, ex.getClientMessageKey(), false));
             } catch (UserNotFoundException ex) {

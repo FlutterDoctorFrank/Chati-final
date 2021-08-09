@@ -3,7 +3,15 @@ package view.UIComponents;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.SplitPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import controller.network.ServerSender;
 import model.user.AdministrativeAction;
 import model.user.IUserView;
@@ -110,7 +118,7 @@ public class UsersListTable extends PopupMenu {
                         @Override
                         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                             Object[] data = {userView.getUserId(), AdministrativeAction.UNBAN_USER, ""};
-                            dropDownMenu.getHud().getApplicationScreen().getGame().getServerSender().send(ServerSender.SendAction.USER_MANAGE, data);
+                            dropDownMenu.getHud().getSender().send(ServerSender.SendAction.USER_MANAGE, data);
                             isBlocked = false;
                             create();
                         }
@@ -126,7 +134,7 @@ public class UsersListTable extends PopupMenu {
                         @Override
                         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                             Object[] data = {userView.getUserId(), AdministrativeAction.BAN_USER, ""};
-                            dropDownMenu.getHud().getApplicationScreen().getGame().getServerSender().send(ServerSender.SendAction.USER_MANAGE, data);
+                            dropDownMenu.getHud().getSender().send(ServerSender.SendAction.USER_MANAGE, data);
                             isBlocked = true;
                             create();
                         }
@@ -158,7 +166,7 @@ public class UsersListTable extends PopupMenu {
                         @Override
                         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                             Object[] data = {userView.getUserId(), AdministrativeAction.REMOVE_FRIEND, ""};
-                            dropDownMenu.getHud().getApplicationScreen().getGame().getServerSender().send(ServerSender.SendAction.USER_MANAGE, data);
+                            dropDownMenu.getHud().getSender().send(ServerSender.SendAction.USER_MANAGE, data);
                             isFriend = false;
                             create();
                         }
@@ -174,7 +182,7 @@ public class UsersListTable extends PopupMenu {
                         @Override
                         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                             Object[] data = {userView.getUserId(), AdministrativeAction.INVITE_FRIEND, ""};
-                            dropDownMenu.getHud().getApplicationScreen().getGame().getServerSender().send(ServerSender.SendAction.USER_MANAGE, data);
+                            dropDownMenu.getHud().getSender().send(ServerSender.SendAction.USER_MANAGE, data);
                             isFriend = false;
                             create();
                         }

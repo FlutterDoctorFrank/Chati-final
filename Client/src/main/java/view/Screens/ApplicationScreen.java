@@ -7,33 +7,28 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import controller.network.ServerSender;
-import model.context.spatial.ILocationView;
-import model.context.spatial.SpatialMap;
-import model.user.IUserManagerView;
-import model.user.IUserView;
-import model.user.InternUser;
 import view.Chati;
 import view.Sprites.Avatar;
 import view.UIComponents.Hud;
 import view.UIComponents.LoginTable;
-
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 public class ApplicationScreen implements Screen {
     protected Chati game;
@@ -97,7 +92,7 @@ public class ApplicationScreen implements Screen {
         avatars.add(userAvatarIndex,userAvatar);
 
         /*
-        InternUser user = game.getUserManager().getInternUserView();
+        IInternUserView user = game.getUserManager().getInternUserView();
         for (var entry : users.entrySet()) {
             if (entry.getKey().equals(user.getUserId())) {
                 Avatar userAvatar = new Avatar(world, user.getAvatar().getPath(), user.getUserId(), user.getCurrentLocation().getPosX(), user.getCurrentLocation().getPosY());
@@ -255,7 +250,7 @@ public class ApplicationScreen implements Screen {
         int positionX = (int) posX;
         int positionY = (int) posY;
         Object[] position = {positionX, positionY};
-        game.getServerSender().send(ServerSender.SendAction.AVATAR_MOVE, position);
+        this.hud.getSender().send(ServerSender.SendAction.AVATAR_MOVE, position);
     }
 
     public void updateAvatarsPositions() {

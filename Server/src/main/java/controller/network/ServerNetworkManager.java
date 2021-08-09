@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class ServerNetworkManager extends NetworkManager<Server> {
 
-    private static final Logger LOGGER = Logger.getLogger("Chati-Network");
+    private static final Logger LOGGER = Logger.getLogger("chati.network");
     private final Map<Integer, UserConnection> connections;
 
     private final IUserAccountManager accountManager;
@@ -33,15 +33,24 @@ public class ServerNetworkManager extends NetworkManager<Server> {
     @Override
     public void connected(@NotNull final Connection connection) {
         if (this.connections.containsKey(connection.getID())) {
-            return;
+            LOGGER.warning("Previous connection with id " + connection.getID() + " has not been cleaned up. Cleaning it up...");
+            final UserConnection previous = this.connections.remove(connection.getID());
+
+            previous.disconnected(connection);
+            connection.removeListener(previous);
         }
 
-        this.connections.put(connection.getID(), new UserConnection(this, connection));
-        LOGGER.info(String.format("Received new connection with id: %s", connection.getID()));
+        LOGGER.info("Connection " + connection.getID() + " connected");
+        final UserConnection handler = new UserConnection(this, connection);
+
+        connection.addListener(handler);
+
+        this.connections.put(connection.getID(), handler);
     }
 
     @Override
     public void disconnected(@NotNull final Connection connection) {
+        LOGGER.info("Connection " + connection.getID() + " disconnected");
         if (this.connections.containsKey(connection.getID())) {
             final UserConnection handler = this.connections.remove(connection.getID());
 
@@ -67,16 +76,20 @@ public class ServerNetworkManager extends NetworkManager<Server> {
 
     @Override
     public void start() {
+        if (this.tcp == this.udp) {
+            throw new IllegalStateException("TCP- and UDP-Port can not be equal");
+        }
+
         try {
             this.endPoint.start();
-            this.endPoint.bind(HOST_TCP_PORT, HOST_UDP_PORT);
+            this.endPoint.bind(this.tcp, this.udp);
             this.active = true;
 
-            LOGGER.info(String.format("Hosted Server on following Ports: %d, %d (TCP, UDP)", HOST_TCP_PORT, HOST_UDP_PORT));
+            LOGGER.info(String.format("Hosted Server on following Ports: %d, %d (TCP, UDP)", this.tcp, this.udp));
         } catch (IOException ex) {
             this.active = false;
 
-            LOGGER.info(String.format("Failed to host Server on Ports: %d, %d (TCP, UDP)", HOST_TCP_PORT, HOST_UDP_PORT));
+            LOGGER.warning(String.format("Failed to host Server on Ports: %d, %d (TCP, UDP)", this.tcp, this.udp));
         }
     }
 
@@ -85,6 +98,6 @@ public class ServerNetworkManager extends NetworkManager<Server> {
         this.endPoint.stop();
         this.active = false;
 
-        LOGGER.info("Closed Server-Connection");
+        LOGGER.info("Closed Server.");
     }
 }

@@ -55,8 +55,7 @@ public class ChatWindow extends Window {
                 if (message.length() > 0) {
                     messageField.setText("");
                     Object[] messageToSend = {message};
-                    ServerSender serverSender = hud.getApplicationScreen().getGame().getServerSender();
-                    serverSender.send(ServerSender.SendAction.MESSAGE, messageToSend);
+                    hud.getSender().send(ServerSender.SendAction.MESSAGE, messageToSend);
                 }
             }
         });

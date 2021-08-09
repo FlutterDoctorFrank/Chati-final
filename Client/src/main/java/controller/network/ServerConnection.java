@@ -108,6 +108,19 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
     }
 
+    @Override
+    public void disconnected(@NotNull final Connection connection) {
+        // Sollte niemals der Fall sein
+        if (!this.manager.getEndPoint().equals(connection)) {
+            connection.removeListener(this);
+            return;
+        }
+
+        if (this.userId != null) {
+            this.manager.getUserManager().logout();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private static <T extends PacketListener> void call(@NotNull final Packet<T> packet,
                                                         @NotNull final PacketListener listener) {

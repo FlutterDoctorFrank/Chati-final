@@ -14,9 +14,9 @@ import model.context.ContextID;
 import model.context.spatial.Menu;
 import model.exception.UserNotFoundException;
 import model.user.IUserView;
+import org.jetbrains.annotations.Nullable;
 import view.Chati;
 import view.Screens.*;
-
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Map;
@@ -24,6 +24,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Hud extends Stage implements IModelObserver, ViewControllerInterface {
+
+    private ServerSender sender;
+
     private ApplicationScreen applicationScreen;
     private LinkedList<Table> waitingResponse;
     private WidgetGroup group;
@@ -52,6 +55,15 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
         waitingResponse = new LinkedList<>();
         System.out.println("new Hud");
+    }
+
+    public synchronized ServerSender getSender() {
+        return this.sender;
+    }
+
+    @Override
+    public synchronized void setSender(@Nullable final ServerSender sender) {
+        this.sender = sender;
     }
 
 
@@ -197,8 +209,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
             table.displayMessage("Auf Antwort warten");
         } else {
             Object[] credentials = {username, password, true};
-            ServerSender serverSender = applicationScreen.getGame().getServerSender();
-            serverSender.send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
+            this.getSender().send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
             waitingRegistrationResponse = true;
         }
     }
@@ -224,8 +235,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
             table.displayMessage("Auf Antwort warten");
         } else {
             Object[] credentials = {username, password, false};
-            ServerSender serverSender = applicationScreen.getGame().getServerSender();
-            serverSender.send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
+            this.getSender().send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
             waitingLoginResponse = true;
 
             //addMenuTable(new StartScreenTable(this));
@@ -261,15 +271,13 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
         contextID = id;
         waitingJoinWorldResponse = true;
         Object[] data = {id, true};
-        ServerSender serverSender = applicationScreen.getGame().getServerSender();
-        serverSender.send(ServerSender.SendAction.WORLD_ACTION, data);
+        this.getSender().send(ServerSender.SendAction.WORLD_ACTION, data);
     }
 
     public void sendLeaveWorld() {
         Object[] data = {contextID, false};
         contextID = null;
-        ServerSender serverSender = applicationScreen.getGame().getServerSender();
-        serverSender.send(ServerSender.SendAction.WORLD_ACTION, data);
+        this.getSender().send(ServerSender.SendAction.WORLD_ACTION, data);
     }
 
 
