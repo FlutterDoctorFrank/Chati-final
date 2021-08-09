@@ -1,5 +1,6 @@
 package view.UIComponents;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -9,17 +10,25 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 public class StartScreenTable extends UIComponentTable {
 
+    private SelectBox<String> worldSelect;
+
     public StartScreenTable(Hud hud) {
         super(hud);
         setName("start-screen-table");
         create();
     }
 
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        updateWorldsList(worldSelect);
+        super.draw(batch, parentAlpha);
+    }
+
     public void create() {
         int spacing = 5;
         infoLabel = new Label("", skin);
 
-        SelectBox<String> worldSelect = new SelectBox<>(skin);
+        worldSelect = new SelectBox<>(skin);
         updateWorldsList(worldSelect);
 
         worldSelect.addListener(new ChangeListener() {
