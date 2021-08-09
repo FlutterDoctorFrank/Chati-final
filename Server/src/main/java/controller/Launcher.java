@@ -5,6 +5,9 @@ import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import model.context.global.GlobalContext;
+import model.exception.UserNotFoundException;
+import model.role.Role;
+import model.user.User;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
 import java.io.BufferedReader;
@@ -17,9 +20,13 @@ import java.util.List;
 public class Launcher implements Runnable {
 
     private final ServerNetworkManager network;
+    private final UserAccountManager manager;
+    private final GlobalContext global;
 
     private Launcher() {
-        this.network = new ServerNetworkManager(UserAccountManager.getInstance(), GlobalContext.getInstance());
+        this.global = GlobalContext.getInstance();
+        this.manager = UserAccountManager.getInstance();
+        this.network = new ServerNetworkManager(this.manager, this.global);
     }
 
     @Override
@@ -36,9 +43,12 @@ public class Launcher implements Runnable {
                 try {
                     final String[] arguments = input.split(" ");
 
-                    Command.valueOf(arguments[0].toUpperCase()).execute(this, Arrays.copyOfRange(arguments, 1, arguments.length));
+                    Command.fromName(arguments[0].toUpperCase()).execute(this, Arrays.copyOfRange(arguments, 1, arguments.length));
                 } catch (IllegalArgumentException ex) {
                     System.out.println("Unknown command. Type 'help' for the commands.");
+                } catch (Exception ex) {
+                    System.err.println("Exception while running command: " + ex.getMessage());
+                    ex.printStackTrace();
                 }
             }
         } catch (IOException ex) {
@@ -134,6 +144,25 @@ public class Launcher implements Runnable {
             }
         },
 
+        SET_OWNER("set-owner", "Sets the owner of this server.") {
+            @Override
+            public void execute(@NotNull final Launcher launcher, @NotNull final String[] arguments) {
+                if (arguments.length != 1) {
+                    System.out.println("Too few/many arguments for the set-owner command.");
+                    return;
+                }
+
+                try {
+                    final User target = launcher.manager.getUser(arguments[0]);
+
+                    target.addRole(launcher.global, Role.OWNER);
+                    System.out.println("User " + target.getUsername() + " has been set as Owner.");
+                } catch (UserNotFoundException ex) {
+                    System.err.println("User " + arguments[0] + " does not exist.");
+                }
+            }
+        },
+
         STOP("Stops the server.") {
             @Override
             public void execute(@NotNull final Launcher launcher, @NotNull final String[] arguments) {
@@ -147,12 +176,33 @@ public class Launcher implements Runnable {
             }
         };
 
+        private final String name;
         private final String description;
 
         Command(@NotNull final String description) {
+            this.name = this.name().toLowerCase();
+            this.description = description;
+        }
+
+        Command(@NotNull final String name, @NotNull final String description) {
+            this.name = name;
             this.description = description;
         }
 
         public abstract void execute(@NotNull final Launcher launcher, @NotNull final String[] arguments);
+
+        public static @NotNull Command fromName(@NotNull final String name) throws IllegalArgumentException {
+            try {
+                return Command.valueOf(name.toUpperCase());
+            } catch (IllegalArgumentException ex) {
+                for (final Command command : Command.values()) {
+                    if (name.equalsIgnoreCase(command.name)) {
+                        return command;
+                    }
+                }
+
+                throw new IllegalArgumentException("There is no command with name " + name);
+            }
+        }
     }
 }
