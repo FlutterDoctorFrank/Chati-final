@@ -105,7 +105,7 @@ public class ApplicationScreen implements Screen {
         IInternUserView user = game.getUserManager().getInternUserView();
         for (var entry : users.entrySet()) {
             if (entry.getKey().equals(user.getUserId())) {
-                Avatar userAvatar = new Avatar(world, user.getUserId(), user.getCurrentLocation().getPosX(), user.getCurrentLocation().getPosY());
+                Avatar userAvatar = new Avatar(world, user.getUserId(), (int) map.getProperties().get("spawnPosX"), (int) map.getProperties().get("spawnPosY"));
                 avatars.add(userAvatarIndex,userAvatar);
             }
             ILocationView position = entry.getValue().getCurrentLocation();
