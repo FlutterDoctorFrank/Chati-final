@@ -165,8 +165,8 @@ public class DeleteAccountTable extends MenuTable {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE,
-                            passwordField.getText());
+                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_LOGOUT,
+                            passwordField.getText(), true);
                     Chati.getInstance().getMenuScreen().setPendingResponse(Response.DELETE_ACCOUNT);
                 }
             });

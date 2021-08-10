@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 public abstract class ChatiTable extends Table {
 
-    protected static final Skin SKIN = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
+    public static final Skin SKIN = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
 
     protected Label infoLabel;
 
@@ -28,8 +28,6 @@ public abstract class ChatiTable extends Table {
     protected abstract void create();
 
     protected abstract void setLayout();
-
-    public abstract void clearTextFields();
 
     public void showMessage(String message) {
         infoLabel.setText(message);

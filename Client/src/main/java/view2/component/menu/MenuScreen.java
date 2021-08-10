@@ -1,6 +1,7 @@
 package view2.component.menu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -8,21 +9,25 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import model.context.ContextID;
+import view2.component.hud.HeadUpDisplay;
 
 import java.util.*;
 
 public class MenuScreen extends ScreenAdapter {
 
     private final Stage menuTableStage;
+    private HeadUpDisplay headUpDisplay;
     private MenuTable currentMenuTable;
+    private Response pendingResponse;
 
     private final Set<ContextEntry> worlds;
 
-    private Response pendingResponse;
-
     public MenuScreen() {
-        this.menuTableStage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera()));
-        Gdx.input.setInputProcessor(menuTableStage);
+        FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera());
+        this.menuTableStage = new Stage(viewport);
+        setTable(new LoginTable());
+        this.headUpDisplay = new HeadUpDisplay();
+        Gdx.input.setInputProcessor(new InputMultiplexer(menuTableStage, headUpDisplay));
         this.worlds = new HashSet<>();
         this.pendingResponse = Response.NONE;
     }
@@ -32,6 +37,8 @@ public class MenuScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         menuTableStage.act(delta);
         menuTableStage.draw();
+        headUpDisplay.act(delta);
+        headUpDisplay.draw();
     }
 
     public void registrationResponse(boolean success, String messageKey) {

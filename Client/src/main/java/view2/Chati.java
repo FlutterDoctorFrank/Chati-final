@@ -48,7 +48,6 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
         this.worldScreen = new WorldScreen();
         this.spriteBatch = new SpriteBatch();
 
-        menuScreen.setTable(new LoginTable());
         setScreen(menuScreen);
     }
 

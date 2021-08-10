@@ -131,7 +131,7 @@ public class StartTable extends MenuTable {
                     return;
                 }
                 Chati.getInstance().getServerSender()
-                        .send(ServerSender.SendAction.WORLD_DELETE, worldSelectBox.getSelected());
+                        .send(ServerSender.SendAction.WORLD_DELETE, worldSelectBox.getSelected().getContextId());
                 Chati.getInstance().getMenuScreen().setPendingResponse(Response.DELETE_WORLD);
             }
         });
@@ -168,7 +168,7 @@ public class StartTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_LOGOUT);
+                Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
                 Chati.getInstance().getMenuScreen().setTable(new LoginTable());
             }
         });
