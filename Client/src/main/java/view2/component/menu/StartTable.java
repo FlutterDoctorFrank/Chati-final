@@ -19,10 +19,7 @@ public class StartTable extends MenuTable {
 
     private static final String NAME = "start-table";
     private Label worldSelectLabel;
-    private Label mapSelectLabel;
     private SelectBox<ContextEntry> worldSelectBox;
-    private SelectBox<SpatialMap> mapSelectBox;
-    private TextField worldNameField;
     private TextButton joinWorldButton;
     private TextButton createWorldButton;
     private TextButton deleteWorldButton;
@@ -42,7 +39,7 @@ public class StartTable extends MenuTable {
 
     @Override
     protected void create() {
-        infoLabel.setText("Bitte wähle eine Welt aus!");
+        infoLabel.setText("Bitte wähle eine Aktion aus!");
 
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = new BitmapFont();
@@ -50,32 +47,6 @@ public class StartTable extends MenuTable {
 
         worldSelectLabel = new Label("Welt: ", style);
         worldSelectBox = new SelectBox<>(SKIN);
-
-        mapSelectLabel = new Label("Karte: ", style);
-        mapSelectBox = new SelectBox<>(SKIN);
-        mapSelectBox.setItems(EnumSet.allOf(SpatialMap.class).toArray(new SpatialMap[0]));
-
-        Skin worldnameFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        worldnameFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(1.6f);
-        worldNameField = new TextField("Name der Welt", worldnameFieldSkin);
-        worldNameField.getStyle().fontColor = Color.GRAY;
-        worldNameField.addListener(new FocusListener() {
-            @Override
-            public boolean handle(Event event){
-                if (event.toString().equals("mouseMoved")
-                        || event.toString().equals("exit")
-                        || event.toString().equals("enter")
-                        || event.toString().equals("keyDown")
-                        || event.toString().equals("touchUp")) {
-                    return false;
-                }
-                if (worldNameField.getStyle().fontColor == Color.GRAY) {
-                    worldNameField.setText("");
-                    worldNameField.getStyle().fontColor = Color.BLACK;
-                }
-                return true;
-            }
-        });
 
         joinWorldButton = new TextButton("Welt Beitreten", SKIN);
         joinWorldButton.addListener(new InputListener() {
@@ -103,18 +74,7 @@ public class StartTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (worldNameField.getText().isEmpty()
-                    || worldNameField.getStyle().fontColor == Color.GRAY) {
-                    infoLabel.setText("Bitte gib den Namen der zu erstellenden Welt ein!");
-                    return;
-                }
-                if (mapSelectBox.getSelected() == null) {
-                    infoLabel.setText("Bitte wähle eine Karte aus!");
-                    return;
-                }
-                Chati.getInstance().getServerSender()
-                        .send(ServerSender.SendAction.WORLD_CREATE, mapSelectBox.getSelected(), worldNameField.getText());
-                Chati.getInstance().getMenuScreen().setPendingResponse(Response.CREATE_WORLD);
+                Chati.getInstance().getMenuScreen().setTable(new WorldCreateTable());
             }
         });
 
@@ -185,8 +145,6 @@ public class StartTable extends MenuTable {
         infoContainer.add(infoLabel);
         add(infoContainer).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
 
-        add(worldNameField).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
-
         Table worldSelectContainer = new Table();
         worldSelectContainer.setWidth(width);
         worldSelectContainer.defaults().space(verticalSpacing);
@@ -194,21 +152,13 @@ public class StartTable extends MenuTable {
         worldSelectContainer.add(worldSelectLabel).width(width / 8f - (verticalSpacing / 2f)).height(height);
         worldSelectContainer.add(worldSelectBox).width(7 * width / 8f - (verticalSpacing / 2f)).height(height);
 
-        add(createWorldButton).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
-
-        Table mapSelectContainer = new Table();
-        mapSelectContainer.setWidth(width);
-        mapSelectContainer.defaults().space(verticalSpacing);
-        add(mapSelectContainer).spaceBottom(horizontalSpacing).row();
-        mapSelectContainer.add(mapSelectLabel).width(width / 8f - (verticalSpacing / 2f)).height(height);
-        mapSelectContainer.add(mapSelectBox).width(7 * width / 8f - (verticalSpacing / 2f)).height(height);
-
         Table worldButtonContainer = new Table();
         worldButtonContainer.setWidth(width);
         worldButtonContainer.defaults().space(verticalSpacing);
         add(worldButtonContainer).spaceBottom(horizontalSpacing).row();
-        worldButtonContainer.add(joinWorldButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
-        worldButtonContainer.add(deleteWorldButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
+        worldButtonContainer.add(joinWorldButton).width(width / 3f - (verticalSpacing / 2f)).height(height);
+        worldButtonContainer.add(createWorldButton).width(width / 3f - (verticalSpacing)).height(height);
+        worldButtonContainer.add(deleteWorldButton).width(width / 3f - (verticalSpacing / 2f)).height(height);
 
         Table settingsButtonContainer = new Table();
         settingsButtonContainer.setWidth(width);
@@ -222,7 +172,6 @@ public class StartTable extends MenuTable {
 
     @Override
     public void clearTextFields() {
-        worldNameField.setText("");
     }
 
     private void updateWorldList() {

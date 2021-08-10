@@ -16,7 +16,7 @@ import java.util.*;
 public class MenuScreen extends ScreenAdapter {
 
     private final Stage menuTableStage;
-    private HeadUpDisplay headUpDisplay;
+    private final HeadUpDisplay headUpDisplay;
     private MenuTable currentMenuTable;
     private Response pendingResponse;
 
@@ -72,11 +72,14 @@ public class MenuScreen extends ScreenAdapter {
             return;
         }
         if (success) {
-            currentMenuTable.showMessage("Dein Passwort wurde geändert!");
+            Gdx.app.postRunnable(() -> {
+                setTable(new StartTable());
+                currentMenuTable.showMessage("Dein Passwort wurde geändert!");
+            });
         } else {
             currentMenuTable.showMessage(messageKey);
+            currentMenuTable.clearTextFields();
         }
-        currentMenuTable.clearTextFields();
         setPendingResponse(Response.NONE);
     }
 
@@ -85,8 +88,10 @@ public class MenuScreen extends ScreenAdapter {
             return;
         }
         if (success) {
-            Gdx.app.postRunnable(() -> setTable(new LoginTable()));
-            currentMenuTable.showMessage("Dein Konto wurde gelöscht.");
+            Gdx.app.postRunnable(() -> {
+                setTable(new LoginTable());
+                currentMenuTable.showMessage("Dein Konto wurde gelöscht.");
+            });
         } else {
             currentMenuTable.showMessage(messageKey);
             currentMenuTable.clearTextFields();
@@ -99,7 +104,10 @@ public class MenuScreen extends ScreenAdapter {
             return;
         }
         if (success) {
-            currentMenuTable.showMessage("Dein Avatar wurde geändert!");
+            Gdx.app.postRunnable(() -> {
+                setTable(new StartTable());
+                currentMenuTable.showMessage("Dein Avatar wurde geändert!");
+            });
         } else {
             currentMenuTable.showMessage(messageKey);
         }
@@ -111,9 +119,13 @@ public class MenuScreen extends ScreenAdapter {
             return;
         }
         if (success) {
-            currentMenuTable.showMessage("Die Welt wurde erfolgreich erstellt!");
+            Gdx.app.postRunnable(() -> {
+                setTable(new StartTable());
+                currentMenuTable.showMessage("Die Welt wurde erfolgreich erstellt!");
+            });
         } else {
             currentMenuTable.showMessage(messageKey);
+            currentMenuTable.clearTextFields();
         }
         setPendingResponse(Response.NONE);
     }

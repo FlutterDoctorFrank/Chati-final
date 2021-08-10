@@ -205,4 +205,8 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
         menuScreen.setTable(new LoginTable());
         setScreen(menuScreen);
     }
+
+    public boolean isUserInfoChanged() {
+        return userInfoChanged;
+    }
 }

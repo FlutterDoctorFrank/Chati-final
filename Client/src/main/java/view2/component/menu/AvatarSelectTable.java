@@ -33,7 +33,7 @@ public class AvatarSelectTable extends MenuTable {
             }
         });
 
-        cancelButton = new TextButton("Abbrechen", SKIN);
+        cancelButton = new TextButton("Zurück", SKIN);
         cancelButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

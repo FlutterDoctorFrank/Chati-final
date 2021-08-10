@@ -4,6 +4,7 @@ import model.context.Context;
 import model.context.spatial.Location;
 import model.exception.ContextNotFoundException;
 import model.context.ContextID;
+import model.role.Permission;
 import model.role.Role;
 
 import java.util.*;
@@ -252,6 +253,11 @@ public class User implements IUserController, IUserView {
     @Override
     public Set<Role> getWorldRoles() {
         return contextRoles.get(UserManager.getInstance().getInternUser().getCurrentWorld());
+    }
+
+    @Override
+    public boolean hasPermission(Permission permission) {
+        return false;
     }
 
     @Override

@@ -6,7 +6,12 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import model.role.Permission;
+import model.user.IUserManagerView;
 import model.user.IUserView;
+import model.user.UserManager;
+import view2.Chati;
 import view2.component.ChatiTable;
 
 import java.util.HashMap;
@@ -35,8 +40,17 @@ public class UserListTable extends HudMenuTable {
     }
 
     @Override
-    public void draw(Batch bach, float delta) {
-
+    public void draw(Batch batch, float parentAlpha) {
+        if (Chati.getInstance().isUserInfoChanged()) {
+            IUserManagerView userManager = Chati.getInstance().getUserManager();
+            this.activeUsers.putAll(userManager.getActiveUsers());
+            this.friends.putAll(userManager.getFriends());
+            if (userManager.getInternUserView().hasPermission(Permission.BAN_USER)
+                || userManager.getInternUserView().hasPermission(Permission.BAN_MODERATOR)) {
+                this.bannedUsers.putAll(userManager.getBannedUsers());
+            }
+        }
+        super.draw(batch, parentAlpha);
     }
 
     @Override
