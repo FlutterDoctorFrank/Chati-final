@@ -56,11 +56,12 @@ public class ContextDatabaseTest {
     @Test
     public void addWorldTest() {
 
-/*
+
         GlobalContext test_gbc = GlobalContext.getInstance();
         User performer = this.account_database.createAccount("performer", "111");
         this.user_database.addRole(performer, test_gbc, Role.OWNER);
         World test = new World("test_world", SpatialMap.MAP);
+        System.out.println(test.getMap().getName());
         try {
             test_gbc.createWorld(performer.getUserId(), "test_world", SpatialMap.MAP);
         } catch (Exception e) {
@@ -69,7 +70,7 @@ public class ContextDatabaseTest {
         this.context_database.addWorld(test);
 
 
- */
+
 
 
 
