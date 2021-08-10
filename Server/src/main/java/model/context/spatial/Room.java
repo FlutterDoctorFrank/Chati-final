@@ -1,9 +1,9 @@
 package model.context.spatial;
 
-import com.badlogic.gdx.Game;
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.backend.headless.mock.graphics.MockGL20;
+import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import controller.network.ClientSender;
@@ -42,15 +42,15 @@ public class Room extends Area implements IRoom {
         this.map = map;
         this.isPrivate = false;
         this.password = null;
-        Game game = new Game() {
+
+        new HeadlessApplication(new ApplicationAdapter() {
             @Override
             public void create() {
+                Gdx.gl = new MockGL20();
                 build();
                 Gdx.app.exit();
             }
-        };
-        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        new Lwjgl3Application(game, config);
+        });
     }
 
     /**
@@ -62,19 +62,9 @@ public class Room extends Area implements IRoom {
      * @param password Passwort des Raums.
      */
     public Room(String roomName, Context parent, World world, SpatialMap map, String password) {
-        super(roomName, parent, world, null, null, null);
-        this.map = map;
+        this(roomName, parent, world, map);
         this.isPrivate = true;
         this.password = password;
-        Game game = new Game() {
-            @Override
-            public void create() {
-                build();
-                Gdx.app.exit();
-            }
-        };
-        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        new Lwjgl3Application(game, config);
     }
 
     @Override
