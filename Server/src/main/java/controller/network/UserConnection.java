@@ -327,7 +327,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                         for (final IWorld world : this.manager.getGlobal().getWorlds().values()) {
                             worlds.add(new PacketOutContextList.ContextInfo(world.getContextId(), world.getContextName()));
                         }
-                        this.send(new PacketOutContextList(this.manager.getGlobal().getContextId(), worlds));
+                        this.send(new PacketOutContextList(null, worlds));
 
                         // Informationen über die globalen Rollen.
                         final IContextRole role = this.user.getGlobalRoles();

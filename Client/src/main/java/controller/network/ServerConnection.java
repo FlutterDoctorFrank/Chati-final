@@ -381,10 +381,14 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                 case LOGOUT:
                     this.manager.getUserManager().logout();
                     this.manager.getView().logout();
+                    this.worldId = null;
+                    this.userId = null;
                     break;
 
                 case DELETE:
                     this.manager.getUserManager().logout();
+                    this.worldId = null;
+                    this.userId = null;
                     this.manager.getView().deleteAccountResponse(packet.isSuccess(), packet.getMessage());
                     break;
             }
