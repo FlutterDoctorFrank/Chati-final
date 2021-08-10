@@ -679,7 +679,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             //Suche alle Benutzer in Datenbank
             ResultSet res = st.executeQuery("SELECT * FROM USER_ACCOUNT");
             while(res.next()) {
-                res.first();
                 String id = res.getString("USER_ID");
                 UUID user_ID = UUID.fromString(id);
                 String user_name = res.getString("USER_NAME");
@@ -698,6 +697,13 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 User user = new User(user_ID, user_name, user_avatar,
                         localDateTime);
                 users.put(user_ID, user);
+            }
+
+            //Role, Freundesliste, IgnoredUser
+            for (Map.Entry<UUID, User> entry : users.entrySet()) {
+                UUID user_id = entry.getKey();
+
+
             }
             res.close();
             st.close();

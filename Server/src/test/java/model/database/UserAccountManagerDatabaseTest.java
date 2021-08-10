@@ -8,6 +8,8 @@ import model.user.User;
 import org.junit.*;
 
 import java.sql.*;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class UserAccountManagerDatabaseTest {
@@ -185,34 +187,45 @@ public class UserAccountManagerDatabaseTest {
     public void getUserTest(){
 
         User test = this.database.createAccount("getUserTest", "111");
-
         User real = this.database.getUser("getUserTest");
-
         Assert.assertEquals(test.getUserId(), real.getUserId());
 
-        //Erstellen ein Benutzer und direkt speichern in Datenbank
-        /*
-        User test = new User("getUserTest");
-        User real = null;
-        try {
-            Connection con = DriverManager.getConnection(dbURL);
-            String sql = "INSERT INTO USER_ACCOUNT(USER_ID, USER_NAME, USER_PSW, LAST_ONLINE_TIME, AVATAR_NAME) values(?,?,?,?,?)";
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, test.getUserId().toString());
-            ps.setString(2, test.getUsername());
-            //Angenommen Password = "000"
-            ps.setString(3, "000");
-            ps.setString(4, null);
-            ps.setString(5, null);
-            ps.executeUpdate();
-            con.close();
-        } catch (SQLException e) {
-            System.out.print("Fehler in getUserTest: " + e);
-        }
-
-        //Erhalten Benutzer mit getUser Methode
+        //Role Testen
+        Context test_context = GlobalContext.getInstance();
+        this.user_database.addRole(test, test_context, Role.OWNER);
         real = this.database.getUser("getUserTest");
-        */
+        System.out.println(real.getGlobalRoles().getRoles());
+        System.out.println(real.getGlobalRoles().getContext().getContextId().getId());
+        Assert.assertEquals(1, real.getGlobalRoles().getRoles().size());
+
+        //Freundesliste
+        User friend = this.database.createAccount("friend", "222");
+        String friend_id = friend.getUserId().toString();
+        this.user_database.addFriendship(test, friend);
+        //Prüfe ob echt hinzufügen
+        int friend_count = 0;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            ResultSet res = st.executeQuery("SELECT * FROM FRIENDSHIP WHERE USER_ID2 = '" + friend_id + "'");
+            while (res.next()){
+                friend_count ++;
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+        Assert.assertEquals(1, friend_count);
+        //Pruefe ob man mit getUser Freundesliste richtig bekommen kann
+        real = this.database.getUser("getUserTest");
+        Assert.assertEquals(1, real.getFriends().size());
+        Assert.assertEquals("friend", real.getFriends().get(friend.getUserId()).getUsername());
+        real = this.database.getUser("getUserTest");
+        Assert.assertEquals(1, real.getFriends().size());
+        Assert.assertEquals("friend", real.getFriends().get(friend.getUserId()).getUsername());
+
+
 
     }
 
@@ -234,6 +247,10 @@ public class UserAccountManagerDatabaseTest {
         User real_after_add_role = this.database.getUser(testID);
         ContextRole actual_context_role = real_after_add_role.getGlobalRoles();
         int count = actual_context_role.getRoles().size();
+
+        System.out.println(real_after_add_role.getGlobalRoles().getRoles());
+        System.out.println(real_after_add_role.getGlobalRoles().getContext().getContextId().getId());
+
         Assert.assertEquals(1,count);
         Assert.assertEquals(true, actual_context_role.getRoles().contains(Role.OWNER));
 
@@ -297,6 +314,10 @@ public class UserAccountManagerDatabaseTest {
 
     @Test
     public void getUsers() {
+        User test1 = this.database.createAccount("test1", "111");
+        User test2 = this.database.createAccount("test2", "222");
+
+        Map<UUID, User> real_users = this.database.getUsers();
 
     }
 

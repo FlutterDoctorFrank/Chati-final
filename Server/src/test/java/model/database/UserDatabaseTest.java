@@ -276,6 +276,9 @@ public class UserDatabaseTest {
             System.out.println(e);
         }
 
+        System.out.println(actual_role);
+        System.out.println(actual_context_id);
+
         Assert.assertEquals(test_context.getContextId().getId(), actual_context_id);
         Assert.assertEquals(Role.OWNER.name(), actual_role);
 
