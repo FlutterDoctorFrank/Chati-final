@@ -37,6 +37,7 @@ public class Chati extends Game {
         new Lwjgl3Application(this, config);
     }
 
+    //Test delete when not needed
     public Chati() {
         this.launcher = null;
         this.userManager = null;

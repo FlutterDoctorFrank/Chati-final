@@ -8,6 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import controller.network.ServerSender;
+import model.context.Context;
+import model.context.spatial.SpatialMap;
 import model.exception.ContextNotFoundException;
 import model.communication.message.MessageType;
 import model.context.ContextID;
@@ -21,7 +23,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class Hud extends Stage implements IModelObserver, ViewControllerInterface {
-
     private static Hud hud;
 
     private ServerSender sender;
@@ -34,7 +35,6 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     private ContextID contextID;
 
     private boolean isPlaying = false;
-
 
     private boolean waitingLoginResponse = false;
     private boolean waitingRegistrationResponse = false;
@@ -67,7 +67,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
 
-    public void addMenuTable(UIComponentTable table) {
+    public void addMenuTable(MenuTable table) {
         if (Objects.isNull(table)) {
             playScreenLayout();
         } else if (Objects.isNull(currentMenuTable) || table.getName().equals("login-table")) {
@@ -97,9 +97,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
         if (Objects.isNull(table)) {
             playScreenLayout();
         } else if (table.getName().equals("login-table")) {
-            group.clear();
-            group.addActor(table);
-            currentMenuTable = table.getName();
+            logiLayout(table);
         } else if (Objects.isNull(group.findActor("drop-down-menu"))){
             group.removeActor(group.findActor(currentMenuTable));
             group.addActor(table);
@@ -109,7 +107,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     }
 
-    private void loginLayout() {
+    private void loginLayout(MenuTable table) {
 
     }
 
@@ -149,12 +147,9 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     @Override
     public void setUserPositionChanged() {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                if(isPlaying) {
-                    applicationScreen.updateAvatarsPositions();
-                }
+        Gdx.app.postRunnable(() -> {
+            if(isPlaying) {
+                applicationScreen.updateAvatarsPositions();
             }
         });
     }
@@ -164,16 +159,13 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
      */
     @Override
     public void setWorldChanged() {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                if (waitingJoinWorldResponse) {
-                    String mapPath = applicationScreen.getGame().getUserManager().getInternUserView().getCurrentWorld().getMap().getPath();
-                    Map<UUID, IUserView> users = applicationScreen.getGame().getUserManager().getActiveUsers();
+        Gdx.app.postRunnable(() -> {
+            if (waitingJoinWorldResponse) {
+                String mapPath = applicationScreen.getGame().getUserManager().getInternUserView().getCurrentWorld().getMap().getPath();
+                Map<UUID, IUserView> users = applicationScreen.getGame().getUserManager().getActiveUsers();
 
-                    applicationScreen.getGame().setScreen(new ApplicationScreen(hud, mapPath, users));
-                    addMenuTable(null);
-                }
+                applicationScreen.getGame().setScreen(new ApplicationScreen(hud, mapPath, users));
+                addMenuTable(null);
             }
         });
     }
@@ -188,12 +180,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     @Override
     public void updateWorlds(Map<ContextID, String> worlds) {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                hud.worlds = worlds;
-            }
-        });
+        Gdx.app.postRunnable(() -> hud.worlds = worlds);
     }
 
     @Override
@@ -211,11 +198,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
         });
         LoginTable table = (LoginTable) group.findActor("login-table");
         if (!Objects.isNull(table) && waitingRegistrationResponse) {
-            if (success) {
                 table.displayMessage(messageKey);
-            } else {
-                table.displayMessage(messageKey);
-            }
         }
 
         waitingRegistrationResponse = false;
@@ -260,8 +243,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
             Object[] credentials = {username, password, false};
             sender.send(ServerSender.SendAction.PROFILE_LOGIN, credentials);
             waitingLoginResponse = true;
-
-            //addMenuTable(new StartScreenTable(this));
+           // addMenuTable(new StartScreenTable(this));
         }
     }
 
@@ -280,9 +262,28 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     }
 
+    public void sendCreateWorldRequest(SpatialMap map, String worldName) {
+        try {
+            Object[] data = {map, worldName};
+            sender.send(ServerSender.SendAction.WORLD_CREATE, data);
+        } catch (NullPointerException exception) {
+            System.out.println("ServerSender not found");
+        }
+    }
+
     @Override
     public void createWorldResponse(boolean success, String messageKey) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                LoginTable table = (LoginTable) group.findActor("login-table");
+                if (!Objects.isNull(table) && waitingLoginResponse) {
+                        table.displayMessage(messageKey);
 
+                }
+                waitingLoginResponse = false;
+            }
+        });
     }
 
     @Override

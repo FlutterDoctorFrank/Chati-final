@@ -8,9 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import org.jetbrains.annotations.NotNull;
 
-public class LoginTable extends UIComponentTable {
+public class LoginTable extends MenuTable {
     private boolean waitingLoginResponse = false;
     private boolean waitingRegResponse = false;
     private TextField password;

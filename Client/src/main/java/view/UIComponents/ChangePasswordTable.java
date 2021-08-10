@@ -1,6 +1,6 @@
 package view.UIComponents;
 
-public class ChangePasswordTable extends UIComponentTable{
+public class ChangePasswordTable extends MenuTable {
 
     public ChangePasswordTable(Hud hud){
         super(hud);

@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 
-public class AvatarSelectTable extends UIComponentTable {
+public class AvatarSelectTable extends MenuTable {
 
     public AvatarSelectTable(Hud hud) {
         super(hud);

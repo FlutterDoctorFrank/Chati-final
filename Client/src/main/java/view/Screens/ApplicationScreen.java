@@ -85,11 +85,13 @@ public class ApplicationScreen implements Screen {
         this.hud = hud;
 
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("maps/map.tmx");   //mapPath
+        map = mapLoader.load("mapPath");   //maps/map.tmx
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / Chati.PPM);
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new WorldContactListener());
         box2DDebugRenderer = new Box2DDebugRenderer();
+
+        addBorders(map.getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class));
 
         avatars = new ArrayList<>();
 
@@ -111,7 +113,7 @@ public class ApplicationScreen implements Screen {
             avatars.add(avatar);
         }
 
-        addBorders(map.getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class));
+
 
         /*
         for (MapObject object: map.getLayers().get("Interactable").getObjects().getByType(RectangleMapObject.class)) {

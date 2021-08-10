@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 
-public class ProfileSettingsTable extends UIComponentTable {
+public class ProfileSettingsTable extends MenuTable {
 
     public ProfileSettingsTable(Hud hud) {
         super(hud);

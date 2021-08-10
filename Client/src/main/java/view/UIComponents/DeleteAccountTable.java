@@ -1,6 +1,6 @@
 package view.UIComponents;
 
-public class DeleteAccountTable extends UIComponentTable {
+public class DeleteAccountTable extends MenuTable {
 
     public DeleteAccountTable(Hud hud) {
         super(hud);
