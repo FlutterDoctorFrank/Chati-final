@@ -111,6 +111,6 @@ public class MapUtils {
         SpatialContext child = new SpatialContext(contextName, parent, communicationRegion, communicationMedia, expanse);
         parent.addChild(child);
 
-        System.out.println(child.getContextId() + "  parent:" + parent.getContextId());
+        System.out.println(child.getContextId().getId() + "  parent:" + parent.getContextId().getId());
     }
 }
