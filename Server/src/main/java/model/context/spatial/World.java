@@ -66,6 +66,10 @@ public class World extends Room implements IWorld {
             return;
         }
 
+        if (!this.equals(user.getWorld())) {
+            user.setWorld(this);
+        }
+
         // Sende die entsprechenden Pakete an den Benutzer und an andere Benutzer.
         user.getClientSender().send(ClientSender.SendAction.WORLD_ACTION, this);
 
@@ -95,6 +99,11 @@ public class World extends Room implements IWorld {
     public void removeUser(@NotNull final User user) {
         // Überprüfung, ob sich der zu entfernende Benutzer überhaupt in der Welt befindet.
         if (this.containedUsers.containsKey(user.getUserId())) {
+            // Temporäre Behebung des 'User is already in a world' Fehler
+            if (this.equals(user.getWorld())) {
+                user.setWorld(null);
+            }
+
             super.removeUser(user);
 
             // Sende die entsprechenden Pakete an den Benutzer und an andere Benutzer.

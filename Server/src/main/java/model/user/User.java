@@ -19,6 +19,7 @@ import model.timedEvents.AccountDeletion;
 import model.timedEvents.TimedEventScheduler;
 import model.timedEvents.AbsentUser;
 import model.user.account.UserAccountManager;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -316,6 +317,10 @@ public class User implements IUser {
     @Override
     public World getWorld() {
         return currentWorld;
+    }
+
+    public void setWorld(@Nullable final World world) {
+        this.currentWorld = world;
     }
 
     @Override
