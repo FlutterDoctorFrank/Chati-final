@@ -700,8 +700,29 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             }
 
             //Role, Freundesliste, IgnoredUser
-            for (Map.Entry<UUID, User> entry : users.entrySet()) {
-                UUID user_id = entry.getKey();
+            Iterator<Map.Entry<UUID, User>> entries = users.entrySet().iterator();
+            while (entries.hasNext()) {
+                Map.Entry<UUID, User> user = entries.next();
+                UUID user_id = user.getKey();
+                System.out.println(user_id);
+                //Context_Role
+                ResultSet res_cr = st.executeQuery("SELECT * FROM ROLE_WITH_CONTEXT WHERE USER_ID = " + "'" +
+                        user_id.toString()+ "'");
+                Map<Context, ContextRole> contextRoles = new HashMap<>();
+                while (res_cr.next()) {
+                    Role role = Role.valueOf(res_cr.getString("USER_ROLE"));
+                    ContextID context_id = new ContextID(res_cr.getString("CONTEXT_ID"));
+                    Context context = GlobalContext.getInstance().getContext(context_id);
+
+                    if (contextRoles.containsKey(context)) {
+                        ContextRole already_add = contextRoles.get(context);
+                        already_add.addRole(role);
+                    } else {
+                        ContextRole context_role = new ContextRole(user.getValue(), context, role);
+                        contextRoles.put(context, context_role);
+                    }
+                }
+                user.getValue().addRoles(contextRoles);
 
 
             }

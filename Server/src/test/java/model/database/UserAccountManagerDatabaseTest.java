@@ -317,7 +317,14 @@ public class UserAccountManagerDatabaseTest {
         User test1 = this.database.createAccount("test1", "111");
         User test2 = this.database.createAccount("test2", "222");
 
+        Context test_context = GlobalContext.getInstance();
+        this.user_database.addRole(test1, test_context, Role.OWNER);
+
         Map<UUID, User> real_users = this.database.getUsers();
+        User real1 = real_users.get(test1.getUserId());
+        System.out.println(real1.getUserId());
+
+        System.out.println(real1.getGlobalRoles().getRoles().size());
 
     }
 
