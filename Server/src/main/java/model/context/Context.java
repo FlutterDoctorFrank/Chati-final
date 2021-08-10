@@ -234,7 +234,7 @@ public abstract class Context implements IContext {
      * @return true, wenn der Benutzer gemeldet ist, sonst false.
      */
     public boolean isReported(User user) {
-        return reportedUsers.containsKey(user.getUserId()) || parent.isReported(user);
+        return reportedUsers.containsKey(user.getUserId()) || (parent != null && parent.isReported(user));
     }
 
     /**
@@ -243,7 +243,7 @@ public abstract class Context implements IContext {
      * @return true, wenn der Benutzer stummgeschaltet ist, sonst false.
      */
     public boolean isMuted(User user) {
-        return mutedUsers.containsKey(user.getUserId()) || parent.isMuted(user);
+        return mutedUsers.containsKey(user.getUserId()) || (parent != null && parent.isMuted(user));
     }
 
     /**
@@ -252,7 +252,7 @@ public abstract class Context implements IContext {
      * @return true, wenn der Benutzer gesperrt ist, sonst false.
      */
     public boolean isBanned(User user) {
-        return bannedUsers.containsKey(user.getUserId()) || parent.isBanned(user);
+        return bannedUsers.containsKey(user.getUserId()) || (parent != null && parent.isBanned(user));
     }
 
     /**
@@ -261,7 +261,7 @@ public abstract class Context implements IContext {
      * @return true, wenn der übergebene Kontext übergeordnet ist, sonst false.
      */
     public boolean isInContext(Context context) {
-        return equals(context) || parent.isInContext(context);
+        return equals(context) || (parent != null && parent.isInContext(context));
     }
 
     /**
@@ -271,7 +271,8 @@ public abstract class Context implements IContext {
      * @return Letzter gemeinsamer Vorfahre beider Kontexte.
      */
     public Context lastCommonAncestor(Context context) {
-        return isInContext(context) ? context : (context.isInContext(this) ? this : parent.lastCommonAncestor(context));
+        return isInContext(context) ? context : (context.isInContext(this) ? this :
+                parent != null ? parent.lastCommonAncestor(context) : null);
     }
 
     /**
