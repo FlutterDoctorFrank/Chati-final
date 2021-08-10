@@ -43,6 +43,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
  */
 
+
+
         initialize();
     }
 

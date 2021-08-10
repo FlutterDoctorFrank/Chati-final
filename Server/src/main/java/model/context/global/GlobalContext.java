@@ -33,7 +33,11 @@ public class GlobalContext extends Context implements IGlobalContext {
      */
     private GlobalContext() {
         super(CONTEXT_NAME, null);
-        worlds = database.getWorlds();
+        this.worlds = new HashMap<>();
+    }
+
+    private void init() {
+        worlds.putAll(database.getWorlds());
     }
 
     @Override
@@ -52,6 +56,7 @@ public class GlobalContext extends Context implements IGlobalContext {
         World createdWorld = new World(worldname, map);
         worlds.put(createdWorld.getContextId(), createdWorld);
         addChild(createdWorld);
+        database.addWorld(createdWorld);
         // Sende neue Liste der Welten an alle Benutzer im Startbildschirm.
         sendWorldList();
     }
@@ -119,6 +124,7 @@ public class GlobalContext extends Context implements IGlobalContext {
     public static GlobalContext getInstance() {
         if (globalContext == null) {
             globalContext = new GlobalContext();
+            globalContext.init();
         }
         return globalContext;
     }
