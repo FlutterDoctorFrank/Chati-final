@@ -159,19 +159,20 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
      */
     @Override
     public void setWorldChanged() {
+
+    }
+
+    @Override
+    public void setRoomChanged() {
         Gdx.app.postRunnable(() -> {
             if (waitingJoinWorldResponse) {
                 String mapPath = applicationScreen.getGame().getUserManager().getInternUserView().getCurrentWorld().getMap().getPath();
                 Map<UUID, IUserView> users = applicationScreen.getGame().getUserManager().getActiveUsers();
 
-                applicationScreen.getGame().setScreen(new ApplicationScreen(hud, mapPath, users));
+                applicationScreen.getGame().setScreen(new ApplicationScreen(applicationScreen.getGame(), hud, mapPath, users));
                 addMenuTable(null);
             }
         });
-    }
-
-    @Override
-    public void setRoomChanged() {
     }
 
     public void setMusicChanged() {
@@ -276,12 +277,10 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                LoginTable table = (LoginTable) group.findActor("login-table");
-                if (!Objects.isNull(table) && waitingLoginResponse) {
-                        table.displayMessage(messageKey);
-
+                StartScreenTable table = (StartScreenTable) group.findActor("start-screen-table");
+                if (!Objects.isNull(table)) {
+                    table.displayMessage(messageKey);
                 }
-                waitingLoginResponse = false;
             }
         });
     }

@@ -61,10 +61,10 @@ public class StartScreenTable extends MenuTable {
                 for (var entry : hud.getWorlds().entrySet()) {
                     if (entry.getValue().equals(worldSelect.getSelected())) {
                         hud.sendJoinWorldRequest(entry.getKey());
-                        break;
+                    } else {
+                        infoLabel.setText("Welt nicht mehr verfügbar");
+                        updateWorldsList(worldSelect);
                     }
-                    infoLabel.setText("Welt nicht mehr verfügbar");
-                    updateWorldsList(worldSelect);
                 }
                // hud.addMenuTable(null);
             }

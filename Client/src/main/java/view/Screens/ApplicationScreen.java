@@ -79,13 +79,13 @@ public class ApplicationScreen implements Screen {
     }
 
 
-    public ApplicationScreen(Hud hud, String mapPath , Map<UUID, IUserView> users) {  //
+    public ApplicationScreen(Chati game, Hud hud, String mapPath , Map<UUID, IUserView> users) {  //
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Chati.V_WIDTH / Chati.PPM, Chati.V_HEIGHT / Chati.PPM, gamecam);
         this.hud = hud;
 
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("mapPath");   //maps/map.tmx
+        map = mapLoader.load(mapPath);   //maps/map.tmx
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / Chati.PPM);
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new WorldContactListener());
@@ -103,14 +103,14 @@ public class ApplicationScreen implements Screen {
          */
 
         IInternUserView user = game.getUserManager().getInternUserView();
+        Avatar userAvatar = new Avatar(world, user.getUserId(), (int) map.getProperties().get("spawnPosX"), (int) map.getProperties().get("spawnPosY"));
+        avatars.add(userAvatarIndex,userAvatar);
         for (var entry : users.entrySet()) {
-            if (entry.getKey().equals(user.getUserId())) {
-                Avatar userAvatar = new Avatar(world, user.getUserId(), (int) map.getProperties().get("spawnPosX"), (int) map.getProperties().get("spawnPosY"));
-                avatars.add(userAvatarIndex,userAvatar);
+            if (!entry.getKey().equals(user.getUserId())) {
+                ILocationView position = entry.getValue().getCurrentLocation();
+                Avatar avatar = new Avatar(world, entry.getKey(), position.getPosX(), position.getPosY());
+                avatars.add(avatar);
             }
-            ILocationView position = entry.getValue().getCurrentLocation();
-            Avatar avatar = new Avatar(world, entry.getKey(), position.getPosX(), position.getPosY());
-            avatars.add(avatar);
         }
 
 
@@ -256,7 +256,7 @@ public class ApplicationScreen implements Screen {
             gamecam.position.y = cameraBottomBoundary;
         }
 
-       // sendPositionToServer(body.getPosition().x, body.getPosition().y);   //Test DELETE
+        sendPositionToServer(body.getPosition().x, body.getPosition().y);   //Test DELETE
     }
 
     private void sendPositionToServer(float posX, float posY) {
