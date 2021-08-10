@@ -56,19 +56,21 @@ public class ContextDatabaseTest {
     @Test
     public void addWorldTest() {
 
-        /*
+/*
         GlobalContext test_gbc = GlobalContext.getInstance();
         User performer = this.account_database.createAccount("performer", "111");
         this.user_database.addRole(performer, test_gbc, Role.OWNER);
-        World test = new World("test_world", SpatialMap.PLACEHOLDER);
+        World test = new World("test_world", SpatialMap.MAP);
         try {
-            test_gbc.createWorld(performer.getUserId(), "test_world", SpatialMap.PLACEHOLDER);
+            test_gbc.createWorld(performer.getUserId(), "test_world", SpatialMap.MAP);
         } catch (Exception e) {
             e.printStackTrace();
         }
         this.context_database.addWorld(test);
 
-         */
+
+ */
+
 
 
     }

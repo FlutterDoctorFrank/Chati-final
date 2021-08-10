@@ -55,8 +55,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO WORLDS(WORLD_ID, WORLD_NAME, MAP_NAME) values(?,?,?)");
-            ps.setString(1, world.getContextName());
-            ps.setString(2, world.getContextId().getId());
+            ps.setString(2, world.getContextName());
+            ps.setString(1, world.getContextId().getId());
             ps.setString(3, world.getMap().name());
             ps.executeUpdate();
             con.close();
