@@ -353,7 +353,7 @@
   <object id="265" x="576" y="256" width="64" height="64"/>
  </objectgroup>
  <objectgroup id="16" name="contextLayer">
-  <object id="204" name="gameboard_2" x="96" y="704" width="128" height="96">
+  <object id="204" name="gameBoard_2" x="96" y="704" width="128" height="96">
    <properties>
     <property name="communicationRegion" value="areaCommunication"/>
     <property name="contextType" value="gameboard"/>
@@ -361,10 +361,10 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="205" name="gameboard_1" x="768" y="704" width="128" height="96">
+  <object id="205" name="gameBoard_1" x="768" y="704" width="128" height="96">
    <properties>
     <property name="communicationRegion" value="areaCommunication"/>
-    <property name="contextType" value="gameboard"/>
+    <property name="contextType" value="gameBoard"/>
     <property name="text" type="bool" value="true"/>
     <property name="voice" type="bool" value="true"/>
    </properties>
@@ -409,7 +409,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="225" name="gameboard_3" x="1792" y="448" width="128" height="96">
+  <object id="225" name="gameBoard_3" x="1792" y="448" width="128" height="96">
    <properties>
     <property name="communicationRegion" value="areaCommunication"/>
     <property name="contextType" value="gameboard"/>
