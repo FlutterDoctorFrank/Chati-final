@@ -1,5 +1,7 @@
 package controller;
 
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import controller.network.ClientNetworkManager;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
@@ -42,7 +44,21 @@ public class Launcher {
     /**
      * Startet die Client-Anwendung.
      */
-    public void launch() {
+    public void launch(final boolean second) {
+        if (second) {
+            view2.Chati chati = new view2.Chati(this.manager);
+            setControllerView(chati);
+            setModelObserver(chati);
+
+            Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+            config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+            config.setIdleFPS(30);
+            config.useVsync(true);
+            config.setTitle("Chati");
+            new Lwjgl3Application(chati, config);
+            return;
+        }
+
         new Chati(this, this.manager);
     }
 
@@ -67,6 +83,8 @@ public class Launcher {
                         .describedAs("UDP-Port");
 
                 this.acceptsAll(List.of("v", "view-only"), "Runs the view without the other components");
+
+                this.acceptsAll(List.of("s", "view-second"), "Runs the application with the second view");
             }
         };
 
@@ -123,7 +141,7 @@ public class Launcher {
                 }
 
                 System.out.println("Starting Client...");
-                launcher.launch();
+                launcher.launch(options.has("view-second"));
             }
         } catch (OptionException ex) {
             System.err.println("Failed to parse arguments: " + ex.getMessage());
