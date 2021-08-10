@@ -1,5 +1,9 @@
 package model.context.spatial;
 
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import controller.network.ClientSender;
@@ -8,12 +12,6 @@ import model.communication.message.TextMessage;
 import model.context.Context;
 import model.role.Role;
 import model.user.User;
-
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class Room extends Area implements IRoom {
 
@@ -44,7 +42,15 @@ public class Room extends Area implements IRoom {
         this.map = map;
         this.isPrivate = false;
         this.password = null;
-        create();
+        Game game = new Game() {
+            @Override
+            public void create() {
+                build();
+                Gdx.app.exit();
+            }
+        };
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        new Lwjgl3Application(game, config);
     }
 
     /**
@@ -60,7 +66,15 @@ public class Room extends Area implements IRoom {
         this.map = map;
         this.isPrivate = true;
         this.password = password;
-        create();
+        Game game = new Game() {
+            @Override
+            public void create() {
+                build();
+                Gdx.app.exit();
+            }
+        };
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        new Lwjgl3Application(game, config);
     }
 
     @Override
@@ -150,7 +164,7 @@ public class Room extends Area implements IRoom {
      * Setzt die Parameter dieses Raums, die in der Datenstruktur der Karte enthalten sind.
      * @see MapUtils
      */
-    private void create() {
+    private void build() {
         TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
         this.communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
         this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());

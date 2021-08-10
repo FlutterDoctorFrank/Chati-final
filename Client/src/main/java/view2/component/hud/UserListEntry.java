@@ -3,6 +3,7 @@ package view2.component.hud;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.user.AdministrativeAction;
 import model.user.IUserView;
@@ -46,9 +47,9 @@ public class UserListEntry extends ChatiTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (!friendButton.isChecked()) {
-                    MessageDialog messageDialog =
-                            new MessageDialog(entry, "Füge deiner Anfrage eine Nachricht hinzu!", AdministrativeAction.INVITE_FRIEND);
-                    add(messageDialog);
+                    MessageWindow messageWindow =
+                            new MessageWindow(entry, "Füge deiner Anfrage eine Nachricht hinzu!", AdministrativeAction.INVITE_FRIEND);
+                    add(messageWindow);
                 } else {
                     Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.REMOVE_FRIEND);
@@ -62,24 +63,28 @@ public class UserListEntry extends ChatiTable {
 
     }
 
-    private class MessageDialog extends Window {
+    private class MessageWindow extends Window {
 
         private final UserListEntry entry;
         private final AdministrativeAction action;
 
+        private Label infoLabel;
         private TextField userMessageField;
         private TextButton confirmButton;
         private TextButton cancelButton;
 
-        protected MessageDialog(UserListEntry entry, String showMessage, AdministrativeAction action) {
-            super("", ChatiTable.SKIN);
+        protected MessageWindow(UserListEntry entry, String showMessage, AdministrativeAction action) {
+            super("Freund hinzufügen", ChatiTable.SKIN);
             this.entry = entry;
-            infoLabel.setText(showMessage);
             this.action = action;
+            create();
+            setLayout();
         }
 
         protected void create() {
-            final MessageDialog table = this;
+            final MessageWindow table = this;
+
+            infoLabel = new Label("Füge zur Anfrage eine Nachricht hinzu!", SKIN);
 
             userMessageField = new TextField("", SKIN);
 
@@ -111,6 +116,11 @@ public class UserListEntry extends ChatiTable {
         }
 
         protected void setLayout() {
+            int width = 300;
+            int height = 200;
+
+            setSize(width, height);
+            align(Align.center);
 
         }
 
