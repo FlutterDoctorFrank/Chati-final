@@ -1,6 +1,5 @@
 package view2.component.hud;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -17,7 +16,6 @@ public class HeadUpDisplay extends Stage {
     private static final String NOTIFICATION_ICON_PATH = "icons/speech_bubble_img.png";
     private static final String SETTINGS_ICON_PATH = "icons/settings_img.png";
 
-    private ButtonGroup<ImageButton> hudButtons;
     private ImageButton userListButton;
     private ImageButton notificationListButton;
     private ImageButton settingsButton;
@@ -32,56 +30,8 @@ public class HeadUpDisplay extends Stage {
         setLayout();
     }
 
-    private void create2() {
-        hudButtons2 = new ButtonGroup<>();
-        hudButtons2.setMinCheckCount(0);
-        hudButtons2.setMaxCheckCount(1);
-        hudButtons2.setUncheckLast(true);
-
-        userListButton2 = new TextButton("U", ChatiTable.SKIN);
-        userListButton2.addListener(new InputListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                userListButton2.setChecked(true);
-                addActor(new UserListTable());
-            }
-        });
-
-
-        notificationListButton2 = new TextButton("N", ChatiTable.SKIN);
-        settingsButton2 = new TextButton("S", ChatiTable.SKIN);
-
-        hudButtons2.add(userListButton2);
-        hudButtons2.add(notificationListButton2);
-        hudButtons2.add(settingsButton2);
-    }
-
-    private void setLayout2() {
-        int buttonSize = 60;
-        int horizontalSpacing = 0;
-
-        Table headUpDisplayTable = new Table();
-        headUpDisplayTable.setFillParent(true);
-        headUpDisplayTable.align(Align.topRight);
-        HorizontalGroup container = new HorizontalGroup();
-        container.space(horizontalSpacing);
-        container.setHeight(buttonSize);
-        container.setWidth(3 * (buttonSize + horizontalSpacing));
-        container.grow();
-
-        container.addActor(userListButton2);
-        container.addActor(notificationListButton2);
-        container.addActor(settingsButton2);
-        headUpDisplayTable.add(container).width(container.getWidth()).height(container.getHeight());
-        addActor(headUpDisplayTable);
-    }
-
     protected void create() {
-        hudButtons = new ButtonGroup<>();
+        ButtonGroup<ImageButton> hudButtons = new ButtonGroup<>();
         hudButtons.setMinCheckCount(0);
         hudButtons.setMaxCheckCount(1);
         hudButtons.setUncheckLast(true);
@@ -134,47 +84,14 @@ public class HeadUpDisplay extends Stage {
 
     protected void setLayout() {
         int buttonSize = 60;
-        int horizontalSpacing = 0;
+        int horizontalSpacing = 2;
 
-        Table headUpDisplayTable = new Table();
-        headUpDisplayTable.setFillParent(true);
-        headUpDisplayTable.align(Align.topRight);
-        HorizontalGroup container = new HorizontalGroup();
-        container.space(horizontalSpacing);
-        container.setHeight(buttonSize);
-        container.setWidth(3 * (buttonSize + horizontalSpacing));
-        container.grow();
-
-        /*
-        userListButton.setWidth(buttonSize);
-        userListButton.setHeight(buttonSize);
-        notificationListButton.setWidth(buttonSize);
-        notificationListButton.setHeight(buttonSize);
-        settingsButton.setWidth(buttonSize);
-        settingsButton.setHeight(buttonSize);
-
-         */
-
-        container.addActor(userListButton);
-        container.addActor(notificationListButton);
-        container.addActor(settingsButton);
-        headUpDisplayTable.add(container).width(container.getWidth()).height(container.getHeight());
-        addActor(headUpDisplayTable);
-
-        /*
-        HorizontalGroup buttonContainer = new HorizontalGroup();
-        buttonContainer.setFillParent(true);
-        buttonContainer.space(horizontalSpacing);
-        buttonContainer.setWidth(3 * (buttonSize + horizontalSpacing));
-        buttonContainer.setHeight(buttonSize);
-        buttonContainer.addActor(userListButton);
-        buttonContainer.addActor(notificationListButton);
-        buttonContainer.addActor(settingsButton);
-        buttonContainer.setPosition(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Align.bottomRight);
-
-        addActor(buttonContainer);
-
-
-         */
+        Table container = new Table();
+        container.setFillParent(true);
+        container.top().right();
+        container.add(userListButton).width(buttonSize).height(buttonSize).space(horizontalSpacing);
+        container.add(notificationListButton).width(buttonSize).height(buttonSize).space(horizontalSpacing);
+        container.add(settingsButton).width(buttonSize).height(buttonSize);
+        addActor(container);
     }
 }

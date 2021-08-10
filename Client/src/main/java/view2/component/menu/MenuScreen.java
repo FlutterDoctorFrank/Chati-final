@@ -156,6 +156,7 @@ public class MenuScreen extends ScreenAdapter {
     }
 
     public void updateWorlds(Map<ContextID, String> worlds) {
+        this.worlds.clear();
         worlds.forEach((key, value) -> this.worlds.add(new ContextEntry(key, value)));
     }
 
