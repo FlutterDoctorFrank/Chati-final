@@ -169,7 +169,7 @@ public class Room extends Area implements IRoom {
         this.communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
         this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
         this.expanse = new Expanse(new Location(this, 0, 0), MapUtils.getWidth(tiledMap), MapUtils.getHeight(tiledMap));
-        this.collisionMap = MapUtils.getCollisionMap(tiledMap);
+        //this.collisionMap = MapUtils.getCollisionMap(tiledMap);
         this.spawnLocation = new Location(this, MapUtils.getSpawnPosX(tiledMap), MapUtils.getSpawnPosY(tiledMap));
         MapUtils.buildChildTree(this, tiledMap);
     }

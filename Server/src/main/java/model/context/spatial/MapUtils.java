@@ -66,6 +66,7 @@ public class MapUtils {
         return layer.getHeight();
     }
 
+    /*
     public static boolean[][] getCollisionMap(TiledMap tiledMap) {
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) tiledMap.getLayers().get("collision");
         int width = collisionLayer.getWidth();
@@ -85,6 +86,7 @@ public class MapUtils {
         });
         return collisionMap;
     }
+     */
 
     public static int getSpawnPosX(TiledMap tiledMap) {
         return tiledMap.getProperties().get("spawnPosX", Integer.class);

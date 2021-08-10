@@ -356,7 +356,7 @@
   <object id="204" name="gameBoard_2" x="96" y="704" width="128" height="96">
    <properties>
     <property name="communicationRegion" value="areaCommunication"/>
-    <property name="contextType" value="gameboard"/>
+    <property name="contextType" value="gameBoard"/>
     <property name="text" type="bool" value="true"/>
     <property name="voice" type="bool" value="true"/>
    </properties>
@@ -412,7 +412,7 @@
   <object id="225" name="gameBoard_3" x="1792" y="448" width="128" height="96">
    <properties>
     <property name="communicationRegion" value="areaCommunication"/>
-    <property name="contextType" value="gameboard"/>
+    <property name="contextType" value="gameBoard"/>
     <property name="text" type="bool" value="true"/>
     <property name="voice" type="bool" value="true"/>
    </properties>
