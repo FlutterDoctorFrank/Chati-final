@@ -133,7 +133,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             //Suche alle Welt in Datenbank
             ResultSet res = st.executeQuery("SELECT * FROM WORLDS");
             while(res.next()) {
-                res.first();
                 String id_name = res.getString("WORLD_ID");
                 String world_name = res.getString("WORLD_NAME");
                 String map_name = res.getString("MAP_NAME");
