@@ -3,6 +3,9 @@
  <properties>
   <property name="spawnPosX" type="int" value="100"/>
   <property name="spawnPosY" type="int" value="20"/>
+          <property name="communicationRegion" value="areaCommunication"/>
+          <property name="text" type="bool" value="true"/>
+          <property name="voice" type="bool" value="true"/>
  </properties>
  <tileset firstgid="1" source="pipo-map001_at.tsx"/>
  <tileset firstgid="481" source="0_Everything.tsx"/>
