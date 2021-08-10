@@ -168,7 +168,7 @@ public class Room extends Area implements IRoom {
         TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
         this.communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
         this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
-        this.expanse = new Expanse(new Location(this, 0, 0), MapUtils.getWidth(tiledMap), MapUtils.getHeight(tiledMap));
+        this.expanse = new Expanse(new Location(this, 0, 0), MapUtils.getWidth(tiledMap) , MapUtils.getHeight(tiledMap));
         System.out.println(MapUtils.getWidth(tiledMap));
         System.out.println(MapUtils.getHeight(tiledMap));
         //this.collisionMap = MapUtils.getCollisionMap(tiledMap);

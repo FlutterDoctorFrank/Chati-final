@@ -58,12 +58,12 @@ public class MapUtils {
 
     public static int getWidth(TiledMap tiledMap) {
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        return layer.getWidth();
+        return layer.getWidth() * layer.getTileWidth();
     }
 
     public static int getHeight(TiledMap tiledMap) {
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        return layer.getHeight();
+        return layer.getHeight() * layer.getTileHeight();
     }
 
     /*
@@ -108,8 +108,8 @@ public class MapUtils {
         // Sortiere die Quadrate ihrer Größe nach absteigend. Dadurch wird garantiert, dass die Kontexte immer an die
         // richtige Stelle in der Kontexthierarchie eingefügt werden.
         contextRectangles.sort((o1, o2) -> {
-            float size1 = o1.getRectangle().getX() * o1.getRectangle().getY();
-            float size2 = o2.getRectangle().getX() * o2.getRectangle().getY();
+            float size1 = o1.getRectangle().getHeight() * o1.getRectangle().getWidth();
+            float size2 = o2.getRectangle().getHeight() * o2.getRectangle().getWidth();
             return Float.compare(size2, size1);
         });
         // Erzeuge alle Kontexte nacheinander.
