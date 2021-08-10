@@ -7,6 +7,7 @@ import model.context.ContextID;
 import model.context.spatial.Music;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -69,6 +70,12 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
         for (int index = 0; index < this.mutes.length; index++) {
             this.mutes[index] = PacketUtils.readUniqueId(input);
         }
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{contextId=" + this.contextId + ", mutes="
+                + Arrays.toString(this.mutes) + ", music=" + this.music + "}";
     }
 
     /**

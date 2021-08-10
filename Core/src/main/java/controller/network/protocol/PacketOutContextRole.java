@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.io.Output;
 import model.context.ContextID;
 import model.role.Role;
 import org.jetbrains.annotations.NotNull;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -65,6 +66,12 @@ public class PacketOutContextRole implements Packet<PacketListenerOut> {
         for (int index = 0; index < this.roles.length; index++) {
             this.roles[index] = PacketUtils.readEnum(input, Role.class);
         }
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{contextId=" + this.contextId + ", userId=" + this.userId +
+                ", roles=" + Arrays.toString(this.roles) + "}";
     }
 
     /**

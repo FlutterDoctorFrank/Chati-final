@@ -142,6 +142,13 @@ public class PacketProfileAction implements Packet<PacketListener> {
         this.success = input.readBoolean();
     }
 
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{userId=" + this.userId + ", name='" + this.name + "', password='"
+                + this.password + "', newPassword='" + this.newPassword + "', avatar=" + this.avatar + ", action="
+                + this.action + ", message='" + this.message + "', success=" + this.success + "}";
+    }
+
     /**
      * Gibt die Benutzer-ID des Benutzerprofils zurück.
      * @return die ID des Benutzers, oder null.

@@ -61,6 +61,11 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
                 PacketUtils.readBundle(input), kryo.readObject(input, LocalDateTime.class), input.readBoolean());
     }
 
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{notification=" + this.notification + "}";
+    }
+
     /**
      * Gibt die Informationen über eine Benachrichtigung zurück.
      * @return die Informationen der Benachrichtigung.
@@ -128,6 +133,12 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
          */
         public boolean isRequest() {
             return this.request;
+        }
+
+        @Override
+        public @NotNull String toString() {
+            return "{notificationId=" + this.notificationId + ", contextId=" + this.contextId + ", message="
+                    + this.message + ", timestamp=" + this.timestamp + ", request=" + this.request + "}";
         }
 
         @Override

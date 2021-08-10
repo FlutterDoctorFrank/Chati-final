@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.io.Output;
 import model.context.ContextID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -65,6 +66,12 @@ public class PacketOutContextList implements Packet<PacketListenerOut> {
         }
     }
 
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{contextId=" + this.contextId + ", infos=" +
+                Arrays.toString(this.infos) + "}";
+    }
+
     /**
      * Gibt die Kontext-ID des übergeordneten Kontexts zurück.
      * Enthält das Paket Informationen über die verfügbaren Welten, so wird null zurückgegeben.
@@ -102,7 +109,7 @@ public class PacketOutContextList implements Packet<PacketListenerOut> {
          * @return die ID des Kontexts.
          */
         public @NotNull ContextID getContextId() {
-            return contextId;
+            return this.contextId;
         }
 
         /**
@@ -110,7 +117,12 @@ public class PacketOutContextList implements Packet<PacketListenerOut> {
          * @return der Name des Kontexts.
          */
         public @NotNull String getName() {
-            return name;
+            return this.name;
+        }
+
+        @Override
+        public @NotNull String toString() {
+            return "{contextId=" + this.contextId + ", name='" + this.name + "}";
         }
 
         @Override

@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.io.Output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -68,6 +69,12 @@ public class PacketVoiceMessage implements Packet<PacketListener> {
         this.senderId = PacketUtils.readNullableUniqueId(input);
         this.timestamp = kryo.readObjectOrNull(input, LocalDateTime.class);
         this.voiceData = input.readBytes(input.readVarInt(true));
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{senderId=" + this.senderId + ", timestamp=" + this.timestamp +
+                ", voiceData=" + Arrays.toString(this.voiceData) + "}";
     }
 
     /**

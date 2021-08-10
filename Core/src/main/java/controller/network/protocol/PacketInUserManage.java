@@ -5,6 +5,7 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -65,6 +66,12 @@ public class PacketInUserManage implements Packet<PacketListenerIn> {
         for (int index = 0; index < this.arguments.length; index++) {
             this.arguments[index] = input.readString();
         }
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{userId=" + this.userId + ", action=" + this.action + ", arguments="
+                + Arrays.toString(this.arguments) + "}";
     }
 
     /**

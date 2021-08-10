@@ -21,6 +21,11 @@ public class ContextID {
     }
 
     @Override
+    public @NotNull String toString() {
+        return this.contextId;
+    }
+
+    @Override
     public boolean equals(@Nullable final Object object) {
         if (this == object) {
             return true;
@@ -36,10 +41,5 @@ public class ContextID {
     @Override
     public int hashCode() {
         return Objects.hash(this.contextId);
-    }
-
-    @Override
-    public String toString() {
-        return contextId;
     }
 }

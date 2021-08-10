@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.io.Output;
 import model.context.ContextID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Arrays;
 
 /**
  * Ein Paket, das Informationen über eine Aktion innerhalb eines Menüs enthält.
@@ -89,6 +90,13 @@ public class PacketMenuOption implements Packet<PacketListener> {
         this.option = input.readVarInt(true);
         this.message = input.readString();
         this.success = input.readBoolean();
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{contextId=" + this.contextId + ", arguments="
+                + Arrays.toString(this.arguments) + ", option=" + this.option + ", message='" + this.message
+                + "', success=" + this.success + '}';
     }
 
     /**

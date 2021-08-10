@@ -47,6 +47,11 @@ public class PacketInContextInteract implements Packet<PacketListenerIn> {
         this.contextId = PacketUtils.readContextId(input);
     }
 
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{contextId=" + this.contextId + "}";
+    }
+
     /**
      * Gibt die Kontext-ID des Kontexts, mit dem interagiert wurde, zurück.
      * @return die ID des Kontexts.

@@ -80,7 +80,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
             this.manager.getEndPoint().sendTCP(packet);
 
-            LOGGER.info(String.format("Sent packet %s to server", packet.getClass().getSimpleName()));
+            LOGGER.info(String.format("Sent packet to server: %s", packet));
         }
     }
 
@@ -98,7 +98,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         if (object instanceof Packet<?>) {
-            LOGGER.info(String.format("Received packet %s from server", object.getClass().getSimpleName()));
+            LOGGER.info(String.format("Received packet from server: %s", object));
 
             try {
                 call((Packet<?>) object, this);
@@ -407,7 +407,6 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
             for (final ContextInfo info : packet.getInfos()) {
                 contexts.put(info.getContextId(), info.getName());
-                System.out.println("Context-ID: " + info.getContextId() + " , Name: " + info.getName());
             }
 
             if (packet.getContextId() != null) {

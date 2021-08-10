@@ -100,6 +100,12 @@ public class PacketChatMessage implements Packet<PacketListener> {
         this.timestamp = kryo.readObjectOrNull(input, LocalDateTime.class);
     }
 
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{type=" + this.type + ", senderId=" + this.senderId + ", message='"
+                + this.message + "', timestamp=" + this.timestamp + ", bundle=" + this.bundle + "}";
+    }
+
     /**
      * Gibt die übersetzbare Nachrichten zurück, falls es sich um den Nachrichten-Typ {@link MessageType#INFO} handelt.
      * @return die übersetzbare Informations-Nachricht, oder null.

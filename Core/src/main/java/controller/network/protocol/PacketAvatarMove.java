@@ -85,6 +85,12 @@ public class PacketAvatarMove implements Packet<PacketListener> {
         this.posY = input.readInt(true);
     }
 
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{action=" + this.action + ", userId=" + this.userId
+                + ", posX=" + this.posX + ", posY=" + this.posY + "}";
+    }
+
     /**
      * Gibt die Aktion, die auf den Avatar des Benutzers ausgeführt werden soll, zurück.
      * @return Die Avatar-Aktion.

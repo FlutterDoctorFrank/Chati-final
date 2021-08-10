@@ -58,6 +58,11 @@ public class PacketOutMenuAction implements Packet<PacketListenerOut> {
         this.open = input.readBoolean();
     }
 
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{contextId=" + this.contextId + ", menu=" + this.menu + ", open=" + this.open + "}";
+    }
+
     /**
      * Gibt die Kontext-ID des zum Menü gehörenden Objekts zurück.
      * @return die Kontext-ID des Objekts.

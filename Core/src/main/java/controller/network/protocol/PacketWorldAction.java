@@ -128,6 +128,13 @@ public class PacketWorldAction implements Packet<PacketListener> {
         this.success = input.readBoolean();
     }
 
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{contextId=" + this.contextId + ", action=" + this.action +
+                ", message='" + this.message + "', success=" + this.success + ", map=" + this.map +
+                ", name='" + this.name + "'}";
+    }
+
     /**
      * Gibt die Aktion, die auf der Welt ausgeführt werden soll, zurück.
      * @return die Aktion, die ausgeführt werden soll.

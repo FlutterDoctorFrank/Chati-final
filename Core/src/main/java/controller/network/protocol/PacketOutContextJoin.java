@@ -60,6 +60,12 @@ public class PacketOutContextJoin implements Packet<PacketListenerOut> {
         this.map = PacketUtils.readNullableEnum(input, SpatialMap.class);
     }
 
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{contextId=" + this.contextId + ", name='" + this.name +
+                "', map=" + this.map + "}";
+    }
+
     /**
      * Gibt die Kontext-ID der Welt bzw des Raumes zurück.
      * @return die ID des Kontexts.

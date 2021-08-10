@@ -53,6 +53,11 @@ public class PacketInNotificationReply implements Packet<PacketListenerIn> {
         this.action = PacketUtils.readEnum(input, Action.class);
     }
 
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{notificationId=" + this.notificationId + ", action=" + this.action + "}";
+    }
+
     /**
      * Gibt die ID der Benachrichtigung zurück.
      * @return die ID der Benachrichtigung.

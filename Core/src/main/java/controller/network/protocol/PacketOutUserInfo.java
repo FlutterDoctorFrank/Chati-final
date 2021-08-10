@@ -106,6 +106,12 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         }
     }
 
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{contextId=" + this.contextId + ", action=" + this.action
+                + ", info=" + this.info + "}";
+    }
+
     /**
      * Gibt die Kontext-ID der Welt oder null, wenn es sich um den global Kontext handelt, zurück.
      * @return die Kontext-ID oder null.
@@ -224,6 +230,12 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
 
         public void setTeleportTo(final boolean canTeleportTo) {
             this.teleportTo = canTeleportTo;
+        }
+
+        @Override
+        public @NotNull String toString() {
+            return "{userId=" + this.userId + ", name='" + this.name + "', avatar=" + this.avatar + ", status="
+                    + this.status + ", teleportTo=" + this.teleportTo + ", flags=" + this.flags + "}";
         }
 
         @Override
