@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.1" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="349">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="349">
  <properties>
   <property name="spawnPosX" type="int" value="100"/>
   <property name="spawnPosY" type="int" value="20"/>
@@ -8,7 +8,6 @@
  <tileset firstgid="481" source="0_Everything.tsx"/>
  <tileset firstgid="8313" source="pipo-map001.tsx"/>
  <tileset firstgid="8449" source="0_Everything_2.tsx"/>
- <tileset firstgid="10497" source="../../test-classes/maps/0_Everything.tsx"/>
  <layer id="1" name="Tile Layer 1" width="64" height="64">
   <data encoding="csv">
 637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,
@@ -480,292 +479,292 @@
    </properties>
   </object>
   <object id="297" name="Bank_23" x="1198" y="736.667" width="31.3333" height="31.3333">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="300" name="Bank_22" x="1361.67" y="703.333" width="31.0833" height="31.3333">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="301" name="Bank_21" x="1361.67" y="736" width="31.0833" height="31.3333">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="302" name="Bank_20" x="1314.33" y="641.333" width="31.3333" height="31.3333">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="303" name="Bank_19" x="1281.33" y="641.333" width="31.3333" height="31.3333">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="318" name="Bank_18" x="1773.37" y="703.083" width="31.0833" height="31.3333">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="319" name="Bank_17" x="1823.12" y="639.75" width="31.3333" height="31.3333">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="320" name="Bank_16" x="1773.12" y="735.75" width="31.3333" height="31.3333">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="321" name="Bank_15" x="1936.79" y="702.416" width="31.0833" height="31.3333">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="322" name="Bank_14" x="1936.79" y="735.083" width="31.0833" height="31.3333">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="323" name="Bank_13" x="1889.45" y="640.416" width="31.3333" height="31.3333">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="324" name="Bank_12" x="1856.45" y="640.416" width="31.3333" height="31.3333">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="325" name="Bank_11" x="720.5" y="1601.17" width="31" height="29.6667">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="326" name="Bank_10" x="1874.75" y="1378.42" width="31" height="30">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="327" name="Bank_9" x="1874.25" y="1409.92" width="31" height="29.1667">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="328" name="Bank_8" x="1697.75" y="1695.92" width="31" height="30">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="329" name="Bank_7" x="1730.11" y="1696.37" width="28.8182" height="29.6667">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="330" name="Bank_6" x="1313.91" y="1697.94" width="31" height="30">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="331" name="Bank_5" x="1346.27" y="1698.39" width="28.8182" height="29.6667">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="332" name="Bank_4" x="257.911" y="1857.94" width="31" height="30">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="333" name="Bank_3" x="290.271" y="1858.39" width="28.8182" height="29.6667">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="334" name="Bank_2" x="577.411" y="1857.44" width="31" height="30">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="335" name="Bank_1" x="609.771" y="1857.89" width="28.8182" height="29.6667">
-     <properties>
-      <property name="communicationRegion" value="radiusCommunication"/>
-      <property name="contextType" value="seat"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="seat"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="336" name="Bar" x="350" y="253" width="324.5" height="69.5">
-     <properties>
-      <property name="communicationRegion" value="areaCommunication"/>
-      <property name="contextType" value="area"/>
-      <property name="text" type="bool" value="true"/>
-      <property name="voice" type="bool" value="true"/>
-     </properties>
-    </object>
+   <properties>
+    <property name="communicationRegion" value="areaCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="337" name="BankArea_12" x="1195" y="701" width="37" height="69.5">
-       <properties>
-        <property name="communicationRegion" value="areaCommunication"/>
-        <property name="contextType" value="area"/>
-        <property name="text" type="bool" value="true"/>
-        <property name="voice" type="bool" value="true"/>
-       </properties>
-      </object>
+   <properties>
+    <property name="communicationRegion" value="areaCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="338" name="BankArea_11" x="1245.5" y="638.5" width="102.5" height="36">
-       <properties>
-        <property name="communicationRegion" value="areaCommunication"/>
-        <property name="contextType" value="area"/>
-        <property name="text" type="bool" value="true"/>
-        <property name="voice" type="bool" value="true"/>
-       </properties>
-      </object>
+   <properties>
+    <property name="communicationRegion" value="areaCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="339" name="BankArea_10" x="1360" y="701" width="35" height="68.5">
-       <properties>
-        <property name="communicationRegion" value="areaCommunication"/>
-        <property name="contextType" value="area"/>
-        <property name="text" type="bool" value="true"/>
-        <property name="voice" type="bool" value="true"/>
-       </properties>
-      </object>
+   <properties>
+    <property name="communicationRegion" value="areaCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="340" name="BankArea_9" x="1771" y="701" width="35" height="67.5">
-       <properties>
-        <property name="communicationRegion" value="areaCommunication"/>
-        <property name="contextType" value="area"/>
-        <property name="text" type="bool" value="true"/>
-        <property name="voice" type="bool" value="true"/>
-       </properties>
-      </object>
+   <properties>
+    <property name="communicationRegion" value="areaCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="341" name="BankArea_8" x="1820.5" y="637" width="102.5" height="37">
-       <properties>
-        <property name="communicationRegion" value="areaCommunication"/>
-        <property name="contextType" value="area"/>
-        <property name="text" type="bool" value="true"/>
-        <property name="voice" type="bool" value="true"/>
-       </properties>
-      </object>
+   <properties>
+    <property name="communicationRegion" value="areaCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="342" name="BankArea_7" x="1935" y="701" width="34" height="67">
-       <properties>
-        <property name="communicationRegion" value="areaCommunication"/>
-        <property name="contextType" value="area"/>
-        <property name="text" type="bool" value="true"/>
-        <property name="voice" type="bool" value="true"/>
-       </properties>
-      </object>
+   <properties>
+    <property name="communicationRegion" value="areaCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="343" name="BankArea_6" x="1873.25" y="1377" width="33" height="64">
-       <properties>
-        <property name="communicationRegion" value="areaCommunication"/>
-        <property name="contextType" value="area"/>
-        <property name="text" type="bool" value="true"/>
-        <property name="voice" type="bool" value="true"/>
-       </properties>
-      </object>
+   <properties>
+    <property name="communicationRegion" value="areaCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="344" name="BankArea_5" x="1696.25" y="1694.5" width="64.25" height="33.25">
-       <properties>
-        <property name="communicationRegion" value="areaCommunication"/>
-        <property name="contextType" value="area"/>
-        <property name="text" type="bool" value="true"/>
-        <property name="voice" type="bool" value="true"/>
-       </properties>
-      </object>
+   <properties>
+    <property name="communicationRegion" value="areaCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="345" name="BankArea_4" x="1312.5" y="1695.25" width="64.25" height="34">
-       <properties>
-        <property name="communicationRegion" value="areaCommunication"/>
-        <property name="contextType" value="area"/>
-        <property name="text" type="bool" value="true"/>
-        <property name="voice" type="bool" value="true"/>
-       </properties>
-      </object>
+   <properties>
+    <property name="communicationRegion" value="areaCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="346" name="BankArea_3" x="719.455" y="1568.91" width="33.0909" height="62.9091">
-       <properties>
-        <property name="communicationRegion" value="areaCommunication"/>
-        <property name="contextType" value="area"/>
-        <property name="text" type="bool" value="true"/>
-        <property name="voice" type="bool" value="true"/>
-       </properties>
-      </object>
+   <properties>
+    <property name="communicationRegion" value="areaCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="347" name="BankArea_2" x="576.364" y="1856.55" width="62.9091" height="31.8182">
-       <properties>
-        <property name="communicationRegion" value="areaCommunication"/>
-        <property name="contextType" value="area"/>
-        <property name="text" type="bool" value="true"/>
-        <property name="voice" type="bool" value="true"/>
-       </properties>
-      </object>
+   <properties>
+    <property name="communicationRegion" value="areaCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
   <object id="348" name="BankArea_1" x="256.727" y="1856.55" width="63.0909" height="32">
-       <properties>
-        <property name="communicationRegion" value="areaCommunication"/>
-        <property name="contextType" value="area"/>
-        <property name="text" type="bool" value="true"/>
-        <property name="voice" type="bool" value="true"/>
-       </properties>
-      </object>
+   <properties>
+    <property name="communicationRegion" value="areaCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>
