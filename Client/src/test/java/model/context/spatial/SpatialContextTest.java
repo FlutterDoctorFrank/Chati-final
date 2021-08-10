@@ -8,9 +8,6 @@ import model.context.ContextID;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import model.context.spatial.SpatialMap;
-
-import static org.junit.Assert.*;
 
 public class SpatialContextTest {
 
@@ -34,7 +31,7 @@ public class SpatialContextTest {
         Game game = new Game() {
             @Override
             public void create() {
-                world.buildContextTree(map);
+                world.build(map);
             }
         };
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();

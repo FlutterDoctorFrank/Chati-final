@@ -58,7 +58,7 @@ public class SpatialContext extends Context implements ISpatialContextView {
         this.map = null;
     }
 
-    public void buildContextTree(SpatialMap map) {
+    public void build(SpatialMap map) {
         // Raum wurde bereits initialisiert.
         if (this.map != null) {
             return;

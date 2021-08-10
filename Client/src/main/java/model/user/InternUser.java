@@ -1,5 +1,9 @@
 package model.user;
 
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import model.MessageBundle;
 import model.context.Context;
 import model.context.ContextID;
@@ -97,7 +101,15 @@ public class InternUser extends User implements IInternUserController, IInternUs
             currentWorld.addChild(currentRoom);
         }
         // Erzeuge die Kontexthierarchie des Raums anhand der Karte.
-        currentRoom.buildContextTree(map);
+        Game game = new Game() {
+            @Override
+            public void create() {
+                currentRoom.build(map);
+                Gdx.app.exit();
+            }
+        };
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        new Lwjgl3Application(game, config);
         isInCurrentRoom = true;
         UserManager.getInstance().getModelObserver().setRoomChanged();
     }
