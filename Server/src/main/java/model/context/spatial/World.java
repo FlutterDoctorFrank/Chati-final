@@ -3,10 +3,9 @@ package model.context.spatial;
 import controller.network.ClientSender;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
-import model.exception.ContextNotFoundException;
 import model.role.Permission;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -61,7 +60,12 @@ public class World extends Room implements IWorld {
     }
 
     @Override
-    public void addUser(User user) {
+    public void addUser(@NotNull final User user) {
+        // Überprüfung, ob sich der Benutzer bereits in der Welt befindet.
+        if (user.equals(this.containedUsers.get(user.getUserId()))) {
+            return;
+        }
+
         // Sende die entsprechenden Pakete an den Benutzer und an andere Benutzer.
         user.getClientSender().send(ClientSender.SendAction.WORLD_ACTION, this);
 
@@ -73,27 +77,34 @@ public class World extends Room implements IWorld {
         user.getWorldNotifications().values().forEach(notification -> {
             user.getClientSender().send(ClientSender.SendAction.NOTIFICATION, notification);
         });
-        Map<UUID, User> usersToSend = containedUsers;
+
+        final Map<UUID, User> usersToSend = this.getUsers();
+
         if (user.hasPermission(this, Permission.BAN_USER) || user.hasPermission(this, Permission.BAN_MODERATOR)) {
-            usersToSend.putAll(bannedUsers);
+            usersToSend.putAll(this.bannedUsers);
         }
+
+        usersToSend.remove(user.getUserId());
         usersToSend.values().forEach(containedUser -> {
-            if (!user.equals(containedUser)) {
-                containedUser.getClientSender().send(ClientSender.SendAction.USER_INFO, user);
-                user.getClientSender().send(ClientSender.SendAction.USER_INFO, containedUser);
-            }
+            containedUser.getClientSender().send(ClientSender.SendAction.USER_INFO, user);
+            user.getClientSender().send(ClientSender.SendAction.USER_INFO, containedUser);
         });
     }
 
     @Override
-    public void removeUser(User user) {
-        super.removeUser(user);
-        // Sende die entsprechenden Pakete an den Benutzer und an andere Benutzer.
-        getUsers().values().forEach(containedUser -> {
-            containedUser.getClientSender().send(ClientSender.SendAction.USER_INFO, user);
-        });
-        if (user.isOnline()) {
-            user.getClientSender().send(ClientSender.SendAction.WORLD_ACTION, this);
+    public void removeUser(@NotNull final User user) {
+        // Überprüfung, ob sich der zu entfernende Benutzer überhaupt in der Welt befindet.
+        if (this.containedUsers.containsKey(user.getUserId())) {
+            super.removeUser(user);
+
+            // Sende die entsprechenden Pakete an den Benutzer und an andere Benutzer.
+            this.containedUsers.values().forEach(containedUser -> {
+                containedUser.getClientSender().send(ClientSender.SendAction.USER_INFO, user);
+            });
+
+            if (user.isOnline()) {
+                user.getClientSender().send(ClientSender.SendAction.WORLD_ACTION, this);
+            }
         }
     }
 

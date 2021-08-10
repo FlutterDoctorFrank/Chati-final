@@ -307,7 +307,7 @@ public interface ClientSender {
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 if (object instanceof IWorld) {
                     final IWorld world = (IWorld) object;
-                    final PacketWorldAction.Action action = user.getWorld().equals(world)
+                    final PacketWorldAction.Action action = world.equals(user.getWorld())
                             ? PacketWorldAction.Action.JOIN : PacketWorldAction.Action.LEAVE;
 
                     return new PacketWorldAction(action, world.getContextId(), world.getContextName(), null, true);
