@@ -52,7 +52,6 @@ public class MenuScreen extends ScreenAdapter {
             return;
         }
         if (success) {
-            currentMenuTable.showMessage("Die Anmeldung war erfolgreich!");
             Gdx.app.postRunnable(() -> setTable(new StartTable()));
         } else {
             currentMenuTable.showMessage(messageKey);
@@ -65,7 +64,12 @@ public class MenuScreen extends ScreenAdapter {
         if (pendingResponse != Response.PASSWORD_CHANGE) {
             return;
         }
-        // Code
+        if (success) {
+            currentMenuTable.showMessage("Dein Passwort wurde geändert!");
+        } else {
+            currentMenuTable.showMessage(messageKey);
+        }
+        currentMenuTable.clearTextFields();
         setPendingResponse(Response.NONE);
     }
 
@@ -73,7 +77,13 @@ public class MenuScreen extends ScreenAdapter {
         if (pendingResponse != Response.DELETE_ACCOUNT) {
             return;
         }
-        // Code
+        if (success) {
+            Gdx.app.postRunnable(() -> setTable(new LoginTable()));
+            currentMenuTable.showMessage("Dein Konto wurde gelöscht.");
+        } else {
+            currentMenuTable.showMessage(messageKey);
+            currentMenuTable.clearTextFields();
+        }
         setPendingResponse(Response.NONE);
     }
 
@@ -81,7 +91,11 @@ public class MenuScreen extends ScreenAdapter {
         if (pendingResponse != Response.AVATAR_CHANGE) {
             return;
         }
-        // Code
+        if (success) {
+            currentMenuTable.showMessage("Dein Avatar wurde geändert!");
+        } else {
+            currentMenuTable.showMessage(messageKey);
+        }
         setPendingResponse(Response.NONE);
     }
 
@@ -89,7 +103,11 @@ public class MenuScreen extends ScreenAdapter {
         if (pendingResponse != Response.CREATE_WORLD) {
             return;
         }
-        // Code
+        if (success) {
+            currentMenuTable.showMessage("Die Welt wurde erfolgreich erstellt!");
+        } else {
+            currentMenuTable.showMessage(messageKey);
+        }
         setPendingResponse(Response.NONE);
     }
 
@@ -97,7 +115,11 @@ public class MenuScreen extends ScreenAdapter {
         if (pendingResponse != Response.DELETE_WORLD) {
             return;
         }
-        // Code
+        if (success) {
+            currentMenuTable.showMessage("Die Welt wurde erfolgreich gelöscht.");
+        } else {
+            currentMenuTable.showMessage(messageKey);
+        }
         setPendingResponse(Response.NONE);
     }
 
@@ -105,7 +127,11 @@ public class MenuScreen extends ScreenAdapter {
         if (pendingResponse != Response.JOIN_WORLD) {
             return;
         }
-        // Code
+        if (success) {
+            // Join world...
+        } else {
+            currentMenuTable.showMessage(messageKey);
+        }
         setPendingResponse(Response.NONE);
     }
 
