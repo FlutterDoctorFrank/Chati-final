@@ -133,6 +133,9 @@ public class MapUtils {
         int posY = (int) contextRectangle.getRectangle().getY();
         int width = (int) contextRectangle.getRectangle().getWidth();
         int height = (int) contextRectangle.getRectangle().getHeight();
+
+        System.out.println(posX);
+        System.out.println(posY);
         Expanse expanse = new Expanse(new Location(room, posX, posY), width, height);
         // Ermittle den übergeordneten Kontext. Da die Quadrate absteigend ihrer Grö0e sortiert eingefügt werden,
         // befindet sich der übergeordnete Kontext immer bereits in der Kontexthierarchie.

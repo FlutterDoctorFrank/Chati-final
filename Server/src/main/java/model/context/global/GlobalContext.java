@@ -50,6 +50,7 @@ public class GlobalContext extends Context implements IGlobalContext {
         }
         // Erzeuge die Welt und füge sie
         World createdWorld = new World(worldname, map);
+        worlds.put(createdWorld.getContextId(), createdWorld);
         addChild(createdWorld);
         // Sende neue Liste der Welten an alle Benutzer im Startbildschirm.
         sendWorldList();
