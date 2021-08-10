@@ -69,7 +69,7 @@ public class HeadUpDisplay extends Stage {
             }
         });
 
-        notificationListButton = new ImageButton(notificationIcon, notificationIconChecked);
+        notificationListButton = new ImageButton(notificationIcon);
         notificationListButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -91,7 +91,7 @@ public class HeadUpDisplay extends Stage {
             }
         });
 
-        settingsButton = new ImageButton(settingsIcon, settingsIconChecked);
+        settingsButton = new ImageButton(settingsIcon);
         settingsButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
