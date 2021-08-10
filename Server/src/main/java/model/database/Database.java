@@ -57,7 +57,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             PreparedStatement ps = con.prepareStatement("INSERT INTO WORLDS(WORLD_ID, WORLD_NAME, MAP_NAME) values(?,?,?)");
             ps.setString(1, world.getContextName());
             ps.setString(2, world.getContextId().getId());
-            ps.setString(3, world.getMap().getName());
+            ps.setString(3, world.getMap().name());
             ps.executeUpdate();
             con.close();
         } catch (Exception e) {
@@ -73,7 +73,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             String worldId = world.getContextId().getId();
-            PreparedStatement ps = con.prepareStatement("DELETE FROM WORLDS WHERE ID = " + "'" + worldId + "'");
+            PreparedStatement ps = con.prepareStatement("DELETE FROM WORLDS WHERE WORLD_ID = " + "'" + worldId + "'");
             ps.executeUpdate();
             con.close();
         } catch (Exception e) {
