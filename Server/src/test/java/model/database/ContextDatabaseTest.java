@@ -1,5 +1,9 @@
 package model.database;
 
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backend.headless.mock.graphics.MockGL20;
+import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
 import model.context.spatial.SpatialMap;
@@ -7,8 +11,10 @@ import model.context.spatial.World;
 import model.role.Role;
 import model.user.User;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.*;
@@ -20,6 +26,21 @@ public class ContextDatabaseTest {
     private IUserDatabase user_database;
     private IUserAccountManagerDatabase account_database;
     private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
+
+    @BeforeClass
+    public static void openGdx() {
+        new HeadlessApplication(new ApplicationAdapter() {
+            @Override
+            public void create() {
+                Gdx.gl = new MockGL20();
+            }
+        });
+    }
+
+    @AfterClass
+    public static void closeGdx() {
+        Gdx.app.exit();
+    }
 
     @Before
     public void setUp(){

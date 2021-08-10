@@ -1,9 +1,6 @@
 package model.context.spatial;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backend.headless.mock.graphics.MockGL20;
-import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import controller.network.ClientSender;
@@ -43,14 +40,7 @@ public class Room extends Area implements IRoom {
         this.isPrivate = false;
         this.password = null;
 
-        new HeadlessApplication(new ApplicationAdapter() {
-            @Override
-            public void create() {
-                Gdx.gl = new MockGL20();
-                build();
-                Gdx.app.exit();
-            }
-        });
+        Gdx.app.postRunnable(this::build);
     }
 
     /**
@@ -112,17 +102,23 @@ public class Room extends Area implements IRoom {
     public void addUser(User user) {
         // Wenn ein neuer Raum betreten wird, sende die entsprechenden Pakete.
         user.getClientSender().send(ClientSender.SendAction.CONTEXT_JOIN, this);
-        containedUsers.values().forEach(containedUser -> {
-            user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, containedUser);
-        });
-        // Wenn der betrene Raum privat ist, informiere alle anderen Benutzer in dem Raum darüber.
+
+        // Wenn der betretene Raum privat ist, informiere alle anderen Benutzer in dem Raum darüber.
         if (isPrivate) {
             TextMessage infoMessage = new TextMessage(new MessageBundle("key"));
             containedUsers.values().forEach(containedUser -> {
                 containedUser.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
             });
         }
+
         super.addUser(user);
+
+        // Positioniere den Avatar an der Anfangsposition der Welt.
+        user.teleport(this.spawnLocation);
+
+        containedUsers.values().forEach(containedUser -> {
+            user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, containedUser);
+        });
     }
 
     @Override

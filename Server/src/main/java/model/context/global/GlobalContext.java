@@ -4,16 +4,21 @@ import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.context.Context;
 import model.context.ContextID;
-import model.context.spatial.*;
-import model.exception.*;
+import model.context.spatial.IWorld;
+import model.context.spatial.SpatialMap;
+import model.context.spatial.World;
+import model.exception.ContextNotFoundException;
+import model.exception.IllegalWorldActionException;
+import model.exception.NoPermissionException;
+import model.exception.UserNotFoundException;
 import model.role.Permission;
 import model.user.User;
 import model.user.account.UserAccountManager;
-
-import java.util.*;
-import java.util.function.Function;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Eine Klasse, welche den globalen Kontext der Anwendung repräsentiert. Kann nur einmal instanziiert werden.
@@ -36,7 +41,7 @@ public class GlobalContext extends Context implements IGlobalContext {
         this.worlds = new HashMap<>();
     }
 
-    private void init() {
+    public void initialize() {
         worlds.putAll(database.getWorlds());
     }
 
@@ -124,7 +129,6 @@ public class GlobalContext extends Context implements IGlobalContext {
     public static GlobalContext getInstance() {
         if (globalContext == null) {
             globalContext = new GlobalContext();
-            globalContext.init();
         }
         return globalContext;
     }

@@ -1,5 +1,9 @@
 package controller;
 
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backend.headless.mock.graphics.MockGL20;
+import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import controller.network.ServerNetworkManager;
 import controller.network.UserConnection;
 import joptsimple.OptionException;
@@ -66,6 +70,14 @@ public class Launcher implements Runnable {
         this.network.start();
 
         new Thread(this, "Console-Handler").start();
+        new HeadlessApplication(new ApplicationAdapter() {
+            @Override
+            public void create() {
+                Gdx.gl = new MockGL20();
+            }
+        });
+
+        this.global.initialize();
     }
 
     public static void main(@NotNull final String[] args) {
@@ -202,6 +214,7 @@ public class Launcher implements Runnable {
 
                 System.out.println("Stopping Server...");
                 launcher.network.stop();
+                Gdx.app.exit();
             }
         };
 

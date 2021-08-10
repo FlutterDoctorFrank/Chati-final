@@ -151,8 +151,6 @@ public class User implements IUser {
         // Betrete die Welt.
         currentWorld = world;
         currentWorld.addUser(this);
-        // Positioniere den Avatar an der Anfangsposition der Welt.
-        teleport(currentWorld.getSpawnLocation());
     }
 
     @Override
