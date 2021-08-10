@@ -58,7 +58,7 @@ public class PacketVoiceMessage implements Packet<PacketListener> {
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeNullableUniqueId(output, this.senderId);
-        kryo.writeObject(output, this.timestamp);
+        kryo.writeObjectOrNull(output, this.timestamp, LocalDateTime.class);
         output.writeVarInt(this.voiceData.length, true);
         output.writeBytes(this.voiceData);
     }
@@ -66,7 +66,7 @@ public class PacketVoiceMessage implements Packet<PacketListener> {
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.senderId = PacketUtils.readNullableUniqueId(input);
-        this.timestamp = kryo.readObject(input, LocalDateTime.class);
+        this.timestamp = kryo.readObjectOrNull(input, LocalDateTime.class);
         this.voiceData = input.readBytes(input.readVarInt(true));
     }
 

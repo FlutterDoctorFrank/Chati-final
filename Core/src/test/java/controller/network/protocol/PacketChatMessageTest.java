@@ -12,6 +12,14 @@ public class PacketChatMessageTest extends PacketTest<PacketChatMessage> {
     }
 
     @Test
+    public void clientSerializationTest() {
+        this.before = new PacketChatMessage(randomString());
+
+        this.serialize();
+        this.equals();
+    }
+
+    @Test
     public void infoSerializationTest() {
         this.before = new PacketChatMessage(randomBundle(), LocalDateTime.now());
 

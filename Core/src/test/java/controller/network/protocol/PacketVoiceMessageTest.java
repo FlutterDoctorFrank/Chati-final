@@ -11,14 +11,16 @@ public class PacketVoiceMessageTest extends PacketTest<PacketVoiceMessage> {
     }
 
     @Test
-    public void serializationTest() {
-        final byte[] bytes = new byte[randomInt(64)];
+    public void clientSerializationTest() {
+        this.before = new PacketVoiceMessage(randomBytes());
 
-        for (int index = 0; index < bytes.length; index++) {
-            bytes[index] = (byte) randomInt();
-        }
+        this.serialize();
+        this.equals();
+    }
 
-        this.before = new PacketVoiceMessage(randomUniqueId(), LocalDateTime.now(), bytes);
+    @Test
+    public void serverSerializationTest() {
+        this.before = new PacketVoiceMessage(randomUniqueId(), LocalDateTime.now(), randomBytes());
 
         this.serialize();
         this.equals();

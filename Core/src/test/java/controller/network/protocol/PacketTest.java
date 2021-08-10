@@ -108,6 +108,17 @@ public abstract class PacketTest<T extends Packet<?>> {
         return RANDOM.nextBoolean();
     }
 
+    public static byte[] randomBytes() {
+        final byte[] bytes = new byte[randomInt(64)];
+
+        for (int index = 0; index < bytes.length; index++) {
+            bytes[index] = (byte) randomInt();
+        }
+
+        return bytes;
+    }
+
+
     public static int randomInt(final int bound) {
         return RANDOM.nextInt(bound);
     }

@@ -88,7 +88,7 @@ public class PacketChatMessage implements Packet<PacketListener> {
         PacketUtils.writeNullableBundle(output, this.bundle);
         PacketUtils.writeNullableUniqueId(output, this.senderId);
         output.writeString(this.message);
-        kryo.writeObject(output, this.timestamp);
+        kryo.writeObjectOrNull(output, this.timestamp, LocalDateTime.class);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class PacketChatMessage implements Packet<PacketListener> {
         this.bundle = PacketUtils.readNullableBundle(input);
         this.senderId = PacketUtils.readNullableUniqueId(input);
         this.message = input.readString();
-        this.timestamp = kryo.readObject(input, LocalDateTime.class);
+        this.timestamp = kryo.readObjectOrNull(input, LocalDateTime.class);
     }
 
     /**
