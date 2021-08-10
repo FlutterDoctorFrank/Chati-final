@@ -2,10 +2,10 @@ package view2.component.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import model.context.ContextID;
 
@@ -14,6 +14,7 @@ import java.util.*;
 public class MenuScreen extends ScreenAdapter {
 
     private final Stage menuTableStage;
+    private MenuTable currentMenuTable;
 
     private final Set<ContextEntry> worlds;
 
@@ -28,6 +29,7 @@ public class MenuScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         menuTableStage.act(delta);
         menuTableStage.draw();
     }
@@ -36,7 +38,12 @@ public class MenuScreen extends ScreenAdapter {
         if (pendingResponse != Response.REGISTRATION) {
             return;
         }
-        // Code
+        if (success) {
+            currentMenuTable.showMessage("Die Registrierung war erfolgreich!");
+        } else {
+            currentMenuTable.showMessage(messageKey);
+        }
+        currentMenuTable.clearTextFields();
         setPendingResponse(Response.NONE);
     }
 
@@ -44,7 +51,13 @@ public class MenuScreen extends ScreenAdapter {
         if (pendingResponse != Response.LOGIN) {
             return;
         }
-        // Code
+        if (success) {
+            currentMenuTable.showMessage("Die Anmeldung war erfolgreich!");
+            Gdx.app.postRunnable(() -> setTable(new StartTable()));
+        } else {
+            currentMenuTable.showMessage(messageKey);
+            currentMenuTable.clearTextFields();
+        }
         setPendingResponse(Response.NONE);
     }
 
@@ -100,7 +113,8 @@ public class MenuScreen extends ScreenAdapter {
         worlds.forEach((key, value) -> this.worlds.add(new ContextEntry(key, value)));
     }
 
-    public void setTable(Table table) {
+    public void setTable(MenuTable table) {
+        currentMenuTable = table;
         menuTableStage.getActors().forEach(Actor::remove);
         menuTableStage.addActor(table);
     }

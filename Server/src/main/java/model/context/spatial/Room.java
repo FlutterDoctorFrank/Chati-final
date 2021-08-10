@@ -44,7 +44,7 @@ public class Room extends Area implements IRoom {
         this.map = map;
         this.isPrivate = false;
         this.password = null;
-        // create();
+        create();
     }
 
     /**

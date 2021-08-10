@@ -1,15 +1,13 @@
 package view2;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import controller.network.ServerSender;
 import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.Menu;
-import model.user.UserManager;
+import model.user.IUserManagerView;
+import org.jetbrains.annotations.Nullable;
 import view2.component.game.WorldScreen;
 import view2.component.menu.LoginTable;
 import view2.component.menu.MenuScreen;
@@ -18,18 +16,15 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
-public class Chati extends Game implements ViewControllerInterface, IModelObserver {
-
-    public static final float PPM = 10; //pixels per meter
+public class Chati extends Game implements view.Screens.ViewControllerInterface, view.Screens.IModelObserver {
 
     private static Chati CHATI;
 
-    private final SpriteBatch spriteBatch;
-
-    private final ServerSender serverSender;
-    private final UserManager userManager;
-    private final MenuScreen menuScreen;
-    private final WorldScreen worldScreen;
+    private final IUserManagerView userManager;
+    private ServerSender serverSender;
+    private MenuScreen menuScreen;
+    private WorldScreen worldScreen;
+    private SpriteBatch spriteBatch;
 
     private boolean userInfoChanged;
     private boolean userNotificationChanged;
@@ -38,21 +33,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private boolean worldChanged;
     private boolean musicChanged;
 
-    public Chati(ServerSender serverSender, UserManager userManager) {
+    public Chati(IUserManagerView userManager) {
         CHATI = this;
-        this.spriteBatch = new SpriteBatch();
-
-        this.serverSender = serverSender;
         this.userManager = userManager;
-        this.menuScreen = new MenuScreen();
-        this.worldScreen = new WorldScreen();
-
-        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setFullscreenMode(Gdx.graphics.getDisplayMode());
-        config.setIdleFPS(60);
-        config.useVsync(true);
-        config.setTitle("Chati");
-        new Lwjgl3Application(this, config);
     }
 
     public static Chati getInstance() {
@@ -61,6 +44,10 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void create() {
+        this.menuScreen = new MenuScreen();
+        this.worldScreen = new WorldScreen();
+        this.spriteBatch = new SpriteBatch();
+
         menuScreen.setTable(new LoginTable());
         setScreen(menuScreen);
     }
@@ -73,7 +60,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return serverSender;
     }
 
-    public UserManager getUserManager() {
+    public IUserManagerView getUserManager() {
         return userManager;
     }
 
@@ -116,6 +103,11 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
+    public void setSender(@Nullable ServerSender sender) {
+        this.serverSender = sender;
+    }
+
+    @Override
     public void updateWorlds(Map<ContextID, String> worlds) {
         if (this.screen.equals(menuScreen)) {
             menuScreen.updateWorlds(worlds);
@@ -129,6 +121,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void registrationResponse(boolean success, String messageKey) {
+        System.out.println("Da is was.");
         if (this.screen.equals(menuScreen)) {
             menuScreen.registrationResponse(success, messageKey);
         }
