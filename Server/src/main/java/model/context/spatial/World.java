@@ -78,7 +78,7 @@ public class World extends Room implements IWorld {
             user.getClientSender().send(ClientSender.SendAction.NOTIFICATION, notification);
         });
 
-        final Map<UUID, User> usersToSend = this.getUsers();
+        final Map<UUID, User> usersToSend = new HashMap<>(this.containedUsers);
 
         if (user.hasPermission(this, Permission.BAN_USER) || user.hasPermission(this, Permission.BAN_MODERATOR)) {
             usersToSend.putAll(this.bannedUsers);

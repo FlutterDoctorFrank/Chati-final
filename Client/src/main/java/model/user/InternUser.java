@@ -1,9 +1,6 @@
 package model.user;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import model.MessageBundle;
 import model.context.Context;
 import model.context.ContextID;
@@ -14,7 +11,6 @@ import model.exception.ContextNotFoundException;
 import model.exception.NotificationNotFoundException;
 import model.notification.INotificationView;
 import model.notification.Notification;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -100,16 +96,11 @@ public class InternUser extends User implements IInternUserController, IInternUs
             this.currentRoom = new SpatialContext(roomId, roomName, currentWorld);
             currentWorld.addChild(currentRoom);
         }
-        // Erzeuge die Kontexthierarchie des Raums anhand der Karte.
-        Game game = new Game() {
-            @Override
-            public void create() {
-                currentRoom.build(map);
-                Gdx.app.exit();
-            }
-        };
-        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        new Lwjgl3Application(game, config);
+
+        Gdx.app.postRunnable(() -> {
+            currentRoom.build(map);
+        });
+
         isInCurrentRoom = true;
         UserManager.getInstance().getModelObserver().setRoomChanged();
     }
