@@ -92,7 +92,9 @@ public class World extends Room implements IWorld {
         getUsers().values().forEach(containedUser -> {
             containedUser.getClientSender().send(ClientSender.SendAction.USER_INFO, user);
         });
-        user.getClientSender().send(ClientSender.SendAction.WORLD_ACTION, this);
+        if (user.isOnline()) {
+            user.getClientSender().send(ClientSender.SendAction.WORLD_ACTION, this);
+        }
     }
 
     @Override

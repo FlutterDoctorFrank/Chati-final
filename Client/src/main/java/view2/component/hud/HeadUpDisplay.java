@@ -28,8 +28,8 @@ public class HeadUpDisplay extends Stage {
     TextButton settingsButton2;
 
     public HeadUpDisplay() {
-        create2();
-        setLayout2();
+        create();
+        setLayout();
     }
 
     private void create2() {
@@ -82,7 +82,6 @@ public class HeadUpDisplay extends Stage {
 
     // Irgendwie krieg ichs nich hin, dass mir die ImageButtons angezeigt werden...
     protected void create() {
-        /*
         hudButtons = new ButtonGroup<>();
         hudButtons.setMinCheckCount(0);
         hudButtons.setMaxCheckCount(1);
@@ -132,15 +131,22 @@ public class HeadUpDisplay extends Stage {
         hudButtons.add(userListButton);
         hudButtons.add(notificationListButton);
         hudButtons.add(settingsButton);
-
-         */
     }
 
     protected void setLayout() {
-        /*
         int buttonSize = 60;
-        int horizontalSpacing = 5;
+        int horizontalSpacing = 0;
 
+        Table headUpDisplayTable = new Table();
+        headUpDisplayTable.setFillParent(true);
+        headUpDisplayTable.align(Align.topRight);
+        HorizontalGroup container = new HorizontalGroup();
+        container.space(horizontalSpacing);
+        container.setHeight(buttonSize);
+        container.setWidth(3 * (buttonSize + horizontalSpacing));
+        container.grow();
+
+        /*
         userListButton.setWidth(buttonSize);
         userListButton.setHeight(buttonSize);
         notificationListButton.setWidth(buttonSize);
@@ -148,6 +154,15 @@ public class HeadUpDisplay extends Stage {
         settingsButton.setWidth(buttonSize);
         settingsButton.setHeight(buttonSize);
 
+         */
+
+        container.addActor(userListButton);
+        container.addActor(notificationListButton);
+        container.addActor(settingsButton);
+        headUpDisplayTable.add(container).width(container.getWidth()).height(container.getHeight());
+        addActor(headUpDisplayTable);
+
+        /*
         HorizontalGroup buttonContainer = new HorizontalGroup();
         buttonContainer.setFillParent(true);
         buttonContainer.space(horizontalSpacing);
@@ -159,6 +174,7 @@ public class HeadUpDisplay extends Stage {
         buttonContainer.setPosition(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Align.bottomRight);
 
         addActor(buttonContainer);
+
 
          */
     }
