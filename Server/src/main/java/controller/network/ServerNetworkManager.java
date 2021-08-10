@@ -6,6 +6,8 @@ import model.context.global.IGlobalContext;
 import model.user.account.IUserAccountManager;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -56,6 +58,14 @@ public class ServerNetworkManager extends NetworkManager<Server> {
 
             connection.removeListener(handler);
         }
+    }
+
+    /**
+     * Gibt die mit dem Server verbundenen Verbindung zurück.
+     * @return die Menge der verbundenen Benutzer.
+     */
+    public @NotNull Collection<UserConnection> getConnections() {
+        return Collections.unmodifiableCollection(this.connections.values());
     }
 
     /**

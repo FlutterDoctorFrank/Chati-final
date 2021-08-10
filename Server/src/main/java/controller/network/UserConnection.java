@@ -38,7 +38,9 @@ import model.role.IContextRole;
 import model.user.AdministrativeAction;
 import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -477,6 +479,35 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             // Sollte niemals der Fall sein.
             throw new IllegalStateException("Failed to provide corresponding administrative-action", ex);
         }
+    }
+
+    @Override
+    public @NotNull String toString() {
+        if (this.user != null) {
+            return this.user.getUsername() + " (" + this.connection + ")";
+        }
+
+        return this.connection.toString();
+    }
+
+    @Override
+    public boolean equals(@Nullable final Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (object == null || this.getClass() != object.getClass()) {
+            return false;
+        }
+
+        final UserConnection other = (UserConnection) object;
+
+        return this.connection.getID() == other.connection.getID();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.connection.getID());
     }
 
     private void logInvalidPacket(@NotNull final Packet<?> packet, @NotNull final String message) {

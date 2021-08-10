@@ -1,6 +1,7 @@
 package controller;
 
 import controller.network.ServerNetworkManager;
+import controller.network.UserConnection;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -15,7 +16,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Launcher implements Runnable {
 
@@ -141,6 +144,27 @@ public class Launcher implements Runnable {
                 for (final Command command : Command.values()) {
                     System.out.println("- " + command.name().toLowerCase() + ": " + command.description);
                 }
+            }
+        },
+
+        LIST("List all connected connections/users.") {
+            @Override
+            public void execute(@NotNull final Launcher launcher, @NotNull final String[] arguments) {
+                if (arguments.length > 0) {
+                    System.out.println("Invalid usage: list");
+                    return;
+                }
+
+                final Collection<String> users = launcher.network.getConnections().stream()
+                        .map(UserConnection::toString).collect(Collectors.toList());
+
+                if (users.isEmpty()) {
+                    System.out.println("There are currently no connected connections/users.");
+                    return;
+                }
+
+                System.out.println("There are currently " + users.size() + " connected connections/users:");
+                System.out.println(String.join(", ", users));
             }
         },
 
