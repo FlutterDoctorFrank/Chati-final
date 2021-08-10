@@ -3,14 +3,10 @@ package view2.component.hud;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import model.role.Permission;
 import model.user.IUserManagerView;
 import model.user.IUserView;
-import model.user.UserManager;
 import view2.Chati;
 import view2.component.ChatiTable;
 
@@ -23,7 +19,6 @@ public class UserListTable extends HudMenuTable {
     private static final String NAME = "user-list-table";
 
     private ButtonGroup<TextButton> tabButtonGroup;
-    private HorizontalGroup tabHorizontalGroup;
     private TextButton activeUserTabButton;
     private TextButton friendTabButton;
     private TextButton bannedUserTabButton;
@@ -43,10 +38,12 @@ public class UserListTable extends HudMenuTable {
     public void draw(Batch batch, float parentAlpha) {
         if (Chati.getInstance().isUserInfoChanged()) {
             IUserManagerView userManager = Chati.getInstance().getUserManager();
-            this.activeUsers.putAll(userManager.getActiveUsers());
+            if (userManager.getInternUserView() != null && userManager.getInternUserView().isInCurrentWorld()) {
+                this.activeUsers.putAll(userManager.getActiveUsers());
+            }
             this.friends.putAll(userManager.getFriends());
-            if (userManager.getInternUserView().hasPermission(Permission.BAN_USER)
-                || userManager.getInternUserView().hasPermission(Permission.BAN_MODERATOR)) {
+            if (userManager.getInternUserView() != null && (userManager.getInternUserView().hasPermission(Permission.BAN_USER)
+                || userManager.getInternUserView().hasPermission(Permission.BAN_MODERATOR))) {
                 this.bannedUsers.putAll(userManager.getBannedUsers());
             }
         }
@@ -68,13 +65,41 @@ public class UserListTable extends HudMenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                activeUserTabButton.setChecked(true);
+            }
+        });
+
+        friendTabButton = new TextButton("Freunde", ChatiTable.SKIN);
+        friendTabButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            }
+        });
+
+        bannedUserTabButton = new TextButton("Gesperrte Benutzer", ChatiTable.SKIN);
+        friendTabButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
             }
         });
     }
 
     @Override
     protected void setLayout() {
+        int width = 400;
+        int height = 600;
+        int buttonSize = 75;
 
+        top().right().padTop(buttonSize).setFillParent(true);
+        Window container = new Window("Benutzerliste", ChatiTable.SKIN);
+        container.setMovable(false);
+        add(container).width(width).height(height);
     }
 }
