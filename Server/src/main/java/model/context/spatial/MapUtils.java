@@ -139,7 +139,7 @@ public class MapUtils {
         Expanse expanse = new Expanse(new Location(room, posX, posY), width, height);
         // Ermittle den übergeordneten Kontext. Da die Quadrate absteigend ihrer Grö0e sortiert eingefügt werden,
         // befindet sich der übergeordnete Kontext immer bereits in der Kontexthierarchie.
-        Area parent = room.getArea(posX, posY);
+        Area parent = room.getArea(posX + width / 2, posY + height / 2);
         String className = contextRectangle.getProperties().get("contextType", String.class);
         switch (className) {
             case "area": // Erzeuge einfachen Bereich.

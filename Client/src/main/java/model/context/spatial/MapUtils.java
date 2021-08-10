@@ -107,7 +107,7 @@ public class MapUtils {
         Expanse expanse = new Expanse(new Location(posX, posY), width, height);
         // Ermittle den übergeordneten Kontext. Da die Quadrate absteigend ihrer Grö0e sortiert eingefügt werden,
         // befindet sich der übergeordnete Kontext immer bereits in der Kontexthierarchie.
-        SpatialContext parent = room.getArea(posX, posY);
+        SpatialContext parent = room.getArea(posX + width / 2, posY + height / 2);
         SpatialContext child = new SpatialContext(contextName, parent, communicationRegion, communicationMedia, expanse);
         parent.addChild(child);
 
