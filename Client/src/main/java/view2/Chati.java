@@ -1,6 +1,7 @@
 package view2;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import controller.network.ServerSender;
 import model.communication.message.MessageType;
@@ -202,8 +203,10 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
 
     @Override
     public void logout() {
-        menuScreen.setTable(new LoginTable());
-        setScreen(menuScreen);
+        Gdx.app.postRunnable(() -> {
+            menuScreen.setTable(new LoginTable());
+            setScreen(menuScreen);
+        });
     }
 
     public boolean isUserInfoChanged() {

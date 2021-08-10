@@ -80,7 +80,6 @@ public class HeadUpDisplay extends Stage {
         addActor(headUpDisplayTable);
     }
 
-    // Irgendwie krieg ichs nich hin, dass mir die ImageButtons angezeigt werden...
     protected void create() {
         hudButtons = new ButtonGroup<>();
         hudButtons.setMinCheckCount(0);
