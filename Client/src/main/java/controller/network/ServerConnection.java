@@ -407,6 +407,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
             for (final ContextInfo info : packet.getInfos()) {
                 contexts.put(info.getContextId(), info.getName());
+                System.out.println("Context-ID: " + info.getContextId() + " , Name: " + info.getName());
             }
 
             if (packet.getContextId() != null) {
