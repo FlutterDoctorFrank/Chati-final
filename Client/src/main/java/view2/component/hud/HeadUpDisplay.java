@@ -1,24 +1,31 @@
 package view2.component.hud;
 
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class HeadUpDisplay extends Stage {
 
-    private static final String USER_ICON_CHECKED_PATH = "icons/userIcon.png";
-    private static final String USER_ICON_PATH = "icons/userIconChecked.png";
-    private static final String NOTIFICATION_ICON_CHECKED_PATH = "icons/notificationIcon.png";
-    private static final String NOTIFICATION_ICON_PATH = "icons/notificationIconChecked.png";
-    private static final String SETTINGS_ICON_CHECKED_PATH = "icons/settingsIcon.png";
-    private static final String SETTINGS_ICON_PATH = "icons/settingsIconChecked.png";
-    private static final float BUTTON_SCALE_FACTOR = 0.1f;
+    private static final String USER_ICON_PATH = "icons/userIcon.png";
+    private static final String USER_ICON_CHECKED_PATH = "icons/userIconChecked.png";
+    private static final String NOTIFICATION_ICON_PATH = "icons/notificationIcon.png";
+    private static final String NOTIFICATION_ICON_CHECKED_PATH = "icons/notificationIconChecked.png";
+    private static final String SETTINGS_ICON_PATH = "icons/settingsIcon.png";
+    private static final String SETTINGS_ICON_CHECKED_PATH = "icons/settingsIconChecked.png";
+    static final float BUTTON_SCALE_FACTOR = 0.1f;
+    static final float BUTTON_SIZE = 75;
+    static final float BUTTON_SPACING = 2.5f;
+    static final float HUD_MENU_TABLE_WIDTH = 400;
+    static final float HUD_MENU_TABLE_HEIGHT = 600;
+    static Button.ButtonStyle enabledStyle;
+    static Button.ButtonStyle disabledStyle;
 
     private Table currentListContainer;
 
@@ -27,6 +34,9 @@ public class HeadUpDisplay extends Stage {
     private ImageButton settingsButton;
 
     public HeadUpDisplay() {
+        enabledStyle = new TextButton("", new Skin(Gdx.files.internal("shadeui/uiskin.json"))).getStyle();
+        disabledStyle = new TextButton("", new Skin(Gdx.files.internal("shadeui/uiskin.json"))).getStyle();
+        disabledStyle.up = disabledStyle.down;
         create();
         setLayout();
     }
@@ -48,15 +58,14 @@ public class HeadUpDisplay extends Stage {
         hudButtons.setUncheckLast(true);
 
         userListButton = new ImageButton(userIcon);
-        userListButton.addListener(new InputListener() {
+        userListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+        userListButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                userListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                userListButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (userListButton.isChecked()) {
                     userListButton.getStyle().imageUp = userIconChecked;
                     notificationListButton.getStyle().imageUp = notificationIcon;
@@ -68,18 +77,29 @@ public class HeadUpDisplay extends Stage {
                     currentListContainer.clearChildren();
                 }
             }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    userListButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    userListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
+            }
         });
 
         notificationListButton = new ImageButton(notificationIcon);
-        notificationListButton.addListener(new InputListener() {
+        notificationListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+        notificationListButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                notificationListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                notificationListButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (notificationListButton.isChecked()) {
                     notificationListButton.getStyle().imageUp = notificationIconChecked;
                     userListButton.getStyle().imageUp = userIcon;
@@ -90,18 +110,29 @@ public class HeadUpDisplay extends Stage {
                     currentListContainer.clearChildren();
                 }
             }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    notificationListButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    notificationListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
+            }
         });
 
         settingsButton = new ImageButton(settingsIcon);
-        settingsButton.addListener(new InputListener() {
+        settingsButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+        settingsButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                settingsButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                settingsButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (settingsButton.isChecked()) {
                     settingsButton.getStyle().imageUp = settingsIconChecked;
                     userListButton.getStyle().imageUp = userIcon;
@@ -111,21 +142,17 @@ public class HeadUpDisplay extends Stage {
                     settingsButton.getStyle().imageUp = settingsIcon;
                     currentListContainer.clearChildren();
                 }
-
-                if (!settingsButton.isChecked()) {
-                    settingsButton.getStyle().imageUp = settingsIcon;
-                    currentListContainer.clearChildren();
-                } else {
-                    settingsButton.getStyle().imageUp = settingsIconChecked;
-                    if (hudButtons.getChecked() != null) {
-                        if (hudButtons.getChecked().equals(userListButton)) {
-                            userListButton.getStyle().imageUp = userIcon;
-                        } else {
-                            notificationListButton.getStyle().imageUp = notificationIcon;
-                        }
-                    }
-                    currentListContainer.clearChildren();
-                    // Schließe vorherige Menüs, öffne Settingsmenü.
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    settingsButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    settingsButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 }
             }
         });
@@ -136,15 +163,12 @@ public class HeadUpDisplay extends Stage {
     }
 
     protected void setLayout() {
-        int buttonSize = 75;
-        int horizontalSpacing = 2;
-
         Table container = new Table();
         container.setFillParent(true);
         container.top().right();
-        container.add(userListButton).width(buttonSize).height(buttonSize).space(horizontalSpacing);
-        container.add(notificationListButton).width(buttonSize).height(buttonSize).space(horizontalSpacing);
-        container.add(settingsButton).width(buttonSize).height(buttonSize);
+        container.add(userListButton).width(BUTTON_SIZE).height(BUTTON_SIZE).space(BUTTON_SPACING);
+        container.add(notificationListButton).width(BUTTON_SIZE).height(BUTTON_SIZE).space(BUTTON_SPACING);
+        container.add(settingsButton).width(BUTTON_SIZE).height(BUTTON_SIZE);
         addActor(container);
 
         addActor(currentListContainer);
