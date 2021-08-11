@@ -6,6 +6,8 @@ import com.badlogic.gdx.backend.headless.mock.graphics.MockGL20;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
+import model.context.spatial.Area;
+import model.context.spatial.AreaReservation;
 import model.context.spatial.SpatialMap;
 import model.context.spatial.World;
 import model.role.Role;
@@ -18,6 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 public class ContextDatabaseTest {
@@ -118,7 +121,7 @@ public class ContextDatabaseTest {
             st.close();
             con.close();
         } catch (SQLException e) {
-            System.out.print("Fehler in deleteData: " + e);
+            System.out.print(e);
         }
 
 
@@ -168,7 +171,7 @@ public class ContextDatabaseTest {
             st.close();
             con.close();
         } catch (SQLException e) {
-            System.out.print("Fehler in deleteData: " + e);
+            System.out.print(e);
         }
 
         //remove
@@ -186,7 +189,7 @@ public class ContextDatabaseTest {
             st.close();
             con.close();
         } catch (SQLException e) {
-            System.out.print("Fehler in deleteData: " + e);
+            System.out.print(e);
         }
 
 
@@ -229,21 +232,175 @@ public class ContextDatabaseTest {
 
     @Test
     public void addBannedUserTest() {
+        World test_world = new World("test_world", SpatialMap.MAP);
+        User test = this.account_database.createAccount("addBanned", "111");
+        this.context_database.addBannedUser(test, test_world);
+
+        try {
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            ResultSet res = st.executeQuery("SELECT * FROM BAN WHERE WORLD_ID = '" + test_world.getContextId().getId() + "'");
+            int count = 0;
+            if (res.next()) {
+                count ++;
+            }
+            Assert.assertEquals(1, count);
+
+            res.first();
+            String real_user_id = res.getString("USER_ID");
+            Assert.assertEquals(test.getUserId().toString(), real_user_id);
+
+            st.close();
+            con.close();
+        } catch (SQLException e) {
+            System.out.print(e);
+        }
+
+
 
     }
 
     @Test
     public void removeBannedUserTest() {
+        World test_world = new World("test_world", SpatialMap.MAP);
+        User test = this.account_database.createAccount("addBanned", "111");
+
+        //zuerst addBannedUser und testen
+        this.context_database.addBannedUser(test, test_world);
+
+        try {
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            ResultSet res = st.executeQuery("SELECT * FROM BAN WHERE WORLD_ID = '" + test_world.getContextId().getId() + "'");
+            int count = 0;
+            if (res.next()) {
+                count ++;
+            }
+            Assert.assertEquals(1, count);
+
+            res.first();
+            String real_user_id = res.getString("USER_ID");
+            Assert.assertEquals(test.getUserId().toString(), real_user_id);
+
+            st.close();
+            con.close();
+        } catch (SQLException e) {
+            System.out.print(e);
+        }
+
+        //removeBannedUser und dann testen
+        this.context_database.removeBannedUser(test, test_world);
+        try {
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            ResultSet res = st.executeQuery("SELECT * FROM BAN WHERE WORLD_ID = '" + test_world.getContextId().getId() + "'");
+            int count = 0;
+            if (res.next()) {
+                count ++;
+            }
+            Assert.assertEquals(0, count);
+
+            st.close();
+            con.close();
+        } catch (SQLException e) {
+            System.out.print(e);
+        }
+
 
     }
 
     @Test
     public void addAreaReservationTest() {
+        User test_reserver = this.account_database.createAccount("test_reserver", "111");
+        Area test_area = new World("test_world", SpatialMap.MAP);
+        LocalDateTime test_from = LocalDateTime.now();
+        LocalDateTime test_to = test_from.plusDays(1);
+        AreaReservation test_reservation = new AreaReservation(test_reserver, test_area, test_from, test_to);
+        this.context_database.addAreaReservation(test_reservation);
+
+        //Suche direkt in Datenbank
+        try {
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            ResultSet res = st.executeQuery("SELECT * FROM USER_RESERVATION WHERE USER_ID = '" +
+                    test_reserver.getUserId().toString() + "'");
+            int count = 0;
+            if (res.next()) {
+                count ++;
+            }
+            Assert.assertEquals(1, count);
+
+            String real_context_id = res.getString("CONTEXT_ID");
+            LocalDateTime real_from = res.getTimestamp("START_TIME").toLocalDateTime();
+            LocalDateTime real_to = res.getTimestamp("END_TIME").toLocalDateTime();
+            //System.out.println(test_area.getContextId().getId()) = Global.test_world;
+            Assert.assertEquals(test_area.getContextId().getId(), real_context_id);
+            Assert.assertEquals(test_from, real_from);
+            Assert.assertEquals(test_to, real_to);
+
+            st.close();
+            con.close();
+        } catch (SQLException e) {
+            System.out.print(e);
+        }
+
+
 
     }
 
     @Test
     public void removeAreaReservationTest() {
+        User test_reserver = this.account_database.createAccount("test_reserver", "111");
+        Area test_area = new World("test_world", SpatialMap.MAP);
+        LocalDateTime test_from = LocalDateTime.now();
+        LocalDateTime test_to = test_from.plusDays(1);
+        AreaReservation test_reservation = new AreaReservation(test_reserver, test_area, test_from, test_to);
+
+        //zuerst addAreaReservation und auch testen
+        this.context_database.addAreaReservation(test_reservation);
+        try {
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            ResultSet res = st.executeQuery("SELECT * FROM USER_RESERVATION WHERE USER_ID = '" +
+                    test_reserver.getUserId().toString() + "'");
+            int count = 0;
+            if (res.next()) {
+                count ++;
+            }
+            Assert.assertEquals(1, count);
+
+            String real_context_id = res.getString("CONTEXT_ID");
+            LocalDateTime real_from = res.getTimestamp("START_TIME").toLocalDateTime();
+            LocalDateTime real_to = res.getTimestamp("END_TIME").toLocalDateTime();
+            Assert.assertEquals(test_area.getContextId().getId(), real_context_id);
+            Assert.assertEquals(test_from, real_from);
+            Assert.assertEquals(test_to, real_to);
+
+            st.close();
+            con.close();
+        } catch (SQLException e) {
+            System.out.print(e);
+        }
+
+        //removeAreaReservation
+        this.context_database.removeAreaReservation(test_reservation);
+        //Suche dierekt in Datenbank
+        try {
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            ResultSet res = st.executeQuery("SELECT * FROM USER_RESERVATION WHERE USER_ID = '" +
+                    test_reserver.getUserId().toString() + "'");
+            int count = 0;
+            if (res.next()) {
+                count ++;
+            }
+            Assert.assertEquals(0, count);
+
+            st.close();
+            con.close();
+        } catch (SQLException e) {
+            System.out.print(e);
+        }
 
     }
 }

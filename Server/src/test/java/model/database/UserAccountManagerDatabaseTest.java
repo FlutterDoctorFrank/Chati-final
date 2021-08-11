@@ -6,6 +6,7 @@ import model.role.ContextRole;
 import model.role.Role;
 import model.user.User;
 import org.junit.*;
+import org.mockito.internal.verification.Times;
 
 import java.sql.*;
 import java.util.Map;
@@ -152,11 +153,13 @@ public class UserAccountManagerDatabaseTest {
         }
 
         //Wegen laufendes Program
-        //+1s
-        Timestamp sss = new Timestamp(current_time.getTime() + 1000);
-        boolean result = sss.after(real_time);
-        Assert.assertEquals(true, result);
-        //Assert.assertEquals(current_time, real_time);
+        //current_time - 1s < timestamp in Datenbank < current_time + 1s
+        Timestamp a_second_after_current_time = new Timestamp(current_time.getTime() + 1000);
+        Timestamp a_second_before_current_time = new Timestamp(current_time.getTime() - 1000);
+        boolean result1 = a_second_after_current_time.after(real_time);
+        boolean result2 = a_second_before_current_time.before(real_time);
+        Assert.assertEquals(true, result1);
+        Assert.assertEquals(true, result2);
     }
 
     @Test
@@ -194,9 +197,13 @@ public class UserAccountManagerDatabaseTest {
         Context test_context = GlobalContext.getInstance();
         this.user_database.addRole(test, test_context, Role.OWNER);
         real = this.database.getUser("getUserTest");
-        System.out.println(real.getGlobalRoles().getRoles());
-        System.out.println(real.getGlobalRoles().getContext().getContextId().getId());
         Assert.assertEquals(1, real.getGlobalRoles().getRoles().size());
+        //Fuege zwei Rolen hiinzu, die in gleichem Context sind
+        this.user_database.addRole(test, test_context, Role.ADMINISTRATOR);
+        real = this.database.getUser("getUserTest");
+        Assert.assertEquals(2, real.getGlobalRoles().getRoles().size());
+        Assert.assertTrue(real.getGlobalRoles().getRoles().contains(Role.ADMINISTRATOR));
+        Assert.assertTrue(real.getGlobalRoles().getRoles().contains(Role.OWNER));
 
         //Freundesliste
         User friend = this.database.createAccount("friend", "222");
@@ -225,6 +232,29 @@ public class UserAccountManagerDatabaseTest {
         Assert.assertEquals(1, real.getFriends().size());
         Assert.assertEquals("friend", real.getFriends().get(friend.getUserId()).getUsername());
 
+
+        //IgnoredUser
+        User ignore = this.database.createAccount("ignore", "222");
+        String ignore_id = ignore.getUserId().toString();
+        this.user_database.addIgnoredUser(test, ignore);
+        int ignore_count = 0;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            ResultSet res = st.executeQuery("SELECT * FROM IGNORE WHERE IGNORED_ID = '" + ignore_id + "'");
+            while (res.next()){
+                ignore_count ++;
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+        Assert.assertEquals(1, ignore_count);
+        //Pruefe ob man mit getUser IgnoredUsers richtig bekommen kann
+        real = this.database.getUser("getUserTest");
+        Assert.assertEquals(1, real.getIgnoredUsers().size());
+        Assert.assertEquals("ignore", real.getIgnoredUsers().get(ignore.getUserId()).getUsername());
 
 
     }
@@ -305,7 +335,7 @@ public class UserAccountManagerDatabaseTest {
             System.out.println(e);
         }
         Assert.assertEquals(1, ignore_count);
-        //Pruefe ob man mit getUser Freundesliste richtig bekommen kann
+        //Pruefe ob man mit getUser IgnoredUsers richtig bekommen kann
         real = this.database.getUser(testID);
         Assert.assertEquals(1, real.getIgnoredUsers().size());
         Assert.assertEquals("ignore", real.getIgnoredUsers().get(ignore.getUserId()).getUsername());
@@ -316,15 +346,46 @@ public class UserAccountManagerDatabaseTest {
     public void getUsers() {
         User test1 = this.database.createAccount("test1", "111");
         User test2 = this.database.createAccount("test2", "222");
+        User test3 = this.database.createAccount("ignore", "333");
 
+        //addRole
         Context test_context = GlobalContext.getInstance();
         this.user_database.addRole(test1, test_context, Role.OWNER);
+        this.user_database.addRole(test2, test_context, Role.OWNER);
+        this.user_database.addRole(test2, test_context, Role.ADMINISTRATOR);
+        //addFriend
+        this.user_database.addFriendship(test1, test2);
+        //addIgnore
+        this.user_database.addIgnoredUser(test1, test3);
 
         Map<UUID, User> real_users = this.database.getUsers();
+        Assert.assertEquals(3, real_users.size());
         User real1 = real_users.get(test1.getUserId());
-        System.out.println(real1.getUserId());
+        User real2 = real_users.get(test2.getUserId());
+        User real3 = real_users.get(test3.getUserId());
 
-        System.out.println(real1.getGlobalRoles().getRoles().size());
+
+        Assert.assertEquals(test1.getUserId(), real1.getUserId() );
+        Assert.assertEquals(test2.getUserId(), real2.getUserId() );
+        Assert.assertEquals(test1.getUsername(), real1.getUsername() );
+        Assert.assertEquals(test2.getUsername(), real2.getUsername() );
+        //Role
+        Assert.assertEquals(1, real1.getGlobalRoles().getRoles().size());
+        Assert.assertTrue(real1.getGlobalRoles().getRoles().contains(Role.OWNER));
+        Assert.assertTrue(real2.getGlobalRoles().getRoles().contains(Role.OWNER));
+        Assert.assertTrue(real2.getGlobalRoles().getRoles().contains(Role.ADMINISTRATOR));
+        Assert.assertEquals(2, real2.getGlobalRoles().getRoles().size());
+        //Friendship
+        Assert.assertEquals(1, real1.getFriends().size());
+        Assert.assertEquals("test2", real1.getFriends().get(test2.getUserId()).getUsername());
+        Assert.assertEquals(1, real2.getFriends().size());
+        Assert.assertEquals("test1", real2.getFriends().get(test1.getUserId()).getUsername());
+        //Ignore
+        Assert.assertEquals(1, real1.getIgnoredUsers().size());
+        Assert.assertEquals("ignore", real1.getIgnoredUsers().get(test3.getUserId()).getUsername());
+        //System.out.println(real1.getUserId());
+
+        //System.out.println(real1.getGlobalRoles().getRoles().size());
 
     }
 
