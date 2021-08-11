@@ -1,6 +1,7 @@
 package model.context.spatial;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import model.context.Context;
@@ -8,6 +9,9 @@ import model.context.ContextID;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import model.context.spatial.SpatialMap;
+
+import static org.junit.Assert.*;
 
 public class SpatialContextTest {
 
@@ -32,6 +36,7 @@ public class SpatialContextTest {
             @Override
             public void create() {
                 world.build(map);
+                Gdx.app.exit();
             }
         };
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();

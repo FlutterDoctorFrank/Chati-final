@@ -130,6 +130,14 @@ public class Context implements IContextView {
         return global;
     }
 
+    /**
+     * gibt alle Kinder des Kontexts zurück
+     * @Kinder des Kontexts
+     */
+    public Map<ContextID, SpatialContext> getChildren() {
+        return children;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;

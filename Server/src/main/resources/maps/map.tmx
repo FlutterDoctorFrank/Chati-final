@@ -369,7 +369,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="212" name="Rezeption" x="1344" y="224" width="384" height="64">
+  <object id="212" name="Reception" x="1344" y="224" width="384" height="64">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="roomReception"/>
