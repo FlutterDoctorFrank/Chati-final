@@ -9,31 +9,24 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import view2.Chati;
 
-import java.awt.*;
-
 public class DeleteAccountTable extends MenuTable {
 
-    private static final String NAME = "delete-account-table";
     private TextField passwordField;
     private TextField confirmPasswordField;
     private TextButton confirmButton;
     private TextButton cancelButton;
 
-    protected DeleteAccountTable() {
-        super(NAME);
-    }
-
     @Override
     protected void create() {
+        super.create();
         infoLabel.setText("Gib dein aktuelles Passwort ein!");
 
         Skin passwordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        passwordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(1.6f);
+        passwordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
         passwordField = new TextField("Passwort", passwordFieldSkin);
         passwordField.getStyle().fontColor = Color.GRAY;
         passwordField.setPasswordCharacter('*');
@@ -57,7 +50,7 @@ public class DeleteAccountTable extends MenuTable {
         });
 
         Skin confirmPasswordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        confirmPasswordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(1.6f);
+        confirmPasswordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
         confirmPasswordField = new TextField("Neues Passwort", confirmPasswordFieldSkin);
         confirmPasswordField.getStyle().fontColor = Color.GRAY;
         confirmPasswordField.setPasswordCharacter('*');
@@ -80,7 +73,7 @@ public class DeleteAccountTable extends MenuTable {
             }
         });
 
-        confirmButton = new TextButton("Bestätigen", SKIN);
+        confirmButton = new TextButton("Bestätigen", Chati.SKIN);
         confirmButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -102,7 +95,7 @@ public class DeleteAccountTable extends MenuTable {
             }
         });
 
-        cancelButton = new TextButton("Abbrechen", SKIN);
+        cancelButton = new TextButton("Abbrechen", Chati.SKIN);
         cancelButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -117,24 +110,19 @@ public class DeleteAccountTable extends MenuTable {
 
     @Override
     protected void setLayout() {
-        int width = 600;
-        int height = 60;
-        int verticalSpacing = 15;
-        int horizontalSpacing = 15;
-
         Table infoContainer = new Table();
         infoContainer.add(infoLabel);
-        add(infoContainer).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
+        add(infoContainer).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
 
-        add(passwordField).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
-        add(confirmPasswordField).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
+        add(passwordField).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
+        add(confirmPasswordField).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
 
         Table buttonContainer = new Table();
-        buttonContainer.setWidth(width);
-        buttonContainer.defaults().space(verticalSpacing);
-        add(buttonContainer).spaceBottom(horizontalSpacing).row();
-        buttonContainer.add(confirmButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
-        buttonContainer.add(cancelButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
+        buttonContainer.setWidth(ROW_WIDTH);
+        buttonContainer.defaults().space(VERTICAL_SPACING);
+        add(buttonContainer).spaceBottom(HORIZONTAL_SPACING).row();
+        buttonContainer.add(confirmButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
+        buttonContainer.add(cancelButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
     }
 
     @Override
@@ -145,19 +133,14 @@ public class DeleteAccountTable extends MenuTable {
 
     private class ConfirmDeletionTable extends MenuTable {
 
-        private static final String NAME = "confirm-deletion-table";
         private TextButton confirmButton;
         private TextButton cancelButton;
-
-        protected ConfirmDeletionTable() {
-            super(NAME);
-        }
 
         @Override
         protected void create() {
             infoLabel.setText("Bist du sicher, dass du dein Konto löschen möchtest?");
 
-            confirmButton = new TextButton("Bestätigen", SKIN);
+            confirmButton = new TextButton("Bestätigen", Chati.SKIN);
             confirmButton.addListener(new InputListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -171,7 +154,7 @@ public class DeleteAccountTable extends MenuTable {
                 }
             });
 
-            cancelButton = new TextButton("Zurück", SKIN);
+            cancelButton = new TextButton("Zurück", Chati.SKIN);
             cancelButton.addListener(new InputListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -186,26 +169,20 @@ public class DeleteAccountTable extends MenuTable {
 
         @Override
         protected void setLayout() {
-            int width = 600;
-            int height = 60;
-            int verticalSpacing = 15;
-            int horizontalSpacing = 15;
-
             Table infoContainer = new Table();
             infoContainer.add(infoLabel);
-            add(infoContainer).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
+            add(infoContainer).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
 
             Table buttonContainer = new Table();
-            buttonContainer.setWidth(width);
-            buttonContainer.defaults().space(verticalSpacing);
-            add(buttonContainer).spaceBottom(horizontalSpacing).row();
-            buttonContainer.add(confirmButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
-            buttonContainer.add(cancelButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
+            buttonContainer.setWidth(ROW_WIDTH);
+            buttonContainer.defaults().space(VERTICAL_SPACING);
+            add(buttonContainer).spaceBottom(HORIZONTAL_SPACING).row();
+            buttonContainer.add(confirmButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
+            buttonContainer.add(cancelButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
         }
 
         @Override
         public void clearTextFields() {
-
         }
     }
 }

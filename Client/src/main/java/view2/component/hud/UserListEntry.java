@@ -25,7 +25,6 @@ public class UserListEntry extends ChatiTable {
     private final IUserView user;
 
     protected UserListEntry(IUserView user) {
-        super(user.getUsername());
         this.user = user;
     }
 
@@ -33,9 +32,9 @@ public class UserListEntry extends ChatiTable {
     protected void create() {
         final UserListEntry entry = this;
 
-        usernameLabel = new Label(user.getUsername(), SKIN);
+        usernameLabel = new Label(user.getUsername(), Chati.SKIN);
 
-        friendButton = new TextButton("f", SKIN);
+        friendButton = new TextButton("f", Chati.SKIN);
         if (user.isFriend()) {
             friendButton.setChecked(true);
         }
@@ -74,7 +73,7 @@ public class UserListEntry extends ChatiTable {
         private TextButton cancelButton;
 
         protected MessageWindow(UserListEntry entry, String showMessage, AdministrativeAction action) {
-            super("Freund hinzufügen", ChatiTable.SKIN);
+            super("Freund hinzufügen", Chati.SKIN);
             this.entry = entry;
             this.action = action;
             create();
@@ -84,11 +83,11 @@ public class UserListEntry extends ChatiTable {
         protected void create() {
             final MessageWindow table = this;
 
-            infoLabel = new Label("Füge zur Anfrage eine Nachricht hinzu!", SKIN);
+            infoLabel = new Label("Füge zur Anfrage eine Nachricht hinzu!", Chati.SKIN);
 
-            userMessageField = new TextField("", SKIN);
+            userMessageField = new TextField("", Chati.SKIN);
 
-            confirmButton = new TextButton("Bestätigen", SKIN);
+            confirmButton = new TextButton("Bestätigen", Chati.SKIN);
             confirmButton.addListener(new InputListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -102,7 +101,7 @@ public class UserListEntry extends ChatiTable {
                 }
             });
 
-            cancelButton = new TextButton("Abbrechen", SKIN);
+            cancelButton = new TextButton("Abbrechen", Chati.SKIN);
             cancelButton.addListener(new InputListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

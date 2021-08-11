@@ -12,25 +12,19 @@ import view2.Chati;
 
 public class LoginTable extends MenuTable {
 
-    private static final String NAME = "login-table";
-
     private TextField usernameField;
     private TextField passwordField;
     private TextButton registerButton;
     private TextButton loginButton;
     private TextButton exitButton;
 
-    public LoginTable() {
-        super(NAME);
-    }
-
     @Override
     protected void create() {
-        // Füge Info-Label hinzu
+        super.create();
         infoLabel.setText("Bitte gib dein Benutzername und dein Passwort ein!");
         // Füge Benutzernamen-Feld hinzu.
         Skin usernameFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        usernameFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(1.6f);
+        usernameFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
         usernameField = new TextField("Benutzername", usernameFieldSkin);
         usernameField.getStyle().fontColor = Color.GRAY;
         usernameField.addListener(new FocusListener() {
@@ -52,7 +46,7 @@ public class LoginTable extends MenuTable {
         });
         // Füge Passwort-Feld hinzu.
         Skin passwordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        passwordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(1.6f);
+        passwordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
         passwordField = new TextField("Passwort", passwordFieldSkin);
         passwordField.getStyle().fontColor = Color.GRAY;
         passwordField.setPasswordCharacter('*');
@@ -75,7 +69,7 @@ public class LoginTable extends MenuTable {
             }
         });
         // Füge Login-Button hinzu.
-        loginButton = new TextButton("Anmelden", SKIN);
+        loginButton = new TextButton("Anmelden", Chati.SKIN);
         loginButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -95,7 +89,7 @@ public class LoginTable extends MenuTable {
             }
         });
         // Füge Register-Button hinzu.
-        registerButton = new TextButton("Registrieren", SKIN);
+        registerButton = new TextButton("Registrieren", Chati.SKIN);
         registerButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -115,7 +109,7 @@ public class LoginTable extends MenuTable {
             }
         });
         // Füge Exit-Button hinzu.
-        exitButton = new TextButton("Beenden", SKIN);
+        exitButton = new TextButton("Beenden", Chati.SKIN);
         exitButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -130,26 +124,21 @@ public class LoginTable extends MenuTable {
 
     @Override
     protected void setLayout() {
-        int width = 600;
-        int height = 60;
-        int verticalSpacing = 15;
-        int horizontalSpacing = 15;
-
         Table infoContainer = new Table();
         infoContainer.add(infoLabel);
-        add(infoContainer).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
+        add(infoContainer).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
 
-        add(usernameField).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
-        add(passwordField).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
+        add(usernameField).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
+        add(passwordField).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
 
         Table buttonContainer = new Table();
-        buttonContainer.setWidth(width);
-        buttonContainer.defaults().space(verticalSpacing);
-        add(buttonContainer).spaceBottom(horizontalSpacing).row();
+        buttonContainer.setWidth(ROW_WIDTH);
+        buttonContainer.defaults().space(VERTICAL_SPACING);
+        add(buttonContainer).spaceBottom(HORIZONTAL_SPACING).row();
 
-        buttonContainer.add(loginButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
-        buttonContainer.add(registerButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
-        add(exitButton).width(width).center().height(height);
+        buttonContainer.add(loginButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
+        buttonContainer.add(registerButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
+        add(exitButton).width(ROW_WIDTH).center().height(ROW_HEIGHT);
     }
 
     @Override

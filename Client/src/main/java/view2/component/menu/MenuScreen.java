@@ -4,10 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import model.context.ContextID;
 import view2.component.hud.HeadUpDisplay;
 
@@ -23,13 +20,12 @@ public class MenuScreen extends ScreenAdapter {
     private final Set<ContextEntry> worlds;
 
     public MenuScreen() {
-        FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera());
-        this.menuTableStage = new Stage(viewport);
-        setTable(new LoginTable());
+        this.menuTableStage = new Stage();
         this.headUpDisplay = new HeadUpDisplay();
         Gdx.input.setInputProcessor(new InputMultiplexer(menuTableStage, headUpDisplay));
         this.worlds = new HashSet<>();
         this.pendingResponse = Response.NONE;
+        setTable(new LoginTable());
     }
 
     @Override
@@ -160,9 +156,10 @@ public class MenuScreen extends ScreenAdapter {
     }
 
     public void setTable(MenuTable table) {
-        currentMenuTable = table;
-        menuTableStage.getActors().forEach(Actor::remove);
-        menuTableStage.addActor(table);
+        if (currentMenuTable != null) {
+            currentMenuTable.remove();
+        }
+        menuTableStage.addActor(currentMenuTable = table);
     }
 
     protected void setPendingResponse(Response pendingResponse) {

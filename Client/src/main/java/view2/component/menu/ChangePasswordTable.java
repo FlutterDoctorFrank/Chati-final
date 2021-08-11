@@ -9,30 +9,25 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import view2.Chati;
 
 public class ChangePasswordTable extends MenuTable {
 
-    private static final String NAME = "change-password-table";
     private TextField passwordField;
     private TextField newPasswordField;
     private TextField confirmNewPasswordField;
     private TextButton confirmButton;
     private TextButton cancelButton;
 
-    protected ChangePasswordTable() {
-        super(NAME);
-    }
-
     @Override
     protected void create() {
+        super.create();
         infoLabel.setText("Gib dein aktuelles und ein neues Passwort ein!");
 
         Skin passwordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        passwordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(1.6f);
+        passwordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
         passwordField = new TextField("Aktuelles Passwort", passwordFieldSkin);
         passwordField.getStyle().fontColor = Color.GRAY;
         passwordField.setPasswordCharacter('*');
@@ -56,7 +51,7 @@ public class ChangePasswordTable extends MenuTable {
         });
 
         Skin newPasswordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        newPasswordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(1.6f);
+        newPasswordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
         newPasswordField = new TextField("Neues Passwort", newPasswordFieldSkin);
         newPasswordField.getStyle().fontColor = Color.GRAY;
         newPasswordField.setPasswordCharacter('*');
@@ -80,7 +75,7 @@ public class ChangePasswordTable extends MenuTable {
         });
 
         Skin confirmNewPasswordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        confirmNewPasswordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(1.6f);
+        confirmNewPasswordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
         confirmNewPasswordField = new TextField("Neues Passwort bestätigen", confirmNewPasswordFieldSkin);
         confirmNewPasswordField.getStyle().fontColor = Color.GRAY;
         confirmNewPasswordField.setPasswordCharacter('*');
@@ -103,7 +98,7 @@ public class ChangePasswordTable extends MenuTable {
             }
         });
 
-        confirmButton = new TextButton("Bestätigen", SKIN);
+        confirmButton = new TextButton("Bestätigen", Chati.SKIN);
         confirmButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -133,7 +128,7 @@ public class ChangePasswordTable extends MenuTable {
             }
         });
 
-        cancelButton = new TextButton("Zurück", SKIN);
+        cancelButton = new TextButton("Zurück", Chati.SKIN);
         cancelButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -148,25 +143,20 @@ public class ChangePasswordTable extends MenuTable {
 
     @Override
     protected void setLayout() {
-        int width = 600;
-        int height = 60;
-        int verticalSpacing = 15;
-        int horizontalSpacing = 15;
-
         Table infoContainer = new Table();
         infoContainer.add(infoLabel);
-        add(infoContainer).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
+        add(infoContainer).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
 
-        add(passwordField).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
-        add(newPasswordField).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
-        add(confirmNewPasswordField).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
+        add(passwordField).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
+        add(newPasswordField).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
+        add(confirmNewPasswordField).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
 
         Table buttonContainer = new Table();
-        buttonContainer.setWidth(width);
-        buttonContainer.defaults().space(verticalSpacing);
-        add(buttonContainer).spaceBottom(horizontalSpacing).row();
-        buttonContainer.add(confirmButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
-        buttonContainer.add(cancelButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
+        buttonContainer.setWidth(ROW_WIDTH);
+        buttonContainer.defaults().space(VERTICAL_SPACING);
+        add(buttonContainer).spaceBottom(HORIZONTAL_SPACING).row();
+        buttonContainer.add(confirmButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
+        buttonContainer.add(cancelButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
     }
 
     @Override

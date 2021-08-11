@@ -2,26 +2,21 @@ package view2.component.menu;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import view2.Chati;
 
 public class AvatarSelectTable extends MenuTable {
 
-    private static final String NAME = "avatar-select-table";
     private TextButton confirmButton;
     private TextButton cancelButton;
 
-    protected AvatarSelectTable() {
-        super(NAME);
-    }
-
     @Override
     protected void create() {
+        super.create();
         infoLabel.setText("Bitte wähle einen Avatar!");
 
-        confirmButton = new TextButton("Bestätigen", SKIN);
+        confirmButton = new TextButton("Bestätigen", Chati.SKIN);
         confirmButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -33,7 +28,7 @@ public class AvatarSelectTable extends MenuTable {
             }
         });
 
-        cancelButton = new TextButton("Zurück", SKIN);
+        cancelButton = new TextButton("Zurück", Chati.SKIN);
         cancelButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -48,21 +43,16 @@ public class AvatarSelectTable extends MenuTable {
 
     @Override
     protected void setLayout() {
-        int width = 600;
-        int height = 60;
-        int verticalSpacing = 15;
-        int horizontalSpacing = 15;
-
         Table infoContainer = new Table();
         infoContainer.add(infoLabel);
-        add(infoContainer).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
+        add(infoContainer).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
 
         Table buttonContainer = new Table();
-        buttonContainer.setWidth(width);
-        buttonContainer.defaults().space(verticalSpacing);
-        add(buttonContainer).spaceBottom(horizontalSpacing);
-        buttonContainer.add(confirmButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
-        buttonContainer.add(cancelButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
+        buttonContainer.setWidth(ROW_WIDTH);
+        buttonContainer.defaults().space(VERTICAL_SPACING);
+        add(buttonContainer).spaceBottom(HORIZONTAL_SPACING);
+        buttonContainer.add(confirmButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
+        buttonContainer.add(cancelButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
     }
 
     @Override

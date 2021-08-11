@@ -3,6 +3,7 @@ package view2;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import controller.network.ServerSender;
 import model.communication.message.MessageType;
 import model.context.ContextID;
@@ -18,6 +19,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Chati extends Game implements view.Screens.ViewControllerInterface, view.Screens.IModelObserver {
+
+    public static Skin SKIN;
 
     private static Chati CHATI;
 
@@ -45,6 +48,8 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
 
     @Override
     public void create() {
+        SKIN = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
+
         this.menuScreen = new MenuScreen();
         this.worldScreen = new WorldScreen();
         this.spriteBatch = new SpriteBatch();

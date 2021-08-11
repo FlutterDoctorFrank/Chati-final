@@ -1,23 +1,16 @@
 package view2.component.menu;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
-import controller.network.ServerSender;
-import model.context.spatial.SpatialMap;
-import view2.Chati;
 
-import java.util.EnumSet;
+import controller.network.ServerSender;
+import view2.Chati;
 
 public class StartTable extends MenuTable {
 
-    private static final String NAME = "start-table";
     private Label worldSelectLabel;
     private SelectBox<ContextEntry> worldSelectBox;
     private TextButton joinWorldButton;
@@ -27,10 +20,6 @@ public class StartTable extends MenuTable {
     private TextButton profileSettingsButton;
     private TextButton logoutButton;
 
-    public StartTable() {
-        super(NAME);
-    }
-
     @Override
     public void draw(Batch batch, float parentAlpha) {
         updateWorldList();
@@ -39,16 +28,17 @@ public class StartTable extends MenuTable {
 
     @Override
     protected void create() {
+        super.create();
         infoLabel.setText("Bitte wähle eine Aktion aus!");
 
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = new BitmapFont();
-        style.font.getData().scale(0.5f);
+        style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
 
         worldSelectLabel = new Label("Welt: ", style);
-        worldSelectBox = new SelectBox<>(SKIN);
+        worldSelectBox = new SelectBox<>(Chati.SKIN);
 
-        joinWorldButton = new TextButton("Welt Beitreten", SKIN);
+        joinWorldButton = new TextButton("Welt Beitreten", Chati.SKIN);
         joinWorldButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -66,7 +56,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        createWorldButton = new TextButton("Welt erstellen", SKIN);
+        createWorldButton = new TextButton("Welt erstellen", Chati.SKIN);
         createWorldButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -78,7 +68,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        deleteWorldButton = new TextButton("Welt löschen", SKIN);
+        deleteWorldButton = new TextButton("Welt löschen", Chati.SKIN);
         deleteWorldButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -96,7 +86,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        changeAvatarButton = new TextButton("Avatar ändern", SKIN);
+        changeAvatarButton = new TextButton("Avatar ändern", Chati.SKIN);
         changeAvatarButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -108,7 +98,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        profileSettingsButton = new TextButton("Konto verwalten", SKIN);
+        profileSettingsButton = new TextButton("Konto verwalten", Chati.SKIN);
         profileSettingsButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -120,7 +110,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        logoutButton = new TextButton("Abmelden", SKIN);
+        logoutButton = new TextButton("Abmelden", Chati.SKIN);
         logoutButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -136,38 +126,33 @@ public class StartTable extends MenuTable {
 
     @Override
     protected void setLayout() {
-        int width = 600;
-        int height = 60;
-        int verticalSpacing = 15;
-        int horizontalSpacing = 15;
-
         Table infoContainer = new Table();
         infoContainer.add(infoLabel);
-        add(infoContainer).width(width).height(height).center().spaceBottom(horizontalSpacing).row();
+        add(infoContainer).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
 
         Table worldSelectContainer = new Table();
-        worldSelectContainer.setWidth(width);
-        worldSelectContainer.defaults().space(verticalSpacing);
-        add(worldSelectContainer).spaceBottom(horizontalSpacing).row();
-        worldSelectContainer.add(worldSelectLabel).width(width / 8f - (verticalSpacing / 2f)).height(height);
-        worldSelectContainer.add(worldSelectBox).width(7 * width / 8f - (verticalSpacing / 2f)).height(height);
+        worldSelectContainer.setWidth(ROW_WIDTH);
+        worldSelectContainer.defaults().space(VERTICAL_SPACING);
+        add(worldSelectContainer).spaceBottom(HORIZONTAL_SPACING).row();
+        worldSelectContainer.add(worldSelectLabel).width(ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
+        worldSelectContainer.add(worldSelectBox).width(7 * ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
 
         Table worldButtonContainer = new Table();
-        worldButtonContainer.setWidth(width);
-        worldButtonContainer.defaults().space(verticalSpacing);
-        add(worldButtonContainer).spaceBottom(horizontalSpacing).row();
-        worldButtonContainer.add(joinWorldButton).width(width / 3f - (verticalSpacing / 2f)).height(height);
-        worldButtonContainer.add(createWorldButton).width(width / 3f - (verticalSpacing)).height(height);
-        worldButtonContainer.add(deleteWorldButton).width(width / 3f - (verticalSpacing / 2f)).height(height);
+        worldButtonContainer.setWidth(ROW_WIDTH);
+        worldButtonContainer.defaults().space(VERTICAL_SPACING);
+        add(worldButtonContainer).spaceBottom(HORIZONTAL_SPACING).row();
+        worldButtonContainer.add(joinWorldButton).width(ROW_WIDTH / 3f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
+        worldButtonContainer.add(createWorldButton).width(ROW_WIDTH / 3f - (VERTICAL_SPACING)).height(ROW_HEIGHT);
+        worldButtonContainer.add(deleteWorldButton).width(ROW_WIDTH / 3f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
 
         Table settingsButtonContainer = new Table();
-        settingsButtonContainer.setWidth(width);
-        settingsButtonContainer.defaults().space(verticalSpacing);
-        add(settingsButtonContainer).spaceBottom(horizontalSpacing).row();
-        settingsButtonContainer.add(changeAvatarButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
-        settingsButtonContainer.add(profileSettingsButton).width(width / 2f - (verticalSpacing / 2f)).height(height);
+        settingsButtonContainer.setWidth(ROW_WIDTH);
+        settingsButtonContainer.defaults().space(VERTICAL_SPACING);
+        add(settingsButtonContainer).spaceBottom(HORIZONTAL_SPACING).row();
+        settingsButtonContainer.add(changeAvatarButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
+        settingsButtonContainer.add(profileSettingsButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
 
-        add(logoutButton).width(width).center().height(height);
+        add(logoutButton).width(ROW_WIDTH).center().height(ROW_HEIGHT);
     }
 
     @Override

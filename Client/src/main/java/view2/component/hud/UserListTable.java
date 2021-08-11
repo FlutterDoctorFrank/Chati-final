@@ -16,8 +16,6 @@ import java.util.UUID;
 
 public class UserListTable extends HudMenuTable {
 
-    private static final String NAME = "user-list-table";
-
     private ButtonGroup<TextButton> tabButtonGroup;
     private TextButton activeUserTabButton;
     private TextButton friendTabButton;
@@ -28,7 +26,6 @@ public class UserListTable extends HudMenuTable {
     private final Map<UUID, IUserView> bannedUsers;
 
     protected UserListTable() {
-        super(NAME);
         this.activeUsers = new HashMap<>();
         this.friends = new HashMap<>();
         this.bannedUsers = new HashMap<>();
@@ -57,7 +54,7 @@ public class UserListTable extends HudMenuTable {
         tabButtonGroup.setMaxCheckCount(1);
         tabButtonGroup.setUncheckLast(true);
 
-        activeUserTabButton = new TextButton("Aktive Benutzer", ChatiTable.SKIN);
+        activeUserTabButton = new TextButton("Aktive Benutzer", Chati.SKIN);
         activeUserTabButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -68,7 +65,7 @@ public class UserListTable extends HudMenuTable {
             }
         });
 
-        friendTabButton = new TextButton("Freunde", ChatiTable.SKIN);
+        friendTabButton = new TextButton("Freunde", Chati.SKIN);
         friendTabButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -79,7 +76,7 @@ public class UserListTable extends HudMenuTable {
             }
         });
 
-        bannedUserTabButton = new TextButton("Gesperrte Benutzer", ChatiTable.SKIN);
+        bannedUserTabButton = new TextButton("Gesperrte Benutzer", Chati.SKIN);
         friendTabButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -98,7 +95,7 @@ public class UserListTable extends HudMenuTable {
         int buttonSize = 75;
 
         top().right().padTop(buttonSize).setFillParent(true);
-        Window container = new Window("Benutzerliste", ChatiTable.SKIN);
+        Window container = new Window("Benutzerliste", Chati.SKIN);
         container.setMovable(false);
         add(container).width(width).height(height);
     }
