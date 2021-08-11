@@ -71,7 +71,7 @@ public class ProfileSettingsTable extends MenuTable {
     }
 
     @Override
-    public void clearTextFields() {
+    public void resetTextFields() {
 
     }
 }

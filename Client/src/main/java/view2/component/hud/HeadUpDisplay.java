@@ -20,9 +20,10 @@ public class HeadUpDisplay extends Stage {
     private static final String SETTINGS_ICON_CHECKED_PATH = "icons/settingsIconChecked.png";
     static final float BUTTON_SCALE_FACTOR = 0.1f;
     static final float BUTTON_SIZE = 75;
-    static final float BUTTON_SPACING = 2.5f;
+    static final float BUTTON_SPACING = 10f;
     static final float HUD_MENU_TABLE_WIDTH = 400;
     static final float HUD_MENU_TABLE_HEIGHT = 600;
+    static final float HUD_MENU_TABLE_TAB_HEIGHT = 30;
     static Button.ButtonStyle enabledStyle;
     static Button.ButtonStyle disabledStyle;
 

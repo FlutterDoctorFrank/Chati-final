@@ -2,6 +2,7 @@ package view2.component.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -33,20 +34,15 @@ public class ChangePasswordTable extends MenuTable {
         passwordField.setPasswordCharacter('*');
         passwordField.addListener(new FocusListener() {
             @Override
-            public boolean handle(Event event){
-                if (event.toString().equals("mouseMoved")
-                        || event.toString().equals("exit")
-                        || event.toString().equals("enter")
-                        || event.toString().equals("keyDown")
-                        || event.toString().equals("touchUp")) {
-                    return false;
-                }
-                if (passwordField.getStyle().fontColor == Color.GRAY) {
-                    passwordField.setText("");
+            public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
+                if(focused && passwordField.getStyle().fontColor == Color.GRAY) {
                     passwordField.getStyle().fontColor = Color.BLACK;
+                    passwordField.setText("");
                     passwordField.setPasswordMode(true);
                 }
-                return true;
+                else if (passwordField.getText().isEmpty()) {
+                    resetPasswordField();
+                }
             }
         });
 
@@ -57,20 +53,15 @@ public class ChangePasswordTable extends MenuTable {
         newPasswordField.setPasswordCharacter('*');
         newPasswordField.addListener(new FocusListener() {
             @Override
-            public boolean handle(Event event){
-                if (event.toString().equals("mouseMoved")
-                        || event.toString().equals("exit")
-                        || event.toString().equals("enter")
-                        || event.toString().equals("keyDown")
-                        || event.toString().equals("touchUp")) {
-                    return false;
-                }
-                if (newPasswordField.getStyle().fontColor == Color.GRAY) {
-                    newPasswordField.setText("");
+            public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
+                if(focused && newPasswordField.getStyle().fontColor == Color.GRAY) {
                     newPasswordField.getStyle().fontColor = Color.BLACK;
+                    newPasswordField.setText("");
                     newPasswordField.setPasswordMode(true);
                 }
-                return true;
+                else if (newPasswordField.getText().isEmpty()) {
+                    resetNewPasswordField();
+                }
             }
         });
 
@@ -81,20 +72,15 @@ public class ChangePasswordTable extends MenuTable {
         confirmNewPasswordField.setPasswordCharacter('*');
         confirmNewPasswordField.addListener(new FocusListener() {
             @Override
-            public boolean handle(Event event){
-                if (event.toString().equals("mouseMoved")
-                        || event.toString().equals("exit")
-                        || event.toString().equals("enter")
-                        || event.toString().equals("keyDown")
-                        || event.toString().equals("touchUp")) {
-                    return false;
-                }
-                if (confirmNewPasswordField.getStyle().fontColor == Color.GRAY) {
-                    confirmNewPasswordField.setText("");
+            public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
+                if(focused && confirmNewPasswordField.getStyle().fontColor == Color.GRAY) {
                     confirmNewPasswordField.getStyle().fontColor = Color.BLACK;
+                    confirmNewPasswordField.setText("");
                     confirmNewPasswordField.setPasswordMode(true);
                 }
-                return true;
+                else if (confirmNewPasswordField.getText().isEmpty()) {
+                    resetConfirmNewPasswordField();
+                }
             }
         });
 
@@ -115,11 +101,15 @@ public class ChangePasswordTable extends MenuTable {
                     return;
                 }
                 if (!newPasswordField.getText().equals(confirmNewPasswordField.getText())) {
-                    infoLabel.setText("Die Passwörter stimmen nicht überein.");
+                    infoLabel.setText("Die neuen Passwörter stimmen nicht überein.");
+                    resetNewPasswordField();
+                    resetConfirmNewPasswordField();
                     return;
                 }
                 if (passwordField.getText().equals(newPasswordField.getText())) {
                     infoLabel.setText("Bitte gib ein neues Passwort ein!");
+                    resetNewPasswordField();
+                    resetConfirmNewPasswordField();
                     return;
                 }
                 Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE,
@@ -160,9 +150,30 @@ public class ChangePasswordTable extends MenuTable {
     }
 
     @Override
-    public void clearTextFields() {
-        passwordField.setText("");
-        newPasswordField.setText("");
-        confirmNewPasswordField.setText("");
+    public void resetTextFields() {
+        resetPasswordField();
+        resetNewPasswordField();
+        resetConfirmNewPasswordField();
+    }
+
+    private void resetPasswordField() {
+        passwordField.getStyle().fontColor = Color.GRAY;
+        passwordField.setText("Passwort");
+        passwordField.setPasswordMode(false);
+        getStage().unfocus(passwordField);
+    }
+
+    private void resetNewPasswordField() {
+        newPasswordField.getStyle().fontColor = Color.GRAY;
+        newPasswordField.setText("Neues Passwort");
+        newPasswordField.setPasswordMode(false);
+        getStage().unfocus(newPasswordField);
+    }
+
+    private void resetConfirmNewPasswordField() {
+        confirmNewPasswordField.getStyle().fontColor = Color.GRAY;
+        confirmNewPasswordField.setText("Neues Passwort bestätigen");
+        confirmNewPasswordField.setPasswordMode(false);
+        getStage().unfocus(confirmNewPasswordField);
     }
 }

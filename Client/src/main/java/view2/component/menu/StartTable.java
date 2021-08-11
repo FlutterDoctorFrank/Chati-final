@@ -156,7 +156,7 @@ public class StartTable extends MenuTable {
     }
 
     @Override
-    public void clearTextFields() {
+    public void resetTextFields() {
     }
 
     private void updateWorldList() {

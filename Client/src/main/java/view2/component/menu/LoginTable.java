@@ -2,7 +2,7 @@ package view2.component.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -29,19 +29,14 @@ public class LoginTable extends MenuTable {
         usernameField.getStyle().fontColor = Color.GRAY;
         usernameField.addListener(new FocusListener() {
             @Override
-            public boolean handle(Event event){
-                if (event.toString().equals("mouseMoved")
-                        || event.toString().equals("exit")
-                        || event.toString().equals("enter")
-                        || event.toString().equals("keyDown")
-                        || event.toString().equals("touchUp")) {
-                    return false;
-                }
-                if (usernameField.getStyle().fontColor == Color.GRAY) {
+            public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
+                if (focused && usernameField.getStyle().fontColor == Color.GRAY) {
                     usernameField.setText("");
                     usernameField.getStyle().fontColor = Color.BLACK;
                 }
-                return true;
+                else if (usernameField.getText().isEmpty()) {
+                    resetUsernameField();
+                }
             }
         });
         // Füge Passwort-Feld hinzu.
@@ -52,20 +47,15 @@ public class LoginTable extends MenuTable {
         passwordField.setPasswordCharacter('*');
         passwordField.addListener(new FocusListener() {
             @Override
-            public boolean handle(Event event){
-                if (event.toString().equals("mouseMoved")
-                        || event.toString().equals("exit")
-                        || event.toString().equals("enter")
-                        || event.toString().equals("keyDown")
-                        || event.toString().equals("touchUp")) {
-                    return false;
-                }
-                if (passwordField.getStyle().fontColor == Color.GRAY) {
-                    passwordField.setText("");
+            public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
+                if(focused && passwordField.getStyle().fontColor == Color.GRAY) {
                     passwordField.getStyle().fontColor = Color.BLACK;
+                    passwordField.setText("");
                     passwordField.setPasswordMode(true);
                 }
-                return true;
+                else if (passwordField.getText().isEmpty()) {
+                    resetPasswordField();
+                }
             }
         });
         // Füge Login-Button hinzu.
@@ -142,8 +132,21 @@ public class LoginTable extends MenuTable {
     }
 
     @Override
-    public void clearTextFields() {
-        usernameField.setText("");
-        passwordField.setText("");
+    public void resetTextFields() {
+        resetUsernameField();
+        resetPasswordField();
+    }
+
+    private void resetUsernameField() {
+        usernameField.getStyle().fontColor = Color.GRAY;
+        usernameField.setText("Benutzername");
+        getStage().unfocus(usernameField);
+    }
+
+    private void resetPasswordField() {
+        passwordField.getStyle().fontColor = Color.GRAY;
+        passwordField.setText("Passwort");
+        passwordField.setPasswordMode(false);
+        getStage().unfocus(passwordField);
     }
 }

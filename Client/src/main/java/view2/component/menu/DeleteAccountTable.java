@@ -2,6 +2,7 @@ package view2.component.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -32,20 +33,15 @@ public class DeleteAccountTable extends MenuTable {
         passwordField.setPasswordCharacter('*');
         passwordField.addListener(new FocusListener() {
             @Override
-            public boolean handle(Event event){
-                if (event.toString().equals("mouseMoved")
-                        || event.toString().equals("exit")
-                        || event.toString().equals("enter")
-                        || event.toString().equals("keyDown")
-                        || event.toString().equals("touchUp")) {
-                    return false;
-                }
-                if (passwordField.getStyle().fontColor == Color.GRAY) {
-                    passwordField.setText("");
+            public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
+                if(focused && passwordField.getStyle().fontColor == Color.GRAY) {
                     passwordField.getStyle().fontColor = Color.BLACK;
+                    passwordField.setText("");
                     passwordField.setPasswordMode(true);
                 }
-                return true;
+                else if (passwordField.getText().isEmpty()) {
+                    resetPasswordField();
+                }
             }
         });
 
@@ -56,20 +52,15 @@ public class DeleteAccountTable extends MenuTable {
         confirmPasswordField.setPasswordCharacter('*');
         confirmPasswordField.addListener(new FocusListener() {
             @Override
-            public boolean handle(Event event){
-                if (event.toString().equals("mouseMoved")
-                        || event.toString().equals("exit")
-                        || event.toString().equals("enter")
-                        || event.toString().equals("keyDown")
-                        || event.toString().equals("touchUp")) {
-                    return false;
-                }
-                if (confirmPasswordField.getStyle().fontColor == Color.GRAY) {
-                    confirmPasswordField.setText("");
+            public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
+                if(focused && confirmPasswordField.getStyle().fontColor == Color.GRAY) {
                     confirmPasswordField.getStyle().fontColor = Color.BLACK;
+                    confirmPasswordField.setText("");
                     confirmPasswordField.setPasswordMode(true);
                 }
-                return true;
+                else if (confirmPasswordField.getText().isEmpty()) {
+                    resetPasswordField();
+                }
             }
         });
 
@@ -89,6 +80,7 @@ public class DeleteAccountTable extends MenuTable {
                 }
                 if (!passwordField.getText().equals(confirmPasswordField.getText())) {
                     infoLabel.setText("Die Passwörter stimmen nicht überein.");
+                    resetTextFields();
                     return;
                 }
                 Chati.getInstance().getMenuScreen().setTable(new ConfirmDeletionTable());
@@ -126,9 +118,23 @@ public class DeleteAccountTable extends MenuTable {
     }
 
     @Override
-    public void clearTextFields() {
-        passwordField.setText("");
-        confirmPasswordField.setText("");
+    public void resetTextFields() {
+        resetPasswordField();
+        resetConfirmPasswordField();
+    }
+
+    private void resetPasswordField() {
+        passwordField.getStyle().fontColor = Color.GRAY;
+        passwordField.setText("Passwort");
+        passwordField.setPasswordMode(false);
+        getStage().unfocus(passwordField);
+    }
+
+    private void resetConfirmPasswordField() {
+        confirmPasswordField.getStyle().fontColor = Color.GRAY;
+        confirmPasswordField.setText("Passwort bestätigen");
+        confirmPasswordField.setPasswordMode(false);
+        getStage().unfocus(confirmPasswordField);
     }
 
     private class ConfirmDeletionTable extends MenuTable {
@@ -182,7 +188,7 @@ public class DeleteAccountTable extends MenuTable {
         }
 
         @Override
-        public void clearTextFields() {
+        public void resetTextFields() {
         }
     }
 }

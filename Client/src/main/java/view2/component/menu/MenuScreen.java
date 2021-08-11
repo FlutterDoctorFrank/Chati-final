@@ -45,8 +45,8 @@ public class MenuScreen extends ScreenAdapter {
             currentMenuTable.showMessage("Die Registrierung war erfolgreich!");
         } else {
             currentMenuTable.showMessage(messageKey);
+            currentMenuTable.resetTextFields();
         }
-        currentMenuTable.clearTextFields();
         setPendingResponse(Response.NONE);
     }
 
@@ -58,7 +58,7 @@ public class MenuScreen extends ScreenAdapter {
             Gdx.app.postRunnable(() -> setTable(new StartTable()));
         } else {
             currentMenuTable.showMessage(messageKey);
-            currentMenuTable.clearTextFields();
+            currentMenuTable.resetTextFields();
         }
         setPendingResponse(Response.NONE);
     }
@@ -74,7 +74,7 @@ public class MenuScreen extends ScreenAdapter {
             });
         } else {
             currentMenuTable.showMessage(messageKey);
-            currentMenuTable.clearTextFields();
+            currentMenuTable.resetTextFields();
         }
         setPendingResponse(Response.NONE);
     }
@@ -90,7 +90,7 @@ public class MenuScreen extends ScreenAdapter {
             });
         } else {
             currentMenuTable.showMessage(messageKey);
-            currentMenuTable.clearTextFields();
+            currentMenuTable.resetTextFields();
         }
         setPendingResponse(Response.NONE);
     }
@@ -121,7 +121,7 @@ public class MenuScreen extends ScreenAdapter {
             });
         } else {
             currentMenuTable.showMessage(messageKey);
-            currentMenuTable.clearTextFields();
+            currentMenuTable.resetTextFields();
         }
         setPendingResponse(Response.NONE);
     }
