@@ -15,6 +15,11 @@ public abstract class MenuTable extends ChatiTable {
 
     protected Label infoLabel;
 
+    protected MenuTable() {
+        create();
+        setLayout();
+    }
+
     public abstract void resetTextFields();
 
     public void showMessage(String message) {

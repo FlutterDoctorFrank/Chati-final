@@ -4,9 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.Array;
 import model.role.Permission;
 import model.user.IUserManagerView;
 import model.user.IUserView;
+import model.user.Status;
+import model.user.User;
 import view2.Chati;
 
 import java.util.HashMap;
@@ -19,6 +22,12 @@ public class UserListTable extends HudMenuTable {
     private TextButton friendTabButton;
     private TextButton activeUserTabButton;
     private TextButton bannedUserTabButton;
+    private ScrollPane userListScrollPane;
+    private Table userListTable;
+
+    private Array<Table> friendEntries;
+    private Array<Table> activeUserEntries;
+    private Array<Table> bannedUserEntries;
 
     private final Map<UUID, IUserView> friends;
     private final Map<UUID, IUserView> activeUsers;
@@ -32,6 +41,7 @@ public class UserListTable extends HudMenuTable {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        /*
         IUserManagerView userManager = Chati.getInstance().getUserManager();
         if (Chati.getInstance().isUserInfoChanged()) {
             if (friendTabButton.isDisabled() && userManager.getInternUserView() != null) {
@@ -59,6 +69,8 @@ public class UserListTable extends HudMenuTable {
                 bannedUserTabButton.setDisabled(true);
             }
         }
+
+         */
         super.draw(batch, parentAlpha);
     }
 
@@ -77,6 +89,9 @@ public class UserListTable extends HudMenuTable {
         tabButtonGroup.setMinCheckCount(1);
         tabButtonGroup.setMaxCheckCount(1);
         tabButtonGroup.setUncheckLast(true);
+
+        userListTable = new Table(Chati.SKIN);
+        userListScrollPane = new ScrollPane(userListTable, Chati.SKIN);
 
         Skin friendTabButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
         friendTabButton = new TextButton("Freunde", friendTabButtonSkin);
@@ -103,9 +118,20 @@ public class UserListTable extends HudMenuTable {
         Window window = new Window("Benutzerliste", Chati.SKIN);
         window.setMovable(false);
         window.top();
-        window.add(friendTabButton).width((HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()) / 3).height(HeadUpDisplay.HUD_MENU_TABLE_TAB_HEIGHT);
-        window.add(activeUserTabButton).width((HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()) / 3).height(HeadUpDisplay.HUD_MENU_TABLE_TAB_HEIGHT);
-        window.add(bannedUserTabButton).width((HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()) / 3).height(HeadUpDisplay.HUD_MENU_TABLE_TAB_HEIGHT);
+
+        Table buttonContainer = new Table(Chati.SKIN);
+        buttonContainer.add(friendTabButton).width((HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()) / 3);
+        buttonContainer.add(activeUserTabButton).width((HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()) / 3);
+        buttonContainer.add(bannedUserTabButton).width((HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()) / 3);
+        window.add(buttonContainer).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()).row();
+        window.add(userListScrollPane).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX())
+                .height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT - HeadUpDisplay.HUD_MENU_TABLE_TAB_HEIGHT - window.getPadY());
         add(window).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT);
+
+        for (int i = 0; i<100; i++) {
+            User user = new User(UUID.randomUUID(), "peter", Status.ONLINE, null);
+            UserListEntry entry = new UserListEntry(user);
+            userListTable.add(entry).row();
+        }
     }
 }

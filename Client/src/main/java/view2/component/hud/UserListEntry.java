@@ -1,9 +1,11 @@
 package view2.component.hud;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import model.user.AdministrativeAction;
 import model.user.IUserView;
@@ -26,12 +28,12 @@ public class UserListEntry extends ChatiTable {
 
     protected UserListEntry(IUserView user) {
         this.user = user;
+        create();
+        setLayout();
     }
 
     @Override
     protected void create() {
-        final UserListEntry entry = this;
-
         usernameLabel = new Label(user.getUsername(), Chati.SKIN);
 
         friendButton = new TextButton("f", Chati.SKIN);
@@ -47,11 +49,11 @@ public class UserListEntry extends ChatiTable {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (!friendButton.isChecked()) {
                     MessageWindow messageWindow =
-                            new MessageWindow(entry, "Füge deiner Anfrage eine Nachricht hinzu!", AdministrativeAction.INVITE_FRIEND);
-                    add(messageWindow);
+                            new MessageWindow("Füge deiner Anfrage eine Nachricht hinzu!", AdministrativeAction.INVITE_FRIEND);
+                    showMessageWindow(messageWindow);
                 } else {
                     Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
-                            AdministrativeAction.REMOVE_FRIEND);
+                            AdministrativeAction.REMOVE_FRIEND, null);
                 }
             }
         });
@@ -59,33 +61,56 @@ public class UserListEntry extends ChatiTable {
 
     @Override
     protected void setLayout() {
+        add(usernameLabel).left().row();
+        add(friendButton).left().height(30).width(30);
+    }
 
+    private void showMessageWindow(MessageWindow window) {
+        getStage().addActor(window);
     }
 
     private class MessageWindow extends Window {
 
-        private final UserListEntry entry;
-        private final AdministrativeAction action;
+        private static final float WINDOW_WIDTH = 400;
+        private static final float WINDOW_HEIGHT = 300;
+        private static final float ROW_WIDTH = 300;
+        private static final float ROW_HEIGHT = 60;
+        private static final float VERTICAL_SPACING = 15;
+        private static final float HORIZONTAL_SPACING = 15;
+        private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
+        private static final float TEXTFIELD_FONT_SCALE_FACTOR = 1.6f;
 
         private Label infoLabel;
         private TextField userMessageField;
         private TextButton confirmButton;
         private TextButton cancelButton;
 
-        protected MessageWindow(UserListEntry entry, String showMessage, AdministrativeAction action) {
+        private final String showMessage;
+        private final AdministrativeAction action;
+
+        protected MessageWindow(String showMessage, AdministrativeAction action) {
             super("Freund hinzufügen", Chati.SKIN);
-            this.entry = entry;
+            this.showMessage = showMessage;
             this.action = action;
             create();
             setLayout();
         }
 
         protected void create() {
-            final MessageWindow table = this;
+            final MessageWindow thisWindow = this;
 
-            infoLabel = new Label("Füge zur Anfrage eine Nachricht hinzu!", Chati.SKIN);
+            Label.LabelStyle style = new Label.LabelStyle();
+            style.font = new BitmapFont();
+            style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
+            this.infoLabel = new Label(showMessage, style);
 
             userMessageField = new TextField("", Chati.SKIN);
+            userMessageField.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    getStage().setKeyboardFocus(userMessageField);
+                }
+            });
 
             confirmButton = new TextButton("Bestätigen", Chati.SKIN);
             confirmButton.addListener(new InputListener() {
@@ -97,7 +122,7 @@ public class UserListEntry extends ChatiTable {
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     Chati.getInstance().getServerSender()
                             .send(ServerSender.SendAction.USER_MANAGE, user.getUserId(), action, userMessageField.getText());
-                    entry.removeActor(table);
+                    thisWindow.remove();
                 }
             });
 
@@ -109,22 +134,27 @@ public class UserListEntry extends ChatiTable {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    entry.removeActor(table);
+                    thisWindow.remove();
                 }
             });
         }
 
         protected void setLayout() {
-            int width = 300;
-            int height = 200;
+            setModal(true);
+            setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
+            setWidth(WINDOW_WIDTH);
+            setHeight(WINDOW_HEIGHT);
 
-            setSize(width, height);
-            align(Align.center);
+            Table labelContainer = new Table(Chati.SKIN);
+            labelContainer.add(infoLabel).center();
 
-        }
+            add(labelContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceBottom(VERTICAL_SPACING).row();
+            add(userMessageField).width(ROW_WIDTH).height(ROW_HEIGHT).spaceBottom(VERTICAL_SPACING).row();
 
-        public String getMessage() {
-            return userMessageField.getText();
+            Table buttonContainer = new Table(Chati.SKIN);
+            buttonContainer.add(confirmButton).width(ROW_WIDTH / 2 - VERTICAL_SPACING).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
+            buttonContainer.add(cancelButton).width(ROW_WIDTH / 2 - VERTICAL_SPACING).height(ROW_HEIGHT);
+            add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
         }
     }
 }

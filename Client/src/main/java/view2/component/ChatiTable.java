@@ -9,8 +9,6 @@ public abstract class ChatiTable extends Table {
     protected ChatiTable() {
         super(Chati.SKIN);
         setFillParent(true);
-        create();
-        setLayout();
     }
 
     protected abstract void create();
