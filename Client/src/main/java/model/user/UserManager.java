@@ -81,7 +81,6 @@ public class UserManager implements IUserManagerController, IUserManagerView {
 
     @Override
     public InternUser getInternUserView() {
-        throwIfNotLoggedIn();
         return internUser;
     }
 
@@ -110,6 +109,11 @@ public class UserManager implements IUserManagerController, IUserManagerView {
         throwIfNotInWorld();
         return externUsers.values().stream().filter(User::isBanned)
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
+    }
+
+    @Override
+    public boolean isLoggedIn() {
+        return internUser != null;
     }
 
     /**

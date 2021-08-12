@@ -7,13 +7,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import model.user.Status;
 import model.user.User;
 import view2.Chati;
+import view2.component.ChatiTable;
 import view2.component.hud.HeadUpDisplay;
-import view2.component.hud.HudMenuTable;
 
 import java.util.*;
 import java.util.List;
 
-public class UserListTable extends HudMenuTable {
+public class UserListTable extends ChatiTable {
 
     private ButtonGroup<TextButton> tabButtonGroup;
     private TextButton friendTabButton;
@@ -30,6 +30,8 @@ public class UserListTable extends HudMenuTable {
         this.friendEntries = new HashSet<>();
         this.activeUserEntries = new HashSet<>();
         this.bannedUserEntries = new HashSet<>();
+        create();
+        setLayout();
     }
 
     @Override
@@ -76,7 +78,6 @@ public class UserListTable extends HudMenuTable {
     private void enableFriendTab() {
     }
 
-    @Override
     protected void create() {
         tabButtonGroup = new ButtonGroup<>();
         tabButtonGroup.setMinCheckCount(1);
@@ -88,24 +89,23 @@ public class UserListTable extends HudMenuTable {
 
         Skin friendTabButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
         friendTabButton = new TextButton("Freunde", friendTabButtonSkin);
-        friendTabButton.setStyle(HeadUpDisplay.disabledStyle);
+        friendTabButton.setStyle(HeadUpDisplay.pressedStyle);
         friendTabButton.getLabel().setColor(Color.DARK_GRAY);
         friendTabButton.setDisabled(true);
 
         Skin activeUserTabButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
         activeUserTabButton = new TextButton("Welt", activeUserTabButtonSkin);
-        activeUserTabButton.setStyle(HeadUpDisplay.disabledStyle);
+        activeUserTabButton.setStyle(HeadUpDisplay.pressedStyle);
         activeUserTabButton.getLabel().setColor(Color.DARK_GRAY);
         activeUserTabButton.setDisabled(true);
 
         Skin bannedUserTabButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
         bannedUserTabButton = new TextButton("Gesperrt", bannedUserTabButtonSkin);
-        bannedUserTabButton.setStyle(HeadUpDisplay.disabledStyle);
+        bannedUserTabButton.setStyle(HeadUpDisplay.pressedStyle);
         bannedUserTabButton.getLabel().setColor(Color.DARK_GRAY);
         bannedUserTabButton.setDisabled(true);
     }
 
-    @Override
     protected void setLayout() {
         top().right().padTop(HeadUpDisplay.BUTTON_SIZE);
         Window window = new Window("Benutzer", Chati.SKIN);
@@ -114,10 +114,10 @@ public class UserListTable extends HudMenuTable {
 
         // TEST ///////////////////////////////////////////////////////////////////////////////////////////////////////
         String[] names = {"Jürgen", "Hans-Peter", "Detlef", "Olaf", "Markus", "Dietrich", "Dieter", "Siegbert", "Siegmund",
-            "Joseph", "Ferdinand", "Alexander", "Adolf H", "Analia", "Inkontinentia", "Vagina", "Agathe", "Bertha", "Hannelore",
-            "Sieglinde", "Josephine", "Brigitte", "Luise-Annegret", "Alma-Dorothea", "Magdalena", "Brunhilde", "Herbert",
+            "Joseph", "Ferdinand", "Alexander", "Adolf H", "Analia", "Inkontinentia", "Vera Agina", "Agathe Bauer", "Bertha", "Hannelore",
+            "Sieglinde", "Josephine", "Brigitte", "Luise-Annegret", "Alma-Dorothea", "Magdalena", "Brunhilde", "Herbert", "Gertrud", "Hiltrud",
             "Hagen", "Heinz", "Son-Goku", "Vegeta", "Axel Schweiß", "Rosa Schlüpfer", "Reinhold", "Mr.WasGehtSieDasAn", "Peter Enis",
-            "Schwanzus-Longus", "G4meMason", "Franz Joseph", "Peter Silie", "Wilma Fiken", "Anna Bolika", "Anna Nass", "Deine Mutter"};
+            "Schwanzus-Longus", "G4meMason", "Franz Joseph", "Peter Silie", "Wilma Ficken", "Anna Bolika", "Anna Nass", "Deine Mutter"};
         List<String> namesList = Arrays.asList(names);
         Collections.shuffle(namesList, new Random());
         for (int i = 0; i<namesList.size(); i++) {

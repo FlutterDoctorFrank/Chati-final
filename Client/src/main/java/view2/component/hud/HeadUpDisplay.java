@@ -5,6 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import view2.Chati;
 import view2.Texture;
 import view2.component.hud.notificationList.NotificationListTable;
 import view2.component.hud.userList.UserListTable;
@@ -16,9 +18,10 @@ public class HeadUpDisplay extends Table {
     public static final float BUTTON_SPACING = 10f;
     public static final float HUD_MENU_TABLE_WIDTH = 450;
     public static final float HUD_MENU_TABLE_HEIGHT = 600;
-    public static final float HUD_MENU_TABLE_TAB_HEIGHT = 30;
-    public static Button.ButtonStyle enabledStyle;
-    public static Button.ButtonStyle disabledStyle;
+    public static final Drawable UNPRESSED_BUTTON_IMAGE = new TextButton("", Chati.SKIN).getStyle().up;
+    public static final Drawable PRESSED_BUTTON_IMAGE = new TextButton("", Chati.SKIN).getStyle().down;
+    public static Button.ButtonStyle unpressedStyle;
+    public static Button.ButtonStyle pressedStyle;
 
     private Table currentListContainer;
 
@@ -27,9 +30,9 @@ public class HeadUpDisplay extends Table {
     private ImageButton settingsButton;
 
     public HeadUpDisplay() {
-        enabledStyle = new TextButton("", new Skin(Gdx.files.internal("shadeui/uiskin.json"))).getStyle();
-        disabledStyle = new TextButton("", new Skin(Gdx.files.internal("shadeui/uiskin.json"))).getStyle();
-        disabledStyle.up = disabledStyle.down;
+        unpressedStyle = new TextButton("", new Skin(Gdx.files.internal("shadeui/uiskin.json"))).getStyle();
+        pressedStyle = new TextButton("", new Skin(Gdx.files.internal("shadeui/uiskin.json"))).getStyle();
+        pressedStyle.up = pressedStyle.down;
         create();
         setLayout();
     }

@@ -75,7 +75,8 @@ public class NotificationListEntry extends Table {
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.NOTIFICATION_RESPONSE);
+                    Chati.getInstance().getServerSender()
+                            .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), true);
                     remove();
                 }
                 @Override
@@ -107,7 +108,8 @@ public class NotificationListEntry extends Table {
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                    // Send
+                    Chati.getInstance().getServerSender()
+                            .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), false);
                     remove();
                 }
                 @Override
@@ -136,7 +138,8 @@ public class NotificationListEntry extends Table {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 deleteButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                // Notify controller
+                Chati.getInstance().getServerSender()
+                        .send(ServerSender.SendAction.NOTIFICATION_DELETE, notification.getNotificationId());
                 remove();
             }
             @Override
@@ -187,6 +190,7 @@ public class NotificationListEntry extends Table {
         private static final float ROW_HEIGHT = 60;
 
         private Label showLabel;
+        private Label dateLabel;
         private TextButton okButton;
         private ImageButton acceptButton;
         private ImageButton declineButton;
@@ -201,6 +205,10 @@ public class NotificationListEntry extends Table {
         private void create() {
             showLabel = new Label(notification.getMessageBundle().getMessageKey(), Chati.SKIN);
             showLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm");
+            dateLabel = new Label(notification.getTimestamp().format(formatter), Chati.SKIN);
+            dateLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
 
             okButton = new TextButton("Ok", Chati.SKIN);
             okButton.addListener(new InputListener() {
@@ -218,6 +226,7 @@ public class NotificationListEntry extends Table {
                 acceptButton = new ImageButton(Texture.DISABLED_ACCEPT_ICON);
             } else {
                 acceptButton = new ImageButton(Texture.ACCEPT_ICON);
+                acceptButton.addListener(new ChatiToolTip("Annehmen"));
                 acceptButton.addListener(new ClickListener() {
                     @Override
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -227,7 +236,8 @@ public class NotificationListEntry extends Table {
                     @Override
                     public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                         acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                        // Send
+                        Chati.getInstance().getServerSender()
+                                .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), true);
                         NotificationListEntry.this.remove();
                         remove();
                     }
@@ -250,6 +260,7 @@ public class NotificationListEntry extends Table {
                 declineButton = new ImageButton(Texture.DISABLED_DECLINE_ICON);
             } else {
                 declineButton = new ImageButton(Texture.DECLINE_ICON);
+                declineButton.addListener(new ChatiToolTip("Ablehnen"));
                 declineButton.addListener(new ClickListener() {
                     @Override
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -259,7 +270,8 @@ public class NotificationListEntry extends Table {
                     @Override
                     public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                         declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                        // Send
+                        Chati.getInstance().getServerSender()
+                                .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), false);
                         NotificationListEntry.this.remove();
                         remove();
                     }
@@ -279,6 +291,7 @@ public class NotificationListEntry extends Table {
             }
 
             deleteButton = new ImageButton(Texture.DELETE_ICON);
+            deleteButton.addListener(new ChatiToolTip("Löschen"));
             deleteButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -288,7 +301,8 @@ public class NotificationListEntry extends Table {
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     deleteButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                    // Notify controller
+                    Chati.getInstance().getServerSender()
+                            .send(ServerSender.SendAction.NOTIFICATION_DELETE, notification.getNotificationId());
                     NotificationListEntry.this.remove();
                     remove();
                 }

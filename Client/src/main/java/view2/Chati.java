@@ -217,4 +217,15 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     public boolean isUserInfoChanged() {
         return userInfoChanged;
     }
+
+    // Test
+    public static boolean haha = true;
+
+    public boolean isUserNotificationChanged() {
+        if (haha) {
+            haha = false;
+            return true;
+        }
+        return false;
+    }
 }

@@ -44,4 +44,10 @@ public interface IUserManagerView {
      * @throws IllegalStateException wenn es keine aktuelle Welt gibt.
      */
     Map<UUID, IUserView> getBannedUsers();
+
+    /**
+     * Gibt zurück, ob auf diesem Client gerade ein Benutzer angemeldet ist.
+     * @return true, wenn ein Benutzer angemeldet ist, sonst false.
+     */
+    boolean isLoggedIn();
 }
