@@ -1,21 +1,16 @@
-package view2.component.hud;
+package view2.component.hud.userList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.Array;
-import model.role.Permission;
-import model.user.IUserManagerView;
-import model.user.IUserView;
 import model.user.Status;
 import model.user.User;
 import view2.Chati;
+import view2.component.hud.HeadUpDisplay;
+import view2.component.hud.HudMenuTable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class UserListTable extends HudMenuTable {
 
@@ -24,20 +19,16 @@ public class UserListTable extends HudMenuTable {
     private TextButton activeUserTabButton;
     private TextButton bannedUserTabButton;
     private ScrollPane userListScrollPane;
-    private Table userListTable;
+    private Table userListContainer;
 
-    private Array<Table> friendEntries;
-    private Array<Table> activeUserEntries;
-    private Array<Table> bannedUserEntries;
+    private final Set<UserListEntry> friendEntries;
+    private final Set<UserListEntry> activeUserEntries;
+    private final Set<UserListEntry> bannedUserEntries;
 
-    private final Map<UUID, IUserView> friends;
-    private final Map<UUID, IUserView> activeUsers;
-    private final Map<UUID, IUserView> bannedUsers;
-
-    protected UserListTable() {
-        this.friends = new HashMap<>();
-        this.activeUsers = new HashMap<>();
-        this.bannedUsers = new HashMap<>();
+    public UserListTable() {
+        this.friendEntries = new HashSet<>();
+        this.activeUserEntries = new HashSet<>();
+        this.bannedUserEntries = new HashSet<>();
     }
 
     @Override
@@ -91,8 +82,8 @@ public class UserListTable extends HudMenuTable {
         tabButtonGroup.setMaxCheckCount(1);
         tabButtonGroup.setUncheckLast(true);
 
-        userListTable = new Table(Chati.SKIN);
-        userListScrollPane = new ScrollPane(userListTable, Chati.SKIN);
+        userListContainer = new Table(Chati.SKIN);
+        userListScrollPane = new ScrollPane(userListContainer, Chati.SKIN);
 
         Skin friendTabButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
         friendTabButton = new TextButton("Freunde", friendTabButtonSkin);
@@ -116,20 +107,20 @@ public class UserListTable extends HudMenuTable {
     @Override
     protected void setLayout() {
         top().right().padTop(HeadUpDisplay.BUTTON_SIZE);
-        Window window = new Window("Benutzerliste", Chati.SKIN);
+        Window window = new Window("Benutzer", Chati.SKIN);
         window.setMovable(false);
         window.top();
 
         // TEST ///////////////////////////////////////////////////////////////////////////////////////////////////////
         String[] names = {"Jürgen", "Hans-Peter", "Detlef", "Olaf", "Markus", "Dietrich", "Dieter", "Siegbert", "Siegmund",
             "Joseph", "Ferdinand", "Alexander", "Adolf", "Analia", "Inkontinentia", "Vagina", "Agathe", "Bertha", "Hannelore",
-            "Sieglinde", "Josephine", "Brigitte", "Luise-Annegret", "Alma-Dorothea", "Magdalena", "Brunhile", "Herbert",
+            "Sieglinde", "Josephine", "Brigitte", "Luise-Annegret", "Alma-Dorothea", "Magdalena", "Brunhilde", "Herbert",
             "Hagen", "Heinz", "Son-Goku", "Vegeta", "Axel Schweiß", "Rosa Schlüpfer", "Penis", "Mr.WasGehtSieDasAn",
-            "Schwanzus-Longus", "G4meMason", "Franz Joseph", "Peter Silie", "Wilma", "Anna Bolika", "Anna Nass"};
+            "Schwanzus-Longus", "G4meMason", "Franz Joseph", "Peter Silie", "Wilma", "Anna Bolika", "Anna Nass", "Deine Mutter"};
         for (int i = 0; i<200; i++) {
             User user = new User(UUID.randomUUID(), names[new Random().nextInt(names.length)], Status.values()[new Random().nextInt(Status.values().length)], null);
             UserListEntry entry = new UserListEntry(user);
-            userListTable.top().left().add(entry).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX() * 2).row();
+            userListContainer.top().left().add(entry).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX() * 2).row();
         }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

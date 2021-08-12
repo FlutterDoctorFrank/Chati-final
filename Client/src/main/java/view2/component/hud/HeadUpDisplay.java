@@ -8,6 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import view2.component.hud.notificationList.NotificationListTable;
+import view2.component.hud.userList.UserListTable;
 
 public class HeadUpDisplay extends Table {
 
@@ -17,14 +19,14 @@ public class HeadUpDisplay extends Table {
     private static final String NOTIFICATION_ICON_CHECKED_PATH = "icons/notificationIconChecked.png";
     private static final String SETTINGS_ICON_PATH = "icons/settingsIcon.png";
     private static final String SETTINGS_ICON_CHECKED_PATH = "icons/settingsIconChecked.png";
-    static final float BUTTON_SCALE_FACTOR = 0.1f;
-    static final float BUTTON_SIZE = 75;
-    static final float BUTTON_SPACING = 10f;
-    static final float HUD_MENU_TABLE_WIDTH = 400;
-    static final float HUD_MENU_TABLE_HEIGHT = 600;
-    static final float HUD_MENU_TABLE_TAB_HEIGHT = 30;
-    static Button.ButtonStyle enabledStyle;
-    static Button.ButtonStyle disabledStyle;
+    public static final float BUTTON_SCALE_FACTOR = 0.1f;
+    public static final float BUTTON_SIZE = 75;
+    public static final float BUTTON_SPACING = 10f;
+    public static final float HUD_MENU_TABLE_WIDTH = 400;
+    public static final float HUD_MENU_TABLE_HEIGHT = 600;
+    public static final float HUD_MENU_TABLE_TAB_HEIGHT = 30;
+    public static Button.ButtonStyle enabledStyle;
+    public static Button.ButtonStyle disabledStyle;
 
     private Table currentListContainer;
 
@@ -104,6 +106,7 @@ public class HeadUpDisplay extends Table {
                     userListButton.getStyle().imageUp = userIcon;
                     settingsButton.getStyle().imageUp = settingsIcon;
                     currentListContainer.clearChildren();
+                    currentListContainer.addActor(new NotificationListTable());
                 } else {
                     notificationListButton.getStyle().imageUp = notificationIcon;
                     currentListContainer.clearChildren();
