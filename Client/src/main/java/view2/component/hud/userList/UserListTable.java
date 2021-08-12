@@ -11,6 +11,7 @@ import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
 
 import java.util.*;
+import java.util.List;
 
 public class UserListTable extends HudMenuTable {
 
@@ -117,8 +118,10 @@ public class UserListTable extends HudMenuTable {
             "Sieglinde", "Josephine", "Brigitte", "Luise-Annegret", "Alma-Dorothea", "Magdalena", "Brunhilde", "Herbert",
             "Hagen", "Heinz", "Son-Goku", "Vegeta", "Axel Schweiß", "Rosa Schlüpfer", "Reinhold", "Mr.WasGehtSieDasAn", "Peter Enis",
             "Schwanzus-Longus", "G4meMason", "Franz Joseph", "Peter Silie", "Wilma Fiken", "Anna Bolika", "Anna Nass", "Deine Mutter"};
-        for (int i = 0; i<names.length; i++) {
-            User user = new User(UUID.randomUUID(), names[i], Status.values()[new Random().nextInt(Status.values().length)], null);
+        List<String> namesList = Arrays.asList(names);
+        Collections.shuffle(namesList, new Random());
+        for (int i = 0; i<namesList.size(); i++) {
+            User user = new User(UUID.randomUUID(), namesList.get(i), Status.values()[new Random().nextInt(Status.values().length)], null);
             UserListEntry entry = new UserListEntry(user);
             userListContainer.top().left().add(entry).fillX().expandX().row();
         }

@@ -100,8 +100,8 @@ public class WorldCreateTable extends MenuTable {
         mapSelectContainer.setWidth(ROW_WIDTH);
         mapSelectContainer.defaults().space(VERTICAL_SPACING);
         add(mapSelectContainer).spaceBottom(HORIZONTAL_SPACING).row();
-        mapSelectContainer.add(mapSelectLabel).width(ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
-        mapSelectContainer.add(mapSelectBox).width(7 * ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
+        mapSelectContainer.add(mapSelectLabel).width(ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f));//.height(ROW_HEIGHT);
+        mapSelectContainer.add(mapSelectBox).width(7 * ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f));//.height(ROW_HEIGHT);
 
         Table settingsButtonContainer = new Table();
         settingsButtonContainer.setWidth(ROW_WIDTH);

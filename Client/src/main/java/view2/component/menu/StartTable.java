@@ -134,8 +134,8 @@ public class StartTable extends MenuTable {
         worldSelectContainer.setWidth(ROW_WIDTH);
         worldSelectContainer.defaults().space(VERTICAL_SPACING);
         add(worldSelectContainer).spaceBottom(HORIZONTAL_SPACING).row();
-        worldSelectContainer.add(worldSelectLabel).width(ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
-        worldSelectContainer.add(worldSelectBox).width(7 * ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
+        worldSelectContainer.add(worldSelectLabel).width(ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f));//.height(ROW_HEIGHT);
+        worldSelectContainer.add(worldSelectBox).width(7 * ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f));//.height(ROW_HEIGHT);
 
         Table worldButtonContainer = new Table();
         worldButtonContainer.setWidth(ROW_WIDTH);

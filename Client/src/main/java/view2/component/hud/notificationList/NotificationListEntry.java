@@ -1,28 +1,21 @@
 package view2.component.hud.notificationList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import model.notification.INotificationView;
 import model.notification.NotificationType;
 import view2.Chati;
+import view2.Texture;
 
 import java.time.format.DateTimeFormatter;
 
 public class NotificationListEntry extends Table {
-
-    private static final Drawable ACCEPT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/accept.png")));
-    private static final Drawable DECLINE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/decline.png")));
-    private static final Drawable DELETE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/delete.jpg")));
 
     private static final float SHOW_BUTTON_WIDTH = 150;
     private static final float BUTTON_SIZE = 30;
@@ -66,7 +59,7 @@ public class NotificationListEntry extends Table {
             }
         });
 
-        acceptButton = new ImageButton(ACCEPT_ICON);
+        acceptButton = new ImageButton(Texture.ACCEPT_ICON);
         acceptButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -93,7 +86,7 @@ public class NotificationListEntry extends Table {
             }
         });
 
-        declineButton = new ImageButton(DECLINE_ICON);
+        declineButton = new ImageButton(Texture.DECLINE_ICON);
         declineButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -120,7 +113,7 @@ public class NotificationListEntry extends Table {
             }
         });
 
-        deleteButton = new ImageButton(DELETE_ICON);
+        deleteButton = new ImageButton(Texture.DELETE_ICON);
         deleteButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -209,7 +202,7 @@ public class NotificationListEntry extends Table {
                 }
             });
 
-            acceptButton = new ImageButton(ACCEPT_ICON);
+            acceptButton = new ImageButton(Texture.ACCEPT_ICON);
             acceptButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -237,7 +230,7 @@ public class NotificationListEntry extends Table {
                 }
             });
 
-            declineButton = new ImageButton(DECLINE_ICON);
+            declineButton = new ImageButton(Texture.DECLINE_ICON);
             declineButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -265,7 +258,7 @@ public class NotificationListEntry extends Table {
                 }
             });
 
-            deleteButton = new ImageButton(DELETE_ICON);
+            deleteButton = new ImageButton(Texture.DELETE_ICON);
             deleteButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

@@ -1,28 +1,20 @@
 package view2.component.hud;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import view2.Texture;
 import view2.component.hud.notificationList.NotificationListTable;
 import view2.component.hud.userList.UserListTable;
 
 public class HeadUpDisplay extends Table {
 
-    private static final String USER_ICON_PATH = "icons/userIcon.png";
-    private static final String USER_ICON_CHECKED_PATH = "icons/userIconChecked.png";
-    private static final String NOTIFICATION_ICON_PATH = "icons/notificationIcon.png";
-    private static final String NOTIFICATION_ICON_CHECKED_PATH = "icons/notificationIconChecked.png";
-    private static final String SETTINGS_ICON_PATH = "icons/settingsIcon.png";
-    private static final String SETTINGS_ICON_CHECKED_PATH = "icons/settingsIconChecked.png";
     public static final float BUTTON_SCALE_FACTOR = 0.1f;
     public static final float BUTTON_SIZE = 75;
     public static final float BUTTON_SPACING = 10f;
-    public static final float HUD_MENU_TABLE_WIDTH = 400;
+    public static final float HUD_MENU_TABLE_WIDTH = 450;
     public static final float HUD_MENU_TABLE_HEIGHT = 600;
     public static final float HUD_MENU_TABLE_TAB_HEIGHT = 30;
     public static Button.ButtonStyle enabledStyle;
@@ -46,19 +38,12 @@ public class HeadUpDisplay extends Table {
         currentListContainer = new Table();
         currentListContainer.setFillParent(true);
 
-        TextureRegionDrawable userIcon = new TextureRegionDrawable(new TextureRegion(new Texture(USER_ICON_PATH)));
-        TextureRegionDrawable userIconChecked = new TextureRegionDrawable(new TextureRegion(new Texture(USER_ICON_CHECKED_PATH)));
-        TextureRegionDrawable notificationIcon = new TextureRegionDrawable(new TextureRegion(new Texture(NOTIFICATION_ICON_PATH)));
-        TextureRegionDrawable notificationIconChecked = new TextureRegionDrawable(new TextureRegion(new Texture(NOTIFICATION_ICON_CHECKED_PATH)));
-        TextureRegionDrawable settingsIcon = new TextureRegionDrawable(new TextureRegion(new Texture(SETTINGS_ICON_PATH)));
-        TextureRegionDrawable settingsIconChecked = new TextureRegionDrawable(new TextureRegion(new Texture(SETTINGS_ICON_CHECKED_PATH)));
-
         ButtonGroup<ImageButton> hudButtons = new ButtonGroup<>();
         hudButtons.setMinCheckCount(0);
         hudButtons.setMaxCheckCount(1);
         hudButtons.setUncheckLast(true);
 
-        userListButton = new ImageButton(userIcon);
+        userListButton = new ImageButton(Texture.USER_ICON);
         userListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         userListButton.addListener(new ClickListener() {
             @Override
@@ -68,13 +53,13 @@ public class HeadUpDisplay extends Table {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (userListButton.isChecked()) {
-                    userListButton.getStyle().imageUp = userIconChecked;
-                    notificationListButton.getStyle().imageUp = notificationIcon;
-                    settingsButton.getStyle().imageUp = settingsIcon;
+                    userListButton.getStyle().imageUp = Texture.CHECKED_USER_ICON;
+                    notificationListButton.getStyle().imageUp = Texture.NOTIFICATION_ICON;
+                    settingsButton.getStyle().imageUp = Texture.SETTINGS_ICON;
                     currentListContainer.clearChildren();
                     currentListContainer.addActor(new UserListTable());
                 } else {
-                    userListButton.getStyle().imageUp = userIcon;
+                    userListButton.getStyle().imageUp = Texture.USER_ICON;
                     currentListContainer.clearChildren();
                 }
             }
@@ -92,7 +77,7 @@ public class HeadUpDisplay extends Table {
             }
         });
 
-        notificationListButton = new ImageButton(notificationIcon);
+        notificationListButton = new ImageButton(Texture.NOTIFICATION_ICON);
         notificationListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         notificationListButton.addListener(new ClickListener() {
             @Override
@@ -102,13 +87,13 @@ public class HeadUpDisplay extends Table {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (notificationListButton.isChecked()) {
-                    notificationListButton.getStyle().imageUp = notificationIconChecked;
-                    userListButton.getStyle().imageUp = userIcon;
-                    settingsButton.getStyle().imageUp = settingsIcon;
+                    notificationListButton.getStyle().imageUp = Texture.CHECKED_NOTIFICATION_ICON;
+                    userListButton.getStyle().imageUp = Texture.USER_ICON;
+                    settingsButton.getStyle().imageUp = Texture.SETTINGS_ICON;
                     currentListContainer.clearChildren();
                     currentListContainer.addActor(new NotificationListTable());
                 } else {
-                    notificationListButton.getStyle().imageUp = notificationIcon;
+                    notificationListButton.getStyle().imageUp = Texture.NOTIFICATION_ICON;
                     currentListContainer.clearChildren();
                 }
             }
@@ -126,7 +111,7 @@ public class HeadUpDisplay extends Table {
             }
         });
 
-        settingsButton = new ImageButton(settingsIcon);
+        settingsButton = new ImageButton(Texture.SETTINGS_ICON);
         settingsButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         settingsButton.addListener(new ClickListener() {
             @Override
@@ -136,12 +121,12 @@ public class HeadUpDisplay extends Table {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (settingsButton.isChecked()) {
-                    settingsButton.getStyle().imageUp = settingsIconChecked;
-                    userListButton.getStyle().imageUp = userIcon;
-                    notificationListButton.getStyle().imageUp = notificationIcon;
+                    settingsButton.getStyle().imageUp = Texture.CHECKED_SETTINGS_ICON;
+                    userListButton.getStyle().imageUp = Texture.USER_ICON;
+                    notificationListButton.getStyle().imageUp = Texture.NOTIFICATION_ICON;
                     currentListContainer.clearChildren();
                 } else {
-                    settingsButton.getStyle().imageUp = settingsIcon;
+                    settingsButton.getStyle().imageUp = Texture.SETTINGS_ICON;
                     currentListContainer.clearChildren();
                 }
             }
