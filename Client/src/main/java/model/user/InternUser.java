@@ -11,6 +11,8 @@ import model.exception.ContextNotFoundException;
 import model.exception.NotificationNotFoundException;
 import model.notification.INotificationView;
 import model.notification.Notification;
+import model.notification.NotificationType;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -120,13 +122,13 @@ public class InternUser extends User implements IInternUserController, IInternUs
 
     @Override
     public void addNotification(ContextID contextId, UUID notificationId, MessageBundle messageBundle,
-                                LocalDateTime timestamp, boolean isRequest)
+                                LocalDateTime timestamp, NotificationType type)
             throws ContextNotFoundException {
         if (notifications.containsKey(notificationId)) {
             throw new IllegalArgumentException("There is already a notification with this ID.");
         }
         notifications.put(notificationId, new Notification(notificationId,
-                Context.getGlobal().getContext(contextId), messageBundle, timestamp, isRequest));
+                Context.getGlobal().getContext(contextId), messageBundle, timestamp, type));
         UserManager.getInstance().getModelObserver().setUserNotificationChanged();
     }
 

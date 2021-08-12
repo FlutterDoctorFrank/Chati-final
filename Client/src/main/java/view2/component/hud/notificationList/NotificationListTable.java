@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import model.MessageBundle;
 import model.notification.Notification;
+import model.notification.NotificationType;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
@@ -75,19 +76,18 @@ public class NotificationListTable extends HudMenuTable {
 
         // Test ///////////////////////////////////////////////////////////////////////////////////////////////////////
         for (int i = 0; i<200; i++) {
-            Notification notification = new Notification(UUID.randomUUID(), null, new MessageBundle("eifhbewrofhef"), LocalDateTime.now(), new Random().nextBoolean());
+            Notification notification = new Notification(UUID.randomUUID(), null, new MessageBundle("eifhbewrofhef"), LocalDateTime.now(), NotificationType.values()[new Random().nextInt(NotificationType.values().length)]);
             NotificationListEntry entry = new NotificationListEntry(notification);
-            notificationListContainer.top().left().add(entry).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX() * 2).row();
+            notificationListContainer.top().left().add(entry).fillX().expandX().row();
         }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         Table buttonContainer = new Table(Chati.SKIN);
-        buttonContainer.add(globalNotificationTabButton).width((HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()) / 2);
-        buttonContainer.add(worldNotificationTabButton).width((HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()) / 2);
-        window.add(buttonContainer).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()).row();
+        buttonContainer.add(globalNotificationTabButton).fillX().expandX();
+        buttonContainer.add(worldNotificationTabButton).fillX().expandX();
+        window.add(buttonContainer).fillX().expandX().row();
 
-        window.add(notificationListScrollPane).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX())
-                .height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT - HeadUpDisplay.HUD_MENU_TABLE_TAB_HEIGHT - window.getPadY());
+        window.add(notificationListScrollPane).fillX().expandX().fillY().expandY();
         add(window).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT);
     }
 }

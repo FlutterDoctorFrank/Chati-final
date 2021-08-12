@@ -8,6 +8,7 @@ import model.context.spatial.SpatialContext;
 import model.context.spatial.SpatialMap;
 import model.exception.ContextNotFoundException;
 import model.exception.NotificationNotFoundException;
+import model.notification.NotificationType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -55,13 +56,13 @@ public interface IInternUserController extends IUserController {
      * @param notificationId ID der Benachrichtigung.
      * @param messageBundle Die übersetzbare Nachricht der Benachrichtigung zusammen mit ihren Argumenten.
      * @param timestamp Zeitstempel der Benachrichtigung.
-     * @param isRequest true, wenn die Benachrichtigung als Anfrage dargestellt werden soll, sonst false.
+     * @param type Art der Benachrichtigung.
      * @throws ContextNotFoundException wenn im Client kein Kontext mit der ID bekannt ist.
      * @throws IllegalStateException falls bei dem Benutzer bereits eine Benachrichtigung mit der ID hinterlegt ist.
      * @see Context
      */
     void addNotification(ContextID contextId, UUID notificationId, MessageBundle messageBundle, LocalDateTime timestamp,
-                         boolean isRequest) throws ContextNotFoundException;
+                         NotificationType type) throws ContextNotFoundException;
 
     /**
      * Entfernt eine Benachrichtigung des Benutzers.

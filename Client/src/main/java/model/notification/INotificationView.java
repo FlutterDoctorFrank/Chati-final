@@ -28,8 +28,8 @@ public interface INotificationView {
     LocalDateTime getTimestamp();
 
     /**
-     * Gibt zurück, ob die Benachrichtigung eine Anfrage repräsentiert.
-     * @return true wenn die Benachrichtigung eine Anfrage ist, sonst false.
+     * Gibt die Art der Benachrichtigung zurück.
+     * @return Art der Benachrichtigung.
      */
-    boolean isRequest();
+    NotificationType getType();
 }

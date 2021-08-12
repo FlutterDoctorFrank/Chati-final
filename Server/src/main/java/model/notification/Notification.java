@@ -101,16 +101,7 @@ public class Notification implements INotification {
         throw new IllegalNotificationActionException("This notification is not a request.", owner, this, false);
     }
 
-    /**
-     * Gibt zurück, ob diese Benachrichtigung eine Anfrage ist. Eine Instanz dieser Klasse ist niemals eine Anfrage.
-     * Lediglich Instanzen erbender Unterklassen können Anfragen sein.
-     * @return true, wenn die Benachrichtigung eine Anfrage ist, sonst false.
-     */
     @Override
-    public boolean isRequest() {
-        return false;
-    }
-
     public NotificationType getNotificationType() {
         return notificationType;
     }

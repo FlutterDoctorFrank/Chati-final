@@ -79,9 +79,4 @@ public class RoomRequest extends Notification {
                 new MessageBundle("messageKey"));
         requestingUser.addNotification(declineNotification);
     }
-
-    @Override
-    public boolean isRequest() {
-        return true;
-    }
 }

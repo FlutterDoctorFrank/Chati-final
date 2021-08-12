@@ -23,16 +23,16 @@ public class Notification implements INotificationView{
     /** Zeitpunkt, an dem die Benachrichtigung generiert wurde. */
     private final LocalDateTime timestamp;
 
-    /** Die Information, ob diese Benachrichtigung als Anfrage dargestellt werden soll. */
-    private final boolean isRequest;
+    /** Die Information, um welche Art von Benachrichtigung es sich handelt. */
+    private final NotificationType type;
 
     public Notification(UUID notificationId, Context context, MessageBundle messageBundle, LocalDateTime timestamp,
-                        boolean isRequest) {
+                        NotificationType type) {
         this.notificationId = notificationId;
         this.context = context;
         this.messageBundle = messageBundle;
         this.timestamp = timestamp;
-        this.isRequest = isRequest;
+        this.type = type;
     }
 
     @Override
@@ -51,8 +51,8 @@ public class Notification implements INotificationView{
     }
 
     @Override
-    public boolean isRequest() {
-        return isRequest;
+    public NotificationType getType() {
+        return type;
     }
 
     /**

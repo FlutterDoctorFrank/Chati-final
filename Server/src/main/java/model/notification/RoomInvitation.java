@@ -68,9 +68,4 @@ public class RoomInvitation extends Notification {
     public void decline() {
         // Keine Auswirkungen.
     }
-
-    @Override
-    public boolean isRequest() {
-        return true;
-    }
 }

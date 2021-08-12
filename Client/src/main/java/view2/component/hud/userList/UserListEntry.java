@@ -152,13 +152,13 @@ public class UserListEntry extends Table {
                 new NinePatchDrawable(new NinePatch(Chati.SKIN.getRegion("panel1"), 10, 10, 10, 10));
         setBackground(controlsBackground);
 
-        left().defaults().padLeft(HORIZONTAL_SPACING).padTop(VERTICAL_SPACING);
+        left().defaults().padTop(VERTICAL_SPACING);
 
         Table nameStatusContainer = new Table();
-        nameStatusContainer.add(statusImage).width(STATUS_ICON_SIZE).height(STATUS_ICON_SIZE).space(2 * HORIZONTAL_SPACING);
+        nameStatusContainer.add(statusImage).width(STATUS_ICON_SIZE).height(STATUS_ICON_SIZE).space(1.6f * HORIZONTAL_SPACING);
         nameStatusContainer.add(usernameLabel);
 
-        add(nameStatusContainer).left().spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).row();
+        add(nameStatusContainer).left().padLeft(1.6f * HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).row();
 
         Table buttonContainer = new Table();
         buttonContainer.add(friendButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).space(HORIZONTAL_SPACING);
@@ -169,7 +169,7 @@ public class UserListEntry extends Table {
         buttonContainer.add(muteButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).space(HORIZONTAL_SPACING);
         buttonContainer.add(banButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).space(HORIZONTAL_SPACING);
         buttonContainer.add(moderatorButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING);
-        add(buttonContainer);
+        add(buttonContainer).center().fillX().expandX();
     }
 
     private class MessageWindow extends Window {
@@ -249,7 +249,7 @@ public class UserListEntry extends Table {
             labelContainer.add(infoLabel).center();
 
             add(labelContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
-            add(userMessageArea).width(ROW_WIDTH).height(ROW_HEIGHT).spaceBottom(VERTICAL_SPACING).row();
+            add(userMessageArea).width(ROW_WIDTH).height(2 * ROW_HEIGHT).spaceBottom(VERTICAL_SPACING).row();
 
             Table buttonContainer = new Table(Chati.SKIN);
             buttonContainer.add(confirmButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
