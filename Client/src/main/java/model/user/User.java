@@ -61,6 +61,9 @@ public class User implements IUserController, IUserView {
     /**
      * Erzeugt eine neue Instanz eines Benutzers.
      * @param userId Die eindeutige ID des Benutzers.
+     * @param username Name des Benutzers.
+     * @param status Status des Benutzers.
+     * @param avatar Avatar des Benutzers.
      */
     public User(UUID userId, String username, Status status, Avatar avatar) {
         this.userId = userId;

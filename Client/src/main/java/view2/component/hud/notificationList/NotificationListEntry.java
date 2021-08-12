@@ -47,9 +47,7 @@ public class NotificationListEntry extends Table {
     }
 
     private void create() {
-        String text = "";
-
-        titleLabel = new Label(text, Chati.SKIN);
+        titleLabel = new Label(notification.getType().getName(), Chati.SKIN);
         titleLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm");
