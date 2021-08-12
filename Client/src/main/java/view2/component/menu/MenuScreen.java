@@ -167,4 +167,8 @@ public class MenuScreen extends ScreenAdapter {
     protected Set<ContextEntry> getWorlds() {
         return Collections.unmodifiableSet(worlds);
     }
+
+    public Stage getStage() {
+        return stage;
+    }
 }

@@ -135,5 +135,7 @@ public class UserListTable extends HudMenuTable {
 
         window.add(userListScrollPane).fillX().expandX().fillY().expandY();
         add(window).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT);
+
+        Chati.getInstance().getMenuScreen().getStage().setScrollFocus(userListScrollPane);
     }
 }

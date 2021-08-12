@@ -188,5 +188,20 @@ com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 		listStyle: default,
 		backgroundOpen: select-box-down
 	}
-}
+},
+com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
+		default: {
+			label: {
+				font: font-button,
+				fontColor: {
+					"a": 1,
+					"b": 1,
+					"g": 1,
+					"r": 1
+				}
+			},
+			background: panel1,
+			wrapWidth: 150
+		}
+	}
 }

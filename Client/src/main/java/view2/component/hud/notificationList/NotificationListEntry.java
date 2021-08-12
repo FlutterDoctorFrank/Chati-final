@@ -8,10 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import controller.network.ServerSender;
 import model.notification.INotificationView;
 import model.notification.NotificationType;
 import view2.Chati;
 import view2.Texture;
+import view2.component.ChatiToolTip;
 
 import java.time.format.DateTimeFormatter;
 
@@ -55,65 +57,76 @@ public class NotificationListEntry extends Table {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                getStage().addActor(new ShowNotificationDialog());
+                getStage().addActor(new NotificationWindow());
             }
         });
 
-        acceptButton = new ImageButton(Texture.ACCEPT_ICON);
-        acceptButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                acceptButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                // Send
-                remove();
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
+        if (notification.getType() == NotificationType.NOTIFICATION) {
+            acceptButton = new ImageButton(Texture.DISABLED_ACCEPT_ICON);
+        } else {
+            acceptButton = new ImageButton(Texture.ACCEPT_ICON);
+            acceptButton.addListener(new ChatiToolTip("Annehmen"));
+            acceptButton.addListener(new ClickListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     acceptButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                    return true;
                 }
-            }
-        });
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.NOTIFICATION_RESPONSE);
+                    remove();
+                }
+                @Override
+                public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                    if (pointer == -1) {
+                        acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                    }
+                }
+                @Override
+                public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                    if (pointer == -1) {
+                        acceptButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                    }
+                }
+            });
+        }
 
-        declineButton = new ImageButton(Texture.DECLINE_ICON);
-        declineButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                declineButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                // Send
-                remove();
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
+        if (notification.getType() == NotificationType.NOTIFICATION) {
+            declineButton = new ImageButton(Texture.DISABLED_DECLINE_ICON);
+        } else {
+            declineButton = new ImageButton(Texture.DECLINE_ICON);
+            declineButton.addListener(new ChatiToolTip("Ablehnen"));
+            declineButton.addListener(new ClickListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     declineButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                    return true;
                 }
-            }
-        });
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                    // Send
+                    remove();
+                }
+                @Override
+                public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                    if (pointer == -1) {
+                        declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                    }
+                }
+                @Override
+                public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                    if (pointer == -1) {
+                        declineButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                    }
+                }
+            });
+        }
 
         deleteButton = new ImageButton(Texture.DELETE_ICON);
+        deleteButton.addListener(new ChatiToolTip("Löschen"));
         deleteButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -157,17 +170,16 @@ public class NotificationListEntry extends Table {
         Table buttonContainer = new Table();
         buttonContainer.add(showButton).left().width(SHOW_BUTTON_WIDTH).height(BUTTON_SIZE).fillX().expandX()
                 .padBottom(VERTICAL_SPACING).space(HORIZONTAL_SPACING);
-        if (notification.getType() != NotificationType.NOTIFICATION) {
-            buttonContainer.add(acceptButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
-                    .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
-            buttonContainer.add(declineButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
-                    .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
-        }
+        buttonContainer.add(acceptButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
+                .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
+        buttonContainer.add(declineButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
+                .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
+
         buttonContainer.add(deleteButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING);
         add(buttonContainer).fillX().expandX();
     }
 
-    private class ShowNotificationDialog extends Window {
+    private class NotificationWindow extends Window {
 
         private static final float WINDOW_WIDTH = 550;
         private static final float WINDOW_HEIGHT = 350;
@@ -180,8 +192,8 @@ public class NotificationListEntry extends Table {
         private ImageButton declineButton;
         private ImageButton deleteButton;
 
-        public ShowNotificationDialog() {
-            super("Information", Chati.SKIN);
+        public NotificationWindow() {
+            super(String.valueOf(titleLabel.getText()), Chati.SKIN);
             create();
             setLayout();
         }
@@ -202,61 +214,69 @@ public class NotificationListEntry extends Table {
                 }
             });
 
-            acceptButton = new ImageButton(Texture.ACCEPT_ICON);
-            acceptButton.addListener(new ClickListener() {
-                @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    acceptButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                    // Send
-                    NotificationListEntry.this.remove();
-                    remove();
-                }
-                @Override
-                public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                    if (pointer == -1) {
-                        acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                    }
-                }
-                @Override
-                public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                    if (pointer == -1) {
+            if (notification.getType() == NotificationType.NOTIFICATION) {
+                acceptButton = new ImageButton(Texture.DISABLED_ACCEPT_ICON);
+            } else {
+                acceptButton = new ImageButton(Texture.ACCEPT_ICON);
+                acceptButton.addListener(new ClickListener() {
+                    @Override
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                         acceptButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                        return true;
                     }
-                }
-            });
+                    @Override
+                    public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                        acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                        // Send
+                        NotificationListEntry.this.remove();
+                        remove();
+                    }
+                    @Override
+                    public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                        if (pointer == -1) {
+                            acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                        }
+                    }
+                    @Override
+                    public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                        if (pointer == -1) {
+                            acceptButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                        }
+                    }
+                });
+            }
 
-            declineButton = new ImageButton(Texture.DECLINE_ICON);
-            declineButton.addListener(new ClickListener() {
-                @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    declineButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                    // Send
-                    NotificationListEntry.this.remove();
-                    remove();
-                }
-                @Override
-                public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                    if (pointer == -1) {
-                        declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                    }
-                }
-                @Override
-                public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                    if (pointer == -1) {
+            if (notification.getType() == NotificationType.NOTIFICATION) {
+                declineButton = new ImageButton(Texture.DISABLED_DECLINE_ICON);
+            } else {
+                declineButton = new ImageButton(Texture.DECLINE_ICON);
+                declineButton.addListener(new ClickListener() {
+                    @Override
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                         declineButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                        return true;
                     }
-                }
-            });
+                    @Override
+                    public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                        declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                        // Send
+                        NotificationListEntry.this.remove();
+                        remove();
+                    }
+                    @Override
+                    public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                        if (pointer == -1) {
+                            declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                        }
+                    }
+                    @Override
+                    public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                        if (pointer == -1) {
+                            declineButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                        }
+                    }
+                });
+            }
 
             deleteButton = new ImageButton(Texture.DELETE_ICON);
             deleteButton.addListener(new ClickListener() {
@@ -294,6 +314,8 @@ public class NotificationListEntry extends Table {
             setWidth(WINDOW_WIDTH);
             setHeight(WINDOW_HEIGHT);
 
+            getTitleTable().add(dateLabel).right();
+
             left().defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).padTop(VERTICAL_SPACING);
 
             Table labelContainer = new Table(Chati.SKIN);
@@ -304,12 +326,11 @@ public class NotificationListEntry extends Table {
             Table buttonContainer = new Table();
             buttonContainer.add(okButton).left().width(SHOW_BUTTON_WIDTH).height(BUTTON_SIZE).fillX().expandX()
                     .padBottom(VERTICAL_SPACING).space(HORIZONTAL_SPACING);
-            if (notification.getType() != NotificationType.NOTIFICATION) {
-                buttonContainer.add(acceptButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
-                        .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
-                buttonContainer.add(declineButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
-                        .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
-            }
+            buttonContainer.add(acceptButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
+                    .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
+            buttonContainer.add(declineButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
+                    .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
+
             buttonContainer.add(deleteButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING);
             add(buttonContainer).center().fillX().expandX().padBottom(VERTICAL_SPACING).row();
         }
