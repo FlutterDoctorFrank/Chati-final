@@ -341,7 +341,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                         for (final INotification notification : this.user.getGlobalNotifications().values()) {
                             this.send(new PacketOutNotification(new Notification(notification.getNotificationId(),
                                     notification.getContext().getContextId(), notification.getMessageBundle(),
-                                    notification.getTimestamp(), notification.isRequest())));
+                                    notification.getTimestamp(), notification.getNotificationType())));
                         }
                         break;
                 }

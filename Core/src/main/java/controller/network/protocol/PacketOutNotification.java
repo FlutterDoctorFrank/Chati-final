@@ -5,6 +5,7 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import model.MessageBundle;
 import model.context.ContextID;
+import model.notification.NotificationType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
@@ -52,13 +53,14 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
         PacketUtils.writeContextId(output, this.notification.getContextId());
         PacketUtils.writeBundle(output, this.notification.getMessage());
         kryo.writeObject(output, this.notification.getTimestamp());
-        output.writeBoolean(this.notification.isRequest());
+        PacketUtils.writeEnum(output, this.notification.getType());
     }
 
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.notification = new Notification(PacketUtils.readUniqueId(input), PacketUtils.readContextId(input),
-                PacketUtils.readBundle(input), kryo.readObject(input, LocalDateTime.class), input.readBoolean());
+                PacketUtils.readBundle(input), kryo.readObject(input, LocalDateTime.class),
+                PacketUtils.readEnum(input, NotificationType.class));
     }
 
     @Override
@@ -81,19 +83,19 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
 
         public Notification(@NotNull final UUID notificationId, @NotNull final ContextID contextId,
                             @NotNull final MessageBundle message, @NotNull final LocalDateTime timestamp,
-                            final boolean request) {
+                            @NotNull final NotificationType type) {
             this.notificationId = notificationId;
             this.contextId = contextId;
             this.message = message;
             this.timestamp = timestamp;
-            this.request = request;
+            this.type = type;
         }
 
         private final UUID notificationId;
         private final ContextID contextId;
         private final MessageBundle message;
         private final LocalDateTime timestamp;
-        private final boolean request;
+        private final NotificationType type;
 
         /**
          * Gibt die ID der Benachrichtigung zurück.
@@ -121,24 +123,24 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
 
         /**
          * Gibt den Zeitpunkt, an dem die Benachrichtigung erstellt wurde, zurück.
-         * @return der Zeitstempel der Benachrichtigung
+         * @return der Zeitstempel der Benachrichtigung.
          */
         public @NotNull LocalDateTime getTimestamp() {
             return this.timestamp;
         }
 
         /**
-         * Gibt zurück, ob die Benachrichtigung eine Anfrage repräsentiert.
-         * @return true, wenn die Benachrichtigung eine Anfrage ist, sonst false.
+         * Gibt den Typ, der von der Benachrichtigung repräsentiert wird, zurück.
+         * @return den Typ der Benachrichtigung.
          */
-        public boolean isRequest() {
-            return this.request;
+        public @NotNull NotificationType getType() {
+            return this.type;
         }
 
         @Override
         public @NotNull String toString() {
             return "{notificationId=" + this.notificationId + ", contextId=" + this.contextId + ", message="
-                    + this.message + ", timestamp=" + this.timestamp + ", request=" + this.request + "}";
+                    + this.message + ", timestamp=" + this.timestamp + ", type=" + this.type + "}";
         }
 
         @Override

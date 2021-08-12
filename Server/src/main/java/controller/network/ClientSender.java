@@ -331,7 +331,7 @@ public interface ClientSender {
 
                     return new PacketOutNotification(new Notification(notification.getNotificationId(),
                             notification.getContext().getContextId(), notification.getMessageBundle(),
-                            notification.getTimestamp(), notification.isRequest()));
+                            notification.getTimestamp(), notification.getNotificationType()));
                 } else {
                     throw new IllegalArgumentException("Expected INotification, got " + object.getClass());
                 }
