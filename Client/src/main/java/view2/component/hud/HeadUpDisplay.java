@@ -5,12 +5,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
-public class HeadUpDisplay extends Stage {
+public class HeadUpDisplay extends Table {
 
     private static final String USER_ICON_PATH = "icons/userIcon.png";
     private static final String USER_ICON_CHECKED_PATH = "icons/userIconChecked.png";
@@ -163,6 +162,7 @@ public class HeadUpDisplay extends Stage {
     }
 
     protected void setLayout() {
+        setFillParent(true);
         Table container = new Table();
         container.setFillParent(true);
         container.top().right();

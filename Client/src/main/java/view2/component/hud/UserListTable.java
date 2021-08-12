@@ -14,6 +14,7 @@ import view2.Chati;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 public class UserListTable extends HudMenuTable {
@@ -114,24 +115,32 @@ public class UserListTable extends HudMenuTable {
 
     @Override
     protected void setLayout() {
-        top().right().padTop(HeadUpDisplay.BUTTON_SIZE).setFillParent(true);
+        top().right().padTop(HeadUpDisplay.BUTTON_SIZE);
         Window window = new Window("Benutzerliste", Chati.SKIN);
         window.setMovable(false);
         window.top();
+
+        // TEST ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        String[] names = {"Jürgen", "Hans-Peter", "Detlef", "Olaf", "Markus", "Dietrich", "Dieter", "Siegbert", "Siegmund",
+            "Joseph", "Ferdinand", "Alexander", "Adolf", "Analia", "Inkontinentia", "Vagina", "Agathe", "Bertha", "Hannelore",
+            "Sieglinde", "Josephine", "Brigitte", "Luise-Annegret", "Alma-Dorothea", "Magdalena", "Brunhile", "Herbert",
+            "Hagen", "Heinz", "Son-Goku", "Vegeta", "Axel Schweiß", "Rosa Schlüpfer", "Penis", "Mr.WasGehtSieDasAn",
+            "Schwanzus-Longus", "G4meMason", "Franz Joseph", "Peter Silie", "Wilma", "Anna Bolika", "Anna Nass"};
+        for (int i = 0; i<200; i++) {
+            User user = new User(UUID.randomUUID(), names[new Random().nextInt(names.length)], Status.values()[new Random().nextInt(Status.values().length)], null);
+            UserListEntry entry = new UserListEntry(user);
+            userListTable.top().left().add(entry).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX() * 2).row();
+        }
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         Table buttonContainer = new Table(Chati.SKIN);
         buttonContainer.add(friendTabButton).width((HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()) / 3);
         buttonContainer.add(activeUserTabButton).width((HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()) / 3);
         buttonContainer.add(bannedUserTabButton).width((HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()) / 3);
         window.add(buttonContainer).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX()).row();
+
         window.add(userListScrollPane).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH - window.getPadX())
                 .height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT - HeadUpDisplay.HUD_MENU_TABLE_TAB_HEIGHT - window.getPadY());
         add(window).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT);
-
-        for (int i = 0; i<100; i++) {
-            User user = new User(UUID.randomUUID(), "peter", Status.ONLINE, null);
-            UserListEntry entry = new UserListEntry(user);
-            userListTable.add(entry).row();
-        }
     }
 }

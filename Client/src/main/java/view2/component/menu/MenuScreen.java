@@ -1,7 +1,6 @@
 package view2.component.menu;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -12,7 +11,7 @@ import java.util.*;
 
 public class MenuScreen extends ScreenAdapter {
 
-    private final Stage menuTableStage;
+    private final Stage stage;
     private final HeadUpDisplay headUpDisplay;
     private MenuTable currentMenuTable;
     private Response pendingResponse;
@@ -20,9 +19,10 @@ public class MenuScreen extends ScreenAdapter {
     private final Set<ContextEntry> worlds;
 
     public MenuScreen() {
-        this.menuTableStage = new Stage();
+        this.stage = new Stage();
         this.headUpDisplay = new HeadUpDisplay();
-        Gdx.input.setInputProcessor(new InputMultiplexer(menuTableStage, headUpDisplay));
+        stage.addActor(headUpDisplay);
+        Gdx.input.setInputProcessor(stage);
         this.worlds = new HashSet<>();
         this.pendingResponse = Response.NONE;
         setTable(new LoginTable());
@@ -31,10 +31,8 @@ public class MenuScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        menuTableStage.act(delta);
-        menuTableStage.draw();
-        headUpDisplay.act(delta);
-        headUpDisplay.draw();
+        stage.act(delta);
+        stage.draw();
     }
 
     public void registrationResponse(boolean success, String messageKey) {
@@ -159,7 +157,7 @@ public class MenuScreen extends ScreenAdapter {
         if (currentMenuTable != null) {
             currentMenuTable.remove();
         }
-        menuTableStage.addActor(currentMenuTable = table);
+        stage.addActor(currentMenuTable = table);
     }
 
     protected void setPendingResponse(Response pendingResponse) {
