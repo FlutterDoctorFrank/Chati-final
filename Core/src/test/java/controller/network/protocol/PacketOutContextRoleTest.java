@@ -1,5 +1,6 @@
 package controller.network.protocol;
 
+import controller.network.protocol.mock.MockPacketListenerOut;
 import model.role.Role;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,6 +12,16 @@ public class PacketOutContextRoleTest extends PacketTest<PacketOutContextRole> {
 
     public PacketOutContextRoleTest() {
         super(PacketOutContextRole.class);
+    }
+
+    @Test
+    public void callListenerTest() {
+        final MockPacketListenerOut listener = new MockPacketListenerOut();
+
+        this.before = new PacketOutContextRole(randomContextId(), randomUniqueId(), Collections.emptySet());
+        this.before.call(listener);
+
+        Assert.assertTrue(listener.handled(PacketOutContextRole.class));
     }
 
     @Test
@@ -46,8 +57,9 @@ public class PacketOutContextRoleTest extends PacketTest<PacketOutContextRole> {
 
     @Override
     public void equals() {
-        // Vergleiche Kontext-ID
+        // Vergleiche Kontext-ID und User-ID
         Assert.assertEquals(this.before.getContextId(), this.after.getContextId());
+        Assert.assertEquals(this.before.getUserId(), this.after.getUserId());
 
         // Vergleiche Rollen
         Assert.assertEquals(this.before.getRoles().length, this.after.getRoles().length);

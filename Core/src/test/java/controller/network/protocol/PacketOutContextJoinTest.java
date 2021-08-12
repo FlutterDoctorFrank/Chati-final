@@ -1,5 +1,6 @@
 package controller.network.protocol;
 
+import controller.network.protocol.mock.MockPacketListenerOut;
 import model.context.spatial.SpatialMap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -8,6 +9,16 @@ public class PacketOutContextJoinTest extends PacketTest<PacketOutContextJoin> {
 
     public PacketOutContextJoinTest() {
         super(PacketOutContextJoin.class);
+    }
+
+    @Test
+    public void callListenerTest() {
+        final MockPacketListenerOut listener = new MockPacketListenerOut();
+
+        this.before = new PacketOutContextJoin(randomContextId(), randomString(), randomEnum(SpatialMap.class));
+        this.before.call(listener);
+
+        Assert.assertTrue(listener.handled(PacketOutContextJoin.class));
     }
 
     @Test

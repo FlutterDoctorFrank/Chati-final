@@ -2,6 +2,7 @@ package controller.network.protocol;
 
 import controller.network.protocol.PacketOutUserInfo.Action;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
+import controller.network.protocol.mock.MockPacketListenerOut;
 import model.user.Avatar;
 import model.user.Status;
 import org.junit.Assert;
@@ -14,29 +15,49 @@ public class PacketOutUserInfoTest extends PacketTest<PacketOutUserInfo> {
     }
 
     @Test
+    public void callListenerTest() {
+        final MockPacketListenerOut listener = new MockPacketListenerOut();
+
+        this.before = new PacketOutUserInfo(randomContextId(), randomEnum(Action.class),
+                new UserInfo(randomUniqueId(), randomString()));
+        this.before.call(listener);
+
+        Assert.assertTrue(listener.handled(PacketOutUserInfo.class));
+    }
+
+    @Test
     public void serializationTest() {
-        this.before = new PacketOutUserInfo(randomContextId(), randomEnum(Action.class), new UserInfo(randomUniqueId(), randomString()));
-        this.before.getInfo().setTeleportTo(randomBoolean());
+        this.before = new PacketOutUserInfo(randomContextId(), randomEnum(Action.class),
+                new UserInfo(randomUniqueId(), randomString()));
 
         // Hier werden zufällige Werte in die Benutzerinformation geschrieben
-        if (randomBoolean()) {
-            this.before.getInfo().setAvatar(randomEnum(Avatar.class));
-        }
+        this.before.getInfo().setTeleportTo(randomBoolean());
+        this.before.getInfo().setAvatar(randomEnum(Avatar.class));
+        this.before.getInfo().setStatus(randomEnum(Status.class));
 
-        if (randomBoolean()) {
-            this.before.getInfo().setStatus(randomEnum(Status.class));
-        }
+        final int flags = randomInt(2) + 1;
 
-        if (randomBoolean()) {
-            for (final UserInfo.Flag flag : UserInfo.Flag.values()) {
-                if (randomBoolean()) {
-                    this.before.getInfo().addFlag(flag);
-                }
-            }
+        while (this.before.getInfo().getFlags().size() < flags) {
+            this.before.getInfo().addFlag(randomEnum(UserInfo.Flag.class));
         }
 
         this.serialize();
         this.equals();
+    }
+
+    @Test
+    public void equalUserInfoTest() {
+        final UserInfo first = new UserInfo(randomUniqueId(), randomString(), randomEnum(Status.class));
+
+        Assert.assertNotNull(first.getName());
+        Assert.assertNotNull(first.getStatus());
+
+        final UserInfo second = new UserInfo(first.getUserId(), first.getName(), first.getStatus());
+
+        Assert.assertEquals(first, first);
+        Assert.assertEquals(first, second);
+        Assert.assertEquals(first.hashCode(), second.hashCode());
+        Assert.assertNotEquals(first, new Object());
     }
 
     @Override
@@ -53,6 +74,8 @@ public class PacketOutUserInfoTest extends PacketTest<PacketOutUserInfo> {
         Assert.assertEquals(this.before.getInfo(), this.after.getInfo());
 
         // Vergleichen der genauen Werte der Benutzerinformation
+        Assert.assertEquals(this.before.getInfo().getUserId(), this.after.getInfo().getUserId());
+
         if (this.before.getInfo().getName() != null) {
             Assert.assertNotNull(this.after.getInfo().getName());
             Assert.assertEquals(this.before.getInfo().getName(), this.after.getInfo().getName());

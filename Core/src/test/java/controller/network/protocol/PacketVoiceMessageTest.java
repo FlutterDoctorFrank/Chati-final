@@ -1,5 +1,6 @@
 package controller.network.protocol;
 
+import controller.network.protocol.mock.MockPacketListener;
 import org.junit.Assert;
 import org.junit.Test;
 import java.time.LocalDateTime;
@@ -8,6 +9,16 @@ public class PacketVoiceMessageTest extends PacketTest<PacketVoiceMessage> {
 
     public PacketVoiceMessageTest() {
         super(PacketVoiceMessage.class, LocalDateTime.class);
+    }
+
+    @Test
+    public void callListenerTest() {
+        final MockPacketListener listener = new MockPacketListener();
+
+        this.before = new PacketVoiceMessage(randomBytes());
+        this.before.call(listener);
+
+        Assert.assertTrue(listener.handled(PacketVoiceMessage.class));
     }
 
     @Test

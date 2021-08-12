@@ -1,5 +1,6 @@
 package controller.network.protocol;
 
+import controller.network.protocol.mock.MockPacketListenerIn;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -7,6 +8,16 @@ public class PacketMenuOptionTest extends PacketTest<PacketMenuOption> {
 
     public PacketMenuOptionTest() {
         super(PacketMenuOption.class);
+    }
+
+    @Test
+    public void callListenerTest() {
+        final MockPacketListenerIn listener = new MockPacketListenerIn();
+
+        this.before = new PacketMenuOption(randomContextId(), new String[0], randomInt(3));
+        this.before.call(listener);
+
+        Assert.assertTrue(listener.handled(PacketMenuOption.class));
     }
 
     @Test

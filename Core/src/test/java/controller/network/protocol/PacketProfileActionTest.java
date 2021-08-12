@@ -1,5 +1,6 @@
 package controller.network.protocol;
 
+import controller.network.protocol.mock.MockPacketListener;
 import model.user.Avatar;
 import org.junit.Assert;
 import org.junit.Test;
@@ -8,6 +9,21 @@ public class PacketProfileActionTest extends PacketTest<PacketProfileAction> {
 
     public PacketProfileActionTest() {
         super(PacketProfileAction.class);
+    }
+
+    @Test
+    public void callListenerTest() {
+        final MockPacketListener listener = new MockPacketListener();
+
+        this.before = new PacketProfileAction(randomString(), randomString(), randomBoolean());
+        this.before.call(listener);
+
+        Assert.assertTrue(listener.handled(PacketProfileAction.class));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void illegalCreationTest() {
+        new PacketProfileAction(null, true);
     }
 
     @Test
@@ -43,9 +59,27 @@ public class PacketProfileActionTest extends PacketTest<PacketProfileAction> {
     }
 
     @Test
-    public void responseSerializationTest() {
+    public void responseLoginSerializationTest() {
         this.before = new PacketProfileAction(new PacketProfileAction(randomString(), randomString(), randomBoolean()),
-                randomString(), randomBoolean());
+                randomUniqueId(), randomEnum(Avatar.class), randomString(), randomBoolean());
+
+        this.serialize();
+        this.equals();
+
+        // Vergleiche Fehlermeldung und Wahrheitswert der Antwort.
+        if (this.before.getMessage() != null) {
+            Assert.assertNotNull(this.after.getMessage());
+            Assert.assertEquals(this.before.getMessage(), this.after.getMessage());
+        } else {
+            Assert.assertNull(this.after.getMessage());
+        }
+
+        Assert.assertEquals(this.before.isSuccess(), this.after.isSuccess());
+    }
+
+    @Test
+    public void responseSerializationTest() {
+        this.before = new PacketProfileAction(new PacketProfileAction(randomEnum(Avatar.class)), randomString(), randomBoolean());
 
         this.serialize();
         this.equals();

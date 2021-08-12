@@ -1,5 +1,6 @@
 package controller.network.protocol;
 
+import controller.network.protocol.mock.MockPacketListener;
 import model.communication.message.MessageType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,6 +10,21 @@ public class PacketChatMessageTest extends PacketTest<PacketChatMessage> {
 
     public PacketChatMessageTest() {
         super(PacketChatMessage.class, LocalDateTime.class);
+    }
+
+    @Test
+    public void callListenerTest() {
+        final MockPacketListener listener = new MockPacketListener();
+
+        this.before = new PacketChatMessage(randomString());
+        this.before.call(listener);
+
+        Assert.assertTrue(listener.handled(PacketChatMessage.class));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void illegalCreationTest() {
+        new PacketChatMessage(MessageType.INFO, randomUniqueId(), randomString(), LocalDateTime.now());
     }
 
     @Test

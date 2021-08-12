@@ -1,5 +1,6 @@
 package controller.network.protocol;
 
+import controller.network.protocol.mock.MockPacketListenerOut;
 import model.context.spatial.Music;
 import model.role.Role;
 import org.junit.Assert;
@@ -13,6 +14,16 @@ public class PacketOutContextInfoTest extends PacketTest<PacketOutContextInfo> {
 
     public PacketOutContextInfoTest() {
         super(PacketOutContextInfo.class);
+    }
+
+    @Test
+    public void callListenerTest() {
+        final MockPacketListenerOut listener = new MockPacketListenerOut();
+
+        this.before = new PacketOutContextInfo(randomContextId(), randomEnum(Music.class), Collections.emptySet());
+        this.before.call(listener);
+
+        Assert.assertTrue(listener.handled(PacketOutContextInfo.class));
     }
 
     @Test
@@ -34,7 +45,7 @@ public class PacketOutContextInfoTest extends PacketTest<PacketOutContextInfo> {
     @Test
     public void mutesSerializationTest() {
         final Set<UUID> mutes = new HashSet<>();
-        final int size = randomInt(Role.values().length);
+        final int size = randomInt(Role.values().length - 1) + 1;
 
         while (mutes.size() < size) {
             mutes.add(randomUniqueId());

@@ -1,6 +1,7 @@
 package controller.network.protocol;
 
 import controller.network.protocol.PacketWorldAction.Action;
+import controller.network.protocol.mock.MockPacketListener;
 import model.context.spatial.SpatialMap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,6 +10,26 @@ public class PacketWorldActionTest extends PacketTest<PacketWorldAction> {
 
     public PacketWorldActionTest() {
         super(PacketWorldAction.class);
+    }
+
+    @Test
+    public void callListenerTest() {
+        final MockPacketListener listener = new MockPacketListener();
+
+        this.before = new PacketWorldAction(randomEnum(SpatialMap.class), randomString());
+        this.before.call(listener);
+
+        Assert.assertTrue(listener.handled(PacketWorldAction.class));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void illegalClientCreationTest() {
+        new PacketWorldAction(Action.CREATE, randomContextId());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void illegalServerCreationTest() {
+        new PacketWorldAction(Action.CREATE, randomContextId(), randomString(), null, randomBoolean());
     }
 
     @Test

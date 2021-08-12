@@ -1,6 +1,7 @@
 package controller.network.protocol;
 
 import controller.network.protocol.PacketOutContextList.ContextInfo;
+import controller.network.protocol.mock.MockPacketListenerOut;
 import org.junit.Assert;
 import org.junit.Test;
 import java.util.Collections;
@@ -11,6 +12,16 @@ public class PacketOutContextListTest extends PacketTest<PacketOutContextList> {
 
     public PacketOutContextListTest() {
         super(PacketOutContextList.class);
+    }
+
+    @Test
+    public void callListenerTest() {
+        final MockPacketListenerOut listener = new MockPacketListenerOut();
+
+        this.before = new PacketOutContextList(randomContextId(), Collections.emptySet());
+        this.before.call(listener);
+
+        Assert.assertTrue(listener.handled(PacketOutContextList.class));
     }
 
     @Test
@@ -43,6 +54,17 @@ public class PacketOutContextListTest extends PacketTest<PacketOutContextList> {
 
         this.serialize();
         this.equals();
+    }
+
+    @Test
+    public void equalContextInfoTest() {
+        final ContextInfo first = new ContextInfo(randomContextId(), randomString());
+        final ContextInfo second = new ContextInfo(first.getContextId(), first.getName());
+
+        Assert.assertEquals(first, first);
+        Assert.assertEquals(first, second);
+        Assert.assertEquals(first.hashCode(), second.hashCode());
+        Assert.assertNotEquals(first, new Object());
     }
 
     @Override

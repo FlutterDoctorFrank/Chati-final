@@ -44,7 +44,7 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
 
     @Override
     public void call(@NotNull final PacketListenerOut listener) {
-
+        listener.handle(this);
     }
 
     @Override

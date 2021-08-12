@@ -1,6 +1,7 @@
 package controller.network.protocol;
 
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
+import controller.network.protocol.mock.MockPacketListener;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -8,6 +9,16 @@ public class PacketAvatarMoveTest extends PacketTest<PacketAvatarMove> {
 
     public PacketAvatarMoveTest() {
         super(PacketAvatarMove.class);
+    }
+
+    @Test
+    public void callListenerTest() {
+        final MockPacketListener listener = new MockPacketListener();
+
+        this.before = new PacketAvatarMove(randomUniqueId());
+        this.before.call(listener);
+
+        Assert.assertTrue(listener.handled(PacketAvatarMove.class));
     }
 
     @Test
