@@ -42,6 +42,7 @@ public class UserManager implements IUserManagerController, IUserManagerView {
             throw new IllegalStateException("There is already a user logged in on this client.");
         }
         this.internUser = new InternUser(userId, username, status, avatar);
+        System.out.println("Interner Benutzer " + userId);
     }
 
     @Override
@@ -54,6 +55,7 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     @Override
     public void addExternUser(UUID userId, String username, Status status, Avatar avatar) {
         this.externUsers.put(userId, new User(userId, username, status, avatar));
+        System.out.println("Externer Benutzer. " + userId);
     }
 
     @Override

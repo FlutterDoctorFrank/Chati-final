@@ -1,6 +1,7 @@
 package view2.component.hud.userList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.StringBuilder;
 import controller.network.ServerSender;
 import model.role.Permission;
 import model.role.Role;
@@ -53,6 +55,11 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         usernameLabel = new Label(user.getUsername(), Chati.SKIN);
         usernameLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
 
+        if (user.hasRole(Role.OWNER)) {
+            usernameLabel.setColor(Color.GOLD);
+        } else if (user.hasRole(Role.ADMINISTRATOR)) {
+        }
+
         statusImage = new Image();
         switch (user.getStatus()) {
             case ONLINE:
@@ -66,6 +73,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             case OFFLINE:
                 statusImage.setDrawable(Texture.OFFLINE_ICON);
                 statusImage.addListener(new ChatiToolTip("Offline"));
+                usernameLabel.setColor(Color.GRAY);
                 break;
             default:
                 throw new IllegalArgumentException("There is no icon for this user status.");

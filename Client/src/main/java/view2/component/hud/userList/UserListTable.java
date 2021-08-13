@@ -220,8 +220,8 @@ public class UserListTable extends ChatiTable {
                 "Schwanzus-Longus", "G4meMason", "Franz Joseph", "Peter Silie", "Wilma Ficken", "Anna Bolika", "Anna Nass", "Deine Mutter"};
         List<String> namesList = Arrays.asList(names);
         Collections.shuffle(namesList, new Random());
-        for (int i = 0; i<100; i++) {
-            User user = new User(UUID.randomUUID(), Integer.toString(i), Status.values()[new Random().nextInt(Status.values().length)], null);
+        for (int i = 0; i<namesList.size(); i++) {
+            User user = new User(UUID.randomUUID(), namesList.get(i), Status.values()[new Random().nextInt(Status.values().length)], null);
             UserListEntry entry = new UserListEntry(user);
             friendEntries.add(entry);
         }
