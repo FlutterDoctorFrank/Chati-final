@@ -147,7 +147,7 @@ public class NotificationListTable extends ChatiTable {
     }
 
     private void showGlobalNotifications() {
-        /*
+
         globalNotificationEntries.clear();
         IUserManagerView userManager = Chati.getInstance().getUserManager();
         if (userManager.isLoggedIn() && userManager.getInternUserView() != null) {
@@ -155,8 +155,7 @@ public class NotificationListTable extends ChatiTable {
                     .forEach(notification -> globalNotificationEntries.add(new NotificationListEntry(notification)));
             layoutEntries(globalNotificationEntries);
         }
-         */
-
+/*
         // TEEEEESST //
         for (int i = 0; i <20; i++) {
             Notification notification = new Notification(UUID.randomUUID(), null, new MessageBundle("Ich bin ein globaler Nachricht"), LocalDateTime.now(),
@@ -165,6 +164,8 @@ public class NotificationListTable extends ChatiTable {
         }
         layoutEntries(globalNotificationEntries);
         // TEEESST ENDE //
+
+ */
     }
 
     private void showWorldNotifications() {
