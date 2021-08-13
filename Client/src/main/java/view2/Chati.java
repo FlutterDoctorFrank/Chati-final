@@ -126,7 +126,6 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
 
     @Override
     public void registrationResponse(boolean success, String messageKey) {
-        System.out.println("Da is was.");
         if (this.screen.equals(menuScreen)) {
             menuScreen.registrationResponse(success, messageKey);
         }
@@ -214,15 +213,8 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
         });
     }
 
-    //Test
-    public static boolean haha2 = true;
-
     public boolean isUserInfoChanged() {
-        if (haha) {
-            haha = false;
-            return true;
-        }
-        return false;
+        return userInfoChanged;
     }
 
     // Test

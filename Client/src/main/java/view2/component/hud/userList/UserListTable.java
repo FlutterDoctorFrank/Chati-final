@@ -202,7 +202,6 @@ public class UserListTable extends ChatiTable {
     }
 
     private void showFriends() {
-        /*
         friendEntries.clear();
         IUserManagerView userManager = Chati.getInstance().getUserManager();
         if (userManager.isLoggedIn() && userManager.getInternUserView() != null) {
@@ -210,8 +209,7 @@ public class UserListTable extends ChatiTable {
                     .forEach(friend -> friendEntries.add(new UserListEntry(friend)));
             layoutEntries(friendEntries);
         }
-         */
-
+/*
         // TEST ///////////////////////////////////////////////////////////////////////////////////////////////////////
         String[] names = {"Jürgen", "Hans-Peter", "Detlef", "Olaf", "Markus", "Dietrich", "Dieter", "Siegbert", "Siegmund",
                 "Joseph", "Ferdinand", "Alexander", "Adolf H", "Analia", "Inkontinentia", "Vera Agina", "Agathe Bauer", "Bertha", "Hannelore",
@@ -225,11 +223,13 @@ public class UserListTable extends ChatiTable {
             UserListEntry entry = new UserListEntry(user);
             friendEntries.add(entry);
         }
-        layoutEntries(friendEntries);
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ */
     }
 
     private void showActiveUsers() {
+        /*
         activeUserEntries.clear();
         IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
         if (internUser != null && internUser.isInCurrentWorld()) {
@@ -237,6 +237,11 @@ public class UserListTable extends ChatiTable {
                     .forEach(activeUser -> activeUserEntries.add(new UserListEntry(activeUser)));
             layoutEntries(activeUserEntries);
         }
+
+         */
+        User user = new User(UUID.fromString("5dfae14e-6017-44ca-8fad-db2b9b092282"), "frank", Status.ONLINE, null);
+        activeUserEntries.add(new UserListEntry(user));
+        layoutEntries(activeUserEntries);
     }
 
     private void showBannedUsers() {
