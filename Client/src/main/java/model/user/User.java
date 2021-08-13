@@ -6,6 +6,7 @@ import model.exception.ContextNotFoundException;
 import model.context.ContextID;
 import model.role.Permission;
 import model.role.Role;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -199,7 +200,11 @@ public class User implements IUserController, IUserView {
 
     @Override
     public boolean isReported() {
-        Context current = UserManager.getInstance().getInternUser().getCurrentLocation().getArea();
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        if (internUser == null || internUser.getCurrentLocation() == null) {
+            return false;
+        }
+        Context current = internUser.getCurrentLocation().getArea();
         do {
             if (reportedContexts.containsKey(current.getContextId())) {
                 return true;
@@ -211,7 +216,11 @@ public class User implements IUserController, IUserView {
 
     @Override
     public boolean isMuted() {
-        Context current = UserManager.getInstance().getInternUser().getCurrentLocation().getArea();
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        if (internUser == null || internUser.getCurrentLocation() == null) {
+            return false;
+        }
+        Context current = internUser.getCurrentLocation().getArea();
         do {
             if (mutedContexts.containsKey(current.getContextId())) {
                 return true;
@@ -223,7 +232,11 @@ public class User implements IUserController, IUserView {
 
     @Override
     public boolean isBanned() {
-        Context current = UserManager.getInstance().getInternUser().getCurrentLocation().getArea();
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        if (internUser == null || internUser.getCurrentLocation() == null) {
+            return false;
+        }
+        Context current = internUser.getCurrentLocation().getArea();
         do {
             if (bannedContexts.containsKey(current.getContextId())) {
                 return true;
@@ -258,6 +271,11 @@ public class User implements IUserController, IUserView {
     public boolean hasPermission(Permission permission) {
         return contextRoles.values().stream()
                 .anyMatch(contextRole -> contextRole.stream().anyMatch(role -> role.hasPermission(permission)));
+    }
+
+    @Override
+    public Set<Role> getRoles() {
+        return null;
     }
 
     @Override

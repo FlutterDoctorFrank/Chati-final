@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.utils.StringBuilder;
 import controller.network.ServerSender;
 import model.role.Permission;
 import model.role.Role;
@@ -23,6 +22,9 @@ import view2.Chati;
 import view2.Texture;
 import view2.component.ChatiToolTip;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
     private static final float BUTTON_SIZE = 30;
@@ -32,8 +34,9 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
     private static final float LABEL_FONT_SCALE_FACTOR = 1.5f;
     private static final float BUTTON_SCALE_FACTOR = 0.1f;
 
-    private Label usernameLabel;
     private Image statusImage;
+    private Label usernameLabel;
+    private List<Image> roleImages;
     private ImageButton friendButton;
     private ImageButton ignoreButton;
     private ImageButton roomButton;
@@ -47,6 +50,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
     protected UserListEntry(IUserView user) {
         this.user = user;
+        this.roleImages = new ArrayList<>();
         create();
         setLayout();
     }
@@ -54,11 +58,6 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
     protected void create() {
         usernameLabel = new Label(user.getUsername(), Chati.SKIN);
         usernameLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
-
-        if (user.hasRole(Role.OWNER)) {
-            usernameLabel.setColor(Color.GOLD);
-        } else if (user.hasRole(Role.ADMINISTRATOR)) {
-        }
 
         statusImage = new Image();
         switch (user.getStatus()) {
@@ -77,6 +76,16 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 break;
             default:
                 throw new IllegalArgumentException("There is no icon for this user status.");
+        }
+
+        if (user.hasRole(Role.OWNER)) {
+            usernameLabel.setColor(Color.GOLD);
+        } else if (user.hasRole(Role.ADMINISTRATOR)) {
+            usernameLabel.setColor(Color.SLATE);
+        } else if (user.hasRole(Role.MODERATOR)) {
+            usernameLabel.setColor(Color.ORANGE);
+        } else if (user.isReported()) {
+            usernameLabel.setColor(Color.RED);
         }
 
         IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();

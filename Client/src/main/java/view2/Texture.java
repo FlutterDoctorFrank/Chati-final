@@ -16,6 +16,13 @@ public class Texture {
     public static final Drawable ONLINE_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/online.png")));
     public static final Drawable AWAY_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/away.png")));
     public static final Drawable OFFLINE_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/offline.png")));
+
+    public static final Drawable OWNER_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/crown_gold.png")));
+    public static final Drawable ADMINISTRATOR_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/crown_silver.png")));
+    public static final Drawable MODERATOR_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/crown_bronze.png")));
+    public static final Drawable ROOM_OWNER_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/crown_blue.png")));
+    public static final Drawable AREA_MANAGER_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/crown_green.png")));
+
     public static final Drawable ADD_FRIEND_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/new_addFriend_color.png")));
     public static final Drawable DISABLED_ADD_FRIEND_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/new_addFriend_grey.png")));
     public static final Drawable REMOVE_FRIEND_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/new_removeFriend_color.png")));
