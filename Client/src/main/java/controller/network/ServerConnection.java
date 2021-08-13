@@ -615,7 +615,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         IUserController user;
 
                         try {
-                            user = this.getExtern(info.getUserId());
+                            user = this.getUser(info.getUserId());
 
                             if (info.getStatus() != null) {
                                 user.setStatus(info.getStatus());
