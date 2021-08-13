@@ -248,8 +248,7 @@ public class User implements IUserController, IUserView {
 
     @Override
     public boolean isInCurrentWorld() {
-        //return isInCurrentWorld;
-        return true; // Für Testzwecke der View, muss wieder geändert werden!
+        return isInCurrentWorld;
     }
 
     @Override

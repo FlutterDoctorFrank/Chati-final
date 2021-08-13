@@ -102,7 +102,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
         Gdx.app.postRunnable(() -> {
             currentRoom.build(map);
         });
-
         isInCurrentRoom = true;
         UserManager.getInstance().getModelObserver().setRoomChanged();
     }

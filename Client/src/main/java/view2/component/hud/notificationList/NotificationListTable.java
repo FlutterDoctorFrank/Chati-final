@@ -147,7 +147,7 @@ public class NotificationListTable extends ChatiTable {
     }
 
     private void showGlobalNotifications() {
-        //globalNotificationEntries.clear();
+        globalNotificationEntries.clear();
         IUserManagerView userManager = Chati.getInstance().getUserManager();
         if (userManager.isLoggedIn() && userManager.getInternUserView() != null) {
             userManager.getInternUserView().getGlobalNotifications().values()
