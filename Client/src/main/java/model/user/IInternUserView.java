@@ -49,4 +49,10 @@ public interface IInternUserView extends IUserView {
      * @return Abzuspielende Musik.
      */
     Music getMusic();
+
+    /**
+     * Gibt zurück, ob sich der Benutzer in einem privaten Raum aufält.
+     * @return true, wenn der Benutzer in einem privaten Raum ist, sonst false.
+     */
+    boolean isInPrivateRoom();
 }

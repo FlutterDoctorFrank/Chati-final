@@ -98,17 +98,16 @@ public interface IUserView {
     ILocationView getCurrentLocation();
 
     /**
-     * Gibt die Rollen des Benutzers im globalen Kontext zurück.
-     * @return die Rollen des Benutzers.
+     * Gibt zurück, ob der Benutzer eine Rolle besitzt.
+     * @param role Zu überprüfende Rolle.
+     * @return true, wenn der Benutzer die Rolle besitzt, sonst false.
      */
-    Set<Role> getGlobalRoles();
+    boolean hasRole(Role role);
 
     /**
-     * Gibt die Rollen des Benutzers in der aktuellen Welt und allen untergeordneten Kontexten dieser Welt zurück.
-     * @return die Rollen des Benutzers in der aktuellen Welt.
-     * @see SpatialContext
+     * Gibt zurück, ob der Benutzer eine Berechtigung besitzt.
+     * @param permission Zu überprüfende Berechtigung.
+     * @return true, wenn der Benutzer die Berechtigung besitzt, sonst false.
      */
-    Set<Role> getWorldRoles();
-
     boolean hasPermission(Permission permission);
 }

@@ -169,6 +169,11 @@ public class InternUser extends User implements IInternUserController, IInternUs
         return music;
     }
 
+    @Override
+    public boolean isInPrivateRoom() {
+        return currentWorld != null && currentRoom != null && !currentWorld.equals(currentRoom);
+    }
+
     /**
      * Entfernt alle Referenzen auf einen verlassen (privaten) Raum.
      */

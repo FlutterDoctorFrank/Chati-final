@@ -3,15 +3,21 @@ package view2.component.hud.userList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import controller.network.ServerSender;
+import model.role.Permission;
+import model.role.Role;
 import model.user.AdministrativeAction;
+import model.user.IInternUserView;
 import model.user.IUserView;
 import view2.Chati;
 import view2.Texture;
+import view2.component.ChatiToolTip;
 
 public class UserListEntry extends Table {
 
@@ -19,8 +25,8 @@ public class UserListEntry extends Table {
     private static final float STATUS_ICON_SIZE = 22f;
     private static final float VERTICAL_SPACING = 5;
     private static final float HORIZONTAL_SPACING = 7.5f;
-    private static final float BUTTON_SPACING = 8f;
     private static final float LABEL_FONT_SCALE_FACTOR = 1.5f;
+    private static final float BUTTON_SCALE_FACTOR = 0.1f;
 
     private Label usernameLabel;
     private Image statusImage;
@@ -49,81 +55,335 @@ public class UserListEntry extends Table {
         switch (user.getStatus()) {
             case ONLINE:
                 statusImage.setDrawable(Texture.ONLINE_ICON);
+                statusImage.addListener(new ChatiToolTip("Online"));
                 break;
             case AWAY:
                 statusImage.setDrawable(Texture.AWAY_ICON);
+                statusImage.addListener(new ChatiToolTip("Abwesend"));
                 break;
             case OFFLINE:
                 statusImage.setDrawable(Texture.OFFLINE_ICON);
+                statusImage.addListener(new ChatiToolTip("Offline"));
                 break;
             default:
                 throw new IllegalArgumentException("There is no icon for this user status.");
         }
 
+        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+
         if (!user.isFriend()) {
             friendButton = new ImageButton(Texture.ADD_FRIEND_ICON);
+            friendButton.addListener(new ChatiToolTip("Freund hinzufügen"));
         } else {
             friendButton = new ImageButton(Texture.REMOVE_FRIEND_ICON);
+            friendButton.addListener(new ChatiToolTip("Freund entfernen"));
         }
-        friendButton.addListener(new InputListener() {
+        friendButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                friendButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (!friendButton.isChecked()) {
-                    getStage().addActor(new MessageWindow("Freund hinzufügen", "Füge deiner Anfrage eine Nachricht hinzu!", AdministrativeAction.INVITE_FRIEND));
+                friendButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                if (friendButton.getImage().getDrawable().equals(Texture.ADD_FRIEND_ICON)) {
+                    getStage().addActor(new MessageWindow(AdministrativeAction.INVITE_FRIEND));
                 } else {
                     Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
-                            AdministrativeAction.REMOVE_FRIEND, null);
+                            AdministrativeAction.REMOVE_FRIEND, "");
+                }
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    friendButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    friendButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 }
             }
         });
 
-        /*
         if (!user.isIgnored()) {
-            ignoreButton = new ImageButton(IGNORE_ICON);
+            ignoreButton = new ImageButton(Texture.IGNORE_ICON);
+            ignoreButton.addListener(new ChatiToolTip("Ignorieren"));
         } else {
-            ignoreButton = new ImageButton(UNIGNORE_ICON);
+            ignoreButton = new ImageButton(Texture.UNIGNORE_ICON);
+            ignoreButton.addListener(new ChatiToolTip("Nicht mehr ignorieren"));
         }
-         */
+        ignoreButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                ignoreButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                ignoreButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                if (ignoreButton.getImage().getDrawable().equals(Texture.IGNORE_ICON)) {
+                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                            AdministrativeAction.IGNORE_USER, "");
+                } else {
+                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                            AdministrativeAction.UNIGNORE_USER, "");
+                }
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    ignoreButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    ignoreButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
+            }
+        });
 
-        ignoreButton = new ImageButton(Texture.IGNORE_ICON);
-
-        // Im Modell muss es eine Abfrage geben, ob der momentane Raum ein privater Raum ist!
-        if (user.isInCurrentWorld() && !user.isInCurrentRoom()) {
-            roomButton = new ImageButton(Texture.ROOM_INVITE_ICON);
+        if (internUser != null && internUser.isInPrivateRoom()
+                && internUser.hasPermission(Permission.MANAGE_PRIVATE_ROOM)) {
+            if (!user.isInCurrentWorld()) {
+                roomButton = new ImageButton(Texture.ROOM_INVITE_ICON);
+                roomButton.addListener(new ChatiToolTip("In den Raum einladen"));
+            } else {
+                roomButton = new ImageButton(Texture.ROOM_KICK_ICON);
+                roomButton.addListener(new ChatiToolTip("Aus dem Raum entfernen"));
+            }
         } else {
-            roomButton = new ImageButton(Texture.ROOM_KICK_ICON);
+            roomButton = new ImageButton(Texture.DISABLED_ROOM_INVITE_ICON);
         }
+        roomButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                roomButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                roomButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                if (roomButton.getImage().getDrawable().equals(Texture.ROOM_INVITE_ICON)) {
+                    getStage().addActor(new MessageWindow(AdministrativeAction.ROOM_INVITE));
+                } else if (roomButton.getImage().getDrawable().equals(Texture.ROOM_KICK_ICON)) {
+                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                            AdministrativeAction.ROOM_KICK, "");
+                }
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    roomButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    roomButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
+            }
+        });
 
-        // Hier brauch ich noch einen ausgegrauten Button, wenn man sich nicht teleportieren kann!
-        // Ich brauch allgemein ausgegraute buttons...
-        teleportButton = new ImageButton(Texture.TELEPORT_ICON);
-
-        reportButton = new ImageButton(Texture.REPORT_ICON);
-
-        /*
-        if (!user.isMuted()) {
-            muteButton = new ImageButton(MUTE_ICON);
+        if (internUser != null && internUser.isInCurrentWorld() && user.isInCurrentWorld() && user.canTeleportTo()) {
+            teleportButton = new ImageButton(Texture.TELEPORT_ICON);
+            teleportButton.addListener(new ChatiToolTip("Zu Benutzer teleportieren"));
         } else {
-            muteButton = new ImageButton(UNMUTE_ICON);
+            teleportButton = new ImageButton(Texture.DISABLED_TELEPORT_ICON);
         }
-         */
-        muteButton = new ImageButton(Texture.MUTE_ICON);
+        teleportButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                teleportButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                teleportButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                if (teleportButton.getImage().getDrawable().equals(Texture.TELEPORT_ICON)) {
+                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                            AdministrativeAction.TELEPORT_TO_USER, "");
+                }
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    teleportButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    teleportButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
+            }
+        });
 
-        /*
-        if (!user.isBanned()) {
-            banButton = new ImageButton(BAN_ICON);
+        if (internUser != null && internUser.isInCurrentWorld() && user.isInCurrentWorld()
+                && !internUser.hasPermission(Permission.BAN_MODERATOR) && !user.hasPermission(Permission.BAN_MODERATOR)
+                && (!internUser.hasPermission(Permission.BAN_USER) || user.hasPermission(Permission.BAN_USER))) {
+            reportButton = new ImageButton(Texture.REPORT_ICON);
+            reportButton.addListener(new ChatiToolTip("Melden"));
         } else {
-            banButton = new ImageButton(UNBAN_ICON);
+            reportButton = new ImageButton(Texture.DISABLED_REPORT_ICON);
         }
-         */
-        banButton = new ImageButton(Texture.BAN_ICON);
+        reportButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                reportButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                reportButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                if (reportButton.getImage().getDrawable().equals(Texture.REPORT_ICON)) {
+                    getStage().addActor(new MessageWindow(AdministrativeAction.REPORT_USER));
+                }
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    reportButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    reportButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
+            }
+        });
 
-        // Das Modell braucht eine Abfrage der Rolle!
-        moderatorButton = new ImageButton(Texture.ASSIGN_MODERATOR_ICON);
+        if (internUser != null && internUser.isInCurrentWorld() && user.isInCurrentWorld()
+                && internUser.hasPermission(Permission.MUTE) && !user.hasPermission(Permission.MUTE)) {
+            if (!user.isMuted()) {
+                muteButton = new ImageButton(Texture.MUTE_ICON);
+                muteButton.addListener(new ChatiToolTip("Stummschalten"));
+            } else {
+                muteButton = new ImageButton(Texture.UNMUTE_ICON);
+                muteButton.addListener(new ChatiToolTip("Stummschalten aufheben"));
+            }
+        } else {
+            muteButton = new ImageButton(Texture.DISABLED_MUTE_ICON);
+        }
+        muteButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                muteButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                muteButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                if (muteButton.getImage().getDrawable().equals(Texture.MUTE_ICON)) {
+                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                            AdministrativeAction.MUTE_USER, "");
+                } else if (muteButton.getImage().getDrawable().equals(Texture.UNMUTE_ICON)) {
+                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                            AdministrativeAction.UNMUTE_USER, "");
+                }
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    muteButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    muteButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
+            }
+        });
+
+        if (internUser != null && (internUser.isInCurrentWorld() && internUser.hasPermission(Permission.BAN_MODERATOR)
+                && !user.hasPermission(Permission.BAN_MODERATOR) || internUser.hasPermission(Permission.BAN_USER)
+                && !user.hasPermission(Permission.BAN_MODERATOR) && !user.hasPermission(Permission.BAN_USER))) {
+            if (!user.isBanned()) {
+                banButton = new ImageButton(Texture.BAN_ICON);
+                banButton.addListener(new ChatiToolTip("Sperren"));
+            } else {
+                banButton = new ImageButton(Texture.UNBAN_ICON);
+                banButton.addListener(new ChatiToolTip("Entperren"));
+            }
+        } else {
+            banButton = new ImageButton(Texture.DISABLED_BAN_ICON);
+        }
+        banButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                banButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                banButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                if (banButton.getImage().getDrawable().equals(Texture.BAN_ICON)) {
+                    getStage().addActor(new MessageWindow(AdministrativeAction.BAN_USER));
+                } else if (banButton.getImage().getDrawable().equals(Texture.UNBAN_ICON)) {
+                    getStage().addActor(new MessageWindow(AdministrativeAction.UNBAN_USER));
+                }
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    banButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    banButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
+            }
+        });
+
+        if (internUser != null && internUser.isInCurrentWorld() && user.isInCurrentWorld()
+                && internUser.hasPermission(Permission.ASSIGN_MODERATOR)) {
+            if (!user.hasRole(Role.MODERATOR)) {
+                moderatorButton = new ImageButton(Texture.ASSIGN_MODERATOR_ICON);
+                moderatorButton.addListener(new ChatiToolTip("Die Rolle des Moderators vergeben"));
+            } else {
+                moderatorButton = new ImageButton(Texture.WITHDRAW_MODERATOR_ICON);
+                moderatorButton.addListener(new ChatiToolTip("Die Rolle des Moderators entziehen"));
+            }
+        } else {
+            moderatorButton = new ImageButton(Texture.DISABLED_ASSIGN_MODERATOR_ICON);
+        }
+        moderatorButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                moderatorButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                moderatorButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                if (moderatorButton.getImage().getDrawable().equals(Texture.ASSIGN_MODERATOR_ICON)) {
+                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                            AdministrativeAction.ASSIGN_MODERATOR, "");
+                } else if (moderatorButton.getImage().getDrawable().equals(Texture.WITHDRAW_MODERATOR_ICON)) {
+                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                            AdministrativeAction.WITHDRAW_MODERATOR, "");
+                }
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    moderatorButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    moderatorButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
+            }
+        });
     }
 
     protected void setLayout() {
@@ -167,12 +427,10 @@ public class UserListEntry extends Table {
         private TextButton confirmButton;
         private TextButton cancelButton;
 
-        private final String showMessage;
         private final AdministrativeAction action;
 
-        protected MessageWindow(String title, String showMessage, AdministrativeAction action) {
-            super(title, Chati.SKIN);
-            this.showMessage = showMessage;
+        protected MessageWindow(AdministrativeAction action) {
+            super("", Chati.SKIN);
             this.action = action;
             create();
             setLayout();
@@ -184,7 +442,29 @@ public class UserListEntry extends Table {
             Label.LabelStyle style = new Label.LabelStyle();
             style.font = new BitmapFont();
             style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
-            this.infoLabel = new Label(showMessage, style);
+            this.infoLabel = new Label("", style);
+
+            switch(action) {
+                case INVITE_FRIEND:
+                    getTitleLabel().setText("Freund hinzufügen");
+                    infoLabel.setText("Füge eine Nachricht zu deiner Anfrage hinzu!");
+                    break;
+                case REPORT_USER:
+                    getTitleLabel().setText("Benutzer melden");
+                    infoLabel.setText("Nenne einen Grund für das Melden dieses Benutzers!");
+                    break;
+                case BAN_USER:
+                    getTitleLabel().setText("Benutzer sperren");
+                    infoLabel.setText("Nenne einen Grund für das Sperren dieses Benutzers!");
+                    break;
+                case UNBAN_USER:
+                    getTitleLabel().setText("Benutzer entsperren");
+                    infoLabel.setText("Nennen einen Grund für das Entsperren dieses Benutzers!");
+                    break;
+                case ROOM_INVITE:
+                    getTitleLabel().setText("In den Raum einladen");
+                    infoLabel.setText("Füge eine Nachricht zu deiner Einladung hinzu!");
+            }
 
             Skin userMessageAreaSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
             userMessageAreaSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);

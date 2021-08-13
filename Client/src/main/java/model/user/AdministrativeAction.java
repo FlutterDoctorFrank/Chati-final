@@ -32,6 +32,14 @@ public enum AdministrativeAction {
     UNIGNORE_USER,
 
     /**
+     * Stellt einen Benutzer im innersten räumlichen Kontext stumm, in dem sich sowohl der ausführende, als auch der
+     * stummzuschaltende Benutzer befinden, sofern der ausführende Benutzer die Berechtigung für diesen Kontext besitzt.
+     * Ein stummgeschalteter Benutzer kann im entsprechenden Kontext nichtmehr aktiv kommunizieren, außer per
+     * Flüsternachricht.
+     */
+    REPORT_USER,
+
+    /**
      * Lädt einen Benutzer in einen privaten Raum ein, in dem sich der ausführende Benutzer befindet und für den er die
      * nötige Berechtigung besitzt.
      */
@@ -59,14 +67,6 @@ public enum AdministrativeAction {
      * Moderatoren zu sperren können nicht gemeldet werden.
      */
     UNBAN_USER,
-
-    /**
-     * Stellt einen Benutzer im innersten räumlichen Kontext stumm, in dem sich sowohl der ausführende, als auch der
-     * stummzuschaltende Benutzer befinden, sofern der ausführende Benutzer die Berechtigung für diesen Kontext besitzt.
-     * Ein stummgeschalteter Benutzer kann im entsprechenden Kontext nichtmehr aktiv kommunizieren, außer per
-     * Flüsternachricht.
-     */
-    REPORT_USER,
 
     /**
      * Hebt die Stummschaltung eines Benutzers auf. Es werden alle Stummschaltungen innerhalb des größten Kontext

@@ -250,18 +250,14 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public Set<Role> getGlobalRoles() {
-        return contextRoles.get(Context.getGlobal());
-    }
-
-    @Override
-    public Set<Role> getWorldRoles() {
-        return contextRoles.get(UserManager.getInstance().getInternUser().getCurrentWorld());
+    public boolean hasRole(Role role) {
+        return contextRoles.values().stream().anyMatch(contextRole -> contextRole.contains(role));
     }
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return false;
+        return contextRoles.values().stream()
+                .anyMatch(contextRole -> contextRole.stream().anyMatch(role -> role.hasPermission(permission)));
     }
 
     @Override

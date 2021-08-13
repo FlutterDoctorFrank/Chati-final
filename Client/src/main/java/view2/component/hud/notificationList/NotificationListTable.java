@@ -56,7 +56,7 @@ public class NotificationListTable extends ChatiTable {
         }
 
         if (Chati.getInstance().isUserNotificationChanged()) {
-            loadNotifications();
+            loadNotificationEntries();
             if (!globalNotificationTabButton.isDisabled() && globalNotificationTabButton.isChecked()) {
                 layoutEntries(globalNotificationEntries);
             } else if (!worldNotificationTabButton.isDisabled() && worldNotificationTabButton.isChecked()) {
@@ -84,6 +84,7 @@ public class NotificationListTable extends ChatiTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                loadNotificationEntries();
                 layoutEntries(globalNotificationEntries);
                 globalNotificationTabButton.getLabel().setColor(Color.MAGENTA);
                 globalNotificationTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
@@ -103,6 +104,7 @@ public class NotificationListTable extends ChatiTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                loadNotificationEntries();
                 layoutEntries(worldNotificationEntries);
                 worldNotificationTabButton.getLabel().setColor(Color.MAGENTA);
                 worldNotificationTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
@@ -124,9 +126,10 @@ public class NotificationListTable extends ChatiTable {
             if (!user.isInCurrentWorld()) {
                 disableWorldNotificationTab();
             }
+
+            loadNotificationEntries();
+            layoutEntries(globalNotificationEntries);
         }
-        loadNotifications();
-        layoutEntries(globalNotificationEntries);
     }
 
     protected void setLayout() {
@@ -148,7 +151,7 @@ public class NotificationListTable extends ChatiTable {
         Chati.getInstance().getMenuScreen().getStage().setScrollFocus(notificationListScrollPane);
     }
 
-    private void loadNotifications() {
+    private void loadNotificationEntries() {
         /*
         globalNotificationEntries.clear();
         worldNotificationEntries.clear();
@@ -191,6 +194,15 @@ public class NotificationListTable extends ChatiTable {
         worldNotificationTabButton.getStyle().up = HeadUpDisplay.UNPRESSED_BUTTON_IMAGE;
     }
 
+    private void disableGlobalNotificationTab() {
+        globalNotificationTabButton.setDisabled(true);
+        globalNotificationTabButton.setTouchable(Touchable.disabled);
+        globalNotificationTabButton.getLabel().setColor(Color.DARK_GRAY);
+        globalNotificationTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
+        globalNotificationEntries.clear();
+        notificationListContainer.clearChildren();
+    }
+
     private void disableWorldNotificationTab() {
         if (worldNotificationTabButton.isChecked() && !globalNotificationTabButton.isDisabled()) {
             worldNotificationTabButton.setChecked(false);
@@ -202,16 +214,6 @@ public class NotificationListTable extends ChatiTable {
         worldNotificationTabButton.getLabel().setColor(Color.DARK_GRAY);
         worldNotificationTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
         worldNotificationEntries.clear();
-        notificationListContainer.clearChildren();
-    }
-
-    private void disableGlobalNotificationTab() {
-        globalNotificationTabButton.setDisabled(true);
-        globalNotificationTabButton.setTouchable(Touchable.disabled);
-        globalNotificationTabButton.getLabel().setColor(Color.DARK_GRAY);
-        globalNotificationTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
-        globalNotificationEntries.clear();
-        notificationListContainer.clearChildren();
     }
 
     private void layoutEntries(Set<NotificationListEntry> entries) {
