@@ -6,7 +6,7 @@ package model.notification;
 public enum NotificationType {
 
     /** Repräsentiert eine einfache Benachrichtigung. */
-    NOTIFICATION("Information"),
+    INFORMATION("Information"),
 
     /** Repräsentiert eine Freundschaftsanfrage. */
     FRIEND_REQUEST("Freundschaftsanfrage"),

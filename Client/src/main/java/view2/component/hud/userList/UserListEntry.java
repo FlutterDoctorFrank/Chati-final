@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -15,11 +16,12 @@ import model.role.Role;
 import model.user.AdministrativeAction;
 import model.user.IInternUserView;
 import model.user.IUserView;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.Texture;
 import view2.component.ChatiToolTip;
 
-public class UserListEntry extends Table {
+public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
     private static final float BUTTON_SIZE = 30;
     private static final float STATUS_ICON_SIZE = 22f;
@@ -157,6 +159,8 @@ public class UserListEntry extends Table {
             }
         } else {
             roomButton = new ImageButton(Texture.DISABLED_ROOM_INVITE_ICON);
+            roomButton.setDisabled(true);
+            roomButton.setTouchable(Touchable.disabled);
         }
         roomButton.addListener(new InputListener() {
             @Override
@@ -193,6 +197,8 @@ public class UserListEntry extends Table {
             teleportButton.addListener(new ChatiToolTip("Zu Benutzer teleportieren"));
         } else {
             teleportButton = new ImageButton(Texture.DISABLED_TELEPORT_ICON);
+            teleportButton.setDisabled(true);
+            teleportButton.setTouchable(Touchable.disabled);
         }
         teleportButton.addListener(new InputListener() {
             @Override
@@ -229,6 +235,8 @@ public class UserListEntry extends Table {
             reportButton.addListener(new ChatiToolTip("Melden"));
         } else {
             reportButton = new ImageButton(Texture.DISABLED_REPORT_ICON);
+            reportButton.setDisabled(true);
+            reportButton.setTouchable(Touchable.disabled);
         }
         reportButton.addListener(new InputListener() {
             @Override
@@ -268,6 +276,8 @@ public class UserListEntry extends Table {
             }
         } else {
             muteButton = new ImageButton(Texture.DISABLED_MUTE_ICON);
+            muteButton.setDisabled(true);
+            muteButton.setTouchable(Touchable.disabled);
         }
         muteButton.addListener(new InputListener() {
             @Override
@@ -312,6 +322,8 @@ public class UserListEntry extends Table {
             }
         } else {
             banButton = new ImageButton(Texture.DISABLED_BAN_ICON);
+            banButton.setDisabled(true);
+            banButton.setTouchable(Touchable.disabled);
         }
         banButton.addListener(new InputListener() {
             @Override
@@ -353,6 +365,8 @@ public class UserListEntry extends Table {
             }
         } else {
             moderatorButton = new ImageButton(Texture.DISABLED_ASSIGN_MODERATOR_ICON);
+            moderatorButton.setDisabled(true);
+            moderatorButton.setTouchable(Touchable.disabled);
         }
         moderatorButton.addListener(new InputListener() {
             @Override
@@ -409,6 +423,16 @@ public class UserListEntry extends Table {
         buttonContainer.add(banButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).fillX().expandX();
         buttonContainer.add(moderatorButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).fillX().expandX();
         add(buttonContainer).center().fillX().expandX();
+    }
+
+    @Override
+    public int compareTo(@NotNull UserListEntry other) {
+        int statusComp = this.user.getStatus().compareTo(other.user.getStatus());
+        if (statusComp == 0) {
+            return this.user.getUsername().compareTo(other.user.getUsername());
+        } else {
+            return statusComp;
+        }
     }
 
     private class MessageWindow extends Window {
@@ -515,5 +539,9 @@ public class UserListEntry extends Table {
             buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(ROW_HEIGHT);
             add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
         }
+    }
+
+    public IUserView getUser() {
+        return user;
     }
 }

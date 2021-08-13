@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.role.Permission;
 import model.user.IInternUserView;
+import model.user.IUserManagerView;
 import model.user.Status;
 import model.user.User;
 import view2.Chati;
@@ -32,9 +33,9 @@ public class UserListTable extends ChatiTable {
     private Table userListContainer;
 
     public UserListTable() {
-        this.friendEntries = new HashSet<>();
-        this.activeUserEntries = new HashSet<>();
-        this.bannedUserEntries = new HashSet<>();
+        this.friendEntries = new TreeSet<>();
+        this.activeUserEntries = new TreeSet<>();
+        this.bannedUserEntries = new TreeSet<>();
         create();
         setLayout();
     }
@@ -57,6 +58,7 @@ public class UserListTable extends ChatiTable {
 
         if (user != null && friendTabButton.isDisabled()) {
             enableFriendsTab();
+            showFriends();
         } else if (user != null && user.isInCurrentWorld() && activeUserTabButton.isDisabled()) {
             enableActiveUsersTab();
         }
@@ -67,13 +69,12 @@ public class UserListTable extends ChatiTable {
         }
 
         if (Chati.getInstance().isUserInfoChanged()) {
-            loadUserEntries();
             if (!friendTabButton.isDisabled() && friendTabButton.isChecked()) {
-                layoutEntries(friendEntries);
+                showFriends();
             } else if (!activeUserTabButton.isDisabled() && activeUserTabButton.isChecked()) {
-                layoutEntries(activeUserEntries);
+                showActiveUsers();
             } else if (!bannedUserTabButton.isDisabled() && bannedUserTabButton.isChecked()) {
-                layoutEntries(bannedUserEntries);
+                showBannedUsers();
             }
         }
         super.draw(batch, parentAlpha);
@@ -97,8 +98,7 @@ public class UserListTable extends ChatiTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                loadUserEntries();
-                layoutEntries(friendEntries);
+                showFriends();
                 friendTabButton.getLabel().setColor(Color.MAGENTA);
                 friendTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
                 if (!activeUserTabButton.isDisabled()) {
@@ -121,8 +121,7 @@ public class UserListTable extends ChatiTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                loadUserEntries();
-                layoutEntries(activeUserEntries);
+                showActiveUsers();
                 activeUserTabButton.getLabel().setColor(Color.MAGENTA);
                 activeUserTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
                 if (!friendTabButton.isDisabled()) {
@@ -145,8 +144,7 @@ public class UserListTable extends ChatiTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                loadUserEntries();
-                layoutEntries(bannedUserEntries);
+                showBannedUsers();
                 bannedUserTabButton.getLabel().setColor(Color.MAGENTA);
                 bannedUserTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
                 if (!friendTabButton.isDisabled()) {
@@ -179,8 +177,7 @@ public class UserListTable extends ChatiTable {
                 disableBannedUsersTab();
             }
 
-            loadUserEntries();
-            layoutEntries(friendEntries);
+            showFriends();
         }
     }
 
@@ -191,21 +188,6 @@ public class UserListTable extends ChatiTable {
         window.top();
 
         userListContainer.top();
-
-        // TEST ///////////////////////////////////////////////////////////////////////////////////////////////////////
-        String[] names = {"Jürgen", "Hans-Peter", "Detlef", "Olaf", "Markus", "Dietrich", "Dieter", "Siegbert", "Siegmund",
-            "Joseph", "Ferdinand", "Alexander", "Adolf H", "Analia", "Inkontinentia", "Vera Agina", "Agathe Bauer", "Bertha", "Hannelore",
-            "Sieglinde", "Josephine", "Brigitte", "Luise-Annegret", "Alma-Dorothea", "Magdalena", "Brunhilde", "Herbert", "Gertrud", "Hiltrud",
-            "Hagen", "Heinz", "Son-Goku", "Vegeta", "Axel Schweiß", "Rosa Schlüpfer", "Reinhold", "Mr.WasGehtSieDasAn", "Peter Enis",
-            "Schwanzus-Longus", "G4meMason", "Franz Joseph", "Peter Silie", "Wilma Ficken", "Anna Bolika", "Anna Nass", "Deine Mutter"};
-        List<String> namesList = Arrays.asList(names);
-        Collections.shuffle(namesList, new Random());
-        for (int i = 0; i<namesList.size(); i++) {
-            User user = new User(UUID.randomUUID(), namesList.get(i), Status.values()[new Random().nextInt(Status.values().length)], null);
-            UserListEntry entry = new UserListEntry(user);
-            userListContainer.top().left().add(entry).fillX().expandX().row();
-        }
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         Table buttonContainer = new Table(Chati.SKIN);
         buttonContainer.add(friendTabButton).fillX().expandX();
@@ -219,7 +201,57 @@ public class UserListTable extends ChatiTable {
         Chati.getInstance().getMenuScreen().getStage().setScrollFocus(userListScrollPane);
     }
 
+    private void showFriends() {
+        /*
+        friendEntries.clear();
+        IUserManagerView userManager = Chati.getInstance().getUserManager();
+        if (userManager.isLoggedIn() && userManager.getInternUserView() != null) {
+            Chati.getInstance().getUserManager().getFriends().values()
+                    .forEach(friend -> friendEntries.add(new UserListEntry(friend)));
+            layoutEntries(friendEntries);
+        }
+         */
+
+        // TEST ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        String[] names = {"Jürgen", "Hans-Peter", "Detlef", "Olaf", "Markus", "Dietrich", "Dieter", "Siegbert", "Siegmund",
+                "Joseph", "Ferdinand", "Alexander", "Adolf H", "Analia", "Inkontinentia", "Vera Agina", "Agathe Bauer", "Bertha", "Hannelore",
+                "Sieglinde", "Josephine", "Brigitte", "Luise-Annegret", "Alma-Dorothea", "Magdalena", "Brunhilde", "Herbert", "Gertrud", "Hiltrud",
+                "Hagen", "Heinz", "Son-Goku", "Vegeta", "Axel Schweiß", "Rosa Schlüpfer", "Reinhold", "Mr.WasGehtSieDasAn", "Peter Enis",
+                "Schwanzus-Longus", "G4meMason", "Franz Joseph", "Peter Silie", "Wilma Ficken", "Anna Bolika", "Anna Nass", "Deine Mutter"};
+        List<String> namesList = Arrays.asList(names);
+        Collections.shuffle(namesList, new Random());
+        for (int i = 0; i<100; i++) {
+            User user = new User(UUID.randomUUID(), Integer.toString(i), Status.values()[new Random().nextInt(Status.values().length)], null);
+            UserListEntry entry = new UserListEntry(user);
+            friendEntries.add(entry);
+        }
+        layoutEntries(friendEntries);
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    }
+
+    private void showActiveUsers() {
+        activeUserEntries.clear();
+        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+        if (internUser != null && internUser.isInCurrentWorld()) {
+            Chati.getInstance().getUserManager().getActiveUsers().values()
+                    .forEach(activeUser -> activeUserEntries.add(new UserListEntry(activeUser)));
+            layoutEntries(activeUserEntries);
+        }
+    }
+
+    private void showBannedUsers() {
+        bannedUserEntries.clear();
+        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+        if (internUser != null && internUser.isInCurrentWorld()
+                && (internUser.hasPermission(Permission.BAN_USER) || internUser.hasPermission(Permission.BAN_MODERATOR))) {
+            Chati.getInstance().getUserManager().getActiveUsers().values()
+                    .forEach(bannedUser -> bannedUserEntries.add(new UserListEntry(bannedUser)));
+            layoutEntries(bannedUserEntries);
+        }
+    }
+
     private void loadUserEntries() {
+        /*
         friendEntries.clear();
         activeUserEntries.clear();
         bannedUserEntries.clear();
@@ -236,6 +268,7 @@ public class UserListTable extends ChatiTable {
                 }
             }
         }
+         */
     }
 
     private void enableFriendsTab() {
@@ -272,7 +305,7 @@ public class UserListTable extends ChatiTable {
         if (activeUserTabButton.isChecked() && !friendTabButton.isDisabled()) {
             activeUserTabButton.setChecked(false);
             friendTabButton.setChecked(true);
-            layoutEntries(friendEntries);
+            showFriends();
         }
         activeUserTabButton.setDisabled(true);
         activeUserTabButton.setTouchable(Touchable.disabled);
@@ -285,7 +318,7 @@ public class UserListTable extends ChatiTable {
         if (bannedUserTabButton.isChecked() && !friendTabButton.isDisabled()) {
             bannedUserTabButton.setChecked(false);
             friendTabButton.setChecked(true);
-            layoutEntries(friendEntries);
+            showFriends();
         }
         bannedUserTabButton.setDisabled(true);
         bannedUserTabButton.setTouchable(Touchable.disabled);

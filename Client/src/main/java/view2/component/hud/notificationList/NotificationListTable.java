@@ -11,15 +11,13 @@ import model.MessageBundle;
 import model.notification.Notification;
 import model.notification.NotificationType;
 import model.user.IInternUserView;
+import model.user.IUserManagerView;
 import view2.Chati;
 import view2.component.ChatiTable;
 import view2.component.hud.HeadUpDisplay;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class NotificationListTable extends ChatiTable {
 
@@ -33,8 +31,8 @@ public class NotificationListTable extends ChatiTable {
     private Table notificationListContainer;
 
     public NotificationListTable() {
-        this.globalNotificationEntries = new HashSet<>();
-        this.worldNotificationEntries = new HashSet<>();
+        this.globalNotificationEntries = new TreeSet<>();
+        this.worldNotificationEntries = new TreeSet<>();
         create();
         setLayout();
     }
@@ -51,16 +49,16 @@ public class NotificationListTable extends ChatiTable {
 
         if (user != null && globalNotificationTabButton.isDisabled()) {
             enableGlobalNotificationTab();
+            showGlobalNotifications();
         } else if (user != null && user.isInCurrentWorld() && worldNotificationTabButton.isDisabled()) {
             enableWorldNotificationTab();
         }
 
         if (Chati.getInstance().isUserNotificationChanged()) {
-            loadNotificationEntries();
             if (!globalNotificationTabButton.isDisabled() && globalNotificationTabButton.isChecked()) {
-                layoutEntries(globalNotificationEntries);
+                showGlobalNotifications();
             } else if (!worldNotificationTabButton.isDisabled() && worldNotificationTabButton.isChecked()) {
-                layoutEntries(worldNotificationEntries);
+                showWorldNotifications();
             }
         }
         super.draw(batch, parentAlpha);
@@ -84,8 +82,7 @@ public class NotificationListTable extends ChatiTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                loadNotificationEntries();
-                layoutEntries(globalNotificationEntries);
+                showGlobalNotifications();
                 globalNotificationTabButton.getLabel().setColor(Color.MAGENTA);
                 globalNotificationTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
                 if (!worldNotificationTabButton.isDisabled()) {
@@ -104,8 +101,7 @@ public class NotificationListTable extends ChatiTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                loadNotificationEntries();
-                layoutEntries(worldNotificationEntries);
+                showWorldNotifications();
                 worldNotificationTabButton.getLabel().setColor(Color.MAGENTA);
                 worldNotificationTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
                 globalNotificationTabButton.getLabel().setColor(Color.WHITE);
@@ -127,8 +123,7 @@ public class NotificationListTable extends ChatiTable {
                 disableWorldNotificationTab();
             }
 
-            loadNotificationEntries();
-            layoutEntries(globalNotificationEntries);
+            showGlobalNotifications();
         }
     }
 
@@ -151,32 +146,45 @@ public class NotificationListTable extends ChatiTable {
         Chati.getInstance().getMenuScreen().getStage().setScrollFocus(notificationListScrollPane);
     }
 
-    private void loadNotificationEntries() {
+    private void showGlobalNotifications() {
         /*
         globalNotificationEntries.clear();
-        worldNotificationEntries.clear();
-        IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
-        if (user != null) {
-            user.getGlobalNotifications().values()
+        IUserManagerView userManager = Chati.getInstance().getUserManager();
+        if (userManager.isLoggedIn() && userManager.getInternUserView() != null) {
+            userManager.getInternUserView().getGlobalNotifications().values()
                     .forEach(notification -> globalNotificationEntries.add(new NotificationListEntry(notification)));
-            if (user.isInCurrentWorld()) {
-                user.getWorldNotifications().values()
-                        .forEach(notification -> worldNotificationEntries.add(new NotificationListEntry(notification)));
-            }
+            layoutEntries(globalNotificationEntries);
         }
          */
+
         // TEEEEESST //
         for (int i = 0; i <20; i++) {
             Notification notification = new Notification(UUID.randomUUID(), null, new MessageBundle("Ich bin ein globaler Nachricht"), LocalDateTime.now(),
                     NotificationType.values()[new Random().nextInt(NotificationType.values().length)]);
             globalNotificationEntries.add(new NotificationListEntry(notification));
         }
+        layoutEntries(globalNotificationEntries);
+        // TEEESST ENDE //
+    }
 
+    private void showWorldNotifications() {
+        /*
+        worldNotificationEntries.clear();
+        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+        if (internUser != null && internUser.isInCurrentWorld()) {
+            internUser.getWorldNotifications().values()
+                    .forEach(notification -> worldNotificationEntries.add(new NotificationListEntry(notification)));
+            layoutEntries(worldNotificationEntries);
+        }
+         */
+
+        // TEEEEEST   //
         for (int i = 0; i <20; i++) {
             Notification notification = new Notification(UUID.randomUUID(), null, new MessageBundle("Ich bin eine Weltnachricht"), LocalDateTime.now(),
                     NotificationType.values()[new Random().nextInt(NotificationType.values().length)]);
             worldNotificationEntries.add(new NotificationListEntry(notification));
         }
+        layoutEntries(worldNotificationEntries);
         // TEEESST ENDE //
     }
 
@@ -207,7 +215,7 @@ public class NotificationListTable extends ChatiTable {
         if (worldNotificationTabButton.isChecked() && !globalNotificationTabButton.isDisabled()) {
             worldNotificationTabButton.setChecked(false);
             globalNotificationTabButton.setChecked(true);
-            layoutEntries(globalNotificationEntries);
+            showGlobalNotifications();
         }
         worldNotificationTabButton.setDisabled(true);
         worldNotificationTabButton.setTouchable(Touchable.disabled);
