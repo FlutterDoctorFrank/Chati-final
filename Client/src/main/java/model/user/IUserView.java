@@ -98,14 +98,16 @@ public interface IUserView {
     ILocationView getCurrentLocation();
 
     /**
-     * Gibt zurück, ob der Benutzer eine Rolle besitzt.
+     * Gibt zurück, ob der Benutzer eine Rolle im innersten Kontext oder einem übergeordneten Kontext besitzt,
+     * in dem sich der intern angemeldete Benutzer befindet.
      * @param role Zu überprüfende Rolle.
      * @return true, wenn der Benutzer die Rolle besitzt, sonst false.
      */
     boolean hasRole(Role role);
 
     /**
-     * Gibt zurück, ob der Benutzer eine Berechtigung besitzt.
+     * Gibt zurück, ob der Benutzer eine Berechtigung im innersten Kontext oder einem übergeordneten Kontext besitzt,
+     * in dem sich der intern angemeldete Benutzer befindet.
      * @param permission Zu überprüfende Berechtigung.
      * @return true, wenn der Benutzer die Berechtigung besitzt, sonst false.
      */
@@ -117,4 +119,15 @@ public interface IUserView {
      * @return Rollen dieses Benutzers.
      */
     Set<Role> getRoles();
+
+    /**
+     * Gibt die übergeordnetste Rolle des Benutzers zurück, die er im innersten Kontext oder einem übergeordneten
+     * Kontext besitzt, in dem sich der intern angemeldete Benutzer befindet. Die Rollen sind wie folgt hierarchisch
+     * gegliedert: {@link Role#OWNER}, {@link Role#ADMINISTRATOR}, {@link Role#MODERATOR}, {@link Role#ROOM_OWNER},
+     * {@link Role#AREA_MANAGER}. Diese Gliederung wird für Anzeigezwecke genutzt und spiegelt keine tatsächliche
+     * Hierarchie der Rollen wider, da nicht jede übergeordnete Rolle alle Berechtigungen aller untergeordneter
+     * Rollen enthalten.
+     * @return Übergeordnetste Rolle des Benutzers.
+     */
+    Role getHighestRole();
 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import view2.Chati;
 
@@ -39,7 +40,7 @@ public class StartTable extends MenuTable {
         worldSelectBox = new SelectBox<>(Chati.SKIN);
 
         joinWorldButton = new TextButton("Welt Beitreten", Chati.SKIN);
-        joinWorldButton.addListener(new InputListener() {
+        joinWorldButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -57,7 +58,7 @@ public class StartTable extends MenuTable {
         });
 
         createWorldButton = new TextButton("Welt erstellen", Chati.SKIN);
-        createWorldButton.addListener(new InputListener() {
+        createWorldButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -69,7 +70,7 @@ public class StartTable extends MenuTable {
         });
 
         deleteWorldButton = new TextButton("Welt löschen", Chati.SKIN);
-        deleteWorldButton.addListener(new InputListener() {
+        deleteWorldButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -87,7 +88,7 @@ public class StartTable extends MenuTable {
         });
 
         changeAvatarButton = new TextButton("Avatar ändern", Chati.SKIN);
-        changeAvatarButton.addListener(new InputListener() {
+        changeAvatarButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -99,7 +100,7 @@ public class StartTable extends MenuTable {
         });
 
         profileSettingsButton = new TextButton("Konto verwalten", Chati.SKIN);
-        profileSettingsButton.addListener(new InputListener() {
+        profileSettingsButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -111,7 +112,7 @@ public class StartTable extends MenuTable {
         });
 
         logoutButton = new TextButton("Abmelden", Chati.SKIN);
-        logoutButton.addListener(new InputListener() {
+        logoutButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;

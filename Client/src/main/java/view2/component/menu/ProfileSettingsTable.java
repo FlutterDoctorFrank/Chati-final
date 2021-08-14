@@ -1,9 +1,9 @@
 package view2.component.menu;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import view2.Chati;
 
 public class ProfileSettingsTable extends MenuTable {
@@ -18,7 +18,7 @@ public class ProfileSettingsTable extends MenuTable {
         infoLabel.setText("Bitte wähle eine Aktion aus!");
 
         changePasswordButton = new TextButton("Passwort ändern", Chati.SKIN);
-        changePasswordButton.addListener(new InputListener() {
+        changePasswordButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -30,7 +30,7 @@ public class ProfileSettingsTable extends MenuTable {
         });
 
         deleteAccountButton = new TextButton("Konto löschen", Chati.SKIN);
-        deleteAccountButton.addListener(new InputListener() {
+        deleteAccountButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -42,7 +42,7 @@ public class ProfileSettingsTable extends MenuTable {
         });
 
         cancelButton = new TextButton("Zurück", Chati.SKIN);
-        cancelButton.addListener(new InputListener() {
+        cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;

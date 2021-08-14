@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -16,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.Texture;
 import view2.component.ChatiToolTip;
+import view2.component.ChatiWindow;
 
 import java.time.format.DateTimeFormatter;
 
@@ -52,7 +52,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         dateLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
 
         showButton = new TextButton("Anzeigen", Chati.SKIN);
-        showButton.addListener(new InputListener() {
+        showButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -197,7 +197,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         }
     }
 
-    private class NotificationWindow extends Window {
+    private class NotificationWindow extends ChatiWindow {
 
         private static final float WINDOW_WIDTH = 550;
         private static final float WINDOW_HEIGHT = 350;
@@ -212,12 +212,13 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         private ImageButton deleteButton;
 
         public NotificationWindow() {
-            super(String.valueOf(titleLabel.getText()), Chati.SKIN);
+            super(String.valueOf(titleLabel.getText()));
             create();
             setLayout();
         }
 
-        private void create() {
+        @Override
+        protected void create() {
             showLabel = new Label(notification.getMessageBundle().getMessageKey(), Chati.SKIN);
             showLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
 
@@ -226,14 +227,14 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             dateLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
 
             okButton = new TextButton("Ok", Chati.SKIN);
-            okButton.addListener(new InputListener() {
+            okButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     return true;
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    remove();
+                    NotificationWindow.this.remove();
                 }
             });
 
@@ -257,7 +258,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                     Chati.getInstance().getServerSender()
                             .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), true);
                     NotificationListEntry.this.remove();
-                    remove();
+                    NotificationWindow.this.remove();
                 }
                 @Override
                 public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -293,7 +294,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                     Chati.getInstance().getServerSender()
                             .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), false);
                     NotificationListEntry.this.remove();
-                    remove();
+                    NotificationWindow.this.remove();
                 }
                 @Override
                 public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -340,12 +341,14 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             });
         }
 
-        private void setLayout() {
+        @Override
+        protected void setLayout() {
             setModal(true);
             setMovable(false);
             setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
             setWidth(WINDOW_WIDTH);
             setHeight(WINDOW_HEIGHT);
+            defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING);
 
             getTitleTable().add(dateLabel).right();
 
@@ -358,13 +361,13 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
 
             Table buttonContainer = new Table();
             buttonContainer.add(okButton).left().width(SHOW_BUTTON_WIDTH).height(BUTTON_SIZE).fillX().expandX()
-                    .padBottom(VERTICAL_SPACING).space(HORIZONTAL_SPACING);
+                    .padBottom(VERTICAL_SPACING).padLeft(HORIZONTAL_SPACING).space(HORIZONTAL_SPACING);
             buttonContainer.add(acceptButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
                     .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
             buttonContainer.add(declineButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
                     .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
-
-            buttonContainer.add(deleteButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING);
+            buttonContainer.add(deleteButton).width(BUTTON_SIZE).height(BUTTON_SIZE)
+                    .padBottom(VERTICAL_SPACING).padRight(HORIZONTAL_SPACING);
             add(buttonContainer).center().fillX().expandX().padBottom(VERTICAL_SPACING).row();
         }
     }

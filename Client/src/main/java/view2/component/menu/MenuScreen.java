@@ -11,6 +11,8 @@ import java.util.*;
 
 public class MenuScreen extends ScreenAdapter {
 
+    private static int loginFailCounter = 0;
+
     private final Stage stage;
     private final HeadUpDisplay headUpDisplay;
     private MenuTable currentMenuTable;
@@ -54,9 +56,15 @@ public class MenuScreen extends ScreenAdapter {
         }
         if (success) {
             Gdx.app.postRunnable(() -> setTable(new StartTable()));
+            loginFailCounter = 0;
         } else {
-            currentMenuTable.showMessage(messageKey);
+            if (loginFailCounter == 2) {
+                currentMenuTable.showMessage("Bist du zu blöd dir dein Passwort zu merken?");
+            } else {
+                currentMenuTable.showMessage(messageKey);
+            }
             currentMenuTable.resetTextFields();
+            loginFailCounter++;
         }
         setPendingResponse(Response.NONE);
     }

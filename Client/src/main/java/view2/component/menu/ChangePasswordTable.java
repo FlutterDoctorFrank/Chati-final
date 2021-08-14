@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import view2.Chati;
@@ -85,7 +86,7 @@ public class ChangePasswordTable extends MenuTable {
         });
 
         confirmButton = new TextButton("Bestätigen", Chati.SKIN);
-        confirmButton.addListener(new InputListener() {
+        confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -119,7 +120,7 @@ public class ChangePasswordTable extends MenuTable {
         });
 
         cancelButton = new TextButton("Zurück", Chati.SKIN);
-        cancelButton.addListener(new InputListener() {
+        cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;

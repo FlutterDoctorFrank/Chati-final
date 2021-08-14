@@ -5,6 +5,7 @@ import view.Screens.IModelObserver;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public class UserManager implements IUserManagerController, IUserManagerView {
             throw new IllegalStateException("There is already a user logged in on this client.");
         }
         this.internUser = new InternUser(userId, username, status, avatar);
-        System.out.println("Interner Benutzer " + userId);
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
@@ -50,18 +51,20 @@ public class UserManager implements IUserManagerController, IUserManagerView {
         throwIfNotLoggedIn();
         internUser = null;
         externUsers.clear();
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
     public void addExternUser(UUID userId, String username, Status status, Avatar avatar) {
         this.externUsers.put(userId, new User(userId, username, status, avatar));
-        System.out.println("Externer Benutzer. " + userId);
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
     public void removeExternUser(UUID userId) throws UserNotFoundException {
         throwIfNotExists(userId);
         externUsers.remove(userId);
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
@@ -90,6 +93,15 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     public User getExternUserView(UUID userId) throws UserNotFoundException {
         throwIfNotExists(userId);
         return externUsers.get(userId);
+    }
+
+    @Override
+    public IUserView getExternUserView(String username) throws UserNotFoundException {
+        try {
+            return externUsers.values().stream().filter(user -> user.getUsername().equals(username)).findFirst().orElseThrow();
+        } catch (NoSuchElementException e) {
+            throw new UserNotFoundException("No User with this name was found", username, e);
+        }
     }
 
     @Override

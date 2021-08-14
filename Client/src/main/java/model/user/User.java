@@ -81,7 +81,6 @@ public class User implements IUserController, IUserView {
         this.mutedContexts = new HashMap<>();
         this.bannedContexts = new HashMap<>();
         this.contextRoles = new HashMap<>();
-        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
@@ -135,7 +134,7 @@ public class User implements IUserController, IUserView {
     @Override
     public void setReport(ContextID contextId, boolean isReported) throws ContextNotFoundException {
         reportedContexts.put(contextId, Context.getGlobal().getContext(contextId));
-        UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        // UserManager.getInstance().getModelObserver().setUserInfoChanged(); Für Testzwecke deaktiviert
     }
 
     @Override
@@ -154,7 +153,7 @@ public class User implements IUserController, IUserView {
     public void setRoles(ContextID contextId, Set<Role> roles) throws ContextNotFoundException {
         Context context = Context.getGlobal().getContext(contextId);
         contextRoles.put(context, roles);
-        UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        //UserManager.getInstance().getModelObserver().setUserInfoChanged(); Für Testzwecke deaktiviert
     }
 
     @Override
@@ -201,8 +200,8 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean isReported() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        if (internUser == null || internUser.getCurrentLocation() == null) {
-            return false;
+        if (internUser.getCurrentLocation() == null) {
+            return reportedContexts.containsKey(Context.getGlobal().getContextId());
         }
         Context current = internUser.getCurrentLocation().getArea();
         do {
@@ -217,8 +216,8 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean isMuted() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        if (internUser == null || internUser.getCurrentLocation() == null) {
-            return false;
+        if (internUser.getCurrentLocation() == null) {
+            return mutedContexts.containsKey(Context.getGlobal().getContextId());
         }
         Context current = internUser.getCurrentLocation().getArea();
         do {
@@ -233,8 +232,8 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean isBanned() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        if (internUser == null || internUser.getCurrentLocation() == null) {
-            return false;
+        if (internUser.getCurrentLocation() == null) {
+            return bannedContexts.containsKey(Context.getGlobal().getContextId());
         }
         Context current = internUser.getCurrentLocation().getArea();
         do {
@@ -263,18 +262,29 @@ public class User implements IUserController, IUserView {
 
     @Override
     public boolean hasRole(Role role) {
-        return contextRoles.values().stream().anyMatch(contextRole -> contextRole.contains(role));
+        return currentLocation == null ? hasRole(Context.getGlobal(), role)
+                : hasRole(UserManager.getInstance().getInternUser().getCurrentLocation().getArea(), role);
     }
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return contextRoles.values().stream()
-                .anyMatch(contextRole -> contextRole.stream().anyMatch(role -> role.hasPermission(permission)));
+        return currentLocation == null ? hasPermission(Context.getGlobal(), permission)
+                : hasPermission(UserManager.getInstance().getInternUser().getCurrentLocation().getArea(), permission);
     }
 
     @Override
     public Set<Role> getRoles() {
         return null;
+    }
+
+    @Override
+    public Role getHighestRole() {
+        return hasRole(Role.OWNER) ? Role.OWNER
+                : (hasRole(Role.ADMINISTRATOR) ? Role.ADMINISTRATOR
+                : (hasRole(Role.MODERATOR) ? Role.MODERATOR
+                : (hasRole(Role.ROOM_OWNER) ? Role.ROOM_OWNER
+                : (hasRole(Role.AREA_MANAGER) ? Role.AREA_MANAGER
+                : null))));
     }
 
     @Override
@@ -288,5 +298,28 @@ public class User implements IUserController, IUserView {
     @Override
     public int hashCode() {
         return Objects.hash(userId);
+    }
+
+    /**
+     * Überprüft, ob der Benutzer eine Rolle in einem Kontext besitzt.
+     * @param context Zu überprüfender Kontext.
+     * @param role Zu überprüfende Rolle.
+     * @return true, wenn der Benutzer die Rolle in dem Kontext besitzt, sonst false.
+     */
+    private boolean hasRole(Context context, Role role) {
+        return contextRoles.containsKey(context) && contextRoles.get(context).contains(role)
+                || context.getParent() != null && hasRole(context.getParent(), role);
+    }
+
+    /**
+     * Überprüft, ob der Benutzer eine Berechtigung in einem Kontext besitzt.
+     * @param context Zu überprüfender Kontext.
+     * @param permission Zu überprüfende Berechtigung.
+     * @return true, wenn der Benutzer die Berechtigung in dem Kontext besitzt, sonst false.
+     */
+    private boolean hasPermission(Context context, Permission permission) {
+        return contextRoles.containsKey(context)
+                && contextRoles.get(context).stream().anyMatch(role -> role.hasPermission(permission))
+                || context.getParent() != null && hasPermission(context.getParent(), permission);
     }
 }

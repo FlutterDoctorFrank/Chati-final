@@ -4,8 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import view2.Chati;
@@ -60,7 +60,7 @@ public class LoginTable extends MenuTable {
         });
         // Füge Login-Button hinzu.
         loginButton = new TextButton("Anmelden", Chati.SKIN);
-        loginButton.addListener(new InputListener() {
+        loginButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -80,7 +80,7 @@ public class LoginTable extends MenuTable {
         });
         // Füge Register-Button hinzu.
         registerButton = new TextButton("Registrieren", Chati.SKIN);
-        registerButton.addListener(new InputListener() {
+        registerButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
@@ -100,7 +100,7 @@ public class LoginTable extends MenuTable {
         });
         // Füge Exit-Button hinzu.
         exitButton = new TextButton("Beenden", Chati.SKIN);
-        exitButton.addListener(new InputListener() {
+        exitButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;

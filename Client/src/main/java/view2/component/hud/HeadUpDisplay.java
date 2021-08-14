@@ -1,6 +1,6 @@
 package view2.component.hud;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -8,7 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import view2.Chati;
 import view2.Texture;
+import view2.component.hud.internUserDisplay.InternUserDisplay;
 import view2.component.hud.notificationList.NotificationListTable;
+import view2.component.hud.settings.SettingsTable;
 import view2.component.hud.userList.UserListTable;
 
 public class HeadUpDisplay extends Table {
@@ -18,10 +20,9 @@ public class HeadUpDisplay extends Table {
     public static final float BUTTON_SPACING = 10f;
     public static final float HUD_MENU_TABLE_WIDTH = 450;
     public static final float HUD_MENU_TABLE_HEIGHT = 600;
-    public static final Drawable UNPRESSED_BUTTON_IMAGE = new TextButton("", Chati.SKIN).getStyle().up;
-    public static final Drawable PRESSED_BUTTON_IMAGE = new TextButton("", Chati.SKIN).getStyle().down;
 
-    private Table currentListContainer;
+    private Table internUserDisplayContainer;
+    private Table currentMenuContainer;
 
     private ImageButton userListButton;
     private ImageButton notificationListButton;
@@ -32,9 +33,24 @@ public class HeadUpDisplay extends Table {
         setLayout();
     }
 
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        if (Chati.getInstance().getUserManager().getInternUserView() != null
+                && internUserDisplayContainer.getChildren().isEmpty()) {
+            internUserDisplayContainer.add(new InternUserDisplay()).width(HUD_MENU_TABLE_WIDTH).height(BUTTON_SIZE);
+        } else if (Chati.getInstance().getUserManager().getInternUserView() == null
+                && !internUserDisplayContainer.getChildren().isEmpty()) {
+            internUserDisplayContainer.clearChildren();
+        }
+        super.draw(batch, parentAlpha);
+    }
+
     protected void create() {
-        currentListContainer = new Table();
-        currentListContainer.setFillParent(true);
+        internUserDisplayContainer = new Table();
+        internUserDisplayContainer.setFillParent(true);
+
+        currentMenuContainer = new Table();
+        currentMenuContainer.setFillParent(true);
 
         ButtonGroup<ImageButton> hudButtons = new ButtonGroup<>();
         hudButtons.setMinCheckCount(0);
@@ -54,11 +70,11 @@ public class HeadUpDisplay extends Table {
                     userListButton.getStyle().imageUp = Texture.CHECKED_USER_ICON;
                     notificationListButton.getStyle().imageUp = Texture.NOTIFICATION_ICON;
                     settingsButton.getStyle().imageUp = Texture.SETTINGS_ICON;
-                    currentListContainer.clearChildren();
-                    currentListContainer.addActor(new UserListTable());
+                    currentMenuContainer.clearChildren();
+                    currentMenuContainer.addActor(new UserListTable());
                 } else {
                     userListButton.getStyle().imageUp = Texture.USER_ICON;
-                    currentListContainer.clearChildren();
+                    currentMenuContainer.clearChildren();
                 }
             }
             @Override
@@ -88,11 +104,11 @@ public class HeadUpDisplay extends Table {
                     notificationListButton.getStyle().imageUp = Texture.CHECKED_NOTIFICATION_ICON;
                     userListButton.getStyle().imageUp = Texture.USER_ICON;
                     settingsButton.getStyle().imageUp = Texture.SETTINGS_ICON;
-                    currentListContainer.clearChildren();
-                    currentListContainer.addActor(new NotificationListTable());
+                    currentMenuContainer.clearChildren();
+                    currentMenuContainer.addActor(new NotificationListTable());
                 } else {
                     notificationListButton.getStyle().imageUp = Texture.NOTIFICATION_ICON;
-                    currentListContainer.clearChildren();
+                    currentMenuContainer.clearChildren();
                 }
             }
             @Override
@@ -122,10 +138,11 @@ public class HeadUpDisplay extends Table {
                     settingsButton.getStyle().imageUp = Texture.CHECKED_SETTINGS_ICON;
                     userListButton.getStyle().imageUp = Texture.USER_ICON;
                     notificationListButton.getStyle().imageUp = Texture.NOTIFICATION_ICON;
-                    currentListContainer.clearChildren();
+                    currentMenuContainer.clearChildren();
+                    currentMenuContainer.addActor(new SettingsTable());
                 } else {
                     settingsButton.getStyle().imageUp = Texture.SETTINGS_ICON;
-                    currentListContainer.clearChildren();
+                    currentMenuContainer.clearChildren();
                 }
             }
             @Override
@@ -149,14 +166,21 @@ public class HeadUpDisplay extends Table {
 
     protected void setLayout() {
         setFillParent(true);
-        Table container = new Table();
-        container.setFillParent(true);
-        container.top().right();
-        container.add(userListButton).width(BUTTON_SIZE).height(BUTTON_SIZE).space(BUTTON_SPACING);
-        container.add(notificationListButton).width(BUTTON_SIZE).height(BUTTON_SIZE).space(BUTTON_SPACING);
-        container.add(settingsButton).width(BUTTON_SIZE).height(BUTTON_SIZE);
-        addActor(container);
 
-        addActor(currentListContainer);
+        Table buttonContainer = new Table();
+        buttonContainer.setFillParent(true);
+        buttonContainer.top().right();
+        buttonContainer.add(userListButton).width(BUTTON_SIZE).height(BUTTON_SIZE).space(BUTTON_SPACING);
+        buttonContainer.add(notificationListButton).width(BUTTON_SIZE).height(BUTTON_SIZE).space(BUTTON_SPACING);
+        buttonContainer.add(settingsButton).width(BUTTON_SIZE).height(BUTTON_SIZE);
+        addActor(buttonContainer);
+
+        currentMenuContainer.top().right().padTop(BUTTON_SIZE);
+        currentMenuContainer.defaults().width(HUD_MENU_TABLE_WIDTH).height(HUD_MENU_TABLE_HEIGHT);
+        addActor(currentMenuContainer);
+
+        internUserDisplayContainer.top().left();
+        internUserDisplayContainer.defaults().width(HUD_MENU_TABLE_WIDTH).height(BUTTON_SIZE);
+        addActor(internUserDisplayContainer);
     }
 }

@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -21,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.Texture;
 import view2.component.ChatiToolTip;
+import view2.component.ChatiWindow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,15 +28,15 @@ import java.util.List;
 public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
     private static final float BUTTON_SIZE = 30;
-    private static final float STATUS_ICON_SIZE = 22f;
+    private static final float USER_INFO_ICON_SIZE = 22.5f;
     private static final float VERTICAL_SPACING = 5;
-    private static final float HORIZONTAL_SPACING = 7.5f;
+    private static final float HORIZONTAL_SPACING = 10;
     private static final float LABEL_FONT_SCALE_FACTOR = 1.5f;
     private static final float BUTTON_SCALE_FACTOR = 0.1f;
 
+    private final List<Image> roleIcons;
     private Image statusImage;
     private Label usernameLabel;
-    private List<Image> roleImages;
     private ImageButton friendButton;
     private ImageButton ignoreButton;
     private ImageButton roomButton;
@@ -50,14 +50,48 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
     protected UserListEntry(IUserView user) {
         this.user = user;
-        this.roleImages = new ArrayList<>();
+        this.roleIcons = new ArrayList<>();
         create();
         setLayout();
     }
 
     protected void create() {
+        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+
         usernameLabel = new Label(user.getUsername(), Chati.SKIN);
         usernameLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
+
+        if (user.hasRole(Role.OWNER)) {
+            usernameLabel.setColor(Color.GOLD);
+            Image ownerImage = new Image(Texture.OWNER_ICON);
+            ownerImage.addListener(new ChatiToolTip("Besitzer"));
+            roleIcons.add(ownerImage);
+        } else if (user.hasRole(Role.ADMINISTRATOR)) {
+            usernameLabel.setColor(Color.SKY);
+            Image administratorImage = new Image(Texture.ADMINISTRATOR_ICON);
+            administratorImage.addListener(new ChatiToolTip("Administrator"));
+            roleIcons.add(administratorImage);
+        } else if (user.hasRole(Role.MODERATOR)) {
+            usernameLabel.setColor(Color.ORANGE);
+            Image moderatorImage = new Image(Texture.MODERATOR_ICON);
+            moderatorImage.addListener(new ChatiToolTip("Moderator"));
+            roleIcons.add(moderatorImage);
+        }
+        if (user.hasRole(Role.ROOM_OWNER)) {
+            Image roomOwnerImage = new Image(Texture.ROOM_OWNER_ICON);
+            roomOwnerImage.addListener(new ChatiToolTip("Raumbesitzer"));
+            roleIcons.add(roomOwnerImage);
+        }
+        if (user.hasRole(Role.AREA_MANAGER)) {
+            Image areaManagerImage = new Image(Texture.AREA_MANAGER_ICON);
+            areaManagerImage.addListener(new ChatiToolTip("Bereichsberechtigter"));
+            roleIcons.add(areaManagerImage);
+        }
+        if ((internUser.hasPermission(Permission.BAN_MODERATOR) || internUser.hasPermission(Permission.BAN_USER)
+                && !(user.hasPermission(Permission.BAN_USER) || user.hasPermission(Permission.BAN_MODERATOR)))
+                && user.isReported()) {
+            usernameLabel.setColor(Color.RED);
+        }
 
         statusImage = new Image();
         switch (user.getStatus()) {
@@ -77,18 +111,6 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             default:
                 throw new IllegalArgumentException("There is no icon for this user status.");
         }
-
-        if (user.hasRole(Role.OWNER)) {
-            usernameLabel.setColor(Color.GOLD);
-        } else if (user.hasRole(Role.ADMINISTRATOR)) {
-            usernameLabel.setColor(Color.SLATE);
-        } else if (user.hasRole(Role.MODERATOR)) {
-            usernameLabel.setColor(Color.ORANGE);
-        } else if (user.isReported()) {
-            usernameLabel.setColor(Color.RED);
-        }
-
-        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
 
         if (!user.isFriend()) {
             friendButton = new ImageButton(Texture.ADD_FRIEND_ICON);
@@ -134,7 +156,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             ignoreButton = new ImageButton(Texture.UNIGNORE_ICON);
             ignoreButton.addListener(new ChatiToolTip("Nicht mehr ignorieren"));
         }
-        ignoreButton.addListener(new InputListener() {
+        ignoreButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 ignoreButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
@@ -165,7 +187,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (internUser != null && internUser.isInPrivateRoom()
+        if (internUser.isInPrivateRoom()
                 && internUser.hasPermission(Permission.MANAGE_PRIVATE_ROOM)) {
             if (!user.isInCurrentWorld()) {
                 roomButton = new ImageButton(Texture.ROOM_INVITE_ICON);
@@ -179,7 +201,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             roomButton.setDisabled(true);
             roomButton.setTouchable(Touchable.disabled);
         }
-        roomButton.addListener(new InputListener() {
+        roomButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 roomButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
@@ -209,7 +231,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (internUser != null && internUser.isInCurrentWorld() && user.isInCurrentWorld() && user.canTeleportTo()) {
+        if (internUser.isInCurrentWorld() && user.isInCurrentWorld() && user.canTeleportTo()) {
             teleportButton = new ImageButton(Texture.TELEPORT_ICON);
             teleportButton.addListener(new ChatiToolTip("Zu Benutzer teleportieren"));
         } else {
@@ -217,7 +239,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             teleportButton.setDisabled(true);
             teleportButton.setTouchable(Touchable.disabled);
         }
-        teleportButton.addListener(new InputListener() {
+        teleportButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 teleportButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
@@ -245,7 +267,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (internUser != null && internUser.isInCurrentWorld() && user.isInCurrentWorld()
+        if (internUser.isInCurrentWorld() && user.isInCurrentWorld()
                 && !internUser.hasPermission(Permission.BAN_MODERATOR) && !user.hasPermission(Permission.BAN_MODERATOR)
                 && (!internUser.hasPermission(Permission.BAN_USER) || user.hasPermission(Permission.BAN_USER))) {
             reportButton = new ImageButton(Texture.REPORT_ICON);
@@ -255,7 +277,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             reportButton.setDisabled(true);
             reportButton.setTouchable(Touchable.disabled);
         }
-        reportButton.addListener(new InputListener() {
+        reportButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 reportButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
@@ -282,7 +304,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (internUser != null && internUser.isInCurrentWorld() && user.isInCurrentWorld()
+        if (internUser.isInCurrentWorld() && user.isInCurrentWorld()
                 && internUser.hasPermission(Permission.MUTE) && !user.hasPermission(Permission.MUTE)) {
             if (!user.isMuted()) {
                 muteButton = new ImageButton(Texture.MUTE_ICON);
@@ -296,7 +318,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             muteButton.setDisabled(true);
             muteButton.setTouchable(Touchable.disabled);
         }
-        muteButton.addListener(new InputListener() {
+        muteButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 muteButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
@@ -327,9 +349,9 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (internUser != null && (internUser.isInCurrentWorld() && internUser.hasPermission(Permission.BAN_MODERATOR)
+        if (internUser.isInCurrentWorld() && internUser.hasPermission(Permission.BAN_MODERATOR)
                 && !user.hasPermission(Permission.BAN_MODERATOR) || internUser.hasPermission(Permission.BAN_USER)
-                && !user.hasPermission(Permission.BAN_MODERATOR) && !user.hasPermission(Permission.BAN_USER))) {
+                && !user.hasPermission(Permission.BAN_MODERATOR) && !user.hasPermission(Permission.BAN_USER)) {
             if (!user.isBanned()) {
                 banButton = new ImageButton(Texture.BAN_ICON);
                 banButton.addListener(new ChatiToolTip("Sperren"));
@@ -342,7 +364,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             banButton.setDisabled(true);
             banButton.setTouchable(Touchable.disabled);
         }
-        banButton.addListener(new InputListener() {
+        banButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 banButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
@@ -371,7 +393,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (internUser != null && internUser.isInCurrentWorld() && user.isInCurrentWorld()
+        if (internUser.isInCurrentWorld() && user.isInCurrentWorld()
                 && internUser.hasPermission(Permission.ASSIGN_MODERATOR)) {
             if (!user.hasRole(Role.MODERATOR)) {
                 moderatorButton = new ImageButton(Texture.ASSIGN_MODERATOR_ICON);
@@ -385,7 +407,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             moderatorButton.setDisabled(true);
             moderatorButton.setTouchable(Touchable.disabled);
         }
-        moderatorButton.addListener(new InputListener() {
+        moderatorButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 moderatorButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
@@ -424,11 +446,13 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
         left().defaults().padTop(VERTICAL_SPACING);
 
-        Table nameStatusContainer = new Table();
-        nameStatusContainer.add(statusImage).width(STATUS_ICON_SIZE).height(STATUS_ICON_SIZE).space(1.5f * HORIZONTAL_SPACING);
-        nameStatusContainer.add(usernameLabel);
+        Table userInfoContainer = new Table();
+        userInfoContainer.add(statusImage).width(USER_INFO_ICON_SIZE).height(USER_INFO_ICON_SIZE).space(HORIZONTAL_SPACING);
+        userInfoContainer.add(usernameLabel).space(HORIZONTAL_SPACING);
+        roleIcons.forEach(roleIcon -> userInfoContainer.add(roleIcon).width(USER_INFO_ICON_SIZE).height(USER_INFO_ICON_SIZE)
+            .space(HORIZONTAL_SPACING / 2));
 
-        add(nameStatusContainer).left().padLeft(1.5f * HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).row();
+        add(userInfoContainer).left().padLeft(HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).row();
 
         Table buttonContainer = new Table();
         buttonContainer.add(friendButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).fillX().expandX();
@@ -445,14 +469,19 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
     @Override
     public int compareTo(@NotNull UserListEntry other) {
         int statusComp = this.user.getStatus().compareTo(other.user.getStatus());
-        if (statusComp == 0) {
-            return this.user.getUsername().compareTo(other.user.getUsername());
-        } else {
-            return statusComp;
-        }
+
+        Role thisHighestRole = this.user.getHighestRole();
+        Role otherHighestRole = other.user.getHighestRole();
+        int roleComp = thisHighestRole == null ? 1
+                : (otherHighestRole == null ? -1
+                : thisHighestRole.compareTo(otherHighestRole));
+
+        return statusComp != 0 ? statusComp
+                : (roleComp != 0 ? roleComp
+                : (this.user.getUsername().compareTo(other.user.getUsername())));
     }
 
-    private class MessageWindow extends Window {
+    private class MessageWindow extends ChatiWindow {
 
         private static final float WINDOW_WIDTH = 550;
         private static final float WINDOW_HEIGHT = 350;
@@ -471,15 +500,14 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         private final AdministrativeAction action;
 
         protected MessageWindow(AdministrativeAction action) {
-            super("", Chati.SKIN);
+            super("");
             this.action = action;
             create();
             setLayout();
         }
 
+        @Override
         protected void create() {
-            final MessageWindow thisWindow = this;
-
             Label.LabelStyle style = new Label.LabelStyle();
             style.font = new BitmapFont();
             style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
@@ -512,7 +540,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             userMessageArea = new TextArea("", userMessageAreaSkin);
 
             confirmButton = new TextButton("Bestätigen", Chati.SKIN);
-            confirmButton.addListener(new InputListener() {
+            confirmButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     return true;
@@ -521,23 +549,24 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     Chati.getInstance().getServerSender()
                             .send(ServerSender.SendAction.USER_MANAGE, user.getUserId(), action, userMessageArea.getText());
-                    thisWindow.remove();
+                    MessageWindow.this.remove();
                 }
             });
 
             cancelButton = new TextButton("Abbrechen", Chati.SKIN);
-            cancelButton.addListener(new InputListener() {
+            cancelButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                     return true;
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    thisWindow.remove();
+                    MessageWindow.this.remove();
                 }
             });
         }
 
+        @Override
         protected void setLayout() {
             setModal(true);
             setMovable(false);
@@ -548,17 +577,13 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             Table labelContainer = new Table(Chati.SKIN);
             labelContainer.add(infoLabel).center();
 
-            add(labelContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
+            add(labelContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(VERTICAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
             add(userMessageArea).width(ROW_WIDTH).height(2 * ROW_HEIGHT).spaceBottom(VERTICAL_SPACING).row();
 
             Table buttonContainer = new Table(Chati.SKIN);
-            buttonContainer.add(confirmButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
-            buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(ROW_HEIGHT);
+            buttonContainer.add(confirmButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(BUTTON_SIZE).space(HORIZONTAL_SPACING);
+            buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(BUTTON_SIZE);
             add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
         }
-    }
-
-    public IUserView getUser() {
-        return user;
     }
 }

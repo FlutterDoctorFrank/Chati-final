@@ -18,11 +18,20 @@ public interface IUserManagerView {
     IInternUserView getInternUserView();
 
     /**
-     * Gibt einen externen Benutzer zurück.
-     * @return ID des externen Benutzers.
+     * Gibt einen externen Benutzer mit der übergebenen ID zurück.
+     * @param userId ID des externen Benutzers.
+     * @return Externer Benutzer.
      * @throws UserNotFoundException falls dem Client kein externer Benutzer mit der ID bekannt ist.
      */
     IUserView getExternUserView(UUID userId) throws UserNotFoundException;
+
+    /**
+     * Gibt einen externen Benutzer mit dem übergebenen Namen zurück.
+     * @param username Name des externen Benutzers.
+     * @return Externer Benutzer
+     * @throws UserNotFoundException falls dem Client kein externer Benutzer mit dem Namen bekannt ist.
+     */
+    IUserView getExternUserView(String username) throws UserNotFoundException;
 
     /**
      * Gibt die externen Benutzer zurück, die in der aktuellen Welt als aktiv hinterlegt sind.

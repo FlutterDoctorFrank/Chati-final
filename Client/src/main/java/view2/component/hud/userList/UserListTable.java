@@ -4,22 +4,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import model.context.Context;
+import model.exception.ContextNotFoundException;
 import model.role.Permission;
-import model.user.IInternUserView;
-import model.user.IUserManagerView;
-import model.user.Status;
-import model.user.User;
+import model.role.Role;
+import model.user.*;
 import view2.Chati;
-import view2.component.ChatiTable;
 import view2.component.hud.HeadUpDisplay;
+import view2.component.hud.HudMenuTable;
 
 import java.util.*;
 import java.util.List;
 
-public class UserListTable extends ChatiTable {
+public class UserListTable extends HudMenuTable {
 
     private final Set<UserListEntry> friendEntries;
     private final Set<UserListEntry> activeUserEntries;
@@ -57,15 +56,15 @@ public class UserListTable extends ChatiTable {
         }
 
         if (user != null && friendTabButton.isDisabled()) {
-            enableFriendsTab();
+            enableButton(friendTabButton);
             showFriends();
         } else if (user != null && user.isInCurrentWorld() && activeUserTabButton.isDisabled()) {
-            enableActiveUsersTab();
+            enableButton(activeUserTabButton);
         }
         if (user != null && user.isInCurrentWorld()
                 && (user.hasPermission(Permission.BAN_USER) || user.hasPermission(Permission.BAN_MODERATOR))
                 && bannedUserTabButton.isDisabled()) {
-            enableBannedUsersTab();
+            enableButton(bannedUserTabButton);
         }
 
         if (Chati.getInstance().isUserInfoChanged()) {
@@ -100,14 +99,14 @@ public class UserListTable extends ChatiTable {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 showFriends();
                 friendTabButton.getLabel().setColor(Color.MAGENTA);
-                friendTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
+                friendTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
                 if (!activeUserTabButton.isDisabled()) {
                     activeUserTabButton.getLabel().setColor(Color.WHITE);
-                    activeUserTabButton.getStyle().up = HeadUpDisplay.UNPRESSED_BUTTON_IMAGE;
+                    activeUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
                 if (!bannedUserTabButton.isDisabled()) {
                     bannedUserTabButton.getLabel().setColor(Color.WHITE);
-                    bannedUserTabButton.getStyle().up = HeadUpDisplay.UNPRESSED_BUTTON_IMAGE;
+                    bannedUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
             }
         });
@@ -123,14 +122,14 @@ public class UserListTable extends ChatiTable {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 showActiveUsers();
                 activeUserTabButton.getLabel().setColor(Color.MAGENTA);
-                activeUserTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
+                activeUserTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
                 if (!friendTabButton.isDisabled()) {
                     friendTabButton.getLabel().setColor(Color.WHITE);
-                    friendTabButton.getStyle().up = HeadUpDisplay.UNPRESSED_BUTTON_IMAGE;
+                    friendTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
                 if (!bannedUserTabButton.isDisabled()) {
                     bannedUserTabButton.getLabel().setColor(Color.WHITE);
-                    bannedUserTabButton.getStyle().up = HeadUpDisplay.UNPRESSED_BUTTON_IMAGE;
+                    bannedUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
             }
         });
@@ -146,14 +145,14 @@ public class UserListTable extends ChatiTable {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 showBannedUsers();
                 bannedUserTabButton.getLabel().setColor(Color.MAGENTA);
-                bannedUserTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
+                bannedUserTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
                 if (!friendTabButton.isDisabled()) {
                     friendTabButton.getLabel().setColor(Color.WHITE);
-                    friendTabButton.getStyle().up = HeadUpDisplay.UNPRESSED_BUTTON_IMAGE;
+                    friendTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
                 if (!activeUserTabButton.isDisabled()) {
                     activeUserTabButton.getLabel().setColor(Color.WHITE);
-                    activeUserTabButton.getStyle().up = HeadUpDisplay.UNPRESSED_BUTTON_IMAGE;
+                    activeUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
             }
         });
@@ -169,7 +168,7 @@ public class UserListTable extends ChatiTable {
             disableBannedUsersTab();
         } else {
             friendTabButton.getLabel().setColor(Color.MAGENTA);
-            friendTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
+            friendTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
             if (!user.isInCurrentWorld()) {
                 disableActiveUsersTab();
                 disableBannedUsersTab();
@@ -209,10 +208,9 @@ public class UserListTable extends ChatiTable {
                     .forEach(friend -> friendEntries.add(new UserListEntry(friend)));
             layoutEntries(friendEntries);
         }
-/*
         // TEST ///////////////////////////////////////////////////////////////////////////////////////////////////////
         String[] names = {"Jürgen", "Hans-Peter", "Detlef", "Olaf", "Markus", "Dietrich", "Dieter", "Siegbert", "Siegmund",
-                "Joseph", "Ferdinand", "Alexander", "Adolf H", "Analia", "Inkontinentia", "Vera Agina", "Agathe Bauer", "Bertha", "Hannelore",
+                "Joseph", "Ferdinand", "Alexander", "Analia", "Inkontinentia", "Vera Agina", "Agathe Bauer", "Bertha", "Hannelore",
                 "Sieglinde", "Josephine", "Brigitte", "Luise-Annegret", "Alma-Dorothea", "Magdalena", "Brunhilde", "Herbert", "Gertrud", "Hiltrud",
                 "Hagen", "Heinz", "Son-Goku", "Vegeta", "Axel Schweiß", "Rosa Schlüpfer", "Reinhold", "Mr.WasGehtSieDasAn", "Peter Enis",
                 "Schwanzus-Longus", "G4meMason", "Franz Joseph", "Peter Silie", "Wilma Ficken", "Anna Bolika", "Anna Nass", "Deine Mutter"};
@@ -220,16 +218,22 @@ public class UserListTable extends ChatiTable {
         Collections.shuffle(namesList, new Random());
         for (int i = 0; i<namesList.size(); i++) {
             User user = new User(UUID.randomUUID(), namesList.get(i), Status.values()[new Random().nextInt(Status.values().length)], null);
+            try {
+                if (new Random().nextBoolean()) {
+                    user.setRoles(Context.getGlobal().getContextId(), Collections.singleton(Role.values()[new Random().nextInt(Role.values().length)]));
+                }
+                //user.setRoles(Context.getGlobal().getContextId(), Collections.singleton(Role.values()[new Random().nextInt(Role.values().length)]));
+            } catch (ContextNotFoundException e) {
+                e.printStackTrace();
+            }
             UserListEntry entry = new UserListEntry(user);
             friendEntries.add(entry);
         }
+        layoutEntries(friendEntries);
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
- */
     }
 
     private void showActiveUsers() {
-        /*
         activeUserEntries.clear();
         IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
         if (internUser != null && internUser.isInCurrentWorld()) {
@@ -237,11 +241,6 @@ public class UserListTable extends ChatiTable {
                     .forEach(activeUser -> activeUserEntries.add(new UserListEntry(activeUser)));
             layoutEntries(activeUserEntries);
         }
-
-         */
-        User user = new User(UUID.fromString("5dfae14e-6017-44ca-8fad-db2b9b092282"), "frank", Status.ONLINE, null);
-        activeUserEntries.add(new UserListEntry(user));
-        layoutEntries(activeUserEntries);
     }
 
     private void showBannedUsers() {
@@ -255,53 +254,8 @@ public class UserListTable extends ChatiTable {
         }
     }
 
-    private void loadUserEntries() {
-        /*
-        friendEntries.clear();
-        activeUserEntries.clear();
-        bannedUserEntries.clear();
-        IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
-        if (user != null) {
-            Chati.getInstance().getUserManager().getFriends().values()
-                    .forEach(friend -> friendEntries.add(new UserListEntry(friend)));
-            if (user.isInCurrentWorld()) {
-                Chati.getInstance().getUserManager().getActiveUsers().values()
-                        .forEach(activeUser -> activeUserEntries.add(new UserListEntry(activeUser)));
-                if (user.hasPermission(Permission.BAN_USER) || user.hasPermission(Permission.BAN_MODERATOR)) {
-                    Chati.getInstance().getUserManager().getActiveUsers().values()
-                            .forEach(bannedUser -> bannedUserEntries.add(new UserListEntry(bannedUser)));
-                }
-            }
-        }
-         */
-    }
-
-    private void enableFriendsTab() {
-        friendTabButton.setDisabled(false);
-        friendTabButton.setTouchable(Touchable.enabled);
-        friendTabButton.getLabel().setColor(Color.MAGENTA);
-        friendTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
-    }
-
-    private void enableActiveUsersTab() {
-        activeUserTabButton.setDisabled(false);
-        activeUserTabButton.setTouchable(Touchable.enabled);
-        activeUserTabButton.getLabel().setColor(Color.WHITE);
-        activeUserTabButton.getStyle().up = HeadUpDisplay.UNPRESSED_BUTTON_IMAGE;
-    }
-
-    private void enableBannedUsersTab() {
-        bannedUserTabButton.setDisabled(false);
-        bannedUserTabButton.setTouchable(Touchable.enabled);
-        bannedUserTabButton.getLabel().setColor(Color.WHITE);
-        bannedUserTabButton.getStyle().up = HeadUpDisplay.UNPRESSED_BUTTON_IMAGE;
-    }
-
     private void disableFriendsTab() {
-        friendTabButton.setDisabled(true);
-        friendTabButton.setTouchable(Touchable.disabled);
-        friendTabButton.getLabel().setColor(Color.DARK_GRAY);
-        friendTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
+        disableButton(friendTabButton);
         friendEntries.clear();
         userListContainer.clearChildren();
     }
@@ -312,10 +266,7 @@ public class UserListTable extends ChatiTable {
             friendTabButton.setChecked(true);
             showFriends();
         }
-        activeUserTabButton.setDisabled(true);
-        activeUserTabButton.setTouchable(Touchable.disabled);
-        activeUserTabButton.getLabel().setColor(Color.DARK_GRAY);
-        activeUserTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
+        disableButton(activeUserTabButton);
         activeUserEntries.clear();
     }
 
@@ -325,10 +276,7 @@ public class UserListTable extends ChatiTable {
             friendTabButton.setChecked(true);
             showFriends();
         }
-        bannedUserTabButton.setDisabled(true);
-        bannedUserTabButton.setTouchable(Touchable.disabled);
-        bannedUserTabButton.getLabel().setColor(Color.DARK_GRAY);
-        bannedUserTabButton.getStyle().up = HeadUpDisplay.PRESSED_BUTTON_IMAGE;
+        disableButton(bannedUserTabButton);
         bannedUserEntries.clear();
     }
 

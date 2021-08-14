@@ -7,7 +7,7 @@ import view2.Chati;
 public class ChatiToolTip extends TextTooltip {
 
     public ChatiToolTip(String text) {
-        super(text, Chati.SKIN);
+        super("   " + text + "   ", Chati.SKIN);
         setInstant(true);
     }
 }

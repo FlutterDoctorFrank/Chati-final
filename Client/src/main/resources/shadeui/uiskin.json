@@ -201,7 +201,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
 				}
 			},
 			background: panel1,
-			wrapWidth: 150
+			wrapWidth: 250
 		}
 	}
 }
