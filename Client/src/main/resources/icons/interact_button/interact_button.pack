@@ -1,0 +1,33 @@
+
+interact_button.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+rotating_e
+  rotate: false
+  xy: 0, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 1
+rotating_e
+  rotate: false
+  xy: 18, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 3
+rotation_e
+  rotate: false
+  xy: 36, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 2
+rotation_e
+  rotate: false
+  xy: 54, 0
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 4

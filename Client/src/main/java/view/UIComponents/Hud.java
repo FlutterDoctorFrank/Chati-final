@@ -328,13 +328,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
             public void run() {
                 ChatWindow chat = (ChatWindow) group.findActor("chat-window");
                 if (!Objects.isNull(chat)) {
-                    String name = null;
-                    try {
-                        name = applicationScreen.getGame().getUserManager().getExternUserView(userID).getUsername();
-                    } catch (UserNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    chat.receiveMessage(timestamp + " " + name +  ": " + message);
+                    chat.receiveMessage(timestamp +  ": " + message);
                 }
             }
         });

@@ -1,6 +1,5 @@
 package view.Sprites;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -8,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
-import org.junit.Test;
 import view.Chati;
 
 import java.util.UUID;
@@ -36,78 +34,7 @@ public class Avatar extends Sprite {
     private Direction previousDirection;
     private float stateTimer;
 
-    private static final short MARIO_BIT = 0;
-
-    public Avatar(World world, Vector2 position) {
-        this.bdef = new BodyDef();
-        this.fdef = new FixtureDef();
-        this.world = world;
-
-        bdef.position.set(position);
-        bdef.type = BodyDef.BodyType.DynamicBody;
-        body = world.createBody(bdef);
-
-        FixtureDef fdef = new FixtureDef();
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(1.5f, 1.5f);
-        fdef.filter.categoryBits = Chati.AVATAR_BIT;
-        fdef.filter.maskBits = Chati.OBJECT_BIT | Chati.GROUND_BIT;
-        fdef.shape = shape;
-        body.createFixture(fdef).setUserData("avatar");
-
-        stateTimer = 0;
-        atlas = new TextureAtlas("skins/Adam/Adam.pack");
-
-        TextureAtlas.AtlasRegion stand = atlas.findRegion("Adam_idle");
-        avatarStandRight = new TextureRegion(stand, 0, 16, 32, 48);
-        avatarStandUp = new TextureRegion(stand, 32, 16, 32, 48);
-        avatarStandLeft = new TextureRegion(stand, 64, 16, 32, 48);
-        avatarStandDown = new TextureRegion(atlas.findRegion("Adam_idle"), 96, 16, 32, 48);
-        setBounds(0, 0, 32 / Chati.PPM, 32 / Chati.PPM);
-        setRegion(avatarStandDown);
-        currentDirection = Direction.DOWN;
-        previousDirection = Direction.DOWN;
-
-        TextureAtlas.AtlasRegion run = atlas.findRegion("Adam_run");
-        Array<TextureRegion> frames = new Array<TextureRegion>();
-
-        //running right animation
-        for (int i = 0; i < 6; i++) {
-            frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
-        }
-        avatarRunRight = new Animation(0.1f, frames);
-        frames.clear();
-
-        //running up animation
-        for (int i = 6; i < 12; i++) {
-            frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
-        }
-        avatarRunUp = new Animation(0.1f, frames);
-        frames.clear();
-
-        //running left animation
-        for (int i = 12; i < 18; i++) {
-            frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
-        }
-        avatarRunLeft = new Animation(0.1f, frames);
-        frames.clear();
-
-        //running down animation
-        for (int i = 18; i < 24; i++) {
-            frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
-        }
-        avatarRunDown = new Animation(0.1f, frames);
-        frames.clear();
-
-        //dance animation
-        for (int i = 0; i < 5; i++) {
-            frames.add(new TextureRegion(atlas.findRegion("Adam_idle"), i * 32, 16, 32, 48));
-        }
-        avatarDance = new Animation(0.1f, frames);
-        frames.clear();
-    }
-
-    public Avatar(World world, UUID id, int posX, int posY) {
+    public Avatar(World world, UUID id, float posX, float posY) {
         this.bdef = new BodyDef();
         this.fdef = new FixtureDef();
         this.world = world;

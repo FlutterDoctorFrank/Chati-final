@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -16,17 +15,13 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import controller.network.ServerSender;
 import model.context.spatial.ILocationView;
-import model.context.spatial.SpatialMap;
 import model.user.IInternUserView;
-import model.user.IUserManagerView;
 import model.user.IUserView;
-import model.user.InternUser;
 import view.Chati;
 import view.Sprites.Avatar;
 import view.Sprites.InteractiveTileObject;
@@ -69,7 +64,7 @@ public class ApplicationScreen implements Screen {
         this.hud = hud;
     }
 
-    public ApplicationScreen (Chati game) {
+    public ApplicationScreen(Chati game) {
         this.game = game;
         this.hud = new Hud(spriteBatch, this);
         gamecam = new OrthographicCamera();
@@ -79,7 +74,7 @@ public class ApplicationScreen implements Screen {
     }
 
 
-    public ApplicationScreen(Chati game, Hud hud, String mapPath , Map<UUID, IUserView> users) {  //
+    public ApplicationScreen(Chati game, Hud hud, String mapPath, Map<UUID, IUserView> users) {  //
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Chati.V_WIDTH / Chati.PPM, Chati.V_HEIGHT / Chati.PPM, gamecam);
         this.hud = hud;
@@ -92,42 +87,34 @@ public class ApplicationScreen implements Screen {
         box2DDebugRenderer = new Box2DDebugRenderer();
 
         addBorders(map.getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class));
+        for (MapObject object: map.getLayers().get("contextLayer").getObjects().getByType(RectangleMapObject.class)) {
+            String name = object.getName();
+            if (!(name.equals("Hotel") || name.equals("Park") || name.equals("Disco"))) {
+                Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
+                new InteractiveTileObject(world, map.getProperties().get("tilewidth", Integer.class), rectangle);
+            }
+        }
 
         avatars = new ArrayList<>();
 
-        /*
-        Avatar userAvatar = new Avatar(world, new Vector2(50 , 40));
-        Avatar test = new Avatar(world, new Vector2(40, 80));
-        avatars.add(test);
-        avatars.add(userAvatarIndex,userAvatar);
-         */
-
         IInternUserView user = game.getUserManager().getInternUserView();
         Avatar userAvatar = new Avatar(world, user.getUserId(), (int) map.getProperties().get("spawnPosX"), (int) map.getProperties().get("spawnPosY"));
-        avatars.add(userAvatarIndex,userAvatar);
+        avatars.add(userAvatarIndex, userAvatar);
         for (var entry : users.entrySet()) {
             if (!entry.getKey().equals(user.getUserId())) {
                 ILocationView position = entry.getValue().getCurrentLocation();
-                Avatar avatar = new Avatar(world, entry.getKey(), position.getPosX(), position.getPosY());
+                Avatar avatar = new Avatar(world, entry.getKey(), position.getPosX() / Chati.PPM, position.getPosY() / Chati.PPM);
                 avatars.add(avatar);
             }
         }
 
-
-
-        /*
-        for (MapObject object: map.getLayers().get("Interactable").getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
-            new InteractiveTileObject(world, rectangle);
-        }
-         */
 
     }
 
     @Override
     public void render(float delta) {
         //Clear game screen
-        Gdx.gl.glClearColor(0, 102/255f, 102/255f, 1);
+        Gdx.gl.glClearColor(0, 102 / 255f, 102 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (!Objects.isNull(mapRenderer) && !Objects.isNull(box2DDebugRenderer)) {
@@ -136,7 +123,7 @@ public class ApplicationScreen implements Screen {
             box2DDebugRenderer.render(world, gamecam.combined);
             spriteBatch.setProjectionMatrix(gamecam.combined);
             spriteBatch.begin();
-            for( Avatar avatar :  avatars) {
+            for (Avatar avatar : avatars) {
                 avatar.draw(spriteBatch);
                 avatar.update(delta);
             }
@@ -256,7 +243,7 @@ public class ApplicationScreen implements Screen {
             gamecam.position.y = cameraBottomBoundary;
         }
 
-        sendPositionToServer(body.getPosition().x, body.getPosition().y);   //Test DELETE
+        //sendPositionToServer(body.getPosition().x * Chati.PPM, body.getPosition().y * Chati.PPM);
     }
 
     private void sendPositionToServer(float posX, float posY) {
@@ -267,29 +254,39 @@ public class ApplicationScreen implements Screen {
     }
 
     public void updateAvatarsPositions() {
-        new Thread(() -> {
-            for(var entry : game.getUserManager().getActiveUsers().entrySet()) {
-                for(Avatar avatar : avatars) {
-                    if(avatar.getUser().equals(entry.getValue().getUserId())) {
-                        Vector2 newPosition = new Vector2(entry.getValue().getCurrentLocation().getPosX(), entry.getValue().getCurrentLocation().getPosY());
-                        moveAvatar(avatar, newPosition, false);
-                    }
-                }
+        for (var entry : game.getUserManager().getActiveUsers().entrySet()) {
+            Avatar currentUserAvatar = findAvatar(entry.getValue().getUserId());
+
+            if (!currentUserAvatar.equals(null)) {
+                Vector2 newPosition = new Vector2(entry.getValue().getCurrentLocation().getPosX(), entry.getValue().getCurrentLocation().getPosY());
+                moveAvatar(avatar, newPosition, false);
+            } else {
+                Avatar newAvatar = new Avatar(world, entry.getKey(), entry.getValue().getCurrentLocation().getPosX(), entry.getValue().getCurrentLocation().getPosY());
+                avatars.add(newAvatar);
             }
-        });
+        }
+    }
+
+    private Avatar findAvatar(UUID id) {
+        for (Avatar avatar : avatars) {
+            if (avatar.getUser().equals(id)) {
+                return avatar;
+            }
+        }
+        return null;
     }
 
     public void moveAvatar(Avatar avatar, Vector2 endPosition, boolean teleport) {
-        if(teleport) {
+        if (teleport) {
             avatar.getBdef().position.set(endPosition);
         } else {
             Vector2 currentPosition = avatar.getBody().getWorldCenter();
             Vector2 normMovingVector = endPosition.sub(currentPosition).nor();
 
             while (!currentPosition.epsilonEquals(endPosition)) {
-                avatar.getBody().applyLinearImpulse(normMovingVector.scl(bodyMovingForce), currentPosition, true);
+                avatar.getBody().applyLinearImpulse(normMovingVector.scl(bodyMovingForce), avatar.getBody().getWorldCenter(), true);
             }
-            avatar.getBody().setLinearVelocity(0,0);
+            avatar.getBody().setLinearVelocity(0, 0);
         }
     }
 
@@ -311,5 +308,7 @@ public class ApplicationScreen implements Screen {
         }
     }
 
-
+    public TiledMap getMap() {
+        return map;
+    }
 }
