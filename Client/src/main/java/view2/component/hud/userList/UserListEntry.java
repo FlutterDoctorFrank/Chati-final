@@ -109,7 +109,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 usernameLabel.setColor(Color.GRAY);
                 break;
             default:
-                throw new IllegalArgumentException("There is no icon for this user status.");
+                throw new IllegalArgumentException("No valid user status.");
         }
 
         if (!user.isFriend()) {

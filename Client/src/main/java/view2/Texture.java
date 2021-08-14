@@ -12,6 +12,8 @@ public class Texture {
     public static final Drawable CHECKED_NOTIFICATION_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/notificationIconChecked.png")));
     public static final Drawable SETTINGS_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/settingsIcon.png")));
     public static final Drawable CHECKED_SETTINGS_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/settingsIconChecked.png")));
+    public static final Drawable CHAT_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/chatIcon.png")));
+    public static final Drawable CHECKED_CHAT_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/chatIcon_checked.png")));
 
     public static final Drawable ONLINE_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/online.png")));
     public static final Drawable AWAY_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/away.png")));
@@ -51,7 +53,7 @@ public class Texture {
     public static final Drawable ASSIGN_MODERATOR_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/new_addModerator_color.png")));
     public static final Drawable DISABLED_ASSIGN_MODERATOR_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/new_addModerator_grey.png")));
     public static final Drawable WITHDRAW_MODERATOR_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/new_removeModerator_color.png")));
-    public static final Drawable DISABLEDWITHDRAW_MODERATOR_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/new_removeModerator_grey.png")));
+    public static final Drawable DISABLED_WITHDRAW_MODERATOR_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/new_removeModerator_grey.png")));
 
     public static final Drawable ACCEPT_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/new_accept_color.png")));
     public static final Drawable DISABLED_ACCEPT_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/new_accept_grey.png")));

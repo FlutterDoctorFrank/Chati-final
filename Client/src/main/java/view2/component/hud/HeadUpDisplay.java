@@ -5,12 +5,17 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import model.communication.message.MessageType;
 import view2.Chati;
 import view2.Texture;
 import view2.component.hud.internUserDisplay.InternUserDisplay;
 import view2.component.hud.notificationList.NotificationListTable;
 import view2.component.hud.settings.SettingsTable;
 import view2.component.hud.userList.UserListTable;
+
+import java.time.LocalDateTime;
+import java.util.Random;
+import java.util.UUID;
 
 public class HeadUpDisplay extends Table {
 
@@ -28,6 +33,7 @@ public class HeadUpDisplay extends Table {
     private ImageButton userListButton;
     private ImageButton notificationListButton;
     private ImageButton settingsButton;
+    protected ImageButton chatButton;
 
     private HeadUpDisplay() {
         create();
@@ -154,6 +160,50 @@ public class HeadUpDisplay extends Table {
             }
         });
 
+        chatButton = new ImageButton(Texture.CHAT_ICON);
+        chatButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+        chatButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                if (chatButton.isChecked()) {
+                    chatButton.getStyle().imageUp = Texture.CHECKED_CHAT_ICON;
+                    if (!ChatWindow.getInstance().hasParent()) {
+                        getStage().addActor(ChatWindow.getInstance());
+                    } else {
+                        ChatWindow.getInstance().setVisible(true);
+                    }
+                    //////////////////////// TEST ////////////////////////
+                    for (int i = 0; i <10; i++) {
+                        UUID id = Chati.getInstance().getUserManager().getInternUserView().getUserId();
+                        String message = "uihferuwihfieeraofhvueifhuiergfbrgfiqeowjderniogwuihfosdhvwrbfhdsvbworgbuiaeofjdhioh0";
+                        MessageType type = MessageType.values()[new Random().nextInt(MessageType.values().length)];
+                        LocalDateTime stamp = LocalDateTime.now();
+                        ChatWindow.getInstance().receiveMessage(id, message, type, stamp);
+                    }
+                    ////////////////// TEST ENDE ///////////////////////////
+                } else {
+                    chatButton.getStyle().imageUp = Texture.CHAT_ICON;
+                    ChatWindow.getInstance().setVisible(false);
+                }
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    chatButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    chatButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
+            }
+        });
+
         hudButtons.add(userListButton);
         hudButtons.add(notificationListButton);
         hudButtons.add(settingsButton);
@@ -162,13 +212,19 @@ public class HeadUpDisplay extends Table {
     protected void setLayout() {
         setFillParent(true);
 
-        Table buttonContainer = new Table();
-        buttonContainer.setFillParent(true);
-        buttonContainer.top().right();
-        buttonContainer.add(userListButton).width(BUTTON_SIZE).height(BUTTON_SIZE).space(BUTTON_SPACING);
-        buttonContainer.add(notificationListButton).width(BUTTON_SIZE).height(BUTTON_SIZE).space(BUTTON_SPACING);
-        buttonContainer.add(settingsButton).width(BUTTON_SIZE).height(BUTTON_SIZE);
-        addActor(buttonContainer);
+        Table hudButtonContainer = new Table();
+        hudButtonContainer.setFillParent(true);
+        hudButtonContainer.top().right();
+        hudButtonContainer.add(userListButton).width(BUTTON_SIZE).height(BUTTON_SIZE).space(BUTTON_SPACING);
+        hudButtonContainer.add(notificationListButton).width(BUTTON_SIZE).height(BUTTON_SIZE).space(BUTTON_SPACING);
+        hudButtonContainer.add(settingsButton).width(BUTTON_SIZE).height(BUTTON_SIZE);
+        addActor(hudButtonContainer);
+
+        Table chatButtonContainer = new Table();
+        chatButtonContainer.setFillParent(true);
+        chatButtonContainer.bottom().right();
+        chatButtonContainer.add(chatButton).width(BUTTON_SIZE).height(BUTTON_SIZE);
+        addActor(chatButtonContainer);
 
         currentMenuContainer = new Table();
         currentMenuContainer.setFillParent(true);
