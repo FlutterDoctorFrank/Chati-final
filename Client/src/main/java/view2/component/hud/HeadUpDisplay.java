@@ -5,7 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import view2.Chati;
 import view2.Texture;
 import view2.component.hud.internUserDisplay.InternUserDisplay;
@@ -21,6 +20,8 @@ public class HeadUpDisplay extends Table {
     public static final float HUD_MENU_TABLE_WIDTH = 450;
     public static final float HUD_MENU_TABLE_HEIGHT = 600;
 
+    public static HeadUpDisplay headUpDisplay;
+
     private Table internUserDisplayContainer;
     private Table currentMenuContainer;
 
@@ -28,7 +29,7 @@ public class HeadUpDisplay extends Table {
     private ImageButton notificationListButton;
     private ImageButton settingsButton;
 
-    public HeadUpDisplay() {
+    private HeadUpDisplay() {
         create();
         setLayout();
     }
@@ -37,7 +38,7 @@ public class HeadUpDisplay extends Table {
     public void draw(Batch batch, float parentAlpha) {
         if (Chati.getInstance().getUserManager().getInternUserView() != null
                 && internUserDisplayContainer.getChildren().isEmpty()) {
-            internUserDisplayContainer.add(new InternUserDisplay()).width(HUD_MENU_TABLE_WIDTH).height(BUTTON_SIZE);
+            internUserDisplayContainer.add(new InternUserDisplay()).width(HUD_MENU_TABLE_WIDTH).height(HUD_MENU_TABLE_HEIGHT);
         } else if (Chati.getInstance().getUserManager().getInternUserView() == null
                 && !internUserDisplayContainer.getChildren().isEmpty()) {
             internUserDisplayContainer.clearChildren();
@@ -46,12 +47,6 @@ public class HeadUpDisplay extends Table {
     }
 
     protected void create() {
-        internUserDisplayContainer = new Table();
-        internUserDisplayContainer.setFillParent(true);
-
-        currentMenuContainer = new Table();
-        currentMenuContainer.setFillParent(true);
-
         ButtonGroup<ImageButton> hudButtons = new ButtonGroup<>();
         hudButtons.setMinCheckCount(0);
         hudButtons.setMaxCheckCount(1);
@@ -175,12 +170,23 @@ public class HeadUpDisplay extends Table {
         buttonContainer.add(settingsButton).width(BUTTON_SIZE).height(BUTTON_SIZE);
         addActor(buttonContainer);
 
+        currentMenuContainer = new Table();
+        currentMenuContainer.setFillParent(true);
         currentMenuContainer.top().right().padTop(BUTTON_SIZE);
         currentMenuContainer.defaults().width(HUD_MENU_TABLE_WIDTH).height(HUD_MENU_TABLE_HEIGHT);
         addActor(currentMenuContainer);
 
+        internUserDisplayContainer = new Table();
+        internUserDisplayContainer.setFillParent(true);
         internUserDisplayContainer.top().left();
-        internUserDisplayContainer.defaults().width(HUD_MENU_TABLE_WIDTH).height(BUTTON_SIZE);
+        internUserDisplayContainer.defaults().width(HUD_MENU_TABLE_WIDTH).height(HUD_MENU_TABLE_HEIGHT);
         addActor(internUserDisplayContainer);
+    }
+
+    public static HeadUpDisplay getInstance() {
+        if (headUpDisplay == null) {
+            headUpDisplay = new HeadUpDisplay();
+        }
+        return headUpDisplay;
     }
 }

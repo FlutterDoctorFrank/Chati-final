@@ -19,9 +19,9 @@ import view2.component.menu.StartTable;
 
 public class SettingsTable extends HudMenuTable {
 
-    private static final float PAD_TOP = 20;
-    private static final float PAD_SIDE = 20;
-    private static final float PAD_BOTTOM = 10;
+    private static final float TOP_SPACING = 20;
+    private static final float VERTICAL_SPACING = 20;
+    private static final float BOTTOM_SPACING  = 10;
 
     private TextButton languageSelectMenuButton;
     private TextButton volumeChangeMenuButton;
@@ -163,7 +163,7 @@ public class SettingsTable extends HudMenuTable {
         window.setMovable(false);
         window.top();
 
-        window.defaults().fill().expand().pad(PAD_TOP, PAD_SIDE, PAD_BOTTOM, PAD_SIDE);
+        window.defaults().fill().expand().pad(TOP_SPACING, VERTICAL_SPACING, BOTTOM_SPACING, VERTICAL_SPACING);
         window.add(languageSelectMenuButton).row();
         window.add(volumeChangeMenuButton).row();
         window.add(administratorManageMenuButton).row();

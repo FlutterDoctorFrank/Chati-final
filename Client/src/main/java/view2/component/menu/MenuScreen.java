@@ -3,7 +3,9 @@ package view2.component.menu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import model.context.ContextID;
 import view2.component.hud.HeadUpDisplay;
 
@@ -14,7 +16,6 @@ public class MenuScreen extends ScreenAdapter {
     private static int loginFailCounter = 0;
 
     private final Stage stage;
-    private final HeadUpDisplay headUpDisplay;
     private MenuTable currentMenuTable;
     private Response pendingResponse;
 
@@ -22,8 +23,7 @@ public class MenuScreen extends ScreenAdapter {
 
     public MenuScreen() {
         this.stage = new Stage();
-        this.headUpDisplay = new HeadUpDisplay();
-        stage.addActor(headUpDisplay);
+        stage.addActor(HeadUpDisplay.getInstance());
         Gdx.input.setInputProcessor(stage);
         this.worlds = new HashSet<>();
         this.pendingResponse = Response.NONE;

@@ -15,6 +15,7 @@ public class Texture {
 
     public static final Drawable ONLINE_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/online.png")));
     public static final Drawable AWAY_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/away.png")));
+    public static final Drawable BUSY_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/busy.png")));
     public static final Drawable OFFLINE_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/offline.png")));
 
     public static final Drawable OWNER_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/crown_gold.png")));
