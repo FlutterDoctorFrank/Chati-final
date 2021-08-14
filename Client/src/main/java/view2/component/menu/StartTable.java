@@ -29,7 +29,6 @@ public class StartTable extends MenuTable {
 
     @Override
     protected void create() {
-        super.create();
         infoLabel.setText("Bitte wähle eine Aktion aus!");
 
         Label.LabelStyle style = new Label.LabelStyle();

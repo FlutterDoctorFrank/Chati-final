@@ -15,7 +15,11 @@ public abstract class MenuTable extends ChatiTable {
 
     protected Label infoLabel;
 
-    protected MenuTable() {
+    public MenuTable() {
+        Label.LabelStyle style = new Label.LabelStyle();
+        style.font = new BitmapFont();
+        style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
+        this.infoLabel = new Label("", style);
         create();
         setLayout();
     }
@@ -24,13 +28,5 @@ public abstract class MenuTable extends ChatiTable {
 
     public void showMessage(String message) {
         infoLabel.setText(message);
-    }
-
-    @Override
-    protected void create() {
-        Label.LabelStyle style = new Label.LabelStyle();
-        style.font = new BitmapFont();
-        style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
-        this.infoLabel = new Label("", style);
     }
 }

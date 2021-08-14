@@ -25,7 +25,6 @@ public class WorldCreateTable extends MenuTable {
 
     @Override
     protected void create() {
-        super.create();
         infoLabel.setText("Bitte wähle einen Namen und eine Karte!");
 
         Label.LabelStyle style = new Label.LabelStyle();

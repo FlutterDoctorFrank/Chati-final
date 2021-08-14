@@ -25,7 +25,6 @@ public class ChangePasswordTable extends MenuTable {
 
     @Override
     protected void create() {
-        super.create();
         infoLabel.setText("Gib dein aktuelles und ein neues Passwort ein!");
 
         Skin passwordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));

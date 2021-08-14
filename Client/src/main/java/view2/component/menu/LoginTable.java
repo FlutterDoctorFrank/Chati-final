@@ -20,7 +20,7 @@ public class LoginTable extends MenuTable {
 
     @Override
     protected void create() {
-        super.create();
+
         infoLabel.setText("Bitte gib dein Benutzername und dein Passwort ein!");
         // Füge Benutzernamen-Feld hinzu.
         Skin usernameFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));

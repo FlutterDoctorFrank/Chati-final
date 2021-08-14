@@ -23,7 +23,6 @@ public class DeleteAccountTable extends MenuTable {
 
     @Override
     protected void create() {
-        super.create();
         infoLabel.setText("Gib dein aktuelles Passwort ein!");
 
         Skin passwordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));

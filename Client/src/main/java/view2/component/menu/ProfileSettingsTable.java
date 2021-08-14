@@ -14,7 +14,6 @@ public class ProfileSettingsTable extends MenuTable {
 
     @Override
     protected void create() {
-        super.create();
         infoLabel.setText("Bitte wähle eine Aktion aus!");
 
         changePasswordButton = new TextButton("Passwort ändern", Chati.SKIN);

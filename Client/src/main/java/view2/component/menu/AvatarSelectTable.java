@@ -14,7 +14,6 @@ public class AvatarSelectTable extends MenuTable {
 
     @Override
     protected void create() {
-        super.create();
         infoLabel.setText("Bitte wähle einen Avatar!");
 
         confirmButton = new TextButton("Bestätigen", Chati.SKIN);
