@@ -6,12 +6,16 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import model.MessageBundle;
+import model.notification.Notification;
+import model.notification.NotificationType;
 import model.user.IInternUserView;
 import model.user.IUserManagerView;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class NotificationListTable extends HudMenuTable {
@@ -149,7 +153,6 @@ public class NotificationListTable extends HudMenuTable {
                     .forEach(notification -> globalNotificationEntries.add(new NotificationListEntry(notification)));
             layoutEntries(globalNotificationEntries);
         }
-/*
         // TEEEEESST //
         for (int i = 0; i <20; i++) {
             Notification notification = new Notification(UUID.randomUUID(), null, new MessageBundle("Ich bin ein globaler Nachricht"), LocalDateTime.now(),
@@ -158,7 +161,6 @@ public class NotificationListTable extends HudMenuTable {
         }
         layoutEntries(globalNotificationEntries);
         // TEEESST ENDE //
- */
     }
 
     private void showWorldNotifications() {
