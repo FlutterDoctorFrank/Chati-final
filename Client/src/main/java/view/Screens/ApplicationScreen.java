@@ -28,10 +28,7 @@ import view.Sprites.InteractiveTileObject;
 import view.UIComponents.Hud;
 import view.UIComponents.LoginTable;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class ApplicationScreen implements Screen {
     protected Chati game;
@@ -44,6 +41,13 @@ public class ApplicationScreen implements Screen {
         RIGHT, LEFT, DOWN, UP, NONE
     }
 
+    private static final Map<KEY_PRESS, Integer> MOVE_KEYS = new HashMap<>() {{
+        this.put(KEY_PRESS.RIGHT, Input.Keys.RIGHT);
+        this.put(KEY_PRESS.LEFT, Input.Keys.LEFT);
+        this.put(KEY_PRESS.UP, Input.Keys.UP);
+        this.put(KEY_PRESS.DOWN, Input.Keys.DOWN);
+    }};
+
     //Map variables
     private TmxMapLoader mapLoader;
     private TiledMap map;
@@ -55,7 +59,7 @@ public class ApplicationScreen implements Screen {
 
     private ArrayList<Avatar> avatars;
     private Avatar avatar;
-    private KEY_PRESS currentKeyPressed = KEY_PRESS.NONE;
+    private KEY_PRESS lastKeyPressed = KEY_PRESS.NONE;
     private final int bodyMovingForce = 25;
 
     private int userAvatarIndex = 0;
@@ -87,7 +91,7 @@ public class ApplicationScreen implements Screen {
         box2DDebugRenderer = new Box2DDebugRenderer();
 
         addBorders(map.getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class));
-        for (MapObject object: map.getLayers().get("contextLayer").getObjects().getByType(RectangleMapObject.class)) {
+        for (MapObject object : map.getLayers().get("contextLayer").getObjects().getByType(RectangleMapObject.class)) {
             String name = object.getName();
             if (!(name.equals("Hotel") || name.equals("Park") || name.equals("Disco"))) {
                 Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
@@ -125,7 +129,7 @@ public class ApplicationScreen implements Screen {
             spriteBatch.begin();
             for (Avatar avatar : avatars) {
                 avatar.draw(spriteBatch);
-                avatar.update(delta);
+                avatar.update(delta, spriteBatch);
             }
             spriteBatch.end();
             update(delta);
@@ -210,21 +214,25 @@ public class ApplicationScreen implements Screen {
         boolean keyPressedLeft = Gdx.input.isKeyPressed(Input.Keys.LEFT);
         boolean keyPressedRight = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 
-        if (keyPressedLeft && body.getLinearVelocity().x >= -20 && (currentKeyPressed.equals(KEY_PRESS.LEFT) || currentKeyPressed.equals(KEY_PRESS.NONE))) {
-            body.applyLinearImpulse(new Vector2(-bodyMovingForce, 0), bodyCenter, true);
-            currentKeyPressed = KEY_PRESS.LEFT;
-        } else if (keyPressedRight && body.getLinearVelocity().x <= 20 && (currentKeyPressed.equals(KEY_PRESS.RIGHT) || currentKeyPressed.equals(KEY_PRESS.NONE))) {
-            body.applyLinearImpulse(new Vector2(bodyMovingForce, 0), bodyCenter, true);
-            currentKeyPressed = KEY_PRESS.RIGHT;
-        } else if (keyPressedUp && body.getLinearVelocity().y <= 20 && (currentKeyPressed.equals(KEY_PRESS.UP) || currentKeyPressed.equals(KEY_PRESS.NONE))) {
-            body.applyLinearImpulse(new Vector2(0, bodyMovingForce), bodyCenter, true);
-            currentKeyPressed = KEY_PRESS.UP;
-        } else if (keyPressedDown && body.getLinearVelocity().y >= -20 && (currentKeyPressed.equals(KEY_PRESS.LEFT) || currentKeyPressed.equals(KEY_PRESS.NONE))) {
-            body.applyLinearImpulse(new Vector2(0, -bodyMovingForce), bodyCenter, true);
-            currentKeyPressed = KEY_PRESS.DOWN;
-        } else if (!keyPressedDown && !keyPressedUp && !keyPressedLeft && !keyPressedRight) {
-            body.setLinearVelocity(0, 0);
-            currentKeyPressed = KEY_PRESS.NONE;
+
+        if (!(MOVE_KEYS.containsKey(lastKeyPressed) && Gdx.input.isKeyPressed(MOVE_KEYS.get(lastKeyPressed)))) {
+            body.setLinearVelocity(0,0);
+            if (keyPressedLeft && body.getLinearVelocity().x >= -20) {
+                body.applyLinearImpulse(new Vector2(-bodyMovingForce, 0), bodyCenter, true);
+                lastKeyPressed = KEY_PRESS.LEFT;
+            } else if (keyPressedRight && body.getLinearVelocity().x <= 20) {
+                body.applyLinearImpulse(new Vector2(bodyMovingForce, 0), bodyCenter, true);
+                lastKeyPressed = KEY_PRESS.RIGHT;
+            } else if (keyPressedUp && body.getLinearVelocity().y <= 20) {
+                body.applyLinearImpulse(new Vector2(0, bodyMovingForce), bodyCenter, true);
+                lastKeyPressed = KEY_PRESS.UP;
+            } else if (keyPressedDown && body.getLinearVelocity().y >= -20) {
+                body.applyLinearImpulse(new Vector2(0, -bodyMovingForce), bodyCenter, true);
+                lastKeyPressed = KEY_PRESS.DOWN;
+            } else if (!keyPressedDown && !keyPressedUp && !keyPressedLeft && !keyPressedRight) {
+                body.setLinearVelocity(0, 0);
+                lastKeyPressed = KEY_PRESS.NONE;
+            }
         }
 
         if (bodyPosition.x >= cameraLeftBoundary && bodyPosition.x <= cameraRightBoundary) {

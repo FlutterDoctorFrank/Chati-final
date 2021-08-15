@@ -1,9 +1,6 @@
 package view.Sprites;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
@@ -29,6 +26,7 @@ public class Avatar extends Sprite {
     private Animation avatarRunRight;
     private Animation avatarDance;
 
+
     private enum Direction {LEFT, RIGHT, UP, DOWN, STAND}
     private Direction currentDirection;
     private Direction previousDirection;
@@ -53,6 +51,7 @@ public class Avatar extends Sprite {
         body.createFixture(fdef).setUserData("avatar");
 
         stateTimer = 0;
+
         atlas = new TextureAtlas("skins/Adam/Adam.pack");
 
         TextureAtlas.AtlasRegion stand = atlas.findRegion("Adam_idle");
@@ -102,12 +101,18 @@ public class Avatar extends Sprite {
         }
         avatarDance = new Animation(0.1f, frames);
         frames.clear();
+
     }
 
-    public void update(float dt) {
+    public void update(float dt, SpriteBatch spriteBatch) {
+        InteractButtonAnimation animation = new InteractButtonAnimation();
+        animation.draw(spriteBatch);
+        animation.update(dt);
         setPosition(getBody().getPosition().x - getWidth() / 2, getBody().getPosition().y - getHeight() / 2);
         setRegion(getFrame(dt));
     }
+
+
 
     private TextureRegion getFrame(float dt) {
         currentDirection = getDirection();
@@ -170,5 +175,36 @@ public class Avatar extends Sprite {
 
     public UUID getUser() {
         return user;
+    }
+
+
+
+    private class InteractButtonAnimation extends Sprite {
+        private Animation interactionButton;
+        private float buttonStateTimer;
+
+        public InteractButtonAnimation() {
+            buttonStateTimer = 0;
+            Array<TextureRegion> frames = new Array<TextureRegion>();
+            TextureAtlas buttonAtlas = new TextureAtlas("icons/interact_button/rotating_button.pack");
+            for (int i = 0; i < 4; i++) {
+                frames.add(new TextureRegion(buttonAtlas.findRegion("button"), i * 16, 0, 16, 16));
+            }
+            interactionButton = new Animation(0.1f, frames);
+
+            setBounds(0, 0, 16 / Chati.PPM, 16 / Chati.PPM);
+            setRegion(buttonAtlas.findRegion("button"), 0, 0, 16, 16);
+        }
+
+        public void update(float dt) {
+            this.setPosition(getBody().getPosition().x - getWidth() / 2, getBody().getPosition().y + getHeight());
+            this.setRegion(getButtonFrame(dt));
+        }
+
+        private  TextureRegion getButtonFrame(float dt) {
+            TextureRegion region = (TextureRegion) interactionButton.getKeyFrame(buttonStateTimer, true);
+            buttonStateTimer += dt;
+            return region;
+        }
     }
 }
