@@ -22,6 +22,7 @@ import controller.network.ServerSender;
 import model.context.spatial.ILocationView;
 import model.user.IInternUserView;
 import model.user.IUserView;
+import org.lwjgl.Sys;
 import view.Chati;
 import view.Sprites.Avatar;
 import view.Sprites.InteractiveTileObject;
@@ -36,17 +37,9 @@ public class ApplicationScreen implements Screen {
     protected OrthographicCamera gamecam;
     protected Viewport gamePort;
     protected Hud hud;
-
-    private enum KEY_PRESS {
-        RIGHT, LEFT, DOWN, UP, NONE
-    }
-
-    private static final Map<KEY_PRESS, Integer> MOVE_KEYS = new HashMap<>() {{
-        this.put(KEY_PRESS.RIGHT, Input.Keys.RIGHT);
-        this.put(KEY_PRESS.LEFT, Input.Keys.LEFT);
-        this.put(KEY_PRESS.UP, Input.Keys.UP);
-        this.put(KEY_PRESS.DOWN, Input.Keys.DOWN);
-    }};
+    
+    private static final int[] movementKeys = {Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT};
+    private LinkedList<Integer> keyPresses = new LinkedList<>();
 
     //Map variables
     private TmxMapLoader mapLoader;
@@ -56,10 +49,11 @@ public class ApplicationScreen implements Screen {
     //Box2d variables
     private World world;
     private Box2DDebugRenderer box2DDebugRenderer;
+    private WorldContactListener contactListener;
 
     private ArrayList<Avatar> avatars;
     private Avatar avatar;
-    private KEY_PRESS lastKeyPressed = KEY_PRESS.NONE;
+    // private KEY_PRESS lastKeyPressed = KEY_PRESS.NONE;
     private final int bodyMovingForce = 25;
 
     private int userAvatarIndex = 0;
@@ -82,21 +76,19 @@ public class ApplicationScreen implements Screen {
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Chati.V_WIDTH / Chati.PPM, Chati.V_HEIGHT / Chati.PPM, gamecam);
         this.hud = hud;
+        this.contactListener = new WorldContactListener();
 
         mapLoader = new TmxMapLoader();
         map = mapLoader.load(mapPath);   //maps/map.tmx
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / Chati.PPM);
         world = new World(new Vector2(0, 0), true);
-        world.setContactListener(new WorldContactListener());
+        world.setContactListener(contactListener);
         box2DDebugRenderer = new Box2DDebugRenderer();
 
         addBorders(map.getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class));
-        for (MapObject object : map.getLayers().get("contextLayer").getObjects().getByType(RectangleMapObject.class)) {
-            String name = object.getName();
-            if (!(name.equals("Hotel") || name.equals("Park") || name.equals("Disco"))) {
-                Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
-                new InteractiveTileObject(world, map.getProperties().get("tilewidth", Integer.class), rectangle);
-            }
+        for (MapObject object : map.getLayers().get("InteractiveObject").getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
+            new InteractiveTileObject(world, map.getProperties().get("tilewidth", Integer.class), rectangle);
         }
 
         avatars = new ArrayList<>();
@@ -209,30 +201,33 @@ public class ApplicationScreen implements Screen {
         Vector2 bodyCenter = body.getWorldCenter();
 
         Vector2 bodyPosition = body.getPosition();
-        boolean keyPressedUp = Gdx.input.isKeyPressed(Input.Keys.UP);
-        boolean keyPressedDown = Gdx.input.isKeyPressed(Input.Keys.DOWN);
-        boolean keyPressedLeft = Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        boolean keyPressedRight = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 
+        body.setLinearVelocity(0, 0);
 
-        if (!(MOVE_KEYS.containsKey(lastKeyPressed) && Gdx.input.isKeyPressed(MOVE_KEYS.get(lastKeyPressed)))) {
-            body.setLinearVelocity(0,0);
-            if (keyPressedLeft && body.getLinearVelocity().x >= -20) {
-                body.applyLinearImpulse(new Vector2(-bodyMovingForce, 0), bodyCenter, true);
-                lastKeyPressed = KEY_PRESS.LEFT;
-            } else if (keyPressedRight && body.getLinearVelocity().x <= 20) {
-                body.applyLinearImpulse(new Vector2(bodyMovingForce, 0), bodyCenter, true);
-                lastKeyPressed = KEY_PRESS.RIGHT;
-            } else if (keyPressedUp && body.getLinearVelocity().y <= 20) {
-                body.applyLinearImpulse(new Vector2(0, bodyMovingForce), bodyCenter, true);
-                lastKeyPressed = KEY_PRESS.UP;
-            } else if (keyPressedDown && body.getLinearVelocity().y >= -20) {
-                body.applyLinearImpulse(new Vector2(0, -bodyMovingForce), bodyCenter, true);
-                lastKeyPressed = KEY_PRESS.DOWN;
-            } else if (!keyPressedDown && !keyPressedUp && !keyPressedLeft && !keyPressedRight) {
+        switch (getKeyPressed()) {
+            case Input.Keys.LEFT:
+                if (body.getLinearVelocity().x >= -20) {
+                    body.applyLinearImpulse(new Vector2(-bodyMovingForce, 0), bodyCenter, true);
+                }
+                break;
+            case Input.Keys.RIGHT:
+                if (body.getLinearVelocity().x <= 20) {
+                    body.applyLinearImpulse(new Vector2(bodyMovingForce, 0), bodyCenter, true);
+                }
+                break;
+            case Input.Keys.UP:
+                if (body.getLinearVelocity().y <= 20) {
+                    body.applyLinearImpulse(new Vector2(0, bodyMovingForce), bodyCenter, true);
+                }
+                break;
+            case Input.Keys.DOWN:
+                if (body.getLinearVelocity().y >= -20) {
+                    body.applyLinearImpulse(new Vector2(0, -bodyMovingForce), bodyCenter, true);
+                }
+                break;
+            default:
                 body.setLinearVelocity(0, 0);
-                lastKeyPressed = KEY_PRESS.NONE;
-            }
+                break;
         }
 
         if (bodyPosition.x >= cameraLeftBoundary && bodyPosition.x <= cameraRightBoundary) {
@@ -251,7 +246,30 @@ public class ApplicationScreen implements Screen {
             gamecam.position.y = cameraBottomBoundary;
         }
 
+        //interact button
+        if (Gdx.input.isKeyPressed(Input.Keys.E) && contactListener.canInteract()) {
+            System.out.println("interagieren");
+        }
+
         //sendPositionToServer(body.getPosition().x * Chati.PPM, body.getPosition().y * Chati.PPM);
+    }
+
+    private int getKeyPressed() {
+        for (int key : movementKeys) {
+            if (Gdx.input.isKeyPressed(key)) {
+                if (!keyPresses.contains(key)) {
+                    keyPresses.add(key);
+                }
+            } else {
+                keyPresses.remove((Object) key);
+            }
+        }
+
+        if (!keyPresses.isEmpty()) {
+            return keyPresses.getLast();
+        } else {
+            return -2;
+        }
     }
 
     private void sendPositionToServer(float posX, float posY) {

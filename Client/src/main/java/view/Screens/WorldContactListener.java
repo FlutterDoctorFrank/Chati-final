@@ -4,10 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.*;
 
 public class WorldContactListener implements ContactListener {
+    private boolean canInteract = false;
+
     @Override
     public void beginContact(Contact contact) {
         if (isInteractiveArea(contact.getFixtureA(), contact.getFixtureB())) {
             Gdx.app.log("Begin", "");
+            canInteract = true;
         }
     }
 
@@ -15,6 +18,7 @@ public class WorldContactListener implements ContactListener {
     public void endContact(Contact contact) {
         if (isInteractiveArea(contact.getFixtureA(), contact.getFixtureB())) {
             Gdx.app.log("End", "");
+            canInteract = false;
         }
     }
 
@@ -33,5 +37,9 @@ public class WorldContactListener implements ContactListener {
             return true;
         }
         return false;
+    }
+
+    public boolean canInteract() {
+        return canInteract;
     }
 }
