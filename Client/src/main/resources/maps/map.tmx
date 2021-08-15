@@ -761,7 +761,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="367" x="1184" y="1824" width="448" height="160">
+  <object id="367" name="SpawnArea" x="1184" y="1824" width="448" height="160">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="area"/>

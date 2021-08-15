@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="349">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="32" tileheight="32" infinite="0" nextlayerid="18" nextobjectid="370">
  <properties>
+  <property name="communicationRegion" value="areaCommunication"/>
   <property name="spawnPosX" type="int" value="100"/>
   <property name="spawnPosY" type="int" value="20"/>
-          <property name="communicationRegion" value="areaCommunication"/>
-          <property name="text" type="bool" value="true"/>
-          <property name="voice" type="bool" value="true"/>
+  <property name="text" type="bool" value="true"/>
+  <property name="voice" type="bool" value="true"/>
  </properties>
  <tileset firstgid="1" source="pipo-map001_at.tsx"/>
  <tileset firstgid="481" source="0_Everything.tsx"/>
@@ -163,14 +163,14 @@
 3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
 3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
 3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
-3221226001,0,0,0,0,0,0,0,0,0,5645,5646,5646,5646,5646,5646,5646,5646,5646,5646,5646,5646,5648,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
-3221226001,0,0,0,0,0,0,0,0,0,5653,5655,5655,5655,5655,5655,5655,5655,5655,5655,5655,5655,5656,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
-3221226001,0,0,0,0,0,0,0,0,0,5653,5655,5654,5654,5654,5654,5654,5654,5654,5654,5654,5655,5656,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
-3221226001,0,0,0,0,0,0,0,0,0,5653,5655,5654,5654,5654,5654,5654,5654,5654,5654,5654,5655,5656,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
-3221226001,0,0,0,0,0,0,0,0,0,5653,5655,5654,5654,5654,5654,5654,5654,5654,5654,5654,5655,5656,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
-3221226001,0,0,0,0,0,0,0,0,0,5653,5655,5654,5654,5654,5654,5654,5654,5654,5654,5654,5655,5656,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
-3221226001,0,0,0,0,0,0,0,0,0,5653,5655,5654,5654,5654,5654,5654,5654,5654,5654,5654,5655,5656,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
-3221226001,0,0,0,0,0,0,0,0,0,5661,5662,5663,5663,5663,5663,5663,5663,5663,5663,5663,5663,5664,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
+3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
+3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
+3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
+3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
+3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
+3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
+3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
+3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
 3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
 3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
 3221226001,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
@@ -353,23 +353,23 @@
   <object id="265" x="576" y="256" width="64" height="64"/>
  </objectgroup>
  <objectgroup id="16" name="contextLayer">
-  <object id="204" name="gameBoard_2" x="96" y="704" width="128" height="96">
+  <object id="204" name="gameboard_2" x="96" y="704" width="128" height="96">
    <properties>
     <property name="communicationRegion" value="areaCommunication"/>
-    <property name="contextType" value="gameBoard"/>
+    <property name="contextType" value="gameboard"/>
     <property name="text" type="bool" value="true"/>
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="205" name="gameBoard_1" x="768" y="704" width="128" height="96">
+  <object id="205" name="gameboard_1" x="768" y="704" width="128" height="96">
    <properties>
     <property name="communicationRegion" value="areaCommunication"/>
-    <property name="contextType" value="gameBoard"/>
+    <property name="contextType" value="gameboard"/>
     <property name="text" type="bool" value="true"/>
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="212" name="Reception" x="1344" y="224" width="384" height="64">
+  <object id="212" name="Rezeption" x="1344" y="224" width="384" height="64">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="roomReception"/>
@@ -409,10 +409,10 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="225" name="gameBoard_3" x="1792" y="448" width="128" height="96">
+  <object id="225" name="gameboard_3" x="1792" y="448" width="128" height="96">
    <properties>
     <property name="communicationRegion" value="areaCommunication"/>
-    <property name="contextType" value="gameBoard"/>
+    <property name="contextType" value="gameboard"/>
     <property name="text" type="bool" value="true"/>
     <property name="voice" type="bool" value="true"/>
    </properties>
@@ -441,7 +441,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="240" name="Bank_24" x="721" y="1569.67" width="31" height="30">
+  <object id="240" name="Bank_24" x="704" y="1569.67" width="48" height="30">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="seat"/>
@@ -471,14 +471,6 @@
     <property name="contextType" value="area"/>
     <property name="text" type="bool" value="true"/>
     <property name="voice" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="294" name="SpawnZone" x="322" y="450" width="410.667" height="248.667">
-   <properties>
-    <property name="communicationRegion" value="radiusCommunication"/>
-    <property name="contextType" value="area"/>
-    <property name="text" type="bool" value="true"/>
-    <property name="voice" type="bool" value="false"/>
    </properties>
   </object>
   <object id="297" name="Bank_23" x="1198" y="736.667" width="31.3333" height="31.3333">
@@ -577,7 +569,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="325" name="Bank_11" x="720.5" y="1601.17" width="31" height="29.6667">
+  <object id="325" name="Bank_11" x="704" y="1601.17" width="47.5" height="29.6667">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="seat"/>
@@ -585,7 +577,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="326" name="Bank_10" x="1874.75" y="1378.42" width="31" height="30">
+  <object id="326" name="Bank_10" x="1856" y="1378.42" width="49.75" height="30">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="seat"/>
@@ -593,7 +585,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="327" name="Bank_9" x="1874.25" y="1409.92" width="31" height="29.1667">
+  <object id="327" name="Bank_9" x="1856" y="1407.98" width="62.9986" height="32.0431">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="seat"/>
@@ -601,7 +593,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="328" name="Bank_8" x="1697.75" y="1695.92" width="31" height="30">
+  <object id="328" name="Bank_8" x="1697.75" y="1696" width="31" height="29.92">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="seat"/>
@@ -609,7 +601,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="329" name="Bank_7" x="1730.11" y="1696.37" width="28.8182" height="29.6667">
+  <object id="329" name="Bank_7" x="1730.11" y="1696" width="28.8182" height="30.0367">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="seat"/>
@@ -617,7 +609,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="330" name="Bank_6" x="1313.91" y="1697.94" width="31" height="30">
+  <object id="330" name="Bank_6" x="1313.91" y="1696" width="31" height="31.94">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="seat"/>
@@ -625,7 +617,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="331" name="Bank_5" x="1346.27" y="1698.39" width="28.8182" height="29.6667">
+  <object id="331" name="Bank_5" x="1346.27" y="1696" width="28.8182" height="32.0567">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="seat"/>
@@ -633,7 +625,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="332" name="Bank_4" x="257.911" y="1857.94" width="31" height="30">
+  <object id="332" name="Bank_4" x="257.911" y="1856" width="31" height="31.94">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="seat"/>
@@ -641,7 +633,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="333" name="Bank_3" x="290.271" y="1858.39" width="28.8182" height="29.6667">
+  <object id="333" name="Bank_3" x="290.271" y="1856" width="28.8182" height="32.0567">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="seat"/>
@@ -649,7 +641,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="334" name="Bank_2" x="577.411" y="1857.44" width="31" height="30">
+  <object id="334" name="Bank_2" x="577.411" y="1856" width="31" height="31.44">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="seat"/>
@@ -657,7 +649,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="335" name="Bank_1" x="609.771" y="1857.89" width="28.8182" height="29.6667">
+  <object id="335" name="Bank_1" x="609.771" y="1856" width="28.8182" height="31.5567">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="seat"/>
@@ -769,5 +761,33 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
+  <object id="367" name="SpawnArea" x="1184" y="1824" width="448" height="160">
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="area"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="false"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="17" name="InteractiveObject" visible="0">
+  <object id="349" x="256" y="1856" width="64" height="32"/>
+  <object id="350" x="576" y="1856" width="64" height="32"/>
+  <object id="351" x="704" y="1568" width="64" height="64"/>
+  <object id="352" x="1312" y="1696" width="64" height="32"/>
+  <object id="353" x="1696" y="1696" width="64" height="32"/>
+  <object id="354" x="1856" y="1376" width="64" height="64"/>
+  <object id="355" x="1760" y="672" width="64" height="96"/>
+  <object id="357" x="1920" y="672" width="64" height="96"/>
+  <object id="358" x="1792" y="448" width="128" height="96"/>
+  <object id="359" x="1344" y="224" width="384" height="64"/>
+  <object id="360" x="1344" y="672" width="64" height="96"/>
+  <object id="362" x="1184" y="672" width="64" height="96"/>
+  <object id="363" x="96" y="704" width="128" height="96"/>
+  <object id="364" x="768" y="704" width="128" height="96"/>
+  <object id="365" x="352" y="256" width="320" height="64"/>
+  <object id="366" x="928" y="192" width="64" height="64"/>
+  <object id="368" x="1248" y="608" width="96" height="64"/>
+  <object id="369" x="1824" y="608" width="96" height="64"/>
  </objectgroup>
 </map>
