@@ -21,8 +21,6 @@ import view2.component.ChatiWindow;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 public class ChatWindow extends ChatiWindow {
@@ -41,7 +39,6 @@ public class ChatWindow extends ChatiWindow {
 
     private static ChatWindow chatWindow;
 
-    private final List<Label> messageLabels;
     private Table messageLabelContainer;
     private ScrollPane historyScrollPane;
     private TextArea typeMessageArea;
@@ -52,13 +49,12 @@ public class ChatWindow extends ChatiWindow {
         super("Chat");
         STYLE.font = FONT;
         STYLE.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
-        this.messageLabels = new LinkedList<>();
         create();
         setLayout();
     }
 
     @Override
-    public void draw(Batch batch, float parentAlpha) {
+    public void act(float delta) {
         /*
         if (Chati.getInstance().isUserInfoChanged()) {
             IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
@@ -68,7 +64,7 @@ public class ChatWindow extends ChatiWindow {
             }
         }
         */
-        super.draw(batch, parentAlpha);
+        super.act(delta);
     }
 
     @Override

@@ -22,9 +22,11 @@ public class StartTable extends MenuTable {
     private TextButton logoutButton;
 
     @Override
-    public void draw(Batch batch, float parentAlpha) {
-        updateWorldList();
-        super.draw(batch, parentAlpha);
+    public void act(float delta) {
+        if (Chati.getInstance().isWorldListUpdated()) {
+            updateWorldList();
+        }
+        super.act(delta);
     }
 
     @Override

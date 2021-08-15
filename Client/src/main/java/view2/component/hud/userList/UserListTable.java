@@ -40,34 +40,36 @@ public class UserListTable extends HudMenuTable {
     }
 
     @Override
-    public void draw(Batch batch, float parentAlpha) {
-        IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
-        if (user == null && !friendTabButton.isDisabled()) {
-            disableBannedUsersTab();
-            disableActiveUsersTab();
-            disableFriendsTab();
-        } else if (user != null && !user.isInCurrentWorld() && !activeUserTabButton.isDisabled()) {
-            disableBannedUsersTab();
-            disableActiveUsersTab();
-        } else if (user != null && user.isInCurrentWorld()
-                && !(user.hasPermission(Permission.BAN_USER) || user.hasPermission(Permission.BAN_MODERATOR))
-                && !bannedUserTabButton.isDisabled()) {
-            disableBannedUsersTab();
-        }
-
-        if (user != null && friendTabButton.isDisabled()) {
-            enableButton(friendTabButton);
-            showFriends();
-        } else if (user != null && user.isInCurrentWorld() && activeUserTabButton.isDisabled()) {
-            enableButton(activeUserTabButton);
-        }
-        if (user != null && user.isInCurrentWorld()
-                && (user.hasPermission(Permission.BAN_USER) || user.hasPermission(Permission.BAN_MODERATOR))
-                && bannedUserTabButton.isDisabled()) {
-            enableButton(bannedUserTabButton);
-        }
-
+    public void act(float delta) {
         if (Chati.getInstance().isUserInfoChanged()) {
+            IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
+            if (user == null && !friendTabButton.isDisabled()) {
+                disableBannedUsersTab();
+                disableActiveUsersTab();
+                disableFriendsTab();
+            } else if (user != null && !user.isInCurrentWorld() && !activeUserTabButton.isDisabled()) {
+                disableBannedUsersTab();
+                disableActiveUsersTab();
+            } else if (user != null && user.isInCurrentWorld()
+                    && !(user.hasPermission(Permission.BAN_USER) || user.hasPermission(Permission.BAN_MODERATOR))
+                    && !bannedUserTabButton.isDisabled()) {
+                disableBannedUsersTab();
+            }
+
+            if (user != null && friendTabButton.isDisabled()) {
+                enableButton(friendTabButton);
+                friendTabButton.setChecked(true);
+                friendTabButton.getLabel().setColor(Color.MAGENTA);
+                friendTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
+            } else if (user != null && user.isInCurrentWorld() && activeUserTabButton.isDisabled()) {
+                enableButton(activeUserTabButton);
+            }
+            if (user != null && user.isInCurrentWorld()
+                    && (user.hasPermission(Permission.BAN_USER) || user.hasPermission(Permission.BAN_MODERATOR))
+                    && bannedUserTabButton.isDisabled()) {
+                enableButton(bannedUserTabButton);
+            }
+
             if (!friendTabButton.isDisabled() && friendTabButton.isChecked()) {
                 showFriends();
             } else if (!activeUserTabButton.isDisabled() && activeUserTabButton.isChecked()) {
@@ -76,7 +78,8 @@ public class UserListTable extends HudMenuTable {
                 showBannedUsers();
             }
         }
-        super.draw(batch, parentAlpha);
+
+        super.act(delta);
     }
 
     protected void create() {

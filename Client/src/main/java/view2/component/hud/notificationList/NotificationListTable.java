@@ -37,30 +37,33 @@ public class NotificationListTable extends HudMenuTable {
     }
 
     @Override
-    public void draw(Batch batch, float parentAlpha) {
-        IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
-        if (user == null && !globalNotificationTabButton.isDisabled()) {
-            disableWorldNotificationTab();
-            disableGlobalNotificationTab();
-        } else if (user != null && !user.isInCurrentWorld() && !worldNotificationTabButton.isDisabled()) {
-            disableWorldNotificationTab();
-        }
-
-        if (user != null && globalNotificationTabButton.isDisabled()) {
-            enableButton(globalNotificationTabButton);
-            showGlobalNotifications();
-        } else if (user != null && user.isInCurrentWorld() && worldNotificationTabButton.isDisabled()) {
-            enableButton(worldNotificationTabButton);
-        }
-
+    public void act(float delta) {
         if (Chati.getInstance().isUserNotificationChanged()) {
+            IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
+            if (user == null && !globalNotificationTabButton.isDisabled()) {
+                disableWorldNotificationTab();
+                disableGlobalNotificationTab();
+            } else if (user != null && !user.isInCurrentWorld() && !worldNotificationTabButton.isDisabled()) {
+                disableWorldNotificationTab();
+            }
+
+            if (user != null && globalNotificationTabButton.isDisabled()) {
+                enableButton(globalNotificationTabButton);
+                globalNotificationTabButton.setChecked(true);
+                globalNotificationTabButton.getLabel().setColor(Color.MAGENTA);
+                globalNotificationTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
+            } else if (user != null && user.isInCurrentWorld() && worldNotificationTabButton.isDisabled()) {
+                enableButton(worldNotificationTabButton);
+            }
+
             if (!globalNotificationTabButton.isDisabled() && globalNotificationTabButton.isChecked()) {
                 showGlobalNotifications();
             } else if (!worldNotificationTabButton.isDisabled() && worldNotificationTabButton.isChecked()) {
                 showWorldNotifications();
             }
         }
-        super.draw(batch, parentAlpha);
+
+        super.act(delta);
     }
 
     protected void create() {

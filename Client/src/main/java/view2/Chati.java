@@ -36,6 +36,8 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     private boolean roomChanged;
     private boolean worldChanged;
     private boolean musicChanged;
+    private boolean worldListUpdated;
+    private boolean roomListUpdated;
 
     public Chati(IUserManagerView userManager) {
         CHATI = this;
@@ -117,6 +119,7 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
         if (this.screen.equals(menuScreen)) {
             menuScreen.updateWorlds(worlds);
         }
+        worldListUpdated = true;
     }
 
     @Override
@@ -225,6 +228,15 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     public boolean isUserNotificationChanged() {
         if (userNotificationChanged) {
             userNotificationChanged = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isWorldListUpdated() {
+        if (worldListUpdated) {
+            worldListUpdated = false;
             return true;
         } else {
             return false;

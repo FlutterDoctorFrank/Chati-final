@@ -36,7 +36,7 @@ public class SettingsTable extends HudMenuTable {
     }
 
     @Override
-    public void draw(Batch batch, float parentAlpha) {
+    public void act(float delta) {
         if (Chati.getInstance().isUserInfoChanged()) {
             IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
             if (!administratorManageMenuButton.isDisabled()
@@ -54,8 +54,9 @@ public class SettingsTable extends HudMenuTable {
                 enableButton(logoutButton);
             }
         }
-        super.draw(batch, parentAlpha);
+        super.act(delta);
     }
+
 
     @Override
     protected void create() {
