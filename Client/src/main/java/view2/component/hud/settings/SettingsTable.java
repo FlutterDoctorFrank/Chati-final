@@ -1,7 +1,6 @@
 package view2.component.hud.settings;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -15,6 +14,7 @@ import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
 import view2.component.menu.LoginTable;
+import view2.component.menu.MenuScreen;
 import view2.component.menu.StartTable;
 
 public class SettingsTable extends HudMenuTable {
@@ -118,8 +118,8 @@ public class SettingsTable extends HudMenuTable {
                 ContextID currentWorldID = Chati.getInstance().getUserManager()
                         .getInternUserView().getCurrentWorld().getContextId();
                 Chati.getInstance().getServerSender().send(ServerSender.SendAction.WORLD_ACTION, currentWorldID, false);
-                Chati.getInstance().setScreen(Chati.getInstance().getMenuScreen());
-                Chati.getInstance().getMenuScreen().setTable(new StartTable());
+                Chati.getInstance().setScreen(MenuScreen.getInstance());
+                MenuScreen.getInstance().setMenuTable(new StartTable());
             }
         });
 
@@ -137,10 +137,10 @@ public class SettingsTable extends HudMenuTable {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 disableButton(logoutButton);
                 Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
-                if (!Chati.getInstance().getScreen().equals(Chati.getInstance().getMenuScreen())) {
-                    Chati.getInstance().setScreen(Chati.getInstance().getMenuScreen());
+                if (!Chati.getInstance().getScreen().equals(MenuScreen.getInstance())) {
+                    Chati.getInstance().setScreen(MenuScreen.getInstance());
                 }
-                Chati.getInstance().getMenuScreen().setTable(new LoginTable());
+                MenuScreen.getInstance().setMenuTable(new LoginTable());
             }
         });
 

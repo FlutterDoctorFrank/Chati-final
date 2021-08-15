@@ -2,6 +2,7 @@ package view2;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import controller.network.ServerSender;
@@ -10,9 +11,9 @@ import model.context.ContextID;
 import model.context.spatial.Menu;
 import model.user.IUserManagerView;
 import org.jetbrains.annotations.Nullable;
-import view2.component.game.WorldScreen;
 import view2.component.menu.LoginTable;
 import view2.component.menu.MenuScreen;
+import view2.component.world.WorldScreen;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -26,8 +27,6 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
 
     private final IUserManagerView userManager;
     private ServerSender serverSender;
-    private MenuScreen menuScreen;
-    private WorldScreen worldScreen;
     private SpriteBatch spriteBatch;
 
     private boolean userInfoChanged;
@@ -49,14 +48,23 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     }
 
     @Override
+    public void setScreen(Screen screen) {
+        if (screen.equals(MenuScreen.getInstance())) {
+            Gdx.input.setInputProcessor(MenuScreen.getInstance().getStage());
+        } else if (screen.equals(WorldScreen.getInstance())) {
+            Gdx.input.setInputProcessor(WorldScreen.getInstance().getStage());
+        } else {
+            return;
+        }
+        super.setScreen(screen);
+    }
+
+    @Override
     public void create() {
         SKIN = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-
-        this.menuScreen = new MenuScreen();
-        this.worldScreen = new WorldScreen();
         this.spriteBatch = new SpriteBatch();
 
-        setScreen(menuScreen);
+        setScreen(MenuScreen.getInstance());
     }
 
     public SpriteBatch getSpriteBatch() {
@@ -69,14 +77,6 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
 
     public IUserManagerView getUserManager() {
         return userManager;
-    }
-
-    public MenuScreen getMenuScreen() {
-        return menuScreen;
-    }
-
-    public WorldScreen getWorldScreen() {
-        return worldScreen;
     }
 
     @Override
@@ -116,8 +116,8 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
 
     @Override
     public void updateWorlds(Map<ContextID, String> worlds) {
-        if (this.screen.equals(menuScreen)) {
-            menuScreen.updateWorlds(worlds);
+        if (this.screen.equals(MenuScreen.getInstance())) {
+            MenuScreen.getInstance().updateWorlds(worlds);
         }
         worldListUpdated = true;
     }
@@ -129,57 +129,57 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
 
     @Override
     public void registrationResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            menuScreen.registrationResponse(success, messageKey);
+        if (this.screen.equals(MenuScreen.getInstance())) {
+            MenuScreen.getInstance().registrationResponse(success, messageKey);
         }
     }
 
     @Override
     public void loginResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            menuScreen.loginResponse(success, messageKey);
+        if (this.screen.equals(MenuScreen.getInstance())) {
+            MenuScreen.getInstance().loginResponse(success, messageKey);
         }
     }
 
     @Override
     public void passwordChangeResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            menuScreen.passwordChangeResponse(success, messageKey);
+        if (this.screen.equals(MenuScreen.getInstance())) {
+            MenuScreen.getInstance().passwordChangeResponse(success, messageKey);
         }
     }
 
     @Override
     public void deleteAccountResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            menuScreen.deleteAccountResponse(success, messageKey);
+        if (this.screen.equals(MenuScreen.getInstance())) {
+            MenuScreen.getInstance().deleteAccountResponse(success, messageKey);
         }
     }
 
     @Override
     public void avatarChangeResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            menuScreen.avatarChangeResponse(success, messageKey);
+        if (this.screen.equals(MenuScreen.getInstance())) {
+            MenuScreen.getInstance().avatarChangeResponse(success, messageKey);
         }
     }
 
     @Override
     public void createWorldResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            menuScreen.createWorldResponse(success, messageKey);
+        if (this.screen.equals(MenuScreen.getInstance())) {
+            MenuScreen.getInstance().createWorldResponse(success, messageKey);
         }
     }
 
     @Override
     public void deleteWorldResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            menuScreen.deleteWorldResponse(success, messageKey);
+        if (this.screen.equals(MenuScreen.getInstance())) {
+            MenuScreen.getInstance().deleteWorldResponse(success, messageKey);
         }
     }
 
     @Override
     public void joinWorldResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            menuScreen.joinWorldResponse(success, messageKey);
+        if (this.screen.equals(MenuScreen.getInstance())) {
+            MenuScreen.getInstance().joinWorldResponse(success, messageKey);
         }
     }
 
@@ -211,8 +211,8 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     @Override
     public void logout() {
         Gdx.app.postRunnable(() -> {
-            menuScreen.setTable(new LoginTable());
-            setScreen(menuScreen);
+            MenuScreen.getInstance().setMenuTable(new LoginTable());
+            setScreen(MenuScreen.getInstance());
         });
     }
 

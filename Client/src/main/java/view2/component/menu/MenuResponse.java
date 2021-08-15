@@ -1,6 +1,6 @@
 package view2.component.menu;
 
-public enum Response {
+public enum MenuResponse {
     NONE,
     REGISTRATION,
     LOGIN,

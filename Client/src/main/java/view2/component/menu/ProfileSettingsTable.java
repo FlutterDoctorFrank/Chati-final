@@ -24,7 +24,7 @@ public class ProfileSettingsTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.getInstance().getMenuScreen().setTable(new ChangePasswordTable());
+                MenuScreen.getInstance().setMenuTable(new ChangePasswordTable());
             }
         });
 
@@ -36,7 +36,7 @@ public class ProfileSettingsTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.getInstance().getMenuScreen().setTable(new DeleteAccountTable());
+                MenuScreen.getInstance().setMenuTable(new DeleteAccountTable());
             }
         });
 
@@ -48,7 +48,7 @@ public class ProfileSettingsTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.getInstance().getMenuScreen().setTable(new StartTable());
+                MenuScreen.getInstance().setMenuTable(new StartTable());
             }
         });
     }

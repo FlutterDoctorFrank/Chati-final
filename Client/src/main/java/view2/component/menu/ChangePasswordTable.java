@@ -3,9 +3,7 @@ package view2.component.menu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -112,9 +110,9 @@ public class ChangePasswordTable extends MenuTable {
                     resetConfirmNewPasswordField();
                     return;
                 }
+                MenuScreen.getInstance().setPendingResponse(MenuResponse.PASSWORD_CHANGE);
                 Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE,
                     passwordField.getText(), newPasswordField.getText());
-                Chati.getInstance().getMenuScreen().setPendingResponse(Response.PASSWORD_CHANGE);
             }
         });
 
@@ -126,7 +124,7 @@ public class ChangePasswordTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.getInstance().getMenuScreen().setTable(new ProfileSettingsTable());
+                MenuScreen.getInstance().setMenuTable(new ProfileSettingsTable());
             }
         });
     }

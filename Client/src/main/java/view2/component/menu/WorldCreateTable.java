@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
@@ -69,9 +68,9 @@ public class WorldCreateTable extends MenuTable {
                     infoLabel.setText("Bitte wähle eine Karte aus!");
                     return;
                 }
+                MenuScreen.getInstance().setPendingResponse(MenuResponse.CREATE_WORLD);
                 Chati.getInstance().getServerSender()
                         .send(ServerSender.SendAction.WORLD_CREATE, mapSelectBox.getSelected(), worldNameField.getText());
-                Chati.getInstance().getMenuScreen().setPendingResponse(Response.CREATE_WORLD);
             }
         });
 
@@ -83,7 +82,7 @@ public class WorldCreateTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.getInstance().getMenuScreen().setTable(new StartTable());
+                MenuScreen.getInstance().setMenuTable(new StartTable());
             }
         });
     }

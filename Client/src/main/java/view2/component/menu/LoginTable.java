@@ -73,9 +73,9 @@ public class LoginTable extends MenuTable {
                     infoLabel.setText("Bitte fülle alle Felder aus.");
                     return;
                 }
+                MenuScreen.getInstance().setPendingResponse(MenuResponse.LOGIN);
                 Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_LOGIN,
                         usernameField.getText(), passwordField.getText(), false);
-                Chati.getInstance().getMenuScreen().setPendingResponse(Response.LOGIN);
             }
         });
         // Füge Register-Button hinzu.
@@ -93,9 +93,9 @@ public class LoginTable extends MenuTable {
                     infoLabel.setText("Bitte fülle alle Felder aus.");
                     return;
                 }
+                MenuScreen.getInstance().setPendingResponse(MenuResponse.REGISTRATION);
                 Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_LOGIN,
                         usernameField.getText(), passwordField.getText(), true);
-                Chati.getInstance().getMenuScreen().setPendingResponse(Response.REGISTRATION);
             }
         });
         // Füge Exit-Button hinzu.

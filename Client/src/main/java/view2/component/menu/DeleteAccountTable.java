@@ -78,7 +78,7 @@ public class DeleteAccountTable extends MenuTable {
                     resetTextFields();
                     return;
                 }
-                Chati.getInstance().getMenuScreen().setTable(new ConfirmDeletionTable());
+                MenuScreen.getInstance().setMenuTable(new ConfirmDeletionTable());
             }
         });
 
@@ -86,7 +86,7 @@ public class DeleteAccountTable extends MenuTable {
         cancelButton.addListener(new ClickListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.getInstance().getMenuScreen().setTable(new ProfileSettingsTable());
+                MenuScreen.getInstance().setMenuTable(new ProfileSettingsTable());
             }
         });
     }
@@ -145,9 +145,9 @@ public class DeleteAccountTable extends MenuTable {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    MenuScreen.getInstance().setPendingResponse(MenuResponse.DELETE_ACCOUNT);
                     Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_LOGOUT,
                             passwordField.getText(), true);
-                    Chati.getInstance().getMenuScreen().setPendingResponse(Response.DELETE_ACCOUNT);
                 }
             });
 
@@ -159,7 +159,7 @@ public class DeleteAccountTable extends MenuTable {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    Chati.getInstance().getMenuScreen().setTable(new ChangePasswordTable());
+                    MenuScreen.getInstance().setMenuTable(new ChangePasswordTable());
                 }
             });
         }

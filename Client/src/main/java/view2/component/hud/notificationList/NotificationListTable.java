@@ -14,6 +14,7 @@ import model.user.IUserManagerView;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
+import view2.component.menu.MenuScreen;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -145,7 +146,7 @@ public class NotificationListTable extends HudMenuTable {
         window.add(notificationListScrollPane).fillX().expandX().fillY().expandY();
         add(window).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT);
 
-        Chati.getInstance().getMenuScreen().getStage().setScrollFocus(notificationListScrollPane);
+        HeadUpDisplay.getInstance().getStage().setScrollFocus(notificationListScrollPane);
     }
 
     private void showGlobalNotifications() {

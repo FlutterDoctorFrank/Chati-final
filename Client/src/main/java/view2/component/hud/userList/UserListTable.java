@@ -14,6 +14,7 @@ import model.user.*;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
+import view2.component.menu.MenuScreen;
 
 import java.util.*;
 import java.util.List;
@@ -200,7 +201,7 @@ public class UserListTable extends HudMenuTable {
         window.add(userListScrollPane).fillX().expandX().fillY().expandY();
         add(window).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT);
 
-        Chati.getInstance().getMenuScreen().getStage().setScrollFocus(userListScrollPane);
+        HeadUpDisplay.getInstance().getStage().setScrollFocus(userListScrollPane);
     }
 
     private void showFriends() {

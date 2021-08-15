@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.communication.message.MessageType;
+import model.user.IInternUserView;
 import view2.Chati;
 import view2.Texture;
 import view2.component.hud.internUserDisplay.InternUserDisplay;
@@ -33,7 +34,7 @@ public class HeadUpDisplay extends Table {
     private ImageButton userListButton;
     private ImageButton notificationListButton;
     private ImageButton settingsButton;
-    protected ImageButton chatButton;
+    private ImageButton chatButton;
 
     private HeadUpDisplay() {
         create();
@@ -41,15 +42,24 @@ public class HeadUpDisplay extends Table {
     }
 
     @Override
-    public void draw(Batch batch, float parentAlpha) {
-        if (Chati.getInstance().getUserManager().getInternUserView() != null
-                && internUserDisplayContainer.getChildren().isEmpty()) {
-            internUserDisplayContainer.add(new InternUserDisplay()).width(HUD_MENU_TABLE_WIDTH).height(HUD_MENU_TABLE_HEIGHT);
-        } else if (Chati.getInstance().getUserManager().getInternUserView() == null
-                && !internUserDisplayContainer.getChildren().isEmpty()) {
-            internUserDisplayContainer.clearChildren();
+    public void act(float delta) {
+        if (Chati.getInstance().isUserInfoChanged()) {
+            IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+            if (internUser != null) {
+                if (internUserDisplayContainer.getChildren().isEmpty()) {
+                    internUserDisplayContainer.add(new InternUserDisplay()).width(HUD_MENU_TABLE_WIDTH).height(HUD_MENU_TABLE_HEIGHT);
+                }
+                if (internUser.isInCurrentWorld() && !chatButton.isVisible()) {
+                    chatButton.setVisible(true);
+                } else if (!internUser.isInCurrentWorld() && chatButton.isVisible()) {
+                    chatButton.setVisible(false);
+                }
+            } else if (!internUserDisplayContainer.getChildren().isEmpty()) {
+                internUserDisplayContainer.clearChildren();
+            }
         }
-        super.draw(batch, parentAlpha);
+
+        super.act(delta);
     }
 
     protected void create() {
@@ -162,6 +172,7 @@ public class HeadUpDisplay extends Table {
 
         chatButton = new ImageButton(Texture.CHAT_ICON);
         chatButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+        chatButton.setVisible(false);
         chatButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -170,12 +181,7 @@ public class HeadUpDisplay extends Table {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (chatButton.isChecked()) {
-                    chatButton.getStyle().imageUp = Texture.CHECKED_CHAT_ICON;
-                    if (!ChatWindow.getInstance().hasParent()) {
-                        getStage().addActor(ChatWindow.getInstance());
-                    } else {
-                        ChatWindow.getInstance().setVisible(true);
-                    }
+                    showChatWindow();
                     //////////////////////// TEST ////////////////////////
                     for (int i = 0; i <10; i++) {
                         UUID id = Chati.getInstance().getUserManager().getInternUserView().getUserId();
@@ -186,8 +192,7 @@ public class HeadUpDisplay extends Table {
                     }
                     ////////////////// TEST ENDE ///////////////////////////
                 } else {
-                    chatButton.getStyle().imageUp = Texture.CHAT_ICON;
-                    ChatWindow.getInstance().setVisible(false);
+                    hideChatWindow();
                 }
             }
             @Override
@@ -209,7 +214,7 @@ public class HeadUpDisplay extends Table {
         hudButtons.add(settingsButton);
     }
 
-    protected void setLayout() {
+    private void setLayout() {
         setFillParent(true);
 
         Table hudButtonContainer = new Table();
@@ -237,6 +242,22 @@ public class HeadUpDisplay extends Table {
         internUserDisplayContainer.top().left();
         internUserDisplayContainer.defaults().width(HUD_MENU_TABLE_WIDTH).height(HUD_MENU_TABLE_HEIGHT);
         addActor(internUserDisplayContainer);
+    }
+
+    public void showChatWindow() {
+        chatButton.setChecked(true);
+        chatButton.getStyle().imageUp = Texture.CHECKED_CHAT_ICON;
+        if (!ChatWindow.getInstance().hasParent()) {
+            getStage().addActor(ChatWindow.getInstance());
+        } else {
+            ChatWindow.getInstance().setVisible(true);
+        }
+    }
+
+    public void hideChatWindow() {
+        chatButton.setChecked(false);
+        chatButton.getStyle().imageUp = Texture.CHAT_ICON;
+        ChatWindow.getInstance().setVisible(false);
     }
 
     public static HeadUpDisplay getInstance() {

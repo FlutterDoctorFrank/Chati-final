@@ -1,7 +1,6 @@
 package view2.component.menu;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -24,7 +23,7 @@ public class AvatarSelectTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.getInstance().getMenuScreen().setTable(new StartTable());
+                MenuScreen.getInstance().setMenuTable(new StartTable());
             }
         });
 
@@ -36,7 +35,7 @@ public class AvatarSelectTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.getInstance().getMenuScreen().setTable(new StartTable());
+                MenuScreen.getInstance().setMenuTable(new StartTable());
             }
         });
     }

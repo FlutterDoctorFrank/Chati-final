@@ -44,14 +44,15 @@ public class InternUserDisplay extends HudMenuTable {
     }
 
     @Override
-    public void draw(Batch batch, float parentAlpha) {
+    public void act(float delta) {
         if (Chati.getInstance().isUserInfoChanged()) {
             IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
             if (internUser != null) {
                 setStatusImage();
             }
         }
-        super.draw(batch, parentAlpha);
+
+        super.act(delta);
     }
 
     @Override

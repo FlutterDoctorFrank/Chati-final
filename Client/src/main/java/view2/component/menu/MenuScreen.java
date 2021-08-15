@@ -3,11 +3,11 @@ package view2.component.menu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import model.context.ContextID;
+import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
+import view2.component.world.WorldScreen;
 
 import java.util.*;
 
@@ -15,19 +15,20 @@ public class MenuScreen extends ScreenAdapter {
 
     private static int loginFailCounter = 0;
 
+    private static MenuScreen menuScreen;
+
     private final Stage stage;
     private MenuTable currentMenuTable;
-    private Response pendingResponse;
+    private MenuResponse pendingMenuResponse;
 
     private final Set<ContextEntry> worlds;
 
-    public MenuScreen() {
+    private MenuScreen() {
         this.stage = new Stage();
         stage.addActor(HeadUpDisplay.getInstance());
-        Gdx.input.setInputProcessor(stage);
         this.worlds = new HashSet<>();
-        this.pendingResponse = Response.NONE;
-        setTable(new LoginTable());
+        this.pendingMenuResponse = MenuResponse.NONE;
+        setMenuTable(new LoginTable());
     }
 
     @Override
@@ -38,24 +39,25 @@ public class MenuScreen extends ScreenAdapter {
     }
 
     public void registrationResponse(boolean success, String messageKey) {
-        if (pendingResponse != Response.REGISTRATION) {
+        if (pendingMenuResponse != MenuResponse.REGISTRATION) {
             return;
         }
+        setPendingResponse(MenuResponse.NONE);
         if (success) {
             currentMenuTable.showMessage("Die Registrierung war erfolgreich!");
         } else {
             currentMenuTable.showMessage(messageKey);
             currentMenuTable.resetTextFields();
         }
-        setPendingResponse(Response.NONE);
     }
 
     public void loginResponse(boolean success, String messageKey) {
-        if (pendingResponse != Response.LOGIN) {
+        if (pendingMenuResponse != MenuResponse.LOGIN) {
             return;
         }
+        setPendingResponse(MenuResponse.NONE);
         if (success) {
-            Gdx.app.postRunnable(() -> setTable(new StartTable()));
+            Gdx.app.postRunnable(() -> setMenuTable(new StartTable()));
             loginFailCounter = 0;
         } else {
             if (loginFailCounter == 2) {
@@ -66,94 +68,93 @@ public class MenuScreen extends ScreenAdapter {
             currentMenuTable.resetTextFields();
             loginFailCounter++;
         }
-        setPendingResponse(Response.NONE);
     }
 
     public void passwordChangeResponse(boolean success, String messageKey) {
-        if (pendingResponse != Response.PASSWORD_CHANGE) {
+        if (pendingMenuResponse != MenuResponse.PASSWORD_CHANGE) {
             return;
         }
+        setPendingResponse(MenuResponse.NONE);
         if (success) {
             Gdx.app.postRunnable(() -> {
-                setTable(new StartTable());
+                setMenuTable(new StartTable());
                 currentMenuTable.showMessage("Dein Passwort wurde geändert!");
             });
         } else {
             currentMenuTable.showMessage(messageKey);
             currentMenuTable.resetTextFields();
         }
-        setPendingResponse(Response.NONE);
     }
 
     public void deleteAccountResponse(boolean success, String messageKey) {
-        if (pendingResponse != Response.DELETE_ACCOUNT) {
+        if (pendingMenuResponse != MenuResponse.DELETE_ACCOUNT) {
             return;
         }
+        setPendingResponse(MenuResponse.NONE);
         if (success) {
             Gdx.app.postRunnable(() -> {
-                setTable(new LoginTable());
+                setMenuTable(new LoginTable());
                 currentMenuTable.showMessage("Dein Konto wurde gelöscht.");
             });
         } else {
             currentMenuTable.showMessage(messageKey);
             currentMenuTable.resetTextFields();
         }
-        setPendingResponse(Response.NONE);
     }
 
     public void avatarChangeResponse(boolean success, String messageKey) {
-        if (pendingResponse != Response.AVATAR_CHANGE) {
+        if (pendingMenuResponse != MenuResponse.AVATAR_CHANGE) {
             return;
         }
+        setPendingResponse(MenuResponse.NONE);
         if (success) {
             Gdx.app.postRunnable(() -> {
-                setTable(new StartTable());
+                setMenuTable(new StartTable());
                 currentMenuTable.showMessage("Dein Avatar wurde geändert!");
             });
         } else {
             currentMenuTable.showMessage(messageKey);
         }
-        setPendingResponse(Response.NONE);
     }
 
     public void createWorldResponse(boolean success, String messageKey) {
-        if (pendingResponse != Response.CREATE_WORLD) {
+        if (pendingMenuResponse != MenuResponse.CREATE_WORLD) {
             return;
         }
+        setPendingResponse(MenuResponse.NONE);
         if (success) {
             Gdx.app.postRunnable(() -> {
-                setTable(new StartTable());
+                setMenuTable(new StartTable());
                 currentMenuTable.showMessage("Die Welt wurde erfolgreich erstellt!");
             });
         } else {
             currentMenuTable.showMessage(messageKey);
             currentMenuTable.resetTextFields();
         }
-        setPendingResponse(Response.NONE);
     }
 
     public void deleteWorldResponse(boolean success, String messageKey) {
-        if (pendingResponse != Response.DELETE_WORLD) {
+        if (pendingMenuResponse != MenuResponse.DELETE_WORLD) {
             return;
         }
+        setPendingResponse(MenuResponse.NONE);
         if (success) {
             currentMenuTable.showMessage("Die Welt wurde erfolgreich gelöscht.");
         } else {
             currentMenuTable.showMessage(messageKey);
         }
-        setPendingResponse(Response.NONE);
     }
 
     public void joinWorldResponse(boolean success, String messageKey) {
-        if (pendingResponse != Response.JOIN_WORLD) {
+        if (pendingMenuResponse != MenuResponse.JOIN_WORLD) {
             return;
         }
+        setPendingResponse(MenuResponse.NONE);
         if (success) {
-            // Join world...
+            Gdx.app.postRunnable(() -> Chati.getInstance().setScreen(WorldScreen.getInstance()));
         } else {
             currentMenuTable.showMessage(messageKey);
         }
-        setPendingResponse(Response.NONE);
     }
 
     public void updateWorlds(Map<ContextID, String> worlds) {
@@ -161,15 +162,15 @@ public class MenuScreen extends ScreenAdapter {
         worlds.forEach((key, value) -> this.worlds.add(new ContextEntry(key, value)));
     }
 
-    public void setTable(MenuTable table) {
+    public void setMenuTable(MenuTable table) {
         if (currentMenuTable != null) {
             currentMenuTable.remove();
         }
         stage.addActor(currentMenuTable = table);
     }
 
-    protected void setPendingResponse(Response pendingResponse) {
-        this.pendingResponse = pendingResponse;
+    protected void setPendingResponse(MenuResponse pendingMenuResponse) {
+        this.pendingMenuResponse = pendingMenuResponse;
     }
 
     protected Set<ContextEntry> getWorlds() {
@@ -178,5 +179,12 @@ public class MenuScreen extends ScreenAdapter {
 
     public Stage getStage() {
         return stage;
+    }
+
+    public static MenuScreen getInstance() {
+        if (menuScreen == null) {
+            menuScreen = new MenuScreen();
+        }
+        return menuScreen;
     }
 }

@@ -3,7 +3,6 @@ package view2.component.hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -16,7 +15,6 @@ import model.communication.message.MessageType;
 import model.exception.UserNotFoundException;
 import model.user.IUserManagerView;
 import view2.Chati;
-import view2.Texture;
 import view2.component.ChatiWindow;
 
 import java.time.LocalDateTime;
@@ -51,20 +49,6 @@ public class ChatWindow extends ChatiWindow {
         STYLE.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
         create();
         setLayout();
-    }
-
-    @Override
-    public void act(float delta) {
-        /*
-        if (Chati.getInstance().isUserInfoChanged()) {
-            IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
-            if (internUser == null || !internUser.isInCurrentWorld() || internUser.getCurrentWorld() == null) {
-                remove();
-                HeadUpDisplay.getInstance().chatButton.remove();
-            }
-        }
-        */
-        super.act(delta);
     }
 
     @Override
@@ -119,9 +103,7 @@ public class ChatWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                ChatWindow.this.setVisible(false);
-                HeadUpDisplay.getInstance().chatButton.getStyle().imageUp = Texture.CHAT_ICON;
-                HeadUpDisplay.getInstance().chatButton.setChecked(false);
+                HeadUpDisplay.getInstance().hideChatWindow();
             }
         });
     }
@@ -131,7 +113,7 @@ public class ChatWindow extends ChatiWindow {
         setModal(false);
         setMovable(true);
         setResizable(true);
-        setResizeBorder((int) SPACE * 2);
+        setResizeBorder((int) getPadBottom());
         defaults().minWidth(MINIMUM_WIDTH).minHeight(MINIMUM_HEIGHT);
         setKeepWithinStage(true);
         setPosition(Gdx.graphics.getWidth(), 0);
