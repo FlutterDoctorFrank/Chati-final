@@ -37,9 +37,9 @@ public class ApplicationScreen implements Screen {
     protected OrthographicCamera gamecam;
     protected Viewport gamePort;
     protected Hud hud;
-    
+
     private static final int[] movementKeys = {Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT};
-    private LinkedList<Integer> keyPresses = new LinkedList<>();
+    public static LinkedList<Integer> keyPresses = new LinkedList<>();
 
     //Map variables
     private TmxMapLoader mapLoader;
@@ -52,8 +52,6 @@ public class ApplicationScreen implements Screen {
     private WorldContactListener contactListener;
 
     private ArrayList<Avatar> avatars;
-    private Avatar avatar;
-    // private KEY_PRESS lastKeyPressed = KEY_PRESS.NONE;
     private final int bodyMovingForce = 25;
 
     private int userAvatarIndex = 0;
@@ -280,17 +278,19 @@ public class ApplicationScreen implements Screen {
     }
 
     public void updateAvatarsPositions() {
-        for (var entry : game.getUserManager().getActiveUsers().entrySet()) {
-            Avatar currentUserAvatar = findAvatar(entry.getValue().getUserId());
+        new Thread(() -> {
+            for (var entry : game.getUserManager().getActiveUsers().entrySet()) {
+                Avatar currentUserAvatar = findAvatar(entry.getValue().getUserId());
 
-            if (!currentUserAvatar.equals(null)) {
-                Vector2 newPosition = new Vector2(entry.getValue().getCurrentLocation().getPosX(), entry.getValue().getCurrentLocation().getPosY());
-                moveAvatar(avatar, newPosition, false);
-            } else {
-                Avatar newAvatar = new Avatar(world, entry.getKey(), entry.getValue().getCurrentLocation().getPosX(), entry.getValue().getCurrentLocation().getPosY());
-                avatars.add(newAvatar);
+                if (!currentUserAvatar.equals(null)) {
+                    Vector2 newPosition = new Vector2(entry.getValue().getCurrentLocation().getPosX(), entry.getValue().getCurrentLocation().getPosY());
+                    moveAvatar(currentUserAvatar, newPosition, false);
+                } else {
+                    Avatar newAvatar = new Avatar(world, entry.getKey(), entry.getValue().getCurrentLocation().getPosX(), entry.getValue().getCurrentLocation().getPosY());
+                    avatars.add(newAvatar);
+                }
             }
-        }
+        });
     }
 
     private Avatar findAvatar(UUID id) {

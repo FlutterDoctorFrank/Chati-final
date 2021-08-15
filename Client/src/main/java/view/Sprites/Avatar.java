@@ -1,10 +1,13 @@
 package view.Sprites;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import view.Chati;
+import view.Screens.ApplicationScreen;
 
 import java.util.UUID;
 
@@ -152,13 +155,19 @@ public class Avatar extends Sprite {
     }
 
     private Direction getDirection() {
-        if (body.getLinearVelocity().y > 0)
+        int movementKeyPressed = -2;
+
+        if (!ApplicationScreen.keyPresses.isEmpty()) {
+            movementKeyPressed = ApplicationScreen.keyPresses.getLast();
+        }
+
+        if (body.getLinearVelocity().y > 0 || movementKeyPressed == Input.Keys.UP)
             return Direction.UP;
-        else if (body.getLinearVelocity().y < 0)
+        else if (body.getLinearVelocity().y < 0 || movementKeyPressed == Input.Keys.DOWN)
             return Direction.DOWN;
-        else if (body.getLinearVelocity().x > 0)
+        else if (body.getLinearVelocity().x > 0 || movementKeyPressed == Input.Keys.RIGHT)
             return Direction.RIGHT;
-        else if (body.getLinearVelocity().x < 0)
+        else if (body.getLinearVelocity().x < 0 || movementKeyPressed == Input.Keys.LEFT)
             return Direction.LEFT;
         else
             return Direction.STAND;
