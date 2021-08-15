@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -15,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import model.communication.message.MessageType;
 import model.exception.UserNotFoundException;
-import model.user.IInternUserView;
 import model.user.IUserManagerView;
 import view2.Chati;
 import view2.Texture;
@@ -38,7 +36,6 @@ public class ChatWindow extends ChatiWindow {
     private static final float SEND_BUTTON_HEIGHT = 60;
     private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
     private static final float MESSAGE_AREA_FONT_SCALE_FACTOR = 1.6f;
-    private static final float SPACING = 5;
     private static final Label.LabelStyle STYLE = new Label.LabelStyle();
     private static final BitmapFont FONT = new BitmapFont();
 
@@ -145,7 +142,8 @@ public class ChatWindow extends ChatiWindow {
         setWidth(DEFAULT_WIDTH);
         setHeight(DEFAULT_HEIGHT);
 
-        add(historyScrollPane).top().expandX().fillX().expandY().fillY().padBottom(SPACE).row();
+        messageLabelContainer.top();
+        add(historyScrollPane).top().fillX().expandX().fillY().expandY().padBottom(SPACE).row();
 
         Table sendContainer = new Table();
         sendContainer.add(typeMessageArea).height(SEND_BUTTON_HEIGHT).expandX().fillX()
@@ -174,7 +172,7 @@ public class ChatWindow extends ChatiWindow {
         String username;
         IUserManagerView userManager = Chati.getInstance().getUserManager();
         if (messageType == MessageType.INFO) {
-            username = "";
+            username = "Info";
         } else if (userManager.getInternUserView() != null && userManager.getInternUserView().getUserId().equals(userId)) {
             username = userManager.getInternUserView().getUsername();
         } else {
@@ -212,7 +210,7 @@ public class ChatWindow extends ChatiWindow {
         showLabel.setColor(messageColor);
         showLabel.setWrap(true);
 
-        messageLabelContainer.add(showLabel).left().padLeft(SPACING).padBottom(SPACING).expandX().row();
+        messageLabelContainer.add(showLabel).top().left().padLeft(SPACE).padBottom(SPACE).expandX().fillX().row();
     }
 
     public static ChatWindow getInstance() {
