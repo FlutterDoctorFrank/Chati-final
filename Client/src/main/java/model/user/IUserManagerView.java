@@ -55,6 +55,14 @@ public interface IUserManagerView {
     Map<UUID, IUserView> getBannedUsers();
 
     /**
+     * Gibt die externen Benutzer zurück, die sich gerade in dem Raum des intern angemeldeten Benutzers befinden,
+     * zurück.
+     * @return Externe Benutzer, die sich im aktuellen Raum befinden.
+     * @throws IllegalStateException wenn es keine aktuelle Welt gibt.
+     */
+    Map<UUID, IUserView> getUsersInRoom();
+
+    /**
      * Gibt zurück, ob auf diesem Client gerade ein Benutzer angemeldet ist.
      * @return true, wenn ein Benutzer angemeldet ist, sonst false.
      */

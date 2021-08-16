@@ -2,7 +2,6 @@ package view2.component.hud.notificationList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -14,7 +13,6 @@ import model.user.IUserManagerView;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
-import view2.component.menu.MenuScreen;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -24,7 +22,6 @@ public class NotificationListTable extends HudMenuTable {
     private final Set<NotificationListEntry> globalNotificationEntries;
     private final Set<NotificationListEntry> worldNotificationEntries;
 
-    private ButtonGroup<TextButton> tabButtonGroup;
     private TextButton globalNotificationTabButton;
     private TextButton worldNotificationTabButton;
     private ScrollPane notificationListScrollPane;
@@ -50,9 +47,10 @@ public class NotificationListTable extends HudMenuTable {
 
             if (user != null && globalNotificationTabButton.isDisabled()) {
                 enableButton(globalNotificationTabButton);
-                globalNotificationTabButton.setChecked(true);
-                globalNotificationTabButton.getLabel().setColor(Color.MAGENTA);
-                globalNotificationTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
+                selectButton(globalNotificationTabButton);
+                //globalNotificationTabButton.setChecked(true);
+                //globalNotificationTabButton.getLabel().setColor(Color.MAGENTA);
+                //globalNotificationTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
             } else if (user != null && user.isInCurrentWorld() && worldNotificationTabButton.isDisabled()) {
                 enableButton(worldNotificationTabButton);
             }
@@ -68,11 +66,6 @@ public class NotificationListTable extends HudMenuTable {
     }
 
     protected void create() {
-        tabButtonGroup = new ButtonGroup<>();
-        tabButtonGroup.setMinCheckCount(1);
-        tabButtonGroup.setMaxCheckCount(1);
-        tabButtonGroup.setUncheckLast(true);
-
         notificationListContainer = new Table(Chati.SKIN);
         notificationListScrollPane = new ScrollPane(notificationListContainer, Chati.SKIN);
 
@@ -86,11 +79,13 @@ public class NotificationListTable extends HudMenuTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 showGlobalNotifications();
-                globalNotificationTabButton.getLabel().setColor(Color.MAGENTA);
-                globalNotificationTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
+                selectButton(globalNotificationTabButton);
+                //globalNotificationTabButton.getLabel().setColor(Color.MAGENTA);
+                //globalNotificationTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
                 if (!worldNotificationTabButton.isDisabled()) {
-                    worldNotificationTabButton.getLabel().setColor(Color.WHITE);
-                    worldNotificationTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
+                    unselectButton(worldNotificationTabButton);
+                    //worldNotificationTabButton.getLabel().setColor(Color.WHITE);
+                    //worldNotificationTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
             }
         });
@@ -105,29 +100,38 @@ public class NotificationListTable extends HudMenuTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 showWorldNotifications();
-                worldNotificationTabButton.getLabel().setColor(Color.MAGENTA);
-                worldNotificationTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
-                globalNotificationTabButton.getLabel().setColor(Color.WHITE);
-                globalNotificationTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
+                selectButton(worldNotificationTabButton);
+                if (!globalNotificationTabButton.isDisabled()) {
+                    unselectButton(globalNotificationTabButton);
+                }
+                //worldNotificationTabButton.getLabel().setColor(Color.MAGENTA);
+                //worldNotificationTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
+                //globalNotificationTabButton.getLabel().setColor(Color.WHITE);
+                //globalNotificationTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
             }
         });
-
-        tabButtonGroup.add(globalNotificationTabButton);
-        tabButtonGroup.add(worldNotificationTabButton);
 
         IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
         if (user == null) {
             disableGlobalNotificationTab();
             disableWorldNotificationTab();
         } else {
-            globalNotificationTabButton.getLabel().setColor(Color.MAGENTA);
-            globalNotificationTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
+            selectButton(globalNotificationTabButton);
+            //globalNotificationTabButton.getLabel().setColor(Color.MAGENTA);
+            //globalNotificationTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
             if (!user.isInCurrentWorld()) {
                 disableWorldNotificationTab();
             }
 
             showGlobalNotifications();
         }
+
+        ButtonGroup<TextButton> tabButtonGroup = new ButtonGroup<>();
+        tabButtonGroup.setMinCheckCount(1);
+        tabButtonGroup.setMaxCheckCount(1);
+        tabButtonGroup.setUncheckLast(true);
+        tabButtonGroup.add(globalNotificationTabButton);
+        tabButtonGroup.add(worldNotificationTabButton);
     }
 
     protected void setLayout() {

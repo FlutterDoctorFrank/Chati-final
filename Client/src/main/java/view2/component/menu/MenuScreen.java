@@ -1,31 +1,27 @@
 package view2.component.menu;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import model.context.ContextID;
 import view2.Chati;
+import view2.component.AbstractScreen;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.world.WorldScreen;
 
 import java.util.*;
 
-public class MenuScreen extends ScreenAdapter {
+public class MenuScreen extends AbstractScreen {
 
     private static int loginFailCounter = 0;
 
     private static MenuScreen menuScreen;
 
-    private final Stage stage;
     private MenuTable currentMenuTable;
     private MenuResponse pendingMenuResponse;
 
     private final Set<ContextEntry> worlds;
 
     private MenuScreen() {
-        this.stage = new Stage();
-        stage.addActor(HeadUpDisplay.getInstance());
         this.worlds = new HashSet<>();
         this.pendingMenuResponse = MenuResponse.NONE;
         setMenuTable(new LoginTable());
@@ -151,7 +147,9 @@ public class MenuScreen extends ScreenAdapter {
         }
         setPendingResponse(MenuResponse.NONE);
         if (success) {
-            Gdx.app.postRunnable(() -> Chati.getInstance().setScreen(WorldScreen.getInstance()));
+            Gdx.app.postRunnable(() -> {
+                Chati.getInstance().setScreen(WorldScreen.getInstance());
+            });
         } else {
             currentMenuTable.showMessage(messageKey);
         }
@@ -177,13 +175,10 @@ public class MenuScreen extends ScreenAdapter {
         return Collections.unmodifiableSet(worlds);
     }
 
-    public Stage getStage() {
-        return stage;
-    }
-
     public static MenuScreen getInstance() {
         if (menuScreen == null) {
             menuScreen = new MenuScreen();
+            menuScreen.getStage().addActor(HeadUpDisplay.getInstance());
         }
         return menuScreen;
     }

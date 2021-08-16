@@ -25,4 +25,16 @@ public abstract class HudMenuTable extends ChatiTable {
         button.getLabel().setColor(Color.DARK_GRAY);
         button.getStyle().up = PRESSED_BUTTON_IMAGE;
     }
+
+    protected void selectButton(TextButton button) {
+        button.setChecked(true);
+        button.getLabel().setColor(Color.MAGENTA);
+        button.getStyle().up = PRESSED_BUTTON_IMAGE;
+    }
+
+    protected void unselectButton(TextButton button) {
+        button.setChecked(false);
+        button.getLabel().setColor(Color.WHITE);
+        button.getStyle().up = UNPRESSED_BUTTON_IMAGE;
+    }
 }

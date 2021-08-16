@@ -6,6 +6,7 @@ import model.communication.CommunicationRegion;
 import model.context.Context;
 import model.communication.CommunicationMedium;
 import model.context.ContextID;
+import model.user.UserManager;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -70,6 +71,7 @@ public class SpatialContext extends Context implements ISpatialContextView {
         this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
         this.expanse = new Expanse(new Location(0, 0), MapUtils.getWidth(tiledMap), MapUtils.getHeight(tiledMap));
         MapUtils.buildChildTree(this, tiledMap);
+        UserManager.getInstance().getModelObserver().setRoomChanged();
     }
 
     /**

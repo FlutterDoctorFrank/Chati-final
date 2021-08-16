@@ -49,9 +49,13 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     @Override
     public void logout() {
         throwIfNotLoggedIn();
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        if (internUser.isInCurrentWorld) {
+            UserManager.getInstance().getModelObserver().setWorldChanged();
+        }
+
         internUser = null;
         externUsers.clear();
-        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
@@ -122,6 +126,13 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     public Map<UUID, IUserView> getBannedUsers() {
         throwIfNotInWorld();
         return externUsers.values().stream().filter(User::isBanned)
+                .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
+    }
+
+    @Override
+    public Map<UUID, IUserView> getUsersInRoom() {
+        throwIfNotInWorld();
+        return externUsers.values().stream().filter(User::isInCurrentRoom)
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
 

@@ -131,6 +131,7 @@ public class ChatWindow extends ChatiWindow {
         add(sendContainer).height(SEND_BUTTON_HEIGHT).expandX().fillX();
 
         getTitleTable().add(minimizeButton).right().width(getTitleLabel().getHeight() * (2f/3f)).height(getTitleLabel().getHeight() * (2f/3f));
+        HeadUpDisplay.getInstance().getStage().addActor(this);
     }
 
     private void resetMessageArea() {
@@ -189,6 +190,11 @@ public class ChatWindow extends ChatiWindow {
         showLabel.setWrap(true);
 
         messageLabelContainer.add(showLabel).top().left().padLeft(SPACE).padBottom(SPACE).expandX().fillX().row();
+    }
+
+    public void clearChat() {
+        resetMessageArea();
+        messageLabelContainer.clearChildren();
     }
 
     public static ChatWindow getInstance() {

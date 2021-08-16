@@ -1,6 +1,7 @@
 package view2.component.hud.settings;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -10,6 +11,7 @@ import controller.network.ServerSender;
 import model.context.ContextID;
 import model.role.Permission;
 import model.user.IInternUserView;
+import model.user.UserManager;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
@@ -37,7 +39,7 @@ public class SettingsTable extends HudMenuTable {
 
     @Override
     public void act(float delta) {
-        if (Chati.getInstance().isUserInfoChanged()) {
+        if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()) {
             IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
             if (!administratorManageMenuButton.isDisabled()
                     && (internUser == null || !internUser.hasPermission(Permission.ASSIGN_ADMINISTRATOR))) {
@@ -46,17 +48,19 @@ public class SettingsTable extends HudMenuTable {
                     && internUser.hasPermission(Permission.ASSIGN_ADMINISTRATOR)) {
                 enableButton(administratorManageMenuButton);
             }
-            if (leaveWorldButton.isDisabled()
-                    && internUser != null && internUser.isInCurrentWorld() && internUser.getCurrentWorld() != null) {
+            if (leaveWorldButton.isDisabled() && internUser != null && internUser.isInCurrentWorld()) {
                 enableButton(leaveWorldButton);
+            } else if (!leaveWorldButton.isDisabled() && (internUser == null || !internUser.isInCurrentWorld())) {
+                disableButton(leaveWorldButton);
             }
             if (logoutButton.isDisabled() && internUser != null) {
                 enableButton(logoutButton);
+            } else if (!logoutButton.isDisabled() && internUser == null) {
+                disableButton(logoutButton);
             }
         }
         super.act(delta);
     }
-
 
     @Override
     protected void create() {

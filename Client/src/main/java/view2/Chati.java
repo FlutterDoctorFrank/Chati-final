@@ -11,9 +11,10 @@ import model.context.ContextID;
 import model.context.spatial.Menu;
 import model.user.IUserManagerView;
 import org.jetbrains.annotations.Nullable;
+import view2.component.AbstractScreen;
+import view2.component.hud.HeadUpDisplay;
 import view2.component.menu.LoginTable;
 import view2.component.menu.MenuScreen;
-import view2.component.world.WorldScreen;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -27,7 +28,6 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
 
     private final IUserManagerView userManager;
     private ServerSender serverSender;
-    private SpriteBatch spriteBatch;
 
     private boolean userInfoChanged;
     private boolean userNotificationChanged;
@@ -47,28 +47,22 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
         return CHATI;
     }
 
-    @Override
-    public void setScreen(Screen screen) {
-        if (screen.equals(MenuScreen.getInstance())) {
-            Gdx.input.setInputProcessor(MenuScreen.getInstance().getStage());
-        } else if (screen.equals(WorldScreen.getInstance())) {
-            Gdx.input.setInputProcessor(WorldScreen.getInstance().getStage());
-        } else {
-            return;
-        }
+    public void setScreen(AbstractScreen screen) {
+        Gdx.input.setInputProcessor(screen.getStage());
+        screen.getStage().addActor(HeadUpDisplay.getInstance());
         super.setScreen(screen);
     }
 
     @Override
     public void create() {
         SKIN = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        this.spriteBatch = new SpriteBatch();
-
         setScreen(MenuScreen.getInstance());
     }
 
-    public SpriteBatch getSpriteBatch() {
-        return spriteBatch;
+    @Override
+    public void render() {
+        super.render();
+        resetModelChangedFlags();
     }
 
     public ServerSender getServerSender() {
@@ -217,29 +211,33 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     }
 
     public boolean isUserInfoChanged() {
-        if (userInfoChanged) {
-            userInfoChanged = false;
-            return true;
-        } else {
-            return false;
-        }
+        return userInfoChanged;
     }
 
     public boolean isUserNotificationChanged() {
-        if (userNotificationChanged) {
-            userNotificationChanged = false;
-            return true;
-        } else {
-            return false;
-        }
+        return userNotificationChanged;
     }
 
     public boolean isWorldListUpdated() {
-        if (worldListUpdated) {
-            worldListUpdated = false;
-            return true;
-        } else {
-            return false;
-        }
+        return worldListUpdated;
+    }
+
+    public boolean isWorldChanged() {
+        return worldChanged;
+    }
+
+    public boolean isRoomChanged() {
+        return roomChanged;
+    }
+
+    private void resetModelChangedFlags() {
+        userInfoChanged = false;
+        userNotificationChanged = false;
+        userPositionChanged = false;
+        roomChanged = false;
+        worldChanged = false;
+        musicChanged = false;
+        worldListUpdated = false;
+        roomListUpdated = false;
     }
 }

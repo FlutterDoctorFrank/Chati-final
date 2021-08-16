@@ -78,6 +78,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
         currentWorld = null;
         isInCurrentWorld = false;
         music = null;
+        UserManager.getInstance().getModelObserver().setWorldChanged();
     }
 
     @Override
@@ -103,7 +104,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
             currentRoom.build(map);
         });
         isInCurrentRoom = true;
-        UserManager.getInstance().getModelObserver().setRoomChanged();
     }
 
     @Override

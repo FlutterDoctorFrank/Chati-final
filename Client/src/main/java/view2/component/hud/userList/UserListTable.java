@@ -1,8 +1,6 @@
 package view2.component.hud.userList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -14,7 +12,6 @@ import model.user.*;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
-import view2.component.menu.MenuScreen;
 
 import java.util.*;
 import java.util.List;
@@ -25,7 +22,6 @@ public class UserListTable extends HudMenuTable {
     private final Set<UserListEntry> activeUserEntries;
     private final Set<UserListEntry> bannedUserEntries;
 
-    private ButtonGroup<TextButton> tabButtonGroup;
     private TextButton friendTabButton;
     private TextButton activeUserTabButton;
     private TextButton bannedUserTabButton;
@@ -59,9 +55,10 @@ public class UserListTable extends HudMenuTable {
 
             if (user != null && friendTabButton.isDisabled()) {
                 enableButton(friendTabButton);
-                friendTabButton.setChecked(true);
-                friendTabButton.getLabel().setColor(Color.MAGENTA);
-                friendTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
+                selectButton(friendTabButton);
+                //friendTabButton.setChecked(true);
+                //friendTabButton.getLabel().setColor(Color.MAGENTA);
+                //friendTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
             } else if (user != null && user.isInCurrentWorld() && activeUserTabButton.isDisabled()) {
                 enableButton(activeUserTabButton);
             }
@@ -84,11 +81,6 @@ public class UserListTable extends HudMenuTable {
     }
 
     protected void create() {
-        tabButtonGroup = new ButtonGroup<>();
-        tabButtonGroup.setMinCheckCount(1);
-        tabButtonGroup.setMaxCheckCount(1);
-        tabButtonGroup.setUncheckLast(true);
-
         userListContainer = new Table(Chati.SKIN);
         userListScrollPane = new ScrollPane(userListContainer, Chati.SKIN);
 
@@ -102,15 +94,18 @@ public class UserListTable extends HudMenuTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 showFriends();
-                friendTabButton.getLabel().setColor(Color.MAGENTA);
-                friendTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
+                selectButton(friendTabButton);
+                //friendTabButton.getLabel().setColor(Color.MAGENTA);
+                //friendTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
                 if (!activeUserTabButton.isDisabled()) {
-                    activeUserTabButton.getLabel().setColor(Color.WHITE);
-                    activeUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
+                    unselectButton(activeUserTabButton);
+                    //activeUserTabButton.getLabel().setColor(Color.WHITE);
+                    //activeUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
                 if (!bannedUserTabButton.isDisabled()) {
-                    bannedUserTabButton.getLabel().setColor(Color.WHITE);
-                    bannedUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
+                    unselectButton(bannedUserTabButton);
+                    //bannedUserTabButton.getLabel().setColor(Color.WHITE);
+                    //bannedUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
             }
         });
@@ -125,15 +120,18 @@ public class UserListTable extends HudMenuTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 showActiveUsers();
-                activeUserTabButton.getLabel().setColor(Color.MAGENTA);
-                activeUserTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
+                selectButton(activeUserTabButton);
+                //activeUserTabButton.getLabel().setColor(Color.MAGENTA);
+                //activeUserTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
                 if (!friendTabButton.isDisabled()) {
-                    friendTabButton.getLabel().setColor(Color.WHITE);
-                    friendTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
+                    unselectButton(friendTabButton);
+                    //friendTabButton.getLabel().setColor(Color.WHITE);
+                    //friendTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
                 if (!bannedUserTabButton.isDisabled()) {
-                    bannedUserTabButton.getLabel().setColor(Color.WHITE);
-                    bannedUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
+                    unselectButton(bannedUserTabButton);
+                    //bannedUserTabButton.getLabel().setColor(Color.WHITE);
+                    //bannedUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
             }
         });
@@ -148,22 +146,21 @@ public class UserListTable extends HudMenuTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 showBannedUsers();
-                bannedUserTabButton.getLabel().setColor(Color.MAGENTA);
-                bannedUserTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
+                selectButton(bannedUserTabButton);
+                //bannedUserTabButton.getLabel().setColor(Color.MAGENTA);
+                //bannedUserTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
                 if (!friendTabButton.isDisabled()) {
-                    friendTabButton.getLabel().setColor(Color.WHITE);
-                    friendTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
+                    unselectButton(friendTabButton);
+                    //friendTabButton.getLabel().setColor(Color.WHITE);
+                    //friendTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
                 if (!activeUserTabButton.isDisabled()) {
-                    activeUserTabButton.getLabel().setColor(Color.WHITE);
-                    activeUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
+                    unselectButton(activeUserTabButton);
+                    //activeUserTabButton.getLabel().setColor(Color.WHITE);
+                    //activeUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
             }
         });
-
-        tabButtonGroup.add(friendTabButton);
-        tabButtonGroup.add(activeUserTabButton);
-        tabButtonGroup.add(bannedUserTabButton);
 
         IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
         if (user == null) {
@@ -171,8 +168,9 @@ public class UserListTable extends HudMenuTable {
             disableActiveUsersTab();
             disableBannedUsersTab();
         } else {
-            friendTabButton.getLabel().setColor(Color.MAGENTA);
-            friendTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
+            selectButton(friendTabButton);
+            //friendTabButton.getLabel().setColor(Color.MAGENTA);
+            //friendTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
             if (!user.isInCurrentWorld()) {
                 disableActiveUsersTab();
                 disableBannedUsersTab();
@@ -182,6 +180,14 @@ public class UserListTable extends HudMenuTable {
 
             showFriends();
         }
+
+        ButtonGroup<TextButton> tabButtonGroup = new ButtonGroup<>();
+        tabButtonGroup.setMinCheckCount(1);
+        tabButtonGroup.setMaxCheckCount(1);
+        tabButtonGroup.setUncheckLast(true);
+        tabButtonGroup.add(friendTabButton);
+        tabButtonGroup.add(activeUserTabButton);
+        tabButtonGroup.add(bannedUserTabButton);
     }
 
     protected void setLayout() {

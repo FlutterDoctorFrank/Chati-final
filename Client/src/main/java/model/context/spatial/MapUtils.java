@@ -58,12 +58,12 @@ public class MapUtils {
 
     public static int getWidth(TiledMap tiledMap) {
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        return layer.getWidth();
+        return layer.getWidth() * layer.getTileWidth();
     }
 
     public static int getHeight(TiledMap tiledMap) {
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        return layer.getHeight();
+        return layer.getHeight() * layer.getTileHeight();
     }
 
     /**
