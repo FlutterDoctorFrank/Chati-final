@@ -26,10 +26,12 @@ import org.lwjgl.Sys;
 import view.Chati;
 import view.Sprites.Avatar;
 import view.Sprites.InteractiveTileObject;
+import view.Sprites.UserAvatar;
 import view.UIComponents.Hud;
 import view.UIComponents.LoginTable;
 
 import java.util.*;
+import java.util.function.ToDoubleBiFunction;
 
 public class ApplicationScreen implements Screen {
     protected Chati game;
@@ -55,6 +57,7 @@ public class ApplicationScreen implements Screen {
     private final int bodyMovingForce = 25;
 
     private int userAvatarIndex = 0;
+    private Vector2 userAvatarPosition;
 
     public ApplicationScreen(Hud hud) {
         this.hud = hud;
@@ -92,7 +95,10 @@ public class ApplicationScreen implements Screen {
         avatars = new ArrayList<>();
 
         IInternUserView user = game.getUserManager().getInternUserView();
-        Avatar userAvatar = new Avatar(world, user.getUserId(), (int) map.getProperties().get("spawnPosX"), (int) map.getProperties().get("spawnPosY"));
+        float userInitPosX = (int) map.getProperties().get("spawnPosX") / Chati.PPM;
+        float userInitPosY = (int) map.getProperties().get("spawnPosY") / Chati.PPM;
+        Avatar userAvatar = new UserAvatar(world, user.getUserId(), userInitPosX, userInitPosY);
+        userAvatarPosition = new Vector2(userInitPosX,userInitPosY);
         avatars.add(userAvatarIndex, userAvatar);
         for (var entry : users.entrySet()) {
             if (!entry.getKey().equals(user.getUserId())) {
@@ -245,11 +251,21 @@ public class ApplicationScreen implements Screen {
         }
 
         //interact button
-        if (Gdx.input.isKeyPressed(Input.Keys.E) && contactListener.canInteract()) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E) && contactListener.canInteract()) {
+            //TODO get current context
+            /*
+            Object[] context = {game.getUserManager().getInternUserView().getCurrentRoom().getContextId()};
+            hud.getSender().send(ServerSender.SendAction.CONTEXT_INTERACT, context);
+             */
+
             System.out.println("interagieren");
         }
 
-        //sendPositionToServer(body.getPosition().x * Chati.PPM, body.getPosition().y * Chati.PPM);
+        if (!userAvatarPosition.epsilonEquals(bodyPosition)) {
+            sendPositionToServer(body.getPosition().x * Chati.PPM, body.getPosition().y * Chati.PPM);
+            userAvatarPosition = new Vector2(bodyPosition.x, bodyPosition.y);
+        }
+
     }
 
     private int getKeyPressed() {

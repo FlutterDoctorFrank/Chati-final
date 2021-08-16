@@ -13,10 +13,11 @@ import java.util.UUID;
 
 public class Avatar extends Sprite {
     private World world;
-    private Body body;
+    protected Body body;
     private BodyDef bdef;
     private FixtureDef fdef;
     private UUID user;
+    protected Fixture fixture;
 
     private TextureAtlas atlas;
     private TextureRegion avatarStandDown;
@@ -30,7 +31,7 @@ public class Avatar extends Sprite {
     private Animation avatarDance;
 
 
-    private enum Direction {LEFT, RIGHT, UP, DOWN, STAND}
+    protected enum Direction {LEFT, RIGHT, UP, DOWN, STAND}
     private Direction currentDirection;
     private Direction previousDirection;
     private float stateTimer;
@@ -154,20 +155,14 @@ public class Avatar extends Sprite {
         return region;
     }
 
-    private Direction getDirection() {
-        int movementKeyPressed = -2;
-
-        if (!ApplicationScreen.keyPresses.isEmpty()) {
-            movementKeyPressed = ApplicationScreen.keyPresses.getLast();
-        }
-
-        if (body.getLinearVelocity().y > 0 || movementKeyPressed == Input.Keys.UP)
+    protected Direction getDirection() {
+        if (body.getLinearVelocity().y > 0)
             return Direction.UP;
-        else if (body.getLinearVelocity().y < 0 || movementKeyPressed == Input.Keys.DOWN)
+        else if (body.getLinearVelocity().y < 0)
             return Direction.DOWN;
-        else if (body.getLinearVelocity().x > 0 || movementKeyPressed == Input.Keys.RIGHT)
+        else if (body.getLinearVelocity().x > 0)
             return Direction.RIGHT;
-        else if (body.getLinearVelocity().x < 0 || movementKeyPressed == Input.Keys.LEFT)
+        else if (body.getLinearVelocity().x < 0)
             return Direction.LEFT;
         else
             return Direction.STAND;
