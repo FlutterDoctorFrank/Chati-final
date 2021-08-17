@@ -4,14 +4,12 @@ import com.badlogic.gdx.physics.box2d.*;
 
 public class WorldContactListener implements ContactListener {
 
-    private boolean canInteract = false;
-
     @Override
     public void beginContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
         if (isInteractionObject(fixtureA, fixtureB) && isUserAvatar(fixtureA, fixtureB)) {
-            canInteract = true;
+            WorldScreen.getInstance().getInternUserAvatar().setCanInteract(true);
         }
     }
 
@@ -20,7 +18,7 @@ public class WorldContactListener implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
         if (isInteractionObject(fixtureA, fixtureB) && isUserAvatar(fixtureA, fixtureB)) {
-            canInteract = false;
+            WorldScreen.getInstance().getInternUserAvatar().setCanInteract(false);
         }
     }
 
@@ -40,9 +38,5 @@ public class WorldContactListener implements ContactListener {
 
     private boolean isUserAvatar(Fixture fixA, Fixture fixB) {
         return fixA.getUserData() == "intern-user-avatar" || fixB.getUserData() == "intern-user-avatar";
-    }
-
-    public boolean canInteract() {
-        return canInteract;
     }
 }

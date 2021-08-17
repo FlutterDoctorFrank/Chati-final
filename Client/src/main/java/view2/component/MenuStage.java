@@ -1,5 +1,6 @@
 package view2.component;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import view2.component.hud.ChatWindow;
@@ -56,37 +57,15 @@ public class MenuStage extends Stage {
     }
 
     @Override
-    public boolean keyUp(int keycode) {
-        return super.keyUp(keycode);
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return super.keyTyped(character);
-    }
-
-    @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (HeadUpDisplay.getInstance().isChatEnabled()) {
+            ChatWindow chatWindow = ChatWindow.getInstance();
+            if (screenX < chatWindow.getX() || screenX > chatWindow.getX() + chatWindow.getWidth()
+                    || Gdx.graphics.getHeight() - screenY < chatWindow.getY()
+                    || Gdx.graphics.getHeight() - screenY > chatWindow.getY() + chatWindow.getHeight()) {
+                chatWindow.getStage().unfocus(chatWindow);
+            }
+        }
         return super.touchDown(screenX, screenY, pointer, button);
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return super.touchUp(screenX, screenY, pointer, button);
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return super.touchDragged(screenX, screenY, pointer);
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return super.mouseMoved(screenX, screenY);
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return super.scrolled(amountX, amountY);
     }
 }

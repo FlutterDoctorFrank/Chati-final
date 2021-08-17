@@ -3,24 +3,26 @@ package view2.component.world;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
+import controller.network.ServerSender;
 import model.user.IInternUserView;
+import view2.Chati;
 
 import java.util.*;
 
 public class InternUserAvatar extends UserAvatar {
 
-    private static final float SPRINT_SPEED_FACTOR = 2f;
     private final LinkedList<Direction> currentDirectionalInputs;
+    private boolean canInteract;
 
     public InternUserAvatar(IInternUserView internUser) {
         super(internUser);
-        body.getFixtureList().get(0).setUserData("user-avatar");
+        body.getFixtureList().get(0).setUserData("intern-user-avatar");
         currentDirectionalInputs = new LinkedList<>();
     }
 
-    public void handleInput() {
-        Direction currentDirection = getCurrentDirection();
-        int velocity = BODY_MOVING_FORCE;
+    public void move() {
+        Direction currentDirection = getCurrentDirectionalInput();
+        int velocity = DEFAULT_VELOCITY;
         if (WorldScreen.getInstance().getWorldInputProcessor().isSprintPressed()) {
             velocity *= SPRINT_SPEED_FACTOR;
         }
@@ -45,11 +47,11 @@ public class InternUserAvatar extends UserAvatar {
             }
         }
         positionCamera();
-
-        //sendPositionToServer(body.getPosition().x * Chati.PPM, body.getPosition().y * Chati.PPM);
+        // Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
+        //        (int) (body.getPosition().x * WorldScreen.PPM), (int) (body.getPosition().y * WorldScreen.PPM));
     }
 
-    private Direction getCurrentDirection() {
+    private Direction getCurrentDirectionalInput() {
         Arrays.stream(Direction.values()).forEach(direction -> {
             if (!currentDirectionalInputs.contains(direction) && direction.isPressed()) {
                 currentDirectionalInputs.add(direction);
@@ -86,6 +88,16 @@ public class InternUserAvatar extends UserAvatar {
             WorldScreen.getInstance().getGameViewport().getCamera().position.y = cameraTopBoundary;
         } else if (bodyPosition.y < cameraBottomBoundary) {
             WorldScreen.getInstance().getGameViewport().getCamera().position.y = cameraBottomBoundary;
+        }
+    }
+
+    public void setCanInteract(boolean canInteract) {
+        this.canInteract = canInteract;
+    }
+
+    public void interact() {
+        if (canInteract) {
+            System.out.println("ok");
         }
     }
 }

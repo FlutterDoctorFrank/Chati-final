@@ -76,7 +76,7 @@ public class WorldScreen extends AbstractScreen {
 
             SPRITE_BATCH.setProjectionMatrix(gameViewport.getCamera().combined);
             SPRITE_BATCH.begin();
-            internUserAvatar.handleInput();
+            internUserAvatar.move();
             internUserAvatar.draw(SPRITE_BATCH, delta);
             externUserAvatars.forEach(avatar ->  {
                 avatar.draw(SPRITE_BATCH, delta);
@@ -165,5 +165,9 @@ public class WorldScreen extends AbstractScreen {
 
     public WorldInputProcessor getWorldInputProcessor() {
         return worldInputProcessor;
+    }
+
+    public InternUserAvatar getInternUserAvatar() {
+        return internUserAvatar;
     }
 }

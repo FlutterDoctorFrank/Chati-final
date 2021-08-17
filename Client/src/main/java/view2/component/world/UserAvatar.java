@@ -8,9 +8,10 @@ import model.user.IUserView;
 
 public class UserAvatar extends Sprite {
 
-    public static final int BODY_MOVING_FORCE = 20;
+    public static final int DEFAULT_VELOCITY = 20;
+    public static final float SPRINT_SPEED_FACTOR = 2f;
 
-    private enum Direction {UP, LEFT, DOWN, RIGHT, NEUTRAL}
+    //private enum Direction {UP, LEFT, DOWN, RIGHT, NEUTRAL}
 
     private final IUserView user;
     protected final Body body;
@@ -34,16 +35,18 @@ public class UserAvatar extends Sprite {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        // Sollte später weg, wenn der Server die initiale Position festlegt?
 
-
+        // Sollte später weg, wenn der Server die initiale Position festlegt? ////////////////////////////////
         float userInitPosX = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosX") / WorldScreen.PPM;
         float userInitPosY = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosY") / WorldScreen.PPM;
         bodyDef.position.set(userInitPosX, userInitPosY);
+        /////////////////////////////////////////////////////////////////////////////////
+
         /*
         body.setTransform(new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM, user.getCurrentLocation().getPosY() / WorldScreen.PPM), body.getAngle());
         body.setAwake(true);
-         */
+         */ /** Das kommt später hierhin. */
+
         this.body = WorldScreen.getInstance().getWorld().createBody(bodyDef);
 
         FixtureDef fixtureDef = new FixtureDef();
@@ -52,7 +55,7 @@ public class UserAvatar extends Sprite {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(1.5f, 1.5f); /** Hardgecodete zahlen ? */
         fixtureDef.shape = shape;
-        this.body.createFixture(fixtureDef);
+        this.body.createFixture(fixtureDef).setUserData("user-avatar");
 
         this.stateTimer = 0;
 
@@ -63,10 +66,8 @@ public class UserAvatar extends Sprite {
     public void draw(Batch batch, float delta) {
         InteractButtonAnimation animation = new InteractButtonAnimation();
         animation.draw(batch);
-        animation.update(delta);
         setPosition(getBody().getPosition().x - getWidth() / 2, getBody().getPosition().y - getHeight() / 2);
         setRegion(getCurrentFrameRegion(delta));
-
         super.draw(batch);
     }
 
@@ -125,45 +126,45 @@ public class UserAvatar extends Sprite {
     private TextureRegion getCurrentFrameRegion(float delta) {
         currentDirection = getDirection();
         stateTimer = currentDirection == previousDirection ? stateTimer + delta : 0;
-        if (!currentDirection.equals(Direction.NEUTRAL)) {
+        if (currentDirection != null) {
             previousDirection = currentDirection;
-        }
-        switch (currentDirection) {
-            case UP:
-                return avatarRunUp.getKeyFrame(stateTimer, true);
-            case LEFT:
-                return avatarRunLeft.getKeyFrame(stateTimer, true);
-            case DOWN:
-                return avatarRunDown.getKeyFrame(stateTimer, true);
-            case RIGHT:
-                return avatarRunRight.getKeyFrame(stateTimer, true);
-            case NEUTRAL:
-                switch (previousDirection) {
-                    case UP:
-                        return avatarStandUp;
-                    case LEFT:
-                        return avatarStandLeft;
-                    case RIGHT:
-                        return avatarStandRight;
-                    default:
-                        return avatarStandDown;
+            switch (currentDirection) {
+                case UP:
+                    return avatarRunUp.getKeyFrame(stateTimer, true);
+                case LEFT:
+                    return avatarRunLeft.getKeyFrame(stateTimer, true);
+                case RIGHT:
+                    return avatarRunRight.getKeyFrame(stateTimer, true);
+                default:
+                    return avatarRunDown.getKeyFrame(stateTimer, true);
             }
-            default:
-                return null;
         }
+        if (previousDirection != null) {
+            switch (previousDirection) {
+                case UP:
+                    return avatarStandUp;
+                case LEFT:
+                    return avatarStandLeft;
+                case RIGHT:
+                    return avatarStandRight;
+                default:
+                    return avatarStandDown;
+            }
+        }
+        return null;
     }
 
     private Direction getDirection() {
         if (body.getLinearVelocity().y > 0)
             return Direction.UP;
+        else if (body.getLinearVelocity().x < 0)
+            return Direction.LEFT;
         else if (body.getLinearVelocity().y < 0)
             return Direction.DOWN;
         else if (body.getLinearVelocity().x > 0)
             return Direction.RIGHT;
-        else if (body.getLinearVelocity().x < 0)
-            return Direction.LEFT;
         else
-            return Direction.NEUTRAL;
+            return null;
     }
 
     public Body getBody() {
@@ -185,21 +186,12 @@ public class UserAvatar extends Sprite {
                 Vector2 normMovingVector = newPosition.sub(currentPosition).nor();
 
                 while (!currentPosition.epsilonEquals(newPosition)) {
-                    body.applyLinearImpulse(normMovingVector.scl(BODY_MOVING_FORCE), body.getWorldCenter(), true);
+                    body.setLinearVelocity(normMovingVector.scl(DEFAULT_VELOCITY));
                 }
                 body.setLinearVelocity(0, 0);
             }).start();
         }
     }
-
-
-
-
-
-
-
-
-
 
     private class InteractButtonAnimation extends Sprite {
 
@@ -208,25 +200,25 @@ public class UserAvatar extends Sprite {
 
         public InteractButtonAnimation() {
             buttonStateTimer = 0;
-            Array<TextureRegion> frames = new Array<TextureRegion>();
+            Array<TextureRegion> frames = new Array<>();
             TextureAtlas buttonAtlas = new TextureAtlas("icons/interact_button/rotating_button.pack");
             for (int i = 0; i < 4; i++) {
-                frames.add(new TextureRegion(buttonAtlas.findRegion("button"), i * 16, 0, 16, 16));
+                frames.add(new TextureRegion(buttonAtlas.findRegion("button"), i * 16, 0, 16, 16)); /**Hard gecoded...*/
             }
             interactionButton = new Animation<>(0.1f, frames);
-
             setBounds(0, 0, 16 / WorldScreen.PPM, 16 / WorldScreen.PPM);
             setRegion(buttonAtlas.findRegion("button"), 0, 0, 16, 16);
         }
 
-        public void update(float dt) {
+        @Override
+        public void draw(Batch batch, float delta) {
             this.setPosition(getBody().getPosition().x - getWidth() / 2, getBody().getPosition().y + getHeight());
-            this.setRegion(getButtonFrame(dt));
+            this.setRegion(getButtonFrame(delta));
         }
 
-        private  TextureRegion getButtonFrame(float dt) {
+        private  TextureRegion getButtonFrame(float delta) {
             TextureRegion region = interactionButton.getKeyFrame(buttonStateTimer, true);
-            buttonStateTimer += dt;
+            buttonStateTimer += delta;
             return region;
         }
     }

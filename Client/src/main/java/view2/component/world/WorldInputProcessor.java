@@ -1,10 +1,7 @@
 package view2.component.world;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import view2.component.KeyAction;
-import view2.component.hud.ChatWindow;
-import view2.component.hud.HeadUpDisplay;
 
 public class WorldInputProcessor implements InputProcessor {
 
@@ -32,7 +29,7 @@ public class WorldInputProcessor implements InputProcessor {
             sprintPressed = true;
         }
         if (KeyAction.getAction(keycode) == KeyAction.INTERACT) {
-            // TODO interact...
+            WorldScreen.getInstance().getInternUserAvatar().interact();
         }
         return true;
     }
@@ -64,12 +61,6 @@ public class WorldInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        ChatWindow chatWindow = ChatWindow.getInstance();
-        if (screenX < chatWindow.getX() || screenX > chatWindow.getX() + chatWindow.getWidth()
-                || Gdx.graphics.getHeight() - screenY < chatWindow.getY()
-                || Gdx.graphics.getHeight() - screenY > chatWindow.getY() + chatWindow.getHeight()) {
-            chatWindow.getStage().unfocus(chatWindow);
-        }
         return true;
     }
 
