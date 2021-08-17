@@ -147,7 +147,7 @@ public class ChatWindow extends ChatiWindow {
         typeMessageArea.setText("");
     }
 
-    public void receiveMessage(UUID userId, String message, MessageType messageType, LocalDateTime timestamp) {
+    public void showMessage(UUID userId, String message, MessageType messageType, LocalDateTime timestamp) {
         String username;
         IUserManagerView userManager = Chati.getInstance().getUserManager();
         if (messageType == MessageType.INFO) {

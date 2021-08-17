@@ -1,6 +1,8 @@
 package view2.component.world;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,33 +16,36 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import model.context.spatial.SpatialMap;
-import view.Screens.WorldContactListener;
-import view.Sprites.InteractiveTileObject;
 import view2.Chati;
 import view2.component.AbstractScreen;
 import view2.component.hud.HeadUpDisplay;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WorldScreen extends AbstractScreen {
 
     public static final float PPM = 10; //pixels per meter
+    public static final short GROUND_BIT = 1;
+    public static final short AVATAR_BIT = 2;
+    public static final short OBJECT_BIT = 4;
     private static final SpriteBatch SPRITE_BATCH = new SpriteBatch();
 
     private static WorldScreen worldScreen;
 
-    private final Viewport gameViewport;
+    private final WorldInputProcessor worldInputProcessor;
+    private final FitViewport gameViewport;
     private final Box2DDebugRenderer debugRenderer;
     private OrthogonalTiledMapRenderer tiledMapRenderer;
     private TiledMap tiledMap;
     private World world;
 
-    private final List<UserAvatar> externUserAvatars;
+    private final Set<UserAvatar> externUserAvatars;
     private InternUserAvatar internUserAvatar;
 
     private WorldScreen() {
-
-        this.externUserAvatars = new ArrayList<>();
+        this.worldInputProcessor = new WorldInputProcessor();
+        this.externUserAvatars = new HashSet<>();
         this.gameViewport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, new OrthographicCamera());
         this.debugRenderer = new Box2DDebugRenderer();
     }
@@ -49,27 +54,33 @@ public class WorldScreen extends AbstractScreen {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // Wechsel den Raum, wenn die entsprechende Flag gesetzt ist.
         if (Chati.getInstance().isRoomChanged()) {
             createMap();
             addBorders();
             addInteractiveObjects();
-            addAvatars();
+            if (internUserAvatar == null) {
+                internUserAvatar = new InternUserAvatar(Chati.getInstance().getUserManager().getInternUserView());
+            } else {
+                internUserAvatar.updatePosition(true);
+            }
         }
 
-        if (Chati.getInstance().isUserInfoChanged()) {
-            externUserAvatars.forEach(externUserAvatar -> externUserAvatar.updatePosition(false));
+        if (Chati.getInstance().isUserPositionChanged()) {
+            updateAvatars();
         }
 
-        if (tiledMap != null) {
+        if (tiledMap != null && internUserAvatar != null) {
             tiledMapRenderer.render();
             debugRenderer.render(world, gameViewport.getCamera().combined);
 
-            internUserAvatar.handleInput();
-
             SPRITE_BATCH.setProjectionMatrix(gameViewport.getCamera().combined);
             SPRITE_BATCH.begin();
-            internUserAvatar.draw(SPRITE_BATCH);
-            externUserAvatars.forEach(avatar -> avatar.draw(SPRITE_BATCH));
+            internUserAvatar.handleInput();
+            internUserAvatar.draw(SPRITE_BATCH, delta);
+            externUserAvatars.forEach(avatar ->  {
+                avatar.draw(SPRITE_BATCH, delta);
+            });
             SPRITE_BATCH.end();
 
             world.step(1 / 30f, 6, 2); /** Was sind das für Zahlen? Kein hardcoden, irgendwo Konstanten setzen... Wo kommen die her?*/
@@ -78,8 +89,17 @@ public class WorldScreen extends AbstractScreen {
         }
 
         SPRITE_BATCH.setProjectionMatrix(stage.getCamera().combined);
-        stage.act(delta);
-        stage.draw();
+        super.render(delta);
+    }
+
+    @Override
+    public InputProcessor getInputProcessor() {
+        return new InputMultiplexer(stage, worldInputProcessor);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        gameViewport.update(width, height);
     }
 
     public TiledMap getTiledMap() {
@@ -112,37 +132,38 @@ public class WorldScreen extends AbstractScreen {
 
             BodyDef bodyDef = new BodyDef();
             bodyDef.type = BodyDef.BodyType.StaticBody;
-            bodyDef.position.set((bounds.getX() + bounds.getWidth() / 2) / view.Chati.PPM, (bounds.getY() + bounds.getHeight() / 2) / view.Chati.PPM);
+            bodyDef.position.set((bounds.getX() + bounds.getWidth() / 2) / PPM, (bounds.getY() + bounds.getHeight() / 2) / PPM);
             Body body = world.createBody(bodyDef);
 
             FixtureDef fixtureDef = new FixtureDef();
             PolygonShape shape = new PolygonShape();
-            shape.setAsBox((bounds.getWidth() / 2) / view.Chati.PPM, (bounds.getHeight() / 2) / view.Chati.PPM);
+            shape.setAsBox((bounds.getWidth() / 2) / PPM, (bounds.getHeight() / 2) / PPM);
             fixtureDef.shape = shape;
             body.createFixture(fixtureDef);
         });
     }
+
     private void addInteractiveObjects() {
-        /**
-         * Das wollte Viktor ja noch ändern ?
-         */
-        tiledMap.getLayers().get("contextLayer").getObjects().getByType(RectangleMapObject.class).forEach(interactiveObject -> {
-            String name = interactiveObject.getName();
-            if (!(name.equals("Hotel") || name.equals("Park") || name.equals("Disco"))) {
-                Rectangle rectangle = interactiveObject.getRectangle();
-                new InteractiveTileObject(world, tiledMap.getProperties().get("tilewidth", Integer.class), rectangle);
-            }
+        tiledMap.getLayers().get("InteractiveObject").getObjects().getByType(RectangleMapObject.class)
+                .forEach(interactiveObject -> {
+            Rectangle rectangle = interactiveObject.getRectangle();
+            new InteractionObject(rectangle);
         });
-        /**********************************************************************************************************/
     }
 
-    private void addAvatars() {
-        internUserAvatar = new InternUserAvatar(Chati.getInstance().getUserManager().getInternUserView());
-        Chati.getInstance().getUserManager().getUsersInRoom().values()
-                .forEach(externUser -> externUserAvatars.add(new UserAvatar(externUser)));
+    private void updateAvatars() {
+        externUserAvatars.clear();
+        externUserAvatars.addAll(Chati.getInstance().getUserManager().getUsersInRoom().values().stream()
+                .map(UserAvatar::new).collect(Collectors.toSet()));
+        //externUserAvatars.forEach(externUserAvatar -> externUserAvatar.updatePosition(false));
+        //internUserAvatar.updatePosition(false);
     }
 
     public World getWorld() {
         return world;
+    }
+
+    public WorldInputProcessor getWorldInputProcessor() {
+        return worldInputProcessor;
     }
 }

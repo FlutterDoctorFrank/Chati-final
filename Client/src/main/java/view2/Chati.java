@@ -2,8 +2,6 @@ package view2;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import controller.network.ServerSender;
 import model.communication.message.MessageType;
@@ -12,9 +10,11 @@ import model.context.spatial.Menu;
 import model.user.IUserManagerView;
 import org.jetbrains.annotations.Nullable;
 import view2.component.AbstractScreen;
+import view2.component.hud.ChatWindow;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.menu.LoginTable;
 import view2.component.menu.MenuScreen;
+import view2.component.world.WorldScreen;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -48,7 +48,7 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     }
 
     public void setScreen(AbstractScreen screen) {
-        Gdx.input.setInputProcessor(screen.getStage());
+        Gdx.input.setInputProcessor(screen.getInputProcessor());
         screen.getStage().addActor(HeadUpDisplay.getInstance());
         super.setScreen(screen);
     }
@@ -118,7 +118,10 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
 
     @Override
     public void updateRooms(ContextID worldId, Map<ContextID, String> privateRooms) {
-
+        if (this.screen.equals(WorldScreen.getInstance())) {
+            // TODO
+        }
+        roomListUpdated = true;
     }
 
     @Override
@@ -178,28 +181,38 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     }
 
     @Override
-    public void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message) {
-
+    public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message) {
+        if (this.screen.equals(WorldScreen.getInstance())) {
+            ChatWindow.getInstance().showMessage(userId, message, messageType, timestamp);
+        }
     }
 
     @Override
     public void playVoiceData(UUID userID, LocalDateTime timestamp, byte[] voiceData) {
-
+        if (this.screen.equals(WorldScreen.getInstance())) {
+            // TODO
+        }
     }
 
     @Override
     public void openMenu(Menu menu) {
-
+        if (this.screen.equals(WorldScreen.getInstance())) {
+            // TODO
+        }
     }
 
     @Override
     public void closeMenu(Menu menu) {
-
+        if (this.screen.equals(WorldScreen.getInstance())) {
+            // TODO
+        }
     }
 
     @Override
     public void menuActionResponse(boolean success, String messageKey) {
-
+        if (this.screen.equals(WorldScreen.getInstance())) {
+            // TODO
+        }
     }
 
     @Override
@@ -228,6 +241,10 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
 
     public boolean isRoomChanged() {
         return roomChanged;
+    }
+
+    public boolean isUserPositionChanged() {
+        return userPositionChanged;
     }
 
     private void resetModelChangedFlags() {

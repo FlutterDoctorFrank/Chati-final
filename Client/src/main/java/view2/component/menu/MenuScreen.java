@@ -1,6 +1,7 @@
 package view2.component.menu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import model.context.ContextID;
 import view2.Chati;
@@ -30,8 +31,12 @@ public class MenuScreen extends AbstractScreen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act(delta);
-        stage.draw();
+        super.render(delta);
+    }
+
+    @Override
+    public InputProcessor getInputProcessor() {
+        return stage;
     }
 
     public void registrationResponse(boolean success, String messageKey) {
