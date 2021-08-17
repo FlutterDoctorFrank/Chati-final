@@ -3,47 +3,47 @@ package view2.component.menu;
 import com.badlogic.gdx.InputProcessor;
 import view2.component.hud.ChatWindow;
 import view2.component.hud.HeadUpDisplay;
-import view2.component.world.KeyAction;
+import view2.component.KeyAction;
 
 public class MenuInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (KeyAction.getAction(keycode) == KeyAction.OPEN_CHAT && HeadUpDisplay.getInstance().chatIsEnabled()
+        if (KeyAction.getAction(keycode) == KeyAction.OPEN_CHAT && HeadUpDisplay.getInstance().isChatEnabled()
             && !ChatWindow.getInstance().isVisible()) {
                 HeadUpDisplay.getInstance().showChatWindow();
         }
         if (KeyAction.getAction(keycode) == KeyAction.OPEN_USER_LIST) {
-            if (!HeadUpDisplay.getInstance().isUserMenuSelected()) {
-                HeadUpDisplay.getInstance().selectUserMenu();
+            if (!HeadUpDisplay.getInstance().isUserMenuOpen()) {
+                HeadUpDisplay.getInstance().openUserMenu();
             } else {
-                HeadUpDisplay.getInstance().unselectMenu();
+                HeadUpDisplay.getInstance().closeMenus();
             }
         }
         if (KeyAction.getAction(keycode) == KeyAction.OPEN_NOTIFICATION) {
-            if (!HeadUpDisplay.getInstance().isNotificationMenuSelected()) {
-                HeadUpDisplay.getInstance().selectNotificationMenu();
+            if (!HeadUpDisplay.getInstance().isNotificationMenuOpen()) {
+                HeadUpDisplay.getInstance().openNotificationMenu();
             } else {
-                HeadUpDisplay.getInstance().unselectMenu();
+                HeadUpDisplay.getInstance().closeMenus();
             }
         }
         if (KeyAction.getAction(keycode) == KeyAction.OPEN_SETTINGS) {
-            if (!HeadUpDisplay.getInstance().isSettingsMenuSelected()) {
-                HeadUpDisplay.getInstance().selectSettingsMenu();
+            if (!HeadUpDisplay.getInstance().isSettingsMenuOpen()) {
+                HeadUpDisplay.getInstance().openSettingsMenu();
             } else {
-                HeadUpDisplay.getInstance().unselectMenu();
+                HeadUpDisplay.getInstance().closeMenus();
             }
         }
         if (KeyAction.getAction(keycode) == KeyAction.CLOSE) {
             HeadUpDisplay.getInstance().getStage().setKeyboardFocus(null);
             if (ChatWindow.getInstance().isVisible()) {
                 HeadUpDisplay.getInstance().hideChatWindow();
-            } else if (HeadUpDisplay.getInstance().isUserMenuSelected()
-                    || HeadUpDisplay.getInstance().isNotificationMenuSelected()
-                    || HeadUpDisplay.getInstance().isSettingsMenuSelected()) {
-                HeadUpDisplay.getInstance().unselectMenu();
+            } else if (HeadUpDisplay.getInstance().isUserMenuOpen()
+                    || HeadUpDisplay.getInstance().isNotificationMenuOpen()
+                    || HeadUpDisplay.getInstance().isSettingsMenuOpen()) {
+                HeadUpDisplay.getInstance().closeMenus();
             } else {
-                HeadUpDisplay.getInstance().selectSettingsMenu();
+                HeadUpDisplay.getInstance().openSettingsMenu();
             }
         }
         return true;

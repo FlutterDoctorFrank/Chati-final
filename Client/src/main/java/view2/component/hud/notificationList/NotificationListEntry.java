@@ -13,7 +13,7 @@ import model.notification.INotificationView;
 import model.notification.NotificationType;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.Texture;
+import view2.Icon;
 import view2.component.ChatiToolTip;
 import view2.component.ChatiWindow;
 
@@ -64,10 +64,10 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         });
 
         if (notification.getType() != NotificationType.NOTIFICATION) {
-            acceptButton = new ImageButton(Texture.ACCEPT_ICON);
+            acceptButton = new ImageButton(Icon.ACCEPT_ICON);
             acceptButton.addListener(new ChatiToolTip("Annehmen"));
         } else {
-            acceptButton = new ImageButton(Texture.DISABLED_ACCEPT_ICON);
+            acceptButton = new ImageButton(Icon.DISABLED_ACCEPT_ICON);
             acceptButton.setDisabled(true);
             acceptButton.setTouchable(Touchable.disabled);
         }
@@ -99,10 +99,10 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         });
 
         if (notification.getType() != NotificationType.NOTIFICATION) {
-            declineButton = new ImageButton(Texture.DECLINE_ICON);
+            declineButton = new ImageButton(Icon.DECLINE_ICON);
             declineButton.addListener(new ChatiToolTip("Ablehnen"));
         } else {
-            declineButton = new ImageButton(Texture.DISABLED_DECLINE_ICON);
+            declineButton = new ImageButton(Icon.DISABLED_DECLINE_ICON);
             declineButton.setDisabled(true);
             declineButton.setTouchable(Touchable.disabled);
         }
@@ -133,7 +133,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             }
         });
 
-        deleteButton = new ImageButton(Texture.DELETE_ICON);
+        deleteButton = new ImageButton(Icon.DELETE_ICON);
         deleteButton.addListener(new ChatiToolTip("Löschen"));
         deleteButton.addListener(new ClickListener() {
             @Override
@@ -239,10 +239,10 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             });
 
             if (notification.getType() != NotificationType.NOTIFICATION) {
-                acceptButton = new ImageButton(Texture.ACCEPT_ICON);
+                acceptButton = new ImageButton(Icon.ACCEPT_ICON);
                 acceptButton.addListener(new ChatiToolTip("Annehmen"));
             } else {
-                acceptButton = new ImageButton(Texture.DISABLED_ACCEPT_ICON);
+                acceptButton = new ImageButton(Icon.DISABLED_ACCEPT_ICON);
                 acceptButton.setDisabled(true);
                 acceptButton.setTouchable(Touchable.disabled);
             }
@@ -275,10 +275,10 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             });
 
             if (notification.getType() != NotificationType.NOTIFICATION) {
-                declineButton = new ImageButton(Texture.DECLINE_ICON);
+                declineButton = new ImageButton(Icon.DECLINE_ICON);
                 declineButton.addListener(new ChatiToolTip("Ablehnen"));
             } else {
-                declineButton = new ImageButton(Texture.DISABLED_DECLINE_ICON);
+                declineButton = new ImageButton(Icon.DISABLED_DECLINE_ICON);
                 declineButton.setDisabled(true);
                 declineButton.setTouchable(Touchable.disabled);
             }
@@ -310,7 +310,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 }
             });
 
-            deleteButton = new ImageButton(Texture.DELETE_ICON);
+            deleteButton = new ImageButton(Icon.DELETE_ICON);
             deleteButton.addListener(new ChatiToolTip("Löschen"));
             deleteButton.addListener(new ClickListener() {
                 @Override

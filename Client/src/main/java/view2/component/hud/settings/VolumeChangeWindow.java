@@ -113,18 +113,6 @@ public class VolumeChangeWindow extends ChatiWindow {
             }
         });
 
-        cancelButton = new TextButton("Abbrechen", Chati.SKIN);
-        cancelButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                remove();
-            }
-        });
-
         defaultButton = new TextButton("Standardeinstellung", Chati.SKIN);
         defaultButton.addListener(new ClickListener() {
             @Override
@@ -134,6 +122,18 @@ public class VolumeChangeWindow extends ChatiWindow {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 setDefaultVolume();
+            }
+        });
+
+        cancelButton = new TextButton("Abbrechen", Chati.SKIN);
+        cancelButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                remove();
             }
         });
     }
@@ -173,8 +173,8 @@ public class VolumeChangeWindow extends ChatiWindow {
 
         Table buttonContainer = new Table(Chati.SKIN);
         buttonContainer.add(confirmButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
-        buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         buttonContainer.add(defaultButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
+        buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
     }
 }

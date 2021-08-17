@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
-public class Texture {
+public class Icon {
 
     public static final Drawable USER_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/userIcon.png")));
     public static final Drawable CHECKED_USER_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/userIconChecked.png")));
@@ -62,6 +62,6 @@ public class Texture {
     public static final Drawable DELETE_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/new_delete_color.png")));
     public static final Drawable DISABLED_DELETE_ICON = new TextureRegionDrawable(new TextureRegion(new com.badlogic.gdx.graphics.Texture("icons/new_delete_grey.png")));
 
-    private Texture() {
+    private Icon() {
     }
 }

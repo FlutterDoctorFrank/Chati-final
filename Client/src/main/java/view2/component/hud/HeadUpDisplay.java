@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.communication.message.MessageType;
 import model.user.IInternUserView;
 import view2.Chati;
-import view2.Texture;
+import view2.Icon;
 import view2.component.hud.internUserDisplay.InternUserDisplay;
 import view2.component.hud.notificationList.NotificationListTable;
 import view2.component.hud.settings.SettingsTable;
@@ -61,7 +61,7 @@ public class HeadUpDisplay extends Table {
     }
 
     protected void create() {
-        userListButton = new ImageButton(Texture.USER_ICON);
+        userListButton = new ImageButton(Icon.USER_ICON);
         userListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         userListButton.addListener(new ClickListener() {
             @Override
@@ -71,9 +71,9 @@ public class HeadUpDisplay extends Table {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (userListButton.isChecked()) {
-                    selectUserMenu();
+                    openUserMenu();
                 } else {
-                    unselectMenu();
+                    closeMenus();
                 }
             }
             @Override
@@ -90,7 +90,7 @@ public class HeadUpDisplay extends Table {
             }
         });
 
-        notificationListButton = new ImageButton(Texture.NOTIFICATION_ICON);
+        notificationListButton = new ImageButton(Icon.NOTIFICATION_ICON);
         notificationListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         notificationListButton.addListener(new ClickListener() {
             @Override
@@ -100,9 +100,9 @@ public class HeadUpDisplay extends Table {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (notificationListButton.isChecked()) {
-                    selectNotificationMenu();
+                    openNotificationMenu();
                 } else {
-                    unselectMenu();
+                    closeMenus();
                 }
             }
             @Override
@@ -119,7 +119,7 @@ public class HeadUpDisplay extends Table {
             }
         });
 
-        settingsButton = new ImageButton(Texture.SETTINGS_ICON);
+        settingsButton = new ImageButton(Icon.SETTINGS_ICON);
         settingsButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         settingsButton.addListener(new ClickListener() {
             @Override
@@ -129,9 +129,9 @@ public class HeadUpDisplay extends Table {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (settingsButton.isChecked()) {
-                    selectSettingsMenu();
+                    openSettingsMenu();
                 } else {
-                    unselectMenu();
+                    closeMenus();
                 }
             }
             @Override
@@ -148,7 +148,7 @@ public class HeadUpDisplay extends Table {
             }
         });
 
-        chatButton = new ImageButton(Texture.CHAT_ICON);
+        chatButton = new ImageButton(Icon.CHAT_ICON);
         chatButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         chatButton.setVisible(false);
         chatButton.addListener(new ClickListener() {
@@ -160,15 +160,6 @@ public class HeadUpDisplay extends Table {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (chatButton.isChecked()) {
                     showChatWindow();
-                    //////////////////////// TEST ////////////////////////
-                    for (int i = 0; i <10; i++) {
-                        UUID id = Chati.getInstance().getUserManager().getInternUserView().getUserId();
-                        String message = "uihferuwihfieeraofhvueifhuiergfbrgfiqeowjderniogwuihfosdhvwrbfhdsvbworgbuiaeofjdhioh0";
-                        MessageType type = MessageType.values()[new Random().nextInt(MessageType.values().length)];
-                        LocalDateTime stamp = LocalDateTime.now();
-                        ChatWindow.getInstance().showMessage(id, message, type, stamp);
-                    }
-                    ////////////////// TEST ENDE ///////////////////////////
                 } else {
                     hideChatWindow();
                 }
@@ -227,19 +218,29 @@ public class HeadUpDisplay extends Table {
     }
 
     public void showChatWindow() {
-        chatButton.setChecked(false);
-        chatButton.getStyle().imageUp = Texture.CHECKED_CHAT_ICON;
+        chatButton.setChecked(true);
+        chatButton.getStyle().imageUp = Icon.CHECKED_CHAT_ICON;
         ChatWindow.getInstance().setVisible(true);
+
+        //////////////////////// TEST ////////////////////////
+        for (int i = 0; i <10; i++) {
+            UUID id = Chati.getInstance().getUserManager().getInternUserView().getUserId();
+            String message = "uihferuwihfieeraofhvueifhuiergfbrgfiqeowjderniogwuihfosdhvwrbfhdsvbworgbuiaeofjdhioh0";
+            MessageType type = MessageType.values()[new Random().nextInt(MessageType.values().length)];
+            LocalDateTime stamp = LocalDateTime.now();
+            ChatWindow.getInstance().showMessage(id, message, type, stamp);
+        }
+        ////////////////// TEST ENDE ///////////////////////////
     }
 
     public void hideChatWindow() {
-        chatButton.setChecked(true);
-        chatButton.getStyle().imageUp = Texture.CHAT_ICON;
+        chatButton.setChecked(false);
+        chatButton.getStyle().imageUp = Icon.CHAT_ICON;
         ChatWindow.getInstance().setVisible(false);
         getStage().unfocus(ChatWindow.getInstance());
     }
 
-    public boolean chatIsEnabled() {
+    public boolean isChatEnabled() {
         return chatButton.isVisible();
     }
 
@@ -250,52 +251,52 @@ public class HeadUpDisplay extends Table {
         return headUpDisplay;
     }
 
-    public boolean isUserMenuSelected() {
+    public boolean isUserMenuOpen() {
         return userListButton.isChecked();
     }
 
-    public boolean isNotificationMenuSelected() {
+    public boolean isNotificationMenuOpen() {
         return notificationListButton.isChecked();
     }
 
-    public boolean isSettingsMenuSelected() {
+    public boolean isSettingsMenuOpen() {
         return settingsButton.isChecked();
     }
 
-    public void selectUserMenu() {
+    public void openUserMenu() {
         userListButton.setChecked(true);
-        userListButton.getStyle().imageUp = Texture.CHECKED_USER_ICON;
-        notificationListButton.getStyle().imageUp = Texture.NOTIFICATION_ICON;
-        settingsButton.getStyle().imageUp = Texture.SETTINGS_ICON;
+        userListButton.getStyle().imageUp = Icon.CHECKED_USER_ICON;
+        notificationListButton.getStyle().imageUp = Icon.NOTIFICATION_ICON;
+        settingsButton.getStyle().imageUp = Icon.SETTINGS_ICON;
         currentMenuContainer.clearChildren();
         currentMenuContainer.addActor(new UserListTable());
     }
 
-    public void selectNotificationMenu() {
+    public void openNotificationMenu() {
         notificationListButton.setChecked(true);
-        notificationListButton.getStyle().imageUp = Texture.CHECKED_NOTIFICATION_ICON;
-        userListButton.getStyle().imageUp = Texture.USER_ICON;
-        settingsButton.getStyle().imageUp = Texture.SETTINGS_ICON;
+        notificationListButton.getStyle().imageUp = Icon.CHECKED_NOTIFICATION_ICON;
+        userListButton.getStyle().imageUp = Icon.USER_ICON;
+        settingsButton.getStyle().imageUp = Icon.SETTINGS_ICON;
         currentMenuContainer.clearChildren();
         currentMenuContainer.addActor(new NotificationListTable());
     }
 
-    public void selectSettingsMenu() {
+    public void openSettingsMenu() {
         settingsButton.setChecked(true);
-        settingsButton.getStyle().imageUp = Texture.CHECKED_SETTINGS_ICON;
-        userListButton.getStyle().imageUp = Texture.USER_ICON;
-        notificationListButton.getStyle().imageUp = Texture.NOTIFICATION_ICON;
+        settingsButton.getStyle().imageUp = Icon.CHECKED_SETTINGS_ICON;
+        userListButton.getStyle().imageUp = Icon.USER_ICON;
+        notificationListButton.getStyle().imageUp = Icon.NOTIFICATION_ICON;
         currentMenuContainer.clearChildren();
         currentMenuContainer.addActor(new SettingsTable());
     }
 
-    public void unselectMenu() {
+    public void closeMenus() {
         userListButton.setChecked(false);
         notificationListButton.setChecked(false);
         settingsButton.setChecked(false);
-        userListButton.getStyle().imageUp = Texture.USER_ICON;
-        notificationListButton.getStyle().imageUp = Texture.NOTIFICATION_ICON;
-        settingsButton.getStyle().imageUp = Texture.SETTINGS_ICON;
+        userListButton.getStyle().imageUp = Icon.USER_ICON;
+        notificationListButton.getStyle().imageUp = Icon.NOTIFICATION_ICON;
+        settingsButton.getStyle().imageUp = Icon.SETTINGS_ICON;
         currentMenuContainer.clearChildren();
     }
 }

@@ -1,4 +1,4 @@
-package view2.component.world;
+package view2.component;
 
 import com.badlogic.gdx.Input;
 
@@ -9,7 +9,7 @@ public enum KeyAction {
     MOVE_DOWN(Input.Keys.DOWN, Input.Keys.S),
     MOVE_RIGHT(Input.Keys.RIGHT, Input.Keys.D),
     SPRINT(Input.Keys.SHIFT_LEFT, Input.Keys.SHIFT_RIGHT),
-    INTERACT(Input.Keys.E),
+    INTERACT(Input.Keys.E, Input.Keys.ENTER),
     OPEN_CHAT(Input.Keys.SPACE),
     SWITCH_MICROPHONE(Input.Keys.Q),
     OPEN_USER_LIST(Input.Keys.NUM_1, Input.Keys.NUMPAD_1, Input.Keys.G),

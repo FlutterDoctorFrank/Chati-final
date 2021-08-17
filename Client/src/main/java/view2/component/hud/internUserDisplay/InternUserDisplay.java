@@ -2,7 +2,6 @@ package view2.component.hud.internUserDisplay;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -12,7 +11,7 @@ import model.role.Role;
 import model.user.IInternUserView;
 import model.user.Status;
 import view2.Chati;
-import view2.Texture;
+import view2.Icon;
 import view2.component.ChatiTable;
 import view2.component.ChatiToolTip;
 import view2.component.hud.HeadUpDisplay;
@@ -62,27 +61,27 @@ public class InternUserDisplay extends HudMenuTable {
 
         if (internUser.hasRole(Role.OWNER)) {
             usernameLabel.setColor(Color.GOLD);
-            Image ownerImage = new Image(Texture.OWNER_ICON);
+            Image ownerImage = new Image(Icon.OWNER_ICON);
             ownerImage.addListener(new ChatiToolTip("Besitzer"));
             roleIcons.add(ownerImage);
         } else if (internUser.hasRole(Role.ADMINISTRATOR)) {
             usernameLabel.setColor(Color.SKY);
-            Image administratorImage = new Image(Texture.ADMINISTRATOR_ICON);
+            Image administratorImage = new Image(Icon.ADMINISTRATOR_ICON);
             administratorImage.addListener(new ChatiToolTip("Administrator"));
             roleIcons.add(administratorImage);
         } else if (internUser.hasRole(Role.MODERATOR)) {
             usernameLabel.setColor(Color.ORANGE);
-            Image moderatorImage = new Image(Texture.MODERATOR_ICON);
+            Image moderatorImage = new Image(Icon.MODERATOR_ICON);
             moderatorImage.addListener(new ChatiToolTip("Moderator"));
             roleIcons.add(moderatorImage);
         }
         if (internUser.hasRole(Role.ROOM_OWNER)) {
-            Image roomOwnerImage = new Image(Texture.ROOM_OWNER_ICON);
+            Image roomOwnerImage = new Image(Icon.ROOM_OWNER_ICON);
             roomOwnerImage.addListener(new ChatiToolTip("Raumbesitzer"));
             roleIcons.add(roomOwnerImage);
         }
         if (internUser.hasRole(Role.AREA_MANAGER)) {
-            Image areaManagerImage = new Image(Texture.AREA_MANAGER_ICON);
+            Image areaManagerImage = new Image(Icon.AREA_MANAGER_ICON);
             areaManagerImage.addListener(new ChatiToolTip("Bereichsberechtigter"));
             roleIcons.add(areaManagerImage);
         }
@@ -90,11 +89,11 @@ public class InternUserDisplay extends HudMenuTable {
         statusImage = new Image();
         switch (internUser.getStatus()) {
             case ONLINE:
-                statusImage.setDrawable(Texture.ONLINE_ICON);
+                statusImage.setDrawable(Icon.ONLINE_ICON);
                 statusImage.addListener(new ChatiToolTip("Online"));
                 break;
             case AWAY:
-                statusImage.setDrawable(Texture.AWAY_ICON);
+                statusImage.setDrawable(Icon.AWAY_ICON);
                 statusImage.addListener(new ChatiToolTip("Abwesend"));
                 break;
             default:
@@ -152,11 +151,11 @@ public class InternUserDisplay extends HudMenuTable {
         statusImage = new Image();
         switch (internUser.getStatus()) {
             case ONLINE:
-                statusImage.setDrawable(Texture.ONLINE_ICON);
+                statusImage.setDrawable(Icon.ONLINE_ICON);
                 statusImage.addListener(new ChatiToolTip("Online"));
                 break;
             case AWAY:
-                statusImage.setDrawable(Texture.AWAY_ICON);
+                statusImage.setDrawable(Icon.AWAY_ICON);
                 statusImage.addListener(new ChatiToolTip("Abwesend"));
                 break;
             default:
@@ -186,9 +185,9 @@ public class InternUserDisplay extends HudMenuTable {
             statusButtonGroup.setMaxCheckCount(1);
             statusButtonGroup.setUncheckLast(true);
 
-            onlineStatusImage = new Image(Texture.ONLINE_ICON);
-            busyStatusImage = new Image(Texture.BUSY_ICON);
-            offlineStatusImage = new Image(Texture.OFFLINE_ICON);
+            onlineStatusImage = new Image(Icon.ONLINE_ICON);
+            busyStatusImage = new Image(Icon.BUSY_ICON);
+            offlineStatusImage = new Image(Icon.OFFLINE_ICON);
 
             Skin onlineStatusButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
             onlineStatusButton = new TextButton("", onlineStatusButtonSkin);
