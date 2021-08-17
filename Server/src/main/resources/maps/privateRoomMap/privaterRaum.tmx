@@ -128,13 +128,13 @@
   <object id="20" name="Door" x="352" y="32" width="64" height="64">
    <properties>
     <property name="communicationRegion" value="areaCommunication"/>
-    <property name="contextType" value="Door"/>
+    <property name="contextType" value="portal"/>
     <property name="text" type="bool" value="true"/>
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="14" name="InteractiveObject">
+ <objectgroup id="14" name="InteractiveObject" visible="0">
   <object id="21" x="64" y="576" width="64" height="64"/>
   <object id="22" x="512" y="544" width="128" height="96"/>
   <object id="23" x="352" y="32" width="64" height="64"/>
