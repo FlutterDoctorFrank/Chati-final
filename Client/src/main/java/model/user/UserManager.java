@@ -53,7 +53,6 @@ public class UserManager implements IUserManagerController, IUserManagerView {
         if (internUser.isInCurrentWorld) {
             UserManager.getInstance().getModelObserver().setWorldChanged();
         }
-
         internUser = null;
         externUsers.clear();
     }
@@ -67,8 +66,11 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     @Override
     public void removeExternUser(UUID userId) throws UserNotFoundException {
         throwIfNotExists(userId);
-        externUsers.remove(userId);
+        User removedUser = externUsers.remove(userId);
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        if (removedUser.isInCurrentRoom) {
+            UserManager.getInstance().getModelObserver().setUserPositionChanged();
+        }
     }
 
     @Override
