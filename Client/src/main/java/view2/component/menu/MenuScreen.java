@@ -1,6 +1,7 @@
 package view2.component.menu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import model.context.ContextID;
@@ -36,7 +37,7 @@ public class MenuScreen extends AbstractScreen {
 
     @Override
     public InputProcessor getInputProcessor() {
-        return stage;
+        return new InputMultiplexer(stage, new MenuInputProcessor());
     }
 
     public void registrationResponse(boolean success, String messageKey) {

@@ -110,6 +110,7 @@ public class ChatWindow extends ChatiWindow {
 
     @Override
     protected void setLayout() {
+        setVisible(false);
         setModal(false);
         setMovable(true);
         setResizable(true);

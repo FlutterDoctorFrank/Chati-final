@@ -11,9 +11,10 @@ public enum KeyAction {
     SPRINT(Input.Keys.SHIFT_LEFT, Input.Keys.SHIFT_RIGHT),
     INTERACT(Input.Keys.E),
     OPEN_CHAT(Input.Keys.SPACE),
-    OPEN_USER_LIST(Input.Keys.U),
-    OPEN_NOTIFICATION(Input.Keys.N),
-    OPEN_SETTINGS(Input.Keys.S),
+    SWITCH_MICROPHONE(Input.Keys.Q),
+    OPEN_USER_LIST(Input.Keys.NUM_1, Input.Keys.NUMPAD_1, Input.Keys.G),
+    OPEN_NOTIFICATION(Input.Keys.NUM_2, Input.Keys.NUMPAD_2, Input.Keys.H),
+    OPEN_SETTINGS(Input.Keys.NUM_3, Input.Keys.NUMPAD_3, Input.Keys.J),
     CLOSE(Input.Keys.ESCAPE);
 
 

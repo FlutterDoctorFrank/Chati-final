@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.communication.message.MessageType;
@@ -28,7 +29,7 @@ public class HeadUpDisplay extends Table {
     public static final float HUD_MENU_TABLE_WIDTH = 450;
     public static final float HUD_MENU_TABLE_HEIGHT = 600;
 
-    public static HeadUpDisplay headUpDisplay;
+    private static HeadUpDisplay headUpDisplay;
 
     private Table internUserDisplayContainer;
     private Table currentMenuContainer;
@@ -197,48 +198,6 @@ public class HeadUpDisplay extends Table {
         hudButtons.add(userListButton);
         hudButtons.add(notificationListButton);
         hudButtons.add(settingsButton);
-
-        /*
-        addListener(new InputListener() {
-            public boolean keyDown(InputEvent event, int keycode) {
-                KeyAction action = KeyAction.getAction(keycode);
-                System.out.println("halo");
-                if (action == null) {
-                    return true;
-                }
-                switch (action) {
-                    case OPEN_CHAT:
-                        break;
-                    case OPEN_USER_LIST:
-                        if (userListButton.isChecked()) {
-                            unselectMenu();
-                        } else {
-                            selectUserMenu();
-                        }
-                    case OPEN_NOTIFICATION:
-                        if (notificationListButton.isChecked()) {
-                            unselectMenu();
-                        } else {
-                            selectNotificationMenu();
-                        }
-                    case OPEN_SETTINGS:
-                        if (settingsButton.isChecked()) {
-                            unselectMenu();
-                        } else {
-                            selectSettingsMenu();
-                        }
-                    case CLOSE:
-                        if (userListButton.isChecked() || notificationListButton.isChecked() || settingsButton.isChecked()) {
-                            unselectMenu();
-                        } else {
-                            selectSettingsMenu();
-                        }
-                }
-                return true;
-            }
-        });
-
-         */
     }
 
     private void setLayout() {
@@ -272,16 +231,20 @@ public class HeadUpDisplay extends Table {
     }
 
     public void showChatWindow() {
-        chatButton.setChecked(true);
+        chatButton.setChecked(false);
         chatButton.getStyle().imageUp = Texture.CHECKED_CHAT_ICON;
         ChatWindow.getInstance().setVisible(true);
     }
 
     public void hideChatWindow() {
-        chatButton.setChecked(false);
+        chatButton.setChecked(true);
         chatButton.getStyle().imageUp = Texture.CHAT_ICON;
         ChatWindow.getInstance().setVisible(false);
         getStage().unfocus(ChatWindow.getInstance());
+    }
+
+    public boolean chatIsEnabled() {
+        return chatButton.isVisible();
     }
 
     public static HeadUpDisplay getInstance() {
@@ -291,7 +254,20 @@ public class HeadUpDisplay extends Table {
         return headUpDisplay;
     }
 
-    private void selectUserMenu() {
+    public boolean isUserMenuSelected() {
+        return userListButton.isChecked();
+    }
+
+    public boolean isNotificationMenuSelected() {
+        return notificationListButton.isChecked();
+    }
+
+    public boolean isSettingsMenuSelected() {
+        return settingsButton.isChecked();
+    }
+
+    public void selectUserMenu() {
+        userListButton.setChecked(true);
         userListButton.getStyle().imageUp = Texture.CHECKED_USER_ICON;
         notificationListButton.getStyle().imageUp = Texture.NOTIFICATION_ICON;
         settingsButton.getStyle().imageUp = Texture.SETTINGS_ICON;
@@ -299,7 +275,8 @@ public class HeadUpDisplay extends Table {
         currentMenuContainer.addActor(new UserListTable());
     }
 
-    private void selectNotificationMenu() {
+    public void selectNotificationMenu() {
+        notificationListButton.setChecked(true);
         notificationListButton.getStyle().imageUp = Texture.CHECKED_NOTIFICATION_ICON;
         userListButton.getStyle().imageUp = Texture.USER_ICON;
         settingsButton.getStyle().imageUp = Texture.SETTINGS_ICON;
@@ -307,7 +284,8 @@ public class HeadUpDisplay extends Table {
         currentMenuContainer.addActor(new NotificationListTable());
     }
 
-    private void selectSettingsMenu() {
+    public void selectSettingsMenu() {
+        settingsButton.setChecked(true);
         settingsButton.getStyle().imageUp = Texture.CHECKED_SETTINGS_ICON;
         userListButton.getStyle().imageUp = Texture.USER_ICON;
         notificationListButton.getStyle().imageUp = Texture.NOTIFICATION_ICON;
@@ -315,7 +293,10 @@ public class HeadUpDisplay extends Table {
         currentMenuContainer.addActor(new SettingsTable());
     }
 
-    private void unselectMenu() {
+    public void unselectMenu() {
+        userListButton.setChecked(false);
+        notificationListButton.setChecked(false);
+        settingsButton.setChecked(false);
         userListButton.getStyle().imageUp = Texture.USER_ICON;
         notificationListButton.getStyle().imageUp = Texture.NOTIFICATION_ICON;
         settingsButton.getStyle().imageUp = Texture.SETTINGS_ICON;

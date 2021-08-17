@@ -3,6 +3,7 @@ package view2.component.world;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import view2.component.hud.ChatWindow;
+import view2.component.hud.HeadUpDisplay;
 
 public class WorldInputProcessor implements InputProcessor {
 
@@ -29,8 +30,9 @@ public class WorldInputProcessor implements InputProcessor {
         if (KeyAction.getAction(keycode) == KeyAction.SPRINT) {
             sprintPressed = true;
         }
-        // TODO other keys...
-
+        if (KeyAction.getAction(keycode) == KeyAction.INTERACT) {
+            // TODO interact...
+        }
         return true;
     }
 
@@ -52,6 +54,42 @@ public class WorldInputProcessor implements InputProcessor {
             sprintPressed = false;
         }
 
+        if (KeyAction.getAction(keycode) == KeyAction.OPEN_CHAT && HeadUpDisplay.getInstance().chatIsEnabled()
+                && !ChatWindow.getInstance().isVisible()) {
+            HeadUpDisplay.getInstance().showChatWindow();
+        }
+        if (KeyAction.getAction(keycode) == KeyAction.OPEN_USER_LIST) {
+            if (!HeadUpDisplay.getInstance().isUserMenuSelected()) {
+                HeadUpDisplay.getInstance().selectUserMenu();
+            } else {
+                HeadUpDisplay.getInstance().unselectMenu();
+            }
+        }
+        if (KeyAction.getAction(keycode) == KeyAction.OPEN_NOTIFICATION) {
+            if (!HeadUpDisplay.getInstance().isNotificationMenuSelected()) {
+                HeadUpDisplay.getInstance().selectNotificationMenu();
+            } else {
+                HeadUpDisplay.getInstance().unselectMenu();
+            }
+        }
+        if (KeyAction.getAction(keycode) == KeyAction.OPEN_SETTINGS) {
+            if (!HeadUpDisplay.getInstance().isSettingsMenuSelected()) {
+                HeadUpDisplay.getInstance().selectSettingsMenu();
+            } else {
+                HeadUpDisplay.getInstance().unselectMenu();
+            }
+        }
+        if (KeyAction.getAction(keycode) == KeyAction.CLOSE) {
+            if (ChatWindow.getInstance().isVisible()) {
+                HeadUpDisplay.getInstance().hideChatWindow();
+            } else if (HeadUpDisplay.getInstance().isUserMenuSelected()
+                    || HeadUpDisplay.getInstance().isNotificationMenuSelected()
+                    || HeadUpDisplay.getInstance().isSettingsMenuSelected()) {
+                HeadUpDisplay.getInstance().unselectMenu();
+            } else {
+                HeadUpDisplay.getInstance().selectSettingsMenu();
+            }
+        }
         return true;
     }
 
