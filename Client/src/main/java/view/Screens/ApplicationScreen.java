@@ -80,7 +80,7 @@ public class ApplicationScreen implements Screen {
         this.contactListener = new WorldContactListener();
 
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load(mapPath);   //maps/map.tmx
+        map = mapLoader.load(mapPath);
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / Chati.PPM);
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(contactListener);
