@@ -53,8 +53,8 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void joinWorld(ContextID worldId, String worldName) {
-        this.currentWorld = new SpatialContext(worldId, worldName, Context.getGlobal());
+    public void joinWorld(String worldName) {
+        this.currentWorld = new SpatialContext(worldName, Context.getGlobal());
         Context.getGlobal().addChild(currentWorld);
         System.out.println(currentWorld.getContextId().getId() + currentWorld.getChildren().isEmpty());
         this.isInCurrentWorld = true;
@@ -97,13 +97,11 @@ public class InternUser extends User implements IInternUserController, IInternUs
         if (currentWorld.getContextId().equals(roomId)) {
             this.currentRoom = currentWorld;
         } else {
-            this.currentRoom = new SpatialContext(roomId, roomName, currentWorld);
+            this.currentRoom = new SpatialContext(roomName, currentWorld);
             currentWorld.addChild(currentRoom);
         }
 
-        Gdx.app.postRunnable(() -> {
-            currentRoom.build(map);
-        });
+        Gdx.app.postRunnable(() -> currentRoom.build(map));
         isInCurrentRoom = true;
     }
 

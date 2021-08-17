@@ -133,10 +133,9 @@ public class User implements IUserController, IUserView {
 
     @Override
     public void setReport(ContextID contextId, boolean isReported) throws ContextNotFoundException {
-        if (isReported){
+        if (isReported) {
             reportedContexts.put(contextId, Context.getGlobal().getContext(contextId));
-        }
-        else {
+        } else {
             reportedContexts.remove(contextId);
         }
 
@@ -145,10 +144,9 @@ public class User implements IUserController, IUserView {
 
     @Override
     public void setMute(ContextID contextId, boolean isMuted) throws ContextNotFoundException {
-        if (isMuted){
+        if (isMuted) {
             mutedContexts.put(contextId, Context.getGlobal().getContext(contextId));
-        }
-        else {
+        } else {
             mutedContexts.remove(contextId);
         }
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
@@ -158,11 +156,10 @@ public class User implements IUserController, IUserView {
     public void setBan(ContextID contextId, boolean isBanned) throws ContextNotFoundException {
         System.out.println("banned context id " + contextId);
         System.out.println(UserManager.getInstance().getBannedUsers());
-        if (isBanned){
+        if (isBanned) {
             bannedContexts.put(contextId, Context.getGlobal().getContext(contextId));
             System.out.println(UserManager.getInstance().getBannedUsers());
-        }
-        else {
+        } else {
             bannedContexts.remove(contextId);
         }
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
