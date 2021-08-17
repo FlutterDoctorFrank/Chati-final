@@ -40,7 +40,7 @@ public class Notification implements INotification {
      */
     public Notification(User owner, Context owningContext, MessageBundle messageBundle) {
         this.notificationId = UUID.randomUUID();
-        this.notificationType = NotificationType.INFORMATION;
+        this.notificationType = NotificationType.NOTIFICATION;
         this.owner = owner;
         this.owningContext = owningContext;
         this.messageBundle = messageBundle;
