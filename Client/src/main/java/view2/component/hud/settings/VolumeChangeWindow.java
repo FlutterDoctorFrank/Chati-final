@@ -44,8 +44,9 @@ public class VolumeChangeWindow extends ChatiWindow {
     private Slider musicVolumeSlider;
     private Slider soundVolumeSlider;
     private TextButton confirmButton;
-    private TextButton cancelButton;
     private TextButton defaultButton;
+    private TextButton cancelButton;
+    private TextButton closeButton;
 
     public VolumeChangeWindow() {
         super("Lautstärke anpassen");
@@ -136,6 +137,18 @@ public class VolumeChangeWindow extends ChatiWindow {
                 remove();
             }
         });
+
+        closeButton = new TextButton("X", Chati.SKIN);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                remove();
+            }
+        });
     }
 
     @Override
@@ -176,5 +189,7 @@ public class VolumeChangeWindow extends ChatiWindow {
         buttonContainer.add(defaultButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
+
+        getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }
 }

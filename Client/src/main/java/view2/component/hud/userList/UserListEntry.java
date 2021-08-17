@@ -21,6 +21,7 @@ import view2.Chati;
 import view2.Icon;
 import view2.component.ChatiToolTip;
 import view2.component.ChatiWindow;
+import view2.component.hud.HeadUpDisplay;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -496,6 +497,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         private TextArea userMessageArea;
         private TextButton confirmButton;
         private TextButton cancelButton;
+        private TextButton closeButton;
 
         private final AdministrativeAction action;
 
@@ -564,6 +566,18 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                     MessageWindow.this.remove();
                 }
             });
+
+            closeButton = new TextButton("X", Chati.SKIN);
+            closeButton.addListener(new ClickListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    remove();
+                }
+            });
         }
 
         @Override
@@ -584,6 +598,8 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             buttonContainer.add(confirmButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(BUTTON_SIZE).space(HORIZONTAL_SPACING);
             buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(BUTTON_SIZE);
             add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
+
+            getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
         }
     }
 }

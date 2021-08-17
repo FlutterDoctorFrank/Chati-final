@@ -9,10 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public abstract class AbstractScreen extends ScreenAdapter {
 
-    protected final Stage stage;
+    protected final MenuStage stage;
 
     protected AbstractScreen() {
-        this.stage = new Stage();
+        this.stage = new MenuStage();
         stage.addListener(new InputListener() {
             public boolean keyDown(InputEvent event, int keycode) {
                 if (Input.Keys.ESCAPE == keycode && stage.getKeyboardFocus() != null) {

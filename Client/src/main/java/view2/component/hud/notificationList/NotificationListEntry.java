@@ -210,6 +210,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         private ImageButton acceptButton;
         private ImageButton declineButton;
         private ImageButton deleteButton;
+        private TextButton closeButton;
 
         public NotificationWindow() {
             super(String.valueOf(titleLabel.getText()));
@@ -339,6 +340,18 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                     }
                 }
             });
+
+            closeButton = new TextButton("X", Chati.SKIN);
+            closeButton.addListener(new ClickListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    remove();
+                }
+            });
         }
 
         @Override
@@ -350,7 +363,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             setHeight(WINDOW_HEIGHT);
             defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING);
 
-            getTitleTable().add(dateLabel).right();
+            getTitleTable().add(dateLabel).right().padRight(VERTICAL_SPACING);
 
             left().defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).padTop(VERTICAL_SPACING);
 
@@ -369,6 +382,8 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             buttonContainer.add(deleteButton).width(BUTTON_SIZE).height(BUTTON_SIZE)
                     .padBottom(VERTICAL_SPACING).padRight(HORIZONTAL_SPACING);
             add(buttonContainer).center().fillX().expandX().padBottom(VERTICAL_SPACING).row();
+
+            getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
         }
     }
 }

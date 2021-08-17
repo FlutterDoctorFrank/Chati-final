@@ -131,7 +131,7 @@ public class ChatWindow extends ChatiWindow {
                 .padLeft(SPACE).padRight(SPACE);
         add(sendContainer).height(SEND_BUTTON_HEIGHT).expandX().fillX();
 
-        getTitleTable().add(minimizeButton).right().width(getTitleLabel().getHeight() * (2f/3f)).height(getTitleLabel().getHeight() * (2f/3f));
+        getTitleTable().add(minimizeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
         HeadUpDisplay.getInstance().getStage().addActor(this);
     }
 

@@ -37,7 +37,7 @@ public class MenuScreen extends AbstractScreen {
 
     @Override
     public InputProcessor getInputProcessor() {
-        return new InputMultiplexer(stage, new MenuInputProcessor());
+        return stage;
     }
 
     public void registrationResponse(boolean success, String messageKey) {

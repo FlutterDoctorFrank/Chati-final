@@ -54,43 +54,6 @@ public class WorldInputProcessor implements InputProcessor {
         if (KeyAction.getAction(keycode) == KeyAction.SPRINT) {
             sprintPressed = false;
         }
-
-        if (KeyAction.getAction(keycode) == KeyAction.OPEN_CHAT && HeadUpDisplay.getInstance().isChatEnabled()
-                && !ChatWindow.getInstance().isVisible()) {
-            HeadUpDisplay.getInstance().showChatWindow();
-        }
-        if (KeyAction.getAction(keycode) == KeyAction.OPEN_USER_LIST) {
-            if (!HeadUpDisplay.getInstance().isUserMenuOpen()) {
-                HeadUpDisplay.getInstance().openUserMenu();
-            } else {
-                HeadUpDisplay.getInstance().closeMenus();
-            }
-        }
-        if (KeyAction.getAction(keycode) == KeyAction.OPEN_NOTIFICATION) {
-            if (!HeadUpDisplay.getInstance().isNotificationMenuOpen()) {
-                HeadUpDisplay.getInstance().openNotificationMenu();
-            } else {
-                HeadUpDisplay.getInstance().closeMenus();
-            }
-        }
-        if (KeyAction.getAction(keycode) == KeyAction.OPEN_SETTINGS) {
-            if (!HeadUpDisplay.getInstance().isSettingsMenuOpen()) {
-                HeadUpDisplay.getInstance().openSettingsMenu();
-            } else {
-                HeadUpDisplay.getInstance().closeMenus();
-            }
-        }
-        if (KeyAction.getAction(keycode) == KeyAction.CLOSE) {
-            if (ChatWindow.getInstance().isVisible()) {
-                HeadUpDisplay.getInstance().hideChatWindow();
-            } else if (HeadUpDisplay.getInstance().isUserMenuOpen()
-                    || HeadUpDisplay.getInstance().isNotificationMenuOpen()
-                    || HeadUpDisplay.getInstance().isSettingsMenuOpen()) {
-                HeadUpDisplay.getInstance().closeMenus();
-            } else {
-                HeadUpDisplay.getInstance().openSettingsMenu();
-            }
-        }
         return true;
     }
 

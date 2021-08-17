@@ -25,6 +25,7 @@ public class LanguageSelectWindow extends ChatiWindow {
     private SelectBox<String> languageSelectBox;
     private TextButton confirmButton;
     private TextButton cancelButton;
+    private TextButton closeButton;
 
     public LanguageSelectWindow() {
         super("Sprache auswählen");
@@ -66,6 +67,18 @@ public class LanguageSelectWindow extends ChatiWindow {
                 remove();
             }
         });
+
+        closeButton = new TextButton("X", Chati.SKIN);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                remove();
+            }
+        });
     }
 
     @Override
@@ -86,5 +99,7 @@ public class LanguageSelectWindow extends ChatiWindow {
         buttonContainer.add(confirmButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(ROW_HEIGHT);
         add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
+
+        getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }
 }

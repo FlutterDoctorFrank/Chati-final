@@ -19,7 +19,6 @@ import model.context.spatial.SpatialMap;
 import view2.Chati;
 import view2.component.AbstractScreen;
 import view2.component.hud.HeadUpDisplay;
-import view2.component.menu.MenuInputProcessor;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -95,7 +94,7 @@ public class WorldScreen extends AbstractScreen {
 
     @Override
     public InputProcessor getInputProcessor() {
-        return new InputMultiplexer(stage, worldInputProcessor, new MenuInputProcessor());
+        return new InputMultiplexer(stage, worldInputProcessor);
     }
 
     @Override

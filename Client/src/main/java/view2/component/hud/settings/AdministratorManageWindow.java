@@ -32,6 +32,7 @@ public class AdministratorManageWindow extends ChatiWindow {
     private TextArea messageArea;
     private TextButton assignButton;
     private TextButton withdrawButton;
+    private TextButton cancelButton;
     private TextButton closeButton;
 
     public AdministratorManageWindow() {
@@ -163,7 +164,19 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
         });
 
-        closeButton = new TextButton("Schließen", Chati.SKIN);
+        cancelButton = new TextButton("Abbrechen", Chati.SKIN);
+        cancelButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                remove();
+            }
+        });
+
+        closeButton = new TextButton("X", Chati.SKIN);
         closeButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -196,8 +209,10 @@ public class AdministratorManageWindow extends ChatiWindow {
         Table buttonContainer = new Table(Chati.SKIN);
         buttonContainer.add(assignButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         buttonContainer.add(withdrawButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
-        buttonContainer.add(closeButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
+        buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
+
+        getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }
 
     private void resetTextFields() {
