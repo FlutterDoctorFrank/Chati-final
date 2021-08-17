@@ -6,7 +6,6 @@ import model.exception.ContextNotFoundException;
 import model.context.ContextID;
 import model.role.Permission;
 import model.role.Role;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -154,11 +153,11 @@ public class User implements IUserController, IUserView {
 
     @Override
     public void setBan(ContextID contextId, boolean isBanned) throws ContextNotFoundException {
-        System.out.println("banned context id " + contextId);
-        System.out.println(UserManager.getInstance().getBannedUsers());
+        //System.out.println("banned context id " + contextId);
+        //System.out.println(UserManager.getInstance().getBannedUsers());
         if (isBanned) {
             bannedContexts.put(contextId, Context.getGlobal().getContext(contextId));
-            System.out.println(UserManager.getInstance().getBannedUsers());
+            // System.out.println(UserManager.getInstance().getBannedUsers());
         } else {
             bannedContexts.remove(contextId);
         }
@@ -217,7 +216,7 @@ public class User implements IUserController, IUserView {
     public boolean isReported() {
         InternUser internUser = UserManager.getInstance().getInternUser();
         if (internUser.getCurrentLocation() == null) {
-            System.out.println();
+            // System.out.println();
             return reportedContexts.containsKey(Context.getGlobal().getContextId());
         }
         Context current = internUser.getCurrentLocation().getArea();
@@ -279,7 +278,7 @@ public class User implements IUserController, IUserView {
 
     @Override
     public boolean hasRole(Role role) {
-        System.out.println("Area  " +UserManager.getInstance().getInternUser().getCurrentLocation().getArea().getContextId());
+        //System.out.println("Area  " +UserManager.getInstance().getInternUser().getCurrentLocation().getArea().getContextId());
         return currentLocation == null ? hasRole(Context.getGlobal(), role)
                 : hasRole(UserManager.getInstance().getInternUser().getCurrentLocation().getArea(), role);
     }
@@ -320,7 +319,7 @@ public class User implements IUserController, IUserView {
      * @return true, wenn der Benutzer die Rolle in dem Kontext besitzt, sonst false.
      */
     private boolean hasRole(Context context, Role role) {
-        System.out.println(context.getContextId());
+        //System.out.println(context.getContextId());
         return contextRoles.containsKey(context) && contextRoles.get(context).contains(role)
                 || context.getParent() != null && hasRole(context.getParent(), role);
     }

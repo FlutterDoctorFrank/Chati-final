@@ -72,6 +72,11 @@ public class SpatialContext extends Context implements ISpatialContextView {
         this.expanse = new Expanse(new Location(0, 0), MapUtils.getWidth(tiledMap), MapUtils.getHeight(tiledMap));
         MapUtils.buildChildTree(this, tiledMap);
         UserManager.getInstance().getModelObserver().setRoomChanged();
+
+        // Paar codezeilen zum Testen der View, kommen später wieder weg (Da ja der Server die Spawn-pos schickt...)
+        int posX = tiledMap.getProperties().get("spawnPosX", Integer.class);
+        int posY = tiledMap.getProperties().get("spawnPosY", Integer.class);
+        UserManager.getInstance().getInternUser().setPosition(posX, posY);
     }
 
     /**

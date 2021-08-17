@@ -104,19 +104,18 @@ public class Context implements IContextView {
     public Context getContext(ContextID contextId) throws ContextNotFoundException {
         Context found = null;
         if (this.contextId.equals(contextId)) {
-
             return this;
         } else {
             for (SpatialContext child : children.values()) {
-                System.out.println(child.getContextId());
-                System.out.println(child.getChildren().isEmpty());
+                //System.out.println(child.getContextId());
+                //System.out.println(child.getChildren().isEmpty());
                 found = child.getContext(contextId);
                 if (found != null) {
                     return found;
                 }
             }
         }
-        if (parent == null && found == null) {
+        if (parent == null) {
             throw new ContextNotFoundException("Context with this ID not found.", contextId);
         }
         return found;

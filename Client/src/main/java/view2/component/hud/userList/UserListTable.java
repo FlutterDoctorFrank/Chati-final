@@ -95,17 +95,11 @@ public class UserListTable extends HudMenuTable {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 showFriends();
                 selectButton(friendTabButton);
-                //friendTabButton.getLabel().setColor(Color.MAGENTA);
-                //friendTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
                 if (!activeUserTabButton.isDisabled()) {
                     unselectButton(activeUserTabButton);
-                    //activeUserTabButton.getLabel().setColor(Color.WHITE);
-                    //activeUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
                 if (!bannedUserTabButton.isDisabled()) {
                     unselectButton(bannedUserTabButton);
-                    //bannedUserTabButton.getLabel().setColor(Color.WHITE);
-                    //bannedUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
             }
         });
@@ -121,17 +115,11 @@ public class UserListTable extends HudMenuTable {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 showActiveUsers();
                 selectButton(activeUserTabButton);
-                //activeUserTabButton.getLabel().setColor(Color.MAGENTA);
-                //activeUserTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
                 if (!friendTabButton.isDisabled()) {
                     unselectButton(friendTabButton);
-                    //friendTabButton.getLabel().setColor(Color.WHITE);
-                    //friendTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
                 if (!bannedUserTabButton.isDisabled()) {
                     unselectButton(bannedUserTabButton);
-                    //bannedUserTabButton.getLabel().setColor(Color.WHITE);
-                    //bannedUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
             }
         });
@@ -147,17 +135,11 @@ public class UserListTable extends HudMenuTable {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 showBannedUsers();
                 selectButton(bannedUserTabButton);
-                //bannedUserTabButton.getLabel().setColor(Color.MAGENTA);
-                //bannedUserTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
                 if (!friendTabButton.isDisabled()) {
                     unselectButton(friendTabButton);
-                    //friendTabButton.getLabel().setColor(Color.WHITE);
-                    //friendTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
                 if (!activeUserTabButton.isDisabled()) {
                     unselectButton(activeUserTabButton);
-                    //activeUserTabButton.getLabel().setColor(Color.WHITE);
-                    //activeUserTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
             }
         });
@@ -169,8 +151,6 @@ public class UserListTable extends HudMenuTable {
             disableBannedUsersTab();
         } else {
             selectButton(friendTabButton);
-            //friendTabButton.getLabel().setColor(Color.MAGENTA);
-            //friendTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
             if (!user.isInCurrentWorld()) {
                 disableActiveUsersTab();
                 disableBannedUsersTab();

@@ -1,7 +1,6 @@
 package view2.component.hud.notificationList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -48,9 +47,6 @@ public class NotificationListTable extends HudMenuTable {
             if (user != null && globalNotificationTabButton.isDisabled()) {
                 enableButton(globalNotificationTabButton);
                 selectButton(globalNotificationTabButton);
-                //globalNotificationTabButton.setChecked(true);
-                //globalNotificationTabButton.getLabel().setColor(Color.MAGENTA);
-                //globalNotificationTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
             } else if (user != null && user.isInCurrentWorld() && worldNotificationTabButton.isDisabled()) {
                 enableButton(worldNotificationTabButton);
             }
@@ -80,12 +76,8 @@ public class NotificationListTable extends HudMenuTable {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 showGlobalNotifications();
                 selectButton(globalNotificationTabButton);
-                //globalNotificationTabButton.getLabel().setColor(Color.MAGENTA);
-                //globalNotificationTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
                 if (!worldNotificationTabButton.isDisabled()) {
                     unselectButton(worldNotificationTabButton);
-                    //worldNotificationTabButton.getLabel().setColor(Color.WHITE);
-                    //worldNotificationTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
                 }
             }
         });
@@ -104,10 +96,6 @@ public class NotificationListTable extends HudMenuTable {
                 if (!globalNotificationTabButton.isDisabled()) {
                     unselectButton(globalNotificationTabButton);
                 }
-                //worldNotificationTabButton.getLabel().setColor(Color.MAGENTA);
-                //worldNotificationTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
-                //globalNotificationTabButton.getLabel().setColor(Color.WHITE);
-                //globalNotificationTabButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
             }
         });
 
@@ -117,8 +105,6 @@ public class NotificationListTable extends HudMenuTable {
             disableWorldNotificationTab();
         } else {
             selectButton(globalNotificationTabButton);
-            //globalNotificationTabButton.getLabel().setColor(Color.MAGENTA);
-            //globalNotificationTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
             if (!user.isInCurrentWorld()) {
                 disableWorldNotificationTab();
             }
