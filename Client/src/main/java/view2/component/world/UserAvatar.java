@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import model.user.IUserView;
-import view.Sprites.Avatar;
 
 public class UserAvatar extends Sprite {
 
@@ -15,8 +14,6 @@ public class UserAvatar extends Sprite {
 
     private final IUserView user;
     protected final Body body;
-
-    // private TextureAtlas atlas;
 
     private TextureRegion avatarStandUp;
     private TextureRegion avatarStandLeft;
@@ -37,10 +34,17 @@ public class UserAvatar extends Sprite {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        this.body = WorldScreen.getInstance().getWorld().createBody(bodyDef);
         // Sollte später weg, wenn der Server die initiale Position festlegt?
+
+
+        float userInitPosX = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosX") / WorldScreen.PPM;
+        float userInitPosY = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosY") / WorldScreen.PPM;
+        bodyDef.position.set(userInitPosX, userInitPosY);
+        /*
         body.setTransform(new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM, user.getCurrentLocation().getPosY() / WorldScreen.PPM), body.getAngle());
         body.setAwake(true);
+         */
+        this.body = WorldScreen.getInstance().getWorld().createBody(bodyDef);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.filter.categoryBits = WorldScreen.AVATAR_BIT;

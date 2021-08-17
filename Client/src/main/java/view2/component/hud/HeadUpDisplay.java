@@ -1,10 +1,7 @@
 package view2.component.hud;
 
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.communication.message.MessageType;
@@ -15,7 +12,6 @@ import view2.component.hud.internUserDisplay.InternUserDisplay;
 import view2.component.hud.notificationList.NotificationListTable;
 import view2.component.hud.settings.SettingsTable;
 import view2.component.hud.userList.UserListTable;
-import view2.component.world.KeyAction;
 
 import java.time.LocalDateTime;
 import java.util.Random;
