@@ -82,7 +82,6 @@ public class MapUtils {
             float size2 = o2.getRectangle().getHeight() * o2.getRectangle().getWidth();
             return Float.compare(size2, size1);
         });
-        contextRectangles.forEach(contextRectangle -> System.out.println(contextRectangle.getName()));
         // Erzeuge alle Kontexte nacheinander.
         contextRectangles.forEach(contextRectangle -> {
             create(room, contextRectangle);
@@ -110,5 +109,7 @@ public class MapUtils {
         SpatialContext parent = room.getArea(posX + width / 2, posY + height / 2);
         SpatialContext child = new SpatialContext(contextName, parent, communicationRegion, communicationMedia, expanse);
         parent.addChild(child);
+
+        System.out.println(child.getContextId()  + "   p   " + parent.getContextId() + "  " + parent.getChildren().isEmpty());
     }
 }

@@ -15,7 +15,7 @@ import java.util.Objects;
 public class Context implements IContextView {
 
     /** Der Name des übergeordnetsten Kontextes. */
-    private static final String ROOT_NAME = "Global";
+    private static final String ROOT_NAME = "global";
 
     /** Der übergeordnetste Kontext. */
     private static Context global;
@@ -37,7 +37,7 @@ public class Context implements IContextView {
      * @param contextName Name des Kontextes.
      * @param parent Übergeordneter Kontext.
      */
-    protected Context(String contextName, Context parent) {
+    public Context(String contextName, Context parent) {
         if (parent == null) {
             this.contextId = new ContextID(contextName);
         } else {
@@ -104,12 +104,15 @@ public class Context implements IContextView {
     public Context getContext(ContextID contextId) throws ContextNotFoundException {
         Context found = null;
         if (this.contextId.equals(contextId)) {
+
             return this;
         } else {
             for (SpatialContext child : children.values()) {
+                System.out.println(child.getContextId());
+                System.out.println(child.getChildren().isEmpty());
                 found = child.getContext(contextId);
                 if (found != null) {
-                    break;
+                    return found;
                 }
             }
         }

@@ -43,20 +43,21 @@ public class SpatialContext extends Context implements ISpatialContextView {
         this.communicationMedia = communicationMedia;
         this.expanse = expanse;
         this.map = null;
+        parent.addChild(this);
     }
 
     /**
      * Erzeugt eine neue Instanz eines räumlichen Kontextes.
-     * @param contextId ID des Kontextes.
      * @param contextName Name des Kontextes.
      * @param parent Übergeordneter Kontext.
      */
-    public SpatialContext(ContextID contextId, String contextName, Context parent) {
-        super(contextId, contextName, parent);
+    public SpatialContext(String contextName, Context parent) {
+        super(contextName, parent);
         this.communicationRegion = null;
         this.communicationMedia = null;
         this.expanse = null;
         this.map = null;
+        parent.addChild(this);
     }
 
     public void build(SpatialMap map) {
@@ -65,7 +66,6 @@ public class SpatialContext extends Context implements ISpatialContextView {
             return;
         }
         this.map = map;
-        System.out.println(map.getPath());
         TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
         this.communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
         this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());

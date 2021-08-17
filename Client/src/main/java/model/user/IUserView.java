@@ -113,12 +113,6 @@ public interface IUserView {
      */
     boolean hasPermission(Permission permission);
 
-    /**
-     * Gibt die Menge der Rollen zurück, die dieser Benutzer im innersten Kontext oder einem übergeordneten Kontext
-     * besitzt, in dem sich der intern angemeldete Benutzer befindet.
-     * @return Rollen dieses Benutzers.
-     */
-    Set<Role> getRoles();
 
     /**
      * Gibt die übergeordnetste Rolle des Benutzers zurück, die er im innersten Kontext oder einem übergeordneten

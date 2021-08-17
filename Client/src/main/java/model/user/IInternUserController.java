@@ -24,7 +24,7 @@ public interface IInternUserController extends IUserController {
      * @param worldName Name der Welt.
      * @see SpatialContext
      */
-    void joinWorld(ContextID worldId, String worldName);
+    void joinWorld(String worldName);
 
     /**
      * Verwirft alle initialisierten Kontexte im Modell.

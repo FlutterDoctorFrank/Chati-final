@@ -133,19 +133,38 @@ public class User implements IUserController, IUserView {
 
     @Override
     public void setReport(ContextID contextId, boolean isReported) throws ContextNotFoundException {
-        reportedContexts.put(contextId, Context.getGlobal().getContext(contextId));
-        // UserManager.getInstance().getModelObserver().setUserInfoChanged(); Für Testzwecke deaktiviert
+        if (isReported){
+            reportedContexts.put(contextId, Context.getGlobal().getContext(contextId));
+        }
+        else {
+            reportedContexts.remove(contextId);
+        }
+
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
     public void setMute(ContextID contextId, boolean isMuted) throws ContextNotFoundException {
-        mutedContexts.put(contextId, Context.getGlobal().getContext(contextId));
+        if (isMuted){
+            mutedContexts.put(contextId, Context.getGlobal().getContext(contextId));
+        }
+        else {
+            mutedContexts.remove(contextId);
+        }
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
     public void setBan(ContextID contextId, boolean isBanned) throws ContextNotFoundException {
-        bannedContexts.put(contextId, Context.getGlobal().getContext(contextId));
+        System.out.println("banned context id " + contextId);
+        System.out.println(UserManager.getInstance().getBannedUsers());
+        if (isBanned){
+            bannedContexts.put(contextId, Context.getGlobal().getContext(contextId));
+            System.out.println(UserManager.getInstance().getBannedUsers());
+        }
+        else {
+            bannedContexts.remove(contextId);
+        }
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
@@ -153,7 +172,7 @@ public class User implements IUserController, IUserView {
     public void setRoles(ContextID contextId, Set<Role> roles) throws ContextNotFoundException {
         Context context = Context.getGlobal().getContext(contextId);
         contextRoles.put(context, roles);
-        //UserManager.getInstance().getModelObserver().setUserInfoChanged(); Für Testzwecke deaktiviert
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
@@ -201,6 +220,7 @@ public class User implements IUserController, IUserView {
     public boolean isReported() {
         InternUser internUser = UserManager.getInstance().getInternUser();
         if (internUser.getCurrentLocation() == null) {
+            System.out.println();
             return reportedContexts.containsKey(Context.getGlobal().getContextId());
         }
         Context current = internUser.getCurrentLocation().getArea();
@@ -262,6 +282,7 @@ public class User implements IUserController, IUserView {
 
     @Override
     public boolean hasRole(Role role) {
+        System.out.println("Area  " +UserManager.getInstance().getInternUser().getCurrentLocation().getArea().getContextId());
         return currentLocation == null ? hasRole(Context.getGlobal(), role)
                 : hasRole(UserManager.getInstance().getInternUser().getCurrentLocation().getArea(), role);
     }
@@ -270,11 +291,6 @@ public class User implements IUserController, IUserView {
     public boolean hasPermission(Permission permission) {
         return currentLocation == null ? hasPermission(Context.getGlobal(), permission)
                 : hasPermission(UserManager.getInstance().getInternUser().getCurrentLocation().getArea(), permission);
-    }
-
-    @Override
-    public Set<Role> getRoles() {
-        return null;
     }
 
     @Override
@@ -307,6 +323,7 @@ public class User implements IUserController, IUserView {
      * @return true, wenn der Benutzer die Rolle in dem Kontext besitzt, sonst false.
      */
     private boolean hasRole(Context context, Role role) {
+        System.out.println(context.getContextId());
         return contextRoles.containsKey(context) && contextRoles.get(context).contains(role)
                 || context.getParent() != null && hasRole(context.getParent(), role);
     }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import model.context.Context;
 import model.context.ContextID;
+import model.user.UserManager;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,8 +24,17 @@ public class SpatialContextTest {
 
     @Before
     public void setUp() throws Exception {
-         world = new SpatialContext(new ContextID("global.world"), "world", Context.getGlobal());
+         world = new SpatialContext("world", Context.getGlobal());
          map = SpatialMap.MAP;
+        Game game = new Game() {
+            @Override
+            public void create() {
+                world.build(map);
+                Gdx.app.exit();
+            }
+        };
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        new Lwjgl3Application(game, config);
     }
 
     @After
@@ -35,16 +45,6 @@ public class SpatialContextTest {
 
     @Test
     public void buildContextTree() {
-        Game game = new Game() {
-            @Override
-            public void create() {
-                world.build(map);
-                Gdx.app.exit();
-            }
-        };
-        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        new Lwjgl3Application(game, config);
-
         Set<String> contextIdSet = Set.of("global.world.Park", "global.world.Disco", "global.world.Hotel",
                 "global.world.Disco.SpawnZone", "global.world.Hotel.Rezeption", "global.world.Disco.Bar",
                 "global.world.Disco.gameboard_2", "global.world.Disco.gameboard_1", "global.world.Hotel.gameboard_3",
@@ -66,7 +66,7 @@ public class SpatialContextTest {
                 "global.world.Park.BankArea_2.Bank_2", "global.world.Park.BankArea_3.Bank_11",
                 "global.world.Park.BankArea_6.Bank_9", "global.world.Park.BankArea_5.Bank_7",
                 "global.world.Park.BankArea_4.Bank_5", "global.world.Park.BankArea_1.Bank_3",
-                "global.world.Park.BankArea_2.Bank_1");
+                "global.world.Park.BankArea_2.Bank_1", "global.world.Park.SpawnArea");
         testChildContexts(Context.getGlobal(), contextIdSet);
 
 
@@ -81,6 +81,9 @@ public class SpatialContextTest {
 
     @Test
     public void getArea() {
+        int posX = 500;
+        int posY = 1500;
+        Assert.assertEquals((world.getArea(posX, posY).getContextId()).toString(), "global.world.Disco");
     }
 
     @Test

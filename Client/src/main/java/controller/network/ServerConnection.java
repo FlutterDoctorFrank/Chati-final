@@ -301,7 +301,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         return;
                     }
 
-                    this.getIntern().joinWorld(packet.getContextId(), packet.getName());
+                    this.getIntern().joinWorld(packet.getName());
                     this.manager.getView().joinWorldResponse(packet.isSuccess(), packet.getMessage());
                     this.worldId = packet.getContextId();
                     break;
