@@ -15,7 +15,7 @@ import java.util.Objects;
 public class Context implements IContextView {
 
     /** Der Name des übergeordnetsten Kontextes. */
-    private static final String ROOT_NAME = "global";
+    private static final String ROOT_NAME = "Global";
 
     /** Der übergeordnetste Kontext. */
     private static Context global;

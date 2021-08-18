@@ -1,7 +1,6 @@
 package view2.component.hud.settings;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -11,7 +10,6 @@ import controller.network.ServerSender;
 import model.context.ContextID;
 import model.role.Permission;
 import model.user.IInternUserView;
-import model.user.UserManager;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
@@ -157,6 +155,7 @@ public class SettingsTable extends HudMenuTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.app.exit();
+                System.exit(0);
             }
         });
     }

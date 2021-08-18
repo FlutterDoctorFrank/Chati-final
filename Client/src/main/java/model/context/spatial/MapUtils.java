@@ -108,7 +108,6 @@ public class MapUtils {
         // befindet sich der übergeordnete Kontext immer bereits in der Kontexthierarchie.
         SpatialContext parent = room.getArea(posX + width / 2, posY + height / 2);
         SpatialContext child = new SpatialContext(contextName, parent, communicationRegion, communicationMedia, expanse);
-        parent.addChild(child);
 
         System.out.println(child.getContextId()  + "   p   " + parent.getContextId() + "  " + parent.getChildren().isEmpty());
     }
