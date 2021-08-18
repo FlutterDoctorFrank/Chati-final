@@ -78,9 +78,7 @@ public class WorldScreen extends AbstractScreen {
             SPRITE_BATCH.begin();
             internUserAvatar.move();
             internUserAvatar.draw(SPRITE_BATCH, delta);
-            externUserAvatars.forEach(avatar ->  {
-                avatar.draw(SPRITE_BATCH, delta);
-            });
+            externUserAvatars.forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
             SPRITE_BATCH.end();
 
             world.step(1 / 30f, 6, 2); /** Was sind das für Zahlen? Kein hardcoden, irgendwo Konstanten setzen... Wo kommen die her?*/

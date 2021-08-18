@@ -16,7 +16,7 @@ public class InternUserAvatar extends UserAvatar {
 
     public InternUserAvatar(IInternUserView internUser) {
         super(internUser);
-        body.getFixtureList().get(0).setUserData("intern-user-avatar");
+        body.setUserData(BodyType.INTERN_USER);
         currentDirectionalInputs = new LinkedList<>();
     }
 
@@ -97,7 +97,7 @@ public class InternUserAvatar extends UserAvatar {
 
     public void interact() {
         if (canInteract) {
-            System.out.println("ok");
+            System.out.println("penis");
         }
     }
 }

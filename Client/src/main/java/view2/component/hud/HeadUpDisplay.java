@@ -8,7 +8,6 @@ import model.communication.message.MessageType;
 import model.user.IInternUserView;
 import view2.Chati;
 import view2.Icon;
-import view2.component.hud.internUserDisplay.InternUserDisplay;
 import view2.component.hud.notificationList.NotificationListTable;
 import view2.component.hud.settings.SettingsTable;
 import view2.component.hud.userList.UserListTable;

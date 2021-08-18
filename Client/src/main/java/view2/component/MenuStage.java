@@ -36,14 +36,11 @@ public class MenuStage extends Stage {
                     HeadUpDisplay.getInstance().closeMenus();
                 }
             }
-        } else {
-            if (KeyAction.getAction(keycode) == KeyAction.CLOSE) {
-                setKeyboardFocus(null);
-            }
+
         }
         if (KeyAction.getAction(keycode) == KeyAction.CLOSE) {
-            HeadUpDisplay.getInstance().getStage().setKeyboardFocus(null);
-            if (ChatWindow.getInstance().isVisible()) {
+            setKeyboardFocus(null);
+            if (HeadUpDisplay.getInstance().isChatEnabled() && ChatWindow.getInstance().isVisible()) {
                 HeadUpDisplay.getInstance().hideChatWindow();
             } else if (HeadUpDisplay.getInstance().isUserMenuOpen()
                     || HeadUpDisplay.getInstance().isNotificationMenuOpen()

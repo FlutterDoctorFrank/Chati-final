@@ -17,17 +17,16 @@ public enum KeyAction {
     OPEN_SETTINGS(Input.Keys.NUM_3, Input.Keys.NUMPAD_3, Input.Keys.J),
     CLOSE(Input.Keys.ESCAPE);
 
+    private final int[] keycodes;
 
-    private final int[] keys;
-
-    KeyAction(int... keys) {
-        this.keys = keys;
+    KeyAction(int... keycodes) {
+        this.keycodes = keycodes;
     }
 
-    public static KeyAction getAction(int inputKey) {
+    public static KeyAction getAction(int inputKeycode) {
         for (KeyAction keyAction : KeyAction.values()) {
-            for (int key : keyAction.keys) {
-                if (inputKey == key) {
+            for (int keycode : keyAction.keycodes) {
+                if (inputKeycode == keycode) {
                     return keyAction;
                 }
             }

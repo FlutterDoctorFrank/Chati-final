@@ -1,4 +1,4 @@
-package view2.component.hud.internUserDisplay;
+package view2.component.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -14,8 +14,6 @@ import view2.Chati;
 import view2.Icon;
 import view2.component.ChatiTable;
 import view2.component.ChatiToolTip;
-import view2.component.hud.HeadUpDisplay;
-import view2.component.hud.HudMenuTable;
 
 import java.util.ArrayList;
 import java.util.List;

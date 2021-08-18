@@ -55,7 +55,8 @@ public class UserAvatar extends Sprite {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(1.5f, 1.5f); /** Hardgecodete zahlen ? */
         fixtureDef.shape = shape;
-        this.body.createFixture(fixtureDef).setUserData("user-avatar");
+        body.createFixture(fixtureDef);
+        body.setUserData(BodyType.USER);
 
         this.stateTimer = 0;
 
@@ -216,7 +217,7 @@ public class UserAvatar extends Sprite {
             this.setRegion(getButtonFrame(delta));
         }
 
-        private  TextureRegion getButtonFrame(float delta) {
+        private TextureRegion getButtonFrame(float delta) {
             TextureRegion region = interactionButton.getKeyFrame(buttonStateTimer, true);
             buttonStateTimer += delta;
             return region;

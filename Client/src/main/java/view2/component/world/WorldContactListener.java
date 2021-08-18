@@ -8,7 +8,9 @@ public class WorldContactListener implements ContactListener {
     public void beginContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
-        if (isInteractionObject(fixtureA, fixtureB) && isUserAvatar(fixtureA, fixtureB)) {
+        if ((fixtureA.getBody().getUserData() == BodyType.INTERN_USER || fixtureB.getBody().getUserData() == BodyType.INTERN_USER)
+            && (fixtureA.getBody().getUserData() == BodyType.INTERACTION_AREA
+                || fixtureB.getBody().getUserData() == BodyType.INTERACTION_AREA)) {
             WorldScreen.getInstance().getInternUserAvatar().setCanInteract(true);
         }
     }
@@ -17,26 +19,18 @@ public class WorldContactListener implements ContactListener {
     public void endContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
-        if (isInteractionObject(fixtureA, fixtureB) && isUserAvatar(fixtureA, fixtureB)) {
+        if ((fixtureA.getBody().getUserData() == BodyType.INTERN_USER || fixtureB.getBody().getUserData() == BodyType.INTERN_USER)
+                && (fixtureA.getBody().getUserData() == BodyType.INTERACTION_AREA
+                || fixtureB.getBody().getUserData() == BodyType.INTERACTION_AREA)) {
             WorldScreen.getInstance().getInternUserAvatar().setCanInteract(false);
         }
     }
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
-
     }
 
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
-
-    }
-
-    private boolean isInteractionObject(Fixture fixA, Fixture fixB) {
-        return fixA.getUserData() == "interaction-object" || fixB.getUserData() == "interaction-object";
-    }
-
-    private boolean isUserAvatar(Fixture fixA, Fixture fixB) {
-        return fixA.getUserData() == "intern-user-avatar" || fixB.getUserData() == "intern-user-avatar";
     }
 }

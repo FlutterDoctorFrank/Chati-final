@@ -36,6 +36,7 @@ public class InteractionObject {
         areaBodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / WorldScreen.PPM,
                 (rectangle.getY() + rectangle.getHeight() / 2) / WorldScreen.PPM);
         Body areaBody = WorldScreen.getInstance().getWorld().createBody(areaBodyDef);
+        areaBody.setUserData(BodyType.INTERACTION_AREA);
 
         FixtureDef areaFixtureDef = new FixtureDef();
         PolygonShape areaShape = new PolygonShape();
@@ -43,6 +44,6 @@ public class InteractionObject {
                 (rectangle.getHeight() / 2 + tileWidth) / WorldScreen.PPM);
         areaFixtureDef.shape = areaShape;
         areaFixtureDef.isSensor = true;
-        areaBody.createFixture(areaFixtureDef).setUserData("interactive-area");
+        areaBody.createFixture(areaFixtureDef);
     }
 }
