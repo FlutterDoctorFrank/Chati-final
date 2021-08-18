@@ -1,7 +1,8 @@
 package model.communication.message;
 
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 
 /**
@@ -19,18 +20,18 @@ public abstract class Message implements IMessage {
      * Erzeugt eine neue Instanz der Nachricht.
      * @param sender Der Sender dieser Nachricht.
      */
-    public Message(User sender) {
+    public Message(@Nullable final User sender) {
         this.sender = sender;
         this.timestamp = LocalDateTime.now();
     }
 
     @Override
-    public User getSender() {
+    public @Nullable User getSender() {
         return sender;
     }
 
     @Override
-    public LocalDateTime getTimestamp() {
+    public @NotNull LocalDateTime getTimestamp() {
         return timestamp;
     }
 }

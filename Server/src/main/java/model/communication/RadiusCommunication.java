@@ -1,6 +1,7 @@
 package model.communication;
 
 import model.user.User;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
@@ -27,7 +28,10 @@ public class RadiusCommunication extends CommunicationRegion {
     }
 
     @Override
-    public Map<UUID, User> getCommunicableUsers(User user) {
+    public @NotNull Map<UUID, User> getCommunicableUsers(@NotNull final User user) {
+        if (user.getLocation() == null) {
+            throw new IllegalStateException("Users location is not available");
+        }
         // ANMERKUNG: Radiusbasierte Kommunikation kann man bereichsübergreifend machen, wenn man hier die Benutzer des
         // Raums statt des Kontextes nimmt:
         /*
@@ -36,8 +40,8 @@ public class RadiusCommunication extends CommunicationRegion {
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
          */
         return area.getUsers().values().stream()
-                .filter(otherUser -> user.getLocation().distance(otherUser.getLocation()) <= radius)
-                .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
+                .filter(otherUser -> otherUser.getLocation() != null && user.getLocation().distance(otherUser.getLocation()) <= radius)
+                .collect(Collectors.toMap(User::getUserId, Function.identity()));
     }
 
 }

@@ -2,7 +2,7 @@ package model.communication;
 
 import model.context.Context;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -21,7 +21,7 @@ public class ParentCommunication extends CommunicationRegion {
     }
 
     @Override
-    public Map<UUID, User> getCommunicableUsers(User user) {
+    public @NotNull Map<UUID, User> getCommunicableUsers(@NotNull final User user) {
         Context parent = area.getParent();
         if (parent == null) {
             return new HashMap<>();

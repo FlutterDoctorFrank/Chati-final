@@ -2,7 +2,7 @@ package model.role;
 
 import model.context.Context;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -25,7 +25,7 @@ public class ContextRole implements IContextRole {
      * @param context Kontext, in dem der Benutzer die Rolle besitzen soll.
      * @param role Rolle, die der Benutzer besitzen soll.
      */
-    public ContextRole(User user, Context context, Role role) {
+    public ContextRole(@NotNull final User user, @NotNull final Context context, @NotNull final Role role) {
         this.user = user;
         this.context = context;
         this.roles = EnumSet.of(role);
@@ -36,24 +36,24 @@ public class ContextRole implements IContextRole {
      * @param context Kontext, in dem der Benutzer die Rollen besitzen soll.
      * @param roles Rollen, die der Benutzer besitzen soll.
      */
-    public ContextRole(User user, Context context, Set<Role> roles) {
+    public ContextRole(@NotNull final User user, @NotNull final Context context, @NotNull final Set<Role> roles) {
         this.user = user;
         this.context = context;
         this.roles = roles;
     }
 
     @Override
-    public User getUser() {
+    public @NotNull User getUser() {
         return user;
     }
 
     @Override
-    public Context getContext() {
+    public @NotNull Context getContext() {
         return context;
     }
 
     @Override
-    public Set<Role> getRoles() {
+    public @NotNull Set<Role> getRoles() {
         return roles;
     }
 
@@ -61,7 +61,7 @@ public class ContextRole implements IContextRole {
      * Fügt eine Rolle hinzu.
      * @param role Hinzuzufügende Rolle.
      */
-    public void addRole(Role role) {
+    public void addRole(@NotNull final Role role) {
         roles.add(role);
     }
 
@@ -69,7 +69,7 @@ public class ContextRole implements IContextRole {
      * Entfernt eine Rolle.
      * @param role Zu entfernende Rolle.
      */
-    public void removeRole(Role role) {
+    public void removeRole(@NotNull final Role role) {
         roles.remove(role);
     }
 
@@ -78,7 +78,7 @@ public class ContextRole implements IContextRole {
      * @param role Zu überprüfende Rolle.
      * @return true, wenn die Rolle vorhanden ist, sonst false.
      */
-    public boolean hasRole(Role role) {
+    public boolean hasRole(@NotNull final Role role) {
         return roles.contains(role);
     }
 
@@ -87,7 +87,7 @@ public class ContextRole implements IContextRole {
      * @param permission Zu überprüfende Berechtigung.
      * @return true, wenn die Berechtigung vorhanden ist, sonst false.
      */
-    public boolean hasPermission(Permission permission) {
+    public boolean hasPermission(@NotNull final Permission permission) {
         return roles.stream().anyMatch(role -> role.hasPermission(permission));
     }
 }

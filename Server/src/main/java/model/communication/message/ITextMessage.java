@@ -1,6 +1,8 @@
 package model.communication.message;
 
 import model.MessageBundle;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Ein Interface, welche dem Controller Methoden zur Verwaltung von Textnachrichten bereitstellt. Wird von
@@ -12,17 +14,17 @@ public interface ITextMessage extends IMessage {
      * Gibt den Text der Nachricht zurück.
      * @return Enthaltene Textnachricht.
      */
-    String getTextMessage();
+    @Nullable String getTextMessage();
 
     /**
      * Gibt den Nachrichtentyp der Nachricht zurück.
      * @return Nachrichtentyp der Textnachricht.
      */
-    MessageBundle getMessageBundle();
+    @Nullable MessageBundle getMessageBundle();
 
     /**
      * Gibt den Schlüssel einer übersetzbaren Nachricht und deren Argumente zurück.
      * @return Den Nachrichtenschlüssel wenn die Nachricht einen enthält, sonst null.
      */
-    MessageType getMessageType();
+    @NotNull MessageType getMessageType();
 }

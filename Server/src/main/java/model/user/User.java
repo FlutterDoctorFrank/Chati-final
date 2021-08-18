@@ -1,6 +1,7 @@
 package model.user;
 
 import controller.network.ClientSender;
+import controller.network.ClientSender.SendAction;
 import model.communication.CommunicationHandler;
 import model.context.Context;
 import model.context.ContextID;
@@ -19,8 +20,8 @@ import model.timedEvents.AccountDeletion;
 import model.timedEvents.TimedEventScheduler;
 import model.timedEvents.AbsentUser;
 import model.user.account.UserAccountManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -90,7 +91,7 @@ public class User implements IUser {
      * Erzeugt eine Instanz eines neu registrierten Benutzers.
      * @param username Benutzername des Benutzers.
      */
-    public User(String username) {
+    public User(@NotNull final String username) {
         this.userId = UUID.randomUUID();
         this.username = username;
         this.status = Status.OFFLINE;
@@ -116,11 +117,12 @@ public class User implements IUser {
      * @param avatar Avatar des Benutzers.
      * @param lastLogoutTime Zeitpunkt, an dem sich der Benutzer das letzte mal ausgeloggt hat.
      */
-    public User(UUID userId, String username, Avatar avatar, LocalDateTime lastLogoutTime) {
+    public User(@NotNull final UUID userId, @NotNull final String username, @Nullable final Avatar avatar,
+                @NotNull final LocalDateTime lastLogoutTime) {
         this.userId = userId;
         this.username = username;
         this.status = Status.OFFLINE;
-        this.avatar = avatar;
+        this.avatar = avatar != null ? avatar : DEFAULT_AVATAR;
         this.lastLogoutTime = lastLogoutTime;
         this.lastActivity = LocalDateTime.now();
         this.currentWorld = null;
@@ -136,7 +138,7 @@ public class User implements IUser {
     }
 
     @Override
-    public void joinWorld(ContextID worldId) throws ContextNotFoundException, IllegalWorldActionException {
+    public void joinWorld(@NotNull final ContextID worldId) throws ContextNotFoundException, IllegalWorldActionException {
         throwIfNotOnline();
         updateLastActivity();
         // Überprüfe, ob Benutzer bereits in einer Welt ist.
@@ -166,7 +168,7 @@ public class User implements IUser {
     }
 
     @Override
-    public void move(int posX, int posY) throws IllegalPositionException {
+    public void move(final int posX, final int posY) throws IllegalPositionException {
         throwIfNotOnline();
         throwIfNotInWorld();
         updateLastActivity();
@@ -174,9 +176,8 @@ public class User implements IUser {
         if (!moveable) {
             throw new IllegalStateException("User is not allowed to move.");
         }
-        Room currentRoom = currentLocation.getRoom();
         // Überprüfe, ob die Zielkoordinaten erlaubt sind.
-        if (!currentRoom.isLegal(posX, posY)) {
+        if (!currentLocation.getRoom().isLegal(posX, posY)) {
             throw new IllegalPositionException("Position is illegal.", this, posX, posY);
         }
         // Setze die neue Position des Benutzers.
@@ -184,7 +185,7 @@ public class User implements IUser {
     }
 
     @Override
-    public void chat(String message) throws IllegalStateException {
+    public void chat(@NotNull final String message) throws IllegalStateException {
         throwIfNotOnline();
         throwIfNotInWorld();
         updateLastActivity();
@@ -192,14 +193,15 @@ public class User implements IUser {
     }
 
     @Override
-    public void talk(byte[] voicedata) {
+    public void talk(final byte[] voiceData) {
         throwIfNotOnline();
         throwIfNotInWorld();
-        communicationHandler.handleVoiceMessage(voicedata);
+        communicationHandler.handleVoiceMessage(voiceData);
     }
 
     @Override
-    public void executeAdministrativeAction(UUID targetID, AdministrativeAction administrativeAction, String[] args)
+    public void executeAdministrativeAction(@NotNull final UUID targetID, @NotNull final AdministrativeAction administrativeAction,
+                                            @NotNull final String[] args)
             throws UserNotFoundException, NoPermissionException {
         throwIfNotOnline();
         updateLastActivity();
@@ -208,7 +210,7 @@ public class User implements IUser {
     }
 
     @Override
-    public void interact(ContextID spatialID) throws IllegalInteractionException, ContextNotFoundException {
+    public void interact(@NotNull final ContextID spatialID) throws IllegalInteractionException, ContextNotFoundException {
         throwIfNotOnline();
         throwIfNotInWorld();
         updateLastActivity();
@@ -220,7 +222,7 @@ public class User implements IUser {
         Interactable interactable = currentArea.getInteractable(spatialID);
         // Überprüfe, ob ein Objekt in der Nähe des Benutzers mit dieser ID vorhanden ist und ob der Benutzer mit diesem
         // interagieren kann.
-        if (interactable == null || !interactable.canInteract(this)) {
+        if (!interactable.canInteract(this)) {
             throw new IllegalInteractionException("There is no interactable context with this ID near the user.", this);
         }
         // Interagiere mit dem Objekt.
@@ -228,8 +230,8 @@ public class User implements IUser {
     }
 
     @Override
-    public void executeOption(ContextID spatialID, int menuOption, String[] args) throws IllegalInteractionException,
-            IllegalMenuActionException, ContextNotFoundException {
+    public void executeOption(@NotNull final ContextID spatialID, final int menuOption,
+                              @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException, ContextNotFoundException {
         throwIfNotOnline();
         throwIfNotInWorld();
         updateLastActivity();
@@ -237,11 +239,11 @@ public class User implements IUser {
         Interactable interactable = currentArea.getInteractable(spatialID);
         // Überprüfe, ob ein Objekt in der Nähe des Benutzers mit dieser ID vorhanden ist und ob der Benutzer mit diesem
         // interagieren kann.
-        if (interactable == null || !interactable.canInteract(this)) {
+        if (!interactable.canInteract(this)) {
             throw new IllegalInteractionException("There is no interactable context with this ID near the user.", this);
         }
         // Überprüfe, ob der Benutzer das Menü dieses Objekts geöffnet hat.
-        if (!currentInteractable.equals(interactable)) {
+        if (currentInteractable == null || !currentInteractable.equals(interactable)) {
             throw new IllegalInteractionException("The user has not opened the menu of this context.", this,
                     interactable);
         }
@@ -250,27 +252,25 @@ public class User implements IUser {
     }
 
     @Override
-    public void deleteNotification(UUID notificationID) throws NotificationNotFoundException {
+    public void deleteNotification(@NotNull final UUID notificationID) throws NotificationNotFoundException {
         throwIfNotOnline();
         updateLastActivity();
         Notification notification = notifications.get(notificationID);
         if (notification == null) {
-            throw new NotificationNotFoundException("This user has no notification with this ID.", this,
-                    notificationID);
+            throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationID);
         }
         database.removeNotification(this, notification);
     }
 
     @Override
-    public void manageNotification(UUID notificationID, boolean accept) throws NotificationNotFoundException,
+    public void manageNotification(@NotNull final UUID notificationID, final boolean accept) throws NotificationNotFoundException,
             IllegalNotificationActionException {
         throwIfNotOnline();
         updateLastActivity();
         Notification notification = notifications.get(notificationID);
         // Überprüfe, ob die Benachrichtigung vorhanden ist.
         if (notification == null) {
-            throw new NotificationNotFoundException("This user has no notification with this ID.", this,
-                    notificationID);
+            throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationID);
         }
         // Akzeptiere die Benachrichtigung, oder lehne sie ab.
         if (accept) {
@@ -283,7 +283,7 @@ public class User implements IUser {
     }
 
     @Override
-    public void setAvatar(Avatar avatar) {
+    public void setAvatar(@NotNull final Avatar avatar) {
         throwIfNotOnline();
         updateLastActivity();
         this.avatar = avatar;
@@ -293,51 +293,47 @@ public class User implements IUser {
     }
 
     @Override
-    public UUID getUserId() {
+    public @NotNull UUID getUserId() {
         return userId;
     }
 
     @Override
-    public String getUsername() {
+    public @NotNull String getUsername() {
         return username;
     }
 
     @Override
-    public Status getStatus() {
+    public @NotNull Status getStatus() {
         return status;
     }
 
     @Override
-    public Avatar getAvatar() {
+    public @NotNull Avatar getAvatar() {
         return avatar;
     }
 
     @Override
-    public World getWorld() {
+    public @Nullable World getWorld() {
         return currentWorld;
     }
 
-    public void setWorld(@Nullable final World world) {
-        this.currentWorld = world;
-    }
-
     @Override
-    public Location getLocation() {
+    public @Nullable Location getLocation() {
         return currentLocation;
     }
 
     @Override
-    public Map<UUID, IUser> getFriends() {
+    public @NotNull Map<UUID, IUser> getFriends() {
         return Collections.unmodifiableMap(friends);
     }
 
     @Override
-    public Map<UUID, IUser> getIgnoredUsers() {
+    public @NotNull Map<UUID, IUser> getIgnoredUsers() {
         return Collections.unmodifiableMap(ignoredUsers);
     }
 
     @Override
-    public ContextRole getGlobalRoles() {
+    public @NotNull ContextRole getGlobalRoles() {
         try {
             return contextRoles.values().stream()
                     .filter(contextRole -> contextRole.getContext().equals(GlobalContext.getInstance()))
@@ -348,13 +344,13 @@ public class User implements IUser {
     }
 
     @Override
-    public Map<UUID, INotification> getGlobalNotifications() {
+    public @NotNull Map<UUID, INotification> getGlobalNotifications() {
         return notifications.values().stream()
                 .filter(notification -> notification.getContext().equals(GlobalContext.getInstance()))
                 .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
     }
 
-    public void setPosition(int posX, int posY) {
+    public void setPosition(final int posX, final int posY) {
         Room currentRoom = currentLocation.getRoom();
         Area currentArea = currentLocation.getArea();
         currentLocation.setPosition(posX, posY);
@@ -363,24 +359,28 @@ public class User implements IUser {
         Area newArea = currentLocation.getArea();
         if (!currentArea.equals(newArea)) {
             Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
+
+            if (lastCommonAncestor == null) {
+                throw new IllegalStateException(String.format("No common ancestor for contexts %s and %s", currentArea.getContextId(), newArea.getContextId()));
+            }
+
             lastCommonAncestor.getChildren().values().forEach(child -> child.removeUser(this));
             newArea.addUser(this);
         }
         // Sende die entsprechenden Pakete an diesen Benutzer und an andere Benutzer.
         // ANMERKUNG: Hier muss evtl. der eigene Benutzer herausgefiltert werden, falls dieser nicht das Paket erhalten
         // soll.
-        currentRoom.getUsers().values().forEach(user -> {
-            user.getClientSender().send(ClientSender.SendAction.AVATAR_MOVE, this);
-        });
+        currentRoom.getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
     }
 
     /**
      * Teleportiert einen Benutzer an die angegebene Position.
      * @param newLocation Position, an die Benutzer teleportiert werden soll.
      */
-    public void teleport(Location newLocation) {
+    public void teleport(@NotNull final Location newLocation) {
         if (currentLocation == null || !currentLocation.getRoom().equals(newLocation.getRoom())) {
             currentLocation = newLocation;
+            currentLocation.getArea().addUser(this);
         }
         setPosition(currentLocation.getPosX(), currentLocation.getPosY());
     }
@@ -389,7 +389,7 @@ public class User implements IUser {
      * Wird von der Datenbank verwendet, um die initiale Menge von Freunden hinzuzufügen..
      * @param friends Hinzuzufügende Benutzer.
      */
-    public void addFriends(Map<UUID, User> friends) {
+    public void addFriends(@NotNull final Map<UUID, User> friends) {
         this.friends.putAll(friends);
     }
 
@@ -397,7 +397,7 @@ public class User implements IUser {
      * Wird von der Datenbank verwendet, um die initiale Menge von ignorierten Benutzern hinzuzufügen.
      * @param ignoredUsers Hinzuzufügende Benutzer.
      */
-    public void addIgnoredUsers(Map<UUID, User> ignoredUsers) {
+    public void addIgnoredUsers(@NotNull final Map<UUID, User> ignoredUsers) {
         this.ignoredUsers.putAll(ignoredUsers);
     }
 
@@ -405,7 +405,7 @@ public class User implements IUser {
      * Fügt einen Benutzer in die Liste der Freunde hinzu.
      * @param user Hinzuzufügender Benutzer.
      */
-    public void addFriend(User user) {
+    public void addFriend(@NotNull final User user) {
         friends.put(user.getUserId(), user);
         database.addFriendship(this, user);
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
@@ -416,7 +416,7 @@ public class User implements IUser {
      * Entfernt einen Benutzer aus der Liste der Freunde.
      * @param user Zu entfernender Benutzer.
      */
-    public void removeFriend(User user) {
+    public void removeFriend(@NotNull final User user) {
         friends.remove(user.getUserId());
         database.removeFriendship(this, user);
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
@@ -427,7 +427,7 @@ public class User implements IUser {
      * Fügt einen Benutzer in die Liste der ignorierten Benutzer hinzu.
      * @param user Hinzuzufügender Benutzer.
      */
-    public void ignoreUser(User user) {
+    public void ignoreUser(@NotNull final User user) {
         ignoredUsers.put(user.getUserId(), user);
         database.addIgnoredUser(this, user);
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
@@ -438,7 +438,7 @@ public class User implements IUser {
      * Entfernt einen Benutzer aus der Liste der ignorierten Benutzer.
      * @param user Zu entfernender Benutzer.
      */
-    public void unignoreUser(User user) {
+    public void unignoreUser(@NotNull final User user) {
         ignoredUsers.remove(user.getUserId());
         database.removeIgnoredUser(this, user);
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
@@ -449,7 +449,7 @@ public class User implements IUser {
      * Wird von den Datenbank verwendet, um die initialen Rollen eines Benutzers zu setzen.
      * @param contextRoles Zu setzende Rollen.
      */
-    public void addRoles(Map<Context, ContextRole> contextRoles) {
+    public void addRoles(@NotNull final Map<Context, ContextRole> contextRoles) {
         this.contextRoles.putAll(contextRoles);
     }
 
@@ -459,7 +459,7 @@ public class User implements IUser {
      * @param role Hinzuzufügende Rolle.
      * @see ContextRole
      */
-    public void addRole(Context context, Role role) {
+    public void addRole(@NotNull final Context context, @NotNull final Role role) {
         ContextRole contextRole = contextRoles.get(context);
         if (contextRole == null) {
             contextRole = new ContextRole(this, context, role);
@@ -477,7 +477,7 @@ public class User implements IUser {
      * @param context Kontext, in dem die Rolle entzogen werden soll.
      * @param role Zu entziehende Rolle.
      */
-    public void removeRole(Context context, Role role) {
+    public void removeRole(@NotNull final Context context, @NotNull final Role role) {
         ContextRole contextRole = contextRoles.get(context);
         if (contextRole != null) {
             contextRole.removeRole(role);
@@ -494,7 +494,7 @@ public class User implements IUser {
      * Wird von der Datenbank verwendet, um die initialen Benachrichtigungen eines Benutzers zu setzen.
      * @param notifications Zu setzende Benachrichtigungen.
      */
-    public void addNotifications(Map<UUID, Notification> notifications) {
+    public void addNotifications(@NotNull final Map<UUID, Notification> notifications) {
         this.notifications.putAll(notifications);
     }
 
@@ -502,11 +502,12 @@ public class User implements IUser {
      * Fügt dem Benutzer eine Benachrichtigung hinzu.
      * @param notification Hinzuzufügende Benachrichtigung.
      */
-    public void addNotification(Notification notification) {
+    public void addNotification(@NotNull final Notification notification) {
         notifications.put(notification.getNotificationId(), notification);
         database.addNotification(this, notification);
+
         // Sende Benachrichtigung an Benutzer.
-        clientSender.send(ClientSender.SendAction.NOTIFICATION, notification);
+        this.send(ClientSender.SendAction.NOTIFICATION, notification);
     }
 
     /**
@@ -515,7 +516,7 @@ public class User implements IUser {
      * @param role Zu überprüfende Rolle.
      * @return true, wenn der Benutzer die Rolle in dem Kontext besitzt, sonst false.
      */
-    public boolean hasRole(Context context, Role role) {
+    public boolean hasRole(@NotNull final Context context, @NotNull final Role role) {
         ContextRole contextRole = contextRoles.get(context);
         return contextRole != null && contextRole.hasRole(role);
     }
@@ -526,12 +527,18 @@ public class User implements IUser {
      * @param permission Zu überprüfende Berechtigung.
      * @return true, wenn der Benutzer die Rolle in dem Kontext, oder einem übergeordneten Kontext besitzt, sonst false.
      */
-    public boolean hasPermission(Context context, Permission permission) {
-        if (context == null) {
-            return false;
-        }
+    public boolean hasPermission(@NotNull final Context context, @NotNull final Permission permission) {
         ContextRole contextRole = contextRoles.get(context);
-        return contextRole != null && contextRole.hasPermission(permission) || hasPermission(context.getParent(), permission);
+
+        if (contextRole != null) {
+            if (!contextRole.hasPermission(permission)) {
+                return context.getParent() != null && this.hasPermission(context.getParent(), permission);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -539,7 +546,7 @@ public class User implements IUser {
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn sich der Benutzer in der Freundesliste befindet, sonst false.
      */
-    public boolean isFriend(User user) {
+    public boolean isFriend(@NotNull final User user) {
         return friends.containsKey(user.getUserId());
     }
 
@@ -548,7 +555,7 @@ public class User implements IUser {
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn der Benutzer ignoriert wird, sonst false.
      */
-    public boolean isIgnoring(User user) {
+    public boolean isIgnoring(@NotNull final User user) {
         return ignoredUsers.containsKey(user.getUserId());
     }
 
@@ -557,8 +564,12 @@ public class User implements IUser {
      * @param interactable Zu überprüfender Kontext.
      * @return true, wenn Benutzer mit dem Kontext interagiert, sonst false.
      */
-    public boolean isInteractingWith(Interactable interactable) {
-        return currentInteractable.equals(interactable);
+    public boolean isInteractingWith(@NotNull final Interactable interactable) {
+        return currentInteractable != null && currentInteractable.equals(interactable);
+    }
+
+    public boolean isInteracting() {
+        return this.currentInteractable != null;
     }
 
     /**
@@ -566,7 +577,15 @@ public class User implements IUser {
      * @return true, wenn der Benutzer online ist, sonst false.
      */
     public boolean isOnline() {
-        return !status.equals(Status.OFFLINE);
+        if (this.status != Status.OFFLINE) {
+            if (this.clientSender == null) {
+                throw new IllegalStateException("User is marked as online but is not connected");
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -581,7 +600,7 @@ public class User implements IUser {
      * Setzt das Objekt, mit dem der Benutzer momentan interagiert.
      * @param interactable Objekt, mit dem der Benutzer momentan interagiert.
      */
-    public void setCurrentInteractable(Interactable interactable) {
+    public void setCurrentInteractable(@Nullable final Interactable interactable) {
         this.currentInteractable = interactable;
     }
 
@@ -589,14 +608,14 @@ public class User implements IUser {
      * Ändert den Status eines Benutzers.
      * @param status Neuer Status des Benutzers.
      */
-    public void setStatus(Status status) {
+    public void setStatus(@NotNull final Status status) {
         this.status = status;
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
         updateUserInfo();
     }
 
     /**
-     * Aktualisiert den Zeitpunkt, an dem der Benutzer sich das letzte mal ausgeloggt hat.
+     * Aktualisiert den Zeitpunkt, an dem der Benutzer sich das letzte Mal ausgeloggt hat.
      */
     public void updateLastLogoutTime() {
         setStatus(Status.OFFLINE);
@@ -623,17 +642,8 @@ public class User implements IUser {
      * Setzt die Information, ob der Benutzer sich momentan bewegen darf.
      * @param moveable true, wenn der Benutzer sich bewegen darf, sonst false.
      */
-    public void setMoveable(boolean moveable) {
+    public void setMoveable(final boolean moveable) {
         this.moveable = moveable;
-    }
-
-    /**
-     * Setzt die Instanz des ClientSenders.
-     * @param clientSender Instanz des ClientSenders.
-     */
-    public void setClientSender(ClientSender clientSender) {
-        this.clientSender = clientSender;
-        this.status = Status.ONLINE;
     }
 
     /**
@@ -641,7 +651,7 @@ public class User implements IUser {
      * @return Menge der Rollen des Benutzers in seiner aktuellen Welt und allen untergeordneten Kontexten.
      * @throws IllegalStateException wenn sich der Benutzer in keiner Welt befindet.
      */
-    public Map<Context, ContextRole> getWorldRoles() throws IllegalStateException {
+    public @NotNull Map<Context, ContextRole> getWorldRoles() throws IllegalStateException {
         // Prüfe, ob Benutzer in einer Welt ist.
         if (currentWorld == null) {
             throw new IllegalStateException("User is not in a world.");
@@ -656,7 +666,7 @@ public class User implements IUser {
      * @param contextRoles Menge von Rollen in Kontexten.
      * @param context Kontext, von dem die Rollen der untergeordneten Kontexte hinzugefügt werden sollen.
      */
-    private void addChildRoles(Map<Context, ContextRole> contextRoles, Context context) {
+    private void addChildRoles(@NotNull final Map<Context, ContextRole> contextRoles, @NotNull final Context context) {
         Map<Context, ContextRole> found = this.contextRoles.values().stream()
                 .filter(contextRole -> contextRole.getContext().equals(context))
                 .collect(Collectors.toMap(ContextRole::getContext, Function.identity()));
@@ -669,7 +679,7 @@ public class User implements IUser {
      * @return Menge der Benachrichtigungen des Benutzers in seiner aktuellen Welt.
      * @throws IllegalStateException wenn sich der Benutzer in keiner Welt befindet.
      */
-    public Map<UUID, INotification> getWorldNotifications() throws IllegalStateException {
+    public @NotNull Map<UUID, INotification> getWorldNotifications() throws IllegalStateException {
         // Prüfe, ob Benutzer in einer Welt ist.
         if (currentWorld == null) {
             throw new IllegalStateException("User is not in a world.");
@@ -683,7 +693,7 @@ public class User implements IUser {
      * Gibt das Menü zurück, dass der Benutzer gerade geöffnet hat.
      * @return Interaktionsobjekt, mit dem der Benutzer gerade interagiert.
      */
-    public Menu getCurrentMenu() {
+    public @Nullable Menu getCurrentMenu() {
         return currentInteractable == null ? null : currentInteractable.getMenu();
     }
 
@@ -691,7 +701,7 @@ public class User implements IUser {
      * Gibt den Zeitpunkt zurück, an dem sich der Benutzer das letzte mal abgemeldet hat.
      * @return Letzter Zeitpunkt, an dem der Benutzer sich abgemeldet hat.
      */
-    public LocalDateTime getLastLogoutTime() {
+    public @NotNull LocalDateTime getLastLogoutTime() {
         return lastLogoutTime;
     }
 
@@ -699,44 +709,40 @@ public class User implements IUser {
      * Gibt den Zeitpunkt zurück, an dem der Benutzer seine letzte Aktivität gezeigt hat.
      * @return Letzter Zeitpunkt, an dem der Benutzer eine Aktivität gezeigt hat.
      */
-    public LocalDateTime getLastActivity() {
+    public @NotNull LocalDateTime getLastActivity() {
         return lastActivity;
-    }
-
-    /**
-     * Gibt den ClientSender des Benutzers zurück.
-     * @return ClientSender.
-     */
-    public ClientSender getClientSender() {
-        return clientSender;
     }
 
     /**
      * Sendet Pakete an alle relevanten Benutzer mit der aktualisierten Benutzerinformation.
      */
     public void updateUserInfo() {
-        Map<UUID, User> receivers = friends;
-        receivers.put(userId, this);
+        final Map<UUID, User> receivers = new HashMap<>(friends);
+
         if (currentWorld != null) {
             receivers.putAll(currentWorld.getUsers());
         }
-        receivers.values().stream().filter(User::isOnline).forEach(user -> {
-            user.getClientSender().send(ClientSender.SendAction.USER_INFO, this);
-        });
+
+        receivers.put(userId, this);
+        receivers.values().stream()
+                .filter(User::isOnline)
+                .forEach(user -> user.send(SendAction.USER_INFO, this));
     }
 
     /**
      * Sendet Pakete an alle relevanten Benutzer mit der aktualisierten Rolleninformation.
      */
-    public void updateRoleInfo(ContextRole contextRole) {
-        Map<UUID, User> receivers = friends;
-        receivers.put(userId, this);
+    public void updateRoleInfo(@NotNull final ContextRole contextRole) {
+        final Map<UUID, User> receivers = new HashMap<>(friends);
+
         if (currentWorld != null) {
             receivers.putAll(currentWorld.getUsers());
         }
-        receivers.values().stream().filter(User::isOnline).forEach(user -> {
-            user.getClientSender().send(ClientSender.SendAction.CONTEXT_ROLE, contextRole);
-        });
+
+        receivers.put(userId, this);
+        receivers.values().stream()
+                .filter(User::isOnline)
+                .forEach(user -> user.send(SendAction.CONTEXT_ROLE, contextRole));
     }
 
     /**
@@ -758,15 +764,56 @@ public class User implements IUser {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+    public boolean equals(@Nullable final Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+
+        final User user = (User) object;
+
         return userId.equals(user.userId);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(userId);
+    }
+
+    public void login(@NotNull final ClientSender sender) {
+        if (this.isOnline()) {
+            throw new IllegalStateException("User is already logged in");
+        }
+
+        this.clientSender = sender;
+        this.status = Status.ONLINE;
+
+        updateLastActivity();
+    }
+
+    public void logout() {
+        if (!this.isOnline()) {
+            throw new IllegalStateException("User is not logged in");
+        }
+
+        this.clientSender = null;
+        this.status = Status.OFFLINE;
+
+        if (this.currentWorld != null) {
+            final World world = this.currentWorld;
+            this.currentWorld = null;
+            world.removeUser(this);
+        }
+
+        updateLastLogoutTime();
+    }
+
+    public void send(@NotNull final SendAction action, @NotNull final Object object) {
+        if (this.isOnline()) {
+            this.clientSender.send(action, object);
+        }
     }
 }

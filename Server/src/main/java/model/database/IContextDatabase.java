@@ -5,17 +5,25 @@ import model.context.ContextID;
 import model.context.spatial.AreaReservation;
 import model.context.spatial.World;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public interface IContextDatabase {
-    void addWorld(World world);
-    void removeWorld(World world);
-    World getWorld(ContextID worldID);
-    Map<ContextID, World> getWorlds();
 
-    void addBannedUser(User user, Context world);
-    void removeBannedUser(User user, Context world);
-    void addAreaReservation(AreaReservation areaReservation);
-    void removeAreaReservation(AreaReservation areaReservation);
+    void addWorld(@NotNull final World world);
+
+    void removeWorld(@NotNull final World world);
+
+    @Nullable World getWorld(@NotNull final ContextID worldID);
+
+    @NotNull Map<ContextID, World> getWorlds();
+
+    void addBannedUser(@NotNull final User user, @NotNull final Context world);
+
+    void removeBannedUser(@NotNull final User user, @NotNull final Context world);
+
+    void addAreaReservation(@NotNull final AreaReservation areaReservation);
+
+    void removeAreaReservation(@NotNull final AreaReservation areaReservation);
 }

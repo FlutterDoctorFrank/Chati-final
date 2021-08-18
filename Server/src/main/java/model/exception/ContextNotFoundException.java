@@ -1,21 +1,24 @@
 package model.exception;
 
 import model.context.ContextID;
+import org.jetbrains.annotations.NotNull;
 
 public class ContextNotFoundException extends Exception {
+
     private final ContextID contextID;
 
-    public ContextNotFoundException(String errorMessage, ContextID contextID) {
+    public ContextNotFoundException(@NotNull final String errorMessage, @NotNull final ContextID contextID) {
         super(errorMessage);
         this.contextID = contextID;
     }
 
-    public ContextNotFoundException(String errorMessage, ContextID contextID, Throwable cause) {
+    public ContextNotFoundException(@NotNull final String errorMessage, @NotNull final ContextID contextID,
+                                    @NotNull final Throwable cause) {
         super(errorMessage, cause);
         this.contextID = contextID;
     }
 
-    public ContextID getContextID() {
+    public @NotNull ContextID getContextID() {
         return contextID;
     }
 }

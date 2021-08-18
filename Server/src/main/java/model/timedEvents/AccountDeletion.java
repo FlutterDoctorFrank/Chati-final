@@ -3,14 +3,14 @@ package model.timedEvents;
 import model.exception.UserNotFoundException;
 import model.user.User;
 import model.user.account.UserAccountManager;
-
+import org.jetbrains.annotations.NotNull;
 import java.time.temporal.ChronoUnit;
 
 public class AccountDeletion extends TimedEvent {
 
     private final User user;
 
-    public AccountDeletion(User user) {
+    public AccountDeletion(@NotNull final User user) {
         super(user.getLastLogoutTime().plus(UserAccountManager.ACCOUNT_DELETION_TIME, ChronoUnit.MONTHS));
         this.user = user;
     }

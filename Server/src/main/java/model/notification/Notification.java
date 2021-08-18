@@ -4,7 +4,8 @@ import model.MessageBundle;
 import model.context.Context;
 import model.exception.IllegalNotificationActionException;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -38,7 +39,8 @@ public class Notification implements INotification {
      * @param owningContext Der Kontext, in dem der Eigentümer diese Benachrichtigung besitzt.
      * @param messageBundle Die übersetzbare Nachricht der Benachrichtigung zusammen mit deren Argumenten.
      */
-    public Notification(User owner, Context owningContext, MessageBundle messageBundle) {
+    public Notification(@NotNull final User owner, @NotNull final Context owningContext,
+                        @NotNull final MessageBundle messageBundle) {
         this.notificationId = UUID.randomUUID();
         this.notificationType = NotificationType.NOTIFICATION;
         this.owner = owner;
@@ -54,7 +56,8 @@ public class Notification implements INotification {
      * @param owningContext Der Kontext, in dem der Eigentümer diese Benachrichtigung besitzt.
      * @param messageBundle Die übersetzbare Nachricht der Benachrichtigung zusammen mit deren Argumenten.
      */
-    protected Notification(NotificationType type, User owner, Context owningContext, MessageBundle messageBundle) {
+    protected Notification(@NotNull final NotificationType type, @NotNull final User owner,
+                           @NotNull final Context owningContext, @NotNull final MessageBundle messageBundle) {
         this.notificationId = UUID.randomUUID();
         this.notificationType = type;
         this.owner = owner;
@@ -64,23 +67,28 @@ public class Notification implements INotification {
     }
 
     @Override
-    public UUID getNotificationId() {
+    public @NotNull UUID getNotificationId() {
         return notificationId;
     }
 
     @Override
-    public Context getContext() {
+    public @NotNull Context getContext() {
         return owningContext;
     }
 
     @Override
-    public MessageBundle getMessageBundle() {
+    public @NotNull MessageBundle getMessageBundle() {
         return messageBundle;
     }
 
     @Override
-    public LocalDateTime getTimestamp() {
+    public @NotNull LocalDateTime getTimestamp() {
         return timestamp;
+    }
+
+    @Override
+    public @NotNull NotificationType getNotificationType() {
+        return notificationType;
     }
 
     /**
@@ -102,16 +110,18 @@ public class Notification implements INotification {
     }
 
     @Override
-    public NotificationType getNotificationType() {
-        return notificationType;
-    }
+    public boolean equals(@Nullable final Object object) {
+        if (this == object) {
+            return true;
+        }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Notification that = (Notification) o;
-        return notificationId.equals(that.notificationId) && owner.equals(that.owner);
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+
+        Notification notification = (Notification) object;
+
+        return notificationId.equals(notification.notificationId) && owner.equals(notification.owner);
     }
 
     @Override

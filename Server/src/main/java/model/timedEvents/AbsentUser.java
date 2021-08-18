@@ -2,7 +2,7 @@ package model.timedEvents;
 
 import model.user.Status;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -18,7 +18,7 @@ public class AbsentUser extends TimedEvent {
      * Erzeugt eine neue Instanz des TimedEvent.
      * @param user Benutzer, dem der Status zugewiesen werden soll.
      */
-    public AbsentUser(User user) {
+    public AbsentUser(@NotNull final User user) {
         super(user.getLastActivity().plus(Status.AWAY_TIME, ChronoUnit.MINUTES));
         this.user = user;
     }

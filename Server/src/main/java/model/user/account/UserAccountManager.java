@@ -8,9 +8,9 @@ import model.database.IUserAccountManagerDatabase;
 import model.exception.IllegalAccountActionException;
 import model.exception.UserNotFoundException;
 import model.role.Permission;
-import model.user.Status;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -47,12 +47,17 @@ public class UserAccountManager implements IUserAccountManager {
      */
     private UserAccountManager() {
         database = Database.getUserAccountManagerDatabase();
-        registeredUsers = database.getUsers();
+        registeredUsers = new HashMap<>();
+    }
+
+    public void load() {
+        this.registeredUsers.clear();
+        this.registeredUsers.putAll(this.database.getUsers());
     }
 
     @Override
-    public void registerUser(String username, String password) throws IllegalAccountActionException {
-        // Überprüfe, ob der übergeben Benutzername dem vorgegebenen Format entspricht.
+    public void registerUser(@NotNull final String username, @NotNull final String password) throws IllegalAccountActionException {
+        // Überprüfe, ob der übergebene Benutzername dem vorgegebenen Format entspricht.
         if (!username.matches(USERNAME_FORMAT))  {
             throw new IllegalAccountActionException("errorMsg console", "Der Benutzername hat ein falsches Format. - key");
         }
@@ -66,12 +71,17 @@ public class UserAccountManager implements IUserAccountManager {
         }
         // Erzeuge Benutzer und füge ihn zu den registrierten Benutzern hinzu.
         User createdUser = database.createAccount(username, password);
+
+        if (createdUser == null) {
+            throw new IllegalAccountActionException("errorMsg console", "Das Benutzerkonto konnte nicht erstellt werden");
+        }
         //User createdUser = new User(username);
         registeredUsers.put(createdUser.getUserId(), createdUser);
     }
 
     @Override
-    public User loginUser(String username, String password, ClientSender sender) throws IllegalAccountActionException {
+    public @NotNull User loginUser(@NotNull final String username, @NotNull final String password,
+                                   @NotNull final ClientSender sender) throws IllegalAccountActionException {
         User user;
         // Überprüfe, ob ein Benutzer mit dem übergebenen Benutzernamen existiert.
         try {
@@ -88,27 +98,26 @@ public class UserAccountManager implements IUserAccountManager {
             throw new IllegalAccountActionException("", "Das Konto ist bereits verbunden.");
         }
         // Melde den Benutzer an.
-        user.setClientSender(sender);
-        user.updateLastActivity();
+        user.login(sender);
         GlobalContext.getInstance().addUser(user);
         return user;
     }
 
     @Override
-    public void logoutUser(UUID userId) throws UserNotFoundException {
+    public void logoutUser(@NotNull final UUID userId) throws UserNotFoundException {
         User user = getUser(userId);
         // Überprüfe, ob der Benutzer angemeldet ist.
         if (!user.isOnline()) {
             return;
         }
         // Melde den Benutzer ab.
+        user.logout();
         GlobalContext.getInstance().removeUser(user);
-        user.updateLastLogoutTime();
         database.updateLastOnlineTime(user);
     }
 
     @Override
-    public void deleteUser(UUID userId, String password) throws UserNotFoundException, IllegalAccountActionException {
+    public void deleteUser(@NotNull final UUID userId, @NotNull final String password) throws UserNotFoundException, IllegalAccountActionException {
         User user = getUser(userId);
         // Überprüfe, ob das aktuelle Passwort korrekt übergeben wurde.
         if (!database.checkPassword(user.getUsername(), password)) {
@@ -119,7 +128,8 @@ public class UserAccountManager implements IUserAccountManager {
     }
 
     @Override
-    public void changePassword(UUID userId, String password, String newPassword) throws UserNotFoundException,
+    public void changePassword(@NotNull final UUID userId, @NotNull final String password,
+                               @NotNull final String newPassword) throws UserNotFoundException,
             IllegalAccountActionException {
         User user = getUser(userId);
         user.updateLastActivity();
@@ -139,7 +149,7 @@ public class UserAccountManager implements IUserAccountManager {
      * Erzeugt eine Instanz der Klasse, falls diese noch nicht existiert und gibt diese zurück.
      * @return Die Instanz des UserAccountManager.
      */
-    public static UserAccountManager getInstance() {
+    public static @NotNull UserAccountManager getInstance() {
         if (userAccountManager == null) {
             userAccountManager = new UserAccountManager();
         }
@@ -151,7 +161,7 @@ public class UserAccountManager implements IUserAccountManager {
      * @param userId Die ID des Benutzers.
      * @return true, wenn der Benutzer existiert, sonst false.
      */
-    public boolean isRegistered(UUID userId) {
+    public boolean isRegistered(@NotNull final UUID userId) {
         return registeredUsers.containsKey(userId);
     }
 
@@ -160,7 +170,7 @@ public class UserAccountManager implements IUserAccountManager {
      * @param username Der Benutzername des Benutzers.
      * @return true, wenn der Benutzer existiert, sonst false.
      */
-    public boolean isRegistered(String username) {
+    public boolean isRegistered(@NotNull final String username) {
         return registeredUsers.values().stream()
                 .anyMatch(user -> user.getUsername().equals(username));
     }
@@ -171,7 +181,7 @@ public class UserAccountManager implements IUserAccountManager {
      * @return Benutzer.
      * @throws UserNotFoundException: wenn kein Benutzer mit der ID existiert.
      */
-    public User getUser(UUID userId) throws UserNotFoundException {
+    public @NotNull User getUser(@NotNull final UUID userId) throws UserNotFoundException {
         User user = registeredUsers.get(userId);
         if (user == null) {
             throw new UserNotFoundException("User does not exist.", userId);
@@ -185,7 +195,7 @@ public class UserAccountManager implements IUserAccountManager {
      * @return Benutzer.
      * @throws UserNotFoundException: wenn kein Benutzer mit dem Benutzernamen existiert.
      */
-    public User getUser(String username) throws UserNotFoundException {
+    public @NotNull User getUser(@NotNull final String username) throws UserNotFoundException {
         try {
             return registeredUsers.values().stream()
                     .filter(user -> user.getUsername().equals(username))
@@ -202,7 +212,8 @@ public class UserAccountManager implements IUserAccountManager {
      * @param permission Berechtigung, die ein Benutzer besitzt.
      * @return Menge aller Benutzer mit der Berechtigung in dem Kontext.
      */
-    public Map<UUID, User> getUsersWithPermission(Context context, Permission permission) {
+    public @NotNull Map<UUID, User> getUsersWithPermission(@NotNull final Context context,
+                                                           @NotNull final Permission permission) {
         return registeredUsers.values().stream()
                 .filter(user -> user.hasPermission(context, permission))
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
@@ -213,7 +224,7 @@ public class UserAccountManager implements IUserAccountManager {
      * @param user Zu löschender Benutzer.
      * @throws UserNotFoundException wenn der Benutzer nicht existiert.
      */
-    public void deleteUser(User user) throws UserNotFoundException {
+    public void deleteUser(@NotNull final User user) throws UserNotFoundException {
         logoutUser(user.getUserId());
         registeredUsers.remove(user.getUserId());
         database.deleteAccount(user);

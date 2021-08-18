@@ -1,6 +1,5 @@
 package model.database;
 
-import com.badlogic.gdx.utils.SortedIntList;
 import model.MessageBundle;
 import model.context.Context;
 import model.context.ContextID;
@@ -8,24 +7,21 @@ import model.context.global.GlobalContext;
 import model.context.spatial.AreaReservation;
 import model.context.spatial.SpatialMap;
 import model.context.spatial.World;
-import model.notification.AreaManagingRequest;
 import model.notification.Notification;
-import model.notification.NotificationType;
-import model.notification.RoomRequest;
 import model.role.ContextRole;
 import model.role.Role;
 import model.user.Avatar;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.sql.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-
 public class Database implements IUserAccountManagerDatabase, IUserDatabase, IContextDatabase {
+
     private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
     private static Database database;
 
@@ -51,7 +47,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
 
     @Override
-    public void addWorld(World world) {
+    public void addWorld(@NotNull final World world) {
 
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -69,7 +65,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void removeWorld(World world) {
+    public void removeWorld(@NotNull final World world) {
 
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -86,8 +82,10 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public World getWorld(ContextID worldID) {
-        try{
+    public @Nullable World getWorld(@NotNull final ContextID worldID) {
+        World world = null;
+
+        try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -105,10 +103,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 String map_name = res.getString("MAP_NAME");
                 SpatialMap world_map = SpatialMap.valueOf(map_name);
 
-                World world = new World(world_name, world_map);
-
-                return world;
-
+                world = new World(world_name, world_map);
             } else {
                 System.out.println("world mehr als 1 or not exist");
             }
@@ -116,18 +111,18 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             st.close();
             con.commit();
             con.close();
-        } catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Fehler in getWorld: " + e);
-
         }
-        return null;
+
+        return world;
     }
 
     @Override
-    public Map<ContextID, World> getWorlds() {
+    public @NotNull Map<ContextID, World> getWorlds() {
+        Map<ContextID, World> worlds = new HashMap<>();
 
-        Map<ContextID, World> worlds = new HashMap<ContextID, World>();
-        try{
+        try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -148,10 +143,10 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             st.close();
             con.commit();
             con.close();
-        } catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Fehler in getWorlds: " + e);
-
         }
+
         return worlds;
     }
 
@@ -160,7 +155,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     // Ja, das muss hier passieren in dieser Klasse. Wir schicken das Passwort ja in Reinform, und sollen es nur als
     // Hash und Salt speichern. Das können wir dann zusammen überlegen, raoul
     @Override
-    public User createAccount(String username, String password) {
+    public @Nullable User createAccount(@NotNull final String username, @NotNull final String password) {
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
@@ -197,11 +192,14 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         } catch (Exception e) {
             System.out.print("Fehler in Database-createAccount: " + e);
         }
+
         return null;
     }
 
     @Override
-    public boolean checkPassword(String username, String password) {
+    public boolean checkPassword(@NotNull final String username, @NotNull final String password) {
+        boolean result = false;
+
         try{
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -216,8 +214,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 res.first();
 
                 String realPassword = res.getString("USER_PSW");
-                boolean result =  realPassword.equals(password);
-                return result;
+                result = realPassword.equals(password);
             } else {
                 System.out.println("User nicht existiert");
             }
@@ -229,11 +226,12 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             System.out.println("Fehler in Database-checkPassword: " + e);
 
         }
-        return false;
+
+        return result;
 
     }
     @Override
-    public void setPassword(User user, String newPassword) {
+    public void setPassword(@NotNull final User user, @NotNull final String newPassword) {
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
@@ -248,7 +246,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void changeAvatar(User user, Avatar avatar) {
+    public void changeAvatar(@NotNull final User user, @NotNull final Avatar avatar) {
 
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -263,7 +261,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void updateLastOnlineTime(User user) {
+    public void updateLastOnlineTime(@NotNull final User user) {
 
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -281,7 +279,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void deleteAccount(User user) {
+    public void deleteAccount(@NotNull final User user) {
 
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -298,7 +296,9 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public User getUser(UUID userID) {
+    public @Nullable User getUser(@NotNull final UUID userID) {
+        User user = null;
+
         try{
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
@@ -327,7 +327,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 }
 
                 //noch ohne ContextRole, Freundesliste, ignoredUser, Notifikationen
-                User user = new User(userID, user_name, user_avatar, localDateTime);
+                user = new User(userID, user_name, user_avatar, localDateTime);
 
                 //Context_Role
                 ResultSet res_cr = st.executeQuery("SELECT * FROM ROLE_WITH_CONTEXT WHERE USER_ID = " + "'" +
@@ -482,9 +482,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                     }
                 }
                 user.addNotifications(notifications);
-
-                return user;
-
             } else {
                 System.out.println("mehr als 1 or not exist");
             }
@@ -492,16 +489,18 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             st.close();
             con.commit();
             con.close();
-        } catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Fehler in Database-getUser(userID): " +e);
 
         }
-        return null;
+        return user;
     }
 
     @Override
-    public User getUser(String username) {
-        try{
+    public @Nullable User getUser(@NotNull final String username) {
+        User user = null;
+
+        try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -531,7 +530,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
 
                 //noch ohne ContextRole, Freundesliste, ignoredUser, Notifikationen
-                User user = new User(UUID.fromString(user_id), username, user_avatar, localDateTime);
+                user = new User(UUID.fromString(user_id), username, user_avatar, localDateTime);
 
                 //Context_Role
                 ResultSet res_cr = st.executeQuery("SELECT * FROM ROLE_WITH_CONTEXT WHERE USER_ID = " + "'" +
@@ -648,9 +647,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                     }
                 }
                 user.addIgnoredUsers(ignores);
-
-                return user;
-
             } else if (row == 0){
                 System.out.println("User not exist");
             } else {
@@ -661,18 +657,19 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             //con.commit();
             con.close();
 
-        } catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Fehler in Database-getUser(username): " + e);
 
         }
-        return null;
+
+        return user;
     }
 
     //alle
     @Override
-    public Map<UUID, User> getUsers() {
-        Map<UUID, User> users = new HashMap<UUID, User>();
-        try{
+    public @NotNull Map<UUID, User> getUsers() {
+        Map<UUID, User> users = new HashMap<>();
+        try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -827,16 +824,15 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             st.close();
             con.commit();
             con.close();
-        } catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Fehler in getUsers: " + e);
-
         }
+
         return users;
     }
 
     @Override
-    public void addFriendship(User first, User second) {
-
+    public void addFriendship(@NotNull final User first, @NotNull final User second) {
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
@@ -852,7 +848,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void removeFriendship(User first, User second) {
+    public void removeFriendship(@NotNull final User first, @NotNull final User second) {
 
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -870,7 +866,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void addIgnoredUser(User ignoringUser, User ignoredUser) {
+    public void addIgnoredUser(@NotNull final User ignoringUser, @NotNull final User ignoredUser) {
 
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -890,7 +886,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void removeIgnoredUser(User ignoringUser, User ignoredUser) {
+    public void removeIgnoredUser(@NotNull final User ignoringUser, @NotNull final User ignoredUser) {
 
 
         try {
@@ -910,7 +906,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void addRole(User user, Context context, Role role) {
+    public void addRole(@NotNull final User user, @NotNull final Context context, @NotNull final Role role) {
 
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -930,7 +926,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void removeRole(User user, Context context, Role role) {
+    public void removeRole(@NotNull final User user, @NotNull final Context context, @NotNull final Role role) {
 
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -948,7 +944,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void addNotification(User user, Notification notification) {
+    public void addNotification(@NotNull final User user, @NotNull final Notification notification) {
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
@@ -996,7 +992,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void removeNotification(User user, Notification notification) {
+    public void removeNotification(@NotNull final User user, @NotNull final Notification notification) {
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
@@ -1010,7 +1006,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void addBannedUser(User user, Context world) {
+    public void addBannedUser(@NotNull final User user, @NotNull final Context world) {
 
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
@@ -1028,7 +1024,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void removeBannedUser(User user, Context world) {
+    public void removeBannedUser(@NotNull final User user, @NotNull final Context world) {
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
@@ -1044,7 +1040,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void addAreaReservation(AreaReservation contextReservation) {
+    public void addAreaReservation(@NotNull final AreaReservation contextReservation) {
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
@@ -1063,7 +1059,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
-    public void removeAreaReservation(AreaReservation contextReservation) {
+    public void removeAreaReservation(@NotNull final AreaReservation contextReservation) {
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
@@ -1155,7 +1151,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         // TODO
     }
 
-    private void dropTable(String tableName){
+    private void dropTable(@NotNull final String tableName){
         try {
             Connection con = DriverManager.getConnection(dbURL);
             Statement st = con.createStatement();
@@ -1167,22 +1163,22 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         }
     }
 
-    private static Database getInstance() {
+    private static @NotNull Database getInstance() {
         if (database == null) {
             database = new Database();
         }
         return database;
     }
 
-    public static IUserAccountManagerDatabase getUserAccountManagerDatabase() {
+    public static @NotNull IUserAccountManagerDatabase getUserAccountManagerDatabase() {
         return getInstance();
     }
 
-    public static IUserDatabase getUserDatabase() {
+    public static @NotNull IUserDatabase getUserDatabase() {
         return getInstance();
     }
 
-    public static IContextDatabase getContextDatabase() {
+    public static @NotNull IContextDatabase getContextDatabase() {
         return getInstance();
     }
 }

@@ -1,5 +1,7 @@
 package model.context.spatial;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Repräsentiert die räumliche Ausdehnung eines Kontextes.
  */
@@ -20,7 +22,7 @@ public class Expanse {
      * @param width Breite des Kontextes.
      * @param height Höhe des Kontextes.
      */
-    public Expanse(Location bottomLeft, int width, int height) {
+    public Expanse(@NotNull final Location bottomLeft, final int width, final int height) {
         this.bottomLeft = bottomLeft;
         this.width = width;
         this.height = height;
@@ -32,7 +34,7 @@ public class Expanse {
      * @param posY Zu überprüfende Y-Koordinate.
      * @return true, wenn sich die Koordinaten in der Ausdehnung befinden, sonst false.
      */
-    public boolean isIn(int posX, int posY) {
+    public boolean isIn(final int posX, final int posY) {
         return isAround(posX, posY, 0);
     }
 
@@ -43,7 +45,7 @@ public class Expanse {
      * @param distance Maximale Distanz.
      * @return true, wenn die Koordinaten die maximale Distanz zur Ausdehnung haben, sonst false.
      */
-    public boolean isAround(int posX, int posY, int distance) {
+    public boolean isAround(final int posX, final int posY, final int distance) {
         return bottomLeft.getPosX() - distance <= posX && posX <= bottomLeft.getPosX() + distance + width
             && bottomLeft.getPosY() - distance <= posY && posY <= bottomLeft.getPosY() + distance + height;
     }
@@ -52,7 +54,7 @@ public class Expanse {
      * Gibt die Position der linken unteren Ecke des Kontextes zurück.
      * @return Position der linken unteren Ecke des Kontextes.
      */
-    public Location getBottomLeft() {
+    public @NotNull Location getBottomLeft() {
         return bottomLeft;
     }
 }

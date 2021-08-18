@@ -1,5 +1,7 @@
 package model.context.spatial;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Ein Interface, welches dem Controller Methoden zur Verwaltung von Position bereitstellt. Wird von {@link Location}
  * implementiert.
@@ -22,11 +24,11 @@ public interface ILocation {
      * Gibt den räumlichen Kontext dieser Position zurück.
      * @return Raum der Position.
      */
-    IRoom getRoom();
+    @NotNull IRoom getRoom();
 
     /**
      * Gibt den innersten Bereich der Position im räumlichen Kontext zurück.
      * @return Innerster Bereich der Position.
      */
-    IArea getArea();
+    @NotNull IArea getArea();
 }

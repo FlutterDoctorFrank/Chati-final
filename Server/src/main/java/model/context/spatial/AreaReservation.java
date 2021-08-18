@@ -1,7 +1,7 @@
 package model.context.spatial;
 
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -28,7 +28,8 @@ public class AreaReservation {
      * @param from Anfangszeitpunkt der Reservierung.
      * @param to Endzeitpunkt der Reservierung.
      */
-    public AreaReservation(User reserver, Area area, LocalDateTime from, LocalDateTime to) {
+    public AreaReservation(@NotNull final User reserver, @NotNull final Area area,
+                           @NotNull final LocalDateTime from, @NotNull final LocalDateTime to) {
         this.reserver = reserver;
         this.area = area;
         this.from = from;
@@ -39,7 +40,7 @@ public class AreaReservation {
      * Gibt den reservierenden Benutzer zurück.
      * @return Reservierender Benutzer.
      */
-    public User getReserver() {
+    public @NotNull User getReserver() {
         return reserver;
     }
 
@@ -47,7 +48,7 @@ public class AreaReservation {
      * Gibt den reservierten Bereich zurück.
      * @return Reservierter Bereich.
      */
-    public Area getArea() {
+    public @NotNull Area getArea() {
         return area;
     }
 
@@ -55,7 +56,7 @@ public class AreaReservation {
      * Gibt den Anfangszeitpunkt der Reservierung zurück.
      * @return Anfangszeitpunkt der Reservierung.
      */
-    public LocalDateTime getFrom() {
+    public @NotNull LocalDateTime getFrom() {
         return from;
     }
 
@@ -63,7 +64,7 @@ public class AreaReservation {
      * Gibt den Endzeitpunkt der Reservierung zurück.
      * @return Endzeitpunkt der Reservierung.
      */
-    public LocalDateTime getTo() {
+    public @NotNull LocalDateTime getTo() {
         return to;
     }
 }

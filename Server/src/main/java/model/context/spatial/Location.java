@@ -1,5 +1,7 @@
 package model.context.spatial;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /**
@@ -22,7 +24,7 @@ public class Location implements ILocation {
      * @param posX Die X-Koordinate der Position.
      * @param posY Die Y-Koordinate der Position.
      */
-    public Location(Room room, int posX, int posY) {
+    public Location(@NotNull final Room room, final int posX, final int posY) {
         this.room = room;
         setPosition(posX, posY);
     }
@@ -38,12 +40,12 @@ public class Location implements ILocation {
     }
 
     @Override
-    public Room getRoom() {
+    public @NotNull Room getRoom() {
         return room;
     }
 
     @Override
-    public Area getArea() {
+    public @NotNull Area getArea() {
         return room.getArea(posX, posY);
     }
 
@@ -52,7 +54,7 @@ public class Location implements ILocation {
      * @param posX Zu setzende X-Koordinate.
      * @param posY Zu setzende Y-Koordinate.
      */
-    public void setPosition(int posX, int posY) {
+    public void setPosition(final int posX, final int posY) {
         this.posX = posX;
         this.posY = posY;
     }
@@ -63,7 +65,7 @@ public class Location implements ILocation {
      * @return Distanz zur anderen Position.
      */
 
-    public int distance(Location location) {
+    public int distance(@NotNull final Location location) {
         // Sollte niemals eintreffen.
         if (!room.equals(location.getRoom())) {
             throw new IllegalArgumentException("Location is in a different room.");
@@ -72,10 +74,16 @@ public class Location implements ILocation {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Location location = (Location) o;
+    public boolean equals(@Nullable final Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+
+        final Location location = (Location) object;
         return posX == location.posX && posY == location.posY && room.equals(location.room);
     }
 

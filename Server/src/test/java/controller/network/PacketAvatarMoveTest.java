@@ -26,6 +26,15 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         this.getPacket(SendAction.AVATAR_REMOVE, PacketAvatarMove.class, new Object());
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void illegalUserPackagingTest() {
+        final IUser user = Mockito.mock(IUser.class);
+
+        Mockito.when(user.getLocation()).thenReturn(null);
+
+        this.getPacket(SendAction.AVATAR_MOVE, PacketAvatarMove.class, user);
+    }
+
     @Test
     public void spawnPackagingTest() {
         final IUser target = Mockito.mock(IUser.class);

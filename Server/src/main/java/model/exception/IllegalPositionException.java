@@ -1,27 +1,30 @@
 package model.exception;
 
 import model.user.User;
+import org.jetbrains.annotations.NotNull;
 
 public class IllegalPositionException extends Exception {
     private final User user;
     private final int posX;
     private final int posY;
 
-    public IllegalPositionException(String errorMessage, User user, int posX, int posY) {
+    public IllegalPositionException(@NotNull final String errorMessage, @NotNull final User user,
+                                    final int posX, final int posY) {
         super(errorMessage);
         this.user = user;
         this.posX = posX;
         this.posY = posY;
     }
 
-    public IllegalPositionException(String errorMessage, User user, int posX, int posY, Throwable cause) {
+    public IllegalPositionException(@NotNull final String errorMessage, @NotNull final User user,
+                                    final int posX, final int posY, @NotNull final Throwable cause) {
         super(errorMessage, cause);
         this.user = user;
         this.posX = posX;
         this.posY = posY;
     }
 
-    public User getUser() {
+    public @NotNull User getUser() {
         return user;
     }
 

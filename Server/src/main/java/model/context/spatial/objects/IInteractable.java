@@ -2,6 +2,7 @@ package model.context.spatial.objects;
 
 import model.context.spatial.IArea;
 import model.context.spatial.Menu;
+import org.jetbrains.annotations.NotNull;
 
 public interface IInteractable extends IArea {
 
@@ -9,5 +10,5 @@ public interface IInteractable extends IArea {
      * Gibt das Menü dieses Interaktionsobjekts zurück.
      * @return Menü dieses Interaktionsobjekts.
      */
-    Menu getMenu();
+    @NotNull Menu getMenu();
 }

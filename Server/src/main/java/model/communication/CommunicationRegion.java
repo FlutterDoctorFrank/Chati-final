@@ -2,7 +2,7 @@ package model.communication;
 
 import model.context.spatial.Area;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.UUID;
 
@@ -20,13 +20,13 @@ public abstract class CommunicationRegion {
      * @param user Kommunizierender Benutzer.
      * @return Menge aller Benutzer, die eine Nachricht vom kommunizierenden Benutzer empfangen können.
      */
-    public abstract Map<UUID, User> getCommunicableUsers(User user);
+    public abstract @NotNull Map<UUID, User> getCommunicableUsers(@NotNull final User user);
 
     /**
      * Setzt den Kontext, der diese Kommunikationsform nutzt.
      * @param area Kontext, der diese Kommunikationsform nutzt.
      */
-    public void setArea(Area area) {
+    public void setArea(@NotNull final Area area) {
         this.area = area;
     }
 }

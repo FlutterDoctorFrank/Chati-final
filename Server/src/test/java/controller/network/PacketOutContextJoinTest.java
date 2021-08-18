@@ -20,16 +20,6 @@ public class PacketOutContextJoinTest extends PacketServerTest {
         this.getPacket(PacketOutContextJoin.class, new Object());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void illegalRoomPackagingTest() {
-        final IRoom room = Mockito.mock(IRoom.class);
-
-        Mockito.when(room.getMap()).thenReturn(null);
-        Mockito.when(this.user.getWorld()).thenReturn(Mockito.mock(IWorld.class));
-
-        this.getPacket(PacketOutContextJoin.class, room);
-    }
-
     @Test
     public void joinPackagingTest() {
         final IRoom room = Mockito.mock(IRoom.class);

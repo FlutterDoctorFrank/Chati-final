@@ -1,12 +1,13 @@
 package model.context.spatial.objects;
 
 import controller.network.ClientSender;
+import controller.network.ClientSender.SendAction;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.spatial.*;
 import model.exception.IllegalInteractionException;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 /**
@@ -26,33 +27,41 @@ public class Portal extends Interactable {
      * @param communicationRegion Geltende Kommunikationsform.
      * @param communicationMedia Benutzbare Kommunikationsmedien.
      */
-    public Portal(String objectName, Area parent, CommunicationRegion communicationRegion,
-                  Set<CommunicationMedium> communicationMedia, Expanse expanse) {
+    public Portal(@NotNull final String objectName, @NotNull final Area parent,
+                  @NotNull final CommunicationRegion communicationRegion, @NotNull final Set<CommunicationMedium> communicationMedia,
+                  @NotNull final Expanse expanse) {
         super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.PORTAL_MENU);
     }
 
     @Override
-    public void interact(User user) {
+    public void interact(@NotNull final User user) {
+        throwIfUserNotAvailable(user);
+
         // Öffne das Menü beim Benutzer.
         user.setCurrentInteractable(this);
         user.setMoveable(false);
-        user.getClientSender().send(ClientSender.SendAction.OPEN_MENU, this);
+        user.send(SendAction.OPEN_MENU, this);
     }
 
     @Override
-    public void executeMenuOption(User user, int menuOption, String[] args) throws IllegalInteractionException {
+    public void executeMenuOption(@NotNull final User user, final int menuOption,
+                                  @NotNull final String[] args) throws IllegalInteractionException {
+        throwIfUserNotAvailable(user);
+
         switch (menuOption) {
             case 0: // Schließe das Menü beim Benutzer.
                 user.setCurrentInteractable(null);
                 user.setMoveable(true);
-                user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
+                user.send(SendAction.CLOSE_MENU, this);
                 break;
+
             case 1: // Teleportiere den Benutzer zur festgelegten Position.
                 user.setCurrentInteractable(null);
                 user.setMoveable(true);
-                user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
+                user.send(ClientSender.SendAction.CLOSE_MENU, this);
                 user.teleport(destination);
                 break;
+
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
         }

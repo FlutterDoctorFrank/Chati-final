@@ -6,7 +6,7 @@ import model.context.spatial.*;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 public abstract class Interactable extends Area implements IInteractable {
@@ -17,7 +17,7 @@ public abstract class Interactable extends Area implements IInteractable {
     protected final Area parent;
 
     /** Das Menü, dass beim Benutzer bei einer Interaktion mit diesem Kontext geöffnet werden soll. */
-    private Menu menu;
+    private final Menu menu;
 
     /**
      * Erzeugt eine Instanz eines Interaktionsobjekts.
@@ -29,8 +29,9 @@ public abstract class Interactable extends Area implements IInteractable {
      * @param expanse Räumliche Ausdehnung des Objekts.
      * @param menu Menü des Objekts.
      */
-    protected Interactable(String interactableName, Area parent, CommunicationRegion communicationRegion,
-                           Set<CommunicationMedium> communicationMedia, Expanse expanse, Menu menu) {
+    protected Interactable(@NotNull final String interactableName, @NotNull final Area parent,
+                           @NotNull final CommunicationRegion communicationRegion, @NotNull final Set<CommunicationMedium> communicationMedia,
+                           @NotNull final Expanse expanse, @NotNull final Menu menu) {
         super(interactableName, parent, parent.getWorld(), communicationRegion, communicationMedia, expanse);
         this.parent = parent;
         this.menu = menu;
@@ -42,7 +43,7 @@ public abstract class Interactable extends Area implements IInteractable {
      * @param user Interagierender Benutzer.
      * @throws IllegalInteractionException wenn mit diesem Kontext keine Interaktion möglich ist.
      */
-    public abstract void interact(User user) throws IllegalInteractionException;
+    public abstract void interact(@NotNull final User user) throws IllegalInteractionException;
 
     /**
      * Lässt einen Benutzer eine Menü-Option dieses Kontextes ausführen. Es können nur Menü-Optionen von Kontexten des
@@ -54,26 +55,39 @@ public abstract class Interactable extends Area implements IInteractable {
      * @throws IllegalMenuActionException wenn die Menü-Option nicht unterstützt wird oder die übergebenen Argumente
      * ungültig sind.
      */
-    public abstract void executeMenuOption(User user, int menuOption, String[] args) throws IllegalInteractionException, IllegalMenuActionException;
+    public abstract void executeMenuOption(@NotNull final User user, final int menuOption,
+                                           @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException;
 
     /**
      * Überprüft, ob ein Benutzer mit diesem Kontext interagieren darf.
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn der Benutzer mit dem Kontext interagieren darf, sonst false.
      */
-    public boolean canInteract(User user) {
-        Location userLocation = user.getLocation();
-        return (user.isInteractingWith(null) || user.isInteractingWith(this))
-                && expanse.isAround(userLocation.getPosX(), userLocation.getPosY(), INTERACTION_DISTANCE);
+    public boolean canInteract(@NotNull final User user) {
+        Location location = user.getLocation();
+
+        if (location != null) {
+            if (!user.isInteracting() || user.isInteractingWith(this)) {
+                return expanse.isAround(location.getPosX(), location.getPosY(), INTERACTION_DISTANCE);
+            }
+        }
+
+        return false;
+    }
+
+    protected void throwIfUserNotAvailable(@NotNull final User user) {
+        if (!user.isOnline() || !user.isInWorld()) {
+            throw new IllegalStateException("User is not logged in or in a world.");
+        }
     }
 
     @Override
-    public Menu getMenu() {
+    public @NotNull Menu getMenu() {
         return menu;
     }
 
     @Override
-    public Area getParent() {
+    public @NotNull Area getParent() {
         return parent;
     }
 }

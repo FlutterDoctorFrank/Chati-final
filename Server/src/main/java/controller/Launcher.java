@@ -77,7 +77,8 @@ public class Launcher implements Runnable {
             }
         });
 
-        this.global.initialize();
+        this.global.load();
+        this.manager.load();
     }
 
     public static void main(@NotNull final String[] args) {

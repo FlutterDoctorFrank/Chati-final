@@ -156,10 +156,6 @@ public interface ClientSender {
                     final IRoom room = (IRoom) object;
 
                     if (user.getWorld() != null) {
-                        if (room.getMap() == null) {
-                            throw new IllegalArgumentException("Context without a Map can not be joined");
-                        }
-
                         return new PacketOutContextJoin(room.getContextId(), room.getContextName(), room.getMap());
                     }
 
@@ -224,6 +220,11 @@ public interface ClientSender {
             protected @NotNull Packet<?> getPacket(@NotNull final IUser self, @NotNull final Object object) {
                 if (object instanceof IUser) {
                     final IUser other = (IUser) object;
+
+                    if (self.getLocation() == null || other.getLocation() == null) {
+                        throw new IllegalStateException("Users has no available locations");
+                    }
+
                     int posX = other.getLocation().getPosX();
                     int posY = other.getLocation().getPosY();
                     AvatarAction action;
@@ -351,8 +352,16 @@ public interface ClientSender {
                     final ITextMessage message = (ITextMessage) object;
 
                     if (message.getMessageType() != MessageType.INFO) {
+                        if (message.getSender() == null || message.getTextMessage() == null) {
+                            throw new IllegalArgumentException("Expected Sender and Message from ITextMessage, got null");
+                        }
+
                         return new PacketChatMessage(message.getMessageType(), message.getSender().getUserId(),
                                 message.getTextMessage(), message.getTimestamp());
+                    }
+
+                    if (message.getMessageBundle() == null) {
+                        throw new IllegalArgumentException("Expected MessageBundle from ITextMessage, got null");
                     }
 
                     return new PacketChatMessage(message.getMessageBundle(), message.getTimestamp());
@@ -373,6 +382,10 @@ public interface ClientSender {
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 if (object instanceof IVoiceMessage) {
                     final IVoiceMessage message = (IVoiceMessage) object;
+
+                    if (message.getSender() == null) {
+                        throw new IllegalArgumentException("Expected Sender from IVoiceMessage, got null");
+                    }
 
                     return new PacketVoiceMessage(message.getSender().getUserId(), message.getTimestamp(), message.getVoiceData());
                 } else {

@@ -1,6 +1,6 @@
 package model.context.spatial;
 
-import controller.network.ClientSender;
+import controller.network.ClientSender.SendAction;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
 import model.role.Permission;
@@ -14,35 +14,39 @@ public class World extends Room implements IWorld {
 
     /** Untergeordnete private Räume. */
     private final Map<ContextID, Room> privateRooms;
+    private final Map<UUID, User> worldUsers;
 
     /**
      * Erzeugt eine Instanz einer Welt.
      * @param worldName Name der Welt.
      * @param map Karte der Welt.
      */
-    public World(String worldName, SpatialMap map) {
+    public World(@NotNull final String worldName, @NotNull final SpatialMap map) {
         super(worldName, GlobalContext.getInstance(), null, map);
         this.privateRooms = new HashMap<>();
+        this.worldUsers = new HashMap<>();
     }
 
     /**
      * Fügt dem Kontext einen privaten Raum hinzu.
      * @param privateRoom Hinzuzufügender privater Raum.
      */
-    public void addPrivateRoom(Room privateRoom) {
+    public void addPrivateRoom(@NotNull final Room privateRoom) {
         privateRooms.put(privateRoom.getContextId(), privateRoom);
         addChild(privateRoom);
-        // Hier noch an alle clienten neue Liste senden...
+
+        this.sendRoomList();
     }
 
     /**
      * Entfernt einen privaten Raum aus dem Kontext.
      * @param privateRoom Zu entfernender privater Raum.
      */
-    public void removePrivateRoom(Room privateRoom) {
+    public void removePrivateRoom(@NotNull final Room privateRoom) {
         privateRooms.remove(privateRoom.getContextId());
         removeChild(privateRoom);
-        // Hier noch alle clienten neue Liste senden...
+
+        this.sendRoomList();
     }
 
     /**
@@ -50,75 +54,73 @@ public class World extends Room implements IWorld {
      * @param privateRoom Zu überprüfender privater Raum.
      * @return true, wenn der Kontext den privaten Raum enthält, sonst false.
      */
-    public boolean containsPrivateRoom(Room privateRoom) {
+    public boolean containsPrivateRoom(@NotNull final Room privateRoom) {
         return privateRooms.containsKey(privateRoom.getContextId());
     }
 
     @Override
-    public Map<ContextID, Room> getPrivateRooms() {
+    public @NotNull Map<ContextID, Room> getPrivateRooms() {
         return privateRooms;
+    }
+
+    public @NotNull Map<UUID, User> getWorldUsers() {
+        return this.worldUsers;
     }
 
     @Override
     public void addUser(@NotNull final User user) {
-        // Überprüfung, ob sich der Benutzer bereits in der Welt befindet.
-        if (user.equals(this.containedUsers.get(user.getUserId()))) {
-            return;
+        if (user.getWorld() != null && !user.getWorld().equals(this)) {
+            throw new IllegalStateException("User is already in an another World.");
         }
 
-        if (!this.equals(user.getWorld())) {
-            user.setWorld(this);
+        if (!this.contains(user)) {
+            user.send(SendAction.WORLD_ACTION, this);
+
+            super.addUser(user);
+
+            user.getWorldRoles().values().forEach(role -> user.send(SendAction.CONTEXT_ROLE, role));
+            user.getWorldNotifications().values().forEach(notification -> user.send(SendAction.NOTIFICATION, notification));
+
+            this.worldUsers.put(user.getUserId(), user);
+            this.worldUsers.values().stream()
+                    .filter(receiver -> !receiver.equals(user))
+                    .forEach(receiver -> {
+                        receiver.send(SendAction.USER_INFO, user);
+                        user.send(SendAction.USER_INFO, receiver);
+                    });
+
+            if (user.hasPermission(this, Permission.BAN_USER) || user.hasPermission(this, Permission.BAN_MODERATOR)) {
+                this.bannedUsers.values().forEach(banned -> user.send(SendAction.USER_INFO, banned));
+            }
         }
-
-        // Sende die entsprechenden Pakete an den Benutzer und an andere Benutzer.
-        user.getClientSender().send(ClientSender.SendAction.WORLD_ACTION, this);
-
-        super.addUser(user);
-
-        user.getWorldRoles().values().forEach(contextRole -> {
-            user.getClientSender().send(ClientSender.SendAction.CONTEXT_ROLE, contextRole);
-        });
-        user.getWorldNotifications().values().forEach(notification -> {
-            user.getClientSender().send(ClientSender.SendAction.NOTIFICATION, notification);
-        });
-
-        final Map<UUID, User> usersToSend = new HashMap<>(this.containedUsers);
-
-        if (user.hasPermission(this, Permission.BAN_USER) || user.hasPermission(this, Permission.BAN_MODERATOR)) {
-            usersToSend.putAll(this.bannedUsers);
-        }
-
-        usersToSend.remove(user.getUserId());
-        usersToSend.values().forEach(containedUser -> {
-            containedUser.getClientSender().send(ClientSender.SendAction.USER_INFO, user);
-            user.getClientSender().send(ClientSender.SendAction.USER_INFO, containedUser);
-        });
     }
 
     @Override
     public void removeUser(@NotNull final User user) {
-        // Überprüfung, ob sich der zu entfernende Benutzer überhaupt in der Welt befindet.
-        if (this.containedUsers.containsKey(user.getUserId())) {
-            // Temporäre Behebung des 'User is already in a world' Fehler
-            if (this.equals(user.getWorld())) {
-                user.setWorld(null);
-            }
+        if (this.contains(user)) {
+            /*
+             * Entferne den Benutzer nur aus der Welt, wenn der Benutzer auch die Welt verlassen hat, ansonsten
+             * wechselt der Benutzer nur den aktuellen Raum innerhalb der Welt.
+             */
+            if (user.getWorld() == null || !user.getWorld().equals(this)) {
+                user.send(SendAction.WORLD_ACTION, this);
 
-            super.removeUser(user);
+                super.removeUser(user);
 
-            // Sende die entsprechenden Pakete an den Benutzer und an andere Benutzer.
-            this.containedUsers.values().forEach(containedUser -> {
-                containedUser.getClientSender().send(ClientSender.SendAction.USER_INFO, user);
-            });
-
-            if (user.isOnline()) {
-                user.getClientSender().send(ClientSender.SendAction.WORLD_ACTION, this);
+                this.worldUsers.remove(user.getUserId());
+                this.worldUsers.values().forEach(receiver -> receiver.send(SendAction.USER_INFO, user));
             }
         }
     }
 
     @Override
-    public World getWorld() {
+    public @NotNull World getWorld() {
         return this;
+    }
+
+    public void sendRoomList() {
+        this.worldUsers.values().stream()
+                .filter(user -> user.getCurrentMenu() == Menu.ROOM_RECEPTION_MENU)
+                .forEach(user -> user.send(SendAction.CONTEXT_LIST, this));
     }
 }

@@ -4,8 +4,6 @@ import model.MessageBundle;
 import model.context.Context;
 import model.context.global.GlobalContext;
 import model.context.spatial.Area;
-import java.lang.IllegalStateException;
-
 import model.context.spatial.Room;
 import model.context.spatial.World;
 import model.exception.NoPermissionException;
@@ -15,7 +13,7 @@ import model.notification.RoomInvitation;
 import model.role.Permission;
 import model.role.Role;
 import model.user.account.UserAccountManager;
-
+import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,7 +30,8 @@ public enum AdministrativeAction {
      */
     INVITE_FRIEND {
         @Override
-        protected void execute(User performer, User target, String[] args) {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) {
             // Überprüfe, ob die Benutzer bereits befreundet sind.
             if (performer.isFriend(target) || target.isFriend(performer)) {
                 throw new IllegalStateException("Users are already friends.");
@@ -57,7 +56,8 @@ public enum AdministrativeAction {
      */
     REMOVE_FRIEND {
         @Override
-        protected void execute(User performer, User target, String[] args) {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) {
             // Überprüfe, ob die Benutzer befreundet sind.
             if (!performer.isFriend(target) || !target.isFriend(performer)) {
                 throw new IllegalStateException("Users are not friends.");
@@ -75,7 +75,8 @@ public enum AdministrativeAction {
      */
     IGNORE_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) {
             // Überprüfe, ob der anfragende Benutzer den angefragten bereits ignoriert.
             if (performer.isIgnoring(target)) {
                 throw new IllegalStateException("User is already ignored.");
@@ -95,7 +96,8 @@ public enum AdministrativeAction {
      */
     UNIGNORE_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) {
             // Überprüfe, ob Benutzer ignoriert wird.
             if (!performer.isIgnoring(target)) {
                 throw new IllegalStateException("User is not ignored.");
@@ -111,7 +113,16 @@ public enum AdministrativeAction {
      */
     ROOM_INVITE {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) throws NoPermissionException {
+            if (performer.getLocation() == null) {
+                throw new IllegalStateException("Performers location is not available");
+            }
+
+            if (args.length < 1) {
+                throw new IllegalArgumentException("Too few arguments to perform this action");
+            }
+
             Room invitedRoom = performer.getLocation().getRoom();
             // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung für den Raum hat.
             if (!performer.hasPermission(invitedRoom, Permission.MANAGE_PRIVATE_ROOM)) {
@@ -134,7 +145,12 @@ public enum AdministrativeAction {
      */
     ROOM_KICK {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) throws NoPermissionException {
+            if (performer.getLocation() == null || target.getWorld() == null) {
+                throw new IllegalStateException("Performers/Targets location/world is not available");
+            }
+
             Room kickedRoom = performer.getLocation().getRoom();
             // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung für den Raum hat.
             if (!performer.hasPermission(kickedRoom, Permission.MANAGE_PRIVATE_ROOM)) {
@@ -154,22 +170,29 @@ public enum AdministrativeAction {
      * Teleportiert einen Benutzer zu einem anderen Benutzer. Die Aktion ist durchführbar, wenn sich der Benutzer, zu
      * dem sich teleportiert werden soll, in der Freundesliste befindet, oder beide Benutzer sich innerhalb eines
      * Kontextes befinden, für den der ausführende Benutzer die Berechtigung zur Teleportation besitzt. Befindet sich
-     * der Benutzer, zu dem sich teleportiert werden soll in einem privaten Raum, ist für die Durchführung der Aktion
+     * der Benutzer, zu dem sich teleportiert werden soll, in einem privaten Raum, ist für die Durchführung der Aktion
      * die Berechtigung zum Beitritt privater Räume ohne Zugangskontrolle erforderlich.
      */
     TELEPORT_TO_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) throws NoPermissionException {
+            if (performer.getLocation() == null || target.getLocation() == null) {
+                throw new IllegalStateException("Performers/Targets location is not available");
+            }
+
             Area performerArea = performer.getLocation().getArea();
             Area targetArea = target.getLocation().getArea();
+
             // Überprüfe, ob beide Benutzer sich innerhalb eines Kontextes befinden, in dem der ausführende Benutzer
-            // die Berechtigung zum teleportieren besitzt, oder ob die Benutzer befreundet sind.
+            // die Berechtigung zum Teleportieren besitzt, oder ob die Benutzer befreundet sind.
             Context commonContext = performerArea.lastCommonAncestor(targetArea);
             if (commonContext == null || !(performer.hasPermission(commonContext, Permission.TELEPORT_TO_USER)
                     || !performer.isFriend(target))) {
                 throw new NoPermissionException("Performer has not the required permission.", performer,
                         Permission.TELEPORT_TO_USER);
             }
+
             // Überprüfe, ob sich der Benutzer, zu dem sich teleportiert werden soll, in einem privaten Raum befindet
             // und ob der ausführende Benutzer die Berechtigung zum Betreten privater Räume ohne Zugangskontrolle
             // besitzt.
@@ -178,6 +201,7 @@ public enum AdministrativeAction {
                 throw new NoPermissionException("Performer has not the required permission.", performer,
                         Permission.ENTER_PRIVATE_ROOM);
             }
+
             // Teleportiere zu dem Benutzer.
             performer.teleport(target.getLocation());
         }
@@ -191,12 +215,19 @@ public enum AdministrativeAction {
      */
     REPORT_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) {
             World performerWorld = performer.getWorld();
+
+            if (performerWorld == null) {
+                throw new IllegalStateException("Performers world is not available");
+            }
+
             // Überprüfe, ob zu meldender Benutzer ein Administrator oder Besitzer ist.
             if (target.hasPermission(performerWorld, Permission.BAN_MODERATOR)) {
                 throw new IllegalStateException("Users with permission to ban moderators cannot be reported.");
             }
+
             // Füge den Benutzer, zu den gemeldeten Benutzern in dem Kontext hinzu.
             performerWorld.addReportedUser(target);
             // Ermittle die Benutzer, die die Benachrichtigung über den gemeldeten Benutzer erhalten sollen.
@@ -206,6 +237,7 @@ public enum AdministrativeAction {
                 receivers.putAll(UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
                         Permission.BAN_USER));
             }
+
             // Sende die Benachrichtigung an alle Benutzer.
             MessageBundle messageBundle = new MessageBundle("messageKey", performer, target, args[0]);
             receivers.values().forEach(user -> {
@@ -218,17 +250,27 @@ public enum AdministrativeAction {
     /**
      * Stellt einen Benutzer im innersten räumlichen Kontext stumm, in dem sich sowohl der ausführende, als auch der
      * stummzuschaltende Benutzer befinden, sofern der ausführende Benutzer die Berechtigung für diesen Kontext besitzt.
-     * Ein stummgeschalteter Benutzer kann im entsprechenden Kontext nichtmehr aktiv kommunizieren, außer per
-     * Flüsternachricht.
+     * Ein stummgeschalteter Benutzer kann im entsprechenden Kontext nicht mehr aktiv kommunizieren, außer per
+     * Flüster-Nachricht.
      */
     MUTE_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) throws NoPermissionException {
+            if (performer.getLocation() == null || target.getLocation() == null) {
+                throw new IllegalStateException("Performers/Targets location is not available");
+            }
+
             Area performerArea = performer.getLocation().getArea();
             Area targetArea = target.getLocation().getArea();
             // Überprüfe, ob beide Benutzer sich in einem Kontext befinden, in dem der ausführende Benutzer die
             // Berechtigung zum Stummschalten besitzt.
             Context commonContext = performerArea.lastCommonAncestor(targetArea);
+
+            if (commonContext == null) {
+                throw new IllegalStateException("No common ancestor available");
+            }
+
             if (!performer.hasPermission(commonContext, Permission.MUTE)) {
                 throw new NoPermissionException("Performer has not the required permission.", performer,
                         Permission.MUTE);
@@ -248,16 +290,27 @@ public enum AdministrativeAction {
      */
     UNMUTE_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) throws NoPermissionException {
+            if (performer.getLocation() == null || target.getLocation() == null) {
+                throw new IllegalStateException("Performers/Targets location is not available");
+            }
+
             Area performerArea = performer.getLocation().getArea();
             Area targetArea = target.getLocation().getArea();
             // Überprüfe, ob beide Benutzer sich in einem Kontext befinden, in dem der ausführende Benutzer die
             // Berechtigung zum Stummschalten besitzt.
             Context commonContext = performerArea.lastCommonAncestor(targetArea);
+
+            if (commonContext == null) {
+                throw new IllegalStateException("No common ancestor available");
+            }
+
             if (!performer.hasPermission(commonContext, Permission.MUTE)) {
                 throw new NoPermissionException("Performer has not the required permission.", performer,
                         Permission.MUTE);
             }
+
             // Überprüfe, ob der Benutzer, dessen Stummschaltung aufgehoben werden soll, in dem Kontext stummgeschaltet
             // ist.
             if (!commonContext.isMuted(target)) {
@@ -279,12 +332,19 @@ public enum AdministrativeAction {
      */
     BAN_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) throws NoPermissionException {
             World performerWorld = performer.getWorld();
+
+            if (performerWorld == null) {
+                throw new IllegalStateException("Performers world is not available");
+            }
+
             // Überprüfe, ob der zu sperrende Benutzer ein Administrator oder Besitzer ist.
             if (target.hasPermission(performerWorld, Permission.BAN_MODERATOR)) {
                 throw new IllegalStateException("Users with permission to ban moderators cannot be banned.");
             }
+
             // Ermittle die Benutzer, die über das Sperren informiert werden sollen und überprüfe ob der ausführende
             // Benutzer die entsprechende Berechtigung besitzt.
             Map<UUID, User> receivers = UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
@@ -302,16 +362,19 @@ public enum AdministrativeAction {
                 receivers.putAll(UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
                         Permission.BAN_USER));
             }
+
             // Sperre den Benutzer.
             performerWorld.removeReportedUser(target);
             performerWorld.addBannedUser(target);
+
             // Sende eine Benachrichtigung mit der Information an alle relevanten Benutzer.
             MessageBundle messageBundle = new MessageBundle("messageKey", performer, target, args[0]);
             receivers.values().forEach(user -> {
                 Notification banNotification = new Notification(user, performer.getWorld(), messageBundle);
                 user.addNotification(banNotification);
             });
-            // Sende eine Benachrichigung an den gesperrten Benutzer.
+
+            // Sende eine Benachrichtigung an den gesperrten Benutzer.
             MessageBundle targetMessageBundle =
                     new MessageBundle("messageKey", performer, performer.getWorld(), args[0]);
             Notification banNotification = new Notification(target, performer.getWorld(), targetMessageBundle);
@@ -327,8 +390,14 @@ public enum AdministrativeAction {
      */
     UNBAN_USER {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) throws NoPermissionException {
             World performerWorld = performer.getWorld();
+
+            if (performerWorld == null) {
+                throw new IllegalStateException("Performers world is not available");
+            }
+
             // Ermittle die Benutzer, die über das Entsperren informiert werden sollen und überprüfe ob der ausführende
             // Benutzer die entsprechende Berechtigung besitzt.
             Map<UUID, User> receivers = UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
@@ -346,6 +415,7 @@ public enum AdministrativeAction {
                 receivers.putAll(UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
                         Permission.BAN_USER));
             }
+
             // Entsperre den Benutzer.
             performerWorld.removeBannedUser(target);
             // Sende eine Benachrichtigung mit der Information an alle relevanten Benutzer.
@@ -354,7 +424,8 @@ public enum AdministrativeAction {
                 Notification unbanNotification = new Notification(user, performer.getWorld(), messageBundle);
                 user.addNotification(unbanNotification);
             });
-            // Sende eine Benachrichigung an den entsperrten Benutzer.
+
+            // Sende eine Benachrichtigung an den entsperrten Benutzer.
             MessageBundle targetMessageBundle =
                     new MessageBundle("messageKey", performer, performer.getWorld(), args[0]);
             Notification unbanNotification = new Notification(target, performer.getWorld(), targetMessageBundle);
@@ -368,8 +439,14 @@ public enum AdministrativeAction {
      */
     ASSIGN_MODERATOR {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) throws NoPermissionException {
             World performerWorld = performer.getWorld();
+
+            if (performerWorld == null) {
+                throw new IllegalStateException("Performers world is not available");
+            }
+
             // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung in dem Kontext besitzt.
             if (!performer.hasPermission(performerWorld, Permission.ASSIGN_MODERATOR)) {
                 throw new NoPermissionException("no permission", performer, Permission.ASSIGN_MODERATOR);
@@ -378,6 +455,7 @@ public enum AdministrativeAction {
             if (target.hasRole(performerWorld, Role.MODERATOR)) {
                 throw new IllegalStateException("Target is already moderator in this world.");
             }
+
             // Füge die Rolle hinzu.
             target.addRole(performerWorld, Role.MODERATOR);
             // Informiere den Benutzer über den Erhalt der Rolle.
@@ -393,8 +471,14 @@ public enum AdministrativeAction {
      */
     WITHDRAW_MODERATOR {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) throws NoPermissionException {
             World performerWorld = performer.getWorld();
+
+            if (performerWorld == null) {
+                throw new IllegalStateException("Performers world is not available");
+            }
+
             // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung in dem Kontext besitzt.
             if (!performer.hasPermission(performerWorld, Permission.ASSIGN_MODERATOR)) {
                 throw new NoPermissionException("no permission", performer, Permission.ASSIGN_MODERATOR);
@@ -403,6 +487,7 @@ public enum AdministrativeAction {
             if (!target.hasRole(performerWorld, Role.MODERATOR)) {
                 throw new IllegalStateException("Target is not moderator in this world.");
             }
+
             // Entferne die Rolle.
             target.removeRole(performerWorld, Role.MODERATOR);
             // Informiere den Benutzer über den Entzug der Rolle.
@@ -418,7 +503,8 @@ public enum AdministrativeAction {
      */
     ASSIGN_ADMINISTRATOR {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) throws NoPermissionException {
             GlobalContext global = GlobalContext.getInstance();
             // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung in dem Kontext besitzt.
             if (!performer.hasPermission(global, Permission.ASSIGN_ADMINISTRATOR)) {
@@ -444,7 +530,8 @@ public enum AdministrativeAction {
      */
     WITHDRAW_ADMINISTRATOR {
         @Override
-        protected void execute(User performer, User target, String[] args) throws NoPermissionException {
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) throws NoPermissionException {
             GlobalContext global = GlobalContext.getInstance();
             // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung in dem Kontext besitzt.
             if (!performer.hasPermission(global, Permission.ASSIGN_ADMINISTRATOR)) {
@@ -471,5 +558,6 @@ public enum AdministrativeAction {
      * @throws IllegalStateException wenn die auszuführende Aktion nicht möglich ist.
      * @throws NoPermissionException wenn der ausführende Benutzer nicht die nötige Berechtigung besitzt.
      */
-    protected abstract void execute(User performer, User target, String[] args) throws NoPermissionException;
+    protected abstract void execute(@NotNull final User performer, @NotNull final User target,
+                                    @NotNull final String[] args) throws NoPermissionException;
 }

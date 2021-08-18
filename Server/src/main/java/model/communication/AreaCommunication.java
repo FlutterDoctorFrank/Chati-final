@@ -1,7 +1,8 @@
 package model.communication;
 
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public class AreaCommunication extends CommunicationRegion {
     }
 
     @Override
-    public Map<UUID, User> getCommunicableUsers(User user) {
-        return area.getUsers();
+    public @NotNull Map<UUID, User> getCommunicableUsers(@NotNull final User user) {
+        return new HashMap<>(area.getUsers());
     }
 }

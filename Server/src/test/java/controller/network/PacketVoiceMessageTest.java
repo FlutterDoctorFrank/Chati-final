@@ -1,8 +1,11 @@
 package controller.network;
 
 import controller.network.ClientSender.SendAction;
+import controller.network.protocol.PacketChatMessage;
 import controller.network.protocol.PacketVoiceMessage;
+import model.communication.message.ITextMessage;
 import model.communication.message.IVoiceMessage;
+import model.communication.message.MessageType;
 import model.user.IUser;
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,6 +21,15 @@ public class PacketVoiceMessageTest extends PacketServerTest {
     @Test(expected = IllegalArgumentException.class)
     public void illegalPackagingTest() {
         this.getPacket(PacketVoiceMessage.class, new Object());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void illegalSenderPackagingTest() {
+        final IVoiceMessage message = Mockito.mock(IVoiceMessage.class);
+
+        Mockito.when(message.getSender()).thenReturn(null);
+
+        this.getPacket(PacketVoiceMessage.class, message);
     }
 
     @Test

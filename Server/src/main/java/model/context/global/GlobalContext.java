@@ -1,6 +1,6 @@
 package model.context.global;
 
-import controller.network.ClientSender;
+import controller.network.ClientSender.SendAction;
 import model.communication.CommunicationMedium;
 import model.context.Context;
 import model.context.ContextID;
@@ -14,6 +14,7 @@ import model.exception.UserNotFoundException;
 import model.role.Permission;
 import model.user.User;
 import model.user.account.UserAccountManager;
+import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,12 +42,14 @@ public class GlobalContext extends Context implements IGlobalContext {
         this.worlds = new HashMap<>();
     }
 
-    public void initialize() {
-        worlds.putAll(database.getWorlds());
+    public void load() {
+        this.worlds.clear();
+        this.worlds.putAll(this.database.getWorlds());
     }
 
     @Override
-    public void createWorld(UUID performerId, String worldname, SpatialMap map) throws UserNotFoundException, NoPermissionException, IllegalWorldActionException {
+    public void createWorld(@NotNull final UUID performerId, @NotNull final String worldName,
+                            @NotNull final SpatialMap map) throws UserNotFoundException, NoPermissionException, IllegalWorldActionException {
         User performer = UserAccountManager.getInstance().getUser(performerId);
         performer.updateLastActivity();
         // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung besitzt.
@@ -54,11 +57,11 @@ public class GlobalContext extends Context implements IGlobalContext {
             throw new NoPermissionException("no permission", performer, Permission.MANAGE_WORLDS);
         }
         // Überprüfe, ob bereits eine Welt mit diesem Namen existiert.
-        if (worlds.values().stream().anyMatch(world -> world.getContextName().equals(worldname))) {
+        if (worlds.values().stream().anyMatch(world -> world.getContextName().equals(worldName))) {
             throw new IllegalWorldActionException("", "Eine Welt mit diesem Namen existiert bereits");
         }
         // Erzeuge die Welt und füge sie
-        World createdWorld = new World(worldname, map);
+        World createdWorld = new World(worldName, map);
         worlds.put(createdWorld.getContextId(), createdWorld);
         addChild(createdWorld);
         database.addWorld(createdWorld);
@@ -67,7 +70,7 @@ public class GlobalContext extends Context implements IGlobalContext {
     }
 
     @Override
-    public void removeWorld(UUID performerId, ContextID worldId) throws UserNotFoundException, NoPermissionException, ContextNotFoundException {
+    public void removeWorld(@NotNull final UUID performerId, @NotNull final ContextID worldId) throws UserNotFoundException, NoPermissionException, ContextNotFoundException {
         User performer = UserAccountManager.getInstance().getUser(performerId);
         performer.updateLastActivity();
         // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung besitzt.
@@ -95,7 +98,7 @@ public class GlobalContext extends Context implements IGlobalContext {
     }
 
     @Override
-    public Map<ContextID, IWorld> getWorlds() {
+    public @NotNull Map<ContextID, IWorld> getWorlds() {
         return Collections.unmodifiableMap(worlds);
     }
 
@@ -105,7 +108,7 @@ public class GlobalContext extends Context implements IGlobalContext {
      * @return Welt mit der übergebenen ID.
      * @throws ContextNotFoundException: wenn keine Welt mit der übergebenen ID existiert.
      */
-    public World getWorld(ContextID worldId) throws ContextNotFoundException {
+    public @NotNull World getWorld(@NotNull final ContextID worldId) throws ContextNotFoundException {
         World world = worlds.get(worldId);
         if (world == null) {
             throw new ContextNotFoundException("Context does not exist.", worldId);
@@ -113,20 +116,11 @@ public class GlobalContext extends Context implements IGlobalContext {
         return world;
     }
 
-    @Override
-    public Context getContext(ContextID contextId) throws ContextNotFoundException {
-        Context found = super.getContext(contextId);
-        if (found == null) {
-            throw new ContextNotFoundException("There is no context with this ID.", contextId);
-        }
-        return found;
-    }
-
     /**
      * Gibt die Singleton-Instanz der Klasse zurück.
      * @return Die Instanz von GlobalContext.
      */
-    public static GlobalContext getInstance() {
+    public static @NotNull GlobalContext getInstance() {
         if (globalContext == null) {
             globalContext = new GlobalContext();
         }
@@ -134,12 +128,12 @@ public class GlobalContext extends Context implements IGlobalContext {
     }
 
     @Override
-    public Map<UUID, User> getCommunicableUsers(User communicatingUser) {
-        return new HashMap<>();
+    public @NotNull Map<UUID, User> getCommunicableUsers(@NotNull final User communicatingUser) {
+        return Collections.emptyMap();
     }
 
     @Override
-    public boolean canCommunicateWith(CommunicationMedium medium) {
+    public boolean canCommunicateWith(@NotNull final CommunicationMedium medium) {
         return false;
     }
 
@@ -147,7 +141,8 @@ public class GlobalContext extends Context implements IGlobalContext {
      * Sendet die Liste aller existierenden Welten an alle Benutzer im Startbildschirm.
      */
     private void sendWorldList() {
-        containedUsers.values().stream().filter(Predicate.not(User::isInWorld))
-                .forEach(receiver -> receiver.getClientSender().send(ClientSender.SendAction.CONTEXT_LIST, this));
+        this.containedUsers.values().stream()
+                .filter(Predicate.not(User::isInWorld))
+                .forEach(receiver -> receiver.send(SendAction.CONTEXT_LIST, this));
     }
 }

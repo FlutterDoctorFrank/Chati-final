@@ -1,15 +1,14 @@
 package model.user;
 
-import model.context.Context;
 import model.context.ContextID;
-import model.context.IContext;
 import model.context.spatial.ILocation;
 import model.context.spatial.IWorld;
 import model.context.spatial.objects.Interactable;
 import model.exception.*;
 import model.notification.INotification;
 import model.role.IContextRole;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.UUID;
 
@@ -27,7 +26,7 @@ public interface IUser {
      * @throws IllegalWorldActionException wenn der Benutzer in der Welt gesperrt ist.
      * @see model.context.spatial.World
      */
-    void joinWorld(ContextID worldId) throws ContextNotFoundException, IllegalWorldActionException;
+    void joinWorld(@NotNull final ContextID worldId) throws ContextNotFoundException, IllegalWorldActionException;
 
     /**
      * Lässt den Benutzer seine aktuelle Welt verlassen.
@@ -43,7 +42,7 @@ public interface IUser {
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      * @see model.context.spatial.Location
      */
-    void move(int posX, int posY) throws IllegalPositionException;
+    void move(final int posX, final int posY) throws IllegalPositionException;
 
     /**
      * Sendet eine Nachricht im Namen des Benutzers, von dem sie erhalten wurde gemäß des entsprechenden Nachrichtentyps
@@ -53,17 +52,17 @@ public interface IUser {
      * @see model.communication.message.TextMessage
      * @see model.communication.CommunicationRegion
      */
-    void chat(String message);
+    void chat(@NotNull final String message);
 
     /**
      * Sendet eine Sprachnachricht im Namen des Benutzers, von dem sie erhalten wurde gemäß der geltenden
      * Kommunikationsform an andere Benutzer.
-     * @param voicedata Audiodaten.
+     * @param voiceData Audiodaten.
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      * @see model.communication.message.VoiceMessage
      * @see model.communication.CommunicationRegion
      */
-    void talk(byte[] voicedata);
+    void talk(final byte[] voiceData);
 
     /**
      * Führt im Namen des Benutzers eine administrative Aktion auf einen anderen Benutzer aus.
@@ -75,8 +74,8 @@ public interface IUser {
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist oder eine nicht
      * durchführbare Aktion durchgeführt werden soll.
      */
-    void executeAdministrativeAction(UUID targetId, AdministrativeAction action, String[] args)
-            throws UserNotFoundException, NoPermissionException;
+    void executeAdministrativeAction(@NotNull final UUID targetId, @NotNull final AdministrativeAction action,
+                                     @NotNull final String[] args) throws UserNotFoundException, NoPermissionException;
 
     /**
      * Lässt den Benutzer mit einem Kontext interagieren.
@@ -87,7 +86,7 @@ public interface IUser {
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      * @see Interactable
      */
-    void interact(ContextID interactableId) throws IllegalInteractionException, ContextNotFoundException;
+    void interact(@NotNull final ContextID interactableId) throws IllegalInteractionException, ContextNotFoundException;
 
     /**
      * Lässt den Benutzer eine Menüoption eines Kontexts durchführen.
@@ -104,8 +103,8 @@ public interface IUser {
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      * @see Interactable
      */
-    void executeOption(ContextID interactableId, int menuOption, String[] args) throws ContextNotFoundException,
-            IllegalInteractionException, IllegalMenuActionException;
+    void executeOption(@NotNull final ContextID interactableId, final int menuOption,
+                       @NotNull final String[] args) throws ContextNotFoundException, IllegalInteractionException, IllegalMenuActionException;
 
     /**
      * Löscht eine Benachrichtigung des Benutzers.
@@ -114,7 +113,7 @@ public interface IUser {
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet ist.
      * @see model.notification.Notification
      */
-    void deleteNotification(UUID notificationId) throws NotificationNotFoundException;
+    void deleteNotification(@NotNull final UUID notificationId) throws NotificationNotFoundException;
 
     /**
      * Akzeptiert die in einer Benachrichtigung enthaltenen Anfrage, oder lehnt diese ab.
@@ -128,72 +127,72 @@ public interface IUser {
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet ist.
      * @see model.notification.Notification
      */
-    void manageNotification(UUID notificationId, boolean accept) throws NotificationNotFoundException,
+    void manageNotification(@NotNull final UUID notificationId, final boolean accept) throws NotificationNotFoundException,
             IllegalNotificationActionException;
 
     /**
      * Ändert den Avatar des Benutzers.
      * @param avatar Neuer Avatar des Benutzers.
      */
-    void setAvatar(Avatar avatar);
+    void setAvatar(@NotNull final Avatar avatar);
 
     /**
      * Gibt die ID des Benutzers zurück.
      * @return ID des Benutzers.
      */
-    UUID getUserId();
+    @NotNull UUID getUserId();
 
     /**
      * Gibt den Benutzernamen des Benutzers zurück.
      * @return Benutzername des Benutzers.
      */
-    String getUsername();
+    @NotNull String getUsername();
 
     /**
      * Gibt den aktuellen Status des Benutzers zurück.
      * @return Status des Benutzers.
      */
-    Status getStatus();
+    @NotNull Status getStatus();
 
     /**
      * Gibt den aktuell ausgewählten Avatar des Benutzers zurück.
      * @return Avatar des Benutzers.
      */
-    Avatar getAvatar();
+    @NotNull Avatar getAvatar();
 
     /**
      * Gibt die aktuelle Welt, in der sich der Benutzer bendet, zurück.
      * @return Aktuelle Welt des Benutzers.
      */
-    IWorld getWorld();
+    @Nullable IWorld getWorld();
 
     /**
      * Gibt die aktuelle Position innerhalb des Raumes, in dem sich der Benutzer befindet, zurück.
      * @return Aktuelle Position des Benutzers.
      */
-    ILocation getLocation();
+    @Nullable ILocation getLocation();
 
     /**
      * Gibt die Freunde des Benutzers zurück.
      * @return Menge der Freunde des Benutzers.
      */
-    Map<UUID, IUser> getFriends();
+    @NotNull Map<UUID, IUser> getFriends();
 
     /**
      * Gibt die von diesem Benutzer ignorierten Benutzer zurück.
      * @return Menge der vom Benutzer ignorierten Benutzer.
      */
-    Map<UUID, IUser> getIgnoredUsers();
+    @NotNull Map<UUID, IUser> getIgnoredUsers();
 
     /**
      * Gibt die Rollen des Benutzers im globalen Kontext zurück.
      * @return Menge der globalen Rollen des Benutzers.
      */
-    IContextRole getGlobalRoles();
+    @NotNull IContextRole getGlobalRoles();
 
     /**
      * Gibt die Benachrichtigungen des Benutzers im globalen Kontext zurück.
      * @return Menge der globalen Benachrichtigungen des Benutzers.
      */
-    Map<UUID, INotification> getGlobalNotifications();
+    @NotNull Map<UUID, INotification> getGlobalNotifications();
 }

@@ -1,11 +1,14 @@
 package model.exception;
 
+import org.jetbrains.annotations.NotNull;
+
 public class IllegalActionException extends Exception {
-    public IllegalActionException(String errorMessage) {
+
+    public IllegalActionException(@NotNull final String errorMessage) {
         super(errorMessage);
     }
 
-    public IllegalActionException(String errorMessage, Throwable cause) {
+    public IllegalActionException(@NotNull final String errorMessage, @NotNull final Throwable cause) {
         super(errorMessage, cause);
     }
 }

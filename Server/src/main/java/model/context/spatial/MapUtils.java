@@ -5,11 +5,10 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.Array;
 import model.communication.*;
 import model.context.spatial.objects.*;
-
+import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 /**
@@ -19,6 +18,7 @@ import java.util.*;
 public class MapUtils {
 
     private MapUtils() {
+
     }
 
     /**
@@ -26,7 +26,7 @@ public class MapUtils {
      * @param properties TiledMap, die die Informationen über die Kommunikationsform enthält.
      * @return Kommunikationsform, die in der TiledMap enthalten ist.
      */
-    public static CommunicationRegion getCommunicationRegion(MapProperties properties) {
+    public static @NotNull CommunicationRegion getCommunicationRegion(@NotNull final MapProperties properties) {
         String className = properties.get("communicationRegion", String.class);
         switch (className) {
             case "areaCommunication":
@@ -45,7 +45,7 @@ public class MapUtils {
      * @param properties TiledMap, die die Informationen über die Menge der verfügbaren Kommunikationsmedien enthält.
      * @return Menge der verfügbaren Kommunikationsmedien, die in der TiledMap enthalten sind.
      */
-    public static Set<CommunicationMedium> getCommunicationMedia(MapProperties properties) {
+    public static @NotNull Set<CommunicationMedium> getCommunicationMedia(@NotNull final MapProperties properties) {
         Set<CommunicationMedium> communicationMedia = new HashSet<>();
         if (properties.get("text", Boolean.class)) {
             communicationMedia.add(CommunicationMedium.TEXT);
@@ -56,18 +56,18 @@ public class MapUtils {
         return communicationMedia;
     }
 
-    public static int getWidth(TiledMap tiledMap) {
+    public static int getWidth(@NotNull final TiledMap tiledMap) {
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
         return layer.getWidth() * layer.getTileWidth();
     }
 
-    public static int getHeight(TiledMap tiledMap) {
+    public static int getHeight(@NotNull final TiledMap tiledMap) {
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
         return layer.getHeight() * layer.getTileHeight();
     }
 
     /*
-    public static boolean[][] getCollisionMap(TiledMap tiledMap) {
+    public static boolean[][] getCollisionMap(@NotNull final TiledMap tiledMap) {
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) tiledMap.getLayers().get("collision");
         int width = collisionLayer.getWidth();
         int height = collisionLayer.getHeight();
@@ -88,11 +88,11 @@ public class MapUtils {
     }
      */
 
-    public static int getSpawnPosX(TiledMap tiledMap) {
+    public static int getSpawnPosX(@NotNull final TiledMap tiledMap) {
         return tiledMap.getProperties().get("spawnPosX", Integer.class);
     }
 
-    public static int getSpawnPosY(TiledMap tiledMap) {
+    public static int getSpawnPosY(@NotNull final TiledMap tiledMap) {
         return tiledMap.getProperties().get("spawnPosY", Integer.class);
     }
 
@@ -101,7 +101,7 @@ public class MapUtils {
      * @param room Raum, dessen untergeordnete Kontexte erzeugt werden sollen.
      * @param tiledMap TiledMap, in der die nötigen Daten enthalten sind.
      */
-    public static void buildChildTree(Room room, TiledMap tiledMap) {
+    public static void buildChildTree(@NotNull final Room room, @NotNull final TiledMap tiledMap) {
         // Hole die Quadrate der Kontexte aus der TiledMap.
         MapLayer contextLayer = tiledMap.getLayers().get("contextLayer");
         Array<RectangleMapObject> contextRectangles = contextLayer.getObjects().getByType(RectangleMapObject.class);
@@ -113,9 +113,7 @@ public class MapUtils {
             return Float.compare(size2, size1);
         });
         // Erzeuge alle Kontexte nacheinander.
-        contextRectangles.forEach(contextRectangle -> {
-            createByType(room, contextRectangle);
-        });
+        contextRectangles.forEach(contextRectangle -> createByType(room, contextRectangle));
     }
 
     /**
@@ -124,7 +122,7 @@ public class MapUtils {
      * @param room Übergeordneter Raum der zu erzeugenden Kontexte.
      * @param contextRectangle Quadrat der TiledMap, das die Informationen über den Kontext enthält.
      */
-    private static void createByType(Room room, RectangleMapObject contextRectangle) {
+    private static void createByType(@NotNull final Room room, @NotNull final RectangleMapObject contextRectangle) {
         // Ermittle alle Parameter zur Erzeugung des Kontextes.
         String areaName = contextRectangle.getName();
         CommunicationRegion communicationRegion = getCommunicationRegion(contextRectangle.getProperties());

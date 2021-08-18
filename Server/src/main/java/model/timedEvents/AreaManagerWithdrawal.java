@@ -6,7 +6,7 @@ import model.context.spatial.AreaReservation;
 import model.notification.Notification;
 import model.role.Role;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -23,7 +23,7 @@ public class AreaManagerWithdrawal extends TimedEvent {
      * Erzeugt eine neue Instanz des TimedEvent.
      * @param reservation Reservierung des Bereichs.
      */
-    public AreaManagerWithdrawal(AreaReservation reservation) {
+    public AreaManagerWithdrawal(@NotNull final AreaReservation reservation) {
         super(reservation.getTo());
         this.reservation = reservation;
     }
@@ -32,10 +32,13 @@ public class AreaManagerWithdrawal extends TimedEvent {
     public void execute() {
         User reserver = reservation.getReserver();
         Area reservedContext = reservation.getArea();
-        reserver.removeRole(reservedContext, Role.AREA_MANAGER);
-        Notification roleLoseNotification = new Notification(reserver, reservedContext.getWorld(), new MessageBundle("key"));
-        reserver.addNotification(roleLoseNotification);
-        reservedContext.removeReservation(reservation);
+
+        if (reservedContext.getWorld() != null) {
+            reserver.removeRole(reservedContext, Role.AREA_MANAGER);
+            Notification roleLoseNotification = new Notification(reserver, reservedContext.getWorld(), new MessageBundle("key"));
+            reserver.addNotification(roleLoseNotification);
+            reservedContext.removeReservation(reservation);
+        }
     }
 
     @Override

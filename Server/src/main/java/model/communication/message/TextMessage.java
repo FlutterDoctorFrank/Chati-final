@@ -2,6 +2,8 @@ package model.communication.message;
 
 import model.MessageBundle;
 import model.user.User;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Eine Klasse, welche Textnachrichten von Benutzern repräsentiert.
@@ -24,7 +26,7 @@ public class TextMessage extends Message implements ITextMessage {
      * @param textMessage Der Text dieser Nachricht.
      * @param messageType Der Typ dieser Nachricht.
      */
-    public TextMessage(User sender, String textMessage, MessageType messageType) {
+    public TextMessage(@NotNull final User sender, @NotNull final String textMessage, @NotNull final MessageType messageType) {
         super(sender);
         this.textMessage = textMessage;
         this.messageBundle = null;
@@ -36,7 +38,7 @@ public class TextMessage extends Message implements ITextMessage {
      * {@link MessageType#INFO} zu erzeugen.
      * @param messageBundle Der Nachrichtenschlüssel der übersetzbaren Nachricht und deren Argumente.
      */
-    public TextMessage(MessageBundle messageBundle) {
+    public TextMessage(@NotNull final MessageBundle messageBundle) {
         super(null);
         this.textMessage = null;
         this.messageBundle = messageBundle;
@@ -44,17 +46,17 @@ public class TextMessage extends Message implements ITextMessage {
     }
 
     @Override
-    public String getTextMessage() {
+    public @Nullable String getTextMessage() {
         return textMessage;
     }
 
     @Override
-    public MessageBundle getMessageBundle() {
+    public @Nullable MessageBundle getMessageBundle() {
         return messageBundle;
     }
 
     @Override
-    public MessageType getMessageType() {
+    public @NotNull MessageType getMessageType() {
         return messageType;
     }
 }

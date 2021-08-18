@@ -2,35 +2,40 @@ package model.exception;
 
 import model.user.AdministrativeAction;
 import model.user.User;
+import org.jetbrains.annotations.NotNull;
 
 public class IllegalAdministrativeActionException extends Exception {
+
     private final User performer;
     private final User target;
     private final AdministrativeAction action;
 
-    public IllegalAdministrativeActionException(String errorMessage, User performer, User target,  AdministrativeAction action) {
+    public IllegalAdministrativeActionException(@NotNull final String errorMessage, @NotNull final User performer,
+                                                @NotNull final User target, @NotNull final AdministrativeAction action) {
         super(errorMessage);
         this.performer = performer;
         this.target = target;
         this.action = action;
     }
 
-    public IllegalAdministrativeActionException(String errorMessage, User performer, User target, AdministrativeAction action, Throwable cause) {
+    public IllegalAdministrativeActionException(@NotNull final String errorMessage, @NotNull final User performer,
+                                                @NotNull final User target, @NotNull final AdministrativeAction action,
+                                                @NotNull final Throwable cause) {
         super(errorMessage, cause);
         this.performer = performer;
         this.target = target;
         this.action = action;
     }
 
-    public User getPerformer() {
+    public @NotNull User getPerformer() {
         return performer;
     }
 
-    public User getTarget() {
+    public @NotNull User getTarget() {
         return target;
     }
 
-    public AdministrativeAction getAdministrativeAction() {
+    public @NotNull AdministrativeAction getAdministrativeAction() {
         return action;
     }
 }

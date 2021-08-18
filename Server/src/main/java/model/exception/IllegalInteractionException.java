@@ -2,38 +2,43 @@ package model.exception;
 
 import model.context.spatial.objects.Interactable;
 import model.user.User;
+import org.jetbrains.annotations.NotNull;
 
 public class IllegalInteractionException extends Exception {
+
     private final User user;
     private Interactable interactable;
 
-    public IllegalInteractionException(String errorMessage, User user) {
+    public IllegalInteractionException(@NotNull final String errorMessage, @NotNull final User user) {
         super(errorMessage);
         this.user = user;
     }
 
-    public IllegalInteractionException(String errorMessage, User user, Throwable cause) {
+    public IllegalInteractionException(@NotNull final String errorMessage, @NotNull final User user,
+                                       @NotNull final Throwable cause) {
         super(errorMessage, cause);
         this.user = user;
     }
 
-    public IllegalInteractionException(String errorMessage, User user, Interactable interactable) {
+    public IllegalInteractionException(@NotNull final String errorMessage, @NotNull final User user,
+                                       @NotNull final Interactable interactable) {
         super(errorMessage);
         this.user = user;
         this.interactable = interactable;
     }
 
-    public IllegalInteractionException(String errorMessage, User user, Interactable interactable, Throwable cause) {
+    public IllegalInteractionException(@NotNull final String errorMessage, @NotNull final User user,
+                                       @NotNull final Interactable interactable, @NotNull final Throwable cause) {
         super(errorMessage, cause);
         this.user = user;
         this.interactable = interactable;
     }
 
-    public User getUser() {
+    public @NotNull User getUser() {
         return user;
     }
 
-    public Interactable getInteractable() {
+    public @NotNull Interactable getInteractable() {
         return interactable;
     }
 }

@@ -97,7 +97,7 @@ public class PacketInUserManage implements Packet<PacketListenerIn> {
      * </i></p>
      * @return die zur Aktion gehörigen Argumente, oder null.
      */
-    public @Nullable String[] getArguments() {
+    public @NotNull String[] getArguments() {
         return this.arguments;
     }
 

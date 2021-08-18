@@ -10,7 +10,7 @@ import model.context.spatial.Expanse;
 import model.context.spatial.Menu;
 import model.exception.IllegalInteractionException;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 /**
@@ -27,13 +27,16 @@ public class Seat extends Interactable {
      * @param communicationRegion Geltende Kommunikationsform.
      * @param communicationMedia Benutzbare Kommunikationsmedien.
      */
-    public Seat(String objectName, Area parent, CommunicationRegion communicationRegion,
-                Set<CommunicationMedium> communicationMedia, Expanse expanse) {
+    public Seat(@NotNull final String objectName, @NotNull final Area parent,
+                @NotNull final CommunicationRegion communicationRegion,
+                @NotNull final Set<CommunicationMedium> communicationMedia, @NotNull final Expanse expanse) {
         super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.SEAT_MENU);
     }
 
     @Override
-    public void interact(User user) {
+    public void interact(@NotNull final User user) {
+        throwIfUserNotAvailable(user);
+
         // Überprüfe, ob der Platz belegt ist.
         if (!containedUsers.isEmpty()) {
             // Überprüfe, ob der interagierende Benutzer den Platz belegt.
@@ -45,26 +48,30 @@ public class Seat extends Interactable {
                 // Teile dem Benutzer mit, dass der Platz bereits von einem anderen Benutzer belegt ist.
                 MessageBundle messageBundle = new MessageBundle("Dieser Platz ist bereits belegt.");
                 TextMessage infoMessage = new TextMessage(messageBundle);
-                user.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
+                user.send(ClientSender.SendAction.MESSAGE, infoMessage);
             }
         } else {
             // Öffne das Menü beim Benutzer.
             user.setCurrentInteractable(this);
             user.setMoveable(false);
-            user.getClientSender().send(ClientSender.SendAction.OPEN_MENU, this);
+            user.send(ClientSender.SendAction.OPEN_MENU, this);
         }
     }
 
     @Override
-    public void executeMenuOption(User user, int menuOption, String[] args) throws IllegalInteractionException {
+    public void executeMenuOption(@NotNull final User user, final int menuOption,
+                                  @NotNull final String[] args) throws IllegalInteractionException {
+        throwIfUserNotAvailable(user);
+
         switch (menuOption) {
             case 0: // Schließe das Menü beim Benutzer.
                 user.setCurrentInteractable(null);
                 user.setMoveable(true);
-                user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
+                user.send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
+
             case 1: // Bewege den Benutzer auf den Platz.
-                user.getClientSender().send(ClientSender.SendAction.CLOSE_MENU, this);
+                user.send(ClientSender.SendAction.CLOSE_MENU, this);
                 try {
                     user.setMoveable(true);
                     user.move(expanse.getBottomLeft().getPosX(), expanse.getBottomLeft().getPosY());
@@ -73,6 +80,7 @@ public class Seat extends Interactable {
                     e.printStackTrace();
                 }
                 break;
+
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
         }

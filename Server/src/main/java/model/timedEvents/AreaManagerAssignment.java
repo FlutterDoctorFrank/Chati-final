@@ -6,7 +6,7 @@ import model.context.spatial.AreaReservation;
 import model.notification.Notification;
 import model.role.Role;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -22,7 +22,7 @@ public class AreaManagerAssignment extends TimedEvent {
      * Erzeugt eine neue Instanz des TimedEvent.
      * @param reservation Reservierung des Bereichs.
      */
-    public AreaManagerAssignment(AreaReservation reservation) {
+    public AreaManagerAssignment(@NotNull final AreaReservation reservation) {
         super(reservation.getFrom());
         this.reservation = reservation;
     }
@@ -31,9 +31,12 @@ public class AreaManagerAssignment extends TimedEvent {
     public void execute() {
         User reserver = reservation.getReserver();
         Area reservedContext = reservation.getArea();
-        reserver.addRole(reservedContext, Role.AREA_MANAGER);
-        Notification roleReceiveNotification = new Notification(reserver, reservedContext.getWorld(), new MessageBundle("key"));
-        reserver.addNotification(roleReceiveNotification);
+
+        if (reservedContext.getWorld() != null) {
+            reserver.addRole(reservedContext, Role.AREA_MANAGER);
+            Notification roleReceiveNotification = new Notification(reserver, reservedContext.getWorld(), new MessageBundle("key"));
+            reserver.addNotification(roleReceiveNotification);
+        }
     }
 
     @Override

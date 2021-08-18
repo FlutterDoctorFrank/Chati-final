@@ -70,7 +70,9 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
             this.connection.sendTCP(packet);
 
-            LOGGER.info(String.format("Sent packet to connection %s: %s", this.connection.getID(), packet));
+            if (!(packet instanceof PacketAvatarMove)) {
+                LOGGER.info(String.format("Sent packet to connection %s: %s", this.connection.getID(), packet));
+            }
         }
     }
 
@@ -88,7 +90,9 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         }
 
         if (object instanceof Packet<?>) {
-            LOGGER.info(String.format("Received packet from connection %s: %s", connection.getID(), object));
+            if (!(object instanceof PacketAvatarMove)) {
+                LOGGER.info(String.format("Received packet from connection %s: %s", connection.getID(), object));
+            }
 
             try {
                 call((Packet<?>) object, this);
@@ -149,6 +153,11 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             try {
                 this.user.move(packet.getPosX(), packet.getPosY());
             } catch (IllegalPositionException ex) {
+                if (user.getLocation() == null) {
+                    LOGGER.warning("User " + this.user.getIgnoredUsers() + " has no valid position.");
+                    return;
+                }
+
                 // Illegale Position erhalten. Sende vorherige Position.
                 LOGGER.warning("User " + this.user.getUsername() + " tried illegal movement: " + ex.getMessage());
 
@@ -225,10 +234,10 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 this.send(new PacketMenuOption(packet, ex.getClientMessageKey(), false));
             } catch (IllegalInteractionException ex) {
                 // Mit dem Objekt kann nicht interagiert werden oder das Objekt existiert nicht.
-                LOGGER.warning("User " + this.user.getUsername() + " tried illegal context-interaction: " + ex.getMessage());
+                LOGGER.warning("User " + this + " tried illegal context-interaction: " + ex.getMessage());
             } catch (ContextNotFoundException e) {
                 // Unbekanntes Objekt, über dem eine Menü-Aktion ausgeführt werden soll.
-                LOGGER.warning("User " + this.user.getUsername() + " tried to interact with an unknown object");
+                LOGGER.warning("User " + this + " tried to interact with an unknown object");
             }
         } else {
             this.logUnexpectedPacket(packet, "Can not interact with menu while not in a world");
@@ -277,14 +286,14 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             // Illegale Welt-Aktion erhalten. Sende Fehlermeldung
             this.send(new PacketWorldAction(packet, ex.getClientMessageKey(), false));
         } catch (NoPermissionException ex) {
-            LOGGER.info("User " + this.user.getUsername() + " is missing permission " + ex.getPermission()
+            LOGGER.info("User " + this + " is missing permission " + ex.getPermission()
                     + " for world action: " + packet.getAction().name());
 
             // Unzureichende Berechtigung des Benutzers. Sende zugehörige Fehlermeldung.
             this.send(new PacketWorldAction(packet, "missing.permission", false));
         } catch (ContextNotFoundException ex) {
             // Unbekannte Welt, auf die zugegriffen werden soll.
-            LOGGER.warning("User " + this.user.getUsername() + " tried to access unknown world");
+            LOGGER.warning("User " + this + " tried to access unknown world");
         } catch (UserNotFoundException ex) {
             // Sollte niemals der Fall sein.
             throw new IllegalStateException("Failed to provide corresponding user-id", ex);
@@ -415,10 +424,10 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 this.user.interact(packet.getContextId());
             } catch (IllegalInteractionException ex) {
                 // Mit dem Objekt kann nicht interagiert werden.
-                LOGGER.warning("User " + this.user.getUsername() + " tried illegal interaction: " + ex.getMessage());
+                LOGGER.warning("User " + this + " tried illegal interaction: " + ex.getMessage());
             } catch (ContextNotFoundException ex) {
                 // Unbekannter Kontext, mit dem interagiert werden soll.
-                LOGGER.warning("User " + this.user.getUsername() + " tried to interact with an unknown context");
+                LOGGER.warning("User " + this + " tried to interact with an unknown context");
             }
         } else {
             this.logUnexpectedPacket(packet, "Can not interact with context while not in a world");
@@ -448,10 +457,10 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             }
         } catch (IllegalNotificationActionException ex) {
             // Auf die Benachrichtigung wurde eine ungültige Aktion ausgeführt.
-            LOGGER.warning("User " + this.user.getUsername() + " tried illegal notification action: " + ex.getMessage());
+            LOGGER.warning("User " + this + " tried illegal notification action: " + ex.getMessage());
         } catch (NotificationNotFoundException ex) {
             // Unbekannte Benachrichtigung, auf die zugegriffen werden soll.
-            LOGGER.warning("User " + this.user.getUsername() + " tried to access unknown notification");
+            LOGGER.warning("User " + this + " tried to access unknown notification");
         }
     }
 
@@ -468,11 +477,11 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             this.user.executeAdministrativeAction(packet.getUserId(), action, packet.getArguments());
         } catch (NoPermissionException ex) {
             // Unzureichende Berechtigung des Benutzers.
-            LOGGER.info("User " + this.user.getUsername() + " is missing permission " + ex.getPermission()
+            LOGGER.info("User " + this + " is missing permission " + ex.getPermission()
                     + " for managing user: " + packet.getAction().name());
         } catch (UserNotFoundException ex) {
             // Unbekannter Benutzer, der verwaltet werden soll.
-            LOGGER.warning("User " + this.user.getUsername() + " tried to manage unknown user");
+            LOGGER.warning("User " + this + " tried to manage unknown user");
         } catch (IllegalArgumentException ex) {
             // Sollte niemals der Fall sein.
             throw new IllegalStateException("Failed to provide corresponding administrative-action", ex);

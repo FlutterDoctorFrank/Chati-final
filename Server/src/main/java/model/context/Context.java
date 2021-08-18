@@ -8,7 +8,8 @@ import model.database.IContextDatabase;
 import model.exception.ContextNotFoundException;
 import model.user.IUser;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 /**
@@ -50,7 +51,7 @@ public abstract class Context implements IContext {
      * @param contextName Name des Kontextes.
      * @param parent Übergeordneter Kontext.
      */
-    protected Context(String contextName, Context parent) {
+    protected Context(@NotNull final String contextName, @Nullable final Context parent) {
         if (parent == null) {
             this.contextId = new ContextID(contextName);
         } else {
@@ -67,32 +68,32 @@ public abstract class Context implements IContext {
     }
 
     @Override
-    public ContextID getContextId() {
+    public @NotNull ContextID getContextId() {
         return contextId;
     }
 
     @Override
-    public String getContextName() {
+    public @NotNull String getContextName() {
         return contextName;
     }
 
     @Override
-    public Map<UUID, IUser> getIUsers() {
+    public @NotNull Map<UUID, IUser> getIUsers() {
         return Collections.unmodifiableMap(containedUsers);
     }
 
     @Override
-    public Map<UUID, IUser> getReportedUsers() {
+    public @NotNull Map<UUID, IUser> getReportedUsers() {
         return Collections.unmodifiableMap(reportedUsers);
     }
 
     @Override
-    public Map<UUID, IUser> getMutedUsers() {
+    public @NotNull Map<UUID, IUser> getMutedUsers() {
         return Collections.unmodifiableMap(mutedUsers);
     }
 
     @Override
-    public Map<UUID, IUser> getBannedUsers() {
+    public @NotNull Map<UUID, IUser> getBannedUsers() {
         return Collections.unmodifiableMap(bannedUsers);
     }
 
@@ -100,7 +101,7 @@ public abstract class Context implements IContext {
      * Fügt einen untergeordneten räumlichen Kontext hinzu.
      * @param child Hinzuzufügender Kontext.
      */
-    public void addChild(Area child) {
+    public void addChild(@NotNull final Area child) {
         children.put(child.getContextId(), child);
     }
 
@@ -108,7 +109,7 @@ public abstract class Context implements IContext {
      * Entfernt einen untergeordneten räumlichen Kontext.
      * @param child Zu entfernender Kontext.
      */
-    public void removeChild(Area child) {
+    public void removeChild(@NotNull final Area child) {
         children.remove(child.getContextId());
     }
 
@@ -117,10 +118,14 @@ public abstract class Context implements IContext {
      * Kontexten hinzugefügt wird, sofern er dort nicht enthalten ist.
      * @param user Hinzuzufügender Benutzer.
      */
-    public void addUser(User user) {
-        containedUsers.put(user.getUserId(), user);
-        if (parent != null && !parent.contains(user)) {
-            parent.addUser(user);
+    public void addUser(@NotNull final User user) {
+        if (!this.contains(user)) {
+            this.containedUsers.put(user.getUserId(), user);
+            System.out.println("User '" + user.getUsername() + "' added to context: " + this.contextId);
+
+            if (this.parent != null && !this.parent.contains(user)) {
+                this.parent.addUser(user);
+            }
         }
     }
 
@@ -129,9 +134,11 @@ public abstract class Context implements IContext {
      * aus allen untergeordneten Kontexten entfernt wird.
      * @param user Zu entfernender Benutzer.
      */
-    public void removeUser(User user) {
-        if (containedUsers.remove(user.getUserId()) != null) {
-            children.values().forEach(child -> child.removeUser(user));
+    public void removeUser(@NotNull final User user) {
+        if (this.contains(user)) {
+            this.containedUsers.remove(user.getUserId());
+            System.out.println("User '" + user.getUsername() + "' removed from context: " + this.contextId);
+            this.children.values().forEach(child -> child.removeUser(user));
         }
     }
 
@@ -140,7 +147,7 @@ public abstract class Context implements IContext {
      * allen untergeordneten Kontexten als gemeldeter Benutzer hinzugefügt wird.
      * @param user Hinzuzufügender Benutzer.
      */
-    public void addReportedUser(User user) {
+    public void addReportedUser(@NotNull final User user) {
         reportedUsers.put(user.getUserId(), user);
         children.values().forEach(child -> child.addReportedUser(user));
         user.updateUserInfo();
@@ -151,7 +158,7 @@ public abstract class Context implements IContext {
      * allen untergeordneten Kontexten als gemeldeter Benutzer entfernt wird.
      * @param user Zu entfernender Benutzer.
      */
-    public void removeReportedUser(User user) {
+    public void removeReportedUser(@NotNull final User user) {
         reportedUsers.remove(user.getUserId());
         children.values().forEach(child -> child.removeReportedUser(user));
         user.updateUserInfo();
@@ -162,7 +169,7 @@ public abstract class Context implements IContext {
      * in allen untergeordneten Kontexten als stummgeschalteter Benutzer hinzugefügt wird.
      * @param user Hinzuzufügender Benutzer.
      */
-    public void addMutedUser(User user) {
+    public void addMutedUser(@NotNull final User user) {
         mutedUsers.put(user.getUserId(), user);
         children.values().forEach(child -> child.addMutedUser(user));
     }
@@ -172,7 +179,7 @@ public abstract class Context implements IContext {
      * in allen untergeordneten Kontexten als stummgeschalteter Benutzer entfernt wird.
      * @param user Zu entfernender Benutzer.
      */
-    public void removeMutedUser(User user) {
+    public void removeMutedUser(@NotNull final User user) {
         mutedUsers.remove(user.getUserId());
         children.values().forEach(child -> child.removeMutedUser(user));
     }
@@ -182,7 +189,7 @@ public abstract class Context implements IContext {
      * allen untergeordneten Kontexten als gesperrter Benutzer hinzugefügt wird.
      * @param user Hinzuzufügender Benutzer.
      */
-    public void addBannedUser(User user) {
+    public void addBannedUser(@NotNull final User user) {
         bannedUsers.put(user.getUserId(), user);
         children.values().forEach(child -> child.addBannedUser(user));
         if (parent.equals(GlobalContext.getInstance())) {
@@ -196,7 +203,7 @@ public abstract class Context implements IContext {
      * allen untergeordneten Kontexten als gemeldeter Benutzer entfernt wird.
      * @param user Zu entfernender Benutzer.
      */
-    public void removeBannedUser(User user) {
+    public void removeBannedUser(@NotNull final User user) {
         bannedUsers.remove(user.getUserId());
         children.values().forEach(child -> child.removeBannedUser(user));
         if (parent.equals(GlobalContext.getInstance())) {
@@ -210,21 +217,21 @@ public abstract class Context implements IContext {
      * @param communicatingUser Kommunizierender Benutzer.
      * @return Menge der Benutzer, mit denen der Benutzer kommunizieren kann.
      */
-    public abstract Map<UUID, User> getCommunicableUsers(User communicatingUser);
+    public abstract @NotNull Map<UUID, User> getCommunicableUsers(@NotNull final User communicatingUser);
 
     /**
      * Überprüft, ob in diesem Kontext mit einem übergebenen Medium kommuniziert werden kann.
      * @param medium Zu überprüfendes Medium.
      * @return true, wenn mit dem Medium kommuniziert werden kann, sonst false.
      */
-    public abstract boolean canCommunicateWith(CommunicationMedium medium);
+    public abstract boolean canCommunicateWith(@NotNull final CommunicationMedium medium);
 
     /**
      * Überprüft, ob ein Benutzer in diesem Kontext enthalten ist.
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn der Benutzer enthalten ist, sonst false.
      */
-    public boolean contains(User user) {
+    public boolean contains(@NotNull final User user) {
         return containedUsers.containsKey(user.getUserId());
     }
 
@@ -233,7 +240,7 @@ public abstract class Context implements IContext {
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn der Benutzer gemeldet ist, sonst false.
      */
-    public boolean isReported(User user) {
+    public boolean isReported(@NotNull final User user) {
         return reportedUsers.containsKey(user.getUserId()) || (parent != null && parent.isReported(user));
     }
 
@@ -242,7 +249,7 @@ public abstract class Context implements IContext {
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn der Benutzer stummgeschaltet ist, sonst false.
      */
-    public boolean isMuted(User user) {
+    public boolean isMuted(@NotNull final User user) {
         return mutedUsers.containsKey(user.getUserId()) || (parent != null && parent.isMuted(user));
     }
 
@@ -251,7 +258,7 @@ public abstract class Context implements IContext {
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn der Benutzer gesperrt ist, sonst false.
      */
-    public boolean isBanned(User user) {
+    public boolean isBanned(@NotNull final User user) {
         return bannedUsers.containsKey(user.getUserId()) || (parent != null && parent.isBanned(user));
     }
 
@@ -260,7 +267,7 @@ public abstract class Context implements IContext {
      * @param context Zu überprüfender Kontext.
      * @return true, wenn der übergebene Kontext übergeordnet ist, sonst false.
      */
-    public boolean isInContext(Context context) {
+    public boolean isInContext(@NotNull final Context context) {
         return equals(context) || (parent != null && parent.isInContext(context));
     }
 
@@ -270,7 +277,7 @@ public abstract class Context implements IContext {
      * @param context Zu überprüfender Kontext.
      * @return Letzter gemeinsamer Vorfahre beider Kontexte.
      */
-    public Context lastCommonAncestor(Context context) {
+    public @Nullable Context lastCommonAncestor(@NotNull final Context context) {
         return isInContext(context) ? context : (context.isInContext(this) ? this :
                 parent != null ? parent.lastCommonAncestor(context) : null);
     }
@@ -279,7 +286,7 @@ public abstract class Context implements IContext {
      * Gibt den übergeordneten Kontext zurück.
      * @return Übergeordneter Kontext.
      */
-    public Context getParent() {
+    public @Nullable Context getParent() {
         return parent;
     }
 
@@ -287,7 +294,7 @@ public abstract class Context implements IContext {
      * Gibt die Menge aller untergeordneter (räumlicher) Kontexte zurück.
      * @return Menge aller untergeordneter Kontexte.
      */
-    public Map<ContextID, Area> getChildren() {
+    public @NotNull Map<ContextID, Area> getChildren() {
         return Collections.unmodifiableMap(children);
     }
 
@@ -296,18 +303,25 @@ public abstract class Context implements IContext {
      * @param contextId ID des gesuchten Kontextes.
      * @return Kontext mit der übergebenen ID.
      */
-    public Context getContext(ContextID contextId) throws ContextNotFoundException {
+    public @NotNull Context getContext(ContextID contextId) throws ContextNotFoundException {
         Context found = null;
         if (this.contextId.equals(contextId)) {
             return this;
         } else {
             for (Area child : children.values()) {
-                found = child.getContext(contextId);
-                if (found != null) {
+                try {
+                    found = child.getContext(contextId);
                     break;
+                } catch (ContextNotFoundException ignored) {
+
                 }
             }
         }
+
+        if (found == null) {
+            throw new ContextNotFoundException("There is no context with this ID.", contextId);
+        }
+
         return found;
     }
 
@@ -315,15 +329,22 @@ public abstract class Context implements IContext {
      * Gibt die Benutzer zurück, die sich gerade innerhalb dieses Kontexts befinden.
      * @return Menge aller Benutzer im Kontext.
      */
-    public Map<UUID, User> getUsers() {
+    public @NotNull Map<UUID, User> getUsers() {
         return Collections.unmodifiableMap(containedUsers);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Context context = (Context) o;
+    public boolean equals(@Nullable final Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
+
+        final Context context = (Context) object;
+
         return contextId.equals(context.contextId);
     }
 

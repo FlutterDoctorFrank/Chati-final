@@ -1,7 +1,8 @@
 package model.communication.message;
 
 import model.user.IUser;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 
 /**
@@ -14,11 +15,11 @@ public interface IMessage {
      * Gibt den Sender der Nachricht zurück.
      * @return Sender der Nachricht.
      */
-    public IUser getSender();
+    @Nullable IUser getSender();
 
     /**
      * Gibt den Zeitpunkt, an dem die Nachricht versendet wurde, zurück.
      * @return Zeitstempel der Nachricht.
      */
-    public LocalDateTime getTimestamp();
+    @NotNull LocalDateTime getTimestamp();
 }

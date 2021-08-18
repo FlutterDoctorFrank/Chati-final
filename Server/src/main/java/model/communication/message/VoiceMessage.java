@@ -1,6 +1,7 @@
 package model.communication.message;
 
 import model.user.User;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Eine Klasse, welche Sprachnachrichten von Benutzern repräsentiert.
@@ -15,7 +16,7 @@ public class VoiceMessage extends Message implements IVoiceMessage {
      * @param sender Der Sender dieser Nachricht.
      * @param voiceData Die Sprachdaten der Nachricht.
      */
-    public VoiceMessage(User sender, byte[] voiceData) {
+    public VoiceMessage(@NotNull final User sender, final byte[] voiceData) {
         super(sender);
         this.voiceData = voiceData;
     }

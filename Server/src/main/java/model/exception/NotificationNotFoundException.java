@@ -1,30 +1,33 @@
 package model.exception;
 
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class NotificationNotFoundException extends Exception {
-    private final User user;
-    private final UUID notificationID;
 
-    public NotificationNotFoundException(String errorMessage, User user, UUID notificationID) {
+    private final User user;
+    private final UUID notificationId;
+
+    public NotificationNotFoundException(@NotNull final String errorMessage, @NotNull final User user,
+                                         @NotNull final UUID notificationId) {
         super(errorMessage);
         this.user = user;
-        this.notificationID = notificationID;
+        this.notificationId = notificationId;
     }
 
-    public NotificationNotFoundException(String errorMessage, User user, UUID notificationID, Throwable cause) {
+    public NotificationNotFoundException(@NotNull final String errorMessage, @NotNull final User user,
+                                         @NotNull final UUID notificationId, @NotNull final Throwable cause) {
         super(errorMessage, cause);
         this.user = user;
-        this.notificationID = notificationID;
+        this.notificationId = notificationId;
     }
 
-    public User getUser() {
+    public @NotNull User getUser() {
         return user;
     }
 
-    public UUID getContextID() {
-        return notificationID;
+    public @NotNull UUID getNotificationId() {
+        return notificationId;
     }
 }

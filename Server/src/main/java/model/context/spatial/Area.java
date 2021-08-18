@@ -1,6 +1,6 @@
 package model.context.spatial;
 
-import controller.network.ClientSender;
+import controller.network.ClientSender.SendAction;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.Context;
@@ -11,7 +11,8 @@ import model.timedEvents.AreaManagerAssignment;
 import model.timedEvents.AreaManagerWithdrawal;
 import model.timedEvents.TimedEventScheduler;
 import model.user.User;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -47,8 +48,9 @@ public class Area extends Context implements IArea {
      * @param communicationMedia Benutzbare Kommunikationsmedien des Bereichs.
      * @param expanse Räumliche Ausdehnung des Bereichs.
      */
-    protected Area(String areaName, Context parent, World world, CommunicationRegion communicationRegion,
-                   Set<CommunicationMedium> communicationMedia, Expanse expanse) {
+    protected Area(@NotNull final String areaName, @NotNull final Context parent, @Nullable final World world,
+                   @Nullable final CommunicationRegion communicationRegion, @Nullable final Set<CommunicationMedium> communicationMedia,
+                   @Nullable final Expanse expanse) {
         super(areaName, parent);
         this.world = world;
         this.expanse = expanse;
@@ -57,10 +59,14 @@ public class Area extends Context implements IArea {
         this.areaReservations = new HashSet<>();
         this.interactables = new HashMap<>();
         this.music = null;
+
+        if (communicationRegion != null) {
+            communicationRegion.setArea(this);
+        }
     }
 
     @Override
-    public Music getMusic() {
+    public @Nullable Music getMusic() {
         return music;
     }
 
@@ -68,12 +74,10 @@ public class Area extends Context implements IArea {
      * Setzt die momentan abzuspielende Musik in diesem Kontext.
      * @param music Abzuspielende Musik.
      */
-    public void playMusic(Music music) {
+    public void playMusic(@Nullable final Music music) {
         this.music = music;
         // Sende Information über geänderte Musik an alle Benutzer im Kontext.
-        containedUsers.values().forEach(user -> {
-            user.getClientSender().send(ClientSender.SendAction.CONTEXT_INFO, this);
-        });
+        this.containedUsers.values().forEach(user -> user.send(SendAction.CONTEXT_INFO, this));
     }
 
     /**
@@ -84,12 +88,20 @@ public class Area extends Context implements IArea {
     }
 
     @Override
-    public Map<UUID, User> getCommunicableUsers(User communicatingUser) {
+    public @NotNull Map<UUID, User> getCommunicableUsers(@NotNull final User communicatingUser) {
+        if (this.communicationRegion == null) {
+            throw new IllegalStateException("No communication region available in: " + contextId);
+        }
+
         return communicationRegion.getCommunicableUsers(communicatingUser);
     }
 
     @Override
-    public boolean canCommunicateWith(CommunicationMedium medium) {
+    public boolean canCommunicateWith(@NotNull final CommunicationMedium medium) {
+        if (this.communicationMedia == null) {
+            return false;
+        }
+
         return communicationMedia.contains(medium);
     }
 
@@ -99,7 +111,7 @@ public class Area extends Context implements IArea {
      * @param from Reservierter Anfangszeitpunkt.
      * @param to Reservierter Endzeitpunkt.
      */
-    public void addReservation(User user, LocalDateTime from, LocalDateTime to) {
+    public void addReservation(@NotNull final User user, @NotNull final LocalDateTime from, @NotNull final LocalDateTime to) {
         AreaReservation reservation = new AreaReservation(user, this, from, to);
         areaReservations.add(reservation);
         TimedEventScheduler.getInstance().put(new AreaManagerAssignment(reservation));
@@ -109,7 +121,7 @@ public class Area extends Context implements IArea {
      * Entfernt eine Reservierung zum Erhalt der Rolle des Bereichsberechtigten.
      * @param reservation Zu entfernende Reservierung.
      */
-    public void removeReservation(AreaReservation reservation) {
+    public void removeReservation(@NotNull final AreaReservation reservation) {
         areaReservations.remove(reservation);
         TimedEventScheduler.getInstance().put(new AreaManagerWithdrawal(reservation));
     }
@@ -118,7 +130,7 @@ public class Area extends Context implements IArea {
      * Fügt ein Interaktionsobjekt zu diesem Bereich hinzu.
      * @param interactable Hinzuzufügendes Interaktionsobjekt.
      */
-    public void addInteractable(Interactable interactable) {
+    public void addInteractable(@NotNull final Interactable interactable) {
         interactables.put(interactable.getContextId(), interactable);
         addChild(interactable);
     }
@@ -128,7 +140,7 @@ public class Area extends Context implements IArea {
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn der Kontext von dem Benutzer reserviert ist, sonst false.
      */
-    public boolean isReservedBy(User user) {
+    public boolean isReservedBy(@NotNull final User user) {
         return areaReservations.stream().anyMatch(reservation -> reservation.getReserver().equals(user));
     }
 
@@ -138,7 +150,7 @@ public class Area extends Context implements IArea {
      * @param to Zu überprüfender Endzeitpunkt.
      * @return true, wenn der Kontext in dem Zeitraum reserviert ist, sonst false.
      */
-    public boolean isReservedAt(LocalDateTime from, LocalDateTime to) {
+    public boolean isReservedAt(@NotNull final LocalDateTime from, @NotNull final LocalDateTime to) {
         return areaReservations.stream().anyMatch(reservation -> reservation.getFrom().equals(from)
                 && reservation.getTo().equals(to));
     }
@@ -150,7 +162,7 @@ public class Area extends Context implements IArea {
      * @param to Zu überprüfender Endzeitpunkt.
      * @return true, wenn der Kontext von dem Benutzer in dem Zeitraum reserviert ist, sonst false.
      */
-    public boolean isReservedAtBy(User user, LocalDateTime from, LocalDateTime to) {
+    public boolean isReservedAtBy(@NotNull final User user, @NotNull final LocalDateTime from, @NotNull final LocalDateTime to) {
         return areaReservations.stream().anyMatch(reservation -> reservation.getReserver().equals(user)
                 && reservation.getFrom().equals(from) && reservation.getTo().equals(to));
     }
@@ -161,7 +173,7 @@ public class Area extends Context implements IArea {
      * @return Interaktionsobjekt.
      * @throws ContextNotFoundException wenn es in diesem Bereich kein Interaktionsobjekt mit dieser ID gibt.
      */
-    public Interactable getInteractable(ContextID interactableId) throws ContextNotFoundException {
+    public @NotNull Interactable getInteractable(@NotNull final ContextID interactableId) throws ContextNotFoundException {
         Interactable interactable = interactables.get(interactableId);
         if (interactable == null) {
             throw new ContextNotFoundException("key", interactableId);
@@ -175,10 +187,11 @@ public class Area extends Context implements IArea {
      * @param posY Y-Koordinate.
      * @return Untergeordnetster Kontext, auf dem sich die Koordinaten befinden.
      */
-    public Area getArea(int posX, int posY) {
+    public @NotNull Area getArea(final int posX, final int posY) {
         try {
             // Suche untergeordneten Kontext, auf dem sich übergebene Koordinaten befinden.
-            return children.values().stream().filter(child -> child.expanse.isIn(posX, posY))
+            return children.values().stream()
+                    .filter(child -> child.expanse != null && child.expanse.isIn(posX, posY))
                     .findFirst().orElseThrow().getArea(posX, posY);
         } catch (NoSuchElementException e) {
             // Dieser Kontext ist der untergeordnetste, auf dem sich die übergebenen Koordinaten befinden.
@@ -190,16 +203,20 @@ public class Area extends Context implements IArea {
      * Gibt die diesem räumlichen Kontext übergeordnete Welt zurück.
      * @return Diesem räumlichen Kontext übergeordnete Welt.
      */
-    public World getWorld() {
+    public @NotNull World getWorld() {
+        if (this.world == null) {
+            throw new IllegalStateException("World of area " + this.contextName + " is not available");
+        }
+
         return world;
     }
 
     @Override
-    public void addUser(User user) {
-        super.addUser(user);
-        // Sende Musikinformationen an den Benutzer.
-        if (music != null) {
-            user.getClientSender().send(ClientSender.SendAction.CONTEXT_INFO, this);
+    public void addUser(@NotNull final User user) {
+        if (!this.contains(user)) {
+            super.addUser(user);
+
+            user.send(SendAction.CONTEXT_INFO, this);
         }
     }
 }

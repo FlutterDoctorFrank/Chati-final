@@ -1,14 +1,15 @@
 package model.notification;
 
-import controller.network.ClientSender;
+import controller.network.ClientSender.SendAction;
 import model.MessageBundle;
 import model.communication.message.TextMessage;
 import model.context.spatial.Area;
 import model.role.Permission;
 import model.user.User;
 import model.user.account.UserAccountManager;
-
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Eine Klasse, welche Anfragen zum Erhalt der Rolle des Bereichsberechtigten repräsentiert.
@@ -35,8 +36,10 @@ public class AreaManagingRequest extends Notification {
      * @param from Zeitpunkt, ab dem der Benutzer die Rolle des Bereichsberechtigten haben soll.
      * @param to Zeitpunkt, bis zu dem der Benutzer die Rolle des Bereichsberechtigten haben soll.
      */
-    public AreaManagingRequest(User owner, User requestingUser, Area requestedArea, LocalDateTime from, LocalDateTime to) {
-        super(NotificationType.AREA_MANAGING_REQUEST, owner, requestingUser.getWorld(),
+    public AreaManagingRequest(@NotNull final User owner, @NotNull final User requestingUser,
+                               @NotNull final Area requestedArea, @NotNull final LocalDateTime from,
+                               @NotNull final LocalDateTime to) {
+        super(NotificationType.AREA_MANAGING_REQUEST, owner, Objects.requireNonNull(requestingUser.getWorld()),
                 new MessageBundle("key", requestingUser.getUsername(), requestedArea.getContextName(), from, to));
         this.requestingUser = requestingUser;
         this.requestedArea = requestedArea;
@@ -50,32 +53,37 @@ public class AreaManagingRequest extends Notification {
         if (!owner.hasPermission(requestedArea, Permission.ASSIGN_AREA_MANAGER)) {
             MessageBundle messageBundle = new MessageBundle("Du besitzt nicht die nötige Berechtigung zum Annehmen dieser Anfrage.");
             TextMessage infoMessage = new TextMessage(messageBundle);
-            owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
+            owner.send(SendAction.MESSAGE, infoMessage);
         }
         // Überprüfe, ob der anfragende Benutzer noch existiert.
         if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserId())) {
             MessageBundle messageBundle = new MessageBundle("Der anfragende Benutzer existiert nicht mehr");
             TextMessage infoMessage = new TextMessage(messageBundle);
-            owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
+            owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
         // Überprüfe, ob der anfragende Benutzer diesen Bereich bereits zu einem Zeitpunkt reserviert.
         if (requestedArea.isReservedBy(requestingUser)) {
             MessageBundle messageBundle = new MessageBundle("Der anfragende Benutzer hat diesen Bereich bereits reserviert.");
             TextMessage infoMessage = new TextMessage(messageBundle);
-            owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
+            owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
         // Überprüfe, ob dieser Bereich zu dem angefragten Zeitraum bereits reserviert wird.
         if (requestedArea.isReservedAt(from, to)) {
             MessageBundle messageBundle = new MessageBundle("Der angefragte Bereich ist bereits reserviert.");
             TextMessage infoMessage = new TextMessage(messageBundle);
-            owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
+            owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
+
+        if (owner.getWorld() == null) {
+            throw new IllegalStateException("Owners world is not available");
+        }
+
         // Füge die Reservierung hinzu.
         requestedArea.addReservation(requestingUser, from, to);
-        // Benachrichte den Benutzer über die erfolgreiche Reservierung.
+        // Benachrichtige den Benutzer über die erfolgreiche Reservierung.
         MessageBundle messageBundle = new MessageBundle("key", owner, requestedArea, from, to);
         Notification acceptNotification = new Notification(requestingUser, owner.getWorld(), messageBundle);
         requestingUser.addNotification(acceptNotification);
@@ -87,22 +95,27 @@ public class AreaManagingRequest extends Notification {
         if (!owner.hasPermission(requestedArea, Permission.ASSIGN_AREA_MANAGER)) {
             MessageBundle messageBundle = new MessageBundle("Du besitzt nicht die nötige Berechtigung zum Ablehnen dieser Anfrage.");
             TextMessage infoMessage = new TextMessage(messageBundle);
-            owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
+            owner.send(SendAction.MESSAGE, infoMessage);
         }
         // Überprüfe, ob der anfragende Benutzer noch existiert.
         if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserId())) {
             MessageBundle messageBundle = new MessageBundle("Der anfragende Benutzer existiert nicht mehr");
             TextMessage infoMessage = new TextMessage(messageBundle);
-            owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
+            owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
         // Überprüfe, ob der anfragende Benutzer diesen Bereich bereits zu diesem Zeitpunkt reserviert.
         if (requestedArea.isReservedAtBy(requestingUser, from, to)) {
             MessageBundle messageBundle = new MessageBundle("Der anfragende Benutzer hat diesen Bereich bereits reserviert.");
             TextMessage infoMessage = new TextMessage(messageBundle);
-            owner.getClientSender().send(ClientSender.SendAction.MESSAGE, infoMessage);
+            owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
+
+        if (owner.getWorld() == null) {
+            throw new IllegalStateException("Owners world is not available");
+        }
+
         // Benachrichtige den Benutzer über die abgelehnte Anfrage.
         Notification declineNotification = new Notification(requestingUser, owner.getWorld(), new MessageBundle("key"));
         requestingUser.addNotification(declineNotification);

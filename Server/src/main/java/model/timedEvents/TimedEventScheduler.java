@@ -1,5 +1,6 @@
 package model.timedEvents;
 
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -78,7 +79,7 @@ public class TimedEventScheduler extends Thread {
      * Füge ein Ereignis hinzu.
      * @param event Hinzuzufügendes Ereignis.
      */
-    public synchronized void put(TimedEvent event) {
+    public synchronized void put(@NotNull final TimedEvent event) {
         timedEvents.put(event);
         notifyAll();
     }
@@ -91,7 +92,7 @@ public class TimedEventScheduler extends Thread {
         if (scheduler == null) {
             scheduler = new TimedEventScheduler();
         }
-        if (scheduler.isRunning = false)  {
+        if (!scheduler.isRunning)  {
             scheduler.start();
         }
         return scheduler;

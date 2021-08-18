@@ -2,7 +2,7 @@ package model.notification;
 
 import model.MessageBundle;
 import model.context.IContext;
-
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -16,29 +16,29 @@ public interface INotification {
      * Gibt die ID der Benachrichtigung zurück.
      * @return ID der Benachrichtigung.
      */
-    UUID getNotificationId();
+    @NotNull UUID getNotificationId();
 
     /**
      * Gibt den Kontext, in dem die Benachrichtigung gesendet wurde, zurück.
      * @return Kontext der Benachrichtigung.
      */
-    IContext getContext();
+    @NotNull IContext getContext();
 
     /**
      * Gibt die Nachricht der Benachrichtigung zurück.
      * @return Nachricht der Benachrichtigung.
      */
-    MessageBundle getMessageBundle();
+    @NotNull MessageBundle getMessageBundle();
 
     /**
      * Gibt den Zeitpunkt zurück, an dem die Benachrichtigung erstellt wurde.
      * @return Zeitstempel der Benachrichtigung.
      */
-    LocalDateTime getTimestamp();
+    @NotNull LocalDateTime getTimestamp();
 
     /**
      * Gibt zurück, um welche Art von Benachrichtigung es sich handelt.
      * @return Art der Benachrichtigung.
      */
-    NotificationType getNotificationType();
+    @NotNull NotificationType getNotificationType();
 }

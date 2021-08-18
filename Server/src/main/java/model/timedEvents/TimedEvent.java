@@ -1,5 +1,6 @@
 package model.timedEvents;
 
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -14,7 +15,7 @@ public abstract class TimedEvent implements Comparable<TimedEvent> {
      * Erzeugt eine neue Instanz eines TimedEvent.
      * @param time Zeitpunkt, an dem das Ereignis ausgeführt werden soll.
      */
-    protected TimedEvent(LocalDateTime time) {
+    protected TimedEvent(@NotNull final LocalDateTime time) {
         this.time = time;
     }
 
@@ -33,12 +34,12 @@ public abstract class TimedEvent implements Comparable<TimedEvent> {
      * Gibt den Zeitpunkt zurück, an dem das Ereignis ausgeführt werden soll.
      * @return Zeitpunkt, an dem das Ereigniss ausgeführt werden soll.
      */
-    public LocalDateTime getTime() {
+    public @NotNull LocalDateTime getTime() {
         return time;
     }
 
     @Override
-    public int compareTo(TimedEvent event) {
+    public int compareTo(@NotNull final TimedEvent event) {
         return time.compareTo(event.getTime());
     }
 }
