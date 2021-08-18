@@ -141,17 +141,10 @@ public class CommunicationHandler {
             return;
         }
 
-        System.out.println("Users in context '" + communicationContext.getContextId() + "': " + communicationContext.getUsers().size());
-
         // Ermittle die empfangsberechtigten Benutzer gemäß der Kommunikationsform, einschließlich dem sendenden
         // Benutzer.
         Map<UUID, User> receivers = communicationContext.getCommunicableUsers(communicator);
-
-        System.out.println("Receivers size before filtering: " + receivers.size());
-
         filterIgnoredUsers(receivers);
-
-        System.out.println("Receivers size after filtering: " + receivers.size());
 
         // Versende die Textnachricht.
         TextMessage textMessage = new TextMessage(communicator, message, MessageType.STANDARD);

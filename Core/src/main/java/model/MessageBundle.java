@@ -48,6 +48,12 @@ public class MessageBundle {
     }
 
     @Override
+    public @NotNull String toString() {
+        return this.getClass().getSimpleName() + "{key='" + this.messageKey +
+                "', arguments=" + Arrays.toString(this.arguments) + "}";
+    }
+
+    @Override
     public boolean equals(@Nullable final Object object) {
         if (this == object) {
             return true;

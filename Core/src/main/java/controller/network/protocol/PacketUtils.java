@@ -54,7 +54,7 @@ public class PacketUtils {
     }
 
     public static void writeBundle(@NotNull final Output output, @NotNull final MessageBundle bundle) {
-        output.writeAscii(bundle.getMessageKey());
+        output.writeString(bundle.getMessageKey());
         output.writeVarInt(bundle.getArguments().length, true);
 
         for (final Object argument : bundle.getArguments()) {
@@ -93,8 +93,9 @@ public class PacketUtils {
                     arguments[index] = readContextId(input);
                     break;
 
-                default:
+                case 0:
                     arguments[index] = input.readString();
+                    break;
             }
         }
 
