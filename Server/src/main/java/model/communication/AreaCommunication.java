@@ -1,6 +1,7 @@
 package model.communication;
 
 import model.user.User;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class AreaCommunication extends CommunicationRegion {
     }
 
     @Override
-    public Map<UUID, User> getCommunicableUsers(User user) {
+    public @NotNull Map<UUID, User> getCommunicableUsers(@NotNull final User user) {
         Map<UUID, User> communicableUsers = new HashMap<>();
         // Prüfe, ob sich kommunizierender Benutzer in dem Kontext befindet.
         if (area.contains(user)) {
