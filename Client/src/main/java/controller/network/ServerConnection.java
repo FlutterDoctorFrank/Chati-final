@@ -267,8 +267,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         if (packet.getAction() == PacketWorldAction.Action.LEAVE) {
-            if (this.worldId != null) {
-                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction().name() + " while user is in a world");
+            if (this.worldId == null) {
+                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction().name() + " while user is not in a world");
                 return;
             }
 
@@ -285,7 +285,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             }
         } else {
             if (this.worldId != null) {
-                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction().name() + " while user is not in a world");
+                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction().name() + " while user is already in a world");
                 return;
             }
 
