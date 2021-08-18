@@ -60,6 +60,7 @@ public class UserAccountManagerTest {
         deleteData("ROLE_WITH_CONTEXT");
         deleteData("NOTIFICATION");
 
+
     }
 
 
@@ -208,11 +209,11 @@ public class UserAccountManagerTest {
     @Test
     public void getUsersWithPermissionTest() {
         try {
-            this.userAccountManager.registerUser("test", "11111");
-            User real = this.userAccountManager.getUser("test");
+            this.userAccountManager.registerUser("getUsersWP", "11111");
+            User real = this.userAccountManager.getUser("getUsersWP");
             UUID real_id = real.getUserId();
 
-            Assert.assertTrue(this.userAccountManager.isRegistered("test"));
+            Assert.assertTrue(this.userAccountManager.isRegistered("getUsersWP"));
             Assert.assertTrue(this.userAccountManager.isRegistered(real_id));
 
             //add Role und testen
@@ -229,6 +230,8 @@ public class UserAccountManagerTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
 
     }
 }

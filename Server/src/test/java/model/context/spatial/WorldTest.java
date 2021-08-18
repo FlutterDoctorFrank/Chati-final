@@ -15,6 +15,7 @@ import model.database.IContextDatabase;
 import model.database.IUserAccountManagerDatabase;
 import model.database.IUserDatabase;
 import model.notification.RoomRequest;
+import model.role.Role;
 import model.user.User;
 import model.user.account.UserAccountManager;
 import org.junit.*;
@@ -31,6 +32,8 @@ public class WorldTest {
     private IUserDatabase user_database;
     private IUserAccountManagerDatabase account_database;
     private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
+    private GlobalContext globalContext;
+    private UserAccountManager userAccountManager;
 
     @BeforeClass
     public static void openGdx() {
@@ -53,6 +56,11 @@ public class WorldTest {
         this.user_database = Database.getUserDatabase();
         this.account_database = Database.getUserAccountManagerDatabase();
         this.test_world = new World("test_world", SpatialMap.MAP);
+        this.globalContext = GlobalContext.getInstance();
+        this.test_world = new World("test_world", SpatialMap.MAP);
+        this.userAccountManager = UserAccountManager.getInstance();
+
+
 
     }
 
@@ -119,16 +127,32 @@ public class WorldTest {
         }
     }
 
-    /*
+
     @Test
     public void addUserTest() {
+        userAccountManager = UserAccountManager.getInstance();
+        globalContext = GlobalContext.getInstance();
+        try {
+            userAccountManager.registerUser("performer", "22222");
+            User performer = userAccountManager.getUser("performer");
+            performer.addRole(globalContext, Role.OWNER);
+            globalContext.createWorld(performer.getUserId(), "test_world", SpatialMap.MAP);
+            ContextID newworld_id = globalContext.getWorlds().keySet().iterator().next();
+            test_world = globalContext.getWorld(newworld_id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         UserAccountManager userAccountManager = UserAccountManager.getInstance();
         WorldTest.TestClientSender testClientSender = new TestClientSender();
         try {
+            Thread.sleep(1500);
             userAccountManager.registerUser("addUser", "11111");
             User test_user = userAccountManager.loginUser("addUser", "11111", testClientSender);
+            test_user.joinWorld(test_world.getContextId());
             this.test_world.addUser(test_user);
+
+            Assert.assertTrue(this.test_world.getWorldUsers().containsKey(test_user.getUserId()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -138,7 +162,7 @@ public class WorldTest {
 
     }
 
-     */
+
 
 
 
