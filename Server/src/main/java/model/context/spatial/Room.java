@@ -110,9 +110,10 @@ public class Room extends Area implements IRoom {
     public void addUser(@NotNull final User user) {
         if (!this.contains(user)) {
             user.send(SendAction.CONTEXT_JOIN, this);
-            user.teleport(this.spawnLocation);
 
             super.addUser(user);
+
+            user.teleport(this.spawnLocation);
 
             this.containedUsers.values().stream()
                     .filter(avatar -> !avatar.equals(user))

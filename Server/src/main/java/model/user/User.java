@@ -530,15 +530,11 @@ public class User implements IUser {
     public boolean hasPermission(@NotNull final Context context, @NotNull final Permission permission) {
         ContextRole contextRole = contextRoles.get(context);
 
-        if (contextRole != null) {
-            if (!contextRole.hasPermission(permission)) {
-                return context.getParent() != null && this.hasPermission(context.getParent(), permission);
-            }
-
+        if (contextRole != null && contextRole.hasPermission(permission)) {
             return true;
         }
 
-        return false;
+        return context.getParent() != null && this.hasPermission(context.getParent(), permission);
     }
 
     /**

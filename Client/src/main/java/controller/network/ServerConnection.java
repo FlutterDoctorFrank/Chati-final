@@ -158,6 +158,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                     case REMOVE_AVATAR:
                         user.setInCurrentRoom(false);
+                        break;
                 }
             } catch (UserNotFoundException ex) {
                 LOGGER.warning("Server tried to move unknown user with id: " + packet.getUserId());
@@ -210,6 +211,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             return;
                         }
                         //TODO Vielleicht eine showInfoMessage(LocalDateTime timestamp, MessageBundle message) Methode?
+                        this.manager.getView().showChatMessage(null, packet.getTimestamp(), packet.getMessageType(), packet.getBundle().getMessageKey());
                         break;
                 }
             } catch (UserNotFoundException ex) {
