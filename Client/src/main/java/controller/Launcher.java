@@ -53,7 +53,6 @@ public class Launcher {
             Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
             config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
             config.setIdleFPS(30);
-            config.useVsync(true);
             config.setTitle("Chati");
             new Lwjgl3Application(chati, config);
             return;

@@ -69,7 +69,6 @@ public class Seat extends Interactable {
                 user.setMoveable(true);
                 user.send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
-
             case 1: // Bewege den Benutzer auf den Platz.
                 user.send(ClientSender.SendAction.CLOSE_MENU, this);
                 try {
@@ -80,7 +79,6 @@ public class Seat extends Interactable {
                     e.printStackTrace();
                 }
                 break;
-
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
         }

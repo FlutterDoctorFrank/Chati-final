@@ -65,14 +65,8 @@ public abstract class Interactable extends Area implements IInteractable {
      */
     public boolean canInteract(@NotNull final User user) {
         Location location = user.getLocation();
-
-        if (location != null) {
-            if (!user.isInteracting() || user.isInteractingWith(this)) {
-                return expanse.isAround(location.getPosX(), location.getPosY(), INTERACTION_DISTANCE);
-            }
-        }
-
-        return false;
+        return (location != null && (!user.isInteracting() || user.isInteractingWith(this))
+                && expanse.isAround(location.getPosX(), location.getPosY(), INTERACTION_DISTANCE));
     }
 
     protected void throwIfUserNotAvailable(@NotNull final User user) {

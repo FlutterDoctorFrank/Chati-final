@@ -5,7 +5,6 @@ import model.context.Context;
 import model.exception.IllegalNotificationActionException;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -110,18 +109,11 @@ public class Notification implements INotification {
     }
 
     @Override
-    public boolean equals(@Nullable final Object object) {
-        if (this == object) {
-            return true;
-        }
-
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-
-        Notification notification = (Notification) object;
-
-        return notificationId.equals(notification.notificationId) && owner.equals(notification.owner);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Notification that = (Notification) o;
+        return notificationId.equals(that.notificationId) && owner.equals(that.owner);
     }
 
     @Override

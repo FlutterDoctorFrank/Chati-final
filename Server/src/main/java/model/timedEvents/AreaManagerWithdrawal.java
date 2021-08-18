@@ -33,12 +33,11 @@ public class AreaManagerWithdrawal extends TimedEvent {
         User reserver = reservation.getReserver();
         Area reservedContext = reservation.getArea();
 
-        if (reservedContext.getWorld() != null) {
-            reserver.removeRole(reservedContext, Role.AREA_MANAGER);
-            Notification roleLoseNotification = new Notification(reserver, reservedContext.getWorld(), new MessageBundle("key"));
-            reserver.addNotification(roleLoseNotification);
-            reservedContext.removeReservation(reservation);
-        }
+        reservedContext.getWorld();
+        reserver.removeRole(reservedContext, Role.AREA_MANAGER);
+        Notification roleLoseNotification = new Notification(reserver, reservedContext.getWorld(), new MessageBundle("key"));
+        reserver.addNotification(roleLoseNotification);
+        reservedContext.removeReservation(reservation);
     }
 
     @Override

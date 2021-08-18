@@ -27,14 +27,12 @@ public class InternUserDisplay extends HudMenuTable {
 
     private StatusSelectTable statusSelectTable;
 
-    private final IInternUserView internUser;
     private final List<Image> roleIcons;
     private Image statusImage;
     private Label usernameLabel;
     private TextButton statusButton;
 
     public InternUserDisplay() {
-        this.internUser = Chati.getInstance().getUserManager().getInternUserView();
         this.roleIcons = new ArrayList<>();
         create();
         setLayout();
@@ -45,16 +43,17 @@ public class InternUserDisplay extends HudMenuTable {
         if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()) {
             IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
             if (internUser != null) {
-                setStatusImage();
-                setRoleImage();
+                clear();
+                create();
+                setLayout();
             }
         }
-
         super.act(delta);
     }
 
     @Override
     protected void create() {
+        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
         usernameLabel = new Label(internUser.getUsername(), Chati.SKIN);
         usernameLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
 
@@ -108,6 +107,7 @@ public class InternUserDisplay extends HudMenuTable {
     }
 
     private void setStatusImage() {
+        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
         statusImage = new Image();
         switch (internUser.getStatus()) {
             case ONLINE:
@@ -124,6 +124,8 @@ public class InternUserDisplay extends HudMenuTable {
     }
 
     private void setRoleImage() {
+        roleIcons.clear();
+        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
         if (internUser.hasRole(Role.OWNER)) {
             usernameLabel.setColor(Color.GOLD);
             Image ownerImage = new Image(Icon.OWNER_ICON);
@@ -152,7 +154,7 @@ public class InternUserDisplay extends HudMenuTable {
         }
     }
 
-    private class StatusSelectTable extends ChatiTable {
+    private static class StatusSelectTable extends ChatiTable {
 
         ButtonGroup<TextButton> statusButtonGroup;
         private Image onlineStatusImage;
@@ -169,6 +171,7 @@ public class InternUserDisplay extends HudMenuTable {
 
         @Override
         protected void create() {
+            IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
             statusButtonGroup = new ButtonGroup<>();
             statusButtonGroup.setMinCheckCount(1);
             statusButtonGroup.setMaxCheckCount(1);

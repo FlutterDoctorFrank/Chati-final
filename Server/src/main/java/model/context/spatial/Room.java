@@ -116,8 +116,8 @@ public class Room extends Area implements IRoom {
             user.teleport(this.spawnLocation);
 
             this.containedUsers.values().stream()
-                    .filter(avatar -> !avatar.equals(user))
-                    .forEach(avatar -> user.send(SendAction.AVATAR_MOVE, avatar));
+                    .filter(other -> !other.equals(user))
+                    .forEach(other -> user.send(SendAction.AVATAR_MOVE, other));
 
             if (this.isPrivate) {
                 final TextMessage info = new TextMessage(new MessageBundle("key"));
@@ -167,8 +167,6 @@ public class Room extends Area implements IRoom {
         this.communicationRegion.setArea(this);
         this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
         this.expanse = new Expanse(new Location(this, 0, 0), MapUtils.getWidth(tiledMap) , MapUtils.getHeight(tiledMap));
-        System.out.println(MapUtils.getWidth(tiledMap));
-        System.out.println(MapUtils.getHeight(tiledMap));
         //this.collisionMap = MapUtils.getCollisionMap(tiledMap);
         this.spawnLocation = new Location(this, MapUtils.getSpawnPosX(tiledMap), MapUtils.getSpawnPosY(tiledMap));
         MapUtils.buildChildTree(this, tiledMap);

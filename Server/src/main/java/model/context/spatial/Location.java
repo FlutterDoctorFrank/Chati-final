@@ -74,16 +74,10 @@ public class Location implements ILocation {
     }
 
     @Override
-    public boolean equals(@Nullable final Object object) {
-        if (this == object) {
-            return true;
-        }
-
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-
-        final Location location = (Location) object;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Location location = (Location) o;
         return posX == location.posX && posY == location.posY && room.equals(location.room);
     }
 

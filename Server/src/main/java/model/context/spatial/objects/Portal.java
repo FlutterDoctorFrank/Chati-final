@@ -54,14 +54,12 @@ public class Portal extends Interactable {
                 user.setMoveable(true);
                 user.send(SendAction.CLOSE_MENU, this);
                 break;
-
             case 1: // Teleportiere den Benutzer zur festgelegten Position.
                 user.setCurrentInteractable(null);
                 user.setMoveable(true);
                 user.send(ClientSender.SendAction.CLOSE_MENU, this);
                 user.teleport(destination);
                 break;
-
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
         }

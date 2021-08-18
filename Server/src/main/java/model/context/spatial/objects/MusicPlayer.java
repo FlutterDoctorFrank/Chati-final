@@ -52,7 +52,6 @@ public class MusicPlayer extends Interactable {
                 user.setMoveable(true);
                 user.send(SendAction.CLOSE_MENU, this);
                 break;
-
             case 1: // Spiele ein Musikstück ab.
                 if (args.length < 1) {
                     throw new IllegalMenuActionException("", "Die angegeben Argument sind nicht ausreichend.");
@@ -66,11 +65,9 @@ public class MusicPlayer extends Interactable {
                 }
                 getParent().playMusic(music);
                 break;
-
             case 2: // Stoppe das Abspielen eines Musikstücks.
                 getParent().stopMusic();
                 break;
-
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
         }

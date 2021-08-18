@@ -32,11 +32,10 @@ public class AreaManagerAssignment extends TimedEvent {
         User reserver = reservation.getReserver();
         Area reservedContext = reservation.getArea();
 
-        if (reservedContext.getWorld() != null) {
-            reserver.addRole(reservedContext, Role.AREA_MANAGER);
-            Notification roleReceiveNotification = new Notification(reserver, reservedContext.getWorld(), new MessageBundle("key"));
-            reserver.addNotification(roleReceiveNotification);
-        }
+        reservedContext.getWorld();
+        reserver.addRole(reservedContext, Role.AREA_MANAGER);
+        Notification roleReceiveNotification = new Notification(reserver, reservedContext.getWorld(), new MessageBundle("key"));
+        reserver.addNotification(roleReceiveNotification);
     }
 
     @Override

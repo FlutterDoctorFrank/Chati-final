@@ -1,5 +1,6 @@
 package model.communication;
 
+import controller.network.ClientSender;
 import controller.network.ClientSender.SendAction;
 import model.MessageBundle;
 import model.communication.message.MessageType;
@@ -16,6 +17,7 @@ import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -24,14 +26,17 @@ import java.util.regex.Pattern;
  */
 public class CommunicationHandler {
 
-    /** Ein regulärer Ausdruck zur Erkennung eines Chatbefehls in einer Nachricht */
-    private static final Pattern COMMAND = Pattern.compile("^((/\\w+)|!|!!)\\s.*");
+    /** Ein reguläre Ausdruck für das Verwenden eines Chatbefehls in einer Nachricht.*/
+    private static final String CHAT_COMMAND = "\\\\.*";
+
+    /** Ein regulärer Ausdruck für das Verwenden einer Flüsternachricht. */
+    private static final String WHISPER_MESSAGE = "\\\\[a-zA-Z0-9]+\\s.*";
 
     /** Ein regulärer Ausdruck für das Verwenden einer Raumnachricht. */
-    private static final String ROOM_MESSAGE = "!";
+    private static final String ROOM_MESSAGE = "!.*";
 
     /** Ein regulärer Ausdruck für das Verwenden einer Weltnachricht. */
-    private static final String WORLD_MESSAGE = "!!";
+    private static final String WORLD_MESSAGE = "!!.*";
 
     /** Der kommunizierende Benutzer dieser Instanz. */
     private final User communicator;
@@ -54,29 +59,30 @@ public class CommunicationHandler {
      * @see MessageType
      */
     public void handleTextMessage(@NotNull final String message) {
-        /*
-         * Ein Befehl beginnt entweder mit '!', '!!' oder mit '/' und einem nachfolgenden Leerzeichen, wobei im
-         * Fall '/' weitere Wortzeichen zwischen dem ersten Zeichen und dem Leerzeichen erwartet werden. Diese
-         * Wortzeichen werden als Benutzername für die Flüster-Kommunikation interpretiert.
-         * Beginnt die Nachricht nicht mit diesen Zeichen, so wird die Nachricht als Chatnachricht interpretiert.
-         */
-        if (COMMAND.matcher(message).matches()) {
-            final String[] command = message.split("\\s", 2);
-
-            switch (command[0]) {
-                case ROOM_MESSAGE:
-                    handleRoomMessage(command[1]);
-                    break;
-
-                case WORLD_MESSAGE:
-                    handleWorldMessage(command[1]);
-                    break;
-
-                default:
-                    handleWhisperMessage(command[0].substring(1), command[1]);
-                    break;
+        // Überprüfe, ob ein Chatbefehl verwendet wurde.
+        if (message.matches(CHAT_COMMAND)) {
+            // Das erste Attribut dieses Felds entspricht dem Chatbefehl, das zweite der restlichen Nachricht.
+            String commandMessage = message.substring(1);
+            if (commandMessage.matches(WHISPER_MESSAGE)) {
+                // Extrahiere den Benutzernamen aus dem Befehl der Flüsternachricht.
+                String[] usernameMessage = commandMessage.substring(1).split("\\s");
+                // Verarbeite die Flüsternachricht.
+                handleWhisperMessage(usernameMessage[0], usernameMessage[1]);
+            } else if (commandMessage.matches(WORLD_MESSAGE)) {
+                // Verarbeite die Weltnachricht.
+                handleWorldMessage(commandMessage.substring(2));
+            } else if (commandMessage.matches(ROOM_MESSAGE)) {
+                // Verarbeite die Raumnachricht.
+                handleRoomMessage(commandMessage.substring(1));
+            } else {
+                // Informiere den kommunizierenden Benutzer darüber, dass er versucht hat, einen nicht existierenden
+                // Chatbefehl zu verwenden.
+                MessageBundle messageBundle = new MessageBundle("Dieser Chatbefehl existiert nicht.");
+                TextMessage infoMessage = new TextMessage(messageBundle);
+                communicator.send(ClientSender.SendAction.MESSAGE, infoMessage);
             }
         } else {
+            // Verarbeite eine normale Chatnachricht, falls kein Chatbefehl verwendet wurde.
             handleStandardMessage(message);
         }
     }
@@ -92,10 +98,8 @@ public class CommunicationHandler {
             throw new IllegalStateException("Communicators location is not available.");
         }
 
-        /*
-         * Überprüfung, ob in dem Bereich des Benutzers Sprachnachrichten versendet werden können oder der sendende
-         * Benutzer in dem Kontext stumm geschaltet ist.
-         */
+        // Überprüfung, ob in dem Bereich des Benutzers Sprachnachrichten versendet werden können oder der sendende
+        // Benutzer in dem Kontext stummgeschaltet ist.
         Area communicationContext = communicator.getLocation().getArea();
         if (!communicationContext.canCommunicateWith(CommunicationMedium.VOICE)
             || communicationContext.isMuted(communicator)) {
@@ -132,10 +136,10 @@ public class CommunicationHandler {
             return;
         }
 
-        // Überprüfe, ob der sendende Benutzer in dem Kontext stumm geschaltet ist.
+        // Überprüfe, ob der sendende Benutzer in dem Kontext stummgeschaltet ist.
         if (communicationContext.isMuted(communicator)) {
-            // Informiere den kommunizierenden Benutzer darüber, dass er in dem Kontext stumm geschaltet ist.
-            MessageBundle messageBundle = new MessageBundle("Du bist in diesem Bereich stumm geschaltet.");
+            // Informiere den kommunizierenden Benutzer darüber, dass er in dem Kontext stummgeschaltet ist.
+            MessageBundle messageBundle = new MessageBundle("Du bist in diesem Bereich stummgeschaltet.");
             TextMessage infoMessage = new TextMessage(messageBundle);
             communicator.send(SendAction.MESSAGE, infoMessage);
             return;
@@ -179,6 +183,14 @@ public class CommunicationHandler {
             return;
         }
 
+        // Überprüfe, ob der Benutzer mit sich selbst kommunizieren möchte.
+        if (communicator.equals(receiver)) {
+            MessageBundle messageBundle = new MessageBundle("Mit sich selbst zu flüstern ist ein wenig merkwürdig.");
+            TextMessage infoMessage = new TextMessage(messageBundle);
+            communicator.send(SendAction.MESSAGE, infoMessage);
+            return;
+        }
+
         Area communicationContext = communicator.getLocation().getArea();
         Map<UUID, User> communicableUsers = communicationContext.getCommunicableUsers(communicator);
 
@@ -191,8 +203,8 @@ public class CommunicationHandler {
                 && !communicator.hasPermission(commonContext, Permission.CONTACT_USER)
                 && !receiver.hasPermission(commonContext, Permission.CONTACT_USER)
                 || communicator.isIgnoring(receiver) || receiver.isIgnoring(communicator))) {
-            // Informiere den kommunizierenden Benutzer darüber, dass die Flüster-Kommunikation nicht möglich ist.
-            MessageBundle messageBundle = new MessageBundle("Eine Flüster-Kommunikation mit diesem Benutzer ist nicht möglich.");
+            // Informiere den kommunizierenden Benutzer darüber, dass die Flüsterkommunikation nicht möglich ist.
+            MessageBundle messageBundle = new MessageBundle("Eine Flüsterkommunikation mit diesem Benutzer ist nicht möglich.");
             TextMessage infoMessage = new TextMessage(messageBundle);
             communicator.send(SendAction.MESSAGE, infoMessage);
             return;
@@ -237,7 +249,7 @@ public class CommunicationHandler {
         }
 
         // Ermittle die empfangsberechtigten Benutzer.
-        Map<UUID, User> receivers = communicationRoom.getCommunicableUsers(communicator);
+        Map<UUID, User> receivers = communicationRoom.getUsers();
         filterIgnoredUsers(receivers);
 
         // Versende die Textnachricht.
@@ -282,7 +294,7 @@ public class CommunicationHandler {
         }
 
         // Ermittle die empfangsberechtigten Benutzer.
-        Map<UUID, User> receivers = communicationWorld.getWorldUsers();
+        Map<UUID, User> receivers = communicationWorld.getUsers();
         filterIgnoredUsers(receivers);
 
         // Versende die Textnachricht.
@@ -296,6 +308,6 @@ public class CommunicationHandler {
      * @param users die Menge von Benutzern, die gefiltert werden soll.
      */
     private void filterIgnoredUsers(@NotNull final Map<UUID, User> users) {
-        users.entrySet().removeIf(user -> this.communicator.isIgnoring(user.getValue()) || user.getValue().isIgnoring(this.communicator));
+        users.values().removeIf(user -> communicator.isIgnoring(user) || user.isIgnoring(communicator));
     }
 }

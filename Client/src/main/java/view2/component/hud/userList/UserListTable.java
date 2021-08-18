@@ -4,17 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import model.context.Context;
-import model.exception.ContextNotFoundException;
 import model.role.Permission;
-import model.role.Role;
 import model.user.*;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
 
 import java.util.*;
-import java.util.List;
 
 public class UserListTable extends HudMenuTable {
 
@@ -39,6 +35,7 @@ public class UserListTable extends HudMenuTable {
     @Override
     public void act(float delta) {
         if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()) {
+            System.out.println("Methode wird aufgerufen");
             IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
             if (user == null && !friendTabButton.isDisabled()) {
                 disableBannedUsersTab();
@@ -56,13 +53,14 @@ public class UserListTable extends HudMenuTable {
             if (user != null && friendTabButton.isDisabled()) {
                 enableButton(friendTabButton);
                 selectButton(friendTabButton);
-            } else if (user != null && user.isInCurrentWorld() && activeUserTabButton.isDisabled()) {
+            }
+            if (user != null && user.isInCurrentWorld() && activeUserTabButton.isDisabled()) {
                 enableButton(activeUserTabButton);
             }
-
             if (user != null && user.isInCurrentWorld()
                     && (user.hasPermission(Permission.BAN_USER) || user.hasPermission(Permission.BAN_MODERATOR))
                     && bannedUserTabButton.isDisabled()) {
+                System.out.println("Diese hier auch");
                 enableButton(bannedUserTabButton);
             }
 
@@ -151,10 +149,10 @@ public class UserListTable extends HudMenuTable {
             if (!user.isInCurrentWorld()) {
                 disableActiveUsersTab();
                 disableBannedUsersTab();
-            } else if (!user.hasPermission(Permission.BAN_USER) || !user.hasPermission(Permission.BAN_MODERATOR)) {
+            } else if (!user.isInCurrentWorld() || !user.hasPermission(Permission.BAN_USER)
+                    && !user.hasPermission(Permission.BAN_MODERATOR)) {
                 disableBannedUsersTab();
             }
-
             showFriends();
         }
 
@@ -237,7 +235,7 @@ public class UserListTable extends HudMenuTable {
         IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
         if (internUser != null && internUser.isInCurrentWorld()
                 && (internUser.hasPermission(Permission.BAN_USER) || internUser.hasPermission(Permission.BAN_MODERATOR))) {
-            Chati.getInstance().getUserManager().getActiveUsers().values()
+            Chati.getInstance().getUserManager().getBannedUsers().values()
                     .forEach(bannedUser -> bannedUserEntries.add(new UserListEntry(bannedUser)));
             layoutEntries(bannedUserEntries);
         }

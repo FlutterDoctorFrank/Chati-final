@@ -6,6 +6,8 @@ import model.context.global.GlobalContext;
 import model.role.Permission;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -60,11 +62,11 @@ public class World extends Room implements IWorld {
 
     @Override
     public @NotNull Map<ContextID, Room> getPrivateRooms() {
-        return privateRooms;
+        return Collections.unmodifiableMap(privateRooms);
     }
 
     public @NotNull Map<UUID, User> getWorldUsers() {
-        return this.worldUsers;
+        return Collections.unmodifiableMap(worldUsers);
     }
 
     @Override

@@ -330,21 +330,14 @@ public abstract class Context implements IContext {
      * @return Menge aller Benutzer im Kontext.
      */
     public @NotNull Map<UUID, User> getUsers() {
-        return Collections.unmodifiableMap(containedUsers);
+        return new HashMap<>(containedUsers);
     }
 
     @Override
-    public boolean equals(@Nullable final Object object) {
-        if (this == object) {
-            return true;
-        }
-
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-
-        final Context context = (Context) object;
-
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Context context = (Context) o;
         return contextId.equals(context.contextId);
     }
 

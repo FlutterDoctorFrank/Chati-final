@@ -60,13 +60,11 @@ public class AreaPlanner extends Interactable {
                 user.setMoveable(true);
                 user.send(SendAction.CLOSE_MENU, this);
                 break;
-
             case 1: // Stellt eine Anfrage zur Reservierung zum Erhalt der Rolle des Bereichsberechtigten im übergeordneten
                     // Kontext.
                 if (args.length < 2) {
                     throw new IllegalMenuActionException("", "Die angegeben Argument sind nicht ausreichend.");
                 }
-
                 if (user.getWorld() == null) {
                     throw new IllegalStateException("Users world is not available");
                 }
@@ -96,7 +94,6 @@ public class AreaPlanner extends Interactable {
                     receiver.addNotification(areaManagingRequest);
                 });
                 break;
-
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
         }

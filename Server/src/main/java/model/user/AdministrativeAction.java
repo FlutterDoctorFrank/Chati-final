@@ -251,7 +251,7 @@ public enum AdministrativeAction {
      * Stellt einen Benutzer im innersten räumlichen Kontext stumm, in dem sich sowohl der ausführende, als auch der
      * stummzuschaltende Benutzer befinden, sofern der ausführende Benutzer die Berechtigung für diesen Kontext besitzt.
      * Ein stummgeschalteter Benutzer kann im entsprechenden Kontext nicht mehr aktiv kommunizieren, außer per
-     * Flüster-Nachricht.
+     * Flüsternachricht.
      */
     MUTE_USER {
         @Override

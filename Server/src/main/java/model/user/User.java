@@ -122,7 +122,7 @@ public class User implements IUser {
         this.userId = userId;
         this.username = username;
         this.status = Status.OFFLINE;
-        this.avatar = avatar != null ? avatar : DEFAULT_AVATAR;
+        this.avatar = avatar;
         this.lastLogoutTime = lastLogoutTime;
         this.lastActivity = LocalDateTime.now();
         this.currentWorld = null;
@@ -529,12 +529,8 @@ public class User implements IUser {
      */
     public boolean hasPermission(@NotNull final Context context, @NotNull final Permission permission) {
         ContextRole contextRole = contextRoles.get(context);
-
-        if (contextRole != null && contextRole.hasPermission(permission)) {
-            return true;
-        }
-
-        return context.getParent() != null && this.hasPermission(context.getParent(), permission);
+        return (contextRole != null && contextRole.hasPermission(permission))
+                || (context.getParent() != null && hasPermission(context.getParent(), permission));
     }
 
     /**
@@ -577,10 +573,8 @@ public class User implements IUser {
             if (this.clientSender == null) {
                 throw new IllegalStateException("User is marked as online but is not connected");
             }
-
             return true;
         }
-
         return false;
     }
 
@@ -760,17 +754,10 @@ public class User implements IUser {
     }
 
     @Override
-    public boolean equals(@Nullable final Object object) {
-        if (this == object) {
-            return true;
-        }
-
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-
-        final User user = (User) object;
-
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
         return userId.equals(user.userId);
     }
 

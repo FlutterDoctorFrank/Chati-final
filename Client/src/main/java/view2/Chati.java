@@ -73,6 +73,7 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     @Override
     public void render() {
         transferFlags();
+        System.out.println(worldChangeReceived);
         resetChangeReceivedFlags();
         super.render();
         resetModelChangedFlags();
