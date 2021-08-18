@@ -173,6 +173,7 @@ public class User implements IUserController, IUserView {
 
     @Override
     public void setPosition(int posX, int posY) {
+        System.out.println(posX + " " + posY + " Client Model setPosition");
         currentLocation = new Location(posX, posY);
         UserManager.getInstance().getModelObserver().setUserPositionChanged();
     }
@@ -273,6 +274,7 @@ public class User implements IUserController, IUserView {
 
     @Override
     public Location getCurrentLocation() {
+        //System.out.print(currentLocation.getPosX() + " " + currentLocation.getPosY() + " Client Model Get");
         return currentLocation;
     }
 

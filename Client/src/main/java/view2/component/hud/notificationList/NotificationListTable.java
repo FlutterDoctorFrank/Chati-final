@@ -4,16 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import model.MessageBundle;
-import model.notification.Notification;
-import model.notification.NotificationType;
 import model.user.IInternUserView;
 import model.user.IUserManagerView;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class NotificationListTable extends HudMenuTable {
@@ -35,7 +31,7 @@ public class NotificationListTable extends HudMenuTable {
 
     @Override
     public void act(float delta) {
-        if (Chati.getInstance().isUserNotificationChanged()) {
+        if (Chati.getInstance().isUserNotificationChanged() || Chati.getInstance().isWorldChanged()) {
             IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
             if (user == null && !globalNotificationTabButton.isDisabled()) {
                 disableWorldNotificationTab();
@@ -148,12 +144,15 @@ public class NotificationListTable extends HudMenuTable {
             layoutEntries(globalNotificationEntries);
         }
         // TEEEEESST //
+        /*
         for (int i = 0; i <20; i++) {
             Notification notification = new Notification(UUID.randomUUID(), null, new MessageBundle("Ich bin ein globaler Nachricht"), LocalDateTime.now(),
                     NotificationType.values()[new Random().nextInt(NotificationType.values().length)]);
             globalNotificationEntries.add(new NotificationListEntry(notification));
         }
         layoutEntries(globalNotificationEntries);
+
+         */
         // TEEESST ENDE //
     }
 

@@ -38,7 +38,7 @@ public class UserListTable extends HudMenuTable {
 
     @Override
     public void act(float delta) {
-        if (Chati.getInstance().isUserInfoChanged()) {
+        if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()) {
             IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
             if (user == null && !friendTabButton.isDisabled()) {
                 disableBannedUsersTab();
@@ -56,12 +56,10 @@ public class UserListTable extends HudMenuTable {
             if (user != null && friendTabButton.isDisabled()) {
                 enableButton(friendTabButton);
                 selectButton(friendTabButton);
-                //friendTabButton.setChecked(true);
-                //friendTabButton.getLabel().setColor(Color.MAGENTA);
-                //friendTabButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
             } else if (user != null && user.isInCurrentWorld() && activeUserTabButton.isDisabled()) {
                 enableButton(activeUserTabButton);
             }
+
             if (user != null && user.isInCurrentWorld()
                     && (user.hasPermission(Permission.BAN_USER) || user.hasPermission(Permission.BAN_MODERATOR))
                     && bannedUserTabButton.isDisabled()) {
@@ -76,7 +74,6 @@ public class UserListTable extends HudMenuTable {
                 showBannedUsers();
             }
         }
-
         super.act(delta);
     }
 
@@ -199,6 +196,7 @@ public class UserListTable extends HudMenuTable {
             layoutEntries(friendEntries);
         }
         // TEST ///////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
         String[] names = {"Jürgen", "Hans-Peter", "Detlef", "Olaf", "Markus", "Dietrich", "Dieter", "Siegbert", "Siegmund",
                 "Joseph", "Ferdinand", "Alexander", "Analia", "Inkontinentia", "Vera Agina", "Agathe Bauer", "Bertha", "Hannelore",
                 "Sieglinde", "Josephine", "Brigitte", "Luise-Annegret", "Alma-Dorothea", "Magdalena", "Brunhilde", "Herbert", "Gertrud", "Hiltrud",
@@ -220,6 +218,7 @@ public class UserListTable extends HudMenuTable {
             friendEntries.add(entry);
         }
         layoutEntries(friendEntries);
+ */
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 

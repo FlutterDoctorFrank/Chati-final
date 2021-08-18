@@ -29,14 +29,25 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     private final IUserManagerView userManager;
     private ServerSender serverSender;
 
-    private boolean userInfoChanged;
-    private boolean userNotificationChanged;
-    private boolean userPositionChanged;
-    private boolean roomChanged;
-    private boolean worldChanged;
-    private boolean musicChanged;
-    private boolean worldListUpdated;
-    private boolean roomListUpdated;
+    private boolean userInfoChangeReceived;
+    private boolean userNotificationChangeReceived;
+    private boolean userPositionChangeReceived;
+    private boolean internUserPositionChangeReceived;
+    private boolean roomChangeReceived;
+    private boolean worldChangeReceived;
+    private boolean musicChangeReceived;
+    private boolean worldListUpdateReceived;
+    private boolean roomListUpdateReceived;
+
+    private boolean changeUserInfo;
+    private boolean changeNotificationInfo;
+    private boolean changeUserPosition;
+    private boolean changeInternUserPosition;
+    private boolean changeRoom;
+    private boolean changeWorld;
+    private boolean changeMusic;
+    private boolean changeWorldList;
+    private boolean changeRoomList;
 
     public Chati(IUserManagerView userManager) {
         CHATI = this;
@@ -61,6 +72,8 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
 
     @Override
     public void render() {
+        transferFlags();
+        resetChangeReceivedFlags();
         super.render();
         resetModelChangedFlags();
     }
@@ -75,32 +88,37 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
 
     @Override
     public void setUserInfoChanged() {
-        this.userInfoChanged = true;
+        this.userInfoChangeReceived = true;
     }
 
     @Override
     public void setUserNotificationChanged() {
-        this.userNotificationChanged = true;
+        this.userNotificationChangeReceived = true;
+    }
+
+    @Override
+    public void setInternUserPositionChanged() {
+        this.internUserPositionChangeReceived = true;
     }
 
     @Override
     public void setUserPositionChanged() {
-        this.userPositionChanged = true;
+        this.userPositionChangeReceived = true;
     }
 
     @Override
     public void setWorldChanged() {
-        this.worldChanged = true;
+        this.worldChangeReceived = true;
     }
 
     @Override
     public void setRoomChanged() {
-        this.roomChanged = true;
+        this.roomChangeReceived = true;
     }
 
     @Override
     public void setMusicChanged() {
-        this.musicChanged = true;
+        this.musicChangeReceived = true;
     }
 
     @Override
@@ -113,7 +131,7 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
         if (this.screen.equals(MenuScreen.getInstance())) {
             MenuScreen.getInstance().updateWorlds(worlds);
         }
-        worldListUpdated = true;
+        worldListUpdateReceived = true;
     }
 
     @Override
@@ -121,7 +139,7 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
         if (this.screen.equals(WorldScreen.getInstance())) {
             // TODO
         }
-        roomListUpdated = true;
+        roomListUpdateReceived = true;
     }
 
     @Override
@@ -224,37 +242,66 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     }
 
     public boolean isUserInfoChanged() {
-        return userInfoChanged;
+        return changeUserInfo;
     }
 
     public boolean isUserNotificationChanged() {
-        return userNotificationChanged;
+        return changeNotificationInfo;
     }
 
     public boolean isWorldListUpdated() {
-        return worldListUpdated;
+        return changeWorldList;
     }
 
     public boolean isWorldChanged() {
-        return worldChanged;
+        return changeWorld;
     }
 
     public boolean isRoomChanged() {
-        return roomChanged;
+        return changeRoom;
     }
 
     public boolean isUserPositionChanged() {
-        return userPositionChanged;
+        return changeUserPosition;
+    }
+
+    public boolean isInternUserPositionChanged() {
+        return changeInternUserPosition;
+    }
+
+    private void resetChangeReceivedFlags() {
+        userInfoChangeReceived = false;
+        userNotificationChangeReceived = false;
+        userPositionChangeReceived = false;
+        internUserPositionChangeReceived = false;
+        roomChangeReceived = false;
+        worldChangeReceived = false;
+        musicChangeReceived = false;
+        worldListUpdateReceived = false;
+        roomListUpdateReceived = false;
+    }
+
+    private void transferFlags() {
+        changeUserInfo = userInfoChangeReceived;
+        changeNotificationInfo = userNotificationChangeReceived;
+        changeUserPosition = userPositionChangeReceived;
+        changeInternUserPosition = internUserPositionChangeReceived;
+        changeRoom = roomChangeReceived;
+        changeWorld = worldChangeReceived;
+        changeMusic = musicChangeReceived;
+        changeWorldList = worldListUpdateReceived;
+        changeRoomList = roomListUpdateReceived;
     }
 
     private void resetModelChangedFlags() {
-        userInfoChanged = false;
-        userNotificationChanged = false;
-        userPositionChanged = false;
-        roomChanged = false;
-        worldChanged = false;
-        musicChanged = false;
-        worldListUpdated = false;
-        roomListUpdated = false;
+        changeUserInfo = false;
+        changeNotificationInfo = false;
+        changeUserPosition = false;
+        changeInternUserPosition = false;
+        changeRoom = false;
+        changeWorld = false;
+        changeMusic = false;
+        changeWorldList = false;
+        changeRoomList = false;
     }
 }

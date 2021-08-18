@@ -59,15 +59,17 @@ public class WorldScreen extends AbstractScreen {
             createMap();
             addBorders();
             addInteractiveObjects();
+        }
+
+        if (Chati.getInstance().isInternUserPositionChanged()) {
             if (internUserAvatar == null) {
                 internUserAvatar = new InternUserAvatar(Chati.getInstance().getUserManager().getInternUserView());
-            } else {
-                internUserAvatar.updatePosition(true);
             }
+            internUserAvatar.updatePosition(true);
         }
 
         if (Chati.getInstance().isUserPositionChanged()) {
-            updateAvatars();
+            updateExternUserAvatars();
         }
 
         if (tiledMap != null && internUserAvatar != null) {
@@ -149,12 +151,18 @@ public class WorldScreen extends AbstractScreen {
         });
     }
 
-    private void updateAvatars() {
-        externUserAvatars.clear();
-        externUserAvatars.addAll(Chati.getInstance().getUserManager().getUsersInRoom().values().stream()
-                .map(UserAvatar::new).collect(Collectors.toSet()));
-        //externUserAvatars.forEach(externUserAvatar -> externUserAvatar.updatePosition(false));
-        //internUserAvatar.updatePosition(false);
+    private void updateExternUserAvatars() {
+        externUserAvatars.forEach(externUserAvatar -> {
+            if (!Chati.getInstance().getUserManager().getUsersInRoom().containsValue(externUserAvatar.getUser())) {
+                externUserAvatars.remove(externUserAvatar);
+            }
+        });
+        Chati.getInstance().getUserManager().getUsersInRoom().values().forEach(externUser -> {
+            if (!externUserAvatars.stream().map(UserAvatar::getUser).collect(Collectors.toSet()).contains(externUser)) {
+                externUserAvatars.add(new UserAvatar(externUser));
+            }
+        });
+        externUserAvatars.forEach(externUserAvatar -> externUserAvatar.updatePosition(false));
     }
 
     public World getWorld() {
@@ -167,5 +175,10 @@ public class WorldScreen extends AbstractScreen {
 
     public InternUserAvatar getInternUserAvatar() {
         return internUserAvatar;
+    }
+
+    public void clear() {
+        internUserAvatar = null;
+        externUserAvatars.clear();
     }
 }

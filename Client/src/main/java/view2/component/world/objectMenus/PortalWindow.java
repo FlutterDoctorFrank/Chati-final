@@ -1,17 +1,18 @@
-package view2.component.hud.settings;
+package view2.component.world.objectMenus;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import controller.network.ServerSender;
+import model.context.ContextID;
 import view2.Chati;
 import view2.component.ChatiWindow;
 
-public class LanguageSelectWindow extends ChatiWindow {
+public class PortalWindow extends ChatiWindow {
 
     private static final float WINDOW_WIDTH = 550;
     private static final float WINDOW_HEIGHT = 350;
@@ -21,14 +22,16 @@ public class LanguageSelectWindow extends ChatiWindow {
     private static final float HORIZONTAL_SPACING = 15;
     private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
 
+    private final ContextID portalId;
+
     private Label infoLabel;
-    private SelectBox<String> languageSelectBox;
     private TextButton confirmButton;
     private TextButton cancelButton;
     private TextButton closeButton;
 
-    public LanguageSelectWindow() {
-        super("Sprache auswählen");
+    public PortalWindow(ContextID portalId) {
+        super("Raum verlassen");
+        this.portalId = portalId;
         create();
         setLayout();
     }
@@ -38,12 +41,9 @@ public class LanguageSelectWindow extends ChatiWindow {
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = new BitmapFont();
         style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
-        this.infoLabel = new Label("Wähle eine Sprache aus!", style);
+        infoLabel = new Label("Möchtest du den Raum wirklich verlassen?", style);
 
-        languageSelectBox = new SelectBox<>(Chati.SKIN);
-        // Das kommt noch
-
-        confirmButton = new TextButton("Bestätigen", Chati.SKIN);
+        confirmButton = new TextButton("Ja", Chati.SKIN);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -51,12 +51,11 @@ public class LanguageSelectWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                // Das kommt noch
-                remove();
+                Chati.getInstance().getServerSender().send(ServerSender.SendAction.MENU_OPTION, portalId, new String[0], 1);
             }
         });
 
-        cancelButton = new TextButton("Abbrechen", Chati.SKIN);
+        cancelButton = new TextButton("Nein", Chati.SKIN);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -64,7 +63,7 @@ public class LanguageSelectWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                remove();
+                Chati.getInstance().getServerSender().send(ServerSender.SendAction.MENU_OPTION, portalId, new String[0], 0);
             }
         });
 
@@ -76,7 +75,7 @@ public class LanguageSelectWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                remove();
+                Chati.getInstance().getServerSender().send(ServerSender.SendAction.MENU_OPTION, portalId, new String[0], 0);
             }
         });
     }
@@ -92,13 +91,13 @@ public class LanguageSelectWindow extends ChatiWindow {
         Table labelContainer = new Table();
         labelContainer.add(infoLabel).center();
 
-        add(labelContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(VERTICAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
-        add(languageSelectBox).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
+        add(labelContainer).top().width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(VERTICAL_SPACING)
+                .spaceBottom(VERTICAL_SPACING).expandY().row();
 
         Table buttonContainer = new Table(Chati.SKIN);
         buttonContainer.add(confirmButton).width((ROW_WIDTH - HORIZONTAL_SPACING) / 2).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         buttonContainer.add(cancelButton).width((ROW_WIDTH - HORIZONTAL_SPACING) / 2).height(ROW_HEIGHT);
-        add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
+        add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceBottom(VERTICAL_SPACING);
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }

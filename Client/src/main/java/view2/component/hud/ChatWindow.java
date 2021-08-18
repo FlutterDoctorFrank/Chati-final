@@ -1,7 +1,6 @@
 package view2.component.hud;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -16,6 +15,7 @@ import model.exception.UserNotFoundException;
 import model.user.IUserManagerView;
 import view2.Chati;
 import view2.component.ChatiWindow;
+import view2.component.KeyAction;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -75,9 +75,14 @@ public class ChatWindow extends ChatiWindow {
         });
         typeMessageArea.addListener(new InputListener() {
             @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                return KeyAction.getAction(keycode) == KeyAction.SEND_CHAT_MESSAGE;
+            }
+            @Override
             public boolean keyUp(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ENTER) {
+                if (KeyAction.getAction(keycode) == KeyAction.SEND_CHAT_MESSAGE) {
                     sendMessage();
+                    return true;
                 }
                 return false;
             }
@@ -144,7 +149,11 @@ public class ChatWindow extends ChatiWindow {
         if (typeMessageArea.getStyle().fontColor == Color.GRAY || typeMessageArea.getText().isEmpty()) {
             return;
         }
-        Chati.getInstance().getServerSender().send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText());
+        String sendMessage = typeMessageArea.getText();
+        if (sendMessage.charAt(sendMessage.length() - 1) == '\n') {
+            sendMessage = sendMessage.substring(0, sendMessage.length() - 1);
+        }
+        Chati.getInstance().getServerSender().send(ServerSender.SendAction.MESSAGE, sendMessage);
         typeMessageArea.setText("");
     }
 
@@ -191,11 +200,17 @@ public class ChatWindow extends ChatiWindow {
         showLabel.setWrap(true);
 
         messageLabelContainer.add(showLabel).top().left().padLeft(SPACE).padBottom(SPACE).expandX().fillX().row();
+        historyScrollPane.scrollTo(0, 0, 0, 0);
     }
 
     public void clearChat() {
         resetMessageArea();
         messageLabelContainer.clearChildren();
+    }
+
+    public void focus() {
+        getStage().setScrollFocus(historyScrollPane);
+        historyScrollPane.scrollTo(0, 0, 0, 0);
     }
 
     public static ChatWindow getInstance() {

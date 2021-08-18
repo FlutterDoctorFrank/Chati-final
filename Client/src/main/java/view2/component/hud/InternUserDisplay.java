@@ -42,10 +42,11 @@ public class InternUserDisplay extends HudMenuTable {
 
     @Override
     public void act(float delta) {
-        if (Chati.getInstance().isUserInfoChanged()) {
+        if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()) {
             IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
             if (internUser != null) {
                 setStatusImage();
+                setRoleImage();
             }
         }
 
@@ -57,46 +58,7 @@ public class InternUserDisplay extends HudMenuTable {
         usernameLabel = new Label(internUser.getUsername(), Chati.SKIN);
         usernameLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
 
-        if (internUser.hasRole(Role.OWNER)) {
-            usernameLabel.setColor(Color.GOLD);
-            Image ownerImage = new Image(Icon.OWNER_ICON);
-            ownerImage.addListener(new ChatiToolTip("Besitzer"));
-            roleIcons.add(ownerImage);
-        } else if (internUser.hasRole(Role.ADMINISTRATOR)) {
-            usernameLabel.setColor(Color.SKY);
-            Image administratorImage = new Image(Icon.ADMINISTRATOR_ICON);
-            administratorImage.addListener(new ChatiToolTip("Administrator"));
-            roleIcons.add(administratorImage);
-        } else if (internUser.hasRole(Role.MODERATOR)) {
-            usernameLabel.setColor(Color.ORANGE);
-            Image moderatorImage = new Image(Icon.MODERATOR_ICON);
-            moderatorImage.addListener(new ChatiToolTip("Moderator"));
-            roleIcons.add(moderatorImage);
-        }
-        if (internUser.hasRole(Role.ROOM_OWNER)) {
-            Image roomOwnerImage = new Image(Icon.ROOM_OWNER_ICON);
-            roomOwnerImage.addListener(new ChatiToolTip("Raumbesitzer"));
-            roleIcons.add(roomOwnerImage);
-        }
-        if (internUser.hasRole(Role.AREA_MANAGER)) {
-            Image areaManagerImage = new Image(Icon.AREA_MANAGER_ICON);
-            areaManagerImage.addListener(new ChatiToolTip("Bereichsberechtigter"));
-            roleIcons.add(areaManagerImage);
-        }
-
-        statusImage = new Image();
-        switch (internUser.getStatus()) {
-            case ONLINE:
-                statusImage.setDrawable(Icon.ONLINE_ICON);
-                statusImage.addListener(new ChatiToolTip("Online"));
-                break;
-            case AWAY:
-                statusImage.setDrawable(Icon.AWAY_ICON);
-                statusImage.addListener(new ChatiToolTip("Abwesend"));
-                break;
-            default:
-                throw new IllegalArgumentException("There is no icon for this user status.");
-        }
+        setRoleImage();
 
         setStatusImage();
 
@@ -158,6 +120,35 @@ public class InternUserDisplay extends HudMenuTable {
                 break;
             default:
                 throw new IllegalArgumentException("There is no icon for this user status.");
+        }
+    }
+
+    private void setRoleImage() {
+        if (internUser.hasRole(Role.OWNER)) {
+            usernameLabel.setColor(Color.GOLD);
+            Image ownerImage = new Image(Icon.OWNER_ICON);
+            ownerImage.addListener(new ChatiToolTip("Besitzer"));
+            roleIcons.add(ownerImage);
+        } else if (internUser.hasRole(Role.ADMINISTRATOR)) {
+            usernameLabel.setColor(Color.SKY);
+            Image administratorImage = new Image(Icon.ADMINISTRATOR_ICON);
+            administratorImage.addListener(new ChatiToolTip("Administrator"));
+            roleIcons.add(administratorImage);
+        } else if (internUser.hasRole(Role.MODERATOR)) {
+            usernameLabel.setColor(Color.ORANGE);
+            Image moderatorImage = new Image(Icon.MODERATOR_ICON);
+            moderatorImage.addListener(new ChatiToolTip("Moderator"));
+            roleIcons.add(moderatorImage);
+        }
+        if (internUser.hasRole(Role.ROOM_OWNER)) {
+            Image roomOwnerImage = new Image(Icon.ROOM_OWNER_ICON);
+            roomOwnerImage.addListener(new ChatiToolTip("Raumbesitzer"));
+            roleIcons.add(roomOwnerImage);
+        }
+        if (internUser.hasRole(Role.AREA_MANAGER)) {
+            Image areaManagerImage = new Image(Icon.AREA_MANAGER_ICON);
+            areaManagerImage.addListener(new ChatiToolTip("Bereichsberechtigter"));
+            roleIcons.add(areaManagerImage);
         }
     }
 

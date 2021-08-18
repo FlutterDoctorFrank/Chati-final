@@ -11,8 +11,6 @@ public class UserAvatar extends Sprite {
     public static final int DEFAULT_VELOCITY = 20;
     public static final float SPRINT_SPEED_FACTOR = 2f;
 
-    //private enum Direction {UP, LEFT, DOWN, RIGHT, NEUTRAL}
-
     private final IUserView user;
     protected final Body body;
 
@@ -34,18 +32,18 @@ public class UserAvatar extends Sprite {
         this.user = user;
 
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.type = BodyDef.BodyType.KinematicBody;
 
         // Sollte später weg, wenn der Server die initiale Position festlegt? ////////////////////////////////
-        float userInitPosX = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosX") / WorldScreen.PPM;
-        float userInitPosY = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosY") / WorldScreen.PPM;
-        bodyDef.position.set(userInitPosX, userInitPosY);
+        //float userInitPosX = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosX") / WorldScreen.PPM;
+        //float userInitPosY = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosY") / WorldScreen.PPM;
+        //bodyDef.position.set(userInitPosX, userInitPosY);
         /////////////////////////////////////////////////////////////////////////////////
 
         /*
         body.setTransform(new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM, user.getCurrentLocation().getPosY() / WorldScreen.PPM), body.getAngle());
         body.setAwake(true);
-         */ /** Das kommt später hierhin. */
+         */
 
         this.body = WorldScreen.getInstance().getWorld().createBody(bodyDef);
 
@@ -177,10 +175,11 @@ public class UserAvatar extends Sprite {
     }
 
     public void updatePosition(boolean teleport) {
-        Vector2 newPosition = new Vector2(user.getCurrentLocation().getPosX(), user.getCurrentLocation().getPosY());
+        Vector2 newPosition = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
+                user.getCurrentLocation().getPosY() / WorldScreen.PPM);
         if (teleport) {
             body.setTransform(newPosition, body.getAngle());
-            body.setAwake(true);
+            body.setActive(true);
         } else {
             new Thread(() -> {
                 Vector2 currentPosition = body.getWorldCenter();

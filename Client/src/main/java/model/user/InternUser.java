@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import model.MessageBundle;
 import model.context.Context;
 import model.context.ContextID;
+import model.context.spatial.Location;
 import model.context.spatial.Music;
 import model.context.spatial.SpatialContext;
 import model.context.spatial.SpatialMap;
@@ -134,6 +135,13 @@ public class InternUser extends User implements IInternUserController, IInternUs
             throw new NotificationNotFoundException("There is no notification with this ID.", notificationId);
         }
         UserManager.getInstance().getModelObserver().setUserNotificationChanged();
+    }
+
+    @Override
+    public void setPosition(int posX, int posY) {
+        System.out.println(posX + " " + posY + " Client Model setPosition");
+        currentLocation = new Location(posX, posY);
+        UserManager.getInstance().getModelObserver().setInternUserPositionChanged();
     }
 
     @Override

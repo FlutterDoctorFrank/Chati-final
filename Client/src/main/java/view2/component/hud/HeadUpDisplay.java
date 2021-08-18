@@ -220,8 +220,10 @@ public class HeadUpDisplay extends Table {
         chatButton.setChecked(true);
         chatButton.getStyle().imageUp = Icon.CHECKED_CHAT_ICON;
         ChatWindow.getInstance().setVisible(true);
+        ChatWindow.getInstance().focus();
 
         //////////////////////// TEST ////////////////////////
+        /*
         for (int i = 0; i <10; i++) {
             UUID id = Chati.getInstance().getUserManager().getInternUserView().getUserId();
             String message = "uihferuwihfieeraofhvueifhuiergfbrgfiqeowjderniogwuihfosdhvwrbfhdsvbworgbuiaeofjdhioh0";
@@ -229,6 +231,7 @@ public class HeadUpDisplay extends Table {
             LocalDateTime stamp = LocalDateTime.now();
             ChatWindow.getInstance().showMessage(id, message, type, stamp);
         }
+         */
         ////////////////// TEST ENDE ///////////////////////////
     }
 

@@ -146,6 +146,11 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
+    public void setInternUserPositionChanged() {
+
+    }
+
+    @Override
     public void setUserPositionChanged() {
         Gdx.app.postRunnable(() -> {
             if(isPlaying) {

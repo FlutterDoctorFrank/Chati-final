@@ -42,6 +42,11 @@ public class IUserTest {
             }
 
             @Override
+            public void setInternUserPositionChanged() {
+
+            }
+
+            @Override
             public void setUserPositionChanged() {
             }
 

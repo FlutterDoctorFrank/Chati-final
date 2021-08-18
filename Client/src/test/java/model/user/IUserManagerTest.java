@@ -38,6 +38,11 @@ public class IUserManagerTest {
             }
 
             @Override
+            public void setInternUserPositionChanged() {
+
+            }
+
+            @Override
             public void setUserPositionChanged() {
             }
 
