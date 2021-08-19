@@ -40,7 +40,8 @@ public class InternUserDisplay extends HudMenuTable {
 
     @Override
     public void act(float delta) {
-        if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()) {
+        if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()
+                || Chati.getInstance().isRoomChanged()) {
             IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
             if (internUser != null) {
                 clear();

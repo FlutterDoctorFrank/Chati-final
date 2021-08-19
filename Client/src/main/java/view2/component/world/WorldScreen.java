@@ -61,27 +61,20 @@ public class WorldScreen extends AbstractScreen {
             addInteractiveObjects();
         }
 
-        if (Chati.getInstance().getUserManager().getInternUserView().isInPrivateRoom() && Chati.getInstance().isInternUserPositionChanged()) {
-            if (internUserAvatar == null) {
-                internUserAvatar = new InternUserAvatar(Chati.getInstance().getUserManager().getInternUserView());
-            }
-            internUserAvatar.teleport();
-        }
-
-        if (Chati.getInstance().isUserPositionChanged()) {
-            updateExternUserAvatars();
-        }
-
-        if (tiledMap != null && internUserAvatar != null) {
+        if (tiledMap != null) {
             tiledMapRenderer.render();
             debugRenderer.render(world, gameViewport.getCamera().combined);
 
-            SPRITE_BATCH.setProjectionMatrix(gameViewport.getCamera().combined);
-            SPRITE_BATCH.begin();
-            internUserAvatar.move();
-            internUserAvatar.draw(SPRITE_BATCH, delta);
-            externUserAvatars.forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
-            SPRITE_BATCH.end();
+            updateInternUserAvatar();
+            updateExternUserAvatars();
+
+            if (internUserAvatar != null) {
+                SPRITE_BATCH.setProjectionMatrix(gameViewport.getCamera().combined);
+                SPRITE_BATCH.begin();
+                internUserAvatar.draw(SPRITE_BATCH, delta);
+                externUserAvatars.forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
+                SPRITE_BATCH.end();
+            }
 
             world.step(1 / 30f, 6, 2); /** Was sind das für Zahlen? Kein hardcoden, irgendwo Konstanten setzen... Wo kommen die her?*/
             gameViewport.getCamera().update();
@@ -160,20 +153,34 @@ public class WorldScreen extends AbstractScreen {
         });
     }
 
+    private void updateInternUserAvatar() {
+        if (Chati.getInstance().isInternUserPositionChanged()) {
+            if (internUserAvatar == null) {
+                internUserAvatar = new InternUserAvatar(Chati.getInstance().getUserManager().getInternUserView());
+            }
+            internUserAvatar.teleport();
+        }
+        if (internUserAvatar != null) {
+            internUserAvatar.move();
+        }
+    }
+
     private void updateExternUserAvatars() {
-        externUserAvatars.forEach(externUserAvatar -> {
-            if (!Chati.getInstance().getUserManager().getUsersInRoom().containsValue(externUserAvatar.getUser())) {
-                externUserAvatars.remove(externUserAvatar);
-            }
-        });
-        Chati.getInstance().getUserManager().getActiveUsers().values().forEach(externUser -> {
-            if (!externUserAvatars.stream().map(UserAvatar::getUser).collect(Collectors.toSet()).contains(externUser)) {
-                UserAvatar newUserAvatar = new UserAvatar(externUser);
-                externUserAvatars.add(newUserAvatar);
-                newUserAvatar.teleport();
-            }
-        });
-        externUserAvatars.forEach(externUserAvatar -> externUserAvatar.move(false));
+        if (Chati.getInstance().isUserPositionChanged()) {
+            externUserAvatars.forEach(externUserAvatar -> {
+                if (!Chati.getInstance().getUserManager().getUsersInRoom().containsValue(externUserAvatar.getUser())) {
+                    externUserAvatars.remove(externUserAvatar);
+                }
+            });
+            Chati.getInstance().getUserManager().getActiveUsers().values().forEach(externUser -> {
+                if (!externUserAvatars.stream().map(UserAvatar::getUser).collect(Collectors.toSet()).contains(externUser)) {
+                    UserAvatar newUserAvatar = new UserAvatar(externUser);
+                    externUserAvatars.add(newUserAvatar);
+                    newUserAvatar.teleport();
+                }
+            });
+            externUserAvatars.forEach(externUserAvatar -> externUserAvatar.move(false));
+        }
     }
 
     public World getWorld() {

@@ -173,7 +173,6 @@ public class User implements IUserController, IUserView {
 
     @Override
     public void setPosition(int posX, int posY) {
-        System.out.println(posX + " " + posY + " Client Model setPosition");
         currentLocation = new Location(posX, posY);
         UserManager.getInstance().getModelObserver().setUserPositionChanged();
     }
@@ -215,12 +214,7 @@ public class User implements IUserController, IUserView {
 
     @Override
     public boolean isReported() {
-        InternUser internUser = UserManager.getInstance().getInternUser();
-        if (internUser.getCurrentLocation() == null) {
-            // System.out.println();
-            return reportedContexts.containsKey(Context.getGlobal().getContextId());
-        }
-        Context current = internUser.getCurrentLocation().getArea();
+        Context current = UserManager.getInstance().getInternUser().getDeepestContext();
         do {
             if (reportedContexts.containsKey(current.getContextId())) {
                 return true;
@@ -232,11 +226,7 @@ public class User implements IUserController, IUserView {
 
     @Override
     public boolean isMuted() {
-        InternUser internUser = UserManager.getInstance().getInternUser();
-        if (internUser.getCurrentLocation() == null) {
-            return mutedContexts.containsKey(Context.getGlobal().getContextId());
-        }
-        Context current = internUser.getCurrentLocation().getArea();
+        Context current = UserManager.getInstance().getInternUser().getDeepestContext();
         do {
             if (mutedContexts.containsKey(current.getContextId())) {
                 return true;
@@ -248,11 +238,7 @@ public class User implements IUserController, IUserView {
 
     @Override
     public boolean isBanned() {
-        InternUser internUser = UserManager.getInstance().getInternUser();
-        if (internUser.getCurrentLocation() == null) {
-            return bannedContexts.containsKey(Context.getGlobal().getContextId());
-        }
-        Context current = internUser.getCurrentLocation().getArea();
+        Context current = UserManager.getInstance().getInternUser().getDeepestContext();
         do {
             if (bannedContexts.containsKey(current.getContextId())) {
                 return true;
@@ -281,14 +267,12 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean hasRole(Role role) {
         //System.out.println("Area  " +UserManager.getInstance().getInternUser().getCurrentLocation().getArea().getContextId());
-        return currentLocation == null ? hasRole(Context.getGlobal(), role)
-                : hasRole(UserManager.getInstance().getInternUser().getCurrentLocation().getArea(), role);
+        return hasRole(UserManager.getInstance().getInternUser().getDeepestContext(), role);
     }
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return currentLocation == null ? hasPermission(Context.getGlobal(), permission)
-                : hasPermission(UserManager.getInstance().getInternUser().getCurrentLocation().getArea(), permission);
+        return hasPermission(UserManager.getInstance().getInternUser().getDeepestContext(), permission);
     }
 
     @Override
@@ -299,6 +283,18 @@ public class User implements IUserController, IUserView {
                 : (hasRole(Role.ROOM_OWNER) ? Role.ROOM_OWNER
                 : (hasRole(Role.AREA_MANAGER) ? Role.AREA_MANAGER
                 : null))));
+    }
+
+    /**
+     * Gibt den untergeordnetsten Kontext zurück, in dem sich der Benutzer befindet.
+     * @return Untergeordnetster Kontext, in dem sich der Benutzer befindet.
+     */
+    public Context getDeepestContext() {
+        return status == Status.OFFLINE ? null
+                : (UserManager.getInstance().getInternUser().getCurrentWorld() == null || !isInCurrentWorld ? Context.getGlobal()
+                : (UserManager.getInstance().getInternUser().getCurrentRoom() == null || !isInCurrentRoom
+                    || currentLocation == null ? UserManager.getInstance().getInternUser().getCurrentWorld()
+                : currentLocation.getArea()));
     }
 
     @Override

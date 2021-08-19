@@ -34,7 +34,8 @@ public class UserListTable extends HudMenuTable {
 
     @Override
     public void act(float delta) {
-        if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()) {
+        if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()
+                || Chati.getInstance().isRoomChanged()) {
             System.out.println("Methode wird aufgerufen");
             IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
             if (user == null && !friendTabButton.isDisabled()) {

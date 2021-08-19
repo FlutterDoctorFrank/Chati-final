@@ -89,17 +89,19 @@ public class InternUser extends User implements IInternUserController, IInternUs
         }
         music = null;
         // Entferne alten Raum aus der Kontexthierarchie.
-        leaveRoom();
+        if (currentRoom != null) {
+            leaveRoom();
+        }
 
         this.currentRoom = new SpatialContext(roomName, currentWorld);
-
         Gdx.app.postRunnable(() -> currentRoom.build(map));
+
         isInCurrentRoom = true;
     }
 
     @Override
     public void setMusic(ContextID spatialId, Music music) throws ContextNotFoundException {
-        Context current = currentRoom.getArea(currentLocation.getPosX(), currentLocation.getPosY());
+        Context current = getDeepestContext();
         do {
             if (!current.getContextId().equals(spatialId)) {
                 throw new ContextNotFoundException("User is not in a context with this ID.", spatialId);

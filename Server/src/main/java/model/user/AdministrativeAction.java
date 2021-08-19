@@ -33,7 +33,7 @@ public enum AdministrativeAction {
         protected void execute(@NotNull final User performer, @NotNull final User target,
                                @NotNull final String[] args) {
             // Überprüfe, ob die Benutzer bereits befreundet sind.
-            if (performer.isFriend(target) || target.isFriend(performer)) {
+            if (performer.isFriend(target) && target.isFriend(performer)) {
                 throw new IllegalStateException("Users are already friends.");
             }
             // Überprüfe, ob der angefragte Benutzer den anfragenden ignoriert.

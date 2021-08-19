@@ -36,7 +36,7 @@ public class FriendRequest extends Notification {
             return;
         }
         // Überprüfe, ob die Benutzer bereits befreundet sind.
-        if (owner.isFriend(requestingUser) || requestingUser.isFriend(owner)) {
+        if (owner.isFriend(requestingUser) && requestingUser.isFriend(owner)) {
             MessageBundle messageBundle = new MessageBundle("Du bist bereits mit diesem Benutzer befreundet.");
             TextMessage infoMessage = new TextMessage(messageBundle);
             owner.send(SendAction.MESSAGE, infoMessage);
@@ -55,7 +55,6 @@ public class FriendRequest extends Notification {
         }
         // Füge die Benutzer jeweils als Freund hinzu.
         owner.addFriend(requestingUser);
-        requestingUser.addFriend(owner);
         // Benachrichtige den anfragenden Benutzer über die Annahme der Freundschaftsanfrage.
         Notification acceptNotification = new Notification(requestingUser, GlobalContext.getInstance(),
                 new MessageBundle("messageKey"));

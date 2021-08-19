@@ -41,7 +41,8 @@ public class HeadUpDisplay extends Table {
 
     @Override
     public void act(float delta) {
-        if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()) {
+        if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()
+                || Chati.getInstance().isRoomChanged()) {
             IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
             if (internUser != null && internUserDisplayContainer.getChildren().isEmpty()) {
                 internUserDisplayContainer.add(new InternUserDisplay()).width(HUD_MENU_TABLE_WIDTH).height(HUD_MENU_TABLE_HEIGHT);

@@ -20,7 +20,7 @@ import java.util.UUID;
 public class CommunicationHandler {
 
     /** Ein regulärer Ausdruck für das Verwenden eines Chatbefehls in einer Nachricht.*/
-    private static final String CHAT_COMMAND = "^\\\\.*";
+    private static final String CHAT_COMMAND = "\\\\.*";
 
     private CommunicationHandler() {
     }
@@ -38,8 +38,9 @@ public class CommunicationHandler {
     public static void handleTextMessage(@NotNull final User sender, @NotNull final String receivedMessage) {
         if (receivedMessage.matches(CHAT_COMMAND)) {
             for (ChatCommand command : ChatCommand.values()) {
-                if (receivedMessage.matches(command.commandPattern)) {
-                    command.handle(sender, receivedMessage.substring(1));
+                String commandMessage = receivedMessage.substring(1);
+                if (commandMessage.matches(command.commandPattern)) {
+                    command.handle(sender, commandMessage);
                     return;
                 }
             }
@@ -140,7 +141,7 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#WHISPER
          */
-        WHISPER_MESSAGE_COMMAND("^\\\\[a-zA-Z0-9]+\\s.*") {
+        WHISPER_MESSAGE_COMMAND("\\\\[a-zA-Z0-9]+\\s.*") {
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message) {
                 // Extrahiere den Benutzernamen aus dem Befehl der Flüsternachricht.
@@ -207,7 +208,7 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#ROOM
          */
-        ROOM_MESSAGE_COMMAND("^room\\s.*") {
+        ROOM_MESSAGE_COMMAND("room\\s.*") {
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message) {
                 String sendMessage = message.split("\\s", 2)[1];
@@ -252,7 +253,7 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#WORLD
          */
-        WORLD_MESSAGE_COMMAND("^world\\s.*"){
+        WORLD_MESSAGE_COMMAND("world\\s.*"){
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message) {
                 String sendMessage = message.split("\\s", 2)[1];
