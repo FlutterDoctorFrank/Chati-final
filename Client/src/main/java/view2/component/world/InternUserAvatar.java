@@ -11,7 +11,10 @@ import java.util.*;
 
 public class InternUserAvatar extends UserAvatar {
 
+    private static final float EPSILON = 32;
+
     private final LinkedList<Direction> currentDirectionalInputs;
+    private Vector2 lastSentPosition;
     private boolean canInteract;
 
     public InternUserAvatar(IInternUserView internUser) {
@@ -21,7 +24,7 @@ public class InternUserAvatar extends UserAvatar {
     }
 
     public void move() {
-        Vector2 oldPosition = body.getPosition();
+        lastSentPosition = body.getPosition();
         Direction currentDirection = getCurrentDirectionalInput();
         int velocity = DEFAULT_VELOCITY;
         if (WorldScreen.getInstance().getWorldInputProcessor().isSprintPressed()) {
@@ -48,15 +51,12 @@ public class InternUserAvatar extends UserAvatar {
             }
         }
         positionCamera();
-        /*
-        if (!oldPosition.epsilonEquals(body.getPosition())) {
+        Vector2 newPosition = body.getPosition();
+        if (lastSentPosition.dst(newPosition) >= EPSILON / WorldScreen.PPM) {
+            lastSentPosition = newPosition;
             Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
-                    (int) (body.getPosition().x * WorldScreen.PPM), (int) (body.getPosition().y * WorldScreen.PPM));
+                    (int) (newPosition.x * WorldScreen.PPM), (int) (newPosition.y * WorldScreen.PPM));
         }
-
-         */
-        Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
-                (int) (body.getPosition().x * WorldScreen.PPM), (int) (body.getPosition().y * WorldScreen.PPM));
     }
 
     private Direction getCurrentDirectionalInput() {
