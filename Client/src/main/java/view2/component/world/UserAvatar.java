@@ -173,16 +173,18 @@ public class UserAvatar extends Sprite {
         }
         Vector2 newPosition = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
-        int finalVelocity = velocity;
-        //new Thread(() -> {
-            Vector2 currentPosition = body.getWorldCenter();
-            Vector2 normMovingVector = newPosition.sub(currentPosition).nor();
-
-            while (!currentPosition.epsilonEquals(newPosition)) {
-                body.setLinearVelocity(normMovingVector.scl(finalVelocity));
+        Vector2 currentPosition = body.getPosition().cpy();
+        Vector2 velocityVector = currentPosition.sub(currentPosition).nor().scl(velocity);
+        body.setLinearVelocity(velocityVector);
+        new Thread() {
+            @Override
+            public void run() {
+                while (!body.getPosition().epsilonEquals(newPosition)) {
+                }
+                body.setLinearVelocity(0, 0);
             }
-            body.setLinearVelocity(0, 0);
-        //}).start();
+        }.start();
+
     }
 
     private class InteractButtonAnimation extends Sprite {
