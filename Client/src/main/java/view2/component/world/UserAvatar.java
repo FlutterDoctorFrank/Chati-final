@@ -54,7 +54,9 @@ public class UserAvatar extends Sprite {
     public void draw(Batch batch, float delta) {
         InteractButtonAnimation animation = new InteractButtonAnimation();
         animation.draw(batch);
-        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
+        setPosition(user.getCurrentLocation().getPosX() / WorldScreen.PPM - getWidth() / 2,
+                user.getCurrentLocation().getPosY() / WorldScreen.PPM - getHeight() / 2);
+        //setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getCurrentFrameRegion(delta));
         super.draw(batch);
     }
@@ -167,6 +169,7 @@ public class UserAvatar extends Sprite {
     }
 
     public void move(boolean sprint) {
+        /*
         int velocity = DEFAULT_VELOCITY;
         if (sprint) {
             velocity *= SPRINT_SPEED_FACTOR;
@@ -176,15 +179,8 @@ public class UserAvatar extends Sprite {
         Vector2 currentPosition = body.getPosition().cpy();
         Vector2 velocityVector = currentPosition.sub(currentPosition).nor().scl(velocity);
         body.setLinearVelocity(velocityVector);
-        new Thread() {
-            @Override
-            public void run() {
-                while (!body.getPosition().epsilonEquals(newPosition)) {
-                }
-                body.setLinearVelocity(0, 0);
-            }
-        }.start();
 
+         */
     }
 
     private class InteractButtonAnimation extends Sprite {
