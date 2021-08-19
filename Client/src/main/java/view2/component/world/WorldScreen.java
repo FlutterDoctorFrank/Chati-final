@@ -70,7 +70,7 @@ public class WorldScreen extends AbstractScreen {
 
         if (tiledMap != null) {
             tiledMapRenderer.render();
-            debugRenderer.render(world, camera.combined);
+            //debugRenderer.render(world, camera.combined);
 
             updateInternUserAvatar();
             updateExternUserAvatars();
@@ -186,8 +186,8 @@ public class WorldScreen extends AbstractScreen {
                     newUserAvatar.teleport();
                 }
             });
-            externUserAvatars.forEach(externUserAvatar -> externUserAvatar.move(false));
         }
+        externUserAvatars.forEach(externUserAvatar -> externUserAvatar.move(false));
     }
 
     public World getWorld() {

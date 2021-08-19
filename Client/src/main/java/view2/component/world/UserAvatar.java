@@ -175,17 +175,6 @@ public class UserAvatar extends Sprite {
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
         Vector2 velocityVector = newPosition.sub(body.getPosition()).nor().scl(velocity);
         body.setLinearVelocity(velocityVector);
-        /*
-        body.setLinearVelocity((newPosition.x - body.getPosition().x) * DEFAULT_VELOCITY,
-                    (newPosition.x - body.getPosition().x) * DEFAULT_VELOCITY);
-                    */
-        /*
-        Vector2 newPosition = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
-                user.getCurrentLocation().getPosY() / WorldScreen.PPM);
-        Vector2 currentPosition = body.getPosition().cpy();
-        Vector2 velocityVector = newPosition.sub(currentPosition).nor().scl(velocity);
-        body.setLinearVelocity(velocityVector);
-         */
     }
 
     private class InteractButtonAnimation extends Sprite {
