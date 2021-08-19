@@ -14,14 +14,13 @@ import model.role.Permission;
 import model.user.User;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
 import java.util.UUID;
 
 public class CommunicationHandler {
 
-    /** Ein reguläre Ausdruck für das Verwenden eines Chatbefehls in einer Nachricht.*/
-    private static final String CHAT_COMMAND = "\\\\.*";
+    /** Ein regulärer Ausdruck für das Verwenden eines Chatbefehls in einer Nachricht.*/
+    private static final String CHAT_COMMAND = "^\\\\.*";
 
     private CommunicationHandler() {
     }
@@ -36,11 +35,11 @@ public class CommunicationHandler {
      * @see TextMessage
      * @see MessageType
      */
-    public static void handleTextMessage(User sender, String receivedMessage) {
+    public static void handleTextMessage(@NotNull final User sender, @NotNull final String receivedMessage) {
         if (receivedMessage.matches(CHAT_COMMAND)) {
             for (ChatCommand command : ChatCommand.values()) {
                 if (receivedMessage.matches(command.commandPattern)) {
-                    command.handle(sender, receivedMessage);
+                    command.handle(sender, receivedMessage.substring(1));
                     return;
                 }
             }
@@ -61,7 +60,7 @@ public class CommunicationHandler {
      * @param message Zu versendende Nachricht.
      * @see MessageType#STANDARD
      */
-    private static void handleStandardMessage(@NotNull User sender, @NotNull final String message) {
+    private static void handleStandardMessage(@NotNull final User sender, @NotNull final String message) {
         if (sender.getLocation() == null) {
             throw new IllegalStateException("Communicators location is not available");
         }
@@ -101,7 +100,7 @@ public class CommunicationHandler {
      * @param voiceData Zu versendende Nachricht.
      * @see VoiceMessage
      */
-    public static void handleVoiceMessage(@NotNull User sender, final byte[] voiceData) {
+    public static void handleVoiceMessage(@NotNull final User sender, final byte[] voiceData) {
         if (sender.getLocation() == null) {
             throw new IllegalStateException("Communicators location is not available.");
         }
@@ -130,7 +129,7 @@ public class CommunicationHandler {
      * @param sender Kommunizierender Benutzer.
      * @param users Die Menge von Benutzern, die gefiltert werden soll.
      */
-    private static void filterIgnoredUsers(@NotNull User sender, @NotNull final Map<UUID, User> users) {
+    private static void filterIgnoredUsers(@NotNull final User sender, @NotNull final Map<UUID, User> users) {
         users.values().removeIf(user -> sender.isIgnoring(user) || user.isIgnoring(sender));
     }
 
@@ -141,11 +140,11 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#WHISPER
          */
-        WHISPER_MESSAGE_COMMAND("\\\\[a-zA-Z0-9]+\\s.*") {
+        WHISPER_MESSAGE_COMMAND("^\\\\[a-zA-Z0-9]+\\s.*") {
             @Override
-            protected void handle(User sender, String message) {
+            protected void handle(@NotNull final User sender, @NotNull final String message) {
                 // Extrahiere den Benutzernamen aus dem Befehl der Flüsternachricht.
-                String[] usernameMessage = message.substring(1).split("\\s");
+                String[] usernameMessage = message.substring(1).split("\\s", 2);
                 String username = usernameMessage[0];
                 String sendMessage = usernameMessage[1];
                 // Verarbeite die Flüsternachricht.
@@ -208,10 +207,10 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#ROOM
          */
-        ROOM_MESSAGE_COMMAND("![^!].*") {
+        ROOM_MESSAGE_COMMAND("^room\\s.*") {
             @Override
-            protected void handle(User sender, String message) {
-                String sendMessage = message.substring(1);
+            protected void handle(@NotNull final User sender, @NotNull final String message) {
+                String sendMessage = message.split("\\s", 2)[1];
 
                 if (sender.getLocation() == null) {
                     throw new IllegalStateException("Users location is not available");
@@ -253,10 +252,10 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#WORLD
          */
-        WORLD_MESSAGE_COMMAND("!!.*"){
+        WORLD_MESSAGE_COMMAND("^world\\s.*"){
             @Override
-            protected void handle(User sender, String message) {
-                String sendMessage = message.substring(2);
+            protected void handle(@NotNull final User sender, @NotNull final String message) {
+                String sendMessage = message.split("\\s", 2)[1];
 
                 if (sender.getLocation() == null) {
                     throw new IllegalStateException("Users location is not available");
@@ -305,13 +304,13 @@ public class CommunicationHandler {
          * @param sender Sender der Nachricht.
          * @param message Erhaltene Nachricht.
          */
-        protected abstract void handle(User sender, String message);
+        protected abstract void handle(@NotNull final User sender, @NotNull final String message);
 
         /**
          * Erzeugt eine Instanz eines Chatbefehls.
          * @param commandPattern Pattern der Nachricht zur Verwendung dieses Chatbefehls.
          */
-        ChatCommand(String commandPattern) {
+        ChatCommand(@NotNull final String commandPattern) {
             this.commandPattern = commandPattern;
         }
     }

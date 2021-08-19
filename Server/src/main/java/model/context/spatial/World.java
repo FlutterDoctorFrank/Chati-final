@@ -2,13 +2,11 @@ package model.context.spatial;
 
 import controller.network.ClientSender.SendAction;
 import model.communication.CommunicationMedium;
-import model.context.Context;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
 import model.role.Permission;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,9 +87,7 @@ public class World extends Area implements IWorld {
 
             super.addUser(user);
 
-            user.getWorldRoles().values().forEach(role -> user.send(SendAction.CONTEXT_ROLE, role));
-            user.getWorldNotifications().values().forEach(notification -> user.send(SendAction.NOTIFICATION, notification));
-
+            // Zuerst die Benutzerinformationen senden und danach die Positionen der Avatare.
             containedUsers.values().stream()
                     .filter(receiver -> !receiver.equals(user))
                     .forEach(receiver -> {
@@ -104,6 +100,10 @@ public class World extends Area implements IWorld {
             }
 
             publicRoom.addUser(user);
+
+            // Die Rollen erst senden, wenn die Baumstruktur im Client aufgebaut ist.
+            user.getWorldRoles().values().forEach(role -> user.send(SendAction.CONTEXT_ROLE, role));
+            user.getWorldNotifications().values().forEach(notification -> user.send(SendAction.NOTIFICATION, notification));
         }
     }
 
@@ -122,12 +122,12 @@ public class World extends Area implements IWorld {
     }
 
     @Override
-    public @NotNull Map<UUID, User> getCommunicableUsers(@NotNull User communicatingUser) {
+    public @NotNull Map<UUID, User> getCommunicableUsers(@NotNull final User communicatingUser) {
         return Collections.emptyMap();
     }
 
     @Override
-    public boolean canCommunicateWith(@NotNull CommunicationMedium medium) {
+    public boolean canCommunicateWith(@NotNull final CommunicationMedium medium) {
         return false;
     }
 
