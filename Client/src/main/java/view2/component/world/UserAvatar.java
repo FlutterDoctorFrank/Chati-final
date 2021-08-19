@@ -169,8 +169,8 @@ public class UserAvatar extends Sprite {
     public void move(boolean sprint) {
         Vector2 newPosition = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
-        body.setTransform(newPosition, body.getAngle());
-        body.setAwake(true);
+        body.setLinearVelocity((newPosition.x - body.getPosition().x) * DEFAULT_VELOCITY,
+                    (newPosition.x - body.getPosition().x) * DEFAULT_VELOCITY);
         /*
         int velocity = DEFAULT_VELOCITY;
         if (sprint) {
@@ -181,7 +181,6 @@ public class UserAvatar extends Sprite {
         Vector2 currentPosition = body.getPosition().cpy();
         Vector2 velocityVector = currentPosition.sub(currentPosition).nor().scl(velocity);
         body.setLinearVelocity(velocityVector);
-
          */
     }
 
