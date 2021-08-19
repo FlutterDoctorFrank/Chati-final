@@ -3,7 +3,9 @@ package view2.component.world;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
+import controller.network.ServerSender;
 import model.user.IInternUserView;
+import view2.Chati;
 
 import java.util.*;
 
@@ -47,8 +49,8 @@ public class InternUserAvatar extends UserAvatar {
         }
         positionCamera();
         if (!oldPosition.epsilonEquals(body.getPosition())) {
-            // Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
-            //        (int) (body.getPosition().x * WorldScreen.PPM), (int) (body.getPosition().y * WorldScreen.PPM));
+            Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
+                    (int) (body.getPosition().x * WorldScreen.PPM), (int) (body.getPosition().y * WorldScreen.PPM));
         }
     }
 
