@@ -174,7 +174,7 @@ public class UserAvatar extends Sprite {
         Vector2 newPosition = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
         int finalVelocity = velocity;
-        new Thread(() -> {
+        //new Thread(() -> {
             Vector2 currentPosition = body.getWorldCenter();
             Vector2 normMovingVector = newPosition.sub(currentPosition).nor();
 
@@ -182,7 +182,7 @@ public class UserAvatar extends Sprite {
                 body.setLinearVelocity(normMovingVector.scl(finalVelocity));
             }
             body.setLinearVelocity(0, 0);
-        }).start();
+        //}).start();
     }
 
     private class InteractButtonAnimation extends Sprite {
