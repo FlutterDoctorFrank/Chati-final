@@ -22,7 +22,7 @@ public class InternUserAvatar extends UserAvatar {
 
     public void move() {
         Direction currentDirection = getCurrentDirectionalInput();
-        int velocity = DEFAULT_VELOCITY;
+        float velocity = DEFAULT_VELOCITY;
         if (WorldScreen.getInstance().getWorldInputProcessor().isSprintPressed()) {
             velocity *= SPRINT_SPEED_FACTOR;
         }
@@ -71,10 +71,14 @@ public class InternUserAvatar extends UserAvatar {
         float mapWidth = layer.getWidth() * layer.getTileWidth();
         float mapHeight = layer.getHeight() * layer.getTileHeight();
 
-        float cameraTopBoundary = (mapHeight - Gdx.graphics.getHeight() / 2f) / WorldScreen.PPM;
-        float cameraLeftBoundary = (Gdx.graphics.getWidth() / 2f) / WorldScreen.PPM;
-        float cameraBottomBoundary = (Gdx.graphics.getHeight() / 2f) / WorldScreen.PPM;
-        float cameraRightBoundary = (mapWidth - Gdx.graphics.getWidth() / 2f) / WorldScreen.PPM;
+        float cameraTopBoundary =
+                (mapHeight - Gdx.graphics.getHeight() * WorldScreen.getInstance().getCamera().zoom / 2f) / WorldScreen.PPM;
+        float cameraLeftBoundary =
+                (Gdx.graphics.getWidth() / 2f * WorldScreen.getInstance().getCamera().zoom) / WorldScreen.PPM;
+        float cameraBottomBoundary =
+                (Gdx.graphics.getHeight() * WorldScreen.getInstance().getCamera().zoom / 2f) / WorldScreen.PPM;
+        float cameraRightBoundary =
+                (mapWidth - Gdx.graphics.getWidth() * WorldScreen.getInstance().getCamera().zoom / 2f) / WorldScreen.PPM;
 
         Vector2 bodyPosition = body.getPosition();
         if (bodyPosition.x >= cameraLeftBoundary && bodyPosition.x <= cameraRightBoundary) {

@@ -8,8 +8,8 @@ import model.user.IUserView;
 
 public class UserAvatar extends Sprite {
 
-    public static final int DEFAULT_VELOCITY = 20;
-    public static final float SPRINT_SPEED_FACTOR = 2f;
+    public static final float DEFAULT_VELOCITY = 12.5f;
+    public static final float SPRINT_SPEED_FACTOR = 1.75f;
 
     private final IUserView user;
     protected final Body body;
@@ -167,7 +167,7 @@ public class UserAvatar extends Sprite {
     }
 
     public void move(boolean sprint) {
-        int velocity = DEFAULT_VELOCITY;
+        float velocity = DEFAULT_VELOCITY;
         if (sprint) {
             velocity *= SPRINT_SPEED_FACTOR;
         }

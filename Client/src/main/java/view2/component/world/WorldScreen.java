@@ -26,6 +26,10 @@ import java.util.stream.Collectors;
 public class WorldScreen extends AbstractScreen {
 
     public static final float PPM = 10; //pixels per meter
+    public static final float DEFAULT_ZOOM = 0.6f;
+    public static final float MIN_ZOOM = 0.4f;
+    public static final float MAX_ZOOM = 0.8f;
+    public static final float ZOOM_STEP = 0.04f;
     public static final short GROUND_BIT = 1;
     public static final short AVATAR_BIT = 2;
     public static final short OBJECT_BIT = 4;
@@ -35,6 +39,7 @@ public class WorldScreen extends AbstractScreen {
 
     private final WorldInputProcessor worldInputProcessor;
     private final FitViewport gameViewport;
+    private final OrthographicCamera camera;
     private final Box2DDebugRenderer debugRenderer;
     private OrthogonalTiledMapRenderer tiledMapRenderer;
     private TiledMap tiledMap;
@@ -46,7 +51,9 @@ public class WorldScreen extends AbstractScreen {
     private WorldScreen() {
         this.worldInputProcessor = new WorldInputProcessor();
         this.externUserAvatars = new HashSet<>();
-        this.gameViewport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, new OrthographicCamera());
+        this.camera = new OrthographicCamera();
+        this.camera.zoom = DEFAULT_ZOOM;
+        this.gameViewport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, camera);
         this.debugRenderer = new Box2DDebugRenderer();
     }
 
@@ -63,13 +70,13 @@ public class WorldScreen extends AbstractScreen {
 
         if (tiledMap != null) {
             tiledMapRenderer.render();
-            debugRenderer.render(world, gameViewport.getCamera().combined);
+            debugRenderer.render(world, camera.combined);
 
             updateInternUserAvatar();
             updateExternUserAvatars();
 
             if (internUserAvatar != null) {
-                SPRITE_BATCH.setProjectionMatrix(gameViewport.getCamera().combined);
+                SPRITE_BATCH.setProjectionMatrix(camera.combined);
                 SPRITE_BATCH.begin();
                 internUserAvatar.draw(SPRITE_BATCH, delta);
                 externUserAvatars.forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
@@ -77,8 +84,8 @@ public class WorldScreen extends AbstractScreen {
             }
 
             world.step(1 / 30f, 6, 2); /** Was sind das für Zahlen? Kein hardcoden, irgendwo Konstanten setzen... Wo kommen die her?*/
-            gameViewport.getCamera().update();
-            tiledMapRenderer.setView((OrthographicCamera) gameViewport.getCamera());
+            camera.update();
+            tiledMapRenderer.setView(camera);
         }
 
         SPRITE_BATCH.setProjectionMatrix(stage.getCamera().combined);
@@ -193,5 +200,9 @@ public class WorldScreen extends AbstractScreen {
 
     public InternUserAvatar getInternUserAvatar() {
         return internUserAvatar;
+    }
+
+    public OrthographicCamera getCamera() {
+        return camera;
     }
 }

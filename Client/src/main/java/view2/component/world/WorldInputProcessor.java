@@ -1,6 +1,7 @@
 package view2.component.world;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import view2.component.KeyAction;
 
 public class WorldInputProcessor implements InputProcessor {
@@ -81,6 +82,12 @@ public class WorldInputProcessor implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
+        OrthographicCamera camera = WorldScreen.getInstance().getCamera();
+        if (amountY > 0 && camera.zoom <= WorldScreen.MAX_ZOOM) {
+            camera.zoom += WorldScreen.ZOOM_STEP;
+        } else if (amountY < 0 && camera.zoom >= WorldScreen.MIN_ZOOM) {
+            camera.zoom -= WorldScreen.ZOOM_STEP;
+        }
         return true;
     }
 
