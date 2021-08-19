@@ -95,7 +95,7 @@ public class RoomReception extends Interactable {
                     throw new IllegalStateException("Users world is not available");
                 }
 
-                Room privateRoom = new Room(createRoomName, world, world, map, password);
+                Room privateRoom = new Room(createRoomName, world, map, password);
                 world.addPrivateRoom(privateRoom);
 
                 // Schließe das Menü des Benutzers.

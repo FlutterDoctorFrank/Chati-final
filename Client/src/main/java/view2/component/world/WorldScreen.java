@@ -61,7 +61,7 @@ public class WorldScreen extends AbstractScreen {
             addInteractiveObjects();
         }
 
-        if (Chati.getInstance().isInternUserPositionChanged()) {
+        if (Chati.getInstance().getUserManager().getInternUserView().isInPrivateRoom() && Chati.getInstance().isInternUserPositionChanged()) {
             if (internUserAvatar == null) {
                 internUserAvatar = new InternUserAvatar(Chati.getInstance().getUserManager().getInternUserView());
             }

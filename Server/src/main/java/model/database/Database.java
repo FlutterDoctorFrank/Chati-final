@@ -55,7 +55,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             PreparedStatement ps = con.prepareStatement("INSERT INTO WORLDS(WORLD_ID, WORLD_NAME, MAP_NAME) values(?,?,?)");
             ps.setString(2, world.getContextName());
             ps.setString(1, world.getContextId().getId());
-            ps.setString(3, world.getMap().name());
+            ps.setString(3, world.getPublicRoom().getMap().name());
             ps.executeUpdate();
             con.close();
         } catch (Exception e) {

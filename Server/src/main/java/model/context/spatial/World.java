@@ -102,6 +102,8 @@ public class World extends Area implements IWorld {
             if (user.hasPermission(this, Permission.BAN_USER) || user.hasPermission(this, Permission.BAN_MODERATOR)) {
                 bannedUsers.values().forEach(banned -> user.send(SendAction.USER_INFO, banned));
             }
+
+            publicRoom.addUser(user);
         }
     }
 

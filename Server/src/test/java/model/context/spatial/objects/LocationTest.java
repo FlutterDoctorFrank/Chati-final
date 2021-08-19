@@ -33,17 +33,17 @@ public class LocationTest {
     @Before
     public void setUp() {
         this.test_world = new World("test_world", SpatialMap.MAP);
-        this.test_location = new Location(test_world, 1, 1);
+        this.test_location = new Location(test_world.getPublicRoom(), 1, 1);
     }
 
     @Test
     public void distanceTest() {
-        Location second_location = new Location(test_world, 4, 5);
+        Location second_location = new Location(test_world.getPublicRoom(), 4, 5);
 
         Assert.assertEquals(4, second_location.getPosX());
         Assert.assertEquals(5, second_location.getPosY());
 
-        Assert.assertEquals(test_world, this.test_location.getRoom());
+        Assert.assertEquals(test_world.getPublicRoom(), this.test_location.getRoom());
 
         Assert.assertEquals(5, this.test_location.distance(second_location));
     }

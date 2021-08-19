@@ -87,18 +87,11 @@ public class InternUser extends User implements IInternUserController, IInternUs
         if (currentWorld == null) {
             throw new IllegalStateException("User is not in world.");
         }
-        currentLocation = null;
         music = null;
-        // Entferne alten Raum aus der Kontexthierarchie, sofern er nicht die Welt selbst ist.
-        if (currentRoom != null && !currentWorld.equals(currentRoom)) {
-            leaveRoom();
-        }
-        // Überprüfe, ob zu betretender Raum der Welt entspricht, sonst erzeuge neuen Raum.
-        if (currentWorld.getContextId().equals(roomId)) {
-            this.currentRoom = currentWorld;
-        } else {
-            this.currentRoom = new SpatialContext(roomName, currentWorld);
-        }
+        // Entferne alten Raum aus der Kontexthierarchie.
+        leaveRoom();
+
+        this.currentRoom = new SpatialContext(roomName, currentWorld);
 
         Gdx.app.postRunnable(() -> currentRoom.build(map));
         isInCurrentRoom = true;

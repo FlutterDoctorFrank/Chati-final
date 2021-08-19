@@ -18,6 +18,7 @@ import model.notification.RoomRequest;
 import model.role.Role;
 import model.user.User;
 import model.user.account.UserAccountManager;
+import org.jetbrains.annotations.NotNull;
 import org.junit.*;
 
 import java.sql.Connection;
@@ -92,7 +93,7 @@ public class WorldTest {
 
     @Test
     public void addPrivateRoomTest() {
-        Room test_room = new Room("test_room", this.test_world, this.test_world, SpatialMap.MAP,
+        Room test_room = new Room("test_room", this.test_world, SpatialMap.MAP,
                 "11111");
         this.test_world.addPrivateRoom(test_room);
         Assert.assertEquals(1, this.test_world.getPrivateRooms().size());
@@ -109,7 +110,7 @@ public class WorldTest {
     @Test
     public void removePrivateRoomTest() {
         // zuerst add ein Raum
-        Room test_room = new Room("test_room", this.test_world, this.test_world, SpatialMap.MAP,
+        Room test_room = new Room("test_room", this.test_world, SpatialMap.MAP,
                 "11111");
         this.test_world.addPrivateRoom(test_room);
         Assert.assertEquals(1, this.test_world.getPrivateRooms().size());
@@ -121,8 +122,8 @@ public class WorldTest {
         Assert.assertEquals(0, this.test_world.getPrivateRooms().size());
     }
 
-    class TestClientSender implements ClientSender {
-        public void send(SendAction sendAction, Object object) {
+    static class TestClientSender implements ClientSender {
+        public void send(@NotNull SendAction sendAction, @NotNull Object object) {
 
         }
     }
@@ -152,7 +153,7 @@ public class WorldTest {
             test_user.joinWorld(test_world.getContextId());
             this.test_world.addUser(test_user);
 
-            Assert.assertTrue(this.test_world.getWorldUsers().containsKey(test_user.getUserId()));
+            Assert.assertTrue(this.test_world.getUsers().containsKey(test_user.getUserId()));
         } catch (Exception e) {
             e.printStackTrace();
         }
