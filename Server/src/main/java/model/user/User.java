@@ -66,9 +66,6 @@ public class User implements IUser {
     /** Information, ob sich ein Benutzer momentan bewegen darf. */
     private boolean moveable;
 
-    /** Wird zum abwickeln der Kommunikation verwendet. */
-    private final CommunicationHandler communicationHandler;
-
     /** Menge der befreundeten Benutzer. */
     private final Map<UUID, User> friends;
 
@@ -102,7 +99,6 @@ public class User implements IUser {
         this.currentLocation = null;
         this.currentInteractable = null;
         this.moveable = true;
-        this.communicationHandler = new CommunicationHandler(this);
         this.friends = new HashMap<>();
         this.ignoredUsers = new HashMap<>();
         this.contextRoles = new HashMap<>();
@@ -117,7 +113,7 @@ public class User implements IUser {
      * @param avatar Avatar des Benutzers.
      * @param lastLogoutTime Zeitpunkt, an dem sich der Benutzer das letzte mal ausgeloggt hat.
      */
-    public User(@NotNull final UUID userId, @NotNull final String username, @Nullable final Avatar avatar,
+    public User(@NotNull final UUID userId, @NotNull final String username, @NotNull final Avatar avatar,
                 @NotNull final LocalDateTime lastLogoutTime) {
         this.userId = userId;
         this.username = username;
@@ -129,7 +125,6 @@ public class User implements IUser {
         this.currentLocation = null;
         this.currentInteractable = null;
         this.moveable = true;
-        this.communicationHandler = new CommunicationHandler(this);
         this.friends = new HashMap<>();
         this.ignoredUsers = new HashMap<>();
         this.contextRoles = new HashMap<>();
@@ -189,14 +184,14 @@ public class User implements IUser {
         throwIfNotOnline();
         throwIfNotInWorld();
         updateLastActivity();
-        communicationHandler.handleTextMessage(message);
+        CommunicationHandler.handleTextMessage(this, message);
     }
 
     @Override
     public void talk(final byte[] voiceData) {
         throwIfNotOnline();
         throwIfNotInWorld();
-        communicationHandler.handleVoiceMessage(voiceData);
+        CommunicationHandler.handleVoiceMessage(this, voiceData);
     }
 
     @Override
@@ -359,11 +354,6 @@ public class User implements IUser {
         Area newArea = currentLocation.getArea();
         if (!currentArea.equals(newArea)) {
             Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
-
-            if (lastCommonAncestor == null) {
-                throw new IllegalStateException(String.format("No common ancestor for contexts %s and %s", currentArea.getContextId(), newArea.getContextId()));
-            }
-
             lastCommonAncestor.getChildren().values().forEach(child -> child.removeUser(this));
             newArea.addUser(this);
         }

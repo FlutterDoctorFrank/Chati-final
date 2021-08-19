@@ -59,7 +59,6 @@ public class Area extends Context implements IArea {
         this.areaReservations = new HashSet<>();
         this.interactables = new HashMap<>();
         this.music = null;
-
         if (communicationRegion != null) {
             communicationRegion.setArea(this);
         }

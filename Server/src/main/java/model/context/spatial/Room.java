@@ -6,11 +6,9 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import controller.network.ClientSender.SendAction;
 import model.MessageBundle;
 import model.communication.message.TextMessage;
-import model.context.Context;
 import model.role.Role;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class Room extends Area implements IRoom {
 
@@ -32,13 +30,12 @@ public class Room extends Area implements IRoom {
     /**
      * Erzeugt eine Instanz eines (öffentlichen) Raums.
      * @param roomName Name des Raums.
-     * @param parent Übergeordneter Kontext.
      * @param world Übergeordnete Welt.
      * @param map Karte des Raums.
      */
-    protected Room(@NotNull final String roomName, @NotNull final Context parent, @Nullable final World world,
+    protected Room(@NotNull final String roomName, @NotNull final World world,
                    @NotNull final SpatialMap map) {
-        super(roomName, parent, world, null, null, null);
+        super(roomName, world, world, null, null, null);
         this.map = map;
         this.isPrivate = false;
         this.password = null;
@@ -53,14 +50,13 @@ public class Room extends Area implements IRoom {
     /**
      * Erzeugt eine Instanz eines (privaten) Raums.
      * @param roomName Name des Raums.
-     * @param parent Übergeordneter Kontext.
      * @param world Übergeordnete Welt.
      * @param map Karte des Raums.
      * @param password Passwort des Raums.
      */
-    public Room(@NotNull final String roomName, @NotNull final Context parent, @Nullable final World world,
+    public Room(@NotNull final String roomName, @NotNull final World world,
                 @NotNull final SpatialMap map, @NotNull final String password) {
-        this(roomName, parent, world, map);
+        this(roomName, world, map);
         this.isPrivate = true;
         this.password = password;
     }
@@ -108,21 +104,21 @@ public class Room extends Area implements IRoom {
 
     @Override
     public void addUser(@NotNull final User user) {
-        if (!this.contains(user)) {
+        if (!contains(user)) {
             user.send(SendAction.CONTEXT_JOIN, this);
 
             super.addUser(user);
 
-            user.teleport(this.spawnLocation);
+            user.teleport(spawnLocation);
 
-            this.containedUsers.values().stream()
+            containedUsers.values().stream()
                     .filter(other -> !other.equals(user))
                     .forEach(other -> user.send(SendAction.AVATAR_MOVE, other));
 
-            if (this.isPrivate) {
+            if (isPrivate) {
                 final TextMessage info = new TextMessage(new MessageBundle("key"));
 
-                this.containedUsers.values().stream()
+                containedUsers.values().stream()
                         .filter(receiver -> !receiver.equals(user))
                         .forEach(receiver -> receiver.send(SendAction.MESSAGE, info));
             }
@@ -131,27 +127,27 @@ public class Room extends Area implements IRoom {
 
     @Override
     public void removeUser(@NotNull final User user) {
-        if (this.contains(user)) {
+        if (contains(user)) {
             super.removeUser(user);
 
-            this.containedUsers.values().forEach(receiver -> receiver.send(SendAction.AVATAR_REMOVE, user));
+            containedUsers.values().forEach(receiver -> receiver.send(SendAction.AVATAR_REMOVE, user));
 
-            if (this.isPrivate && user.hasRole(this, Role.ROOM_OWNER)) {
+            if (isPrivate && user.hasRole(this, Role.ROOM_OWNER)) {
                 user.removeRole(this, Role.ROOM_OWNER);
 
-                if (this.containedUsers.isEmpty()) {
-                    this.world.removePrivateRoom(this);
-                    this.world.removeChild(this);
+                if (containedUsers.isEmpty()) {
+                    world.removePrivateRoom(this);
+                    world.removeChild(this);
 
                     /*
                      * Sende an alle Benutzer, die gerade das Menü einer Rezeption geöffnet haben, die neue Liste
                      * aller privaten Räume.
                      */
-                    this.world.getUsers().values().stream()
+                    world.getUsers().values().stream()
                             .filter(receiver -> receiver.getCurrentMenu() == Menu.ROOM_RECEPTION_MENU)
                             .forEach(receiver -> receiver.send(SendAction.CONTEXT_LIST, this.world));
                 } else {
-                    this.containedUsers.values().stream().findAny().get().addRole(this, Role.ROOM_OWNER);
+                    containedUsers.values().stream().findAny().get().addRole(this, Role.ROOM_OWNER);
                 }
             }
         }
@@ -163,12 +159,12 @@ public class Room extends Area implements IRoom {
      */
     private void build() {
         TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
-        this.communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
-        this.communicationRegion.setArea(this);
-        this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
-        this.expanse = new Expanse(new Location(this, 0, 0), MapUtils.getWidth(tiledMap) , MapUtils.getHeight(tiledMap));
+        communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
+        communicationRegion.setArea(this);
+        communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
+        expanse = new Expanse(new Location(this, 0, 0), MapUtils.getWidth(tiledMap) , MapUtils.getHeight(tiledMap));
         //this.collisionMap = MapUtils.getCollisionMap(tiledMap);
-        this.spawnLocation = new Location(this, MapUtils.getSpawnPosX(tiledMap), MapUtils.getSpawnPosY(tiledMap));
+        spawnLocation = new Location(this, MapUtils.getSpawnPosX(tiledMap), MapUtils.getSpawnPosY(tiledMap));
         MapUtils.buildChildTree(this, tiledMap);
     }
 }

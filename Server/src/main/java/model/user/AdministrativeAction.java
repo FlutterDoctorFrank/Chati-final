@@ -162,7 +162,7 @@ public enum AdministrativeAction {
                 throw new IllegalStateException("Target is not in the private room.");
             }
             // Entferne den Benutzer aus dem Raum.
-            target.teleport(target.getWorld().getSpawnLocation());
+            target.teleport(target.getWorld().getPublicRoom().getSpawnLocation());
         }
     },
 
@@ -187,8 +187,7 @@ public enum AdministrativeAction {
             // Überprüfe, ob beide Benutzer sich innerhalb eines Kontextes befinden, in dem der ausführende Benutzer
             // die Berechtigung zum Teleportieren besitzt, oder ob die Benutzer befreundet sind.
             Context commonContext = performerArea.lastCommonAncestor(targetArea);
-            if (commonContext == null || !(performer.hasPermission(commonContext, Permission.TELEPORT_TO_USER)
-                    || !performer.isFriend(target))) {
+            if (!(performer.hasPermission(commonContext, Permission.TELEPORT_TO_USER) || !performer.isFriend(target))) {
                 throw new NoPermissionException("Performer has not the required permission.", performer,
                         Permission.TELEPORT_TO_USER);
             }
@@ -267,10 +266,6 @@ public enum AdministrativeAction {
             // Berechtigung zum Stummschalten besitzt.
             Context commonContext = performerArea.lastCommonAncestor(targetArea);
 
-            if (commonContext == null) {
-                throw new IllegalStateException("No common ancestor available");
-            }
-
             if (!performer.hasPermission(commonContext, Permission.MUTE)) {
                 throw new NoPermissionException("Performer has not the required permission.", performer,
                         Permission.MUTE);
@@ -301,10 +296,6 @@ public enum AdministrativeAction {
             // Überprüfe, ob beide Benutzer sich in einem Kontext befinden, in dem der ausführende Benutzer die
             // Berechtigung zum Stummschalten besitzt.
             Context commonContext = performerArea.lastCommonAncestor(targetArea);
-
-            if (commonContext == null) {
-                throw new IllegalStateException("No common ancestor available");
-            }
 
             if (!performer.hasPermission(commonContext, Permission.MUTE)) {
                 throw new NoPermissionException("Performer has not the required permission.", performer,
@@ -370,14 +361,14 @@ public enum AdministrativeAction {
             // Sende eine Benachrichtigung mit der Information an alle relevanten Benutzer.
             MessageBundle messageBundle = new MessageBundle("messageKey", performer, target, args[0]);
             receivers.values().forEach(user -> {
-                Notification banNotification = new Notification(user, performer.getWorld(), messageBundle);
+                Notification banNotification = new Notification(user, performerWorld, messageBundle);
                 user.addNotification(banNotification);
             });
 
             // Sende eine Benachrichtigung an den gesperrten Benutzer.
             MessageBundle targetMessageBundle =
-                    new MessageBundle("messageKey", performer, performer.getWorld(), args[0]);
-            Notification banNotification = new Notification(target, performer.getWorld(), targetMessageBundle);
+                    new MessageBundle("messageKey", performer, performerWorld, args[0]);
+            Notification banNotification = new Notification(target, performerWorld, targetMessageBundle);
             target.addNotification(banNotification);
         }
     },
@@ -427,8 +418,8 @@ public enum AdministrativeAction {
 
             // Sende eine Benachrichtigung an den entsperrten Benutzer.
             MessageBundle targetMessageBundle =
-                    new MessageBundle("messageKey", performer, performer.getWorld(), args[0]);
-            Notification unbanNotification = new Notification(target, performer.getWorld(), targetMessageBundle);
+                    new MessageBundle("messageKey", performer, performerWorld, args[0]);
+            Notification unbanNotification = new Notification(target, performerWorld, targetMessageBundle);
             target.addNotification(unbanNotification);
         }
     },
@@ -460,7 +451,7 @@ public enum AdministrativeAction {
             target.addRole(performerWorld, Role.MODERATOR);
             // Informiere den Benutzer über den Erhalt der Rolle.
             MessageBundle messageBundle = new MessageBundle("messageKey", performer, Role.MODERATOR, args[0]);
-            Notification roleReceiveNotification = new Notification(target, performer.getWorld(), messageBundle);
+            Notification roleReceiveNotification = new Notification(target, performerWorld, messageBundle);
             target.addNotification(roleReceiveNotification);
         }
     },
@@ -492,7 +483,7 @@ public enum AdministrativeAction {
             target.removeRole(performerWorld, Role.MODERATOR);
             // Informiere den Benutzer über den Entzug der Rolle.
             MessageBundle messageBundle = new MessageBundle("messageKey", performer, Role.MODERATOR, args[0]);
-            Notification roleLoseNotification = new Notification(target, performer.getWorld(), messageBundle);
+            Notification roleLoseNotification = new Notification(target, performerWorld, messageBundle);
             target.addNotification(roleLoseNotification);
         }
     },
@@ -518,7 +509,7 @@ public enum AdministrativeAction {
             target.addRole(global, Role.ADMINISTRATOR);
             // Informiere den Benutzer über den Erhalt der Rolle.
             MessageBundle messageBundle = new MessageBundle("messageKey", performer, Role.ADMINISTRATOR, args[0]);
-            Notification roleReceiveNotification = new Notification(target, GlobalContext.getInstance(), messageBundle);
+            Notification roleReceiveNotification = new Notification(target, global, messageBundle);
             target.addNotification(roleReceiveNotification);
         }
     },
@@ -545,7 +536,7 @@ public enum AdministrativeAction {
             target.removeRole(global, Role.ADMINISTRATOR);
             // Informiere den Benutzer über den Verlust der Rolle.
             MessageBundle messageBundle = new MessageBundle("messageKey", performer, Role.ADMINISTRATOR, args[0]);
-            Notification roleLoseNotification = new Notification(target, GlobalContext.getInstance(), messageBundle);
+            Notification roleLoseNotification = new Notification(target, global, messageBundle);
             target.addNotification(roleLoseNotification);
         }
     };

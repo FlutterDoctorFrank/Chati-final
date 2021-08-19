@@ -277,9 +277,9 @@ public abstract class Context implements IContext {
      * @param context Zu überprüfender Kontext.
      * @return Letzter gemeinsamer Vorfahre beider Kontexte.
      */
-    public @Nullable Context lastCommonAncestor(@NotNull final Context context) {
+    public @NotNull Context lastCommonAncestor(@NotNull final Context context) {
         return isInContext(context) ? context : (context.isInContext(this) ? this :
-                parent != null ? parent.lastCommonAncestor(context) : null);
+                parent != null ? parent.lastCommonAncestor(context) : this);
     }
 
     /**
@@ -313,15 +313,12 @@ public abstract class Context implements IContext {
                     found = child.getContext(contextId);
                     break;
                 } catch (ContextNotFoundException ignored) {
-
                 }
             }
         }
-
         if (found == null) {
             throw new ContextNotFoundException("There is no context with this ID.", contextId);
         }
-
         return found;
     }
 
