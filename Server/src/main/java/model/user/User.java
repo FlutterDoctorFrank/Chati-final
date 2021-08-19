@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -360,7 +361,8 @@ public class User implements IUser {
         // Sende die entsprechenden Pakete an diesen Benutzer und an andere Benutzer.
         // ANMERKUNG: Hier muss evtl. der eigene Benutzer herausgefiltert werden, falls dieser nicht das Paket erhalten
         // soll.
-        currentRoom.getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
+        currentRoom.getUsers().values().stream().filter(Predicate.not(this::equals))
+                .forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
     }
 
     /**
@@ -373,6 +375,7 @@ public class User implements IUser {
             currentLocation.getArea().addUser(this);
         }
         setPosition(currentLocation.getPosX(), currentLocation.getPosY());
+        this.send(SendAction.AVATAR_MOVE, this);
     }
 
     /**
