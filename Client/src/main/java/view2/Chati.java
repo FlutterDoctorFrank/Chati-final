@@ -73,8 +73,7 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     @Override
     public void render() {
         transferFlags();
-        System.out.println(worldChangeReceived);
-        resetChangeReceivedFlags();
+        resetModelChangeReceivedFlags();
         super.render();
         resetModelChangedFlags();
     }
@@ -202,7 +201,7 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     @Override
     public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message) {
         if (this.screen.equals(WorldScreen.getInstance())) {
-            ChatWindow.getInstance().showMessage(userId, message, messageType, timestamp);
+            Gdx.app.postRunnable(() -> ChatWindow.getInstance().showMessage(userId, message, messageType, timestamp));
         }
     }
 
@@ -270,7 +269,7 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
         return changeInternUserPosition;
     }
 
-    private void resetChangeReceivedFlags() {
+    private void resetModelChangeReceivedFlags() {
         userInfoChangeReceived = false;
         userNotificationChangeReceived = false;
         userPositionChangeReceived = false;

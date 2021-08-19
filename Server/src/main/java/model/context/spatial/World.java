@@ -66,7 +66,7 @@ public class World extends Room implements IWorld {
     }
 
     public @NotNull Map<UUID, User> getWorldUsers() {
-        return Collections.unmodifiableMap(worldUsers);
+        return this.worldUsers;
     }
 
     @Override

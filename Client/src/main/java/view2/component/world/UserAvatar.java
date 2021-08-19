@@ -32,18 +32,7 @@ public class UserAvatar extends Sprite {
         this.user = user;
 
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.KinematicBody;
-
-        // Sollte später weg, wenn der Server die initiale Position festlegt? ////////////////////////////////
-        //float userInitPosX = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosX") / WorldScreen.PPM;
-        //float userInitPosY = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosY") / WorldScreen.PPM;
-        //bodyDef.position.set(userInitPosX, userInitPosY);
-        /////////////////////////////////////////////////////////////////////////////////
-
-        /*
-        body.setTransform(new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM, user.getCurrentLocation().getPosY() / WorldScreen.PPM), body.getAngle());
-        body.setAwake(true);
-         */
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
 
         this.body = WorldScreen.getInstance().getWorld().createBody(bodyDef);
 
@@ -65,7 +54,7 @@ public class UserAvatar extends Sprite {
     public void draw(Batch batch, float delta) {
         InteractButtonAnimation animation = new InteractButtonAnimation();
         animation.draw(batch);
-        setPosition(getBody().getPosition().x - getWidth() / 2, getBody().getPosition().y - getHeight() / 2);
+        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getCurrentFrameRegion(delta));
         super.draw(batch);
     }
@@ -166,31 +155,34 @@ public class UserAvatar extends Sprite {
             return null;
     }
 
-    public Body getBody() {
-        return body;
-    }
-
     public IUserView getUser() {
         return user;
     }
 
-    public void updatePosition(boolean teleport) {
+    public void teleport() {
         Vector2 newPosition = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
-        if (teleport) {
-            body.setTransform(newPosition, body.getAngle());
-            body.setActive(true);
-        } else {
-            new Thread(() -> {
-                Vector2 currentPosition = body.getWorldCenter();
-                Vector2 normMovingVector = newPosition.sub(currentPosition).nor();
+        body.setTransform(newPosition, body.getAngle());
+        body.setAwake(true);
+    }
 
-                while (!currentPosition.epsilonEquals(newPosition)) {
-                    body.setLinearVelocity(normMovingVector.scl(DEFAULT_VELOCITY));
-                }
-                body.setLinearVelocity(0, 0);
-            }).start();
+    public void move(boolean sprint) {
+        int velocity = DEFAULT_VELOCITY;
+        if (sprint) {
+            velocity *= SPRINT_SPEED_FACTOR;
         }
+        Vector2 newPosition = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
+                user.getCurrentLocation().getPosY() / WorldScreen.PPM);
+        int finalVelocity = velocity;
+        new Thread(() -> {
+            Vector2 currentPosition = body.getWorldCenter();
+            Vector2 normMovingVector = newPosition.sub(currentPosition).nor();
+
+            while (!currentPosition.epsilonEquals(newPosition)) {
+                body.setLinearVelocity(normMovingVector.scl(finalVelocity));
+            }
+            body.setLinearVelocity(0, 0);
+        }).start();
     }
 
     private class InteractButtonAnimation extends Sprite {
@@ -212,7 +204,7 @@ public class UserAvatar extends Sprite {
 
         @Override
         public void draw(Batch batch, float delta) {
-            this.setPosition(getBody().getPosition().x - getWidth() / 2, getBody().getPosition().y + getHeight());
+            this.setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y + getHeight());
             this.setRegion(getButtonFrame(delta));
         }
 

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class RadiusCommunication extends CommunicationRegion {
 
     /** Standardmäßiger Radius, innerhalb dem Benutzer kommunizieren können. */
-    private static final int DEFAULT_RADIUS = 2;
+    private static final int DEFAULT_RADIUS = 2 * 32;
 
     /** Radius, innerhalb dem Benutzer kommunizieren können.*/
     private final int radius;

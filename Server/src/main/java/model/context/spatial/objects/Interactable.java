@@ -12,7 +12,7 @@ import java.util.Set;
 public abstract class Interactable extends Area implements IInteractable {
 
     /** Die maximale Distanz, über die eine Interaktion erfolgen darf. */
-    protected static final int INTERACTION_DISTANCE = 1;
+    protected static final int INTERACTION_DISTANCE = 1 * 32;
 
     protected final Area parent;
 

@@ -65,7 +65,7 @@ public class WorldScreen extends AbstractScreen {
             if (internUserAvatar == null) {
                 internUserAvatar = new InternUserAvatar(Chati.getInstance().getUserManager().getInternUserView());
             }
-            internUserAvatar.updatePosition(true);
+            internUserAvatar.teleport();
         }
 
         if (Chati.getInstance().isUserPositionChanged()) {
@@ -93,13 +93,22 @@ public class WorldScreen extends AbstractScreen {
     }
 
     @Override
-    public InputProcessor getInputProcessor() {
-        return new InputMultiplexer(stage, worldInputProcessor);
+    public void resize(int width, int height) {
+        gameViewport.update(width, height);
     }
 
     @Override
-    public void resize(int width, int height) {
-        gameViewport.update(width, height);
+    public void hide() {
+        internUserAvatar = null;
+        externUserAvatars.clear();
+        tiledMap = null;
+        tiledMapRenderer = null;
+        world = null;
+    }
+
+    @Override
+    public InputProcessor getInputProcessor() {
+        return new InputMultiplexer(stage, worldInputProcessor);
     }
 
     public TiledMap getTiledMap() {
@@ -157,12 +166,14 @@ public class WorldScreen extends AbstractScreen {
                 externUserAvatars.remove(externUserAvatar);
             }
         });
-        Chati.getInstance().getUserManager().getUsersInRoom().values().forEach(externUser -> {
+        Chati.getInstance().getUserManager().getActiveUsers().values().forEach(externUser -> {
             if (!externUserAvatars.stream().map(UserAvatar::getUser).collect(Collectors.toSet()).contains(externUser)) {
-                externUserAvatars.add(new UserAvatar(externUser));
+                UserAvatar newUserAvatar = new UserAvatar(externUser);
+                externUserAvatars.add(newUserAvatar);
+                newUserAvatar.teleport();
             }
         });
-        externUserAvatars.forEach(externUserAvatar -> externUserAvatar.updatePosition(false));
+        externUserAvatars.forEach(externUserAvatar -> externUserAvatar.move(false));
     }
 
     public World getWorld() {
@@ -175,10 +186,5 @@ public class WorldScreen extends AbstractScreen {
 
     public InternUserAvatar getInternUserAvatar() {
         return internUserAvatar;
-    }
-
-    public void clear() {
-        internUserAvatar = null;
-        externUserAvatars.clear();
     }
 }
