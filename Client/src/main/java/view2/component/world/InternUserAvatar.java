@@ -21,7 +21,6 @@ public class InternUserAvatar extends UserAvatar {
     }
 
     public void move() {
-        Vector2 oldPosition = body.getPosition();
         Direction currentDirection = getCurrentDirectionalInput();
         int velocity = DEFAULT_VELOCITY;
         if (WorldScreen.getInstance().getWorldInputProcessor().isSprintPressed()) {
@@ -48,9 +47,8 @@ public class InternUserAvatar extends UserAvatar {
             }
         }
         positionCamera();
-        Vector2 newPosition = body.getPosition();
         if (currentDirection != null) {
-            System.out.println("Ich sende meine Position");
+            Vector2 newPosition = body.getPosition();
             Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
                     (int) (newPosition.x * WorldScreen.PPM), (int) (newPosition.y * WorldScreen.PPM));
         }

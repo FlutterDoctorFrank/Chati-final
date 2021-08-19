@@ -1,6 +1,5 @@
 package view2.component.world;
 
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import view2.component.KeyAction;
 

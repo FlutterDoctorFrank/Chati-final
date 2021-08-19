@@ -134,7 +134,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
 
     @Override
     public void setPosition(int posX, int posY) {
-        System.out.println(posX + " " + posY + " Client Model setPosition");
         currentLocation = new Location(posX, posY);
         UserManager.getInstance().getModelObserver().setInternUserPositionChanged();
     }
