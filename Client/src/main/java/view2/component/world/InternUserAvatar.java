@@ -47,11 +47,11 @@ public class InternUserAvatar extends UserAvatar {
             }
         }
         positionCamera();
-        if (currentDirection != null) {
+        //if (currentDirection != null) {
             Vector2 newPosition = body.getPosition();
             Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
                     (int) (newPosition.x * WorldScreen.PPM), (int) (newPosition.y * WorldScreen.PPM));
-        }
+        //}
     }
 
     private Direction getCurrentDirectionalInput() {
