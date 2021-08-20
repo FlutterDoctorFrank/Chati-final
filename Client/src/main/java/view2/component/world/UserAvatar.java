@@ -185,8 +185,8 @@ public class UserAvatar extends Sprite {
         }
         destination = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
-        Vector2 velocityVector = destination.sub(body.getPosition()).nor().scl(velocity);
-        body.setLinearVelocity(velocityVector);
+        Vector2 velocityVector = destination.cpy();
+        body.setLinearVelocity(velocityVector.sub(body.getPosition()).nor().scl(velocity));
     }
 
     public Body getBody() {
