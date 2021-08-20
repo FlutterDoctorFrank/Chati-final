@@ -16,11 +16,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import model.context.spatial.SpatialMap;
+import model.user.IUserView;
+import model.user.User;
 import view2.Chati;
 import view2.component.AbstractScreen;
 import view2.component.hud.HeadUpDisplay;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
 public class WorldScreen extends AbstractScreen {
@@ -45,12 +48,12 @@ public class WorldScreen extends AbstractScreen {
     private TiledMap tiledMap;
     private World world;
 
-    private final Set<UserAvatar> externUserAvatars;
+    private final Map<IUserView, UserAvatar> externUserAvatars;
     private InternUserAvatar internUserAvatar;
 
     private WorldScreen() {
         this.worldInputProcessor = new WorldInputProcessor();
-        this.externUserAvatars = new HashSet<>();
+        this.externUserAvatars = new HashMap<>();
         this.camera = new OrthographicCamera();
         this.camera.zoom = DEFAULT_ZOOM;
         this.gameViewport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, camera);
@@ -79,7 +82,7 @@ public class WorldScreen extends AbstractScreen {
                 SPRITE_BATCH.setProjectionMatrix(camera.combined);
                 SPRITE_BATCH.begin();
                 internUserAvatar.draw(SPRITE_BATCH, delta);
-                externUserAvatars.forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
+                externUserAvatars.values().forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
                 SPRITE_BATCH.end();
             }
 
@@ -171,20 +174,20 @@ public class WorldScreen extends AbstractScreen {
 
     private void updateExternUserAvatars() {
         if (Chati.getInstance().isUserPositionChanged()) {
-            externUserAvatars.forEach(externUserAvatar -> {
+            externUserAvatars.values().forEach(externUserAvatar -> {
                 if (!Chati.getInstance().getUserManager().getUsersInRoom().containsValue(externUserAvatar.getUser())) {
-                    externUserAvatars.remove(externUserAvatar);
+                    externUserAvatars.remove(externUserAvatar.getUser());
                 }
             });
             Chati.getInstance().getUserManager().getActiveUsers().values().forEach(externUser -> {
-                if (!externUserAvatars.stream().map(UserAvatar::getUser).collect(Collectors.toSet()).contains(externUser)) {
+                if (!externUserAvatars.containsKey(externUser)) {
                     UserAvatar newUserAvatar = new UserAvatar(externUser);
-                    externUserAvatars.add(newUserAvatar);
+                    externUserAvatars.put(externUser, newUserAvatar);
                     newUserAvatar.teleport();
                 }
             });
         }
-        externUserAvatars.forEach(externUserAvatar -> externUserAvatar.move(false));
+        externUserAvatars.values().forEach(externUserAvatar -> externUserAvatar.move(false));
     }
 
     private void updateCamera() {

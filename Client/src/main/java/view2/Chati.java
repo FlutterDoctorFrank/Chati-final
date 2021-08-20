@@ -70,9 +70,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void create() {
-        profiler = new GLProfiler(Gdx.graphics);
-        profiler.enable();
-
         SKIN = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
         setScreen(MenuScreen.getInstance());
     }
