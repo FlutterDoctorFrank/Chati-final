@@ -180,27 +180,16 @@ public class WorldScreen extends AbstractScreen {
                     newUserAvatar.teleport();
                 }
             });
-            Map<IUserView, UserAvatar> externUserAvatarsCopy = externUserAvatars;
-            externUserAvatarsCopy.values().forEach(externUserAvatar -> {
-                if (!Chati.getInstance().getUserManager().getActiveUsers().containsValue(externUserAvatar.getUser())) {
-                    world.destroyBody(externUserAvatar.getBody());
-                    externUserAvatars.remove(externUserAvatar.getUser());
-                } else {
-                    externUserAvatar.move(false);
-                }
-            });
-            /*
             Iterator<Map.Entry<IUserView, UserAvatar>> iterator = externUserAvatars.entrySet().iterator();
             while (iterator.hasNext()) {
                 UserAvatar userAvatar = iterator.next().getValue();
                 if (!Chati.getInstance().getUserManager().getActiveUsers().containsValue(userAvatar.getUser())) {
                     world.destroyBody(userAvatar.getBody());
                     iterator.remove();
+                } else {
+                    userAvatar.move(false);
                 }
             }
-            externUserAvatars.values().forEach(externUserAvatar -> externUserAvatar.move(false));
-
-             */
         }
     }
 
