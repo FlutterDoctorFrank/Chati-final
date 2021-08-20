@@ -57,7 +57,7 @@ public class UserAvatar extends Sprite {
         //animation.draw(batch);
         if (destination != null && destination.epsilonEquals(body.getPosition())) {
             Vector2 velocityVector = body.getLinearVelocity().cpy();
-            body.getLinearVelocity().sub(velocityVector);
+            body.setLinearVelocity(- velocityVector.x, - velocityVector.y);
             destination = null;
         }
 
