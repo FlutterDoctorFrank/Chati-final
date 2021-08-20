@@ -126,8 +126,7 @@ public class UserAvatar extends Sprite {
                 default:
                     return avatarRunDown.getKeyFrame(stateTimer, true);
             }
-        }
-        if (previousDirection != null) {
+        } else if (previousDirection != null) {
             switch (previousDirection) {
                 case UP:
                     return avatarStandUp;
