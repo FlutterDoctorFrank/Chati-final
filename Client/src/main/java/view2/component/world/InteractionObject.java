@@ -20,8 +20,8 @@ public class InteractionObject {
         FixtureDef fixtureDef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
         shape.setAsBox((rectangle.getWidth() / 2) / WorldScreen.PPM, (rectangle.getHeight() / 2) / WorldScreen.PPM);
-        //fixtureDef.filter.categoryBits = WorldScreen.OBJECT_BIT;
-        //fixtureDef.filter.maskBits = WorldScreen.AVATAR_BIT;
+        fixtureDef.filter.categoryBits = WorldScreen.OBJECT_BIT;
+        fixtureDef.filter.maskBits = WorldScreen.AVATAR_BIT;
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
 
