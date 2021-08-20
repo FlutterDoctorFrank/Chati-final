@@ -186,8 +186,8 @@ public class WorldScreen extends AbstractScreen {
                     iterator.remove();
                 }
             }
+            externUserAvatars.values().forEach(externUserAvatar -> externUserAvatar.move(false));
         }
-        externUserAvatars.values().forEach(externUserAvatar -> externUserAvatar.move(false));
     }
 
     private void updateCamera() {
