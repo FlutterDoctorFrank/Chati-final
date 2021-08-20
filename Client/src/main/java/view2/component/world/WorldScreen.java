@@ -41,8 +41,8 @@ public class WorldScreen extends AbstractScreen {
     private final FitViewport viewport;
     private final OrthographicCamera camera;
     private final Box2DDebugRenderer debugRenderer;
-    private OrthogonalTiledMapRenderer tiledMapRenderer;
-    private World world;
+    private final OrthogonalTiledMapRenderer tiledMapRenderer;
+    private final World world;
 
     private final Map<IUserView, UserAvatar> externUserAvatars;
     private InternUserAvatar internUserAvatar;
@@ -69,14 +69,18 @@ public class WorldScreen extends AbstractScreen {
             setMap();
             createBorders();
             createInteractionObjects();
-        }
 
-        updateInternUserAvatar();
-        updateExternUserAvatars();
+            int spawnPosX = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosX");
+            int spawnPosY = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosY");
+            internUserAvatar.body.setTransform(spawnPosX / WorldScreen.PPM, spawnPosY / WorldScreen.PPM, internUserAvatar.body.getAngle());
+        }
 
         if (tiledMapRenderer.getMap() != null) {
             tiledMapRenderer.render();
             debugRenderer.render(world, camera.combined);
+
+            updateInternUserAvatar();
+            updateExternUserAvatars();
             updateCamera();
         }
 
