@@ -114,30 +114,30 @@ public class UserAvatar extends Sprite {
     private TextureRegion getCurrentFrameRegion(float delta) {
         currentDirection = getDirection();
         stateTimer = currentDirection == previousDirection ? stateTimer + delta : 0;
-        if (currentDirection != null) {
-            previousDirection = currentDirection;
-            switch (currentDirection) {
-                case UP:
-                    return avatarRunUp.getKeyFrame(stateTimer, true);
-                case LEFT:
-                    return avatarRunLeft.getKeyFrame(stateTimer, true);
-                case RIGHT:
-                    return avatarRunRight.getKeyFrame(stateTimer, true);
-                default:
-                    return avatarRunDown.getKeyFrame(stateTimer, true);
+        if (currentDirection == null) {
+            if (previousDirection == Direction.UP) {
+                return avatarStandUp;
             }
+            if (previousDirection == Direction.LEFT) {
+                return avatarStandLeft;
+            }
+            if (previousDirection == Direction.RIGHT) {
+                return avatarStandRight;
+            }
+            return avatarStandDown;
+        } else {
+            previousDirection = currentDirection;
+            if (currentDirection == Direction.UP) {
+                return avatarRunUp.getKeyFrame(stateTimer, true);
+            }
+            if (currentDirection == Direction.LEFT) {
+                return avatarRunLeft.getKeyFrame(stateTimer, true);
+            }
+            if (currentDirection == Direction.RIGHT) {
+                return avatarRunRight.getKeyFrame(stateTimer, true);
+            }
+            return avatarRunDown.getKeyFrame(stateTimer, true);
         }
-        if (previousDirection == Direction.UP) {
-            return avatarStandUp;
-        }
-        if (previousDirection == Direction.LEFT) {
-            return avatarStandLeft;
-        }
-        if (previousDirection == Direction.RIGHT) {
-            return avatarStandRight;
-        }
-        return avatarStandDown;
-
     }
 
     private Direction getDirection() {
