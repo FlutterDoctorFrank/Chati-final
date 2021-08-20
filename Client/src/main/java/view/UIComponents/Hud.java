@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import controller.network.ServerSender;
-import model.context.Context;
 import model.context.spatial.SpatialMap;
 import model.exception.ContextNotFoundException;
 import model.communication.message.MessageType;
@@ -19,6 +18,9 @@ import model.user.IUserView;
 import org.jetbrains.annotations.Nullable;
 import view.Chati;
 import view.Screens.*;
+import view2.IModelObserver;
+import view2.ViewControllerInterface;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -322,6 +324,11 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
                 }
             }
         });
+
+    }
+
+    @Override
+    public void updatePosition(UUID userID, int posX, int posY, boolean teleport, boolean sprint) {
 
     }
 

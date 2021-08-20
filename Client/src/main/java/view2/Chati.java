@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
-public class Chati extends Game implements view.Screens.ViewControllerInterface, view.Screens.IModelObserver {
+public class Chati extends Game implements ViewControllerInterface, IModelObserver {
 
     public static Skin SKIN;
 
@@ -202,6 +202,11 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
         if (this.screen.equals(MenuScreen.getInstance())) {
             MenuScreen.getInstance().joinWorldResponse(success, messageKey);
         }
+    }
+
+    @Override
+    public void updatePosition(UUID userID, int posX, int posY, boolean teleport, boolean sprint) {
+
     }
 
     @Override

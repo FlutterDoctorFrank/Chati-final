@@ -9,17 +9,14 @@ import model.context.spatial.SpatialContext;
 import model.context.spatial.SpatialMap;
 import model.exception.ContextNotFoundException;
 import model.exception.UserNotFoundException;
-import model.role.Role;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import view.Screens.IModelObserver;
+import view2.IModelObserver;
 
 import java.util.Set;
 import java.util.UUID;
-
-import static org.junit.Assert.*;
 
 public class IUserManagerTest {
 
