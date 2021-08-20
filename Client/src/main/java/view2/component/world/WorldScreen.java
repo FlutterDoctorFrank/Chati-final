@@ -174,11 +174,8 @@ public class WorldScreen extends AbstractScreen {
 
     private void updateExternUserAvatars() {
         if (Chati.getInstance().isUserPositionChanged()) {
-            externUserAvatars.values().forEach(externUserAvatar -> {
-                if (!Chati.getInstance().getUserManager().getUsersInRoom().containsValue(externUserAvatar.getUser())) {
-                    externUserAvatars.remove(externUserAvatar.getUser());
-                }
-            });
+            externUserAvatars.values().removeIf(userAvatar -> !Chati.getInstance().getUserManager().getUsersInRoom()
+                    .containsValue(userAvatar.getUser()));
             Chati.getInstance().getUserManager().getActiveUsers().values().forEach(externUser -> {
                 if (!externUserAvatars.containsKey(externUser)) {
                     UserAvatar newUserAvatar = new UserAvatar(externUser);
