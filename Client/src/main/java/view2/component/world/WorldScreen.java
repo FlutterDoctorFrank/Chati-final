@@ -42,7 +42,6 @@ public class WorldScreen extends AbstractScreen {
     private final OrthographicCamera camera;
     private final Box2DDebugRenderer debugRenderer;
     private OrthogonalTiledMapRenderer tiledMapRenderer;
-    private TiledMap tiledMap;
     private World world;
 
     private final Map<IUserView, UserAvatar> externUserAvatars;
@@ -54,6 +53,9 @@ public class WorldScreen extends AbstractScreen {
         this.camera = new OrthographicCamera();
         this.camera.zoom = DEFAULT_ZOOM;
         this.viewport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, camera);
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(null, 1 / PPM);
+        world = new World(new Vector2(0, 0), true);
+        world.setContactListener(new WorldContactListener());
         this.debugRenderer = new Box2DDebugRenderer();
     }
 
@@ -63,29 +65,29 @@ public class WorldScreen extends AbstractScreen {
 
         // Wechsel den Raum, wenn die entsprechende Flag gesetzt ist.
         if (Chati.getInstance().isRoomChanged()) {
-            createMap();
-            addBorders();
-            addInteractiveObjects();
+            setMap();
+            createBorders();
+            createInteractionObjects();
         }
 
-        if (tiledMap != null) {
+        if (tiledMapRenderer.getMap() != null) {
             tiledMapRenderer.render();
             debugRenderer.render(world, camera.combined);
-
-            updateInternUserAvatar();
-            updateExternUserAvatars();
-            if (internUserAvatar != null) {
-                SPRITE_BATCH.setProjectionMatrix(camera.combined);
-                SPRITE_BATCH.begin();
-                internUserAvatar.draw(SPRITE_BATCH, delta);
-                externUserAvatars.values().forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
-                SPRITE_BATCH.end();
-                world.step(1 / 30f, 6, 2); /** Was sind das für Zahlen? Kein hardcoden, irgendwo Konstanten setzen... Wo kommen die her?*/
-                camera.update();
-                tiledMapRenderer.setView(camera);
-            }
         }
 
+        updateInternUserAvatar();
+        updateExternUserAvatars();
+        if (internUserAvatar != null) {
+            SPRITE_BATCH.setProjectionMatrix(camera.combined);
+            SPRITE_BATCH.begin();
+            internUserAvatar.draw(SPRITE_BATCH, delta);
+            externUserAvatars.values().forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
+            SPRITE_BATCH.end();
+        }
+
+        world.step(1 / 30f, 6, 2); /** Was sind das für Zahlen? Kein hardcoden, irgendwo Konstanten setzen... Wo kommen die her?*/
+        camera.update();
+        tiledMapRenderer.setView(camera);
         SPRITE_BATCH.setProjectionMatrix(stage.getCamera().combined);
         super.render(delta);
     }
@@ -99,7 +101,6 @@ public class WorldScreen extends AbstractScreen {
     public void hide() {
         internUserAvatar = null;
         externUserAvatars.clear();
-        tiledMap = null;
         tiledMapRenderer = null;
         world = null;
     }
@@ -110,7 +111,7 @@ public class WorldScreen extends AbstractScreen {
     }
 
     public TiledMap getTiledMap() {
-        return tiledMap;
+        return tiledMapRenderer.getMap();
     }
 
     public static WorldScreen getInstance() {
@@ -121,16 +122,14 @@ public class WorldScreen extends AbstractScreen {
         return worldScreen;
     }
 
-    private void createMap() {
+    private void setMap() {
         SpatialMap spatialMap = Chati.getInstance().getUserManager().getInternUserView().getCurrentRoom().getMap();
-        tiledMap = new TmxMapLoader().load(spatialMap.getPath());
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 1 / PPM);
-        world = new World(new Vector2(0, 0), true);
-        world.setContactListener(new WorldContactListener());
+        TiledMap tiledMap = new TmxMapLoader().load(spatialMap.getPath());
+        tiledMapRenderer.setMap(tiledMap);
     }
 
-    private void addBorders() {
-        tiledMap.getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class).forEach(border -> {
+    private void createBorders() {
+        tiledMapRenderer.getMap().getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class).forEach(border -> {
             Rectangle bounds = border.getRectangle();
 
             BodyDef bodyDef = new BodyDef();
@@ -146,8 +145,8 @@ public class WorldScreen extends AbstractScreen {
         });
     }
 
-    private void addInteractiveObjects() {
-        tiledMap.getLayers().get("InteractiveObject").getObjects().getByType(RectangleMapObject.class)
+    private void createInteractionObjects() {
+        tiledMapRenderer.getMap().getLayers().get("InteractiveObject").getObjects().getByType(RectangleMapObject.class)
                 .forEach(interactiveObject -> {
             Rectangle rectangle = interactiveObject.getRectangle();
             new InteractionObject(rectangle);
@@ -183,7 +182,7 @@ public class WorldScreen extends AbstractScreen {
     }
 
     private void updateCamera() {
-        TiledMapTileLayer layer = (TiledMapTileLayer) WorldScreen.getInstance().getTiledMap().getLayers().get(0);
+        TiledMapTileLayer layer = (TiledMapTileLayer) tiledMapRenderer.getMap().getLayers().get(0);
         float mapWidth = layer.getWidth() * layer.getTileWidth();
         float mapHeight = layer.getHeight() * layer.getTileHeight();
 
