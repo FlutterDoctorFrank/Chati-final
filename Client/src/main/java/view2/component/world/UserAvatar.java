@@ -37,10 +37,10 @@ public class UserAvatar extends Sprite {
         this.body = WorldScreen.getInstance().getWorld().createBody(bodyDef);
 
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.filter.categoryBits = WorldScreen.AVATAR_BIT;
-        fixtureDef.filter.maskBits = WorldScreen.OBJECT_BIT | WorldScreen.GROUND_BIT;
+        //fixtureDef.filter.categoryBits = WorldScreen.AVATAR_BIT;
+        //fixtureDef.filter.maskBits = WorldScreen.OBJECT_BIT | WorldScreen.GROUND_BIT;
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(1.5f, 1.5f); /** Hardgecodete zahlen ? */
+        shape.setAsBox((32 - 1) / WorldScreen.PPM / 2, (32 - 1) / WorldScreen.PPM / 2);
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
         body.setUserData(BodyType.USER);
@@ -159,6 +159,10 @@ public class UserAvatar extends Sprite {
         return user;
     }
 
+    public Vector2 getPosition() {
+        return body.getPosition();
+    }
+
     public void teleport() {
         Vector2 newPosition = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
@@ -187,7 +191,7 @@ public class UserAvatar extends Sprite {
             Array<TextureRegion> frames = new Array<>();
             TextureAtlas buttonAtlas = new TextureAtlas("icons/interact_button/rotating_button.pack");
             for (int i = 0; i < 4; i++) {
-                frames.add(new TextureRegion(buttonAtlas.findRegion("button"), i * 16, 0, 16, 16)); /**Hard gecoded...*/
+                frames.add(new TextureRegion(buttonAtlas.findRegion("button"), i * 16, 0, 16, 16)); /** Hard gecoded...*/
             }
             interactionButton = new Animation<>(0.1f, frames);
             setBounds(0, 0, 16 / WorldScreen.PPM, 16 / WorldScreen.PPM);

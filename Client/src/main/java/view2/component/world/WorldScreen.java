@@ -8,13 +8,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import model.context.spatial.SpatialMap;
 import view2.Chati;
 import view2.component.AbstractScreen;
@@ -29,10 +29,10 @@ public class WorldScreen extends AbstractScreen {
     public static final float DEFAULT_ZOOM = 0.6f;
     public static final float MIN_ZOOM = 0.4f;
     public static final float MAX_ZOOM = 0.8f;
-    public static final float ZOOM_STEP = 0.04f;
-    public static final short GROUND_BIT = 1;
-    public static final short AVATAR_BIT = 2;
-    public static final short OBJECT_BIT = 4;
+    public static final float ZOOM_STEP = 0.01f;
+    //public static final short GROUND_BIT = 1;
+    //public static final short AVATAR_BIT = 2;
+    //public static final short OBJECT_BIT = 4;
     private static final SpriteBatch SPRITE_BATCH = new SpriteBatch();
 
     private static WorldScreen worldScreen;
@@ -70,7 +70,7 @@ public class WorldScreen extends AbstractScreen {
 
         if (tiledMap != null) {
             tiledMapRenderer.render();
-            //debugRenderer.render(world, camera.combined);
+            debugRenderer.render(world, camera.combined);
 
             updateInternUserAvatar();
             updateExternUserAvatars();
@@ -113,10 +113,6 @@ public class WorldScreen extends AbstractScreen {
 
     public TiledMap getTiledMap() {
         return tiledMap;
-    }
-
-    public Viewport getGameViewport() {
-        return gameViewport;
     }
 
     public static WorldScreen getInstance() {
@@ -169,6 +165,7 @@ public class WorldScreen extends AbstractScreen {
         }
         if (internUserAvatar != null) {
             internUserAvatar.move();
+            updateCamera();
         }
     }
 
@@ -190,6 +187,38 @@ public class WorldScreen extends AbstractScreen {
         externUserAvatars.forEach(externUserAvatar -> externUserAvatar.move(false));
     }
 
+    private void updateCamera() {
+        TiledMapTileLayer layer = (TiledMapTileLayer) WorldScreen.getInstance().getTiledMap().getLayers().get(0);
+        float mapWidth = layer.getWidth() * layer.getTileWidth();
+        float mapHeight = layer.getHeight() * layer.getTileHeight();
+
+        float cameraTopBoundary =
+                (mapHeight - Gdx.graphics.getHeight() * camera.zoom / 2f) / PPM;
+        float cameraLeftBoundary =
+                (Gdx.graphics.getWidth() / 2f * camera.zoom) / PPM;
+        float cameraBottomBoundary =
+                (Gdx.graphics.getHeight() * camera.zoom / 2f) / PPM;
+        float cameraRightBoundary =
+                (mapWidth - Gdx.graphics.getWidth() * camera.zoom / 2f) / PPM;
+
+        Vector2 bodyPosition = internUserAvatar.getPosition();
+        if (bodyPosition.x >= cameraLeftBoundary && bodyPosition.x <= cameraRightBoundary) {
+            camera.position.x = bodyPosition.x;
+        } else if (bodyPosition.x < cameraLeftBoundary) {
+            camera.position.x = cameraLeftBoundary;
+        } else if (bodyPosition.x > cameraRightBoundary) {
+            camera.position.x = cameraRightBoundary;
+        }
+
+        if (bodyPosition.y >= cameraBottomBoundary && bodyPosition.y <= cameraTopBoundary) {
+            camera.position.y = bodyPosition.y;
+        } else if (bodyPosition.y > cameraTopBoundary) {
+            camera.position.y = cameraTopBoundary;
+        } else if (bodyPosition.y < cameraBottomBoundary) {
+            camera.position.y = cameraBottomBoundary;
+        }
+    }
+
     public World getWorld() {
         return world;
     }
@@ -202,7 +231,11 @@ public class WorldScreen extends AbstractScreen {
         return internUserAvatar;
     }
 
-    public OrthographicCamera getCamera() {
-        return camera;
+    public void zoom(boolean in) {
+        if (in && camera.zoom <= MAX_ZOOM) {
+            camera.zoom += ZOOM_STEP;
+        } else if (!in && camera.zoom >= WorldScreen.MIN_ZOOM) {
+            camera.zoom -= ZOOM_STEP;
+        }
     }
 }

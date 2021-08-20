@@ -46,12 +46,11 @@ public class InternUserAvatar extends UserAvatar {
                     body.setLinearVelocity(0, 0);
             }
         }
-        positionCamera();
-        //if (currentDirection != null) {
+        if (currentDirection != null) {
             Vector2 newPosition = body.getPosition();
             Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
                     (int) (newPosition.x * WorldScreen.PPM), (int) (newPosition.y * WorldScreen.PPM));
-        //}
+        }
     }
 
     private Direction getCurrentDirectionalInput() {
@@ -64,38 +63,6 @@ public class InternUserAvatar extends UserAvatar {
             }
         });
         return currentDirectionalInputs.peekLast();
-    }
-
-    private void positionCamera() {
-        TiledMapTileLayer layer = (TiledMapTileLayer) WorldScreen.getInstance().getTiledMap().getLayers().get(0);
-        float mapWidth = layer.getWidth() * layer.getTileWidth();
-        float mapHeight = layer.getHeight() * layer.getTileHeight();
-
-        float cameraTopBoundary =
-                (mapHeight - Gdx.graphics.getHeight() * WorldScreen.getInstance().getCamera().zoom / 2f) / WorldScreen.PPM;
-        float cameraLeftBoundary =
-                (Gdx.graphics.getWidth() / 2f * WorldScreen.getInstance().getCamera().zoom) / WorldScreen.PPM;
-        float cameraBottomBoundary =
-                (Gdx.graphics.getHeight() * WorldScreen.getInstance().getCamera().zoom / 2f) / WorldScreen.PPM;
-        float cameraRightBoundary =
-                (mapWidth - Gdx.graphics.getWidth() * WorldScreen.getInstance().getCamera().zoom / 2f) / WorldScreen.PPM;
-
-        Vector2 bodyPosition = body.getPosition();
-        if (bodyPosition.x >= cameraLeftBoundary && bodyPosition.x <= cameraRightBoundary) {
-            WorldScreen.getInstance().getGameViewport().getCamera().position.x = body.getPosition().x;
-        } else if (bodyPosition.x < cameraLeftBoundary) {
-            WorldScreen.getInstance().getGameViewport().getCamera().position.x = cameraLeftBoundary;
-        } else if (bodyPosition.x > cameraRightBoundary) {
-            WorldScreen.getInstance().getGameViewport().getCamera().position.x = cameraRightBoundary;
-        }
-
-        if (bodyPosition.y >= cameraBottomBoundary && bodyPosition.y <= cameraTopBoundary) {
-            WorldScreen.getInstance().getGameViewport().getCamera().position.y = body.getPosition().y;
-        } else if (bodyPosition.y > cameraTopBoundary) {
-            WorldScreen.getInstance().getGameViewport().getCamera().position.y = cameraTopBoundary;
-        } else if (bodyPosition.y < cameraBottomBoundary) {
-            WorldScreen.getInstance().getGameViewport().getCamera().position.y = cameraBottomBoundary;
-        }
     }
 
     public void setCanInteract(boolean canInteract) {

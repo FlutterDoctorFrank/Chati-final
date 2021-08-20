@@ -2,6 +2,7 @@ package view2;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import controller.network.ServerSender;
 import model.communication.message.MessageType;
@@ -49,6 +50,8 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
     private boolean changeWorldList;
     private boolean changeRoomList;
 
+    private GLProfiler profiler;
+
     public Chati(IUserManagerView userManager) {
         CHATI = this;
         this.userManager = userManager;
@@ -66,6 +69,9 @@ public class Chati extends Game implements view.Screens.ViewControllerInterface,
 
     @Override
     public void create() {
+        profiler = new GLProfiler(Gdx.graphics);
+        profiler.enable();
+
         SKIN = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
         setScreen(MenuScreen.getInstance());
     }

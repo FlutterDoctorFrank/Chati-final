@@ -82,12 +82,7 @@ public class WorldInputProcessor implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        OrthographicCamera camera = WorldScreen.getInstance().getCamera();
-        if (amountY > 0 && camera.zoom <= WorldScreen.MAX_ZOOM) {
-            camera.zoom += WorldScreen.ZOOM_STEP;
-        } else if (amountY < 0 && camera.zoom >= WorldScreen.MIN_ZOOM) {
-            camera.zoom -= WorldScreen.ZOOM_STEP;
-        }
+        WorldScreen.getInstance().zoom(amountY > 0);
         return true;
     }
 

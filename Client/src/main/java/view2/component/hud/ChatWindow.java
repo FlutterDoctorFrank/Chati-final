@@ -146,14 +146,11 @@ public class ChatWindow extends ChatiWindow {
     }
 
     private void sendMessage() {
-        if (typeMessageArea.getStyle().fontColor == Color.GRAY || typeMessageArea.getText().isEmpty()) {
+        if (typeMessageArea.getStyle().fontColor == Color.GRAY || typeMessageArea.getText().isBlank()) {
+            resetMessageArea();
             return;
         }
-        String sendMessage = typeMessageArea.getText();
-        if (sendMessage.charAt(sendMessage.length() - 1) == '\n') {
-            sendMessage = sendMessage.substring(0, sendMessage.length() - 1);
-        }
-        Chati.getInstance().getServerSender().send(ServerSender.SendAction.MESSAGE, sendMessage);
+        Chati.getInstance().getServerSender().send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());
         typeMessageArea.setText("");
     }
 
