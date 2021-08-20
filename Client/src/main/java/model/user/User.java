@@ -103,12 +103,19 @@ public class User implements IUserController, IUserView {
     @Override
     public void setInCurrentWorld(boolean isInCurrentWorld) {
         this.isInCurrentWorld = isInCurrentWorld;
+        if (!isInCurrentWorld) {
+            setInCurrentRoom(false);
+        }
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
     public void setInCurrentRoom(boolean isInCurrentRoom) {
         this.isInCurrentRoom = isInCurrentRoom;
+        if (!isInCurrentRoom) {
+            currentLocation = null;
+            UserManager.getInstance().getModelObserver().setUserPositionChanged();
+        }
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
