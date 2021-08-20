@@ -57,7 +57,6 @@ public class WorldScreen extends AbstractScreen {
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new WorldContactListener());
         this.debugRenderer = new Box2DDebugRenderer();
-        this.internUserAvatar = new InternUserAvatar(Chati.getInstance().getUserManager().getInternUserView(), world);
     }
 
     @Override
