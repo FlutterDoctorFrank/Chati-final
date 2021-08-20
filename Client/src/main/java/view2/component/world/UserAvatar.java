@@ -192,12 +192,9 @@ public class UserAvatar extends Sprite {
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
         if (!destination.epsilonEquals(body.getPosition())) {
             Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
-            body.setLinearVelocity(velocityVector);
+            body.setLinearVelocity(velocityVector.x, velocityVector.y);
         } else {
             body.setLinearVelocity(0, 0);
-            body.setAwake(false);
-            body.setActive(false);
-            body.setSleepingAllowed(true);
         }
     }
 
