@@ -120,11 +120,11 @@ public class UserAccountManagerTest {
         UserAccountManagerTest.TestClientSender testClientSender = new TestClientSender();
 
         try {
-            this.userAccountManager.registerUser("logout", "11111");
-            Assert.assertTrue(this.userAccountManager.isRegistered("logout"));
-            User actual = this.userAccountManager.loginUser("logout", "11111", testClientSender);
+            this.userAccountManager.registerUser("logoutUser", "11111");
+            Assert.assertTrue(this.userAccountManager.isRegistered("logoutUser"));
+            User actual = this.userAccountManager.loginUser("logoutUser", "11111", testClientSender);
             UUID actual_id = actual.getUserId();
-            Assert.assertEquals("logout", actual.getUsername());
+            Assert.assertEquals("logoutUser", actual.getUsername());
             Assert.assertTrue(actual.isOnline());
 
             //Nach erfolgreiches Login testen dann Logout

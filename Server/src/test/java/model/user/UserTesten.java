@@ -150,6 +150,7 @@ public class UserTesten {
             this.userAccountManager.registerUser("join", "11111");
             this.userAccountManager.loginUser("join", "11111", testClientSender);
             this.user = userAccountManager.getUser("join");
+            Assert.assertEquals(Status.ONLINE, this.user.getStatus());
             Thread.sleep(1500);
             this.user.joinWorld(test_world.getContextId());
 
@@ -275,7 +276,7 @@ public class UserTesten {
             //System.out.println(this.user.hasPermission(this.test_world, Permission.BAN_USER));
             //System.out.println(this.user.hasPermission(this.test_world, Permission.BAN_MODERATOR));
             //Assert.assertTrue(this.user.hasPermission(this.test_world, Permission.BAN_MODERATOR));
-            this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.BAN_USER, args);
+            //this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.BAN_USER, args);
 
 
             // Room Invite
@@ -426,6 +427,7 @@ public class UserTesten {
             this.user.addRole(GlobalContext.getInstance(), Role.OWNER);
 
             Assert.assertTrue(user.getGlobalRoles().getRoles().contains(Role.OWNER));
+            Assert.assertTrue(user.hasRole(globalContext, Role.OWNER));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -527,6 +529,25 @@ public class UserTesten {
     @Test
     public void updateRoleInfoTest() {
 
+    }
+
+    @Test
+    public void logoutTest() {
+        setTestWorld("forLogout");
+        UserTesten.TestClientSender testClientSender = new UserTesten.TestClientSender();
+        try {
+            userAccountManager.registerUser("logout", "11111");
+            this.user = userAccountManager.loginUser("logout", "11111", testClientSender);
+            Thread.sleep(1500);
+            this.user.joinWorld(this.test_world.getContextId());
+            Assert.assertEquals(Status.ONLINE, this.user.getStatus());
+
+            this.user.logout();
+            Assert.assertEquals(null, this.user.getWorld());
+            Assert.assertEquals(Status.OFFLINE, this.user.getStatus());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
