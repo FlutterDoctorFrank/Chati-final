@@ -59,6 +59,7 @@ public class UserAvatar extends Sprite {
             body.setLinearVelocity(0, 0);
             destination = null;
         }
+        System.out.println(user.getUsername() + " Velocity X: " + body.getLinearVelocity().x + " Y: " + body.getLinearVelocity().y);
 
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getCurrentFrameRegion(delta));
@@ -185,10 +186,8 @@ public class UserAvatar extends Sprite {
         }
         destination = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
-        if (!destination.epsilonEquals(body.getPosition())) {
-            Vector2 velocityVector = destination.cpy();
-            body.setLinearVelocity(velocityVector.sub(body.getPosition()).nor().scl(velocity));
-        }
+        Vector2 velocityVector = destination.cpy();
+        body.setLinearVelocity(velocityVector.sub(body.getPosition()).nor().scl(velocity));
     }
 
     public Body getBody() {
