@@ -13,6 +13,7 @@ public class UserAvatar extends Sprite {
 
     private final IUserView user;
     protected final Body body;
+    private Vector2 destination;
 
     private TextureRegion avatarStandUp;
     private TextureRegion avatarStandLeft;
@@ -54,6 +55,11 @@ public class UserAvatar extends Sprite {
     public void draw(Batch batch, float delta) {
         //InteractButtonAnimation animation = new InteractButtonAnimation();
         //animation.draw(batch);
+        if (destination != null && destination.epsilonEquals(body.getPosition())) {
+            body.setLinearVelocity(0, 0);
+            destination = null;
+        }
+
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getCurrentFrameRegion(delta));
         super.draw(batch);
@@ -177,9 +183,9 @@ public class UserAvatar extends Sprite {
         if (sprint) {
             velocity *= SPRINT_SPEED_FACTOR;
         }
-        Vector2 newPosition = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
+        destination = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
-        Vector2 velocityVector = newPosition.sub(body.getPosition()).nor().scl(velocity);
+        Vector2 velocityVector = destination.sub(body.getPosition()).nor().scl(velocity);
         body.setLinearVelocity(velocityVector);
     }
 
