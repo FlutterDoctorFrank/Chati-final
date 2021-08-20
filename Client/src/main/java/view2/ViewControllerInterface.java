@@ -1,12 +1,10 @@
 package view2;
 
 import controller.network.ServerSender;
-import model.context.spatial.SpatialContext;
 import model.exception.ContextNotFoundException;
 import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.Menu;
-import model.context.spatial.SpatialContextType;
 import model.exception.UserNotFoundException;
 import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
