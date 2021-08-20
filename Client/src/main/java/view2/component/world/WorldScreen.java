@@ -109,6 +109,8 @@ public class WorldScreen extends AbstractScreen {
 
     @Override
     public void hide() {
+        world.destroyBody(internUserAvatar.getBody());
+        internUserAvatar = null;
         externUserAvatars.clear();
         tiledMapRenderer.setMap(null);
     }
