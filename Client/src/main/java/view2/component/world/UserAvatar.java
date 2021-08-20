@@ -164,13 +164,10 @@ public class UserAvatar extends Sprite {
     }
 
     public void teleport() {
-        /*
         Vector2 newPosition = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
         body.setTransform(newPosition, body.getAngle());
         body.setAwake(true);
-
-         */
     }
 
     public void move(boolean sprint) {

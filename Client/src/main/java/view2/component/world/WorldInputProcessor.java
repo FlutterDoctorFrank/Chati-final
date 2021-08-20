@@ -1,7 +1,6 @@
 package view2.component.world;
 
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import view2.component.KeyAction;
 
 public class WorldInputProcessor implements InputProcessor {
