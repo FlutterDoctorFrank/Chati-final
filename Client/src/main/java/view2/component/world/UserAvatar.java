@@ -194,6 +194,7 @@ public class UserAvatar extends Sprite {
             Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
             body.setLinearVelocity(velocityVector.x, velocityVector.y);
         } else {
+            System.out.println("Trifft ein.");
             body.setLinearVelocity(0, 0);
         }
     }
