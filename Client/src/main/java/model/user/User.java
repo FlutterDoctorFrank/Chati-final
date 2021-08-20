@@ -179,7 +179,7 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void setPosition(int posX, int posY) {
+    public void setPosition(float posX, float posY) {
         currentLocation = new Location(posX, posY);
         UserManager.getInstance().getModelObserver().setUserPositionChanged();
     }
