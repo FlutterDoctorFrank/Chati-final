@@ -108,8 +108,10 @@ public class WorldScreen extends AbstractScreen {
 
     @Override
     public void hide() {
-        world.destroyBody(internUserAvatar.getBody());
-        internUserAvatar = null;
+        if (internUserAvatar != null) {
+            world.destroyBody(internUserAvatar.getBody());
+            internUserAvatar = null;
+        }
         externUserAvatars.clear();
         tiledMapRenderer.setMap(null);
     }
@@ -178,6 +180,16 @@ public class WorldScreen extends AbstractScreen {
                     newUserAvatar.teleport();
                 }
             });
+            Map<IUserView, UserAvatar> externUserAvatarsCopy = externUserAvatars;
+            externUserAvatarsCopy.values().forEach(externUserAvatar -> {
+                if (!Chati.getInstance().getUserManager().getActiveUsers().containsValue(externUserAvatar.getUser())) {
+                    world.destroyBody(externUserAvatar.getBody());
+                    externUserAvatars.remove(externUserAvatar.getUser());
+                } else {
+                    externUserAvatar.move(false);
+                }
+            });
+            /*
             Iterator<Map.Entry<IUserView, UserAvatar>> iterator = externUserAvatars.entrySet().iterator();
             while (iterator.hasNext()) {
                 UserAvatar userAvatar = iterator.next().getValue();
@@ -187,6 +199,8 @@ public class WorldScreen extends AbstractScreen {
                 }
             }
             externUserAvatars.values().forEach(externUserAvatar -> externUserAvatar.move(false));
+
+             */
         }
     }
 
