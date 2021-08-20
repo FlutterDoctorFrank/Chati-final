@@ -183,6 +183,10 @@ public class UserAvatar extends Sprite {
         body.setLinearVelocity(velocityVector);
     }
 
+    public Body getBody() {
+        return body;
+    }
+
     private class InteractButtonAnimation extends Sprite {
 
         private final Animation<TextureRegion> interactionButton;
