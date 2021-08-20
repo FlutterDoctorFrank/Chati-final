@@ -132,7 +132,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void setPosition(int posX, int posY) {
+    public void setPosition(float posX, float posY) {
         currentLocation = new Location(posX, posY);
         UserManager.getInstance().getModelObserver().setInternUserPositionChanged();
     }
