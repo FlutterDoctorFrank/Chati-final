@@ -195,6 +195,9 @@ public class UserAvatar extends Sprite {
             body.setLinearVelocity(velocityVector);
         } else {
             body.setLinearVelocity(0, 0);
+            body.setAwake(false);
+            body.setActive(false);
+            body.setSleepingAllowed(true);
         }
     }
 
