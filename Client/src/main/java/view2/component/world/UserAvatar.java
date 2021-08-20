@@ -56,7 +56,7 @@ public class UserAvatar extends Sprite {
         //InteractButtonAnimation animation = new InteractButtonAnimation();
         //animation.draw(batch);
         if (destination != null && destination.epsilonEquals(body.getPosition())) {
-            body.setLinearVelocity(0, 0);
+            body.setLinearVelocity(new Vector2(0, 0));
             destination = null;
         }
 
