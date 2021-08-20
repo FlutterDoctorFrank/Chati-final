@@ -112,7 +112,7 @@ public class UserAvatar extends Sprite {
     }
 
     private TextureRegion getCurrentFrameRegion(float delta) {
-        currentDirection = getDirection();
+        //currentDirection = getDirection();
         stateTimer = currentDirection == previousDirection ? stateTimer + delta : 0;
         if (currentDirection != null) {
             previousDirection = currentDirection;
@@ -182,6 +182,21 @@ public class UserAvatar extends Sprite {
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
         Vector2 velocityVector = newPosition.sub(body.getPosition()).nor().scl(velocity);
         body.setLinearVelocity(velocityVector);
+        setCurrentDirection(velocityVector);
+    }
+
+    private void setCurrentDirection(Vector2 velocityVector) {
+        if (velocityVector.y > Math.abs(velocityVector.x)) {
+            currentDirection = Direction.UP;
+        } else if (velocityVector.x < -Math.abs(velocityVector.y)) {
+            currentDirection = Direction.LEFT;
+        } else if (velocityVector.y < -Math.abs(velocityVector.x)) {
+            currentDirection = Direction.DOWN;
+        } else if (velocityVector.x > Math.abs(velocityVector.y)) {
+            currentDirection = Direction.RIGHT;
+        } else {
+            currentDirection = null;
+        }
     }
 
     private class InteractButtonAnimation extends Sprite {
