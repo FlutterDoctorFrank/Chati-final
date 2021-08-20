@@ -1,4 +1,4 @@
-package model.context.spatial;
+package model.user;
 
 import org.junit.After;
 import org.junit.Before;
@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class LocationTest {
+public class IInternUserViewTest {
 
     @Before
     public void setUp() throws Exception {
@@ -17,14 +17,22 @@ public class LocationTest {
     }
 
     @Test
-    public void getArea() {
+    public void getCurrentWorld() {
     }
 
     @Test
-    public void getPosX() {
+    public void getCurrentRoom() {
     }
 
     @Test
-    public void getPosY() {
+    public void getGlobalNotifications() {
+    }
+
+    @Test
+    public void getWorldNotifications() {
+    }
+
+    @Test
+    public void getMusic() {
     }
 }

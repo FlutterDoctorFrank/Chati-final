@@ -109,6 +109,6 @@ public class MapUtils {
         SpatialContext parent = room.getArea(posX + width / 2, posY + height / 2);
         SpatialContext child = new SpatialContext(contextName, parent, communicationRegion, communicationMedia, expanse);
 
-        System.out.println(child.getContextId()  + "   p   " + parent.getContextId() + "  " + parent.getChildren().isEmpty());
+        System.out.println(child.getContextId());
     }
 }

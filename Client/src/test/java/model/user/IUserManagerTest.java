@@ -76,10 +76,6 @@ public class IUserManagerTest {
     }
 
     @Test
-    public void logout() {
-    }
-
-    @Test
     public void addRemoveGetExternUser() {
         UUID userId1 = UUID.randomUUID();
         UUID userId2 = UUID.randomUUID();
@@ -110,11 +106,12 @@ public class IUserManagerTest {
         UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.PLACEHOLDER);
         testUserManagerController.addExternUser(userId1, userId1.toString(), Status.ONLINE, Avatar.PLACEHOLDER);
         testUserManagerController.addExternUser(userId2, userId2.toString(), Status.ONLINE, Avatar.PLACEHOLDER);
-        SpatialContext world = new SpatialContext("world", Context.getGlobal());
+        SpatialContext world = new SpatialContext("World", Context.getGlobal());
+        SpatialContext room = new SpatialContext("Room", world);
         Game game = new Game() {
             @Override
             public void create() {
-                world.build(map);
+                room.build(map);
                 Gdx.app.exit();
                 UserManager.getInstance().getInternUser().joinWorld(world.getContextName());
                 UserManager.getInstance().getInternUser().joinRoom(world.getContextId(), world.getContextName(), map);
@@ -137,5 +134,6 @@ public class IUserManagerTest {
         userSet.forEach(id -> Assert.assertTrue(testUserManagerView.getBannedUsers().containsKey(id)));
         testUserManagerController.getExternUsers().forEach((id, user) -> user.setFriend(true));
         userSet.forEach(id -> Assert.assertTrue(testUserManagerView.getFriends().containsKey(id)));
+        UserManager.getInstance().logout();
     }
 }

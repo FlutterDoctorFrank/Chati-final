@@ -1,4 +1,4 @@
-package model.context.spatial;
+package model.notification;
 
 import org.junit.After;
 import org.junit.Before;
@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class MapUtilsTest {
+public class INotificationViewTest {
 
     @Before
     public void setUp() throws Exception {
@@ -17,22 +17,18 @@ public class MapUtilsTest {
     }
 
     @Test
-    public void getCommunicationRegion() {
+    public void getNotificationId() {
     }
 
     @Test
-    public void getCommunicationMedia() {
+    public void getMessageBundle() {
     }
 
     @Test
-    public void getWidth() {
+    public void getTimestamp() {
     }
 
     @Test
-    public void getHeight() {
-    }
-
-    @Test
-    public void buildChildTree() {
+    public void isRequest() {
     }
 }

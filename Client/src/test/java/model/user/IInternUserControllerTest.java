@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class UserManagerTest {
+public class IInternUserControllerTest {
 
     @Before
     public void setUp() throws Exception {
@@ -17,22 +17,26 @@ public class UserManagerTest {
     }
 
     @Test
-    public void setInternUser() {
+    public void joinWorld() {
     }
 
     @Test
-    public void getInstance() {
+    public void leaveWorld() {
     }
 
     @Test
-    public void getInternUser() {
+    public void joinRoom() {
     }
 
     @Test
-    public void setModelObserver() {
+    public void setMusic() {
     }
 
     @Test
-    public void getModelObserver() {
+    public void addNotification() {
+    }
+
+    @Test
+    public void removeNotification() {
     }
 }

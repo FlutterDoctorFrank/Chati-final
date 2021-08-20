@@ -24,6 +24,7 @@ import java.util.UUID;
 public class IUserTest {
 
     SpatialContext world;
+    SpatialContext room;
     SpatialMap map;
     User testUser;
     UUID userId;
@@ -62,17 +63,17 @@ public class IUserTest {
             public void setMusicChanged() {
             }
         });
-        world = new SpatialContext("world", Context.getGlobal());
+        world = new SpatialContext("World", Context.getGlobal());
+        room = new SpatialContext("Room", world);
         UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.PLACEHOLDER);
 
         map = SpatialMap.MAP;
         Game game = new Game() {
             @Override
             public void create() {
-                world.build(map);
                 Gdx.app.exit();
                 UserManager.getInstance().getInternUser().joinWorld(world.getContextName());
-                UserManager.getInstance().getInternUser().joinRoom(world.getContextId(), world.getContextName(), map);
+                UserManager.getInstance().getInternUser().joinRoom(room.getContextId(), room.getContextName(), map);
             }
         };
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -86,6 +87,7 @@ public class IUserTest {
     @After
     public void tearDown() throws Exception {
         world = null;
+        room = null;
         map = null;
         testUser = null;
         userId = null;
@@ -162,13 +164,13 @@ public class IUserTest {
         int posY = 1500;
         UserManager.getInstance().getInternUser().setPosition(posX, posY);
         try {
-            testUserController.setReport(new ContextID("global.world.Disco"), true);
+            testUserController.setReport(new ContextID("Global.World.Room.Disco"), true);
         } catch (ContextNotFoundException e) {
             e.printStackTrace();
         }
         Assert.assertTrue(testUserView.isReported());
         try {
-            testUserController.setReport(new ContextID("global.world.Disco"), false);
+            testUserController.setReport(new ContextID("Global.World.Room.Disco"), false);
         } catch (ContextNotFoundException e) {
             e.printStackTrace();
         }
@@ -181,13 +183,13 @@ public class IUserTest {
         int posY = 1500;
         UserManager.getInstance().getInternUser().setPosition(posX, posY);
         try {
-            testUserController.setMute(new ContextID("global.world.Disco"), true);
+            testUserController.setMute(new ContextID("Global.World.Room.Disco"), true);
         } catch (ContextNotFoundException e) {
             e.printStackTrace();
         }
         Assert.assertTrue(testUserView.isMuted());
         try {
-            testUserController.setMute(new ContextID("global.world.Disco"), false);
+            testUserController.setMute(new ContextID("Global.World.Room.Disco"), false);
         } catch (ContextNotFoundException e) {
             e.printStackTrace();
         }
@@ -200,13 +202,13 @@ public class IUserTest {
         int posY = 1500;
         UserManager.getInstance().getInternUser().setPosition(posX, posY);
         try {
-            testUserController.setBan(new ContextID("global.world.Disco"), true);
+            testUserController.setBan(new ContextID("Global.World.Room.Disco"), true);
         } catch (ContextNotFoundException e) {
             e.printStackTrace();
         }
         Assert.assertTrue(testUserView.isBanned());
         try {
-            testUserController.setBan(new ContextID("global.world.Disco"), false);
+            testUserController.setBan(new ContextID("Global.World.Room.Disco"), false);
         } catch (ContextNotFoundException e) {
             e.printStackTrace();
         }
@@ -222,7 +224,7 @@ public class IUserTest {
 
         try {
             testUserController.setRoles(Context.getGlobal().getContextId(), Set.of(Role.ADMINISTRATOR));
-            testUserController.setRoles(new ContextID("global.world.Park"), Set.of(Role.AREA_MANAGER));
+            testUserController.setRoles(new ContextID("Global.World.Room.Park"), Set.of(Role.AREA_MANAGER));
         } catch (ContextNotFoundException e) {
             e.printStackTrace();
         }
@@ -242,7 +244,7 @@ public class IUserTest {
         UserManager.getInstance().getInternUser().setPosition(posX, posY);
         testUser.setPosition(posX, posY);
         try {
-            testUserController.setRoles(new ContextID("global.world.Park"), Set.of(Role.AREA_MANAGER));
+            testUserController.setRoles(new ContextID("Global.World.Room.Park"), Set.of(Role.AREA_MANAGER));
         } catch (ContextNotFoundException e) {
             e.printStackTrace();
         }

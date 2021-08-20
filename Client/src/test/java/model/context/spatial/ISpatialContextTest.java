@@ -1,11 +1,13 @@
-package model.context;
+package model.context.spatial;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import model.context.spatial.SpatialContext;
-import model.context.spatial.SpatialMap;
+import model.communication.CommunicationMedium;
+import model.communication.CommunicationRegion;
+import model.context.Context;
+import model.context.ContextID;
 import model.exception.ContextNotFoundException;
 import model.user.UserManager;
 import org.junit.After;
@@ -14,13 +16,16 @@ import org.junit.Before;
 import org.junit.Test;
 import view.Screens.IModelObserver;
 
+import java.util.Set;
+
 import static org.junit.Assert.*;
 
-public class ContextTest {
+public class ISpatialContextTest {
 
     SpatialContext world;
-    SpatialContext room;
     SpatialMap map;
+    ISpatialContextView testSpatialContextView;
+    ISpatialContextView testWorldView;
 
     @Before
     public void setUp() throws Exception {
@@ -54,54 +59,40 @@ public class ContextTest {
             public void setMusicChanged() {
             }
         });
-        world = new SpatialContext("World", Context.getGlobal());
-        room = new SpatialContext("Room", world);
+        world = new SpatialContext("world", Context.getGlobal());
+        testWorldView = world;
         map = SpatialMap.MAP;
         Game game = new Game() {
             @Override
             public void create() {
-                room.build(map);
+                world.build(map);
                 Gdx.app.exit();
             }
         };
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         new Lwjgl3Application(game, config);
+        testSpatialContextView = (SpatialContext)Context.getGlobal().getContext(new ContextID("Global.world.Disco"));
     }
 
     @After
     public void tearDown() throws Exception {
+        world = null;
+        map = null;
     }
 
     @Test
-    public void addChild() {
+    public void getCommunicationRegion() {
+        Assert.assertEquals(testSpatialContextView.getCommunicationRegion(), CommunicationRegion.RADIAL);
     }
 
     @Test
-    public void removeChild() {
+    public void getCommunicationMedia() {
+        Assert.assertEquals(testSpatialContextView.getCommunicationMedia(),
+                Set.of(CommunicationMedium.TEXT, CommunicationMedium.VOICE));
     }
 
     @Test
-    public void getParent() {
-    }
-
-    @Test
-    public void getContext() {
-        ContextID contextId = new ContextID("Global.World.Room.Park.BankArea_1.Bank_3");
-        try {
-            Assert.assertEquals(Context.getGlobal().
-                    getContext(contextId).contextId, contextId);
-        } catch (ContextNotFoundException e) {
-            e.printStackTrace();
-        }
-        contextId = new ContextID("keinContext");
-        try {
-            Context.getGlobal().getContext(contextId);
-        } catch (ContextNotFoundException e) {
-            Assert.assertTrue(true);
-        }
-    }
-
-    @Test
-    public void getGlobal() {
+    public void getMap() {
+        Assert.assertEquals(testWorldView.getMap(), map);
     }
 }

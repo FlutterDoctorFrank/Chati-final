@@ -1,18 +1,15 @@
-package model.context.spatial;
+package model.context;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.naming.Context;
-
 import static org.junit.Assert.*;
 
-public class ExpanseTest {
+public class IContextTest {
 
     @Before
     public void setUp() throws Exception {
-
     }
 
     @After
@@ -20,6 +17,10 @@ public class ExpanseTest {
     }
 
     @Test
-    public void isIn() {
+    public void getContextId() {
+    }
+
+    @Test
+    public void getContextName() {
     }
 }
