@@ -142,16 +142,20 @@ public class UserAvatar extends Sprite {
     }
 
     private Direction getDirection() {
-        if (body.getLinearVelocity().y > 0)
+        Vector2 velocity = body.getLinearVelocity();
+        if (velocity.y > Math.abs(velocity.x)) {
             return Direction.UP;
-        else if (body.getLinearVelocity().x < 0)
+        }
+        if (velocity.x < -Math.abs(velocity.y)) {
             return Direction.LEFT;
-        else if (body.getLinearVelocity().y < 0)
+        }
+        if (velocity.y < -Math.abs(velocity.x)) {
             return Direction.DOWN;
-        else if (body.getLinearVelocity().x > 0)
+        }
+        if (velocity.x > Math.abs(velocity.y)) {
             return Direction.RIGHT;
-        else
-            return null;
+        }
+        return null;
     }
 
     public IUserView getUser() {
