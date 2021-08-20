@@ -190,11 +190,10 @@ public class UserAvatar extends Sprite {
         }
         destination = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
-        if (!destination.epsilonEquals(body.getPosition())) {
+        if (!destination.epsilonEquals(body.getPosition(), 16 / WorldScreen.PPM)) {
             Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
             body.setLinearVelocity(velocityVector.x, velocityVector.y);
         } else {
-            System.out.println("Trifft ein.");
             body.setLinearVelocity(0, 0);
         }
     }
