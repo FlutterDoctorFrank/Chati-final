@@ -56,7 +56,8 @@ public class UserAvatar extends Sprite {
         //InteractButtonAnimation animation = new InteractButtonAnimation();
         //animation.draw(batch);
         if (destination != null && destination.epsilonEquals(body.getPosition())) {
-            body.setLinearVelocity(new Vector2(0, 0));
+            Vector2 velocityVector = body.getLinearVelocity().cpy();
+            body.getLinearVelocity().sub(velocityVector);
             destination = null;
         }
 
@@ -185,8 +186,10 @@ public class UserAvatar extends Sprite {
         }
         destination = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
-        Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
-        body.setLinearVelocity(velocityVector);
+        if (!destination.epsilonEquals(body.getPosition())) {
+            Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
+            body.setLinearVelocity(velocityVector);
+        }
     }
 
     public Body getBody() {
