@@ -17,14 +17,11 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import model.context.spatial.SpatialMap;
 import model.user.IUserView;
-import model.user.User;
 import view2.Chati;
 import view2.component.AbstractScreen;
 import view2.component.hud.HeadUpDisplay;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.stream.Collectors;
 
 public class WorldScreen extends AbstractScreen {
 
@@ -41,7 +38,7 @@ public class WorldScreen extends AbstractScreen {
     private static WorldScreen worldScreen;
 
     private final WorldInputProcessor worldInputProcessor;
-    private final FitViewport gameViewport;
+    private final FitViewport viewport;
     private final OrthographicCamera camera;
     private final Box2DDebugRenderer debugRenderer;
     private OrthogonalTiledMapRenderer tiledMapRenderer;
@@ -56,7 +53,7 @@ public class WorldScreen extends AbstractScreen {
         this.externUserAvatars = new HashMap<>();
         this.camera = new OrthographicCamera();
         this.camera.zoom = DEFAULT_ZOOM;
-        this.gameViewport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, camera);
+        this.viewport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, camera);
         this.debugRenderer = new Box2DDebugRenderer();
     }
 
@@ -77,18 +74,16 @@ public class WorldScreen extends AbstractScreen {
 
             updateInternUserAvatar();
             updateExternUserAvatars();
-
             if (internUserAvatar != null) {
                 SPRITE_BATCH.setProjectionMatrix(camera.combined);
                 SPRITE_BATCH.begin();
                 internUserAvatar.draw(SPRITE_BATCH, delta);
                 externUserAvatars.values().forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
                 SPRITE_BATCH.end();
+                world.step(1 / 30f, 6, 2); /** Was sind das für Zahlen? Kein hardcoden, irgendwo Konstanten setzen... Wo kommen die her?*/
+                camera.update();
+                tiledMapRenderer.setView(camera);
             }
-
-            world.step(1 / 30f, 6, 2); /** Was sind das für Zahlen? Kein hardcoden, irgendwo Konstanten setzen... Wo kommen die her?*/
-            camera.update();
-            tiledMapRenderer.setView(camera);
         }
 
         SPRITE_BATCH.setProjectionMatrix(stage.getCamera().combined);
@@ -97,7 +92,7 @@ public class WorldScreen extends AbstractScreen {
 
     @Override
     public void resize(int width, int height) {
-        gameViewport.update(width, height);
+        viewport.update(width, height);
     }
 
     @Override
