@@ -177,13 +177,11 @@ public class WorldScreen extends AbstractScreen {
                     newUserAvatar.teleport();
                 }
             });
-            Iterator<UserAvatar> iterator = externUserAvatars.values().iterator();
-            while (iterator.hasNext()) {
-                UserAvatar userAvatar = iterator.next();
+            for (UserAvatar userAvatar : externUserAvatars.values()) {
                 if (!Chati.getInstance().getUserManager().getActiveUsers().containsValue(userAvatar.getUser())) {
                     System.out.println("BODY DESTROY");
                     world.destroyBody(userAvatar.getBody());
-                    iterator.remove();
+                    externUserAvatars.remove(userAvatar.getUser());
                 }
             }
         }
