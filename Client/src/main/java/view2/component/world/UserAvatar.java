@@ -52,8 +52,8 @@ public class UserAvatar extends Sprite {
 
     @Override
     public void draw(Batch batch, float delta) {
-        InteractButtonAnimation animation = new InteractButtonAnimation();
-        animation.draw(batch);
+        //InteractButtonAnimation animation = new InteractButtonAnimation();
+        //animation.draw(batch);
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getCurrentFrameRegion(delta));
         super.draw(batch);
@@ -112,7 +112,7 @@ public class UserAvatar extends Sprite {
     }
 
     private TextureRegion getCurrentFrameRegion(float delta) {
-        //currentDirection = getDirection();
+        currentDirection = getDirection();
         stateTimer = currentDirection == previousDirection ? stateTimer + delta : 0;
         if (currentDirection != null) {
             previousDirection = currentDirection;
@@ -126,19 +126,18 @@ public class UserAvatar extends Sprite {
                 default:
                     return avatarRunDown.getKeyFrame(stateTimer, true);
             }
-        } else if (previousDirection != null) {
-            switch (previousDirection) {
-                case UP:
-                    return avatarStandUp;
-                case LEFT:
-                    return avatarStandLeft;
-                case RIGHT:
-                    return avatarStandRight;
-                default:
-                    return avatarStandDown;
-            }
         }
-        return null;
+        if (previousDirection == Direction.UP) {
+            return avatarStandUp;
+        }
+        if (previousDirection == Direction.LEFT) {
+            return avatarStandLeft;
+        }
+        if (previousDirection == Direction.RIGHT) {
+            return avatarStandRight;
+        }
+        return avatarStandDown;
+
     }
 
     private Direction getDirection() {
@@ -182,21 +181,6 @@ public class UserAvatar extends Sprite {
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
         Vector2 velocityVector = newPosition.sub(body.getPosition()).nor().scl(velocity);
         body.setLinearVelocity(velocityVector);
-        setCurrentDirection(velocityVector);
-    }
-
-    private void setCurrentDirection(Vector2 velocityVector) {
-        if (velocityVector.y > Math.abs(velocityVector.x)) {
-            currentDirection = Direction.UP;
-        } else if (velocityVector.x < -Math.abs(velocityVector.y)) {
-            currentDirection = Direction.LEFT;
-        } else if (velocityVector.y < -Math.abs(velocityVector.x)) {
-            currentDirection = Direction.DOWN;
-        } else if (velocityVector.x > Math.abs(velocityVector.y)) {
-            currentDirection = Direction.RIGHT;
-        } else {
-            currentDirection = null;
-        }
     }
 
     private class InteractButtonAnimation extends Sprite {
