@@ -16,6 +16,9 @@ import model.database.Database;
 import model.database.IContextDatabase;
 import model.database.IUserAccountManagerDatabase;
 import model.database.IUserDatabase;
+import model.notification.INotification;
+import model.notification.Notification;
+import model.role.Permission;
 import model.role.Role;
 import model.user.account.UserAccountManager;
 import model.user.account.UserAccountManagerTest;
@@ -121,14 +124,20 @@ public class UserTesten {
             userAccountManager.registerUser(performerName, "22222");
             User performer = userAccountManager.getUser(performerName);
             performer.addRole(globalContext, Role.OWNER);
-            globalContext.createWorld(performer.getUserId(), "test_world", SpatialMap.MAP);
-
+            if (globalContext.getWorlds().size() == 0) {
+                globalContext.createWorld(performer.getUserId(), "test_world", SpatialMap.MAP);
+            }
             ContextID newworld_id = globalContext.getWorlds().keySet().iterator().next();
             System.out.println(globalContext.getWorlds().size());
             test_world = globalContext.getWorld(newworld_id);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void setUserNameTest() {
+
     }
 
 
@@ -176,6 +185,22 @@ public class UserTesten {
 
     @Test
     public void moveTest() {
+        setTestWorld("forMove");
+        UserTesten.TestClientSender testClientSender = new UserTesten.TestClientSender();
+        try {
+            this.userAccountManager.registerUser("move", "11111");
+            this.userAccountManager.loginUser("move", "11111", testClientSender);
+            this.user = userAccountManager.getUser("move");
+            Thread.sleep(1500);
+            this.user.joinWorld(test_world.getContextId());
+            Assert.assertEquals("test_world", this.user.getWorld().getContextName());
+
+            this.user.move(1401, 1000);
+            Assert.assertEquals(1401, this.user.getLocation().getPosX());
+            Assert.assertEquals(1000, this.user.getLocation().getPosY());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -194,7 +219,82 @@ public class UserTesten {
 
     @Test
     public void executeAdministrativeActionTest() {
+        UserTesten.TestClientSender testClientSender = new UserTesten.TestClientSender();
 
+        try {
+            // Invite Friend
+            this.userAccountManager.registerUser("target", "11111");
+            User target = this.userAccountManager.loginUser("target", "11111", testClientSender);
+            this.userAccountManager.registerUser("sender", "22222");
+            this.user = this.userAccountManager.loginUser("sender", "22222", testClientSender);
+            String[] args = new String[]{"hallo"};
+
+            this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.INVITE_FRIEND, args);
+            Assert.assertEquals(1, target.getGlobalNotifications().size());
+            UUID actual_friend_request_id = target.getGlobalNotifications().keySet().iterator().next();
+            INotification actual_notif= target.getGlobalNotifications().get(actual_friend_request_id);
+            Assert.assertEquals("friendRequestKey", actual_notif.getMessageBundle().getMessageKey());
+            Assert.assertEquals("sender", actual_notif.getMessageBundle().getArguments()[0]);
+            Assert.assertEquals("hallo", actual_notif.getMessageBundle().getArguments()[1]);
+
+
+            // Remove Friend
+            this.user.addFriend(target);
+            target.addFriend(this.user);
+            args = new String[]{};
+
+            this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.REMOVE_FRIEND, args);
+            Assert.assertEquals(0, this.user.getFriends().size());
+            Assert.assertEquals(0, target.getFriends().size());
+
+
+            // Ignore User
+            this.user.addFriend(target);
+            target.addFriend(this.user);
+            Assert.assertEquals(1, this.user.getFriends().size());
+            Assert.assertEquals(1, target.getFriends().size());
+            args = new String[]{};
+            this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.IGNORE_USER, args);
+            Assert.assertEquals(0, this.user.getFriends().size());
+            Assert.assertEquals(0, target.getFriends().size());
+            Assert.assertEquals(1, this.user.getIgnoredUsers().size());
+            Assert.assertTrue(this.user.getIgnoredUsers().keySet().contains(target.getUserId()));
+
+
+            // Unignore User
+            this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.UNIGNORE_USER, args);
+            Assert.assertEquals(0, this.user.getIgnoredUsers().size());
+
+
+            // Ban User
+
+            setTestWorld("forBanUser");
+            Thread.sleep(1500);
+            this.user.joinWorld(this.test_world.getContextId());
+            this.user.addRole(this.test_world, Role.MODERATOR);
+            //System.out.println(this.user.hasPermission(this.test_world, Permission.BAN_USER));
+            //System.out.println(this.user.hasPermission(this.test_world, Permission.BAN_MODERATOR));
+            //Assert.assertTrue(this.user.hasPermission(this.test_world, Permission.BAN_MODERATOR));
+            this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.BAN_USER, args);
+
+
+            // Room Invite
+            // Room Kick
+            // Teleport to User
+            // Report User
+            // Mute User
+            // Unmute User
+
+            // Unban User
+            // Assign Moderator
+            // Withdraw Moderator
+            // Assign Administrator
+            // Withdraw Administrator
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

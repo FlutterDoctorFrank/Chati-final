@@ -346,10 +346,12 @@ public enum AdministrativeAction {
                             Permission.BAN_MODERATOR);
                 }
             } else {
+                // BAN_MODERATOR ?
                 if (!performer.hasPermission(performerWorld, Permission.BAN_USER)) {
                     throw new NoPermissionException("Performer has not the required permission to ban.", performer,
                             Permission.BAN_USER);
                 }
+                // java.lang.UnsupportedOperationException (UserTesten - executeAdministrativeActionTest)
                 receivers.putAll(UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
                         Permission.BAN_USER));
             }
