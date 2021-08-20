@@ -55,11 +55,15 @@ public class UserAvatar extends Sprite {
     public void draw(Batch batch, float delta) {
         //InteractButtonAnimation animation = new InteractButtonAnimation();
         //animation.draw(batch);
+
+        /*
         if (destination != null && destination.epsilonEquals(body.getPosition())) {
             Vector2 velocityVector = body.getLinearVelocity().cpy();
             body.setLinearVelocity(- velocityVector.x, - velocityVector.y);
             destination = null;
         }
+
+         */
 
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getCurrentFrameRegion(delta));
@@ -189,6 +193,8 @@ public class UserAvatar extends Sprite {
         if (!destination.epsilonEquals(body.getPosition())) {
             Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
             body.setLinearVelocity(velocityVector);
+        } else {
+            body.setLinearVelocity(0, 0);
         }
     }
 
