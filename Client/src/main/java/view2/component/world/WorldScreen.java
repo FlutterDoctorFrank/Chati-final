@@ -57,6 +57,7 @@ public class WorldScreen extends AbstractScreen {
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new WorldContactListener());
         this.debugRenderer = new Box2DDebugRenderer();
+        this.internUserAvatar = new InternUserAvatar(Chati.getInstance().getUserManager().getInternUserView(), world);
     }
 
     @Override
@@ -70,20 +71,20 @@ public class WorldScreen extends AbstractScreen {
             createInteractionObjects();
         }
 
+        updateInternUserAvatar();
+        updateExternUserAvatars();
+
         if (tiledMapRenderer.getMap() != null) {
             tiledMapRenderer.render();
             debugRenderer.render(world, camera.combined);
+            updateCamera();
         }
 
-        updateInternUserAvatar();
-        updateExternUserAvatars();
-        if (internUserAvatar != null) {
-            SPRITE_BATCH.setProjectionMatrix(camera.combined);
-            SPRITE_BATCH.begin();
-            internUserAvatar.draw(SPRITE_BATCH, delta);
-            externUserAvatars.values().forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
-            SPRITE_BATCH.end();
-        }
+        SPRITE_BATCH.setProjectionMatrix(camera.combined);
+        SPRITE_BATCH.begin();
+        internUserAvatar.draw(SPRITE_BATCH, delta);
+        externUserAvatars.values().forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
+        SPRITE_BATCH.end();
 
         world.step(1 / 30f, 6, 2); /** Was sind das für Zahlen? Kein hardcoden, irgendwo Konstanten setzen... Wo kommen die her?*/
         camera.update();
@@ -98,11 +99,14 @@ public class WorldScreen extends AbstractScreen {
     }
 
     @Override
+    public void show() {
+        this.internUserAvatar = new InternUserAvatar(Chati.getInstance().getUserManager().getInternUserView(), world);
+    }
+
+    @Override
     public void hide() {
-        internUserAvatar = null;
         externUserAvatars.clear();
-        tiledMapRenderer = null;
-        world = null;
+        tiledMapRenderer.setMap(null);
     }
 
     @Override
@@ -155,15 +159,9 @@ public class WorldScreen extends AbstractScreen {
 
     private void updateInternUserAvatar() {
         if (Chati.getInstance().isInternUserPositionChanged()) {
-            if (internUserAvatar == null) {
-                internUserAvatar = new InternUserAvatar(Chati.getInstance().getUserManager().getInternUserView());
-            }
             internUserAvatar.teleport();
         }
-        if (internUserAvatar != null) {
-            internUserAvatar.move();
-            updateCamera();
-        }
+        internUserAvatar.move();
     }
 
     private void updateExternUserAvatars() {
@@ -172,7 +170,7 @@ public class WorldScreen extends AbstractScreen {
                     .containsValue(userAvatar.getUser()));
             Chati.getInstance().getUserManager().getActiveUsers().values().forEach(externUser -> {
                 if (!externUserAvatars.containsKey(externUser)) {
-                    UserAvatar newUserAvatar = new UserAvatar(externUser);
+                    UserAvatar newUserAvatar = new UserAvatar(externUser, world);
                     externUserAvatars.put(externUser, newUserAvatar);
                     newUserAvatar.teleport();
                 }

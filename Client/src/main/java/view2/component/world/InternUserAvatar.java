@@ -3,6 +3,7 @@ package view2.component.world;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import controller.network.ServerSender;
 import model.user.IInternUserView;
 import view2.Chati;
@@ -14,8 +15,8 @@ public class InternUserAvatar extends UserAvatar {
     private final LinkedList<Direction> currentDirectionalInputs;
     private boolean canInteract;
 
-    public InternUserAvatar(IInternUserView internUser) {
-        super(internUser);
+    public InternUserAvatar(IInternUserView internUser, World world) {
+        super(internUser, world);
         body.setUserData(BodyType.INTERN_USER);
         currentDirectionalInputs = new LinkedList<>();
     }
