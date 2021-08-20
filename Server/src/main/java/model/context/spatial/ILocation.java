@@ -12,13 +12,13 @@ public interface ILocation {
      * Gibt die X-Koordinate der Position im räumlichen Kontext zurück.
      * @return X-Koordinate der Position.
      */
-    int getPosX();
+    float getPosX();
 
     /**
      * Gibt die Y-Koordinate der Position im räumlichen Kontext zurück.
      * @return Y-Koordinate der Position.
      */
-    int getPosY();
+    float getPosY();
 
     /**
      * Gibt den räumlichen Kontext dieser Position zurück.

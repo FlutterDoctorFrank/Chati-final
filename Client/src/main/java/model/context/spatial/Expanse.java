@@ -9,10 +9,10 @@ public class Expanse {
     private final Location bottomLeft;
 
     /** Breite des Kontextes. */
-    private final int width;
+    private final float width;
 
     /** Höhe des Kontextes. */
-    private final int height;
+    private final float height;
 
     /**
      * Erzeugt eine neue Instanz der räumlichen Ausdehnung eines Kontextes.
@@ -20,7 +20,7 @@ public class Expanse {
      * @param width Breite des Kontextes.
      * @param height Höhe des Kontextes.
      */
-    public Expanse(Location bottomLeft, int width, int height) {
+    public Expanse(Location bottomLeft, float width, float height) {
         this.bottomLeft = bottomLeft;
         this.width = width;
         this.height = height;
@@ -32,7 +32,7 @@ public class Expanse {
      * @param posY Zu überprüfende Y-Koordinate.
      * @return true, wenn sich die Koordinaten in der Ausdehnung befinden, sonst false.
      */
-    public boolean isIn(int posX, int posY) {
+    public boolean isIn(float posX, float posY) {
         return bottomLeft.getPosX() <= posX && posX <= bottomLeft.getPosX() + width
                 && bottomLeft.getPosY() <= posY && posY <= bottomLeft.getPosY() + height;
     }

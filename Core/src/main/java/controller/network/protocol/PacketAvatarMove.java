@@ -21,8 +21,8 @@ public class PacketAvatarMove implements Packet<PacketListener> {
 
     private AvatarAction action;
     private UUID userId;
-    private int posX;
-    private int posY;
+    private float posX;
+    private float posY;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -37,7 +37,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * @param posX Die neue X-Koordinate.
      * @param posY Die neue Y-Koordinate.
      */
-    public PacketAvatarMove(final int posX, final int posY) {
+    public PacketAvatarMove(final float posX, final float posY) {
         this(AvatarAction.UPDATE_AVATAR, null, posX, posY);
     }
 
@@ -57,7 +57,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * @param posX Die neue X-Koordinate.
      * @param posY Die neue Y-Koordinate.
      */
-    public PacketAvatarMove(@NotNull final AvatarAction action, @Nullable final UUID userId, final int posX, final int posY) {
+    public PacketAvatarMove(@NotNull final AvatarAction action, @Nullable final UUID userId, final float posX, final float posY) {
         this.action = action;
         this.userId = userId;
         this.posX = posX;
@@ -73,16 +73,16 @@ public class PacketAvatarMove implements Packet<PacketListener> {
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeEnum(output, this.action);
         PacketUtils.writeNullableUniqueId(output, this.userId);
-        output.writeInt(this.posX, true);
-        output.writeInt(this.posY, true);
+        output.writeFloat(this.posX);
+        output.writeFloat(this.posY);
     }
 
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.action = PacketUtils.readEnum(input, AvatarAction.class);
         this.userId = PacketUtils.readNullableUniqueId(input);
-        this.posX = input.readInt(true);
-        this.posY = input.readInt(true);
+        this.posX = input.readFloat();
+        this.posY = input.readFloat();
     }
 
     @Override
@@ -111,7 +111,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * Gibt die neue X-Position des Avatars im Raum zurück.
      * @return Die neue X-Koordinate.
      */
-    public int getPosX() {
+    public float getPosX() {
         return this.posX;
     }
 
@@ -119,7 +119,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * Gibt die neue Y-Position des Avatars im Raum zurück.
      * @return Die neue Y-Koordinate.
      */
-    public int getPosY() {
+    public float getPosY() {
         return this.posY;
     }
 

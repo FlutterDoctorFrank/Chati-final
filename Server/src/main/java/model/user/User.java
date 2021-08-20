@@ -164,7 +164,7 @@ public class User implements IUser {
     }
 
     @Override
-    public void move(final int posX, final int posY) throws IllegalPositionException {
+    public void move(final float posX, final float posY) throws IllegalPositionException {
         throwIfNotOnline();
         throwIfNotInWorld();
         updateLastActivity();
@@ -346,7 +346,7 @@ public class User implements IUser {
                 .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
     }
 
-    public void setPosition(final int posX, final int posY) {
+    public void setPosition(final float posX, final float posY) {
         Room currentRoom = currentLocation.getRoom();
         Area currentArea = currentLocation.getArea();
         currentLocation.setPosition(posX, posY);

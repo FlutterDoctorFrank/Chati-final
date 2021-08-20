@@ -225,8 +225,8 @@ public interface ClientSender {
                         throw new IllegalStateException("Users has no available locations");
                     }
 
-                    int posX = other.getLocation().getPosX();
-                    int posY = other.getLocation().getPosY();
+                    float posX = other.getLocation().getPosX();
+                    float posY = other.getLocation().getPosY();
                     AvatarAction action;
 
                     if (self.getLocation().getRoom().equals(other.getLocation().getRoom())) {

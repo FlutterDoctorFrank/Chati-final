@@ -82,7 +82,7 @@ public class Room extends Area implements IRoom {
      * @param posY Y-Koordinate.
      * @return true, wenn die Position erlaubt ist, sonst false.
      */
-    public boolean isLegal(final int posX, final int posY) {
+    public boolean isLegal(final float posX, final float posY) {
         return true; // !collisionMap[posX][posY];
     }
 

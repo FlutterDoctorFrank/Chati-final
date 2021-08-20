@@ -56,12 +56,12 @@ public class MapUtils {
         return communicationMedia;
     }
 
-    public static int getWidth(TiledMap tiledMap) {
+    public static float getWidth(TiledMap tiledMap) {
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
         return layer.getWidth() * layer.getTileWidth();
     }
 
-    public static int getHeight(TiledMap tiledMap) {
+    public static float getHeight(TiledMap tiledMap) {
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
         return layer.getHeight() * layer.getTileHeight();
     }
@@ -99,10 +99,10 @@ public class MapUtils {
         String contextName = contextRectangle.getName();
         CommunicationRegion communicationRegion = getCommunicationRegion(contextRectangle.getProperties());
         Set<CommunicationMedium> communicationMedia = getCommunicationMedia(contextRectangle.getProperties());
-        int posX = (int) contextRectangle.getRectangle().getX();
-        int posY = (int) contextRectangle.getRectangle().getY();
-        int width = (int) contextRectangle.getRectangle().getWidth();
-        int height = (int) contextRectangle.getRectangle().getHeight();
+        float posX = contextRectangle.getRectangle().getX();
+        float posY = contextRectangle.getRectangle().getY();
+        float width = contextRectangle.getRectangle().getWidth();
+        float height = contextRectangle.getRectangle().getHeight();
         Expanse expanse = new Expanse(new Location(posX, posY), width, height);
         // Ermittle den übergeordneten Kontext. Da die Quadrate absteigend ihrer Grö0e sortiert eingefügt werden,
         // befindet sich der übergeordnete Kontext immer bereits in der Kontexthierarchie.

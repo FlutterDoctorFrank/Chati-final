@@ -9,13 +9,13 @@ public interface ILocationView {
      * Gibt die X-Koordinate dieser Position zurück.
      * @return X-Koordinate.
      */
-    int getPosX();
+    float getPosX();
 
     /**
      * Gibt die Y-Koordinate dieser Position zurück.
      * @return Y-Koordinate.
      */
-    int getPosY();
+    float getPosY();
 
     /**
      * Gibt den innersten räumlichen Kontext der Position im aktuellen Raum zurück.

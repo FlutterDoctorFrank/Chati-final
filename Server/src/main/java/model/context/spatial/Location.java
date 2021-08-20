@@ -1,7 +1,7 @@
 package model.context.spatial;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 /**
@@ -13,10 +13,10 @@ public class Location implements ILocation {
     private final Room room;
 
     /** X-Koordinate der Position. */
-    private int posX;
+    private float posX;
 
     /** Y-Koordinate der Position. */
-    private int posY;
+    private float posY;
 
     /**
      * Erzeugt eine neue Instanz einer Position.
@@ -24,18 +24,18 @@ public class Location implements ILocation {
      * @param posX Die X-Koordinate der Position.
      * @param posY Die Y-Koordinate der Position.
      */
-    public Location(@NotNull final Room room, final int posX, final int posY) {
+    public Location(@NotNull final Room room, final float posX, final float posY) {
         this.room = room;
         setPosition(posX, posY);
     }
 
     @Override
-    public int getPosX() {
+    public float getPosX() {
         return posX;
     }
 
     @Override
-    public int getPosY() {
+    public float getPosY() {
         return posY;
     }
 
@@ -54,7 +54,7 @@ public class Location implements ILocation {
      * @param posX Zu setzende X-Koordinate.
      * @param posY Zu setzende Y-Koordinate.
      */
-    public void setPosition(final int posX, final int posY) {
+    public void setPosition(final float posX, final float posY) {
         this.posX = posX;
         this.posY = posY;
     }

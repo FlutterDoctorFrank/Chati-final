@@ -161,8 +161,8 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 // Illegale Position erhalten. Sende vorherige Position.
                 LOGGER.warning("User " + this.user.getUsername() + " tried illegal movement: " + ex.getMessage());
 
-                int posX = this.user.getLocation().getPosX();
-                int posY = this.user.getLocation().getPosY();
+                float posX = this.user.getLocation().getPosX();
+                float posY = this.user.getLocation().getPosY();
 
                 this.send(new PacketAvatarMove(AvatarAction.UPDATE_AVATAR, this.user.getUserId(), posX, posY));
             }

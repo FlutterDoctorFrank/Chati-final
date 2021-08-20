@@ -10,17 +10,17 @@ import java.util.Objects;
 public class Location implements ILocationView {
 
     /** X-Koordinate der Position. */
-    private final int posX;
+    private final float posX;
 
     /** Y-Koordinate der Position. */
-    private final int posY;
+    private final float posY;
 
     /**
      * Erzeugt eine neue Instanz einer Position.
      * @param posX Die X-Koordinate der Position.
      * @param posY Die Y-Koordinate der Position.
      */
-    public Location(int posX, int posY) {
+    public Location(float posX, float posY) {
         this.posX = posX;
         this.posY = posY;
     }
@@ -31,12 +31,12 @@ public class Location implements ILocationView {
     }
 
     @Override
-    public int getPosX() {
+    public float getPosX() {
         return posX;
     }
 
     @Override
-    public int getPosY() {
+    public float getPosY() {
         return posY;
     }
 

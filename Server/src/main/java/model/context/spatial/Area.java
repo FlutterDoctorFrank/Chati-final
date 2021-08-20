@@ -186,7 +186,7 @@ public class Area extends Context implements IArea {
      * @param posY Y-Koordinate.
      * @return Untergeordnetster Kontext, auf dem sich die Koordinaten befinden.
      */
-    public @NotNull Area getArea(final int posX, final int posY) {
+    public @NotNull Area getArea(final float posX, final float posY) {
         try {
             // Suche untergeordneten Kontext, auf dem sich übergebene Koordinaten befinden.
             return children.values().stream()

@@ -80,7 +80,7 @@ public class SpatialContext extends Context implements ISpatialContextView {
      * @param posY Y-Koordinate.
      * @return Untergeordnetster Kontext, auf dem sich die Koordinaten befinden.
      */
-    public SpatialContext getArea(int posX, int posY) {
+    public SpatialContext getArea(float posX, float posY) {
         try {
             return children.values().stream().filter(child -> child.getExpanse().isIn(posX, posY))
                     .findFirst().orElseThrow().getArea(posX, posY);

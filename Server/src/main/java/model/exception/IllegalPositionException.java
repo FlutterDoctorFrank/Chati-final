@@ -5,11 +5,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class IllegalPositionException extends Exception {
     private final User user;
-    private final int posX;
-    private final int posY;
+    private final float posX;
+    private final float posY;
 
     public IllegalPositionException(@NotNull final String errorMessage, @NotNull final User user,
-                                    final int posX, final int posY) {
+                                    final float posX, final float posY) {
         super(errorMessage);
         this.user = user;
         this.posX = posX;
@@ -17,7 +17,7 @@ public class IllegalPositionException extends Exception {
     }
 
     public IllegalPositionException(@NotNull final String errorMessage, @NotNull final User user,
-                                    final int posX, final int posY, @NotNull final Throwable cause) {
+                                    final float posX, final float posY, @NotNull final Throwable cause) {
         super(errorMessage, cause);
         this.user = user;
         this.posX = posX;
@@ -28,11 +28,11 @@ public class IllegalPositionException extends Exception {
         return user;
     }
 
-    public int getPosX() {
+    public float getPosX() {
         return posX;
     }
 
-    public int getPosY() {
+    public float getPosY() {
         return posY;
     }
 }

@@ -42,7 +42,7 @@ public interface IUser {
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      * @see model.context.spatial.Location
      */
-    void move(final int posX, final int posY) throws IllegalPositionException;
+    void move(final float posX, final float posY) throws IllegalPositionException;
 
     /**
      * Sendet eine Nachricht im Namen des Benutzers, von dem sie erhalten wurde gemäß des entsprechenden Nachrichtentyps

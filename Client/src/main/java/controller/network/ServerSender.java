@@ -207,13 +207,13 @@ public interface ServerSender {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
                 if (objects.length == 2) {
-                    if (objects[0] instanceof Integer && objects[1] instanceof Integer) {
-                        final int posX = (int) objects[0];
-                        final int posY = (int) objects[1];
+                    if (objects[0] instanceof Float && objects[1] instanceof Float) {
+                        final float posX = (float) objects[0];
+                        final float posY = (float) objects[1];
 
                         return new PacketAvatarMove(posX, posY);
                     } else {
-                        throw new IllegalArgumentException("Expected Integer and Integer, got "
+                        throw new IllegalArgumentException("Expected Float and Float, got "
                                 + objects[0].getClass() + " and " + objects[1].getClass());
                     }
                 } else {
