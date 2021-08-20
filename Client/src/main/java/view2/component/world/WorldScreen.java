@@ -112,6 +112,7 @@ public class WorldScreen extends AbstractScreen {
             world.destroyBody(internUserAvatar.getBody());
             internUserAvatar = null;
         }
+        externUserAvatars.values().forEach(userAvatar -> world.destroyBody(userAvatar.getBody()));
         externUserAvatars.clear();
         tiledMapRenderer.setMap(null);
     }
