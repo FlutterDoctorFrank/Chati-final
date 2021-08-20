@@ -188,10 +188,11 @@ public class WorldScreen extends AbstractScreen {
                     world.destroyBody(userAvatar.getBody());
                     iterator.remove();
                 } else {
-                    userAvatar.move(false);
+                    // userAvatar.move(false);
                 }
             }
         }
+        externUserAvatars.values().forEach(userAvatar -> userAvatar.move(false));
     }
 
     private void updateCamera() {
