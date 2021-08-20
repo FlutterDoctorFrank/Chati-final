@@ -177,8 +177,6 @@ public class WorldScreen extends AbstractScreen {
                     newUserAvatar.teleport();
                 }
             });
-            externUserAvatars.values().removeIf(userAvatar -> !Chati.getInstance().getUserManager().getActiveUsers()
-                    .containsValue(userAvatar.getUser()));
             Iterator<UserAvatar> iterator = externUserAvatars.values().iterator();
             while (iterator.hasNext()) {
                 UserAvatar userAvatar = iterator.next();
