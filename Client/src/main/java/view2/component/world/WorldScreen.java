@@ -69,8 +69,8 @@ public class WorldScreen extends AbstractScreen {
             createBorders();
             createInteractionObjects();
 
-            int spawnPosX = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosX");
-            int spawnPosY = (int) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosY");
+            float spawnPosX = (float) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosX");
+            float spawnPosY = (float) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosY");
             internUserAvatar.body.setTransform(spawnPosX / WorldScreen.PPM, spawnPosY / WorldScreen.PPM, internUserAvatar.body.getAngle());
         }
 
