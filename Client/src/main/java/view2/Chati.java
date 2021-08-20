@@ -10,6 +10,7 @@ import model.context.ContextID;
 import model.context.spatial.Menu;
 import model.user.IUserManagerView;
 import org.jetbrains.annotations.Nullable;
+import view.Screens.IModelObserver;
 import view2.component.AbstractScreen;
 import view2.component.hud.ChatWindow;
 import view2.component.hud.HeadUpDisplay;

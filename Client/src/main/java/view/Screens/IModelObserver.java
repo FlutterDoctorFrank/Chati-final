@@ -1,4 +1,4 @@
-package view2;
+package view.Screens;
 
 public interface IModelObserver {
     void setUserInfoChanged();

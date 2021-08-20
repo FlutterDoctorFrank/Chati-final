@@ -30,9 +30,9 @@ public class WorldScreen extends AbstractScreen {
     public static final float MIN_ZOOM = 0.4f;
     public static final float MAX_ZOOM = 0.8f;
     public static final float ZOOM_STEP = 0.01f;
-    //public static final short GROUND_BIT = 1;
-    //public static final short AVATAR_BIT = 2;
-    //public static final short OBJECT_BIT = 4;
+    public static final short GROUND_BIT = 1;
+    public static final short AVATAR_BIT = 2;
+    public static final short OBJECT_BIT = 4;
     private static final SpriteBatch SPRITE_BATCH = new SpriteBatch();
 
     private static WorldScreen worldScreen;
