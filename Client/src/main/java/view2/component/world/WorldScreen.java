@@ -183,6 +183,7 @@ public class WorldScreen extends AbstractScreen {
             while (iterator.hasNext()) {
                 UserAvatar userAvatar = iterator.next();
                 if (!Chati.getInstance().getUserManager().getActiveUsers().containsValue(userAvatar.getUser())) {
+                    System.out.println("BODY DESTROY");
                     world.destroyBody(userAvatar.getBody());
                     iterator.remove();
                 }
