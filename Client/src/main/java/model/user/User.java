@@ -112,9 +112,7 @@ public class User implements IUserController, IUserView {
     @Override
     public void setInCurrentRoom(boolean isInCurrentRoom) {
         this.isInCurrentRoom = isInCurrentRoom;
-        if (!isInCurrentRoom) {
-            UserManager.getInstance().getModelObserver().setUserPositionChanged();
-        }
+        UserManager.getInstance().getModelObserver().setUserPositionChanged();
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
