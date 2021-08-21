@@ -77,6 +77,10 @@ public abstract class RandomTest {
         return bytes;
     }
 
+    public static float randomFloat() {
+        return RANDOM.nextFloat();
+    }
+
     public static int randomInt(final int bound) {
         return RANDOM.nextInt(bound);
     }

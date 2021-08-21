@@ -23,7 +23,7 @@ public class PacketAvatarMoveTest extends PacketTest<PacketAvatarMove> {
 
     @Test
     public void clientSerializationTest() {
-        this.before = new PacketAvatarMove(randomInt(), randomInt());
+        this.before = new PacketAvatarMove(randomFloat(), randomFloat());
 
         this.serialize();
         this.equals();
@@ -31,7 +31,7 @@ public class PacketAvatarMoveTest extends PacketTest<PacketAvatarMove> {
 
     @Test
     public void serverSerializationTest() {
-        this.before = new PacketAvatarMove(randomEnum(AvatarAction.class), randomUniqueId(), randomInt(), randomInt());
+        this.before = new PacketAvatarMove(randomEnum(AvatarAction.class), randomUniqueId(), randomFloat(), randomFloat());
 
         this.serialize();
         this.equals();
@@ -51,7 +51,7 @@ public class PacketAvatarMoveTest extends PacketTest<PacketAvatarMove> {
         }
 
         // Vergleiche Position:
-        Assert.assertEquals(this.before.getPosX(), this.after.getPosX());
-        Assert.assertEquals(this.before.getPosY(), this.after.getPosY());
+        Assert.assertEquals(this.before.getPosX(), this.after.getPosX(), 0.0f);
+        Assert.assertEquals(this.before.getPosY(), this.after.getPosY(), 0.0f);
     }
 }

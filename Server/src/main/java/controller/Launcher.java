@@ -59,7 +59,8 @@ public class Launcher implements Runnable {
                 }
             }
         } catch (IOException ex) {
-            System.out.println("Exception in console input handling");
+            System.err.println("Exception in console input handling.");
+            ex.printStackTrace();
         }
     }
 
@@ -69,7 +70,6 @@ public class Launcher implements Runnable {
     public void launch() {
         this.network.start();
 
-        new Thread(this, "Console-Handler").start();
         new HeadlessApplication(new ApplicationAdapter() {
             @Override
             public void create() {
@@ -79,6 +79,8 @@ public class Launcher implements Runnable {
 
         this.global.load();
         this.manager.load();
+
+        new Thread(this, "Console-Handler").start();
     }
 
     public static void main(@NotNull final String[] args) {
@@ -199,6 +201,30 @@ public class Launcher implements Runnable {
 
                     target.addRole(launcher.global, Role.OWNER);
                     System.out.println("User " + target.getUsername() + " has been set as Owner.");
+                } catch (UserNotFoundException ex) {
+                    System.err.println("User " + arguments[0] + " does not exist.");
+                }
+            }
+        },
+
+        UNSET_OWNER("unset-owner", "Unsets the owner for this server.") {
+            @Override
+            public void execute(@NotNull final Launcher launcher, @NotNull final String[] arguments) {
+                if (arguments.length != 1) {
+                    System.out.println("Invalid usage: unset-owner <name>");
+                    return;
+                }
+
+                try {
+                    final User target = launcher.manager.getUser(arguments[0]);
+
+                    if (!target.hasRole(launcher.global, Role.OWNER)) {
+                        System.err.println("User " + target.getUsername() + " has not been set as Owner.");
+                        return;
+                    }
+
+                    target.removeRole(launcher.global, Role.OWNER);
+                    System.out.println("User " + target.getUsername() + " has been unset as Owner.");
                 } catch (UserNotFoundException ex) {
                     System.err.println("User " + arguments[0] + " does not exist.");
                 }

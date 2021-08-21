@@ -42,8 +42,8 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         final ILocation self = Mockito.mock(ILocation.class);
 
         Mockito.when(location.getRoom()).thenReturn(Mockito.mock(IRoom.class));
-        Mockito.when(location.getPosX()).thenReturn(randomInt(64));
-        Mockito.when(location.getPosY()).thenReturn(randomInt(64));
+        Mockito.when(location.getPosX()).thenReturn(randomFloat());
+        Mockito.when(location.getPosY()).thenReturn(randomFloat());
         Mockito.when(target.getUserId()).thenReturn(randomUniqueId());
         Mockito.when(target.getLocation()).thenReturn(location);
         Mockito.when(self.getRoom()).thenReturn(Mockito.mock(IRoom.class));
@@ -54,8 +54,8 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         Assert.assertEquals(AvatarAction.SPAWN_AVATAR, packet.getAction());
         Assert.assertNotNull(packet.getUserId());
         Assert.assertEquals(target.getUserId(), packet.getUserId());
-        Assert.assertEquals(location.getPosX(), packet.getPosX());
-        Assert.assertEquals(location.getPosY(), packet.getPosY());
+        Assert.assertEquals(location.getPosX(), packet.getPosX(), 0.0f);
+        Assert.assertEquals(location.getPosY(), packet.getPosY(), 0.0f);
     }
 
     @Test
@@ -65,8 +65,8 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         final IRoom room = Mockito.mock(IRoom.class);
 
         Mockito.when(location.getRoom()).thenReturn(room);
-        Mockito.when(location.getPosX()).thenReturn(randomInt(64));
-        Mockito.when(location.getPosY()).thenReturn(randomInt(64));
+        Mockito.when(location.getPosX()).thenReturn(randomFloat());
+        Mockito.when(location.getPosY()).thenReturn(randomFloat());
         Mockito.when(target.getUserId()).thenReturn(randomUniqueId());
         Mockito.when(target.getLocation()).thenReturn(location);
         Mockito.when(this.user.getLocation()).thenReturn(location);
@@ -76,8 +76,8 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         Assert.assertEquals(AvatarAction.UPDATE_AVATAR, packet.getAction());
         Assert.assertNotNull(packet.getUserId());
         Assert.assertEquals(target.getUserId(), packet.getUserId());
-        Assert.assertEquals(location.getPosX(), packet.getPosX());
-        Assert.assertEquals(location.getPosY(), packet.getPosY());
+        Assert.assertEquals(location.getPosX(), packet.getPosX(), 0.0f);
+        Assert.assertEquals(location.getPosY(), packet.getPosY(), 0.0f);
     }
 
     @Test
