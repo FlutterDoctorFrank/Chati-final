@@ -1,6 +1,8 @@
 package view2.component.world;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import controller.network.ServerSender;
 import model.user.IInternUserView;
@@ -15,6 +17,10 @@ public class InternUserAvatar extends UserAvatar {
 
     public InternUserAvatar(IInternUserView internUser, World world) {
         super(internUser, world);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.filter.categoryBits = WorldScreen.AVATAR_BIT;
+        fixtureDef.filter.maskBits = WorldScreen.OBJECT_BIT | WorldScreen.GROUND_BIT;
+        body.createFixture(fixtureDef);
         body.setUserData(BodyType.INTERN_USER);
         currentDirectionalInputs = new LinkedList<>();
     }

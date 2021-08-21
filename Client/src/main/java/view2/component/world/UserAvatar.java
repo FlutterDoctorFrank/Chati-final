@@ -40,7 +40,7 @@ public class UserAvatar extends Sprite {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.filter.categoryBits = WorldScreen.AVATAR_BIT;
-        fixtureDef.filter.maskBits = WorldScreen.OBJECT_BIT | WorldScreen.GROUND_BIT;
+        fixtureDef.filter.maskBits = 0;
         PolygonShape shape = new PolygonShape();
         shape.setAsBox((32 - 1) / WorldScreen.PPM / 2, (32 - 1) / WorldScreen.PPM / 2);
         fixtureDef.shape = shape;

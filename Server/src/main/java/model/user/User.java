@@ -366,7 +366,7 @@ public class User implements IUser {
      * @param oldLocation Alte Position des Benutzers.
      * @param newLocation Neue Position des Benutzers.
      */
-    private void updateArea(Location oldLocation, Location newLocation) {
+    private void updateArea(@Nullable final Location oldLocation, @Nullable final Location newLocation) {
         if (newLocation != null) {
             Area newArea = newLocation.getArea();
             if (oldLocation != null) {
