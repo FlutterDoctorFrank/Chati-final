@@ -178,7 +178,7 @@ public class User implements IUser {
         }
         // Setze die neue Position des Benutzers.
         Location oldLocation = currentLocation;
-        currentLocation.setPosition(posX, posY);
+        currentLocation = new Location(currentLocation.getRoom(), posX, posY);
         updateArea(oldLocation, currentLocation);
         currentLocation.getRoom().getUsers().values().stream().filter(Predicate.not(this::equals))
                 .forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
