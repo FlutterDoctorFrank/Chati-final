@@ -16,10 +16,6 @@ public class InternUserAvatar extends UserAvatar {
 
     public InternUserAvatar(IInternUserView internUser, World world) {
         super(internUser, world);
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.filter.categoryBits = WorldScreen.AVATAR_BIT;
-        fixtureDef.filter.maskBits = WorldScreen.OBJECT_BIT | WorldScreen.GROUND_BIT;
-        body.createFixture(fixtureDef);
         body.setUserData(BodyType.INTERN_USER);
         currentDirectionalInputs = new LinkedList<>();
     }
