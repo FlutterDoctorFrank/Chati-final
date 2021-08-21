@@ -45,7 +45,7 @@ public class InternUserAvatar extends UserAvatar {
                     body.setLinearVelocity(0, 0);
             }
         }
-        if (currentDirection != null) {
+        if (body.getLinearVelocity().x != 0 || body.getLinearVelocity().y != 0) {
             Vector2 newPosition = body.getPosition();
             Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
                     newPosition.x * WorldScreen.PPM, newPosition.y * WorldScreen.PPM);

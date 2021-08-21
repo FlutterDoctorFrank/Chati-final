@@ -187,8 +187,6 @@ public class WorldScreen extends AbstractScreen {
                 if (!Chati.getInstance().getUserManager().getActiveUsers().containsValue(userAvatar.getUser())) {
                     world.destroyBody(userAvatar.getBody());
                     iterator.remove();
-                } else {
-                    //userAvatar.move(false);
                 }
             }
         }

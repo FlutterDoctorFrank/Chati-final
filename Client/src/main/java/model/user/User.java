@@ -113,7 +113,6 @@ public class User implements IUserController, IUserView {
     public void setInCurrentRoom(boolean isInCurrentRoom) {
         this.isInCurrentRoom = isInCurrentRoom;
         if (!isInCurrentRoom) {
-            currentLocation = null;
             UserManager.getInstance().getModelObserver().setUserPositionChanged();
         }
         UserManager.getInstance().getModelObserver().setUserInfoChanged();

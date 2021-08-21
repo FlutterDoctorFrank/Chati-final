@@ -1,6 +1,8 @@
 package view2.component.world;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
@@ -13,7 +15,6 @@ public class UserAvatar extends Sprite {
 
     private final IUserView user;
     protected final Body body;
-    private Vector2 destination;
 
     private TextureRegion avatarStandUp;
     private TextureRegion avatarStandLeft;
@@ -55,15 +56,6 @@ public class UserAvatar extends Sprite {
     public void draw(Batch batch, float delta) {
         //InteractButtonAnimation animation = new InteractButtonAnimation();
         //animation.draw(batch);
-
-        /*
-        if (destination != null && destination.epsilonEquals(body.getPosition())) {
-            Vector2 velocityVector = body.getLinearVelocity().cpy();
-            body.setLinearVelocity(- velocityVector.x, - velocityVector.y);
-            destination = null;
-        }
-
-         */
 
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getCurrentFrameRegion(delta));
@@ -188,13 +180,13 @@ public class UserAvatar extends Sprite {
         if (sprint) {
             velocity *= SPRINT_SPEED_FACTOR;
         }
-        destination = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
+        Vector2 destination = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
-        if (!destination.epsilonEquals(body.getPosition(), 16 / WorldScreen.PPM)) {
-            Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
-            body.setLinearVelocity(velocityVector.x, velocityVector.y);
-        } else {
+        if (body.getPosition().dst(destination) <= velocity * WorldScreen.PPM / Gdx.graphics.getFramesPerSecond()) {
             body.setLinearVelocity(0, 0);
+        } else {
+            Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
+            body.setLinearVelocity(velocityVector);
         }
     }
 
