@@ -779,11 +779,7 @@ public class User implements IUser {
         this.clientSender = null;
         this.status = Status.OFFLINE;
 
-        if (this.currentWorld != null) {
-            final World world = this.currentWorld;
-            this.currentWorld = null;
-            world.removeUser(this);
-        }
+        leaveWorld();
 
         updateLastLogoutTime();
     }

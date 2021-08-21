@@ -111,9 +111,11 @@ public class Room extends Area implements IRoom {
 
             user.teleport(spawnLocation);
 
+            /*
             containedUsers.values().stream()
                     .filter(other -> !other.equals(user))
                     .forEach(other -> user.send(SendAction.AVATAR_MOVE, other));
+             */
 
             if (isPrivate) {
                 final TextMessage info = new TextMessage(new MessageBundle("key"));
