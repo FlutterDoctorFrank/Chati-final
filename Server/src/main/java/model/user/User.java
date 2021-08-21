@@ -402,6 +402,8 @@ public class User implements IUser {
         friends.put(user.getUserId(), user);
         database.addFriendship(this, user);
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
+        System.out.println(username);
+        friends.values().forEach(iuser -> System.out.println(iuser.getUserId()));
         updateUserInfo();
     }
 
@@ -424,6 +426,8 @@ public class User implements IUser {
         ignoredUsers.put(user.getUserId(), user);
         database.addIgnoredUser(this, user);
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
+        System.out.println(username);
+        ignoredUsers.values().forEach(iuser -> System.out.println(iuser.getUserId()));
         updateUserInfo();
     }
 
