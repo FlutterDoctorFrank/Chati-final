@@ -776,10 +776,10 @@ public class User implements IUser {
             throw new IllegalStateException("User is not logged in");
         }
 
+        leaveWorld();
+
         this.clientSender = null;
         this.status = Status.OFFLINE;
-
-        leaveWorld();
 
         updateLastLogoutTime();
     }
