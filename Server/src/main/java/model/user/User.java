@@ -400,7 +400,6 @@ public class User implements IUser {
      */
     public void addFriend(@NotNull final User user) {
         friends.put(user.getUserId(), user);
-        user.friends.put(userId, this);
         database.addFriendship(this, user);
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
         updateUserInfo();
