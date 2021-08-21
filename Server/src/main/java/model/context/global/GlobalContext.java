@@ -93,6 +93,7 @@ public class GlobalContext extends Context implements IGlobalContext {
         // Entferne die Welt.
         worlds.remove(worldId);
         removeChild(deleteWorld);
+        database.removeWorld(deleteWorld);
         // Sende neue Liste der Welten an alle Benutzer im Startbildschirm.
         sendWorldList();
     }

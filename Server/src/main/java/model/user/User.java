@@ -177,7 +177,11 @@ public class User implements IUser {
             throw new IllegalPositionException("Position is illegal.", this, posX, posY);
         }
         // Setze die neue Position des Benutzers.
-        setPosition(posX, posY);
+        Location oldLocation = currentLocation;
+        currentLocation.setPosition(posX, posY);
+        updateArea(oldLocation, currentLocation);
+        currentLocation.getRoom().getUsers().values().stream().filter(Predicate.not(this::equals))
+                .forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
     }
 
     @Override
@@ -346,36 +350,32 @@ public class User implements IUser {
                 .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
     }
 
-    public void setPosition(final float posX, final float posY) {
-        Room currentRoom = currentLocation.getRoom();
-        Area currentArea = currentLocation.getArea();
-        currentLocation.setPosition(posX, posY);
-        // Ermittle, ob sich der Bereich des Benutzers geändert hat, entferne ihn aus den verlassenen Bereichen und
-        // füge ihn zu den betretenen Bereichen hinzu.
-        Area newArea = currentLocation.getArea();
-        if (!currentArea.equals(newArea)) {
-            Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
-            lastCommonAncestor.getChildren().values().forEach(child -> child.removeUser(this));
-            newArea.addUser(this);
-        }
-        // Sende die entsprechenden Pakete an diesen Benutzer und an andere Benutzer.
-        // ANMERKUNG: Hier muss evtl. der eigene Benutzer herausgefiltert werden, falls dieser nicht das Paket erhalten
-        // soll.
-        currentRoom.getUsers().values().stream().filter(Predicate.not(this::equals))
-                .forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
-    }
-
     /**
      * Teleportiert einen Benutzer an die angegebene Position.
      * @param newLocation Position, an die Benutzer teleportiert werden soll.
      */
     public void teleport(@NotNull final Location newLocation) {
-        if (currentLocation == null || !currentLocation.getRoom().equals(newLocation.getRoom())) {
-            currentLocation = newLocation;
-            currentLocation.getArea().addUser(this);
+        Location oldLocation = currentLocation;
+        currentLocation = newLocation;
+        updateArea(oldLocation, currentLocation);
+        currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
+    }
+
+    /**
+     * Aktualisiert die Datenstrukturen der enthaltenen Benutzer in Kontexten nach einer Positionsänderung.
+     * @param oldLocation Alte Position des Benutzers.
+     * @param newLocation Neue Position des Benutzers.
+     */
+    private void updateArea(Location oldLocation, Location newLocation) {
+        if (newLocation != null) {
+            Area newArea = newLocation.getArea();
+            if (oldLocation != null) {
+                Area oldArea = oldLocation.getArea();
+                Context lastCommonAncestor = oldArea.lastCommonAncestor(newArea);
+                lastCommonAncestor.getChildren().values().forEach(child -> child.removeUser(this));
+            }
+            newArea.addUser(this);
         }
-        setPosition(currentLocation.getPosX(), currentLocation.getPosY());
-        this.send(SendAction.AVATAR_MOVE, this);
     }
 
     /**
