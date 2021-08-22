@@ -110,21 +110,18 @@ public class LoginTable extends MenuTable {
 
     @Override
     protected void setLayout() {
-        Table infoContainer = new Table();
-        infoContainer.add(infoLabel);
-        add(infoContainer).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
-
-        add(usernameField).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
-        add(passwordField).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
-
+        Table container = new Table();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().fillX().expandX();
+        container.add(infoLabel).row();
+        container.add(usernameField).row();
+        container.add(passwordField).row();
         Table buttonContainer = new Table();
-        buttonContainer.setWidth(ROW_WIDTH);
-        buttonContainer.defaults().space(VERTICAL_SPACING);
-        add(buttonContainer).spaceBottom(HORIZONTAL_SPACING).row();
-
-        buttonContainer.add(loginButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
-        buttonContainer.add(registerButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
-        add(exitButton).width(ROW_WIDTH).center().height(ROW_HEIGHT);
+        buttonContainer.defaults().height(ROW_HEIGHT).fillX().expandX();
+        buttonContainer.add(loginButton).spaceRight(SPACING);
+        buttonContainer.add(registerButton);
+        container.add(buttonContainer).row();
+        container.add(exitButton);
+        add(container).width(ROW_WIDTH);
     }
 
     @Override

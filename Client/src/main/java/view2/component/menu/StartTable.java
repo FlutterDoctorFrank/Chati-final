@@ -124,33 +124,26 @@ public class StartTable extends MenuTable {
 
     @Override
     protected void setLayout() {
-        Table infoContainer = new Table();
-        infoContainer.add(infoLabel);
-        add(infoContainer).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
-
+        Table container = new Table();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().fillX().expandX();
+        container.add(infoLabel).row();
         Table worldSelectContainer = new Table();
-        worldSelectContainer.setWidth(ROW_WIDTH);
-        worldSelectContainer.defaults().space(VERTICAL_SPACING);
-        add(worldSelectContainer).spaceBottom(HORIZONTAL_SPACING).row();
-        worldSelectContainer.add(worldSelectLabel).width(ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f));//.height(ROW_HEIGHT);
-        worldSelectContainer.add(worldSelectBox).width(7 * ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f));//.height(ROW_HEIGHT);
-
+        worldSelectContainer.add(worldSelectLabel).width(ROW_WIDTH / 8f);
+        worldSelectContainer.add(worldSelectBox).fillX().expandX();
+        container.add(worldSelectContainer).row();
         Table worldButtonContainer = new Table();
-        worldButtonContainer.setWidth(ROW_WIDTH);
-        worldButtonContainer.defaults().space(VERTICAL_SPACING);
-        add(worldButtonContainer).spaceBottom(HORIZONTAL_SPACING).row();
-        worldButtonContainer.add(joinWorldButton).width(ROW_WIDTH / 3f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
-        worldButtonContainer.add(createWorldButton).width(ROW_WIDTH / 3f - (VERTICAL_SPACING)).height(ROW_HEIGHT);
-        worldButtonContainer.add(deleteWorldButton).width(ROW_WIDTH / 3f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
-
+        worldButtonContainer.defaults().height(ROW_HEIGHT).fillX().expandX();
+        worldButtonContainer.add(joinWorldButton).spaceRight(SPACING);
+        worldButtonContainer.add(createWorldButton).spaceRight(SPACING);
+        worldButtonContainer.add(deleteWorldButton);
+        container.add(worldButtonContainer).row();
         Table settingsButtonContainer = new Table();
-        settingsButtonContainer.setWidth(ROW_WIDTH);
-        settingsButtonContainer.defaults().space(VERTICAL_SPACING);
-        add(settingsButtonContainer).spaceBottom(HORIZONTAL_SPACING).row();
-        settingsButtonContainer.add(changeAvatarButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
-        settingsButtonContainer.add(profileSettingsButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
-
-        add(logoutButton).width(ROW_WIDTH).center().height(ROW_HEIGHT);
+        settingsButtonContainer.defaults().height(ROW_HEIGHT).fillX().expandX();
+        settingsButtonContainer.add(changeAvatarButton).spaceRight(SPACING);
+        settingsButtonContainer.add(profileSettingsButton);
+        container.add(settingsButtonContainer).row();
+        container.add(logoutButton);
+        add(container).width(ROW_WIDTH);
     }
 
     @Override

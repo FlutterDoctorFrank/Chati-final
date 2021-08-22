@@ -83,25 +83,20 @@ public class WorldCreateTable extends MenuTable {
 
     @Override
     protected void setLayout() {
-        Table infoContainer = new Table();
-        infoContainer.add(infoLabel);
-        add(infoContainer).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
-
-        add(worldNameField).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
-
+        Table container = new Table();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().fillX().expandX();
+        container.add(infoLabel).row();
+        container.add(worldNameField).row();
         Table mapSelectContainer = new Table();
-        mapSelectContainer.setWidth(ROW_WIDTH);
-        mapSelectContainer.defaults().space(VERTICAL_SPACING);
-        add(mapSelectContainer).spaceBottom(HORIZONTAL_SPACING).row();
-        mapSelectContainer.add(mapSelectLabel).width(ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f));//.height(ROW_HEIGHT);
-        mapSelectContainer.add(mapSelectBox).width(7 * ROW_WIDTH / 8f - (VERTICAL_SPACING / 2f));//.height(ROW_HEIGHT);
-
-        Table settingsButtonContainer = new Table();
-        settingsButtonContainer.setWidth(ROW_WIDTH);
-        settingsButtonContainer.defaults().space(VERTICAL_SPACING);
-        add(settingsButtonContainer).spaceBottom(HORIZONTAL_SPACING);
-        settingsButtonContainer.add(confirmButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
-        settingsButtonContainer.add(cancelButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
+        mapSelectContainer.add(mapSelectLabel).width(ROW_WIDTH / 8f);
+        mapSelectContainer.add(mapSelectBox).fillX().expandX();
+        container.add(mapSelectContainer).row();
+        Table buttonContainer = new Table();
+        buttonContainer.defaults().height(ROW_HEIGHT).fillX().expandX();
+        buttonContainer.add(confirmButton).spaceRight(SPACING);
+        buttonContainer.add(cancelButton);
+        container.add(buttonContainer);
+        add(container).width(ROW_WIDTH);
     }
 
     @Override

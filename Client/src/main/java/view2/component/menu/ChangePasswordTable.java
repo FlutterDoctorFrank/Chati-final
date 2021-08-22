@@ -124,20 +124,18 @@ public class ChangePasswordTable extends MenuTable {
 
     @Override
     protected void setLayout() {
-        Table infoContainer = new Table();
-        infoContainer.add(infoLabel);
-        add(infoContainer).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
-
-        add(passwordField).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
-        add(newPasswordField).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
-        add(confirmNewPasswordField).width(ROW_WIDTH).height(ROW_HEIGHT).center().spaceBottom(HORIZONTAL_SPACING).row();
-
+        Table container = new Table();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().fillX().expandX();
+        container.add(infoLabel).row();
+        container.add(passwordField).row();
+        container.add(newPasswordField).row();
+        container.add(confirmNewPasswordField).row();
         Table buttonContainer = new Table();
-        buttonContainer.setWidth(ROW_WIDTH);
-        buttonContainer.defaults().space(VERTICAL_SPACING);
-        add(buttonContainer).spaceBottom(HORIZONTAL_SPACING).row();
-        buttonContainer.add(confirmButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
-        buttonContainer.add(cancelButton).width(ROW_WIDTH / 2f - (VERTICAL_SPACING / 2f)).height(ROW_HEIGHT);
+        buttonContainer.defaults().height(ROW_HEIGHT).fillX().expandX();
+        buttonContainer.add(confirmButton).spaceRight(SPACING);
+        buttonContainer.add(cancelButton);
+        container.add(buttonContainer);
+        add(container).width(ROW_WIDTH);
     }
 
     @Override

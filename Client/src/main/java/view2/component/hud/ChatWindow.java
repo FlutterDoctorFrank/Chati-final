@@ -61,7 +61,7 @@ public class ChatWindow extends ChatiWindow {
                     typeMessageArea.setText("");
                     typeMessageArea.getStyle().fontColor = Color.BLACK;
                 }
-                else if (typeMessageArea.getText().isEmpty()) {
+                else if (typeMessageArea.getText().isBlank()) {
                     resetMessageArea();
                 }
             }
@@ -69,12 +69,16 @@ public class ChatWindow extends ChatiWindow {
         typeMessageArea.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                return KeyAction.getAction(keycode) == KeyAction.SEND_CHAT_MESSAGE;
+                return KeyAction.getAction(keycode) == KeyAction.SEND_CHAT_MESSAGE
+                        || KeyAction.getAction(keycode) == KeyAction.OPEN_CHAT && typeMessageArea.getText().isBlank();
             }
             @Override
             public boolean keyUp(InputEvent event, int keycode) {
                 if (KeyAction.getAction(keycode) == KeyAction.SEND_CHAT_MESSAGE) {
                     sendMessage();
+                    return true;
+                } else if (KeyAction.getAction(keycode) == KeyAction.OPEN_CHAT && typeMessageArea.getText().isBlank()) {
+                    typeMessageArea.setText("");
                     return true;
                 }
                 return false;
@@ -140,7 +144,6 @@ public class ChatWindow extends ChatiWindow {
 
     private void sendMessage() {
         if (typeMessageArea.getStyle().fontColor == Color.GRAY || typeMessageArea.getText().isBlank()) {
-            resetMessageArea();
             return;
         }
         Chati.getInstance().getServerSender().send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());
@@ -201,6 +204,7 @@ public class ChatWindow extends ChatiWindow {
     public void focus() {
         getStage().setScrollFocus(historyScrollPane);
         historyScrollPane.scrollTo(0, 0, 0, 0);
+        getStage().setKeyboardFocus(typeMessageArea);
     }
 
     public static ChatWindow getInstance() {
