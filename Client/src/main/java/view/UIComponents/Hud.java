@@ -18,7 +18,7 @@ import model.user.IUserView;
 import org.jetbrains.annotations.Nullable;
 import view.Chati;
 import view.Screens.*;
-import view.Screens.IModelObserver;
+import view2.IModelObserver;
 import view2.ViewControllerInterface;
 
 import java.time.LocalDateTime;

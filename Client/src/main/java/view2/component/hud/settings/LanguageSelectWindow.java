@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import view2.Chati;
+import view2.Assets;
 import view2.component.ChatiWindow;
 
 public class LanguageSelectWindow extends ChatiWindow {
@@ -19,7 +19,6 @@ public class LanguageSelectWindow extends ChatiWindow {
     private static final float ROW_HEIGHT = 60;
     private static final float VERTICAL_SPACING = 15;
     private static final float HORIZONTAL_SPACING = 15;
-    private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
 
     private Label infoLabel;
     private SelectBox<String> languageSelectBox;
@@ -35,15 +34,12 @@ public class LanguageSelectWindow extends ChatiWindow {
 
     @Override
     protected void create() {
-        Label.LabelStyle style = new Label.LabelStyle();
-        style.font = new BitmapFont();
-        style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
-        this.infoLabel = new Label("Wähle eine Sprache aus!", style);
+        this.infoLabel = new Label("Wähle eine Sprache aus!", Assets.SKIN);
 
-        languageSelectBox = new SelectBox<>(Chati.SKIN);
+        languageSelectBox = new SelectBox<>(Assets.SKIN);
         // Das kommt noch
 
-        confirmButton = new TextButton("Bestätigen", Chati.SKIN);
+        confirmButton = new TextButton("Bestätigen", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -56,7 +52,7 @@ public class LanguageSelectWindow extends ChatiWindow {
             }
         });
 
-        cancelButton = new TextButton("Abbrechen", Chati.SKIN);
+        cancelButton = new TextButton("Abbrechen", Assets.SKIN);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -68,7 +64,7 @@ public class LanguageSelectWindow extends ChatiWindow {
             }
         });
 
-        closeButton = new TextButton("X", Chati.SKIN);
+        closeButton = new TextButton("X", Assets.SKIN);
         closeButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -95,7 +91,7 @@ public class LanguageSelectWindow extends ChatiWindow {
         add(labelContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(VERTICAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
         add(languageSelectBox).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
 
-        Table buttonContainer = new Table(Chati.SKIN);
+        Table buttonContainer = new Table();
         buttonContainer.add(confirmButton).width((ROW_WIDTH - HORIZONTAL_SPACING) / 2).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         buttonContainer.add(cancelButton).width((ROW_WIDTH - HORIZONTAL_SPACING) / 2).height(ROW_HEIGHT);
         add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);

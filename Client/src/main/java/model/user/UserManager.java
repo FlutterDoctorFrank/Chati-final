@@ -1,7 +1,7 @@
 package model.user;
 
 import model.exception.UserNotFoundException;
-import view.Screens.IModelObserver;
+import view2.IModelObserver;
 
 import java.util.HashMap;
 import java.util.Map;

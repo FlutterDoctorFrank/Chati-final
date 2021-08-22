@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.role.Permission;
 import model.user.*;
+import view2.Assets;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
@@ -77,11 +78,10 @@ public class UserListTable extends HudMenuTable {
     }
 
     protected void create() {
-        userListContainer = new Table(Chati.SKIN);
-        userListScrollPane = new ScrollPane(userListContainer, Chati.SKIN);
+        userListContainer = new Table();
+        userListScrollPane = new ScrollPane(userListContainer, Assets.SKIN);
 
-        Skin friendTabButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        friendTabButton = new TextButton("Freunde", friendTabButtonSkin);
+        friendTabButton = new TextButton("Freunde", Assets.getNewSkin());
         friendTabButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -100,8 +100,7 @@ public class UserListTable extends HudMenuTable {
             }
         });
 
-        Skin activeUserTabButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        activeUserTabButton = new TextButton("Welt", activeUserTabButtonSkin);
+        activeUserTabButton = new TextButton("Welt", Assets.getNewSkin());
         activeUserTabButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -120,8 +119,7 @@ public class UserListTable extends HudMenuTable {
             }
         });
 
-        Skin bannedUserTabButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        bannedUserTabButton = new TextButton("Gesperrt", bannedUserTabButtonSkin);
+        bannedUserTabButton = new TextButton("Gesperrt", Assets.getNewSkin());
         bannedUserTabButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -168,13 +166,13 @@ public class UserListTable extends HudMenuTable {
 
     protected void setLayout() {
         top().right().padTop(HeadUpDisplay.BUTTON_SIZE);
-        Window window = new Window("Benutzer", Chati.SKIN);
+        Window window = new Window("Benutzer", Assets.SKIN);
         window.setMovable(false);
         window.top();
 
         userListContainer.top();
 
-        Table buttonContainer = new Table(Chati.SKIN);
+        Table buttonContainer = new Table();
         buttonContainer.add(friendTabButton).fillX().expandX();
         buttonContainer.add(activeUserTabButton).fillX().expandX();
         buttonContainer.add(bannedUserTabButton).fillX().expandX();

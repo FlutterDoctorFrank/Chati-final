@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
+import view2.Assets;
 import view2.Chati;
 
 public class StartTable extends MenuTable {
@@ -31,15 +32,11 @@ public class StartTable extends MenuTable {
     protected void create() {
         infoLabel.setText("Bitte wähle eine Aktion aus!");
 
-        Label.LabelStyle style = new Label.LabelStyle();
-        style.font = new BitmapFont();
-        style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
-
-        worldSelectLabel = new Label("Welt: ", style);
-        worldSelectBox = new SelectBox<>(Chati.SKIN);
+        worldSelectLabel = new Label("Welt: ", Assets.SKIN);
+        worldSelectBox = new SelectBox<>(Assets.SKIN);
         updateWorldList();
 
-        joinWorldButton = new TextButton("Welt Beitreten", Chati.SKIN);
+        joinWorldButton = new TextButton("Welt Beitreten", Assets.SKIN);
         joinWorldButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -57,7 +54,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        createWorldButton = new TextButton("Welt erstellen", Chati.SKIN);
+        createWorldButton = new TextButton("Welt erstellen", Assets.SKIN);
         createWorldButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -69,7 +66,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        deleteWorldButton = new TextButton("Welt löschen", Chati.SKIN);
+        deleteWorldButton = new TextButton("Welt löschen", Assets.SKIN);
         deleteWorldButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -87,7 +84,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        changeAvatarButton = new TextButton("Avatar ändern", Chati.SKIN);
+        changeAvatarButton = new TextButton("Avatar ändern", Assets.SKIN);
         changeAvatarButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -99,7 +96,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        profileSettingsButton = new TextButton("Konto verwalten", Chati.SKIN);
+        profileSettingsButton = new TextButton("Konto verwalten", Assets.SKIN);
         profileSettingsButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -111,7 +108,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        logoutButton = new TextButton("Abmelden", Chati.SKIN);
+        logoutButton = new TextButton("Abmelden", Assets.SKIN);
         logoutButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

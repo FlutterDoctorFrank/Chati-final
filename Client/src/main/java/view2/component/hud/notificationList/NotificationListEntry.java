@@ -13,7 +13,7 @@ import model.notification.INotificationView;
 import model.notification.NotificationType;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.Icon;
+import view2.Assets;
 import view2.component.ChatiToolTip;
 import view2.component.ChatiWindow;
 
@@ -25,7 +25,6 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
     private static final float BUTTON_SIZE = 30;
     private static final float VERTICAL_SPACING = 5;
     private static final float HORIZONTAL_SPACING = 7.5f;
-    private static final float LABEL_FONT_SCALE_FACTOR = 1.5f;
     private static final float BUTTON_SCALE_FACTOR = 0.1f;
 
     private Label titleLabel;
@@ -44,14 +43,12 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
     }
 
     private void create() {
-        titleLabel = new Label(notification.getType().getName(), Chati.SKIN);
-        titleLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
+        titleLabel = new Label(notification.getType().getName(), Assets.SKIN);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm");
-        dateLabel = new Label(notification.getTimestamp().format(formatter), Chati.SKIN);
-        dateLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
+        dateLabel = new Label(notification.getTimestamp().format(formatter), Assets.SKIN);
 
-        showButton = new TextButton("Anzeigen", Chati.SKIN);
+        showButton = new TextButton("Anzeigen", Assets.SKIN);
         showButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -64,10 +61,10 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         });
 
         if (notification.getType() != NotificationType.NOTIFICATION) {
-            acceptButton = new ImageButton(Icon.ACCEPT_ICON);
+            acceptButton = new ImageButton(Assets.ACCEPT_ICON);
             acceptButton.addListener(new ChatiToolTip("Annehmen"));
         } else {
-            acceptButton = new ImageButton(Icon.DISABLED_ACCEPT_ICON);
+            acceptButton = new ImageButton(Assets.DISABLED_ACCEPT_ICON);
             acceptButton.setDisabled(true);
             acceptButton.setTouchable(Touchable.disabled);
         }
@@ -99,10 +96,10 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         });
 
         if (notification.getType() != NotificationType.NOTIFICATION) {
-            declineButton = new ImageButton(Icon.DECLINE_ICON);
+            declineButton = new ImageButton(Assets.DECLINE_ICON);
             declineButton.addListener(new ChatiToolTip("Ablehnen"));
         } else {
-            declineButton = new ImageButton(Icon.DISABLED_DECLINE_ICON);
+            declineButton = new ImageButton(Assets.DISABLED_DECLINE_ICON);
             declineButton.setDisabled(true);
             declineButton.setTouchable(Touchable.disabled);
         }
@@ -133,7 +130,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             }
         });
 
-        deleteButton = new ImageButton(Icon.DELETE_ICON);
+        deleteButton = new ImageButton(Assets.DELETE_ICON);
         deleteButton.addListener(new ChatiToolTip("Löschen"));
         deleteButton.addListener(new ClickListener() {
             @Override
@@ -165,7 +162,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
 
     private void setLayout() {
         NinePatchDrawable controlsBackground =
-                new NinePatchDrawable(new NinePatch(Chati.SKIN.getRegion("panel1"), 10, 10, 10, 10));
+                new NinePatchDrawable(new NinePatch(Assets.SKIN.getRegion("panel1"), 10, 10, 10, 10));
         setBackground(controlsBackground);
 
         left().defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).padTop(VERTICAL_SPACING);
@@ -220,14 +217,12 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
 
         @Override
         protected void create() {
-            showLabel = new Label(notification.getMessageBundle().getMessageKey(), Chati.SKIN);
-            showLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
+            showLabel = new Label(notification.getMessageBundle().getMessageKey(), Assets.SKIN);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm");
-            dateLabel = new Label(notification.getTimestamp().format(formatter), Chati.SKIN);
-            dateLabel.setFontScale(LABEL_FONT_SCALE_FACTOR);
+            dateLabel = new Label(notification.getTimestamp().format(formatter), Assets.SKIN);
 
-            okButton = new TextButton("Ok", Chati.SKIN);
+            okButton = new TextButton("Ok", Assets.SKIN);
             okButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -240,10 +235,10 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             });
 
             if (notification.getType() != NotificationType.NOTIFICATION) {
-                acceptButton = new ImageButton(Icon.ACCEPT_ICON);
+                acceptButton = new ImageButton(Assets.ACCEPT_ICON);
                 acceptButton.addListener(new ChatiToolTip("Annehmen"));
             } else {
-                acceptButton = new ImageButton(Icon.DISABLED_ACCEPT_ICON);
+                acceptButton = new ImageButton(Assets.DISABLED_ACCEPT_ICON);
                 acceptButton.setDisabled(true);
                 acceptButton.setTouchable(Touchable.disabled);
             }
@@ -276,10 +271,10 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             });
 
             if (notification.getType() != NotificationType.NOTIFICATION) {
-                declineButton = new ImageButton(Icon.DECLINE_ICON);
+                declineButton = new ImageButton(Assets.DECLINE_ICON);
                 declineButton.addListener(new ChatiToolTip("Ablehnen"));
             } else {
-                declineButton = new ImageButton(Icon.DISABLED_DECLINE_ICON);
+                declineButton = new ImageButton(Assets.DISABLED_DECLINE_ICON);
                 declineButton.setDisabled(true);
                 declineButton.setTouchable(Touchable.disabled);
             }
@@ -311,7 +306,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 }
             });
 
-            deleteButton = new ImageButton(Icon.DELETE_ICON);
+            deleteButton = new ImageButton(Assets.DELETE_ICON);
             deleteButton.addListener(new ChatiToolTip("Löschen"));
             deleteButton.addListener(new ClickListener() {
                 @Override
@@ -341,7 +336,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 }
             });
 
-            closeButton = new TextButton("X", Chati.SKIN);
+            closeButton = new TextButton("X", Assets.SKIN);
             closeButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -367,7 +362,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
 
             left().defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).padTop(VERTICAL_SPACING);
 
-            Table labelContainer = new Table(Chati.SKIN);
+            Table labelContainer = new Table();
             labelContainer.add(showLabel).center();
             add(labelContainer).top().width(ROW_WIDTH).height(ROW_HEIGHT).fillY().expandY()
                     .spaceTop(HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).row();

@@ -1,17 +1,16 @@
 package view2.component.menu;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
+import view2.Assets;
 import view2.Chati;
 
 public class DeleteAccountTable extends MenuTable {
@@ -25,9 +24,7 @@ public class DeleteAccountTable extends MenuTable {
     protected void create() {
         infoLabel.setText("Gib dein aktuelles Passwort ein!");
 
-        Skin passwordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        passwordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
-        passwordField = new TextField("Passwort", passwordFieldSkin);
+        passwordField = new TextField("Passwort", Assets.getNewSkin());
         passwordField.getStyle().fontColor = Color.GRAY;
         passwordField.setPasswordCharacter('*');
         passwordField.addListener(new FocusListener() {
@@ -44,9 +41,7 @@ public class DeleteAccountTable extends MenuTable {
             }
         });
 
-        Skin confirmPasswordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        confirmPasswordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
-        confirmPasswordField = new TextField("Neues Passwort", confirmPasswordFieldSkin);
+        confirmPasswordField = new TextField("Neues Passwort", Assets.getNewSkin());
         confirmPasswordField.getStyle().fontColor = Color.GRAY;
         confirmPasswordField.setPasswordCharacter('*');
         confirmPasswordField.addListener(new FocusListener() {
@@ -63,7 +58,7 @@ public class DeleteAccountTable extends MenuTable {
             }
         });
 
-        confirmButton = new TextButton("Bestätigen", Chati.SKIN);
+        confirmButton = new TextButton("Bestätigen", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -82,7 +77,7 @@ public class DeleteAccountTable extends MenuTable {
             }
         });
 
-        cancelButton = new TextButton("Abbrechen", Chati.SKIN);
+        cancelButton = new TextButton("Abbrechen", Assets.SKIN);
         cancelButton.addListener(new ClickListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
@@ -137,7 +132,7 @@ public class DeleteAccountTable extends MenuTable {
         protected void create() {
             infoLabel.setText("Bist du sicher, dass du dein Konto löschen möchtest?");
 
-            confirmButton = new TextButton("Bestätigen", Chati.SKIN);
+            confirmButton = new TextButton("Bestätigen", Assets.SKIN);
             confirmButton.addListener(new InputListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -151,7 +146,7 @@ public class DeleteAccountTable extends MenuTable {
                 }
             });
 
-            cancelButton = new TextButton("Zurück", Chati.SKIN);
+            cancelButton = new TextButton("Zurück", Assets.SKIN);
             cancelButton.addListener(new InputListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -180,7 +175,6 @@ public class DeleteAccountTable extends MenuTable {
 
         @Override
         public void resetTextFields() {
-
         }
     }
 }

@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import view2.Chati;
+import view2.Assets;
 import view2.component.ChatiWindow;
 
 public class VolumeChangeWindow extends ChatiWindow {
@@ -26,7 +26,6 @@ public class VolumeChangeWindow extends ChatiWindow {
     private static final float ROW_HEIGHT = 60;
     private static final float VERTICAL_SPACING = 15;
     private static final float HORIZONTAL_SPACING = 15;
-    private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
 
     private static boolean CHANGED = false;
     private static float TOTAL_VOLUME = 0;
@@ -63,32 +62,29 @@ public class VolumeChangeWindow extends ChatiWindow {
 
     @Override
     protected void create() {
-        Label.LabelStyle style = new Label.LabelStyle();
-        style.font = new BitmapFont();
-        style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
-        infoLabel = new Label("Ändere die Lautstärke!", style);
+        infoLabel = new Label("Ändere die Lautstärke!", Assets.SKIN);
 
-        totalVolumeLabel = new Label("Gesamt", style);
-        voiceVolumeLabel = new Label("Sprache", style);
-        musicVolumeLabel = new Label("Musik", style);
-        soundVolumeLabel = new Label("Hintergrundgeräusche", style);
+        totalVolumeLabel = new Label("Gesamt", Assets.SKIN);
+        voiceVolumeLabel = new Label("Sprache", Assets.SKIN);
+        musicVolumeLabel = new Label("Musik", Assets.SKIN);
+        soundVolumeLabel = new Label("Hintergrundgeräusche", Assets.SKIN);
 
-        totalVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Chati.SKIN);
+        totalVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
         totalVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE, 3 * SNAP_VALUE_STEP_SIZE}
                 , SNAP_VALUE_THRESHOLD);
         totalVolumeSlider.setValue(TOTAL_VOLUME);
 
-        voiceVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Chati.SKIN);
+        voiceVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
         voiceVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE, 3 * SNAP_VALUE_STEP_SIZE}
                 , SNAP_VALUE_THRESHOLD);
         voiceVolumeSlider.setValue(VOICE_VOLUME);
 
-        musicVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Chati.SKIN);
+        musicVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
         musicVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE, 3 * SNAP_VALUE_STEP_SIZE}
                 , SNAP_VALUE_THRESHOLD);
         musicVolumeSlider.setValue(MUSIC_VOLUME);
 
-        soundVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Chati.SKIN);
+        soundVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
         soundVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE, 3 * SNAP_VALUE_STEP_SIZE}
                 , SNAP_VALUE_THRESHOLD);
         soundVolumeSlider.setValue(SOUND_VOLUME);
@@ -97,7 +93,7 @@ public class VolumeChangeWindow extends ChatiWindow {
             setDefaultVolume();
         }
 
-        confirmButton = new TextButton("Bestätigen", Chati.SKIN);
+        confirmButton = new TextButton("Bestätigen", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -114,7 +110,7 @@ public class VolumeChangeWindow extends ChatiWindow {
             }
         });
 
-        defaultButton = new TextButton("Standardeinstellung", Chati.SKIN);
+        defaultButton = new TextButton("Standardeinstellung", Assets.SKIN);
         defaultButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -126,7 +122,7 @@ public class VolumeChangeWindow extends ChatiWindow {
             }
         });
 
-        cancelButton = new TextButton("Abbrechen", Chati.SKIN);
+        cancelButton = new TextButton("Abbrechen", Assets.SKIN);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -138,7 +134,7 @@ public class VolumeChangeWindow extends ChatiWindow {
             }
         });
 
-        closeButton = new TextButton("X", Chati.SKIN);
+        closeButton = new TextButton("X", Assets.SKIN);
         closeButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -184,7 +180,7 @@ public class VolumeChangeWindow extends ChatiWindow {
         add(soundVolumeContainer).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
 
 
-        Table buttonContainer = new Table(Chati.SKIN);
+        Table buttonContainer = new Table();
         buttonContainer.add(confirmButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         buttonContainer.add(defaultButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);

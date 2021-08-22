@@ -12,12 +12,9 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import model.context.spatial.SpatialMap;
-import view.Screens.IModelObserver;
+import view2.IModelObserver;
 
 import java.util.Set;
-
-import static org.junit.Assert.*;
 
 public class SpatialContextTest {
 

@@ -13,7 +13,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import view.Screens.IModelObserver;
+import view2.IModelObserver;
 
 import java.util.Set;
 import java.util.UUID;

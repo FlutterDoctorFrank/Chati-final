@@ -9,7 +9,7 @@ import joptsimple.OptionSet;
 import model.user.UserManager;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
-import view.Screens.IModelObserver;
+import view2.IModelObserver;
 import view2.ViewControllerInterface;
 import java.io.IOException;
 import java.util.List;

@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
+import view2.Assets;
 import view2.Chati;
 
 public class LoginTable extends MenuTable {
@@ -22,9 +23,7 @@ public class LoginTable extends MenuTable {
     protected void create() {
         infoLabel.setText("Bitte gib dein Benutzername und dein Passwort ein!");
         // Füge Benutzernamen-Feld hinzu.
-        Skin usernameFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        usernameFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
-        usernameField = new TextField("Benutzername", usernameFieldSkin);
+        usernameField = new TextField("Benutzername", Assets.getNewSkin());
         usernameField.getStyle().fontColor = Color.GRAY;
         usernameField.addListener(new FocusListener() {
             @Override
@@ -39,9 +38,7 @@ public class LoginTable extends MenuTable {
             }
         });
         // Füge Passwort-Feld hinzu.
-        Skin passwordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        passwordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
-        passwordField = new TextField("Passwort", passwordFieldSkin);
+        passwordField = new TextField("Passwort", Assets.getNewSkin());
         passwordField.getStyle().fontColor = Color.GRAY;
         passwordField.setPasswordCharacter('*');
         passwordField.addListener(new FocusListener() {
@@ -58,7 +55,7 @@ public class LoginTable extends MenuTable {
             }
         });
         // Füge Login-Button hinzu.
-        loginButton = new TextButton("Anmelden", Chati.SKIN);
+        loginButton = new TextButton("Anmelden", Assets.SKIN);
         loginButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -78,7 +75,7 @@ public class LoginTable extends MenuTable {
             }
         });
         // Füge Register-Button hinzu.
-        registerButton = new TextButton("Registrieren", Chati.SKIN);
+        registerButton = new TextButton("Registrieren", Assets.SKIN);
         registerButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -98,7 +95,7 @@ public class LoginTable extends MenuTable {
             }
         });
         // Füge Exit-Button hinzu.
-        exitButton = new TextButton("Beenden", Chati.SKIN);
+        exitButton = new TextButton("Beenden", Assets.SKIN);
         exitButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

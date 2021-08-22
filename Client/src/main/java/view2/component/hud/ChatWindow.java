@@ -13,6 +13,7 @@ import controller.network.ServerSender;
 import model.communication.message.MessageType;
 import model.exception.UserNotFoundException;
 import model.user.IUserManagerView;
+import view2.Assets;
 import view2.Chati;
 import view2.component.ChatiWindow;
 import view2.component.KeyAction;
@@ -30,10 +31,6 @@ public class ChatWindow extends ChatiWindow {
     private static final float SPACE = 5;
     private static final float SEND_BUTTON_WIDTH = 120;
     private static final float SEND_BUTTON_HEIGHT = 60;
-    private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
-    private static final float MESSAGE_AREA_FONT_SCALE_FACTOR = 1.6f;
-    private static final Label.LabelStyle STYLE = new Label.LabelStyle();
-    private static final BitmapFont FONT = new BitmapFont();
 
     private static ChatWindow chatWindow;
 
@@ -45,8 +42,6 @@ public class ChatWindow extends ChatiWindow {
 
     private ChatWindow() {
         super("Chat");
-        STYLE.font = FONT;
-        STYLE.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
         create();
         setLayout();
     }
@@ -55,11 +50,9 @@ public class ChatWindow extends ChatiWindow {
     protected void create() {
         messageLabelContainer = new Table();
 
-        historyScrollPane = new ScrollPane(messageLabelContainer, Chati.SKIN);
+        historyScrollPane = new ScrollPane(messageLabelContainer, Assets.SKIN);
 
-        Skin typeMessageAreaSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        typeMessageAreaSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(MESSAGE_AREA_FONT_SCALE_FACTOR);
-        typeMessageArea = new TextArea("Nachricht", typeMessageAreaSkin);
+        typeMessageArea = new TextArea("Nachricht", Assets.getNewSkin());
         typeMessageArea.getStyle().fontColor = Color.GRAY;
         typeMessageArea.addListener(new FocusListener() {
             @Override
@@ -88,7 +81,7 @@ public class ChatWindow extends ChatiWindow {
             }
         });
 
-        sendButton = new TextButton("Senden", Chati.SKIN);
+        sendButton = new TextButton("Senden", Assets.SKIN);
         sendButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -100,7 +93,7 @@ public class ChatWindow extends ChatiWindow {
             }
         });
 
-        minimizeButton = new TextButton("X", Chati.SKIN);
+        minimizeButton = new TextButton("X", Assets.SKIN);
         minimizeButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -192,7 +185,7 @@ public class ChatWindow extends ChatiWindow {
         String timeString = timestamp.format(formatter);
 
         String showMessage = "[" + timeString + "] " + username + ": " + message;
-        Label showLabel = new Label(showMessage, STYLE);
+        Label showLabel = new Label(showMessage, Assets.SKIN);
         showLabel.setColor(messageColor);
         showLabel.setWrap(true);
 

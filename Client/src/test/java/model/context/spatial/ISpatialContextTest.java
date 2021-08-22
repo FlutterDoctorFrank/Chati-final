@@ -8,17 +8,14 @@ import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.Context;
 import model.context.ContextID;
-import model.exception.ContextNotFoundException;
 import model.user.UserManager;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import view.Screens.IModelObserver;
+import view2.IModelObserver;
 
 import java.util.Set;
-
-import static org.junit.Assert.*;
 
 public class ISpatialContextTest {
 

@@ -1,6 +1,5 @@
 package view2.component.menu;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -10,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import model.context.spatial.SpatialMap;
+import view2.Assets;
 import view2.Chati;
 
 import java.util.EnumSet;
@@ -26,17 +26,11 @@ public class WorldCreateTable extends MenuTable {
     protected void create() {
         infoLabel.setText("Bitte wähle einen Namen und eine Karte!");
 
-        Label.LabelStyle style = new Label.LabelStyle();
-        style.font = new BitmapFont();
-        style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
-
-        mapSelectLabel = new Label("Karte: ", style);
-        mapSelectBox = new SelectBox<>(Chati.SKIN);
+        mapSelectLabel = new Label("Karte: ", Assets.SKIN);
+        mapSelectBox = new SelectBox<>(Assets.SKIN);
         mapSelectBox.setItems(EnumSet.allOf(SpatialMap.class).toArray(new SpatialMap[0]));
 
-        Skin worldnameFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        worldnameFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
-        worldNameField = new TextField("Name der Welt", worldnameFieldSkin);
+        worldNameField = new TextField("Name der Welt", Assets.getNewSkin());
         worldNameField.getStyle().fontColor = Color.GRAY;
         worldNameField.addListener(new FocusListener() {
             @Override
@@ -51,7 +45,7 @@ public class WorldCreateTable extends MenuTable {
             }
         });
 
-        confirmButton = new TextButton("Bestätigen", Chati.SKIN);
+        confirmButton = new TextButton("Bestätigen", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -74,7 +68,7 @@ public class WorldCreateTable extends MenuTable {
             }
         });
 
-        cancelButton = new TextButton("Zurück", Chati.SKIN);
+        cancelButton = new TextButton("Zurück", Assets.SKIN);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

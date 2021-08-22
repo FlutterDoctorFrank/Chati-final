@@ -1,22 +1,16 @@
 package view2.component.world.objectMenus;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import controller.network.ServerSender;
 import model.context.ContextID;
-import model.context.spatial.Music;
+import view2.Assets;
 import view2.Chati;
 import view2.component.ChatiTable;
 import view2.component.ChatiWindow;
 import view2.component.menu.ContextEntry;
-import view2.component.menu.MenuResponse;
-import view2.component.menu.MenuScreen;
-
-import java.util.EnumSet;
 
 public class RoomReceptionWindow extends ChatiWindow {
 
@@ -84,10 +78,10 @@ public class RoomReceptionWindow extends ChatiWindow {
             style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
             roomSelectLabel = new Label("Raum: ", style);
 
-            roomSelectBox = new SelectBox<>(Chati.SKIN);
+            roomSelectBox = new SelectBox<>(Assets.SKIN);
             // roomSelectBox.setItems...
 
-            joinButton = new TextButton("Beitreten", Chati.SKIN);
+            joinButton = new TextButton("Beitreten", Assets.SKIN);
             joinButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -100,7 +94,7 @@ public class RoomReceptionWindow extends ChatiWindow {
                 }
             });
 
-            requestButton = new TextButton("Beitritt anfragen", Chati.SKIN);
+            requestButton = new TextButton("Beitritt anfragen", Assets.SKIN);
         }
 
         @Override

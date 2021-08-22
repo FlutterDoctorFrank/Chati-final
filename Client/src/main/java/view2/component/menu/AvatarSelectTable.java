@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import view2.Chati;
+import view2.Assets;
 
 public class AvatarSelectTable extends MenuTable {
 
@@ -15,7 +15,7 @@ public class AvatarSelectTable extends MenuTable {
     protected void create() {
         infoLabel.setText("Bitte wähle einen Avatar!");
 
-        confirmButton = new TextButton("Bestätigen", Chati.SKIN);
+        confirmButton = new TextButton("Bestätigen", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -27,7 +27,7 @@ public class AvatarSelectTable extends MenuTable {
             }
         });
 
-        cancelButton = new TextButton("Zurück", Chati.SKIN);
+        cancelButton = new TextButton("Zurück", Assets.SKIN);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

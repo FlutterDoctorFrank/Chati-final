@@ -4,17 +4,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import model.communication.message.MessageType;
 import model.user.IInternUserView;
 import view2.Chati;
-import view2.Icon;
+import view2.Assets;
 import view2.component.hud.notificationList.NotificationListTable;
 import view2.component.hud.settings.SettingsTable;
 import view2.component.hud.userList.UserListTable;
-
-import java.time.LocalDateTime;
-import java.util.Random;
-import java.util.UUID;
 
 public class HeadUpDisplay extends Table {
 
@@ -61,7 +56,7 @@ public class HeadUpDisplay extends Table {
     }
 
     protected void create() {
-        userListButton = new ImageButton(Icon.USER_ICON);
+        userListButton = new ImageButton(Assets.USER_ICON);
         userListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         userListButton.addListener(new ClickListener() {
             @Override
@@ -90,7 +85,7 @@ public class HeadUpDisplay extends Table {
             }
         });
 
-        notificationListButton = new ImageButton(Icon.NOTIFICATION_ICON);
+        notificationListButton = new ImageButton(Assets.NOTIFICATION_ICON);
         notificationListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         notificationListButton.addListener(new ClickListener() {
             @Override
@@ -119,7 +114,7 @@ public class HeadUpDisplay extends Table {
             }
         });
 
-        settingsButton = new ImageButton(Icon.SETTINGS_ICON);
+        settingsButton = new ImageButton(Assets.SETTINGS_ICON);
         settingsButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         settingsButton.addListener(new ClickListener() {
             @Override
@@ -148,7 +143,7 @@ public class HeadUpDisplay extends Table {
             }
         });
 
-        chatButton = new ImageButton(Icon.CHAT_ICON);
+        chatButton = new ImageButton(Assets.CHAT_ICON);
         chatButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         chatButton.setVisible(false);
         chatButton.addListener(new ClickListener() {
@@ -219,7 +214,7 @@ public class HeadUpDisplay extends Table {
 
     public void showChatWindow() {
         chatButton.setChecked(true);
-        chatButton.getStyle().imageUp = Icon.CHECKED_CHAT_ICON;
+        chatButton.getStyle().imageUp = Assets.CHECKED_CHAT_ICON;
         ChatWindow.getInstance().setVisible(true);
         ChatWindow.getInstance().focus();
 
@@ -238,7 +233,7 @@ public class HeadUpDisplay extends Table {
 
     public void hideChatWindow() {
         chatButton.setChecked(false);
-        chatButton.getStyle().imageUp = Icon.CHAT_ICON;
+        chatButton.getStyle().imageUp = Assets.CHAT_ICON;
         ChatWindow.getInstance().setVisible(false);
         getStage().unfocus(ChatWindow.getInstance());
     }
@@ -268,27 +263,27 @@ public class HeadUpDisplay extends Table {
 
     public void openUserMenu() {
         userListButton.setChecked(true);
-        userListButton.getStyle().imageUp = Icon.CHECKED_USER_ICON;
-        notificationListButton.getStyle().imageUp = Icon.NOTIFICATION_ICON;
-        settingsButton.getStyle().imageUp = Icon.SETTINGS_ICON;
+        userListButton.getStyle().imageUp = Assets.CHECKED_USER_ICON;
+        notificationListButton.getStyle().imageUp = Assets.NOTIFICATION_ICON;
+        settingsButton.getStyle().imageUp = Assets.SETTINGS_ICON;
         currentMenuContainer.clearChildren();
         currentMenuContainer.addActor(new UserListTable());
     }
 
     public void openNotificationMenu() {
         notificationListButton.setChecked(true);
-        notificationListButton.getStyle().imageUp = Icon.CHECKED_NOTIFICATION_ICON;
-        userListButton.getStyle().imageUp = Icon.USER_ICON;
-        settingsButton.getStyle().imageUp = Icon.SETTINGS_ICON;
+        notificationListButton.getStyle().imageUp = Assets.CHECKED_NOTIFICATION_ICON;
+        userListButton.getStyle().imageUp = Assets.USER_ICON;
+        settingsButton.getStyle().imageUp = Assets.SETTINGS_ICON;
         currentMenuContainer.clearChildren();
         currentMenuContainer.addActor(new NotificationListTable());
     }
 
     public void openSettingsMenu() {
         settingsButton.setChecked(true);
-        settingsButton.getStyle().imageUp = Icon.CHECKED_SETTINGS_ICON;
-        userListButton.getStyle().imageUp = Icon.USER_ICON;
-        notificationListButton.getStyle().imageUp = Icon.NOTIFICATION_ICON;
+        settingsButton.getStyle().imageUp = Assets.CHECKED_SETTINGS_ICON;
+        userListButton.getStyle().imageUp = Assets.USER_ICON;
+        notificationListButton.getStyle().imageUp = Assets.NOTIFICATION_ICON;
         currentMenuContainer.clearChildren();
         currentMenuContainer.addActor(new SettingsTable());
     }
@@ -297,9 +292,9 @@ public class HeadUpDisplay extends Table {
         userListButton.setChecked(false);
         notificationListButton.setChecked(false);
         settingsButton.setChecked(false);
-        userListButton.getStyle().imageUp = Icon.USER_ICON;
-        notificationListButton.getStyle().imageUp = Icon.NOTIFICATION_ICON;
-        settingsButton.getStyle().imageUp = Icon.SETTINGS_ICON;
+        userListButton.getStyle().imageUp = Assets.USER_ICON;
+        notificationListButton.getStyle().imageUp = Assets.NOTIFICATION_ICON;
+        settingsButton.getStyle().imageUp = Assets.SETTINGS_ICON;
         currentMenuContainer.clearChildren();
     }
 }

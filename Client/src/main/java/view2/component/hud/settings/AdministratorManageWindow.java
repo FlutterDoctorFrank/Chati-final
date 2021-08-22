@@ -13,6 +13,7 @@ import model.exception.UserNotFoundException;
 import model.role.Role;
 import model.user.AdministrativeAction;
 import model.user.IUserView;
+import view2.Assets;
 import view2.Chati;
 import view2.component.ChatiWindow;
 
@@ -24,7 +25,6 @@ public class AdministratorManageWindow extends ChatiWindow {
     private static final float ROW_HEIGHT = 60;
     private static final float VERTICAL_SPACING = 15;
     private static final float HORIZONTAL_SPACING = 15;
-    private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
     private static final float TEXTFIELD_FONT_SCALE_FACTOR = 1.6f;
 
     private Label infoLabel;
@@ -43,10 +43,7 @@ public class AdministratorManageWindow extends ChatiWindow {
 
     @Override
     protected void create() {
-        Label.LabelStyle style = new Label.LabelStyle();
-        style.font = new BitmapFont();
-        style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
-        infoLabel = new Label("Erteile oder entziehe die Rolle des Administrators!", style);
+        infoLabel = new Label("Erteile oder entziehe die Rolle des Administrators!", Assets.SKIN);
 
         Skin usernameFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
         usernameFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
@@ -82,7 +79,7 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
         });
 
-        assignButton = new TextButton("Rolle erteilen", Chati.SKIN);
+        assignButton = new TextButton("Rolle erteilen", Assets.SKIN);
         assignButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -123,7 +120,7 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
         });
 
-        withdrawButton = new TextButton("Rolle entziehen", Chati.SKIN);
+        withdrawButton = new TextButton("Rolle entziehen", Assets.SKIN);
         withdrawButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -164,7 +161,7 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
         });
 
-        cancelButton = new TextButton("Abbrechen", Chati.SKIN);
+        cancelButton = new TextButton("Abbrechen", Assets.SKIN);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -176,7 +173,7 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
         });
 
-        closeButton = new TextButton("X", Chati.SKIN);
+        closeButton = new TextButton("X", Assets.SKIN);
         closeButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -206,7 +203,7 @@ public class AdministratorManageWindow extends ChatiWindow {
         add(usernameField).width(ROW_WIDTH).height(ROW_HEIGHT).spaceBottom(VERTICAL_SPACING).row();
         add(messageArea).width(ROW_WIDTH).height(2 * ROW_HEIGHT).spaceBottom(VERTICAL_SPACING).row();
 
-        Table buttonContainer = new Table(Chati.SKIN);
+        Table buttonContainer = new Table();
         buttonContainer.add(assignButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         buttonContainer.add(withdrawButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);

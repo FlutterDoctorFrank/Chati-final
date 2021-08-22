@@ -10,6 +10,7 @@ import controller.network.ServerSender;
 import model.context.ContextID;
 import model.role.Permission;
 import model.user.IInternUserView;
+import view2.Assets;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
@@ -64,7 +65,7 @@ public class SettingsTable extends HudMenuTable {
     protected void create() {
         IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
 
-        languageSelectMenuButton = new TextButton("Sprache wählen", Chati.SKIN);
+        languageSelectMenuButton = new TextButton("Sprache wählen", Assets.SKIN);
         languageSelectMenuButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -76,7 +77,7 @@ public class SettingsTable extends HudMenuTable {
             }
         });
 
-        volumeChangeMenuButton = new TextButton("Lautstärke anpassen", Chati.SKIN);
+        volumeChangeMenuButton = new TextButton("Lautstärke anpassen", Assets.SKIN);
         volumeChangeMenuButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -88,8 +89,7 @@ public class SettingsTable extends HudMenuTable {
             }
         });
 
-        Skin administratorManageMenuButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        administratorManageMenuButton = new TextButton("Administratoren verwalten", administratorManageMenuButtonSkin);
+        administratorManageMenuButton = new TextButton("Administratoren verwalten", Assets.getNewSkin());
         if (internUser == null || !internUser.hasPermission(Permission.ASSIGN_ADMINISTRATOR)) {
             disableButton(administratorManageMenuButton);
         }
@@ -104,8 +104,7 @@ public class SettingsTable extends HudMenuTable {
             }
         });
 
-        Skin leaveWorldButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        leaveWorldButton = new TextButton("Welt verlassen", leaveWorldButtonSkin);
+        leaveWorldButton = new TextButton("Welt verlassen", Assets.getNewSkin());
         if (internUser == null || !internUser.isInCurrentWorld() || internUser.getCurrentWorld() == null) {
             disableButton(leaveWorldButton);
         }
@@ -125,8 +124,7 @@ public class SettingsTable extends HudMenuTable {
             }
         });
 
-        Skin logoutButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        logoutButton = new TextButton("Abmelden", logoutButtonSkin);
+        logoutButton = new TextButton("Abmelden", Assets.getNewSkin());
         if (internUser == null) {
             disableButton(logoutButton);
         }
@@ -146,7 +144,7 @@ public class SettingsTable extends HudMenuTable {
             }
         });
 
-        closeApplicationButton = new TextButton("Beenden", Chati.SKIN);
+        closeApplicationButton = new TextButton("Beenden", Assets.SKIN);
         closeApplicationButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -163,7 +161,7 @@ public class SettingsTable extends HudMenuTable {
     @Override
     protected void setLayout() {
         top().right().padTop(HeadUpDisplay.BUTTON_SIZE);
-        Window window = new Window("Einstellungen", Chati.SKIN);
+        Window window = new Window("Einstellungen", Assets.SKIN);
         window.setMovable(false);
         window.top();
 

@@ -1,16 +1,15 @@
 package view2.component.menu;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
+import view2.Assets;
 import view2.Chati;
 
 public class ChangePasswordTable extends MenuTable {
@@ -25,9 +24,7 @@ public class ChangePasswordTable extends MenuTable {
     protected void create() {
         infoLabel.setText("Gib dein aktuelles und ein neues Passwort ein!");
 
-        Skin passwordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        passwordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
-        passwordField = new TextField("Aktuelles Passwort", passwordFieldSkin);
+        passwordField = new TextField("Aktuelles Passwort", Assets.getNewSkin());
         passwordField.getStyle().fontColor = Color.GRAY;
         passwordField.setPasswordCharacter('*');
         passwordField.addListener(new FocusListener() {
@@ -44,9 +41,7 @@ public class ChangePasswordTable extends MenuTable {
             }
         });
 
-        Skin newPasswordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        newPasswordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
-        newPasswordField = new TextField("Neues Passwort", newPasswordFieldSkin);
+        newPasswordField = new TextField("Neues Passwort", Assets.getNewSkin());
         newPasswordField.getStyle().fontColor = Color.GRAY;
         newPasswordField.setPasswordCharacter('*');
         newPasswordField.addListener(new FocusListener() {
@@ -63,9 +58,7 @@ public class ChangePasswordTable extends MenuTable {
             }
         });
 
-        Skin confirmNewPasswordFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        confirmNewPasswordFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
-        confirmNewPasswordField = new TextField("Neues Passwort bestätigen", confirmNewPasswordFieldSkin);
+        confirmNewPasswordField = new TextField("Neues Passwort bestätigen", Assets.getNewSkin());
         confirmNewPasswordField.getStyle().fontColor = Color.GRAY;
         confirmNewPasswordField.setPasswordCharacter('*');
         confirmNewPasswordField.addListener(new FocusListener() {
@@ -82,7 +75,7 @@ public class ChangePasswordTable extends MenuTable {
             }
         });
 
-        confirmButton = new TextButton("Bestätigen", Chati.SKIN);
+        confirmButton = new TextButton("Bestätigen", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -116,7 +109,7 @@ public class ChangePasswordTable extends MenuTable {
             }
         });
 
-        cancelButton = new TextButton("Zurück", Chati.SKIN);
+        cancelButton = new TextButton("Zurück", Assets.SKIN);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

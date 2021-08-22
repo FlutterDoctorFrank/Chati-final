@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.user.IInternUserView;
 import model.user.IUserManagerView;
+import view2.Assets;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
@@ -58,11 +59,10 @@ public class NotificationListTable extends HudMenuTable {
     }
 
     protected void create() {
-        notificationListContainer = new Table(Chati.SKIN);
-        notificationListScrollPane = new ScrollPane(notificationListContainer, Chati.SKIN);
+        notificationListContainer = new Table();
+        notificationListScrollPane = new ScrollPane(notificationListContainer, Assets.SKIN);
 
-        Skin globalNotificationTabButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        globalNotificationTabButton = new TextButton("Global", globalNotificationTabButtonSkin);
+        globalNotificationTabButton = new TextButton("Global", Assets.getNewSkin());
         globalNotificationTabButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -78,8 +78,7 @@ public class NotificationListTable extends HudMenuTable {
             }
         });
 
-        Skin worldNotificationTabButtonSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        worldNotificationTabButton = new TextButton("Welt", worldNotificationTabButtonSkin);
+        worldNotificationTabButton = new TextButton("Welt", Assets.getNewSkin());
         worldNotificationTabButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -118,7 +117,7 @@ public class NotificationListTable extends HudMenuTable {
 
     protected void setLayout() {
         top().right().padTop(HeadUpDisplay.BUTTON_SIZE);
-        Window window = new Window("Benachrichtigungen", Chati.SKIN);
+        Window window = new Window("Benachrichtigungen", Assets.SKIN);
         window.setMovable(false);
         window.top();
 

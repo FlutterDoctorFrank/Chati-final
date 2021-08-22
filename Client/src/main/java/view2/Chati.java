@@ -2,6 +2,9 @@ package view2;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import controller.network.ServerSender;
@@ -10,7 +13,6 @@ import model.context.ContextID;
 import model.context.spatial.Menu;
 import model.user.IUserManagerView;
 import org.jetbrains.annotations.Nullable;
-import view.Screens.IModelObserver;
 import view2.component.AbstractScreen;
 import view2.component.hud.ChatWindow;
 import view2.component.hud.HeadUpDisplay;
@@ -23,8 +25,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Chati extends Game implements ViewControllerInterface, IModelObserver {
-
-    public static Skin SKIN;
 
     private static Chati CHATI;
 
@@ -70,7 +70,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void create() {
-        SKIN = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
+        Assets.initialize();
         setScreen(MenuScreen.getInstance());
     }
 

@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import model.context.ContextID;
+import view2.Assets;
 import view2.Chati;
 import view2.component.ChatiWindow;
 
@@ -43,7 +44,7 @@ public class PortalWindow extends ChatiWindow {
         style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
         infoLabel = new Label("Möchtest du den Raum wirklich verlassen?", style);
 
-        confirmButton = new TextButton("Ja", Chati.SKIN);
+        confirmButton = new TextButton("Ja", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -55,7 +56,7 @@ public class PortalWindow extends ChatiWindow {
             }
         });
 
-        cancelButton = new TextButton("Nein", Chati.SKIN);
+        cancelButton = new TextButton("Nein", Assets.SKIN);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -67,7 +68,7 @@ public class PortalWindow extends ChatiWindow {
             }
         });
 
-        closeButton = new TextButton("X", Chati.SKIN);
+        closeButton = new TextButton("X", Assets.SKIN);
         closeButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -94,7 +95,7 @@ public class PortalWindow extends ChatiWindow {
         add(labelContainer).top().width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(VERTICAL_SPACING)
                 .spaceBottom(VERTICAL_SPACING).expandY().row();
 
-        Table buttonContainer = new Table(Chati.SKIN);
+        Table buttonContainer = new Table();
         buttonContainer.add(confirmButton).width((ROW_WIDTH - HORIZONTAL_SPACING) / 2).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
         buttonContainer.add(cancelButton).width((ROW_WIDTH - HORIZONTAL_SPACING) / 2).height(ROW_HEIGHT);
         add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceBottom(VERTICAL_SPACING);

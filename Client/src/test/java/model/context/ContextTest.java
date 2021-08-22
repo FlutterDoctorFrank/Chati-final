@@ -12,9 +12,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import view.Screens.IModelObserver;
-
-import static org.junit.Assert.*;
+import view2.IModelObserver;
 
 public class ContextTest {
 

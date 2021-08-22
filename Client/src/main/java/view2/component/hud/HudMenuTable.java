@@ -4,13 +4,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import view2.Chati;
+import view2.Assets;
 import view2.component.ChatiTable;
 
 public abstract class HudMenuTable extends ChatiTable {
 
-    public static final Drawable PRESSED_BUTTON_IMAGE = new TextButton("", Chati.SKIN).getStyle().down;
-    public static final Drawable UNPRESSED_BUTTON_IMAGE = new TextButton("", Chati.SKIN).getStyle().up;
+    public static final Drawable PRESSED_BUTTON_IMAGE = new TextButton("", Assets.SKIN).getStyle().down;
+    public static final Drawable UNPRESSED_BUTTON_IMAGE = new TextButton("", Assets.SKIN).getStyle().up;
 
     protected void enableButton(TextButton button) {
         button.setDisabled(false);

@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import model.context.ContextID;
 import model.context.spatial.Music;
-import view2.Chati;
+import view2.Assets;
 import view2.component.ChatiWindow;
 
 import java.util.EnumSet;
@@ -43,7 +43,7 @@ public class MusicPlayerWindow extends ChatiWindow {
 
         musicSelectLabel = new Label("Musik: ", style);
 
-        musicSelectBox = new SelectBox<>(Chati.SKIN);
+        musicSelectBox = new SelectBox<>(Assets.SKIN);
         musicSelectBox.setItems(EnumSet.allOf(Music.class).toArray(new Music[0]));
 
         // TODO
