@@ -38,7 +38,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * @param posY Die neue Y-Koordinate.
      */
     public PacketAvatarMove(final float posX, final float posY) {
-        this(AvatarAction.UPDATE_AVATAR, null, posX, posY);
+        this(AvatarAction.MOVE_AVATAR, null, posX, posY);
     }
 
     /**
@@ -136,11 +136,11 @@ public class PacketAvatarMove implements Packet<PacketListener> {
         /**
          * Führt dazu, dass ein neuer Avatar auf einer Karte dargestellt wird.
          */
-        UPDATE_AVATAR,
+        MOVE_AVATAR,
 
         /**
          * Führt dazu, dass die Position eines Avatars auf einer Karte aktualisiert wird.
          */
-        SPAWN_AVATAR
+        SPAWN_AVATAR,
     }
 }

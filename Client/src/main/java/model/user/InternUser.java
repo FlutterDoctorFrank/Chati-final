@@ -132,9 +132,16 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void setPosition(float posX, float posY) {
+    public void setPosition(final float posX, final float posY, final boolean spawn) {
         currentLocation = new Location(posX, posY);
-        UserManager.getInstance().getModelObserver().setInternUserPositionChanged();
+
+        if (spawn) {
+            /*
+             * Die View soll über die neue Position nur benachrichtigt werden, wenn der Benutzer an dieser Position
+             * gespawnt oder an diese Position teleportiert wird.
+             */
+            UserManager.getInstance().getModelObserver().setInternUserPositionChanged();
+        }
     }
 
     @Override

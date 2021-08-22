@@ -139,9 +139,9 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         }
 
         if (this.user.getWorld() != null) {
-            if (packet.getAction() != AvatarAction.UPDATE_AVATAR) {
+            if (packet.getAction() != AvatarAction.MOVE_AVATAR) {
                 // Die Client-Anwendung darf nur die Aktion UPDATE_AVATAR versenden.
-                this.logInvalidPacket(packet, "Only Avatar-Action UPDATE_AVATAR is allowed");
+                this.logInvalidPacket(packet, "Only Avatar-Action MOVE_AVATAR is allowed");
                 return;
             }
 
@@ -164,7 +164,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 float posX = this.user.getLocation().getPosX();
                 float posY = this.user.getLocation().getPosY();
 
-                this.send(new PacketAvatarMove(AvatarAction.UPDATE_AVATAR, this.user.getUserId(), posX, posY));
+                this.send(new PacketAvatarMove(AvatarAction.MOVE_AVATAR, this.user.getUserId(), posX, posY));
             }
         } else {
             this.logUnexpectedPacket(packet, "Can not move while not in a world");

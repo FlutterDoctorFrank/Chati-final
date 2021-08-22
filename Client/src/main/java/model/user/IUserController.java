@@ -110,5 +110,5 @@ public interface IUserController {
      * @param posY Y-Koordinate.
      * @see Location
      */
-    void setPosition(float posX, float posY);
+    void setPosition(float posX, float posY, boolean spawn);
 }

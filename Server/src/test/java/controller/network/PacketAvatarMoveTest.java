@@ -73,7 +73,7 @@ public class PacketAvatarMoveTest extends PacketServerTest {
 
         final PacketAvatarMove packet = this.getPacket(SendAction.AVATAR_MOVE, PacketAvatarMove.class, target);
 
-        Assert.assertEquals(AvatarAction.UPDATE_AVATAR, packet.getAction());
+        Assert.assertEquals(AvatarAction.MOVE_AVATAR, packet.getAction());
         Assert.assertNotNull(packet.getUserId());
         Assert.assertEquals(target.getUserId(), packet.getUserId());
         Assert.assertEquals(location.getPosX(), packet.getPosX(), 0.0f);

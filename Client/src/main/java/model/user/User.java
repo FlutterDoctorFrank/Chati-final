@@ -176,9 +176,14 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void setPosition(float posX, float posY) {
+    public void setPosition(final float posX, final float posY, final boolean spawn) {
         currentLocation = new Location(posX, posY);
         UserManager.getInstance().getModelObserver().setUserPositionChanged();
+
+        /*
+         * Hier muss gegebenenfalls die View darüber informiert werden, ob der Benutzer an die neue Position
+         * teleportiert oder bewegt werden soll.
+         */
     }
 
     @Override

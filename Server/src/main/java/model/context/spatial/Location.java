@@ -1,7 +1,6 @@
 package model.context.spatial;
 
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
 
 /**

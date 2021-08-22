@@ -176,12 +176,17 @@ public class User implements IUser {
         if (!currentLocation.getRoom().isLegal(posX, posY)) {
             throw new IllegalPositionException("Position is illegal.", this, posX, posY);
         }
-        // Setze die neue Position des Benutzers.
-        Location oldLocation = currentLocation;
-        currentLocation = new Location(currentLocation.getRoom(), posX, posY);
-        updateArea(oldLocation, currentLocation);
-        currentLocation.getRoom().getUsers().values().stream().filter(Predicate.not(this::equals))
+
+        setPosition(posX, posY);
+        // Hier erhält der eigene Benutzer eine Bestätigung der Bewegung:
+        currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
+
+        /*
+        // Hier erhält der eigene Benutzer keine Bestätigung der Bewegung:
+        currentLocation.getRoom().getUsers().values().stream()
+                .filter(Predicate.not(this::equals))
                 .forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
+         */
     }
 
     @Override
@@ -355,10 +360,35 @@ public class User implements IUser {
      * @param newLocation Position, an die Benutzer teleportiert werden soll.
      */
     public void teleport(@NotNull final Location newLocation) {
-        Location oldLocation = currentLocation;
-        currentLocation = newLocation;
-        updateArea(oldLocation, currentLocation);
-        currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
+        if (currentLocation != null) {
+            if (currentLocation.getRoom().equals(newLocation.getRoom())) {
+                // Der Raum ist gleich. Position im Raum aktualisieren und die Teleportation den Benutzern mitteilen.
+                setPosition(newLocation.getPosX(), newLocation.getPosY());
+
+                currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_SPAWN, this));
+                return;
+            }
+
+            currentLocation.getRoom().removeUser(this);
+        }
+
+        currentLocation = new Location(newLocation.getRoom(), newLocation.getPosX(), newLocation.getPosY());
+        currentLocation.getRoom().addUser(this); // Falls der Benutzer noch nicht im Raum ist, wird er jetzt hinzugefügt.
+        currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_SPAWN, this));
+        currentLocation.getArea().addUser(this);
+    }
+
+    public void setPosition(final float posX, final float posY) {
+        Area currentArea = currentLocation.getArea();
+        currentLocation.setPosition(posX, posY);
+        // Ermittle, ob sich der Bereich des Benutzers geändert hat, entferne ihn aus den verlassenen Bereichen und
+        // füge ihn zu den betretenen Bereichen hinzu.
+        Area newArea = currentLocation.getArea();
+        if (!currentArea.equals(newArea)) {
+            Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
+            lastCommonAncestor.getChildren().values().forEach(child -> child.removeUser(this));
+            newArea.addUser(this);
+        }
     }
 
     /**
@@ -379,7 +409,7 @@ public class User implements IUser {
     }
 
     /**
-     * Wird von der Datenbank verwendet, um die initiale Menge von Freunden hinzuzufügen..
+     * Wird von der Datenbank verwendet, um die initiale Menge von Freunden hinzuzufügen.
      * @param friends Hinzuzufügende Benutzer.
      */
     public void addFriends(@NotNull final Map<UUID, User> friends) {

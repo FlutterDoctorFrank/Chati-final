@@ -106,6 +106,8 @@ public class Room extends Area implements IRoom {
     public void addUser(@NotNull final User user) {
         if (!contains(user)) {
             user.send(SendAction.CONTEXT_JOIN, this);
+            // Sende die Positionen der anderen Benutzer an den beitretenden Benutzer.
+            containedUsers.values().forEach(other -> user.send(SendAction.AVATAR_SPAWN, other));
 
             super.addUser(user);
 

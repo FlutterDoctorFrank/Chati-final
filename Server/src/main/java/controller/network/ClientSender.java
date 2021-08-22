@@ -209,6 +209,26 @@ public interface ClientSender {
             }
         },
 
+        AVATAR_SPAWN {
+            @Override
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
+                if (object instanceof IUser) {
+                    final IUser other = (IUser) object;
+
+                    if (other.getLocation() == null) {
+                        throw new IllegalStateException("User has no available location");
+                    }
+
+                    float posX = other.getLocation().getPosX();
+                    float posY = other.getLocation().getPosY();
+
+                    return new PacketAvatarMove(AvatarAction.SPAWN_AVATAR, other.getUserId(), posX, posY);
+                } else {
+                    throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
+                }
+            }
+        },
+
         /**
          * Information, dass die Position eines Avatars im Raum aktualisiert werden soll.
          * <p>
@@ -222,20 +242,13 @@ public interface ClientSender {
                     final IUser other = (IUser) object;
 
                     if (self.getLocation() == null || other.getLocation() == null) {
-                        throw new IllegalStateException("Users has no available locations");
+                        throw new IllegalStateException("User has no available location");
                     }
 
                     float posX = other.getLocation().getPosX();
                     float posY = other.getLocation().getPosY();
-                    AvatarAction action;
 
-                    if (self.getLocation().getRoom().equals(other.getLocation().getRoom())) {
-                        action = AvatarAction.UPDATE_AVATAR;
-                    } else {
-                        action = AvatarAction.SPAWN_AVATAR;
-                    }
-
-                    return new PacketAvatarMove(action, other.getUserId(), posX, posY);
+                    return new PacketAvatarMove(AvatarAction.MOVE_AVATAR, other.getUserId(), posX, posY);
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }

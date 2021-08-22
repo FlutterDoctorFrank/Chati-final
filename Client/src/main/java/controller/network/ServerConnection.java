@@ -124,6 +124,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
         if (this.userId != null) {
             this.manager.getUserManager().logout();
+            this.manager.getView().logout();
         }
     }
 
@@ -153,9 +154,12 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                 switch (packet.getAction()) {
                     case SPAWN_AVATAR:
                         user.setInCurrentRoom(true);
+                        user.setPosition(packet.getPosX(), packet.getPosY(), true);
+                        break;
 
-                    case UPDATE_AVATAR:
-                        user.setPosition(packet.getPosX(), packet.getPosY());
+                    case MOVE_AVATAR:
+                        user.setInCurrentRoom(true);
+                        user.setPosition(packet.getPosX(), packet.getPosY(), false);
                         break;
 
                     case REMOVE_AVATAR:
