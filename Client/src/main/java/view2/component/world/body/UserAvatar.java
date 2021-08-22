@@ -150,7 +150,7 @@ public class UserAvatar extends Sprite {
         }
         Vector2 destination = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
-        if (body.getPosition().dst(destination) <= velocity * WorldScreen.PPM / WorldScreen.WORLD_STEP) {
+        if (body.getPosition().dst(destination) <= velocity / WorldScreen.WORLD_STEP) {
             body.setLinearVelocity(0, 0);
         } else {
             Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
