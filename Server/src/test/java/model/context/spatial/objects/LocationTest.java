@@ -38,10 +38,10 @@ public class LocationTest {
 
     @Test
     public void distanceTest() {
-        Location second_location = new Location(test_world.getPublicRoom(), 4, 5);
+        Location second_location = new Location(test_world.getPublicRoom(), 4.0f, 5.0f);
 
-        Assert.assertEquals(4, second_location.getPosX());
-        Assert.assertEquals(5, second_location.getPosY());
+        Assert.assertEquals(4.0f, second_location.getPosX(), 0.0f);
+        Assert.assertEquals(5.0f, second_location.getPosY(), 0.0f);
 
         Assert.assertEquals(test_world.getPublicRoom(), this.test_location.getRoom());
 

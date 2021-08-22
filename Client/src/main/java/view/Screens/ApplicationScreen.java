@@ -22,16 +22,13 @@ import controller.network.ServerSender;
 import model.context.spatial.ILocationView;
 import model.user.IInternUserView;
 import model.user.IUserView;
-import org.lwjgl.Sys;
 import view.Chati;
 import view.Sprites.Avatar;
 import view.Sprites.InteractiveTileObject;
 import view.Sprites.UserAvatar;
 import view.UIComponents.Hud;
 import view.UIComponents.LoginTable;
-
 import java.util.*;
-import java.util.function.ToDoubleBiFunction;
 
 public class ApplicationScreen implements Screen {
     protected Chati game;
