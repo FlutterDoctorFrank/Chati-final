@@ -1,4 +1,4 @@
-package view2.component.world.objectMenus;
+package view2.component.world.objectMenu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.context.ContextID;
 import view2.Assets;
-import view2.Chati;
 import view2.component.ChatiTable;
 import view2.component.ChatiWindow;
 import view2.component.menu.ContextEntry;

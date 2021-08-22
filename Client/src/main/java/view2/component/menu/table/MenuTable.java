@@ -1,4 +1,4 @@
-package view2.component.menu;
+package view2.component.menu.table;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;

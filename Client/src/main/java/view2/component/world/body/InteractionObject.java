@@ -1,8 +1,9 @@
-package view2.component.world;
+package view2.component.world.body;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.*;
+import view2.component.world.WorldScreen;
 
 public class InteractionObject {
 
@@ -21,7 +22,7 @@ public class InteractionObject {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox((rectangle.getWidth() / 2) / WorldScreen.PPM, (rectangle.getHeight() / 2) / WorldScreen.PPM);
         fixtureDef.filter.categoryBits = WorldScreen.OBJECT_BIT;
-        fixtureDef.filter.maskBits = WorldScreen.AVATAR_BIT;
+        fixtureDef.filter.maskBits = WorldScreen.INTERN_USER_BIT;
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
 

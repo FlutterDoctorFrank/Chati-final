@@ -1,6 +1,5 @@
-package view2.component.menu;
+package view2.component.menu.table;
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 
@@ -8,6 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import view2.Assets;
 import view2.Chati;
+import view2.component.menu.ContextEntry;
+import view2.component.menu.MenuResponse;
+import view2.component.menu.MenuScreen;
 
 public class StartTable extends MenuTable {
 

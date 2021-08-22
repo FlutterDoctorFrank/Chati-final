@@ -1,4 +1,4 @@
-package view2.component.menu;
+package view2.component.menu.table;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -10,6 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import view2.Assets;
 import view2.Chati;
+import view2.component.menu.MenuResponse;
+import view2.component.menu.MenuScreen;
 
 public class LoginTable extends MenuTable {
 

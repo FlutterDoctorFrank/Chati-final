@@ -1,13 +1,15 @@
 package view2.component.menu;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import model.context.ContextID;
 import view2.Chati;
 import view2.component.AbstractScreen;
 import view2.component.hud.HeadUpDisplay;
+import view2.component.menu.table.LoginTable;
+import view2.component.menu.table.MenuTable;
+import view2.component.menu.table.StartTable;
 import view2.component.world.WorldScreen;
 
 import java.util.*;
@@ -173,11 +175,11 @@ public class MenuScreen extends AbstractScreen {
         stage.addActor(currentMenuTable = table);
     }
 
-    protected void setPendingResponse(MenuResponse pendingMenuResponse) {
+    public void setPendingResponse(MenuResponse pendingMenuResponse) {
         this.pendingMenuResponse = pendingMenuResponse;
     }
 
-    protected Set<ContextEntry> getWorlds() {
+    public Set<ContextEntry> getWorlds() {
         return Collections.unmodifiableSet(worlds);
     }
 

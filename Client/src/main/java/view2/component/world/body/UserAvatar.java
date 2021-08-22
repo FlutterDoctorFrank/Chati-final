@@ -1,11 +1,11 @@
-package view2.component.world;
+package view2.component.world.body;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import model.user.IUserView;
+import view2.component.world.WorldScreen;
 
 public class UserAvatar extends Sprite {
 
@@ -31,90 +31,67 @@ public class UserAvatar extends Sprite {
 
     public UserAvatar(IUserView user, World world) {
         this.user = user;
-
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-
         this.body = world.createBody(bodyDef);
-
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.filter.categoryBits = WorldScreen.AVATAR_BIT;
-        fixtureDef.filter.maskBits = WorldScreen.OBJECT_BIT | WorldScreen.GROUND_BIT;
+        fixtureDef.filter.categoryBits = WorldScreen.USER_BIT;
+        fixtureDef.filter.maskBits = 0;
         PolygonShape shape = new PolygonShape();
         shape.setAsBox((32 - 1) / WorldScreen.PPM / 2, (32 - 1) / WorldScreen.PPM / 2);
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
         body.setUserData(BodyType.USER);
 
+        initializeSprite();
         this.stateTimer = 0;
-
-        initializeTextures();
+        currentDirection = Direction.DOWN;
+        previousDirection = Direction.DOWN;
     }
 
     @Override
     public void draw(Batch batch, float delta) {
         //InteractButtonAnimation animation = new InteractButtonAnimation();
         //animation.draw(batch);
-
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getCurrentFrameRegion(delta));
         super.draw(batch);
     }
 
-    private void initializeTextures() {
-        TextureAtlas atlas = new TextureAtlas("skins/Adam/Adam.pack");
+    private void initializeSprite() {
+        TextureAtlas atlas = new TextureAtlas(user.getAvatar().getPath());
 
-        TextureAtlas.AtlasRegion stand = atlas.findRegion("Adam_idle");
+        TextureAtlas.AtlasRegion stand = atlas.findRegion(user.getAvatar().getIdleRegion());
         avatarStandRight = new TextureRegion(stand, 0, 16, 32, 48);
         avatarStandUp = new TextureRegion(stand, 32, 16, 32, 48);
         avatarStandLeft = new TextureRegion(stand, 64, 16, 32, 48);
-        avatarStandDown = new TextureRegion(atlas.findRegion("Adam_idle"), 96, 16, 32, 48); /** Alles hardgecoded... */
-        setBounds(0, 0, 32 / WorldScreen.PPM, 32 / WorldScreen.PPM);
-        setRegion(avatarStandDown);
-        currentDirection = Direction.DOWN;
-        previousDirection = Direction.DOWN;
+        avatarStandDown = new TextureRegion(stand, 96, 16, 32, 48); /** Alles hardgecoded... */
 
-        TextureAtlas.AtlasRegion run = atlas.findRegion("Adam_run");
+        TextureAtlas.AtlasRegion run = atlas.findRegion(user.getAvatar().getRunRegion());
         Array<TextureRegion> frames = new Array<>();
-
         //running right animation
-        for (int i = 0; i < 6; i++) {
-            frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
-        }
+        for (int i = 0; i < 6; i++) frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
         avatarRunRight = new Animation<>(0.1f, frames);
         frames.clear();
-
         //running up animation
-        for (int i = 6; i < 12; i++) {
-            frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
-        }
+        for (int i = 6; i < 12; i++) frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
         avatarRunUp = new Animation<>(0.1f, frames);
         frames.clear();
-
         //running left animation
-        for (int i = 12; i < 18; i++) {
-            frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
-        }
+        for (int i = 12; i < 18; i++) frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
         avatarRunLeft = new Animation<>(0.1f, frames);
         frames.clear();
-
         //running down animation
-        for (int i = 18; i < 24; i++) {
-            frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
-        }
+        for (int i = 18; i < 24; i++) frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
         avatarRunDown = new Animation<>(0.1f, frames);
         frames.clear();
 
-        //dance animation
-        for (int i = 0; i < 5; i++) {
-            frames.add(new TextureRegion(atlas.findRegion("Adam_idle"), i * 32, 16, 32, 48));
-        }
-        // avatarDance = new Animation<>(0.1f, frames);
-        frames.clear();
+        setBounds(0, 0, 32 / WorldScreen.PPM, 32 / WorldScreen.PPM);
+        setRegion(avatarStandDown);
     }
 
     private TextureRegion getCurrentFrameRegion(float delta) {
-        currentDirection = getDirection();
+        currentDirection = getCurrentDirection();
         stateTimer = currentDirection == previousDirection ? stateTimer + delta : 0;
         if (currentDirection == null) {
             if (previousDirection == Direction.UP) {
@@ -142,7 +119,7 @@ public class UserAvatar extends Sprite {
         }
     }
 
-    private Direction getDirection() {
+    private Direction getCurrentDirection() {
         Vector2 velocity = body.getLinearVelocity();
         if (velocity.y > Math.abs(velocity.x)) {
             return Direction.UP;
@@ -159,14 +136,6 @@ public class UserAvatar extends Sprite {
         return null;
     }
 
-    public IUserView getUser() {
-        return user;
-    }
-
-    public Vector2 getPosition() {
-        return body.getPosition();
-    }
-
     public void teleport() {
         Vector2 newPosition = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
@@ -181,12 +150,20 @@ public class UserAvatar extends Sprite {
         }
         Vector2 destination = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
                 user.getCurrentLocation().getPosY() / WorldScreen.PPM);
-        if (body.getPosition().dst(destination) <= velocity * WorldScreen.PPM / Gdx.graphics.getFramesPerSecond()) {
+        if (body.getPosition().dst(destination) <= velocity * WorldScreen.PPM / WorldScreen.WORLD_STEP) {
             body.setLinearVelocity(0, 0);
         } else {
             Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
             body.setLinearVelocity(velocityVector);
         }
+    }
+
+    public IUserView getUser() {
+        return user;
+    }
+
+    public Vector2 getPosition() {
+        return body.getPosition();
     }
 
     public Body getBody() {

@@ -2,11 +2,7 @@ package view2;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import controller.network.ServerSender;
 import model.communication.message.MessageType;
 import model.context.ContextID;
@@ -16,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import view2.component.AbstractScreen;
 import view2.component.hud.ChatWindow;
 import view2.component.hud.HeadUpDisplay;
-import view2.component.menu.LoginTable;
+import view2.component.menu.table.LoginTable;
 import view2.component.menu.MenuScreen;
 import view2.component.world.WorldScreen;
 

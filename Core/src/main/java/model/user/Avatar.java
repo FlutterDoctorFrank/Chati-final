@@ -8,16 +8,21 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum Avatar implements Resource {
 
-    PLACEHOLDER("placeholder");
+    PLACEHOLDER("Adam/Adam.pack", "Adam_idle", "Adam_run"),
+    ADAM("Adam/Adam.pack", "Adam_idle", "Adam_run");
 
     private static final String PATH = "avatars/";
 
     private final String name;
     private final String path;
+    private final String idleRegion;
+    private final String runRegion;
 
-    Avatar(@NotNull final String name) {
+    Avatar(@NotNull final String name, @NotNull final String idleRegion, @NotNull final String runRegion) {
         this.name = name;
         this.path = PATH + this.name.toLowerCase();
+        this.idleRegion = idleRegion;
+        this.runRegion = runRegion;
     }
 
     @Override
@@ -28,5 +33,13 @@ public enum Avatar implements Resource {
     @Override
     public @NotNull String getPath() {
         return this.path;
+    }
+
+    public @NotNull String getIdleRegion() {
+        return this.idleRegion;
+    }
+
+    public @NotNull String getRunRegion() {
+        return this.runRegion;
     }
 }

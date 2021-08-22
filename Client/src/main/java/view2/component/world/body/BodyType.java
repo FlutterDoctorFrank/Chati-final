@@ -1,4 +1,4 @@
-package view2.component.world;
+package view2.component.world.body;
 
 public enum BodyType {
     USER,

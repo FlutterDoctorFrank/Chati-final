@@ -1,10 +1,13 @@
-package view2.component.world;
+package view2.component.world.body;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import controller.network.ServerSender;
 import model.user.IInternUserView;
 import view2.Chati;
+import view2.component.world.WorldScreen;
 
 import java.util.*;
 
@@ -16,6 +19,14 @@ public class InternUserAvatar extends UserAvatar {
     public InternUserAvatar(IInternUserView internUser, World world) {
         super(internUser, world);
         body.setUserData(BodyType.INTERN_USER);
+        body.destroyFixture(body.getFixtureList().get(0));
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.filter.categoryBits = WorldScreen.INTERN_USER_BIT;
+        fixtureDef.filter.maskBits = WorldScreen.OBJECT_BIT | WorldScreen.BORDER_BIT;
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox((32 - 1) / WorldScreen.PPM / 2, (32 - 1) / WorldScreen.PPM / 2);
+        fixtureDef.shape = shape;
+        body.createFixture(fixtureDef);
         currentDirectionalInputs = new LinkedList<>();
     }
 

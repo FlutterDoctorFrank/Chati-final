@@ -2,7 +2,6 @@ package view2.component.hud.settings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -14,9 +13,9 @@ import view2.Assets;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuTable;
-import view2.component.menu.LoginTable;
+import view2.component.menu.table.LoginTable;
 import view2.component.menu.MenuScreen;
-import view2.component.menu.StartTable;
+import view2.component.menu.table.StartTable;
 
 public class SettingsTable extends HudMenuTable {
 

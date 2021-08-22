@@ -1,42 +1,30 @@
-package view2.component.menu;
+package view2.component.menu.table;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import view2.Assets;
+import view2.component.menu.MenuScreen;
 
-public class ProfileSettingsTable extends MenuTable {
+public class AvatarSelectTable extends MenuTable {
 
-    private TextButton changePasswordButton;
-    private TextButton deleteAccountButton;
+    private TextButton confirmButton;
     private TextButton cancelButton;
 
     @Override
     protected void create() {
-        infoLabel.setText("Bitte wähle eine Aktion aus!");
+        infoLabel.setText("Bitte wähle einen Avatar!");
 
-        changePasswordButton = new TextButton("Passwort ändern", Assets.SKIN);
-        changePasswordButton.addListener(new ClickListener() {
+        confirmButton = new TextButton("Bestätigen", Assets.SKIN);
+        confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                MenuScreen.getInstance().setMenuTable(new ChangePasswordTable());
-            }
-        });
-
-        deleteAccountButton = new TextButton("Konto löschen", Assets.SKIN);
-        deleteAccountButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                MenuScreen.getInstance().setMenuTable(new DeleteAccountTable());
+                MenuScreen.getInstance().setMenuTable(new StartTable());
             }
         });
 
@@ -58,12 +46,12 @@ public class ProfileSettingsTable extends MenuTable {
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().fillX().expandX();
         container.add(infoLabel).row();
+        // avatar scrollpane kommt hier rein
         Table buttonContainer = new Table();
         buttonContainer.defaults().height(ROW_HEIGHT).fillX().expandX();
-        buttonContainer.add(changePasswordButton).spaceRight(SPACING);
-        buttonContainer.add(deleteAccountButton);
-        container.add(buttonContainer).row();
-        container.add(cancelButton);
+        buttonContainer.add(confirmButton).spaceRight(SPACING);
+        buttonContainer.add(cancelButton);
+        container.add(buttonContainer);
         add(container).width(ROW_WIDTH);
     }
 

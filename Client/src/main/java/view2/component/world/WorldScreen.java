@@ -20,19 +20,24 @@ import model.user.IUserView;
 import view2.Chati;
 import view2.component.AbstractScreen;
 import view2.component.hud.HeadUpDisplay;
+import view2.component.world.body.InteractionObject;
+import view2.component.world.body.InternUserAvatar;
+import view2.component.world.body.UserAvatar;
 
 import java.util.*;
 
 public class WorldScreen extends AbstractScreen {
 
-    public static final float PPM = 10; //pixels per meter
+    public static final float PPM = 10;
     public static final float DEFAULT_ZOOM = 0.6f;
     public static final float MIN_ZOOM = 0.4f;
     public static final float MAX_ZOOM = 0.8f;
     public static final float ZOOM_STEP = 0.01f;
-    public static final short GROUND_BIT = 1;
-    public static final short AVATAR_BIT = 2;
-    public static final short OBJECT_BIT = 4;
+    public static final short BORDER_BIT = 1;
+    public static final short USER_BIT = 2;
+    public static final short INTERN_USER_BIT = 4;
+    public static final short OBJECT_BIT = 8;
+    public static final float WORLD_STEP = 30;
     private static final SpriteBatch SPRITE_BATCH = new SpriteBatch();
 
     private static WorldScreen worldScreen;
@@ -53,9 +58,9 @@ public class WorldScreen extends AbstractScreen {
         this.camera = new OrthographicCamera();
         this.camera.zoom = DEFAULT_ZOOM;
         this.viewport = new FitViewport(Gdx.graphics.getWidth() / PPM, Gdx.graphics.getHeight() / PPM, camera);
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(null, 1 / PPM);
-        world = new World(new Vector2(0, 0), true);
-        world.setContactListener(new WorldContactListener());
+        this.tiledMapRenderer = new OrthogonalTiledMapRenderer(null, 1 / PPM);
+        this.world = new World(new Vector2(0, 0), true);
+        this.world.setContactListener(new WorldContactListener());
         this.debugRenderer = new Box2DDebugRenderer();
     }
 
@@ -68,10 +73,7 @@ public class WorldScreen extends AbstractScreen {
             setMap();
             createBorders();
             createInteractionObjects();
-
-            float spawnPosX = (float) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosX");
-            float spawnPosY = (float) WorldScreen.getInstance().getTiledMap().getProperties().get("spawnPosY");
-            internUserAvatar.body.setTransform(spawnPosX / WorldScreen.PPM, spawnPosY / WorldScreen.PPM, internUserAvatar.body.getAngle());
+            internUserAvatar.teleport();
         }
 
         if (tiledMapRenderer.getMap() != null) {
@@ -89,7 +91,7 @@ public class WorldScreen extends AbstractScreen {
         externUserAvatars.values().forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
         SPRITE_BATCH.end();
 
-        world.step(1 / 30f, 6, 2); /** Was sind das für Zahlen? Kein hardcoden, irgendwo Konstanten setzen... Wo kommen die her?*/
+        world.step(1 / WORLD_STEP, 6, 2); /** Was sind das für Zahlen? Kein hardcoden, irgendwo Konstanten setzen... Wo kommen die her?*/
         camera.update();
         tiledMapRenderer.setView(camera);
         SPRITE_BATCH.setProjectionMatrix(stage.getCamera().combined);
@@ -174,7 +176,8 @@ public class WorldScreen extends AbstractScreen {
 
     private void updateExternUserAvatars() {
         if (Chati.getInstance().isUserPositionChanged()) {
-            Chati.getInstance().getUserManager().getUsersInRoom().values().forEach(externUser -> {
+            Chati.getInstance().getUserManager().getActiveUsers().values().forEach(externUser -> {
+                // TODO : Ändere getActiveUsers() zu getUsersInRoom() wenn Sven das Problem mit der Flag gelöst hat.
                 if (!externUserAvatars.containsKey(externUser)) {
                     UserAvatar newUserAvatar = new UserAvatar(externUser, world);
                     externUserAvatars.put(externUser, newUserAvatar);
@@ -184,7 +187,8 @@ public class WorldScreen extends AbstractScreen {
             Iterator<Map.Entry<IUserView, UserAvatar>> iterator = externUserAvatars.entrySet().iterator();
             while (iterator.hasNext()) {
                 UserAvatar userAvatar = iterator.next().getValue();
-                if (!Chati.getInstance().getUserManager().getUsersInRoom().containsValue(userAvatar.getUser())) {
+                if (!Chati.getInstance().getUserManager().getActiveUsers().containsValue(userAvatar.getUser())) {
+                    // TODO : Ändere getActiveUsers() zu getUsersInRoom() wenn Sven das Problem mit der Flag gelöst hat.
                     world.destroyBody(userAvatar.getBody());
                     iterator.remove();
                 }

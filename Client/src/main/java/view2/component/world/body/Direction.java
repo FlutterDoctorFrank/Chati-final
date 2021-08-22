@@ -1,4 +1,6 @@
-package view2.component.world;
+package view2.component.world.body;
+
+import view2.component.world.WorldScreen;
 
 public enum Direction {
     UP {

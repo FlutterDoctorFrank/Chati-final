@@ -1,6 +1,7 @@
 package view2.component.world;
 
 import com.badlogic.gdx.physics.box2d.*;
+import view2.component.world.body.BodyType;
 
 public class WorldContactListener implements ContactListener {
 

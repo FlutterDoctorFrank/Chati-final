@@ -1,4 +1,4 @@
-package view2.component.world.objectMenus;
+package view2.component.world.objectMenu;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.*;

@@ -1,7 +1,6 @@
-package view2.component.menu;
+package view2.component.menu.table;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -11,6 +10,10 @@ import controller.network.ServerSender;
 import model.context.spatial.SpatialMap;
 import view2.Assets;
 import view2.Chati;
+import view2.component.menu.MenuResponse;
+import view2.component.menu.MenuScreen;
+import view2.component.menu.table.MenuTable;
+import view2.component.menu.table.StartTable;
 
 import java.util.EnumSet;
 
