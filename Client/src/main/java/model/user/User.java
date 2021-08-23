@@ -286,12 +286,7 @@ public class User implements IUserController, IUserView {
 
     @Override
     public boolean isSprinting() {
-        if (isSprinting) {
-            isSprinting = false;
-            return true;
-        } else {
-            return false;
-        }
+        return isSprinting;
     }
 
     @Override

@@ -157,7 +157,6 @@ public class UserAvatar extends Sprite {
             teleport();
         } else {
             float velocity = DEFAULT_VELOCITY;
-            System.out.println(user.isSprinting());
             if (user.isSprinting()) {
                 velocity *= SPRINT_VELOCITY_FACTOR;
             }
