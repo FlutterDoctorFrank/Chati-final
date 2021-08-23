@@ -1,6 +1,7 @@
 package view2.component.world.body;
 
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
@@ -160,7 +161,7 @@ public class UserAvatar extends Sprite {
             float distance = body.getPosition().dst(destination);
 
             float velocity = DEFAULT_VELOCITY;
-            if (distance * WorldScreen.WORLD_STEP > velocity) {
+            if (Math.abs(distance * WorldScreen.WORLD_STEP - velocity) > MathUtils.FLOAT_ROUNDING_ERROR) {
                 velocity *= SPRINT_VELOCITY_FACTOR;
             }
 
@@ -169,7 +170,7 @@ public class UserAvatar extends Sprite {
             } else {
                 Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor();
                 if (distance * WorldScreen.WORLD_STEP <= velocity) {
-                    body.setLinearVelocity(velocityVector.scl(WorldScreen.WORLD_STEP * distance));
+                    body.setLinearVelocity(velocityVector.scl(distance * WorldScreen.WORLD_STEP));
                 } else {
                     body.setLinearVelocity(velocityVector.scl(velocity));
                 }
