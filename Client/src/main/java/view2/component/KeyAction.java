@@ -9,6 +9,7 @@ public enum KeyAction {
     MOVE_DOWN(Input.Keys.DOWN, Input.Keys.S),
     MOVE_RIGHT(Input.Keys.RIGHT, Input.Keys.D),
     SPRINT(Input.Keys.SHIFT_LEFT, Input.Keys.SHIFT_RIGHT),
+    SHOW_NAMES(Input.Keys.TAB),
     INTERACT(Input.Keys.E),
     OPEN_CHAT(Input.Keys.SPACE),
     SEND_CHAT_MESSAGE(Input.Keys.ENTER, Input.Keys.NUMPAD_ENTER),

@@ -10,6 +10,7 @@ public class WorldInputProcessor implements InputProcessor {
     private boolean moveDownPressed;
     private boolean moveRightPressed;
     private boolean sprintPressed;
+    private boolean showNamesPressed;
 
     @Override
     public boolean keyDown(int keycode) {
@@ -27,6 +28,9 @@ public class WorldInputProcessor implements InputProcessor {
         }
         if (KeyAction.getAction(keycode) == KeyAction.SPRINT) {
             sprintPressed = true;
+        }
+        if (KeyAction.getAction(keycode) == KeyAction.SHOW_NAMES) {
+            showNamesPressed = true;
         }
         if (KeyAction.getAction(keycode) == KeyAction.INTERACT) {
             WorldScreen.getInstance().getInternUserAvatar().interact();
@@ -50,6 +54,9 @@ public class WorldInputProcessor implements InputProcessor {
         }
         if (KeyAction.getAction(keycode) == KeyAction.SPRINT) {
             sprintPressed = false;
+        }
+        if (KeyAction.getAction(keycode) == KeyAction.SHOW_NAMES) {
+            showNamesPressed = false;
         }
         return true;
     }
@@ -103,5 +110,9 @@ public class WorldInputProcessor implements InputProcessor {
 
     public boolean isSprintPressed() {
         return sprintPressed;
+    }
+
+    public boolean isShowNamesPressed() {
+        return showNamesPressed;
     }
 }

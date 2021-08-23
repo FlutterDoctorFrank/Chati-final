@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import model.user.IUserView;
+import view2.Assets;
 import view2.component.world.WorldScreen;
 
 public class UserAvatar extends Sprite {
@@ -53,6 +54,13 @@ public class UserAvatar extends Sprite {
     public void draw(Batch batch, float delta) {
         //InteractButtonAnimation animation = new InteractButtonAnimation();
         //animation.draw(batch);
+        if (WorldScreen.getInstance().getWorldInputProcessor().isShowNamesPressed()) {
+            GlyphLayout glyphLayout = new GlyphLayout();
+            glyphLayout.setText(Assets.WORLD_FONT, user.getUsername());
+            Assets.WORLD_FONT.draw(batch, glyphLayout,
+                    body.getPosition().x - glyphLayout.width / 2, body.getPosition().y + getHeight());
+        }
+
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getCurrentFrameRegion(delta));
         super.draw(batch);

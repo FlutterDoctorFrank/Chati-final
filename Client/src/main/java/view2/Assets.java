@@ -69,12 +69,20 @@ public class Assets {
     public static final Drawable DISABLED_DELETE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_delete_grey.png")));
 
     public static final Skin SKIN = new Skin();
+    private static final int TITLE_FONT_SIZE = 20;
+    private static final int LABEL_FONT_SIZE = 22;
+    private static final int BUTTON_FONT_SIZE = 18;
+    private static final int WORLD_FONT_SIZE = 30;
+
+    public static BitmapFont WORLD_FONT;
+
 
     private Assets() {
     }
 
     public static void initialize() {
         initializeSkin(SKIN);
+        initializeWorldFont();
     }
 
     public static Skin getNewSkin() {
@@ -86,11 +94,11 @@ public class Assets {
     private static void initializeSkin(Skin skin) {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/font.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 20;
+        parameter.size = TITLE_FONT_SIZE;
         BitmapFont fontTitle = generator.generateFont(parameter);
-        parameter.size = 22;
+        parameter.size = LABEL_FONT_SIZE;
         BitmapFont fontLabel = generator.generateFont(parameter);
-        parameter.size = 18;
+        parameter.size = BUTTON_FONT_SIZE;
         BitmapFont fontButton = generator.generateFont(parameter);
         generator.dispose();
         skin.add("font-title", fontTitle);
@@ -98,5 +106,14 @@ public class Assets {
         skin.add("font-button", fontButton);
         skin.addRegions(new TextureAtlas(Gdx.files.internal("shadeui/uiskin.atlas")));
         skin.load(Gdx.files.internal("shadeui/uiskin.json"));
+    }
+
+    private static void initializeWorldFont() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/font.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = WORLD_FONT_SIZE;
+        WORLD_FONT = generator.generateFont(parameter);
+        WORLD_FONT.getData().setScale(0.05f);
+        WORLD_FONT.setUseIntegerPositions(false);
     }
 }
