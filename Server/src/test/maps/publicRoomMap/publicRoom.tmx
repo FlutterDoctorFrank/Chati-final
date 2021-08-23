@@ -7,10 +7,10 @@
   <property name="text" type="bool" value="true"/>
   <property name="voice" type="bool" value="true"/>
  </properties>
- <tileset firstgid="1" source="pipo-map001_at.tsx"/>
- <tileset firstgid="481" source="0_Everything.tsx"/>
- <tileset firstgid="8313" source="pipo-map001.tsx"/>
- <tileset firstgid="8449" source="0_Everything_2.tsx"/>
+ <tileset firstgid="1" source="ground_2.tsx"/>
+ <tileset firstgid="481" source="everything_1.tsx"/>
+ <tileset firstgid="8313" source="ground_1.tsx"/>
+ <tileset firstgid="8449" source="everything_2.tsx"/>
  <layer id="1" name="Tile Layer 1" width="64" height="64">
   <data encoding="csv">
 637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,637,
