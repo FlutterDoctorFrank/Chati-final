@@ -173,9 +173,10 @@ public class UserListTable extends HudMenuTable {
         userListContainer.top();
 
         Table buttonContainer = new Table();
-        buttonContainer.add(friendTabButton).fillX().expandX();
-        buttonContainer.add(activeUserTabButton).fillX().expandX();
-        buttonContainer.add(bannedUserTabButton).fillX().expandX();
+        buttonContainer.defaults().colspan(3).growX();
+        buttonContainer.add(friendTabButton);
+        buttonContainer.add(activeUserTabButton);
+        buttonContainer.add(bannedUserTabButton);
         window.add(buttonContainer).fillX().expandX().row();
 
         window.add(userListScrollPane).fillX().expandX().fillY().expandY();

@@ -177,7 +177,10 @@ public class User implements IUser {
             throw new IllegalPositionException("Position is illegal.", this, posX, posY);
         }
 
-        setPosition(posX, posY);
+        Location oldLocation = currentLocation;
+        currentLocation = new Location(currentLocation.getRoom(), posX, posY);
+        updateArea(oldLocation, currentLocation);
+
         // Hier erhält der eigene Benutzer eine Bestätigung der Bewegung:
         currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
 
@@ -360,6 +363,19 @@ public class User implements IUser {
      * @param newLocation Position, an die Benutzer teleportiert werden soll.
      */
     public void teleport(@NotNull final Location newLocation) {
+        Location oldLocation = currentLocation;
+        currentLocation = new Location(newLocation.getRoom(), newLocation.getPosX(), newLocation.getPosY());
+        updateArea(oldLocation, newLocation);
+        currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_SPAWN, this));
+    }
+
+    /*
+    /**
+     * Teleportiert einen Benutzer an die angegebene Position.
+     * @param newLocation Position, an die Benutzer teleportiert werden soll.
+     */
+    /*
+    public void teleport(@NotNull final Location newLocation) {
         if (currentLocation != null) {
             if (currentLocation.getRoom().equals(newLocation.getRoom())) {
                 // Der Raum ist gleich. Position im Raum aktualisieren und die Teleportation den Benutzern mitteilen.
@@ -377,6 +393,7 @@ public class User implements IUser {
         currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_SPAWN, this));
         currentLocation.getArea().addUser(this);
     }
+     */
 
     public void setPosition(final float posX, final float posY) {
         Area currentArea = currentLocation.getArea();

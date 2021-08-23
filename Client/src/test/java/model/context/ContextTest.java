@@ -32,15 +32,6 @@ public class ContextTest {
             }
 
             @Override
-            public void setInternUserPositionChanged() {
-
-            }
-
-            @Override
-            public void setUserPositionChanged() {
-            }
-
-            @Override
             public void setWorldChanged() {
             }
 

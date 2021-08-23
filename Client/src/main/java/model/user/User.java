@@ -37,6 +37,14 @@ public class User implements IUserController, IUserView {
     /** Die aktuelle Position des Benutzers auf der Karte des aktuell angezeigten Raums. */
     protected Location currentLocation;
 
+    /** Eine Information darüber, ob dieser Benutzer durch ein Teleportieren zu seiner aktuellen Position bewegt
+     *  werden soll. */
+    private boolean isTeleporting;
+
+    /** Eine Information darüber, ob dieser Benutzer durch eine schnellere Laufanimation zu seiner aktuellen Position
+     *  bewegt werden soll. Wird nicht berücksichtigt, wenn sich der Benutzer teleportieren soll. */
+    private boolean isSprinting;
+
     /** Die Information, ob der Benutzer mit dem intern angemeldeten Benutzer dieses Clients befreundet ist. */
     private boolean isFriend;
 
@@ -112,7 +120,6 @@ public class User implements IUserController, IUserView {
     @Override
     public void setInCurrentRoom(boolean isInCurrentRoom) {
         this.isInCurrentRoom = isInCurrentRoom;
-        UserManager.getInstance().getModelObserver().setUserPositionChanged();
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
@@ -176,14 +183,10 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void setPosition(final float posX, final float posY, final boolean spawn) {
-        currentLocation = new Location(posX, posY);
-        UserManager.getInstance().getModelObserver().setUserPositionChanged();
-
-        /*
-         * Hier muss gegebenenfalls die View darüber informiert werden, ob der Benutzer an die neue Position
-         * teleportiert oder bewegt werden soll.
-         */
+    public void setLocation(final float posX, final float posY, final boolean isTeleporting, final boolean isSprinting) {
+        this.currentLocation = new Location(posX, posY);
+        this.isTeleporting = isTeleporting;
+        this.isSprinting = isSprinting;
     }
 
     @Override
@@ -268,14 +271,32 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public Location getCurrentLocation() {
-        //System.out.print(currentLocation.getPosX() + " " + currentLocation.getPosY() + " Client Model Get");
+    public Location getLocation() {
         return currentLocation;
     }
 
     @Override
+    public boolean isTeleporting() {
+        if (isTeleporting) {
+            isTeleporting = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isSprinting() {
+        if (isSprinting) {
+            isSprinting = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public boolean hasRole(Role role) {
-        //System.out.println("Area  " +UserManager.getInstance().getInternUser().getCurrentLocation().getArea().getContextId());
         return hasRole(UserManager.getInstance().getInternUser().getDeepestContext(), role);
     }
 

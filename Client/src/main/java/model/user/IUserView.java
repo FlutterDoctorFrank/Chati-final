@@ -95,7 +95,21 @@ public interface IUserView {
      * @return Die Position des Benutzers.
      * @see Location
      */
-    ILocationView getCurrentLocation();
+    ILocationView getLocation();
+
+    /**
+     * Gibt die Information zurück, ob der Benutzer zu seiner aktuellen Position teleportiert, oder mit einer
+     * Laufanimation bewegt werden soll.
+     * @return true, wenn der Benutzer teleportiert werden soll, sonst false.
+     */
+    boolean isTeleporting();
+
+    /**
+     * Gibt die Information zurück, ob der Benutzer zu seiner aktuellen Position mit einer schnelleren Laufanimation
+     * bewegt werden soll. Wird nicht berücksichtigt, wenn der Benutzer teleportiert werden soll.
+     * @return true, wenn der Benutzer mit einer schnelleren Laufanimation bewegt werden soll, sonst false.
+     */
+    boolean isSprinting();
 
     /**
      * Gibt zurück, ob der Benutzer eine Rolle im innersten Kontext oder einem übergeordneten Kontext besitzt,

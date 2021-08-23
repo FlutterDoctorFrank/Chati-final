@@ -113,14 +113,14 @@ public class LoginTable extends MenuTable {
     @Override
     protected void setLayout() {
         Table container = new Table();
-        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().fillX().expandX();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
         container.add(infoLabel).row();
         container.add(usernameField).row();
         container.add(passwordField).row();
         Table buttonContainer = new Table();
-        buttonContainer.defaults().height(ROW_HEIGHT).fillX().expandX();
-        buttonContainer.add(loginButton).spaceRight(SPACING);
-        buttonContainer.add(registerButton);
+        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
+        buttonContainer.add(loginButton).padRight(SPACING / 2);
+        buttonContainer.add(registerButton).padLeft(SPACING / 2);
         container.add(buttonContainer).row();
         container.add(exitButton);
         add(container).width(ROW_WIDTH);

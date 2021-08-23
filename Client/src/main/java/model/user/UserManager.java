@@ -66,11 +66,8 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     @Override
     public void removeExternUser(UUID userId) throws UserNotFoundException {
         throwIfNotExists(userId);
-        User removedUser = externUsers.remove(userId);
+        externUsers.remove(userId);
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
-        if (removedUser.isInCurrentRoom) {
-            UserManager.getInstance().getModelObserver().setUserPositionChanged();
-        }
     }
 
     @Override

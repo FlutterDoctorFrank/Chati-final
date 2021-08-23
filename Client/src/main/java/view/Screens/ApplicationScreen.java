@@ -99,7 +99,7 @@ public class ApplicationScreen implements Screen {
         avatars.add(userAvatarIndex, userAvatar);
         for (var entry : users.entrySet()) {
             if (!entry.getKey().equals(user.getUserId())) {
-                ILocationView position = entry.getValue().getCurrentLocation();
+                ILocationView position = entry.getValue().getLocation();
                 Avatar avatar = new Avatar(world, entry.getKey(), position.getPosX() / Chati.PPM, position.getPosY() / Chati.PPM);
                 avatars.add(avatar);
             }
@@ -296,10 +296,10 @@ public class ApplicationScreen implements Screen {
                 Avatar currentUserAvatar = findAvatar(entry.getValue().getUserId());
 
                 if (!currentUserAvatar.equals(null)) {
-                    Vector2 newPosition = new Vector2(entry.getValue().getCurrentLocation().getPosX(), entry.getValue().getCurrentLocation().getPosY());
+                    Vector2 newPosition = new Vector2(entry.getValue().getLocation().getPosX(), entry.getValue().getLocation().getPosY());
                     moveAvatar(currentUserAvatar, newPosition, false);
                 } else {
-                    Avatar newAvatar = new Avatar(world, entry.getKey(), entry.getValue().getCurrentLocation().getPosX(), entry.getValue().getCurrentLocation().getPosY());
+                    Avatar newAvatar = new Avatar(world, entry.getKey(), entry.getValue().getLocation().getPosX(), entry.getValue().getLocation().getPosY());
                     avatars.add(newAvatar);
                 }
             }

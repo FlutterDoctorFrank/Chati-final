@@ -12,7 +12,7 @@ public class UserAvatar extends Sprite {
     public static final float DEFAULT_VELOCITY = 12.5f;
     public static final float SPRINT_SPEED_FACTOR = 1.75f;
 
-    private final IUserView user;
+    protected final IUserView user;
     protected final Body body;
 
     private TextureRegion avatarStandUp;
@@ -137,24 +137,45 @@ public class UserAvatar extends Sprite {
     }
 
     public void teleport() {
-        Vector2 newPosition = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
-                user.getCurrentLocation().getPosY() / WorldScreen.PPM);
+        Vector2 newPosition = new Vector2(user.getLocation().getPosX() / WorldScreen.PPM,
+                user.getLocation().getPosY() / WorldScreen.PPM);
         body.setTransform(newPosition, body.getAngle());
         body.setAwake(true);
     }
 
+    /*
     public void move(boolean sprint) {
         float velocity = DEFAULT_VELOCITY;
         if (sprint) {
             velocity *= SPRINT_SPEED_FACTOR;
         }
-        Vector2 destination = new Vector2(user.getCurrentLocation().getPosX() / WorldScreen.PPM,
-                user.getCurrentLocation().getPosY() / WorldScreen.PPM);
+        Vector2 destination = new Vector2(user.getLocation().getPosX() / WorldScreen.PPM,
+                user.getLocation().getPosY() / WorldScreen.PPM);
         if (body.getPosition().dst(destination) <= velocity / WorldScreen.WORLD_STEP) {
             body.setLinearVelocity(0, 0);
         } else {
             Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
             body.setLinearVelocity(velocityVector);
+        }
+    }
+     */
+
+    public void update() {
+        if (user.isTeleporting()) {
+            teleport();
+        } else {
+            float velocity = DEFAULT_VELOCITY;
+            if (user.isSprinting()) {
+                velocity *= SPRINT_SPEED_FACTOR;
+            }
+            Vector2 destination = new Vector2(user.getLocation().getPosX() / WorldScreen.PPM,
+                    user.getLocation().getPosY() / WorldScreen.PPM);
+            if (body.getPosition().dst(destination) <= velocity / WorldScreen.WORLD_STEP) {
+                body.setLinearVelocity(0, 0);
+            } else {
+                Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
+                body.setLinearVelocity(velocityVector);
+            }
         }
     }
 

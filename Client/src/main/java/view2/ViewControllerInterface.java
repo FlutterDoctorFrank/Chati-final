@@ -28,7 +28,6 @@ public interface ViewControllerInterface {
     void createWorldResponse(boolean success, String messageKey);
     void deleteWorldResponse(boolean success, String messageKey);
     void joinWorldResponse(boolean success, String messageKey);
-    void updatePosition(UUID userID, int posX, int posY, boolean teleport, boolean sprint); //throws UserNotFoundException;
     void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message) throws UserNotFoundException;
     void playVoiceData(UUID userID, LocalDateTime timestamp, byte[] voiceData); //throws UserNotFoundException;
     void openMenu(Menu menu);

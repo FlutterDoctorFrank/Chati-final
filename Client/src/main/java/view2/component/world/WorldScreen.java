@@ -29,15 +29,17 @@ import java.util.*;
 public class WorldScreen extends AbstractScreen {
 
     public static final float PPM = 10;
-    public static final float DEFAULT_ZOOM = 0.6f;
-    public static final float MIN_ZOOM = 0.4f;
-    public static final float MAX_ZOOM = 0.8f;
-    public static final float ZOOM_STEP = 0.01f;
     public static final short BORDER_BIT = 1;
     public static final short USER_BIT = 2;
     public static final short INTERN_USER_BIT = 4;
     public static final short OBJECT_BIT = 8;
     public static final float WORLD_STEP = 30;
+    private static final int VELOCITY_ITERATIONS = 6;
+    private static final int POSITION_ITERATIONS = 2;
+    private static final float DEFAULT_ZOOM = 0.6f;
+    private static final float MIN_ZOOM = 0.4f;
+    private static final float MAX_ZOOM = 0.8f;
+    private static final float ZOOM_STEP = 0.01f;
     private static final SpriteBatch SPRITE_BATCH = new SpriteBatch();
 
     private static WorldScreen worldScreen;
@@ -68,44 +70,42 @@ public class WorldScreen extends AbstractScreen {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Wechsel den Raum, wenn die entsprechende Flag gesetzt ist.
         if (Chati.getInstance().isRoomChanged()) {
-            setMap();
-            createBorders();
-            createInteractionObjects();
-            internUserAvatar.teleport();
+            createMap();
+            loadExternUserAvatars();
         }
 
         if (tiledMapRenderer.getMap() != null) {
             tiledMapRenderer.render();
             debugRenderer.render(world, camera.combined);
 
-            updateInternUserAvatar();
-            updateExternUserAvatars();
-            updateCamera();
+            if (Chati.getInstance().isUserInfoChanged()) {
+                loadExternUserAvatars();
+            }
+            externUserAvatars.values().forEach(UserAvatar::update);
+
+            internUserAvatar.update();
+            updateCameraPosition();
+
+            SPRITE_BATCH.setProjectionMatrix(camera.combined);
+            SPRITE_BATCH.begin();
+            internUserAvatar.draw(SPRITE_BATCH, delta);
+            externUserAvatars.values().forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
+            SPRITE_BATCH.end();
+
+            world.step(1 / WORLD_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
+            camera.update();
+            tiledMapRenderer.setView(camera);
         }
 
-        SPRITE_BATCH.setProjectionMatrix(camera.combined);
-        SPRITE_BATCH.begin();
-        internUserAvatar.draw(SPRITE_BATCH, delta);
-        externUserAvatars.values().forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
-        SPRITE_BATCH.end();
-
-        world.step(1 / WORLD_STEP, 6, 2); /** Was sind das für Zahlen? Kein hardcoden, irgendwo Konstanten setzen... Wo kommen die her?*/
-        camera.update();
-        tiledMapRenderer.setView(camera);
         SPRITE_BATCH.setProjectionMatrix(stage.getCamera().combined);
         super.render(delta);
     }
 
     @Override
-    public void resize(int width, int height) {
-        viewport.update(width, height);
-    }
-
-    @Override
     public void show() {
         this.internUserAvatar = new InternUserAvatar(Chati.getInstance().getUserManager().getInternUserView(), world);
+        loadExternUserAvatars();
     }
 
     @Override
@@ -120,12 +120,37 @@ public class WorldScreen extends AbstractScreen {
     }
 
     @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height);
+    }
+
+    @Override
     public InputProcessor getInputProcessor() {
         return new InputMultiplexer(stage, worldInputProcessor);
     }
 
     public TiledMap getTiledMap() {
         return tiledMapRenderer.getMap();
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public WorldInputProcessor getWorldInputProcessor() {
+        return worldInputProcessor;
+    }
+
+    public InternUserAvatar getInternUserAvatar() {
+        return internUserAvatar;
+    }
+
+    public void zoom(boolean in) {
+        if (in && camera.zoom <= MAX_ZOOM) {
+            camera.zoom += ZOOM_STEP;
+        } else if (!in && camera.zoom >= WorldScreen.MIN_ZOOM) {
+            camera.zoom -= ZOOM_STEP;
+        }
     }
 
     public static WorldScreen getInstance() {
@@ -136,10 +161,12 @@ public class WorldScreen extends AbstractScreen {
         return worldScreen;
     }
 
-    private void setMap() {
+    private void createMap() {
         SpatialMap spatialMap = Chati.getInstance().getUserManager().getInternUserView().getCurrentRoom().getMap();
         TiledMap tiledMap = new TmxMapLoader().load(spatialMap.getPath());
         tiledMapRenderer.setMap(tiledMap);
+        createBorders();
+        createInteractionObjects();
     }
 
     private void createBorders() {
@@ -167,37 +194,25 @@ public class WorldScreen extends AbstractScreen {
         });
     }
 
-    private void updateInternUserAvatar() {
-        if (Chati.getInstance().isInternUserPositionChanged()) {
-            internUserAvatar.teleport();
-        }
-        internUserAvatar.move();
-    }
-
-    private void updateExternUserAvatars() {
-        if (Chati.getInstance().isUserPositionChanged()) {
-            Chati.getInstance().getUserManager().getActiveUsers().values().forEach(externUser -> {
-                // TODO : Ändere getActiveUsers() zu getUsersInRoom() wenn Sven das Problem mit der Flag gelöst hat.
-                if (!externUserAvatars.containsKey(externUser)) {
-                    UserAvatar newUserAvatar = new UserAvatar(externUser, world);
-                    externUserAvatars.put(externUser, newUserAvatar);
-                    newUserAvatar.teleport();
-                }
-            });
-            Iterator<Map.Entry<IUserView, UserAvatar>> iterator = externUserAvatars.entrySet().iterator();
-            while (iterator.hasNext()) {
-                UserAvatar userAvatar = iterator.next().getValue();
-                if (!Chati.getInstance().getUserManager().getActiveUsers().containsValue(userAvatar.getUser())) {
-                    // TODO : Ändere getActiveUsers() zu getUsersInRoom() wenn Sven das Problem mit der Flag gelöst hat.
-                    world.destroyBody(userAvatar.getBody());
-                    iterator.remove();
-                }
+    private void loadExternUserAvatars() {
+        Chati.getInstance().getUserManager().getUsersInRoom().values().forEach(externUser -> {
+            if (!externUserAvatars.containsKey(externUser)) {
+                UserAvatar newUserAvatar = new UserAvatar(externUser, world);
+                externUserAvatars.put(externUser, newUserAvatar);
+                newUserAvatar.teleport();
+            }
+        });
+        Iterator<Map.Entry<IUserView, UserAvatar>> iterator = externUserAvatars.entrySet().iterator();
+        while (iterator.hasNext()) {
+            UserAvatar userAvatar = iterator.next().getValue();
+            if (!Chati.getInstance().getUserManager().getUsersInRoom().containsValue(userAvatar.getUser())) {
+                world.destroyBody(userAvatar.getBody());
+                iterator.remove();
             }
         }
-        externUserAvatars.values().forEach(userAvatar -> userAvatar.move(false));
     }
 
-    private void updateCamera() {
+    private void updateCameraPosition() {
         TiledMapTileLayer layer = (TiledMapTileLayer) tiledMapRenderer.getMap().getLayers().get(0);
         float mapWidth = layer.getWidth() * layer.getTileWidth();
         float mapHeight = layer.getHeight() * layer.getTileHeight();
@@ -211,41 +226,21 @@ public class WorldScreen extends AbstractScreen {
         float cameraRightBoundary =
                 (mapWidth - Gdx.graphics.getWidth() * camera.zoom / 2f) / PPM;
 
-        Vector2 bodyPosition = internUserAvatar.getPosition();
-        if (bodyPosition.x >= cameraLeftBoundary && bodyPosition.x <= cameraRightBoundary) {
-            camera.position.x = bodyPosition.x;
-        } else if (bodyPosition.x < cameraLeftBoundary) {
+        Vector2 internUserPosition = internUserAvatar.getPosition();
+        if (internUserPosition.x >= cameraLeftBoundary && internUserPosition.x <= cameraRightBoundary) {
+            camera.position.x = internUserPosition.x;
+        } else if (internUserPosition.x < cameraLeftBoundary) {
             camera.position.x = cameraLeftBoundary;
-        } else if (bodyPosition.x > cameraRightBoundary) {
+        } else if (internUserPosition.x > cameraRightBoundary) {
             camera.position.x = cameraRightBoundary;
         }
 
-        if (bodyPosition.y >= cameraBottomBoundary && bodyPosition.y <= cameraTopBoundary) {
-            camera.position.y = bodyPosition.y;
-        } else if (bodyPosition.y > cameraTopBoundary) {
+        if (internUserPosition.y >= cameraBottomBoundary && internUserPosition.y <= cameraTopBoundary) {
+            camera.position.y = internUserPosition.y;
+        } else if (internUserPosition.y > cameraTopBoundary) {
             camera.position.y = cameraTopBoundary;
-        } else if (bodyPosition.y < cameraBottomBoundary) {
+        } else if (internUserPosition.y < cameraBottomBoundary) {
             camera.position.y = cameraBottomBoundary;
-        }
-    }
-
-    public World getWorld() {
-        return world;
-    }
-
-    public WorldInputProcessor getWorldInputProcessor() {
-        return worldInputProcessor;
-    }
-
-    public InternUserAvatar getInternUserAvatar() {
-        return internUserAvatar;
-    }
-
-    public void zoom(boolean in) {
-        if (in && camera.zoom <= MAX_ZOOM) {
-            camera.zoom += ZOOM_STEP;
-        } else if (!in && camera.zoom >= WorldScreen.MIN_ZOOM) {
-            camera.zoom -= ZOOM_STEP;
         }
     }
 }

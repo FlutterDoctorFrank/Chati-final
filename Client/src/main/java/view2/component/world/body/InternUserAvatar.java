@@ -30,6 +30,45 @@ public class InternUserAvatar extends UserAvatar {
         currentDirectionalInputs = new LinkedList<>();
     }
 
+    @Override
+    public void update() {
+        if (user.isTeleporting()) {
+            teleport();
+            return;
+        }
+        Direction currentDirection = getCurrentDirectionalInput();
+        float velocity = DEFAULT_VELOCITY;
+        if (WorldScreen.getInstance().getWorldInputProcessor().isSprintPressed()) {
+            velocity *= SPRINT_SPEED_FACTOR;
+        }
+        if (currentDirection == null) {
+            body.setLinearVelocity(0, 0);
+        } else {
+            switch (currentDirection) {
+                case UP:
+                    body.setLinearVelocity(0, velocity);
+                    break;
+                case LEFT:
+                    body.setLinearVelocity(-velocity, 0);
+                    break;
+                case DOWN:
+                    body.setLinearVelocity(0, -velocity);
+                    break;
+                case RIGHT:
+                    body.setLinearVelocity(velocity, 0);
+                    break;
+                default:
+                    body.setLinearVelocity(0, 0);
+            }
+        }
+        if (body.getLinearVelocity().x != 0 || body.getLinearVelocity().y != 0) {
+            Vector2 newPosition = body.getPosition();
+            Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
+                    newPosition.x * WorldScreen.PPM, newPosition.y * WorldScreen.PPM);
+        }
+    }
+
+    /*
     public void move() {
         Direction currentDirection = getCurrentDirectionalInput();
         float velocity = DEFAULT_VELOCITY;
@@ -62,6 +101,7 @@ public class InternUserAvatar extends UserAvatar {
                     newPosition.x * WorldScreen.PPM, newPosition.y * WorldScreen.PPM);
         }
     }
+     */
 
     private Direction getCurrentDirectionalInput() {
         Arrays.stream(Direction.values()).forEach(direction -> {

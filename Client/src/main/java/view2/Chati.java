@@ -29,8 +29,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     private boolean userInfoChangeReceived;
     private boolean userNotificationChangeReceived;
-    private boolean userPositionChangeReceived;
-    private boolean internUserPositionChangeReceived;
     private boolean roomChangeReceived;
     private boolean worldChangeReceived;
     private boolean musicChangeReceived;
@@ -39,8 +37,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     private boolean changeUserInfo;
     private boolean changeNotificationInfo;
-    private boolean changeUserPosition;
-    private boolean changeInternUserPosition;
     private boolean changeRoom;
     private boolean changeWorld;
     private boolean changeMusic;
@@ -94,16 +90,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void setUserNotificationChanged() {
         this.userNotificationChangeReceived = true;
-    }
-
-    @Override
-    public void setInternUserPositionChanged() {
-        this.internUserPositionChangeReceived = true;
-    }
-
-    @Override
-    public void setUserPositionChanged() {
-        this.userPositionChangeReceived = true;
     }
 
     @Override
@@ -199,11 +185,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void updatePosition(UUID userID, int posX, int posY, boolean teleport, boolean sprint) {
-
-    }
-
-    @Override
     public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message) {
         if (this.screen.equals(WorldScreen.getInstance())) {
             Gdx.app.postRunnable(() -> ChatWindow.getInstance().showMessage(userId, message, messageType, timestamp));
@@ -266,19 +247,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return changeRoom;
     }
 
-    public boolean isUserPositionChanged() {
-        return changeUserPosition;
-    }
-
-    public boolean isInternUserPositionChanged() {
-        return changeInternUserPosition;
-    }
-
     private void resetModelChangeReceivedFlags() {
         userInfoChangeReceived = false;
         userNotificationChangeReceived = false;
-        userPositionChangeReceived = false;
-        internUserPositionChangeReceived = false;
         roomChangeReceived = false;
         worldChangeReceived = false;
         musicChangeReceived = false;
@@ -289,8 +260,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private void transferFlags() {
         changeUserInfo = userInfoChangeReceived;
         changeNotificationInfo = userNotificationChangeReceived;
-        changeUserPosition = userPositionChangeReceived;
-        changeInternUserPosition = internUserPositionChangeReceived;
         changeRoom = roomChangeReceived;
         changeWorld = worldChangeReceived;
         changeMusic = musicChangeReceived;
@@ -301,8 +270,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private void resetModelChangedFlags() {
         changeUserInfo = false;
         changeNotificationInfo = false;
-        changeUserPosition = false;
-        changeInternUserPosition = false;
         changeRoom = false;
         changeWorld = false;
         changeMusic = false;

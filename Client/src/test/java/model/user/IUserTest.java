@@ -45,15 +45,6 @@ public class IUserTest {
             }
 
             @Override
-            public void setInternUserPositionChanged() {
-
-            }
-
-            @Override
-            public void setUserPositionChanged() {
-            }
-
-            @Override
             public void setWorldChanged() {
             }
 
@@ -164,7 +155,7 @@ public class IUserTest {
     public void setIsReport() {
         int posX = 500;
         int posY = 1500;
-        UserManager.getInstance().getInternUser().setPosition(posX, posY, false);
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false);
         try {
             testUserController.setReport(new ContextID("Global.World.Room.Disco"), true);
         } catch (ContextNotFoundException e) {
@@ -183,7 +174,7 @@ public class IUserTest {
     public void setIsMute() {
         int posX = 500;
         int posY = 1500;
-        UserManager.getInstance().getInternUser().setPosition(posX, posY, false);
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false);
         try {
             testUserController.setMute(new ContextID("Global.World.Room.Disco"), true);
         } catch (ContextNotFoundException e) {
@@ -202,7 +193,7 @@ public class IUserTest {
     public void setIsBan() {
         int posX = 500;
         int posY = 1500;
-        UserManager.getInstance().getInternUser().setPosition(posX, posY, false);
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false);
         try {
             testUserController.setBan(new ContextID("Global.World.Room.Disco"), true);
         } catch (ContextNotFoundException e) {
@@ -221,8 +212,8 @@ public class IUserTest {
     public void setRoles_HasRoleGet_HighestRole() {
         int posX = 1200;
         int posY = 80;
-        UserManager.getInstance().getInternUser().setPosition(posX, posY, false);
-        testUser.setPosition(posX, posY, false);
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false);
+        testUser.setLocation(posX, posY, false, false);
 
         try {
             testUserController.setRoles(Context.getGlobal().getContextId(), Set.of(Role.ADMINISTRATOR));
@@ -234,7 +225,7 @@ public class IUserTest {
         Assert.assertTrue(testUserView.hasRole(Role.AREA_MANAGER));
         posX = 500;
         posY = 1500;
-        UserManager.getInstance().getInternUser().setPosition(posX, posY, false);
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false);
         Assert.assertFalse(testUserView.hasRole(Role.AREA_MANAGER));
         Assert.assertEquals(testUserView.getHighestRole(), Role.ADMINISTRATOR);
     }
@@ -243,8 +234,8 @@ public class IUserTest {
     public void hasPermission() {
         int posX = 1200;
         int posY = 1500;
-        UserManager.getInstance().getInternUser().setPosition(posX, posY, false);
-        testUser.setPosition(posX, posY, false);
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false);
+        testUser.setLocation(posX, posY, false, false);
         try {
             testUserController.setRoles(new ContextID("Global.World.Room.Park"), Set.of(Role.AREA_MANAGER));
         } catch (ContextNotFoundException e) {
@@ -253,8 +244,8 @@ public class IUserTest {
         Assert.assertFalse(testUserView.hasPermission(Permission.ASSIGN_ADMINISTRATOR));
         Assert.assertFalse(testUserView.hasPermission(Permission.MUTE));
         posY = 80;
-        UserManager.getInstance().getInternUser().setPosition(posX, posY, false);
-        testUser.setPosition(posX, posY, false);
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false);
+        testUser.setLocation(posX, posY, false, false);
         Assert.assertTrue(testUserView.hasPermission(Permission.MUTE));
         try {
             testUserController.setRoles(Context.getGlobal().getContextId(), Set.of(Role.OWNER));
@@ -268,8 +259,8 @@ public class IUserTest {
     public void setPosition_getCurrentLocation() {
         float posX = 1200.0f;
         float posY = 1500.0f;
-        testUserController.setPosition(posX, posY, false);
-        Assert.assertEquals(posX, testUserView.getCurrentLocation().getPosX(), 0.0f);
-        Assert.assertEquals(posY, testUserView.getCurrentLocation().getPosY(), 0.0f);
+        testUserController.setLocation(posX, posY, false, false);
+        Assert.assertEquals(posX, testUserView.getLocation().getPosX(), 0.0f);
+        Assert.assertEquals(posY, testUserView.getLocation().getPosY(), 0.0f);
     }
 }
