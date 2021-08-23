@@ -9,17 +9,17 @@ import org.jetbrains.annotations.NotNull;
 public enum SpatialMap implements Resource {
 
     //MAP("map"),
-    PUBLIC_ROOM_MAP("publicRoomMap/publicRoom"),
-    PRIVATE_ROOM_MAP("privateRoomMap/privateRoom");
+    PUBLIC_ROOM_MAP("Public Room", "publicRoomMap/publicRoom"),
+    PRIVATE_ROOM_MAP("Private Room", "privateRoomMap/privateRoom");
 
-    private static final String PATH = "maps/";
+    private static final String MAPS_PATH = "maps/";
 
     private final String name;
     private final String path;
 
-    SpatialMap(@NotNull final String name) {
+    SpatialMap(@NotNull final String name, @NotNull final String path) {
         this.name = name;
-        this.path = PATH + this.name().toLowerCase() + ".tmx";
+        this.path = MAPS_PATH + path + ".tmx";
     }
 
     @Override
