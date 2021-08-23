@@ -93,7 +93,7 @@ public class GlobalContextTest {
             User performer = this.userAccountManager.getUser("createWorld");
             performer.addRole(this.globalContext, Role.OWNER);
             UUID performer_id = performer.getUserId();
-            this.globalContext.createWorld(performer_id, "testWorld", SpatialMap.MAP);
+            this.globalContext.createWorld(performer_id, "testWorld", SpatialMap.PUBLIC_ROOM_MAP);
 
             Assert.assertEquals(1, this.globalContext.getWorlds().size());
             ContextID actual_world_id = this.globalContext.getWorlds().keySet().iterator().next();
@@ -119,7 +119,7 @@ public class GlobalContextTest {
             User performer = this.userAccountManager.getUser("removeWorld");
             performer.addRole(this.globalContext, Role.OWNER);
             UUID performer_id = performer.getUserId();
-            this.globalContext.createWorld(performer_id, "testWorld", SpatialMap.MAP);
+            this.globalContext.createWorld(performer_id, "testWorld", SpatialMap.PUBLIC_ROOM_MAP);
 
             Assert.assertEquals(1, this.globalContext.getWorlds().size());
             ContextID actual_world_id = this.globalContext.getWorlds().keySet().iterator().next();

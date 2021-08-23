@@ -32,7 +32,7 @@ public class LocationTest {
 
     @Before
     public void setUp() {
-        this.test_world = new World("test_world", SpatialMap.MAP);
+        this.test_world = new World("test_world", SpatialMap.PUBLIC_ROOM_MAP);
         this.test_location = new Location(test_world.getPublicRoom(), 1, 1);
     }
 

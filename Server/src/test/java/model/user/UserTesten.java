@@ -66,7 +66,7 @@ public class UserTesten {
         this.account_database = Database.getUserAccountManagerDatabase();
         this.user_database = Database.getUserDatabase();
         this.context_database = Database.getContextDatabase();
-        this.test_world = new World("test_world", SpatialMap.MAP);
+        this.test_world = new World("test_world", SpatialMap.PUBLIC_ROOM_MAP);
 
 
 
@@ -125,7 +125,7 @@ public class UserTesten {
             User performer = userAccountManager.getUser(performerName);
             performer.addRole(globalContext, Role.OWNER);
             if (globalContext.getWorlds().size() == 0) {
-                globalContext.createWorld(performer.getUserId(), "test_world", SpatialMap.MAP);
+                globalContext.createWorld(performer.getUserId(), "test_world", SpatialMap.PUBLIC_ROOM_MAP);
             }
             ContextID newworld_id = globalContext.getWorlds().keySet().iterator().next();
             System.out.println(globalContext.getWorlds().size());

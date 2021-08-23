@@ -86,7 +86,7 @@ public class ContextDatabaseTest {
         GlobalContext test_gbc = GlobalContext.getInstance();
         User performer = this.account_database.createAccount("performer", "111");
         this.user_database.addRole(performer, test_gbc, Role.OWNER);
-        World test = new World("test_world", SpatialMap.MAP);
+        World test = new World("test_world", SpatialMap.PUBLIC_ROOM_MAP);
         //System.out.println(test.getMap().getName());
         /*
         try {
@@ -116,7 +116,7 @@ public class ContextDatabaseTest {
             String real_map_name = res.getString("MAP_NAME");
 
             Assert.assertEquals("test_world", real_world_name);
-            Assert.assertEquals(SpatialMap.MAP.name(), real_map_name);
+            Assert.assertEquals(SpatialMap.PUBLIC_ROOM_MAP.name(), real_map_name);
 
             st.close();
             con.close();
@@ -138,7 +138,7 @@ public class ContextDatabaseTest {
         GlobalContext test_gbc = GlobalContext.getInstance();
         User performer = this.account_database.createAccount("performer", "111");
         this.user_database.addRole(performer, test_gbc, Role.OWNER);
-        World test = new World("test_world", SpatialMap.MAP);
+        World test = new World("test_world", SpatialMap.PUBLIC_ROOM_MAP);
         /*
         //add World
         try {
@@ -166,7 +166,7 @@ public class ContextDatabaseTest {
             String real_map_name = res.getString("MAP_NAME");
 
             Assert.assertEquals("test_world", real_world_name);
-            Assert.assertEquals(SpatialMap.MAP.name(), real_map_name);
+            Assert.assertEquals(SpatialMap.PUBLIC_ROOM_MAP.name(), real_map_name);
 
             st.close();
             con.close();
@@ -203,7 +203,7 @@ public class ContextDatabaseTest {
         //GlobalContext test_gbc = GlobalContext.getInstance();
         //User performer = this.account_database.createAccount("performer", "111");
         //this.user_database.addRole(performer, test_gbc, Role.OWNER);
-        World test = new World("test_world", SpatialMap.MAP);
+        World test = new World("test_world", SpatialMap.PUBLIC_ROOM_MAP);
         //add
         this.context_database.addWorld(test);
 
@@ -216,8 +216,8 @@ public class ContextDatabaseTest {
 
     @Test
     public void getWorldsTest() {
-        World test1 = new World("test1_world", SpatialMap.MAP);
-        World test2 = new World("test2_world", SpatialMap.MAP);
+        World test1 = new World("test1_world", SpatialMap.PUBLIC_ROOM_MAP);
+        World test2 = new World("test2_world", SpatialMap.PUBLIC_ROOM_MAP);
         this.context_database.addWorld(test1);
         this.context_database.addWorld(test2);
 
@@ -232,7 +232,7 @@ public class ContextDatabaseTest {
 
     @Test
     public void addBannedUserTest() {
-        World test_world = new World("test_world", SpatialMap.MAP);
+        World test_world = new World("test_world", SpatialMap.PUBLIC_ROOM_MAP);
         User test = this.account_database.createAccount("addBanned", "111");
         this.context_database.addBannedUser(test, test_world);
 
@@ -262,7 +262,7 @@ public class ContextDatabaseTest {
 
     @Test
     public void removeBannedUserTest() {
-        World test_world = new World("test_world", SpatialMap.MAP);
+        World test_world = new World("test_world", SpatialMap.PUBLIC_ROOM_MAP);
         User test = this.account_database.createAccount("addBanned", "111");
 
         //zuerst addBannedUser und testen
@@ -312,7 +312,7 @@ public class ContextDatabaseTest {
     @Test
     public void addAreaReservationTest() {
         User test_reserver = this.account_database.createAccount("test_reserver", "111");
-        Area test_area = new World("test_world", SpatialMap.MAP);
+        Area test_area = new World("test_world", SpatialMap.PUBLIC_ROOM_MAP);
         LocalDateTime test_from = LocalDateTime.now();
         LocalDateTime test_to = test_from.plusDays(1);
         AreaReservation test_reservation = new AreaReservation(test_reserver, test_area, test_from, test_to);
@@ -351,7 +351,7 @@ public class ContextDatabaseTest {
     @Test
     public void removeAreaReservationTest() {
         User test_reserver = this.account_database.createAccount("test_reserver", "111");
-        Area test_area = new World("test_world", SpatialMap.MAP);
+        Area test_area = new World("test_world", SpatialMap.PUBLIC_ROOM_MAP);
         LocalDateTime test_from = LocalDateTime.now();
         LocalDateTime test_to = test_from.plusDays(1);
         AreaReservation test_reservation = new AreaReservation(test_reserver, test_area, test_from, test_to);
