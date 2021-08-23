@@ -49,7 +49,7 @@ public class ISpatialContextTest {
         });
         world = new SpatialContext("world", Context.getGlobal());
         testWorldView = world;
-        map = SpatialMap.MAP;
+        map = SpatialMap.PUBLIC_ROOM_MAP;
         Game game = new Game() {
             @Override
             public void create() {

@@ -60,7 +60,7 @@ public class IUserTest {
         room = new SpatialContext("Room", world);
         UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.PLACEHOLDER);
 
-        map = SpatialMap.MAP;
+        map = SpatialMap.PUBLIC_ROOM_MAP;
         Game game = new Game() {
             @Override
             public void create() {

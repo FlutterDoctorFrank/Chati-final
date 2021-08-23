@@ -8,7 +8,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum SpatialMap implements Resource {
 
-    MAP("map");
+    //MAP("map"),
+    PUBLIC_ROOM_MAP("publicRoomMap/publicRoom"),
+    PRIVATE_ROOM_MAP("privateRoomMap/privateRoom");
 
     private static final String PATH = "maps/";
 

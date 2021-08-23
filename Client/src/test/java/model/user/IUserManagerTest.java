@@ -91,8 +91,8 @@ public class IUserManagerTest {
     }
 
     @Test
-    public void getActiveUsers_getBannedUsers_getFirends() {
-        SpatialMap map = SpatialMap.MAP;
+    public void getActiveUsers_getBannedUsers_getFriends() {
+        SpatialMap map = SpatialMap.PUBLIC_ROOM_MAP;
         UUID userId1 = UUID.randomUUID();
         UUID userId2 = UUID.randomUUID();
         Set<UUID> userSet = Set.of(userId1, userId2);

@@ -823,7 +823,11 @@ public class User implements IUser {
             throw new IllegalStateException("User is not logged in");
         }
 
-        leaveWorld();
+        try {
+            leaveWorld();
+        } catch(IllegalStateException e) {
+            // Benutzer ist nicht in einer Welt
+        }
 
         this.clientSender = null;
         this.status = Status.OFFLINE;
