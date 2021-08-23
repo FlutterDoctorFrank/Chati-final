@@ -160,7 +160,7 @@ public class UserAvatar extends Sprite {
             float distance = body.getPosition().dst(destination);
 
             float velocity = DEFAULT_VELOCITY;
-            if (distance > velocity) {
+            if (distance > WorldScreen.WORLD_STEP / velocity) {
                 velocity *= SPRINT_VELOCITY_FACTOR;
             }
 
