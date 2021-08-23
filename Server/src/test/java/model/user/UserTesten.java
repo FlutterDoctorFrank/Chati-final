@@ -196,7 +196,7 @@ public class UserTesten {
             this.user.joinWorld(test_world.getContextId());
             Assert.assertEquals("test_world", this.user.getWorld().getContextName());
 
-            this.user.move(1401, 1000);
+            this.user.move(1401, 1000, false);
             Assert.assertEquals(1401, (int)this.user.getLocation().getPosX());
             Assert.assertEquals(1000, (int)this.user.getLocation().getPosY());
         } catch (Exception e) {

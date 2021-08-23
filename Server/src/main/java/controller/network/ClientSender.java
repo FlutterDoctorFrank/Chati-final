@@ -222,7 +222,7 @@ public interface ClientSender {
                     float posX = other.getLocation().getPosX();
                     float posY = other.getLocation().getPosY();
 
-                    return new PacketAvatarMove(AvatarAction.SPAWN_AVATAR, other.getUserId(), posX, posY);
+                    return new PacketAvatarMove(AvatarAction.SPAWN_AVATAR, other.getUserId(), posX, posY, false);
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }
@@ -247,8 +247,9 @@ public interface ClientSender {
 
                     float posX = other.getLocation().getPosX();
                     float posY = other.getLocation().getPosY();
+                    boolean isSprinting = other.isSprinting();
 
-                    return new PacketAvatarMove(AvatarAction.MOVE_AVATAR, other.getUserId(), posX, posY);
+                    return new PacketAvatarMove(AvatarAction.MOVE_AVATAR, other.getUserId(), posX, posY, isSprinting);
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }

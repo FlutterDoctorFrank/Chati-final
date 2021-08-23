@@ -253,7 +253,7 @@ public class WorldScreen extends AbstractScreen {
         Vector2 newPosition = internUserAvatar.getPosition();
         if (!oldPosition.epsilonEquals(newPosition)) {
             Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
-                    newPosition.x * WorldScreen.PPM, newPosition.y * WorldScreen.PPM);
+                    newPosition.x * WorldScreen.PPM, newPosition.y * WorldScreen.PPM, internUserAvatar.isSprinting());
         }
     }
 }

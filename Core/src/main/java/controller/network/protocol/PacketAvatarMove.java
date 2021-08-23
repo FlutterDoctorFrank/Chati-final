@@ -23,6 +23,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
     private UUID userId;
     private float posX;
     private float posY;
+    private boolean isSprinting;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -37,8 +38,8 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * @param posX Die neue X-Koordinate.
      * @param posY Die neue Y-Koordinate.
      */
-    public PacketAvatarMove(final float posX, final float posY) {
-        this(AvatarAction.MOVE_AVATAR, null, posX, posY);
+    public PacketAvatarMove(final float posX, final float posY, final boolean isSprinting) {
+        this(AvatarAction.MOVE_AVATAR, null, posX, posY, isSprinting);
     }
 
     /**
@@ -56,12 +57,14 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * @param userId Die ID des bewegenden Benutzers.
      * @param posX Die neue X-Koordinate.
      * @param posY Die neue Y-Koordinate.
+     * @param isSprinting Die Information, ob sich der Benutzer schnell fortbewegt.
      */
-    public PacketAvatarMove(@NotNull final AvatarAction action, @Nullable final UUID userId, final float posX, final float posY) {
+    public PacketAvatarMove(@NotNull final AvatarAction action, @Nullable final UUID userId, final float posX, final float posY, final boolean isSprinting) {
         this.action = action;
         this.userId = userId;
         this.posX = posX;
         this.posY = posY;
+        this.isSprinting = isSprinting;
     }
 
     @Override
@@ -121,6 +124,14 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      */
     public float getPosY() {
         return this.posY;
+    }
+
+    /**
+     * Gibt die Information zurück, ob sich der Benutzer schnell fortbewegt.
+     * @return true, wenn sich der Benutzer schnell fortbewegt, sonst false.
+     */
+    public boolean isSprinting() {
+        return this.isSprinting;
     }
 
     /**

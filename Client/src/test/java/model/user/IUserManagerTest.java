@@ -116,7 +116,7 @@ public class IUserManagerTest {
         userSet.forEach(id -> Assert.assertTrue(testUserManagerView.getActiveUsers().containsKey(id)));
         int posX = 500;
         int posY = 1500;
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, false);
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false);
         testUserManagerController.getExternUsers().forEach((id, user) -> {
             try {
                 user.setBan(UserManager.getInstance().getInternUser().getCurrentWorld().getContextId(), true);

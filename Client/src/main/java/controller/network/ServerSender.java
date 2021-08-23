@@ -200,24 +200,26 @@ public interface ServerSender {
          * <p>
          *     Erwartet als Objekt Array die Klassen:<br>
          *     - {@code 0}: {@link Integer}, Die X-Koordinate<br>
-         *     - {@code 1}: {@link Integer}, Die Y-Koordinate
+         *     - {@code 1}: {@link Integer}, Die Y-Koordinate<br>
+         *     - {@code 2}: {@link Boolean}, Die Information, ob sich der Benutzer schnell fortbewegt.
          * </p>
          */
         AVATAR_MOVE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                if (objects.length == 2) {
+                if (objects.length == 3) {
                     if (objects[0] instanceof Float && objects[1] instanceof Float) {
                         final float posX = (float) objects[0];
                         final float posY = (float) objects[1];
+                        final boolean isSprinting = (boolean) objects[2];
 
-                        return new PacketAvatarMove(posX, posY);
+                        return new PacketAvatarMove(posX, posY, isSprinting);
                     } else {
-                        throw new IllegalArgumentException("Expected Float and Float, got "
-                                + objects[0].getClass() + " and " + objects[1].getClass());
+                        throw new IllegalArgumentException("Expected Float, Float and Boolean, got "
+                                + objects[0].getClass() + ", " + objects[1].getClass() + " and " + objects[2].getClass());
                     }
                 } else {
-                    throw new IllegalArgumentException("Expected Array size of 2, got " + objects.length);
+                    throw new IllegalArgumentException("Expected Array size of 3, got " + objects.length);
                 }
             }
         },

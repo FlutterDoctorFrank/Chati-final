@@ -38,11 +38,12 @@ public interface IUser {
      * Verändert die Position eines Benutzers.
      * @param posX Neue X-Koordinate.
      * @param posY Neue Y-Koordinate.
+     * @param isSprinting Information, ob sich der Benutzer gerade schnell fortbewegt.
      * @throws IllegalPositionException wenn die übergebenen Koordinaten ungültig sind oder eine Kollision verursachen.
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      * @see model.context.spatial.Location
      */
-    void move(final float posX, final float posY) throws IllegalPositionException;
+    void move(final float posX, final float posY, final boolean isSprinting) throws IllegalPositionException;
 
     /**
      * Sendet eine Nachricht im Namen des Benutzers, von dem sie erhalten wurde gemäß des entsprechenden Nachrichtentyps
@@ -171,6 +172,12 @@ public interface IUser {
      * @return Aktuelle Position des Benutzers.
      */
     @Nullable ILocation getLocation();
+
+    /**
+     * Gibt die Information zurück, ob sich der Benutzer schnell fortbewegt.
+     * @return true, wenn sich der Benutzer schnell fortbewegt, sonst false.
+     */
+    boolean isSprinting();
 
     /**
      * Gibt die Freunde des Benutzers zurück.

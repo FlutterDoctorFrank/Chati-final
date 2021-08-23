@@ -109,7 +109,8 @@ public interface IUserController {
      * @param posX X-Koordinate.
      * @param posY Y-Koordinate.
      * @param isTeleporting Information, ob der Benutzer zu seiner momentanen Position teleportiert werden soll.
+     * @param isSprinting Information, ob der Benutzer sich schnell fortbewegt.
      * @see Location
      */
-    void setLocation(float posX, float posY, boolean isTeleporting);
+    void setLocation(float posX, float posY, boolean isTeleporting, boolean isSprinting);
 }

@@ -151,7 +151,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             }
 
             try {
-                this.user.move(packet.getPosX(), packet.getPosY());
+                this.user.move(packet.getPosX(), packet.getPosY(), packet.isSprinting());
             } catch (IllegalPositionException ex) {
                 if (user.getLocation() == null) {
                     LOGGER.warning("User " + this.user.getIgnoredUsers() + " has no valid position.");
@@ -164,7 +164,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 float posX = this.user.getLocation().getPosX();
                 float posY = this.user.getLocation().getPosY();
 
-                this.send(new PacketAvatarMove(AvatarAction.MOVE_AVATAR, this.user.getUserId(), posX, posY));
+                this.send(new PacketAvatarMove(AvatarAction.SPAWN_AVATAR, this.user.getUserId(), posX, posY, false));
             }
         } else {
             this.logUnexpectedPacket(packet, "Can not move while not in a world");

@@ -23,7 +23,7 @@ public class PacketAvatarMoveTest extends PacketTest<PacketAvatarMove> {
 
     @Test
     public void clientSerializationTest() {
-        this.before = new PacketAvatarMove(randomFloat(), randomFloat());
+        this.before = new PacketAvatarMove(randomFloat(), randomFloat(), randomBoolean());
 
         this.serialize();
         this.equals();
@@ -31,7 +31,7 @@ public class PacketAvatarMoveTest extends PacketTest<PacketAvatarMove> {
 
     @Test
     public void serverSerializationTest() {
-        this.before = new PacketAvatarMove(randomEnum(AvatarAction.class), randomUniqueId(), randomFloat(), randomFloat());
+        this.before = new PacketAvatarMove(randomEnum(AvatarAction.class), randomUniqueId(), randomFloat(), randomFloat(), randomBoolean());
 
         this.serialize();
         this.equals();

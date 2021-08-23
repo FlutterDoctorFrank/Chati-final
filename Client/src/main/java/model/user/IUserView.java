@@ -105,6 +105,12 @@ public interface IUserView {
     boolean isTeleporting();
 
     /**
+     * Gibt die Information zurück, ob sich dieser Benutzer schnell fortbewegt.
+     * @return true, wenn der Benutzer sich schnell fortbewegt, sonst false.
+     */
+    boolean isSprinting();
+
+    /**
      * Gibt zurück, ob der Benutzer eine Rolle im innersten Kontext oder einem übergeordneten Kontext besitzt,
      * in dem sich der intern angemeldete Benutzer befindet.
      * @param role Zu überprüfende Rolle.

@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -60,6 +59,9 @@ public class User implements IUser {
 
     /** Die aktuelle Position des Benutzers. */
     private Location currentLocation;
+
+    /** Die Information, ob sich der Benutzer gerade schnell fortbewegt. */
+    private boolean isSprinting;
 
     /** Das Objekt, mit dem der Benutzer aktuell interagiert. */
     private Interactable currentInteractable;
@@ -164,7 +166,7 @@ public class User implements IUser {
     }
 
     @Override
-    public void move(final float posX, final float posY) throws IllegalPositionException {
+    public void move(final float posX, final float posY, final boolean isSprinting) throws IllegalPositionException {
         throwIfNotOnline();
         throwIfNotInWorld();
         updateLastActivity();
@@ -181,15 +183,10 @@ public class User implements IUser {
         currentLocation = new Location(currentLocation.getRoom(), posX, posY);
         updateArea(oldLocation, currentLocation);
 
+        this.isSprinting = isSprinting;
+
         // Hier erhält der eigene Benutzer eine Bestätigung der Bewegung:
         currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
-
-        /*
-        // Hier erhält der eigene Benutzer keine Bestätigung der Bewegung:
-        currentLocation.getRoom().getUsers().values().stream()
-                .filter(Predicate.not(this::equals))
-                .forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
-         */
     }
 
     @Override
@@ -328,6 +325,11 @@ public class User implements IUser {
     @Override
     public @Nullable Location getLocation() {
         return currentLocation;
+    }
+
+    @Override
+    public boolean isSprinting() {
+        return isSprinting;
     }
 
     @Override

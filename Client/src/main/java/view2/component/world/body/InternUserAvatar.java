@@ -13,6 +13,7 @@ public class InternUserAvatar extends UserAvatar {
 
     private final LinkedList<Direction> currentDirectionalInputs;
     private Vector2 oldPosition;
+    private boolean isSprinting;
     private boolean canInteract;
 
     public InternUserAvatar(IInternUserView internUser, World world) {
@@ -41,7 +42,10 @@ public class InternUserAvatar extends UserAvatar {
         Direction currentDirection = getCurrentDirectionalInput();
         float velocity = DEFAULT_VELOCITY;
         if (WorldScreen.getInstance().getWorldInputProcessor().isSprintPressed()) {
+            isSprinting = true;
             velocity *= SPRINT_VELOCITY_FACTOR;
+        } else {
+            isSprinting = false;
         }
         if (currentDirection == null) {
             body.setLinearVelocity(0, 0);
@@ -67,6 +71,10 @@ public class InternUserAvatar extends UserAvatar {
 
     public Vector2 getOldPosition() {
         return oldPosition;
+    }
+
+    public boolean isSprinting() {
+        return isSprinting;
     }
 
     private Direction getCurrentDirectionalInput() {

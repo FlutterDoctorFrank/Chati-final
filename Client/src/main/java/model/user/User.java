@@ -41,6 +41,9 @@ public class User implements IUserController, IUserView {
      *  werden soll. */
     private boolean isTeleporting;
 
+    /** Eine Information darüber, ob sich dieser Benutzer schnell fortbewegt. */
+    private boolean isSprinting;
+
     /** Die Information, ob der Benutzer mit dem intern angemeldeten Benutzer dieses Clients befreundet ist. */
     private boolean isFriend;
 
@@ -179,9 +182,10 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void setLocation(final float posX, final float posY, final boolean isTeleporting) {
+    public void setLocation(final float posX, final float posY, final boolean isTeleporting, final boolean isSprinting) {
         this.currentLocation = new Location(posX, posY);
         this.isTeleporting = isTeleporting;
+        this.isSprinting = isSprinting;
     }
 
     @Override
@@ -274,6 +278,16 @@ public class User implements IUserController, IUserView {
     public boolean isTeleporting() {
         if (isTeleporting) {
             isTeleporting = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isSprinting() {
+        if (isSprinting) {
+            isSprinting = false;
             return true;
         } else {
             return false;
