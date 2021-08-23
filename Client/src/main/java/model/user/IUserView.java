@@ -105,13 +105,6 @@ public interface IUserView {
     boolean isTeleporting();
 
     /**
-     * Gibt die Information zurück, ob der Benutzer zu seiner aktuellen Position mit einer schnelleren Laufanimation
-     * bewegt werden soll. Wird nicht berücksichtigt, wenn der Benutzer teleportiert werden soll.
-     * @return true, wenn der Benutzer mit einer schnelleren Laufanimation bewegt werden soll, sonst false.
-     */
-    boolean isSprinting();
-
-    /**
      * Gibt zurück, ob der Benutzer eine Rolle im innersten Kontext oder einem übergeordneten Kontext besitzt,
      * in dem sich der intern angemeldete Benutzer befindet.
      * @param role Zu überprüfende Rolle.

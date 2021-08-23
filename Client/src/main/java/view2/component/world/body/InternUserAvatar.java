@@ -4,9 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import controller.network.ServerSender;
 import model.user.IInternUserView;
-import view2.Chati;
 import view2.component.world.WorldScreen;
 
 import java.util.*;
@@ -14,6 +12,7 @@ import java.util.*;
 public class InternUserAvatar extends UserAvatar {
 
     private final LinkedList<Direction> currentDirectionalInputs;
+    private Vector2 oldPosition;
     private boolean canInteract;
 
     public InternUserAvatar(IInternUserView internUser, World world) {
@@ -27,7 +26,9 @@ public class InternUserAvatar extends UserAvatar {
         shape.setAsBox((32 - 1) / WorldScreen.PPM / 2, (32 - 1) / WorldScreen.PPM / 2);
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
-        currentDirectionalInputs = new LinkedList<>();
+
+        this.currentDirectionalInputs = new LinkedList<>();
+        this.oldPosition = body.getPosition().cpy();
     }
 
     @Override
@@ -36,10 +37,11 @@ public class InternUserAvatar extends UserAvatar {
             teleport();
             return;
         }
+        oldPosition = body.getPosition().cpy();
         Direction currentDirection = getCurrentDirectionalInput();
         float velocity = DEFAULT_VELOCITY;
         if (WorldScreen.getInstance().getWorldInputProcessor().isSprintPressed()) {
-            velocity *= SPRINT_SPEED_FACTOR;
+            velocity *= SPRINT_VELOCITY_FACTOR;
         }
         if (currentDirection == null) {
             body.setLinearVelocity(0, 0);
@@ -60,48 +62,12 @@ public class InternUserAvatar extends UserAvatar {
                 default:
                     body.setLinearVelocity(0, 0);
             }
-        }
-        if (body.getLinearVelocity().x != 0 || body.getLinearVelocity().y != 0) {
-            Vector2 newPosition = body.getPosition();
-            Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
-                    newPosition.x * WorldScreen.PPM, newPosition.y * WorldScreen.PPM);
         }
     }
 
-    /*
-    public void move() {
-        Direction currentDirection = getCurrentDirectionalInput();
-        float velocity = DEFAULT_VELOCITY;
-        if (WorldScreen.getInstance().getWorldInputProcessor().isSprintPressed()) {
-            velocity *= SPRINT_SPEED_FACTOR;
-        }
-        if (currentDirection == null) {
-            body.setLinearVelocity(0, 0);
-        } else {
-            switch (currentDirection) {
-                case UP:
-                    body.setLinearVelocity(0, velocity);
-                    break;
-                case LEFT:
-                    body.setLinearVelocity(-velocity, 0);
-                    break;
-                case DOWN:
-                    body.setLinearVelocity(0, -velocity);
-                    break;
-                case RIGHT:
-                    body.setLinearVelocity(velocity, 0);
-                    break;
-                default:
-                    body.setLinearVelocity(0, 0);
-            }
-        }
-        if (body.getLinearVelocity().x != 0 || body.getLinearVelocity().y != 0) {
-            Vector2 newPosition = body.getPosition();
-            Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
-                    newPosition.x * WorldScreen.PPM, newPosition.y * WorldScreen.PPM);
-        }
+    public Vector2 getOldPosition() {
+        return oldPosition;
     }
-     */
 
     private Direction getCurrentDirectionalInput() {
         Arrays.stream(Direction.values()).forEach(direction -> {

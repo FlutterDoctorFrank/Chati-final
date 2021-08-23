@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import controller.network.ServerSender;
 import model.context.spatial.SpatialMap;
 import model.user.IUserView;
 import view2.Chati;
@@ -83,9 +84,7 @@ public class WorldScreen extends AbstractScreen {
                 loadExternUserAvatars();
             }
             externUserAvatars.values().forEach(UserAvatar::update);
-
             internUserAvatar.update();
-            updateCameraPosition();
 
             SPRITE_BATCH.setProjectionMatrix(camera.combined);
             SPRITE_BATCH.begin();
@@ -94,7 +93,8 @@ public class WorldScreen extends AbstractScreen {
             SPRITE_BATCH.end();
 
             world.step(1 / WORLD_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
-            camera.update();
+            updateCameraPosition();
+            sendPosition();
             tiledMapRenderer.setView(camera);
         }
 
@@ -241,6 +241,17 @@ public class WorldScreen extends AbstractScreen {
             camera.position.y = cameraTopBoundary;
         } else if (internUserPosition.y < cameraBottomBoundary) {
             camera.position.y = cameraBottomBoundary;
+        }
+
+        camera.update();
+    }
+
+    private void sendPosition() {
+        Vector2 oldPosition = internUserAvatar.getOldPosition();
+        Vector2 newPosition = internUserAvatar.getPosition();
+        if (!oldPosition.epsilonEquals(newPosition)) {
+            Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
+                    newPosition.x * WorldScreen.PPM, newPosition.y * WorldScreen.PPM);
         }
     }
 }

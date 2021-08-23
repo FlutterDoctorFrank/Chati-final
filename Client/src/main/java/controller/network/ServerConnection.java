@@ -154,11 +154,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                 switch (packet.getAction()) {
                     case SPAWN_AVATAR:
                         user.setInCurrentRoom(true);
-                        user.setLocation(packet.getPosX(), packet.getPosY(), true, false);
+                        user.setLocation(packet.getPosX(), packet.getPosY(), true);
                         break;
 
                     case MOVE_AVATAR:
-                        user.setLocation(packet.getPosX(), packet.getPosY(), false, false);
+                        user.setLocation(packet.getPosX(), packet.getPosY(), false);
                         break;
 
                     case REMOVE_AVATAR:

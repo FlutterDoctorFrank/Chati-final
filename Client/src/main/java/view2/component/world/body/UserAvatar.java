@@ -10,7 +10,7 @@ import view2.component.world.WorldScreen;
 public class UserAvatar extends Sprite {
 
     public static final float DEFAULT_VELOCITY = 12.5f;
-    public static final float SPRINT_SPEED_FACTOR = 1.75f;
+    public static final float SPRINT_VELOCITY_FACTOR = 1.75f;
 
     protected final IUserView user;
     protected final Body body;
@@ -143,38 +143,28 @@ public class UserAvatar extends Sprite {
         body.setAwake(true);
     }
 
-    /*
-    public void move(boolean sprint) {
-        float velocity = DEFAULT_VELOCITY;
-        if (sprint) {
-            velocity *= SPRINT_SPEED_FACTOR;
-        }
-        Vector2 destination = new Vector2(user.getLocation().getPosX() / WorldScreen.PPM,
-                user.getLocation().getPosY() / WorldScreen.PPM);
-        if (body.getPosition().dst(destination) <= velocity / WorldScreen.WORLD_STEP) {
-            body.setLinearVelocity(0, 0);
-        } else {
-            Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
-            body.setLinearVelocity(velocityVector);
-        }
-    }
-     */
-
     public void update() {
         if (user.isTeleporting()) {
             teleport();
         } else {
-            float velocity = DEFAULT_VELOCITY;
-            if (user.isSprinting()) {
-                velocity *= SPRINT_SPEED_FACTOR;
-            }
             Vector2 destination = new Vector2(user.getLocation().getPosX() / WorldScreen.PPM,
                     user.getLocation().getPosY() / WorldScreen.PPM);
-            if (body.getPosition().dst(destination) <= velocity / WorldScreen.WORLD_STEP) {
+            float distance = body.getPosition().dst(destination);
+
+            float velocity = DEFAULT_VELOCITY;
+            if (distance > velocity / WorldScreen.WORLD_STEP) {
+                velocity *= SPRINT_VELOCITY_FACTOR;
+            }
+
+            if (body.getPosition().epsilonEquals(destination)) {
                 body.setLinearVelocity(0, 0);
             } else {
-                Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor().scl(velocity);
-                body.setLinearVelocity(velocityVector);
+                Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor();
+                if (distance <= velocity / WorldScreen.WORLD_STEP) {
+                    body.setLinearVelocity(velocityVector.scl(WorldScreen.WORLD_STEP * distance));
+                } else {
+                    body.setLinearVelocity(velocityVector.scl(velocity));
+                }
             }
         }
     }
