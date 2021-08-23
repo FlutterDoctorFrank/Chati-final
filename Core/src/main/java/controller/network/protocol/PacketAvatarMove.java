@@ -37,6 +37,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Client-Anwendung.
      * @param posX Die neue X-Koordinate.
      * @param posY Die neue Y-Koordinate.
+     * @param isSprinting Die Information, ob sich der Benutzer schnell fortbewegt.
      */
     public PacketAvatarMove(final float posX, final float posY, final boolean isSprinting) {
         this(AvatarAction.MOVE_AVATAR, null, posX, posY, isSprinting);
@@ -78,6 +79,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
         PacketUtils.writeNullableUniqueId(output, this.userId);
         output.writeFloat(this.posX);
         output.writeFloat(this.posY);
+        output.writeBoolean(this.isSprinting);
     }
 
     @Override
@@ -86,12 +88,13 @@ public class PacketAvatarMove implements Packet<PacketListener> {
         this.userId = PacketUtils.readNullableUniqueId(input);
         this.posX = input.readFloat();
         this.posY = input.readFloat();
+        this.isSprinting = input.readBoolean();
     }
 
     @Override
     public @NotNull String toString() {
         return this.getClass().getSimpleName() + "{action=" + this.action + ", userId=" + this.userId
-                + ", posX=" + this.posX + ", posY=" + this.posY + "}";
+                + ", posX=" + this.posX + ", posY=" + this.posY + ", isSprinting=" + this.isSprinting + "}";
     }
 
     /**
