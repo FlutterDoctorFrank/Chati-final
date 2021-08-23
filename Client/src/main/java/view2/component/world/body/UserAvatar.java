@@ -160,7 +160,7 @@ public class UserAvatar extends Sprite {
             float distance = body.getPosition().dst(destination);
 
             float velocity = DEFAULT_VELOCITY;
-            if (distance > WorldScreen.WORLD_STEP / velocity) {
+            if (distance * WorldScreen.WORLD_STEP > velocity) {
                 velocity *= SPRINT_VELOCITY_FACTOR;
             }
 
@@ -168,7 +168,7 @@ public class UserAvatar extends Sprite {
                 body.setLinearVelocity(0, 0);
             } else {
                 Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor();
-                if (distance <= velocity / WorldScreen.WORLD_STEP) {
+                if (distance * WorldScreen.WORLD_STEP <= velocity) {
                     body.setLinearVelocity(velocityVector.scl(WorldScreen.WORLD_STEP * distance));
                 } else {
                     body.setLinearVelocity(velocityVector.scl(velocity));
