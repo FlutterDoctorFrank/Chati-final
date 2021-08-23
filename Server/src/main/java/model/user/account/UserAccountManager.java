@@ -111,6 +111,10 @@ public class UserAccountManager implements IUserAccountManager {
             return;
         }
         // Melde den Benutzer ab.
+        // Yujie Hu: Falls ein Benutzer nur angemeldet hat, noch nicht in eine Welt beigetreten ist und
+        // wollte abmelden, ruft hier user.logout() und bei user.logout() ruft dann noch leaveWorld().
+        // Bei leaveWorld() benutzt dann throwIfNotInWorld(), bekommt dann Exception weil der Benutzer
+        // noch nicht in eine Welt beigetreten ist. Aber ich denke diese Situation ist erlaubt.
         user.logout();
         GlobalContext.getInstance().removeUser(user);
         database.updateLastOnlineTime(user);

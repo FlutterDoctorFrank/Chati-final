@@ -58,7 +58,6 @@ public class WorldTest {
         this.account_database = Database.getUserAccountManagerDatabase();
         this.test_world = new World("test_world", SpatialMap.MAP);
         this.globalContext = GlobalContext.getInstance();
-        this.test_world = new World("test_world", SpatialMap.MAP);
         this.userAccountManager = UserAccountManager.getInstance();
 
 
@@ -99,6 +98,7 @@ public class WorldTest {
         Assert.assertEquals(1, this.test_world.getPrivateRooms().size());
         ContextID actual_room_id = test_room.getContextId();
         Assert.assertEquals(test_room, this.test_world.getPrivateRooms().get(actual_room_id));
+        Assert.assertEquals(test_room, this.test_world.getChildren().get(actual_room_id));
 
         //test auch containsPrivateRoom
         Assert.assertTrue(this.test_world.containsPrivateRoom(test_room));
