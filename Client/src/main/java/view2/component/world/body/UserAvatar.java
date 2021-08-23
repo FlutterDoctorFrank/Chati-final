@@ -156,20 +156,18 @@ public class UserAvatar extends Sprite {
         if (user.isTeleporting()) {
             teleport();
         } else {
-            Vector2 destination = new Vector2(user.getLocation().getPosX() / WorldScreen.PPM,
-                    user.getLocation().getPosY() / WorldScreen.PPM);
-            float distance = body.getPosition().dst(destination);
-
             float velocity = DEFAULT_VELOCITY;
-            if (Math.abs(distance * WorldScreen.WORLD_STEP - velocity) > MathUtils.FLOAT_ROUNDING_ERROR) {
+            if (user.isSprinting()) {
                 velocity *= SPRINT_VELOCITY_FACTOR;
             }
-
+            Vector2 destination = new Vector2(user.getLocation().getPosX() / WorldScreen.PPM,
+                    user.getLocation().getPosY() / WorldScreen.PPM);
             if (body.getPosition().epsilonEquals(destination)) {
                 body.setLinearVelocity(0, 0);
             } else {
+                float distance = body.getPosition().dst(destination);
                 Vector2 velocityVector = destination.cpy().sub(body.getPosition()).nor();
-                if (distance * WorldScreen.WORLD_STEP <= velocity) {
+                if (distance <= velocity / WorldScreen.WORLD_STEP) {
                     body.setLinearVelocity(velocityVector.scl(distance * WorldScreen.WORLD_STEP));
                 } else {
                     body.setLinearVelocity(velocityVector.scl(velocity));
