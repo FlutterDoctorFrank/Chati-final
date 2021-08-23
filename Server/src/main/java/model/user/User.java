@@ -1,5 +1,6 @@
 package model.user;
 
+import com.google.common.collect.Sets;
 import controller.network.ClientSender;
 import controller.network.ClientSender.SendAction;
 import model.communication.CommunicationHandler;
@@ -69,6 +70,9 @@ public class User implements IUser {
     /** Information, ob sich ein Benutzer momentan bewegen darf. */
     private boolean moveable;
 
+    /** Die Benutzer, mit denen dieser Benutzer gerade kommunizieren kann. */
+    private final Map<UUID, User> communicableUsers;
+
     /** Menge der befreundeten Benutzer. */
     private final Map<UUID, User> friends;
 
@@ -102,6 +106,7 @@ public class User implements IUser {
         this.currentLocation = null;
         this.currentInteractable = null;
         this.moveable = true;
+        this.communicableUsers = new HashMap<>();
         this.friends = new HashMap<>();
         this.ignoredUsers = new HashMap<>();
         this.contextRoles = new HashMap<>();
@@ -128,6 +133,7 @@ public class User implements IUser {
         this.currentLocation = null;
         this.currentInteractable = null;
         this.moveable = true;
+        this.communicableUsers = new HashMap<>();
         this.friends = new HashMap<>();
         this.ignoredUsers = new HashMap<>();
         this.contextRoles = new HashMap<>();
@@ -187,6 +193,8 @@ public class User implements IUser {
 
         // Hier erhält der eigene Benutzer eine Bestätigung der Bewegung:
         currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
+
+        updateCommunicableUsers();
     }
 
     @Override
@@ -364,51 +372,40 @@ public class User implements IUser {
      * Teleportiert einen Benutzer an die angegebene Position.
      * @param newLocation Position, an die Benutzer teleportiert werden soll.
      */
-    public void teleport(@NotNull final Location newLocation) {
+    public void teleport(@Nullable final Location newLocation) {
+        if (newLocation == null) {
+            currentLocation = null;
+            return;
+        }
         Location oldLocation = currentLocation;
         currentLocation = new Location(newLocation.getRoom(), newLocation.getPosX(), newLocation.getPosY());
         updateArea(oldLocation, newLocation);
         currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_SPAWN, this));
+        updateCommunicableUsers();
     }
 
-    /*
-    /**
-     * Teleportiert einen Benutzer an die angegebene Position.
-     * @param newLocation Position, an die Benutzer teleportiert werden soll.
-     */
-    /*
-    public void teleport(@NotNull final Location newLocation) {
-        if (currentLocation != null) {
-            if (currentLocation.getRoom().equals(newLocation.getRoom())) {
-                // Der Raum ist gleich. Position im Raum aktualisieren und die Teleportation den Benutzern mitteilen.
-                setPosition(newLocation.getPosX(), newLocation.getPosY());
-
-                currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_SPAWN, this));
-                return;
-            }
-
-            currentLocation.getRoom().removeUser(this);
+    private void updateCommunicableUsers() {
+        Map<UUID, User> currentCommunicableUsers = new HashMap<>(communicableUsers);
+        Map<UUID, User> newCommuniableUsers = new HashMap<>(currentLocation.getArea().getCommunicableUsers(this));
+        if (currentCommunicableUsers.keySet().equals(newCommuniableUsers.keySet())) {
+            return;
         }
+        filterIgnoredUsers(newCommuniableUsers);
+        communicableUsers.clear();
+        communicableUsers.putAll(newCommuniableUsers);
 
-        currentLocation = new Location(newLocation.getRoom(), newLocation.getPosX(), newLocation.getPosY());
-        currentLocation.getRoom().addUser(this); // Falls der Benutzer noch nicht im Raum ist, wird er jetzt hinzugefügt.
-        currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_SPAWN, this));
-        currentLocation.getArea().addUser(this);
-    }
-     */
+        // Send...
 
-    public void setPosition(final float posX, final float posY) {
-        Area currentArea = currentLocation.getArea();
-        currentLocation.setPosition(posX, posY);
-        // Ermittle, ob sich der Bereich des Benutzers geändert hat, entferne ihn aus den verlassenen Bereichen und
-        // füge ihn zu den betretenen Bereichen hinzu.
-        Area newArea = currentLocation.getArea();
-        if (!currentArea.equals(newArea)) {
-            Context lastCommonAncestor = currentArea.lastCommonAncestor(newArea);
-            lastCommonAncestor.getChildren().values().forEach(child -> child.removeUser(this));
-            newArea.addUser(this);
-        }
+        Sets.symmetricDifference(currentCommunicableUsers.entrySet(), newCommuniableUsers.entrySet())
+            .forEach(entry -> entry.getValue().updateCommunicableUsers());
     }
+
+    public Map<UUID, User> getCommunicableUsers() {
+        return communicableUsers;
+    }
+
+    public void filterIgnoredUsers(Map<UUID, User> users) {
+        users.values().removeIf(other -> this.isIgnoring(other) || other.isIgnoring(this));    }
 
     /**
      * Aktualisiert die Datenstrukturen der enthaltenen Benutzer in Kontexten nach einer Positionsänderung.
@@ -451,8 +448,6 @@ public class User implements IUser {
         friends.put(user.getUserId(), user);
         database.addFriendship(this, user);
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
-        System.out.println(username);
-        friends.values().forEach(iuser -> System.out.println(iuser.getUserId()));
         updateUserInfo();
     }
 
@@ -473,10 +468,9 @@ public class User implements IUser {
      */
     public void ignoreUser(@NotNull final User user) {
         ignoredUsers.put(user.getUserId(), user);
+        updateCommunicableUsers();
         database.addIgnoredUser(this, user);
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
-        System.out.println(username);
-        ignoredUsers.values().forEach(iuser -> System.out.println(iuser.getUserId()));
         updateUserInfo();
     }
 
@@ -486,6 +480,7 @@ public class User implements IUser {
      */
     public void unignoreUser(@NotNull final User user) {
         ignoredUsers.remove(user.getUserId());
+        updateCommunicableUsers();
         database.removeIgnoredUser(this, user);
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
         updateUserInfo();

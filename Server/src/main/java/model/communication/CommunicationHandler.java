@@ -86,8 +86,7 @@ public class CommunicationHandler {
 
         // Ermittle die empfangsberechtigten Benutzer gemäß der Kommunikationsform, einschließlich dem sendenden
         // Benutzer.
-        Map<UUID, User> receivers = communicationContext.getCommunicableUsers(sender);
-        filterIgnoredUsers(sender, receivers);
+        Map<UUID, User> receivers = sender.getCommunicableUsers();
 
         // Versende die Textnachricht.
         TextMessage textMessage = new TextMessage(sender, message, MessageType.STANDARD);
@@ -115,23 +114,12 @@ public class CommunicationHandler {
         }
 
         // Ermittle die empfangsberechtigten Benutzer gemäß der Kommunikationsform, ohne den sendenden Benutzer.
-        Map<UUID, User> receivers = communicationContext.getCommunicableUsers(sender);
+        Map<UUID, User> receivers = sender.getCommunicableUsers();
         receivers.remove(sender.getUserId());
-        filterIgnoredUsers(sender, receivers);
 
         // Versende die Sprachnachricht.
         VoiceMessage voiceMessage = new VoiceMessage(sender, voiceData);
         receivers.values().forEach(user -> user.send(ClientSender.SendAction.VOICE, voiceMessage));
-    }
-
-    /**
-     * Filtert aus einer Menge von Benutzern die Benutzer heraus, die der kommunizierende Benutzer ignoriert und die
-     * ihn ignorieren
-     * @param sender Kommunizierender Benutzer.
-     * @param users Die Menge von Benutzern, die gefiltert werden soll.
-     */
-    private static void filterIgnoredUsers(@NotNull final User sender, @NotNull final Map<UUID, User> users) {
-        users.values().removeIf(user -> sender.isIgnoring(user) || user.isIgnoring(sender));
     }
 
     private enum ChatCommand {
@@ -240,7 +228,7 @@ public class CommunicationHandler {
 
                 // Ermittle die empfangsberechtigten Benutzer.
                 Map<UUID, User> receivers = communicationRoom.getUsers();
-                filterIgnoredUsers(sender, receivers);
+                sender.filterIgnoredUsers(receivers);
 
                 // Versende die Textnachricht.
                 TextMessage textMessage = new TextMessage(sender, sendMessage, MessageType.ROOM);
@@ -289,7 +277,7 @@ public class CommunicationHandler {
 
                 // Ermittle die empfangsberechtigten Benutzer.
                 Map<UUID, User> receivers = communicationWorld.getUsers();
-                filterIgnoredUsers(sender, receivers);
+                sender.filterIgnoredUsers(receivers);
 
                 // Versende die Textnachricht.
                 TextMessage textMessage = new TextMessage(sender, sendMessage, MessageType.WORLD);

@@ -110,7 +110,6 @@ public class Room extends Area implements IRoom {
             containedUsers.values().forEach(other -> user.send(SendAction.AVATAR_SPAWN, other));
 
             super.addUser(user);
-
             user.teleport(spawnLocation);
 
             if (isPrivate) {
@@ -127,6 +126,7 @@ public class Room extends Area implements IRoom {
     public void removeUser(@NotNull final User user) {
         if (contains(user)) {
             super.removeUser(user);
+            user.teleport(null);
 
             containedUsers.values().forEach(receiver -> receiver.send(SendAction.AVATAR_REMOVE, user));
 
