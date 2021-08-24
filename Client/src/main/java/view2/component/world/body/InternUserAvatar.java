@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import model.user.IInternUserView;
+import view2.Chati;
 import view2.component.world.WorldScreen;
 
 import java.util.*;
@@ -16,8 +17,8 @@ public class InternUserAvatar extends UserAvatar {
     private boolean isSprinting;
     private boolean canInteract;
 
-    public InternUserAvatar(IInternUserView internUser, World world) {
-        super(internUser, world);
+    public InternUserAvatar(World world) {
+        super(Chati.getInstance().getUserManager().getInternUserView());
         body.setUserData(BodyType.INTERN_USER);
         body.destroyFixture(body.getFixtureList().get(0));
         FixtureDef fixtureDef = new FixtureDef();

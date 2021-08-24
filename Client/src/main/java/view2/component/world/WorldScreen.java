@@ -5,24 +5,23 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import controller.network.ServerSender;
 import model.context.spatial.SpatialMap;
 import model.user.IUserView;
-import view2.Assets;
 import view2.Chati;
 import view2.component.AbstractScreen;
 import view2.component.hud.HeadUpDisplay;
+import view2.component.world.body.Border;
 import view2.component.world.body.InteractionObject;
 import view2.component.world.body.InternUserAvatar;
 import view2.component.world.body.UserAvatar;
@@ -52,7 +51,7 @@ public class WorldScreen extends AbstractScreen {
     private final OrthographicCamera camera;
     private final Box2DDebugRenderer debugRenderer;
     private final OrthogonalTiledMapRenderer tiledMapRenderer;
-    private final World world;
+    private World world;
 
     private final Map<IUserView, UserAvatar> externUserAvatars;
     private InternUserAvatar internUserAvatar;
@@ -74,8 +73,9 @@ public class WorldScreen extends AbstractScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (Chati.getInstance().isRoomChanged()) {
+            destroy();
             createMap();
-            loadExternUserAvatars();
+            initialize();
         }
 
         if (tiledMapRenderer.getMap() != null) {
@@ -106,19 +106,12 @@ public class WorldScreen extends AbstractScreen {
 
     @Override
     public void show() {
-        this.internUserAvatar = new InternUserAvatar(Chati.getInstance().getUserManager().getInternUserView(), world);
-        loadExternUserAvatars();
+        initialize();
     }
 
     @Override
     public void hide() {
-        if (internUserAvatar != null) {
-            world.destroyBody(internUserAvatar.getBody());
-            internUserAvatar = null;
-        }
-        externUserAvatars.values().forEach(userAvatar -> world.destroyBody(userAvatar.getBody()));
-        externUserAvatars.clear();
-        tiledMapRenderer.setMap(null);
+        destroy();
     }
 
     @Override
@@ -163,43 +156,34 @@ public class WorldScreen extends AbstractScreen {
         return worldScreen;
     }
 
+    private void destroy() {
+        Array<Body> bodies = new Array<>();
+        world.getBodies(bodies);
+        bodies.forEach(world::destroyBody);
+        internUserAvatar = null;
+        externUserAvatars.clear();
+        tiledMapRenderer.setMap(null);
+    }
+
+    private void initialize() {
+        this.internUserAvatar = new InternUserAvatar(world);
+        loadExternUserAvatars();
+    }
+
     private void createMap() {
         SpatialMap spatialMap = Chati.getInstance().getUserManager().getInternUserView().getCurrentRoom().getMap();
         TiledMap tiledMap = new TmxMapLoader().load(spatialMap.getPath());
         tiledMapRenderer.setMap(tiledMap);
-        createBorders();
-        createInteractionObjects();
-    }
-
-    private void createBorders() {
-        tiledMapRenderer.getMap().getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class).forEach(border -> {
-            Rectangle bounds = border.getRectangle();
-
-            BodyDef bodyDef = new BodyDef();
-            bodyDef.type = BodyDef.BodyType.StaticBody;
-            bodyDef.position.set((bounds.getX() + bounds.getWidth() / 2) / PPM, (bounds.getY() + bounds.getHeight() / 2) / PPM);
-            Body body = world.createBody(bodyDef);
-
-            FixtureDef fixtureDef = new FixtureDef();
-            PolygonShape shape = new PolygonShape();
-            shape.setAsBox((bounds.getWidth() / 2) / PPM, (bounds.getHeight() / 2) / PPM);
-            fixtureDef.shape = shape;
-            body.createFixture(fixtureDef);
-        });
-    }
-
-    private void createInteractionObjects() {
+        tiledMapRenderer.getMap().getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class)
+                .forEach(border -> new Border(border.getRectangle()));
         tiledMapRenderer.getMap().getLayers().get("InteractiveObject").getObjects().getByType(RectangleMapObject.class)
-                .forEach(interactiveObject -> {
-            Rectangle rectangle = interactiveObject.getRectangle();
-            new InteractionObject(rectangle);
-        });
+                .forEach(interactiveObject -> new InteractionObject(interactiveObject.getRectangle()));
     }
 
     private void loadExternUserAvatars() {
         Chati.getInstance().getUserManager().getUsersInRoom().values().forEach(externUser -> {
             if (!externUserAvatars.containsKey(externUser)) {
-                UserAvatar newUserAvatar = new UserAvatar(externUser, world);
+                UserAvatar newUserAvatar = new UserAvatar(externUser);
                 externUserAvatars.put(externUser, newUserAvatar);
                 newUserAvatar.teleport();
             }
@@ -219,17 +203,16 @@ public class WorldScreen extends AbstractScreen {
         float mapWidth = layer.getWidth() * layer.getTileWidth();
         float mapHeight = layer.getHeight() * layer.getTileHeight();
 
-        float cameraTopBoundary =
-                (mapHeight - Gdx.graphics.getHeight() * camera.zoom / 2f) / PPM;
-        float cameraLeftBoundary =
-                (Gdx.graphics.getWidth() / 2f * camera.zoom) / PPM;
-        float cameraBottomBoundary =
-                (Gdx.graphics.getHeight() * camera.zoom / 2f) / PPM;
-        float cameraRightBoundary =
-                (mapWidth - Gdx.graphics.getWidth() * camera.zoom / 2f) / PPM;
+        float cameraTopBoundary = (mapHeight - Gdx.graphics.getHeight() * camera.zoom / 2f) / PPM;
+        float cameraLeftBoundary = (Gdx.graphics.getWidth() / 2f * camera.zoom) / PPM;
+        float cameraBottomBoundary = (Gdx.graphics.getHeight() * camera.zoom / 2f) / PPM;
+        float cameraRightBoundary = (mapWidth - Gdx.graphics.getWidth() * camera.zoom / 2f) / PPM;
 
         Vector2 internUserPosition = internUserAvatar.getPosition();
-        if (internUserPosition.x >= cameraLeftBoundary && internUserPosition.x <= cameraRightBoundary) {
+
+        if (mapWidth < Gdx.graphics.getWidth() * camera.zoom) {
+            camera.position.x = (cameraLeftBoundary + cameraRightBoundary) / 2f;
+        } else if (internUserPosition.x >= cameraLeftBoundary && internUserPosition.x <= cameraRightBoundary) {
             camera.position.x = internUserPosition.x;
         } else if (internUserPosition.x < cameraLeftBoundary) {
             camera.position.x = cameraLeftBoundary;
@@ -237,7 +220,9 @@ public class WorldScreen extends AbstractScreen {
             camera.position.x = cameraRightBoundary;
         }
 
-        if (internUserPosition.y >= cameraBottomBoundary && internUserPosition.y <= cameraTopBoundary) {
+        if (mapHeight < Gdx.graphics.getHeight() * camera.zoom) {
+            camera.position.y = (cameraTopBoundary + cameraBottomBoundary) / 2f;
+        } else if (internUserPosition.y >= cameraBottomBoundary && internUserPosition.y <= cameraTopBoundary) {
             camera.position.y = internUserPosition.y;
         } else if (internUserPosition.y > cameraTopBoundary) {
             camera.position.y = cameraTopBoundary;

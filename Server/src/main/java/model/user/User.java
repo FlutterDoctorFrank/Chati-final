@@ -351,6 +351,11 @@ public class User implements IUser {
     }
 
     @Override
+    public @NotNull Map<UUID, IUser> getCommunicableIUsers() {
+        return Collections.unmodifiableMap(communicableUsers);
+    }
+
+    @Override
     public @NotNull ContextRole getGlobalRoles() {
         try {
             return contextRoles.values().stream()
@@ -382,46 +387,6 @@ public class User implements IUser {
         updateArea(oldLocation, newLocation);
         currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_SPAWN, this));
         updateCommunicableUsers();
-    }
-
-    private void updateCommunicableUsers() {
-        Map<UUID, User> currentCommunicableUsers = new HashMap<>(communicableUsers);
-        Map<UUID, User> newCommuniableUsers = new HashMap<>(currentLocation.getArea().getCommunicableUsers(this));
-        if (currentCommunicableUsers.keySet().equals(newCommuniableUsers.keySet())) {
-            return;
-        }
-        filterIgnoredUsers(newCommuniableUsers);
-        communicableUsers.clear();
-        communicableUsers.putAll(newCommuniableUsers);
-
-        // Send...
-
-        Sets.symmetricDifference(currentCommunicableUsers.entrySet(), newCommuniableUsers.entrySet())
-            .forEach(entry -> entry.getValue().updateCommunicableUsers());
-    }
-
-    public Map<UUID, User> getCommunicableUsers() {
-        return communicableUsers;
-    }
-
-    public void filterIgnoredUsers(Map<UUID, User> users) {
-        users.values().removeIf(other -> this.isIgnoring(other) || other.isIgnoring(this));    }
-
-    /**
-     * Aktualisiert die Datenstrukturen der enthaltenen Benutzer in Kontexten nach einer Positionsänderung.
-     * @param oldLocation Alte Position des Benutzers.
-     * @param newLocation Neue Position des Benutzers.
-     */
-    private void updateArea(@Nullable final Location oldLocation, @Nullable final Location newLocation) {
-        if (newLocation != null) {
-            Area newArea = newLocation.getArea();
-            if (oldLocation != null) {
-                Area oldArea = oldLocation.getArea();
-                Context lastCommonAncestor = oldArea.lastCommonAncestor(newArea);
-                lastCommonAncestor.getChildren().values().forEach(child -> child.removeUser(this));
-            }
-            newArea.addUser(this);
-        }
     }
 
     /**
@@ -595,12 +560,16 @@ public class User implements IUser {
     /**
      * Überprüft, ob ein Benutzer gerade mit dem übergebenen Kontext interagiert.
      * @param interactable Zu überprüfender Kontext.
-     * @return true, wenn Benutzer mit dem Kontext interagiert, sonst false.
+     * @return true, wenn der Benutzer mit dem Kontext interagiert, sonst false.
      */
     public boolean isInteractingWith(@NotNull final Interactable interactable) {
         return currentInteractable != null && currentInteractable.equals(interactable);
     }
 
+    /**
+     * Gibt zurück, ob der Benutzer gerade mit einem Kontext interagiert.
+     * @return true, wenn der Benutzer interagiert, sonst false.
+     */
     public boolean isInteracting() {
         return this.currentInteractable != null;
     }
@@ -693,19 +662,6 @@ public class User implements IUser {
     }
 
     /**
-     * Fügt zu einer Menge von Rollen in Kontexten die Rollen von allen untergeordneten Kontexten hinzu.
-     * @param contextRoles Menge von Rollen in Kontexten.
-     * @param context Kontext, von dem die Rollen der untergeordneten Kontexte hinzugefügt werden sollen.
-     */
-    private void addChildRoles(@NotNull final Map<Context, ContextRole> contextRoles, @NotNull final Context context) {
-        Map<Context, ContextRole> found = this.contextRoles.values().stream()
-                .filter(contextRole -> contextRole.getContext().equals(context))
-                .collect(Collectors.toMap(ContextRole::getContext, Function.identity()));
-        contextRoles.putAll(found);
-        context.getChildren().values().forEach(child -> addChildRoles(contextRoles, child));
-    }
-
-    /**
      * Gibt die Benachrichtigungen des Benutzers innerhalb seiner aktuellen Welt zurück.
      * @return Menge der Benachrichtigungen des Benutzers in seiner aktuellen Welt.
      * @throws IllegalStateException wenn sich der Benutzer in keiner Welt befindet.
@@ -718,6 +674,14 @@ public class User implements IUser {
         return notifications.values().stream()
                 .filter(notification -> notification.getContext().equals(currentWorld))
                 .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
+    }
+
+    /**
+     * Gibt die Benutzer zurück, mit denen der Benutzer gerade kommunizieren kann.
+     * @return Menge der Benutzer, mit denen dieser Benutzer gerade kommunizieren kann.
+     */
+    public @NotNull Map<UUID, User> getCommunicableUsers() {
+        return communicableUsers;
     }
 
     /**
@@ -776,24 +740,6 @@ public class User implements IUser {
                 .forEach(user -> user.send(SendAction.CONTEXT_ROLE, contextRole));
     }
 
-    /**
-     * Wirft eine Exception wenn der Benutzer nicht angemeldet ist.
-     */
-    private void throwIfNotOnline() {
-        if (!isOnline()) {
-            throw new IllegalStateException("User is not logged in.");
-        }
-    }
-
-    /**
-     * Wirft eine Exception wenn der Benutzer nicht in einer Welt ist.
-     */
-    private void throwIfNotInWorld() {
-        if (!isInWorld()) {
-            throw new IllegalStateException("User is not in world.");
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -838,6 +784,73 @@ public class User implements IUser {
     public void send(@NotNull final SendAction action, @NotNull final Object object) {
         if (this.isOnline()) {
             this.clientSender.send(action, object);
+        }
+    }
+
+    /**
+     * Aktualisiert die Menge der Benutzer, mit denen gerade kommuniziert werden kann.
+     */
+    private void updateCommunicableUsers() {
+        Map<UUID, User> currentCommunicableUsers = new HashMap<>(communicableUsers);
+        Map<UUID, User> newCommuniableUsers = new HashMap<>(currentLocation.getArea().getCommunicableUsers(this));
+        if (currentCommunicableUsers.keySet().equals(newCommuniableUsers.keySet())) {
+            return;
+        }
+        CommunicationHandler.filterIgnoredUsers(this, newCommuniableUsers);
+        communicableUsers.clear();
+        communicableUsers.putAll(newCommuniableUsers);
+
+        // Send...
+
+        Sets.symmetricDifference(currentCommunicableUsers.entrySet(), newCommuniableUsers.entrySet())
+                .forEach(entry -> entry.getValue().updateCommunicableUsers());
+    }
+
+    /**
+     * Aktualisiert die Datenstrukturen der enthaltenen Benutzer in Kontexten nach einer Positionsänderung.
+     * @param oldLocation Alte Position des Benutzers.
+     * @param newLocation Neue Position des Benutzers.
+     */
+    private void updateArea(@Nullable final Location oldLocation, @Nullable final Location newLocation) {
+        if (newLocation != null) {
+            Area newArea = newLocation.getArea();
+            if (oldLocation != null) {
+                Area oldArea = oldLocation.getArea();
+                Context lastCommonAncestor = oldArea.lastCommonAncestor(newArea);
+                lastCommonAncestor.getChildren().values().forEach(child -> child.removeUser(this));
+            }
+            newArea.addUser(this);
+        }
+    }
+
+    /**
+     * Fügt zu einer Menge von Rollen in Kontexten die Rollen von allen untergeordneten Kontexten hinzu.
+     * @param contextRoles Menge von Rollen in Kontexten.
+     * @param context Kontext, von dem die Rollen der untergeordneten Kontexte hinzugefügt werden sollen.
+     */
+    private void addChildRoles(@NotNull final Map<Context, ContextRole> contextRoles, @NotNull final Context context) {
+        Map<Context, ContextRole> found = this.contextRoles.values().stream()
+                .filter(contextRole -> contextRole.getContext().equals(context))
+                .collect(Collectors.toMap(ContextRole::getContext, Function.identity()));
+        contextRoles.putAll(found);
+        context.getChildren().values().forEach(child -> addChildRoles(contextRoles, child));
+    }
+
+    /**
+     * Wirft eine Exception wenn der Benutzer nicht angemeldet ist.
+     */
+    private void throwIfNotOnline() {
+        if (!isOnline()) {
+            throw new IllegalStateException("User is not logged in.");
+        }
+    }
+
+    /**
+     * Wirft eine Exception wenn der Benutzer nicht in einer Welt ist.
+     */
+    private void throwIfNotInWorld() {
+        if (!isInWorld()) {
+            throw new IllegalStateException("User is not in world.");
         }
     }
 }

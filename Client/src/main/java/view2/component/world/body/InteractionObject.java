@@ -9,7 +9,7 @@ public class InteractionObject {
 
     private final Rectangle rectangle;
 
-    public InteractionObject (Rectangle rectangle) {
+    public InteractionObject(Rectangle rectangle) {
         this.rectangle = rectangle;
 
         BodyDef bodyDef = new BodyDef();

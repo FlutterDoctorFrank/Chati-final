@@ -30,11 +30,11 @@ public class UserAvatar extends Sprite {
     private Direction previousDirection;
     private float stateTimer;
 
-    public UserAvatar(IUserView user, World world) {
+    public UserAvatar(IUserView user) {
         this.user = user;
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        this.body = world.createBody(bodyDef);
+        this.body = WorldScreen.getInstance().getWorld().createBody(bodyDef);
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.filter.categoryBits = WorldScreen.USER_BIT;
         fixtureDef.filter.maskBits = 0;

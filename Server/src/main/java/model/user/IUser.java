@@ -192,6 +192,12 @@ public interface IUser {
     @NotNull Map<UUID, IUser> getIgnoredUsers();
 
     /**
+     * Gibt die Benutzer zurück, mit denen der Benutzer gerade kommunizieren kann.
+     * @return Menge der Benutzer, mit denen dieser Benutzer gerade kommunizieren kann.
+     */
+    @NotNull Map<UUID, IUser> getCommunicableIUsers();
+
+    /**
      * Gibt die Rollen des Benutzers im globalen Kontext zurück.
      * @return Menge der globalen Rollen des Benutzers.
      */

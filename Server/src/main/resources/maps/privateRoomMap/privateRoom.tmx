@@ -2,8 +2,8 @@
 <map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="24" height="24" tilewidth="32" tileheight="32" infinite="0" nextlayerid="15" nextobjectid="24">
  <properties>
   <property name="communicationRegion" value="areaCommunication"/>
-  <property name="spawnPosX" type="float" value="380"/>
-  <property name="spawnPosY" type="float" value="610"/>
+  <property name="spawnPosX" type="float" value="180"/>
+  <property name="spawnPosY" type="float" value="310"/>
   <property name="text" type="bool" value="true"/>
   <property name="voice" type="bool" value="true"/>
  </properties>

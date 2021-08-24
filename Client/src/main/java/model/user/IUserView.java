@@ -58,6 +58,12 @@ public interface IUserView {
     boolean canTeleportTo();
 
     /**
+     * Gibt zurück, ob der intern angemeldete Benutzer mit diesem Benutzer kommunizieren kann.
+     * @return true, wenn eine Kommunikation möglich ist, sonst false.
+     */
+    boolean canCommunicateWith();
+
+    /**
      * Gibt zurück, ob der Benutzer im aktuellen räumlichen Kontext des internen Benutzers als gemeldet markiert ist.
      * @return true, wenn der Benutzer im aktuellen räumlichen Kontext als gemeldet markiert ist, sonst false.
      */

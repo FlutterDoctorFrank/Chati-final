@@ -122,6 +122,16 @@ public class CommunicationHandler {
         receivers.values().forEach(user -> user.send(ClientSender.SendAction.VOICE, voiceMessage));
     }
 
+    /**
+     * Filtert aus einer Menge von Benutzern die Benutzer heraus, die der kommunizierende Benutzer ignoriert und die
+     * ihn ignorieren
+     * @param sender Kommunizierender Benutzer.
+     * @param users Die Menge von Benutzern, die gefiltert werden soll.
+     */
+    public static void filterIgnoredUsers(@NotNull final User sender, @NotNull final Map<UUID, User> users) {
+        users.values().removeIf(user -> sender.isIgnoring(user) || user.isIgnoring(sender));
+    }
+
     private enum ChatCommand {
 
         /**
@@ -228,7 +238,7 @@ public class CommunicationHandler {
 
                 // Ermittle die empfangsberechtigten Benutzer.
                 Map<UUID, User> receivers = communicationRoom.getUsers();
-                sender.filterIgnoredUsers(receivers);
+                filterIgnoredUsers(sender, receivers);
 
                 // Versende die Textnachricht.
                 TextMessage textMessage = new TextMessage(sender, sendMessage, MessageType.ROOM);
@@ -277,7 +287,7 @@ public class CommunicationHandler {
 
                 // Ermittle die empfangsberechtigten Benutzer.
                 Map<UUID, User> receivers = communicationWorld.getUsers();
-                sender.filterIgnoredUsers(receivers);
+                filterIgnoredUsers(sender, receivers);
 
                 // Versende die Textnachricht.
                 TextMessage textMessage = new TextMessage(sender, sendMessage, MessageType.WORLD);

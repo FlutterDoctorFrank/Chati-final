@@ -53,6 +53,9 @@ public class User implements IUserController, IUserView {
     /** Die Information, ob sich der intern angemeldete Benutzer zu diesem Benutzer teleportieren kann. */
     private boolean canTeleportTo;
 
+    /** Die Information, ob der intern angemeldete Benutzer mit diesem Benutzer gerade kommunizieren kann. */
+    private boolean canCommunicateWith;
+
     /** Die Kontexte, in denen der Benutzer gemeldet ist. */
     protected final Map<ContextID, Context> reportedContexts;
 
@@ -80,9 +83,12 @@ public class User implements IUserController, IUserView {
         this.isInCurrentWorld = false;
         this.isInCurrentRoom = false;
         this.currentLocation = null;
+        this.isSprinting = false;
+        this.isTeleporting = false;
         this.isFriend = false;
         this.isIgnored = false;
         this.canTeleportTo = false;
+        this.canCommunicateWith = false;
         this.reportedContexts = new HashMap<>();
         this.mutedContexts = new HashMap<>();
         this.bannedContexts = new HashMap<>();
@@ -138,6 +144,11 @@ public class User implements IUserController, IUserView {
     public void setTeleportable(boolean canTeleportTo) {
         this.canTeleportTo = canTeleportTo;
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
+    }
+
+    @Override
+    public void setCommunicable(boolean canCommunicateWith) {
+        this.canCommunicateWith = canCommunicateWith;
     }
 
     @Override
@@ -221,6 +232,11 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canTeleportTo() {
         return canTeleportTo;
+    }
+
+    @Override
+    public boolean canCommunicateWith() {
+        return canCommunicateWith;
     }
 
     @Override

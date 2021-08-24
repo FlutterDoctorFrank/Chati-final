@@ -69,6 +69,12 @@ public interface IUserController {
     void setTeleportable(boolean canTeleportTo);
 
     /**
+     * Setzt die Information, ob der intern angemeldete Benutzer mit diesem Benutzer gerade kommunizieren kann.
+     * @param canCommunicateWith true, wenn eine Kommunikation möglich ist, sonst false.
+     */
+    void setCommunicable(boolean canCommunicateWith);
+
+    /**
      * Setzt die Information, ob ein Benutzer in einem bestimmten Kontext gemeldet ist.
      * @param contextId ID des Kontextes, in dem der Benutzer gemeldet ist.
      * @param isReported true, wenn der Benutzer in dem Kontext gemeldet ist, sonst false.
