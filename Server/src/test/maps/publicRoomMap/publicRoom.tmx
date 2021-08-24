@@ -634,7 +634,6 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="137" x="352" y="224" width="320" height="96"/>
   <object id="159" name="Disco" x="0" y="0" width="1024" height="896">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
