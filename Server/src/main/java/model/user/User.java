@@ -69,7 +69,7 @@ public class User implements IUser {
     private Interactable currentInteractable;
 
     /** Information, ob sich ein Benutzer momentan bewegen darf. */
-    private boolean moveable;
+    private boolean movable;
 
     /** Die Benutzer, mit denen dieser Benutzer gerade kommunizieren kann. */
     private final Map<UUID, User> communicableUsers;
@@ -106,7 +106,7 @@ public class User implements IUser {
         this.currentWorld = null;
         this.currentLocation = null;
         this.currentInteractable = null;
-        this.moveable = true;
+        this.movable = true;
         this.communicableUsers = new HashMap<>();
         this.friends = new HashMap<>();
         this.ignoredUsers = new HashMap<>();
@@ -133,7 +133,7 @@ public class User implements IUser {
         this.currentWorld = null;
         this.currentLocation = null;
         this.currentInteractable = null;
-        this.moveable = true;
+        this.movable = true;
         this.communicableUsers = new HashMap<>();
         this.friends = new HashMap<>();
         this.ignoredUsers = new HashMap<>();
@@ -178,7 +178,7 @@ public class User implements IUser {
         throwIfNotInWorld();
         updateLastActivity();
         // Überprüfe, ob sich der Benutzer bewegen darf.
-        if (!moveable) {
+        if (!movable) {
             throw new IllegalStateException("User is not allowed to move.");
         }
         // Überprüfe, ob die Zielkoordinaten erlaubt sind.
@@ -678,10 +678,10 @@ public class User implements IUser {
 
     /**
      * Setzt die Information, ob der Benutzer sich momentan bewegen darf.
-     * @param moveable true, wenn der Benutzer sich bewegen darf, sonst false.
+     * @param movable true, wenn der Benutzer sich bewegen darf, sonst false.
      */
-    public void setMoveable(final boolean moveable) {
-        this.moveable = moveable;
+    public void setMovable(final boolean movable) {
+        this.movable = movable;
     }
 
     /**
@@ -843,7 +843,7 @@ public class User implements IUser {
         communicableUsers.clear();
         communicableUsers.putAll(newCommuniableUsers);
 
-        // Send...
+        this.send(SendAction.COMMUNICABLES, this);
 
         Sets.symmetricDifference(currentCommunicableUsers.entrySet(), newCommuniableUsers.entrySet())
                 .forEach(entry -> entry.getValue().updateCommunicableUsers());

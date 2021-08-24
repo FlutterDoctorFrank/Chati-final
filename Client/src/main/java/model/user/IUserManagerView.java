@@ -63,13 +63,6 @@ public interface IUserManagerView {
     Map<UUID, IUserView> getUsersInRoom();
 
     /**
-     * Gibt die externen Benutzer zurück, mit denen der intern angemeldete Benutzer gerade kommunizieren kann.
-     * @return Externe Benutzer, mit denen gerade kommuniziert werden kann.
-     * @throws IllegalStateException wenn es keine aktuelle Welt gibt.
-     */
-    Map<UUID, IUserView> getCommunicableUsers();
-
-    /**
      * Gibt zurück, ob auf diesem Client gerade ein Benutzer angemeldet ist.
      * @return true, wenn ein Benutzer angemeldet ist, sonst false.
      */

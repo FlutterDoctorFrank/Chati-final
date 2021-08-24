@@ -45,7 +45,7 @@ public class AreaPlanner extends Interactable {
         throwIfUserNotAvailable(user);
         // Öffne das Menü beim Benutzer.
         user.setCurrentInteractable(this);
-        user.setMoveable(false);
+        user.setMovable(false);
         user.send(SendAction.OPEN_MENU, this);
     }
 
@@ -57,7 +57,7 @@ public class AreaPlanner extends Interactable {
         switch (menuOption) {
             case 0: // Schließt das Menü.
                 user.setCurrentInteractable(null);
-                user.setMoveable(true);
+                user.setMovable(true);
                 user.send(SendAction.CLOSE_MENU, this);
                 break;
             case 1: // Stellt eine Anfrage zur Reservierung zum Erhalt der Rolle des Bereichsberechtigten im übergeordneten

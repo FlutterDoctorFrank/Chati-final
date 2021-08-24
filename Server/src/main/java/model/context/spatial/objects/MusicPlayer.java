@@ -37,7 +37,7 @@ public class MusicPlayer extends Interactable {
 
         // Öffne das Menü beim Benutzer.
         user.setCurrentInteractable(this);
-        user.setMoveable(false);
+        user.setMovable(false);
         user.send(SendAction.OPEN_MENU, this);
     }
 
@@ -49,7 +49,7 @@ public class MusicPlayer extends Interactable {
         switch (menuOption) {
             case 0: // Schließe das Menü beim Benutzer.
                 user.setCurrentInteractable(null);
-                user.setMoveable(true);
+                user.setMovable(true);
                 user.send(SendAction.CLOSE_MENU, this);
                 break;
             case 1: // Spiele ein Musikstück ab.

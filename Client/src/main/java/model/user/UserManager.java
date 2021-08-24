@@ -136,13 +136,6 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     }
 
     @Override
-    public Map<UUID, IUserView> getCommunicableUsers() {
-        throwIfNotInWorld();
-        return externUsers.values().stream().filter(User::canCommunicateWith)
-                .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
-    }
-
-    @Override
     public boolean isLoggedIn() {
         return internUser != null;
     }

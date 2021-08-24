@@ -50,7 +50,7 @@ public class RoomReception extends Interactable {
 
         // Öffne das Menü beim Benutzer.
         user.setCurrentInteractable(this);
-        user.setMoveable(false);
+        user.setMovable(false);
         user.send(SendAction.OPEN_MENU, this);
     }
 
@@ -62,7 +62,7 @@ public class RoomReception extends Interactable {
         switch (menuOption) {
             case 0: // Schließe das Menü beim Benutzer.
                 user.setCurrentInteractable(null);
-                user.setMoveable(true);
+                user.setMovable(true);
                 user.send(SendAction.CLOSE_MENU, this);
                 break;
             case 1: // Erzeuge einen privaten Raum.
@@ -100,7 +100,7 @@ public class RoomReception extends Interactable {
 
                 // Schließe das Menü des Benutzers.
                 user.setCurrentInteractable(null);
-                user.setMoveable(true);
+                user.setMovable(true);
                 user.send(ClientSender.SendAction.CLOSE_MENU, this);
                 user.teleport(privateRoom.getSpawnLocation());
                 user.addRole(privateRoom, Role.ROOM_OWNER);
@@ -137,7 +137,7 @@ public class RoomReception extends Interactable {
                 }
                 // Schließe das Menü beim Benutzer.
                 user.setCurrentInteractable(null);
-                user.setMoveable(true);
+                user.setMovable(true);
                 user.send(SendAction.CLOSE_MENU, this);
                 user.teleport(privateRoom.getSpawnLocation());
                 break;

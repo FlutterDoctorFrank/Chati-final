@@ -64,6 +64,9 @@ public class UserAvatar extends Sprite {
             || WorldSettingsTable.SHOW_NAME) {
             userInfoContainer.setPosition(body.getPosition().x, body.getPosition().y + getHeight());
             userInfoContainer.setScale(1 / WorldScreen.PPM * WorldScreen.getInstance().getCamera().zoom);
+            if (user.canCommunicateWith()) {
+                userInfoContainer.scaleBy(2);
+            }
             userInfoContainer.act(delta);
             userInfoContainer.draw(batch, 1);
         }

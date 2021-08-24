@@ -43,7 +43,7 @@ public class Seat extends Interactable {
             if (contains(user)) {
                 // Erlaube dem Benutzer, sich von dem Platz wegzubewegen.
                 user.setCurrentInteractable(null);
-                user.setMoveable(true);
+                user.setMovable(true);
             } else {
                 // Teile dem Benutzer mit, dass der Platz bereits von einem anderen Benutzer belegt ist.
                 MessageBundle messageBundle = new MessageBundle("Dieser Platz ist bereits belegt.");
@@ -53,7 +53,7 @@ public class Seat extends Interactable {
         } else {
             // Öffne das Menü beim Benutzer.
             user.setCurrentInteractable(this);
-            user.setMoveable(false);
+            user.setMovable(false);
             user.send(ClientSender.SendAction.OPEN_MENU, this);
         }
     }
@@ -66,15 +66,15 @@ public class Seat extends Interactable {
         switch (menuOption) {
             case 0: // Schließe das Menü beim Benutzer.
                 user.setCurrentInteractable(null);
-                user.setMoveable(true);
+                user.setMovable(true);
                 user.send(ClientSender.SendAction.CLOSE_MENU, this);
                 break;
             case 1: // Bewege den Benutzer auf den Platz.
                 user.send(ClientSender.SendAction.CLOSE_MENU, this);
                 try {
-                    user.setMoveable(true);
+                    user.setMovable(true);
                     user.move(expanse.getBottomLeft().getPosX(), expanse.getBottomLeft().getPosY(), false);
-                    user.setMoveable(false);
+                    user.setMovable(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

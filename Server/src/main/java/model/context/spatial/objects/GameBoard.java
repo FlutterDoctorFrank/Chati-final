@@ -36,7 +36,7 @@ public class GameBoard extends Interactable {
 
         // Öffne das Menü beim Benutzer.
         user.setCurrentInteractable(this);
-        user.setMoveable(false);
+        user.setMovable(false);
         user.send(SendAction.OPEN_MENU, this);
     }
 
