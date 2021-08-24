@@ -220,7 +220,7 @@ public class UserAccountManager implements IUserAccountManager {
                                                            @NotNull final Permission permission) {
         return registeredUsers.values().stream()
                 .filter(user -> user.hasPermission(context, permission))
-                .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
+                .collect(Collectors.toMap(User::getUserId, Function.identity()));
     }
 
     /**

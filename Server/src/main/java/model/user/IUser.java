@@ -72,11 +72,11 @@ public interface IUser {
      * @param args Argumente der durchzuführenden Aktion.
      * @throws UserNotFoundException wenn kein Benutzer mit der ID existiert.
      * @throws NoPermissionException wenn der durchführende Benutzer nicht die nötige Berechtigung besitzt.
-     * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist oder eine nicht
-     * durchführbare Aktion durchgeführt werden soll.
+     * @throws IllegalAdministrativeActionException wenn eine nicht durchführbare Aktion durchgeführt werden soll.
+     * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      */
     void executeAdministrativeAction(@NotNull final UUID targetId, @NotNull final AdministrativeAction action,
-                                     @NotNull final String[] args) throws UserNotFoundException, NoPermissionException;
+                                     @NotNull final String[] args) throws UserNotFoundException, IllegalAdministrativeActionException, NoPermissionException;
 
     /**
      * Lässt den Benutzer mit einem Kontext interagieren.

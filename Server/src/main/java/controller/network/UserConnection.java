@@ -25,6 +25,7 @@ import controller.network.protocol.PacketWorldAction;
 import model.context.spatial.IWorld;
 import model.exception.ContextNotFoundException;
 import model.exception.IllegalAccountActionException;
+import model.exception.IllegalAdministrativeActionException;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.exception.IllegalNotificationActionException;
@@ -480,7 +481,10 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         } catch (NoPermissionException ex) {
             // Unzureichende Berechtigung des Benutzers.
             LOGGER.info("User " + this + " is missing permission " + ex.getPermission()
-                    + " for managing user: " + packet.getAction().name());
+                    + " for managing user: " + packet.getAction());
+        } catch (IllegalAdministrativeActionException ex) {
+            // Die Aktion konnte nicht ausgeführt werden.
+            LOGGER.warning("User " + this + " tried to perform illegal administrative action: " + packet.getAction());
         } catch (UserNotFoundException ex) {
             // Unbekannter Benutzer, der verwaltet werden soll.
             LOGGER.warning("User " + this + " tried to manage unknown user");

@@ -1,5 +1,6 @@
 package model.context;
 
+import controller.network.ClientSender.SendAction;
 import model.communication.CommunicationMedium;
 import model.context.global.GlobalContext;
 import model.context.spatial.Area;
@@ -149,8 +150,10 @@ public abstract class Context implements IContext {
      */
     public void addReportedUser(@NotNull final User user) {
         reportedUsers.put(user.getUserId(), user);
-        children.values().forEach(child -> child.addReportedUser(user));
-        user.updateUserInfo();
+        children.values().forEach(child -> child.reportedUsers.put(user.getUserId(), user));
+
+        // Die Information über den gemeldeten Benutzer ist nur für die Benutzer innerhalb der Welt relevant.
+        containedUsers.values().forEach(receiver -> receiver.send(SendAction.USER_INFO, user));
     }
 
     /**
@@ -160,8 +163,10 @@ public abstract class Context implements IContext {
      */
     public void removeReportedUser(@NotNull final User user) {
         reportedUsers.remove(user.getUserId());
-        children.values().forEach(child -> child.removeReportedUser(user));
-        user.updateUserInfo();
+        children.values().forEach(child -> child.reportedUsers.remove(user.getUserId()));
+
+        // Die Information über den nun nicht mehr gemeldeten Benutzer ist nur für die Benutzer innerhalb der Welt relevant.
+        containedUsers.values().forEach(receiver -> receiver.send(SendAction.USER_INFO, user));
     }
 
     /**
@@ -171,7 +176,12 @@ public abstract class Context implements IContext {
      */
     public void addMutedUser(@NotNull final User user) {
         mutedUsers.put(user.getUserId(), user);
-        children.values().forEach(child -> child.addMutedUser(user));
+        children.values().forEach(child -> child.mutedUsers.put(user.getUserId(), user));
+
+        // Die Information über den stumm geschalteten Benutzer ist für die Benutzer relevant die sich momentan in
+        // diesem Kontext befinden. Würde diese Information hier nicht versendet werden, müssten alle Benutzer diesen
+        // Kontext verlassen und neu betreten, um diese Information zu erhalten.
+        containedUsers.values().forEach(receiver -> receiver.send(SendAction.CONTEXT_INFO, this));
     }
 
     /**
@@ -181,7 +191,12 @@ public abstract class Context implements IContext {
      */
     public void removeMutedUser(@NotNull final User user) {
         mutedUsers.remove(user.getUserId());
-        children.values().forEach(child -> child.removeMutedUser(user));
+        children.values().forEach(child -> child.mutedUsers.remove(user.getUserId()));
+
+        // Die Information über den nun nicht mehr stumm geschalteten Benutzer ist für die Benutzer relevant die sich
+        // momentan in diesem Kontext befinden. Würde diese Information hier nicht versendet werden, müssten alle
+        // Benutzer diesen Kontext verlassen und neu betreten, um diese Information zu erhalten.
+        containedUsers.values().forEach(receiver -> receiver.send(SendAction.CONTEXT_INFO, this));
     }
 
     /**
@@ -191,10 +206,12 @@ public abstract class Context implements IContext {
      */
     public void addBannedUser(@NotNull final User user) {
         bannedUsers.put(user.getUserId(), user);
-        children.values().forEach(child -> child.addBannedUser(user));
-        if (parent.equals(GlobalContext.getInstance())) {
-            user.updateUserInfo();
+        children.values().forEach(child -> child.bannedUsers.put(user.getUserId(), user));
+
+        if (parent != null && parent.equals(GlobalContext.getInstance())) {
             database.addBannedUser(user, this);
+            // Die Information über den gesperrten Benutzer ist nur für die Benutzer innerhalb der Welt relevant.
+            containedUsers.values().forEach(receiver -> receiver.send(SendAction.USER_INFO, user));
         }
     }
 
@@ -205,10 +222,12 @@ public abstract class Context implements IContext {
      */
     public void removeBannedUser(@NotNull final User user) {
         bannedUsers.remove(user.getUserId());
-        children.values().forEach(child -> child.removeBannedUser(user));
-        if (parent.equals(GlobalContext.getInstance())) {
+        children.values().forEach(child -> child.bannedUsers.remove(user.getUserId()));
+
+        if (parent != null && parent.equals(GlobalContext.getInstance())) {
             database.removeBannedUser(user, this);
-            user.updateUserInfo();
+            // Die Information über den nun nicht mehr gesperrten Benutzer ist nur für die Benutzer innerhalb der Welt relevant.
+            containedUsers.values().forEach(receiver -> receiver.send(SendAction.USER_INFO, user));
         }
     }
 

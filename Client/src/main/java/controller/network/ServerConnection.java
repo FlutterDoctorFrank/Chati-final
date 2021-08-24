@@ -603,30 +603,18 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             user = this.getExtern(info.getUserId());
                         }
 
-                        for (final Flag flag : info.getFlags()) {
-                            switch (flag) {
-                                case FRIEND:
-                                    user.setFriend(true);
-                                    break;
-
-                                case IGNORED:
-                                    user.setIgnored(true);
-                                    break;
-
-                                case REPORTED:
-                                    user.setReport(packet.getContextId(), true);
-                                    break;
-
-                                case BANNED:
-                                    user.setTeleportable(false);
-                                    user.setInCurrentRoom(false);
-                                    // Muss das trotzdem true sein, obwohl der Benutzer nicht in der Welt sein kann? Oder auf welchen Wert muss das gesetzt werden?
-                                    user.setInCurrentWorld(false);
-                                    user.setBan(packet.getContextId(), true);
-                                    return;
-                            }
+                        if (info.getFlags().contains(Flag.BANNED)) {
+                            user.setTeleportable(false);
+                            user.setInCurrentRoom(false);
+                            // Muss das trotzdem true sein, obwohl der Benutzer nicht in der Welt sein kann? Oder auf welchen Wert muss das gesetzt werden?
+                            user.setInCurrentWorld(false);
+                            user.setBan(packet.getContextId(), true);
+                            return;
                         }
 
+                        user.setFriend(info.getFlags().contains(Flag.FRIEND));
+                        user.setIgnored(info.getFlags().contains(Flag.IGNORED));
+                        user.setReport(packet.getContextId(), info.getFlags().contains(Flag.REPORTED));
                         user.setInCurrentWorld(true);
                         user.setTeleportable(info.getTeleportTo());
                         break;
@@ -648,10 +636,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                         try {
                             user = this.getUser(info.getUserId());
-
-                            if (info.getStatus() != null) {
-                                user.setStatus(info.getStatus());
-                            }
+                            user.setStatus(info.getStatus() != null ? info.getStatus() : Status.OFFLINE);
                         } catch (UserNotFoundException ex) {
                             // Externer Benutzer existiert noch nicht. Füge neuen hinzu.
                             this.manager.getUserManager().addExternUser(info.getUserId(), info.getName(),
@@ -659,18 +644,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             user = this.getExtern(info.getUserId());
                         }
 
-                        for (final Flag flag : info.getFlags()) {
-                            switch (flag) {
-                                case FRIEND:
-                                    user.setFriend(true);
-                                    break;
-
-                                case IGNORED:
-                                    user.setIgnored(true);
-                                    break;
-                            }
-                        }
-
+                        user.setFriend(info.getFlags().contains(Flag.FRIEND));
+                        user.setIgnored(info.getFlags().contains(Flag.IGNORED));
                         user.setTeleportable(info.getTeleportTo());
                         break;
 

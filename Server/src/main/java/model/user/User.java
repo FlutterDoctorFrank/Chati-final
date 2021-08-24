@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -215,7 +216,7 @@ public class User implements IUser {
     @Override
     public void executeAdministrativeAction(@NotNull final UUID targetID, @NotNull final AdministrativeAction administrativeAction,
                                             @NotNull final String[] args)
-            throws UserNotFoundException, NoPermissionException {
+            throws UserNotFoundException, IllegalAdministrativeActionException, NoPermissionException {
         throwIfNotOnline();
         updateLastActivity();
         User target = UserAccountManager.getInstance().getUser(targetID);
@@ -301,8 +302,18 @@ public class User implements IUser {
         updateLastActivity();
         this.avatar = avatar;
         database.changeAvatar(this, avatar);
-        // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
-        updateUserInfo();
+
+        /*
+         * Wird der Avatar geändert, während sich der Benutzer innerhalb einer Welt befindet, so wird allen Benutzern
+         * in dieser Welt der neue Avatar mitgeteilt. An die Freunde des Benutzers muss diese Information nicht
+         * mitgeteilt werden.
+         * Da der Avatar momentan nur im Startmenü geändert werden kann, wird der Fall nie eintreten.
+         */
+        if (currentWorld != null) {
+            currentWorld.getUsers().values().stream()
+                    .filter(Predicate.not(this::equals))
+                    .forEach(receiver -> receiver.send(SendAction.USER_INFO, this));
+        }
     }
 
     @Override
@@ -410,10 +421,20 @@ public class User implements IUser {
      * @param user Hinzuzufügender Benutzer.
      */
     public void addFriend(@NotNull final User user) {
+        if (friends.containsKey(user.getUserId())) {
+            return;
+        }
+
         friends.put(user.getUserId(), user);
         database.addFriendship(this, user);
-        // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
-        updateUserInfo();
+
+        if (!user.isFriend(this)) {
+            user.addFriend(this);
+        }
+
+        // Ausschließlich der eigene Benutzer muss über den neuen Freund informiert werden.
+        // Der andere Benutzer wird über seine eigene addFriend() Methode informiert.
+        send(SendAction.USER_INFO, user);
     }
 
     /**
@@ -421,10 +442,20 @@ public class User implements IUser {
      * @param user Zu entfernender Benutzer.
      */
     public void removeFriend(@NotNull final User user) {
+        if (!friends.containsKey(user.getUserId())) {
+            return;
+        }
+
         friends.remove(user.getUserId());
         database.removeFriendship(this, user);
-        // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
-        updateUserInfo();
+
+        if (user.isFriend(this)) {
+            user.removeFriend(this);
+        }
+
+        // Ausschließlich der eigene Benutzer muss über zu entfernenden Freund informiert werden.
+        // Der andere Benutzer wird über seine eigene removeFriend() Methode informiert.
+        send(SendAction.USER_INFO, user);
     }
 
     /**
@@ -432,11 +463,15 @@ public class User implements IUser {
      * @param user Hinzuzufügender Benutzer.
      */
     public void ignoreUser(@NotNull final User user) {
+        if (ignoredUsers.containsKey(user.getUserId())) {
+            return;
+        }
+
         ignoredUsers.put(user.getUserId(), user);
         updateCommunicableUsers();
         database.addIgnoredUser(this, user);
-        // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
-        updateUserInfo();
+
+        send(SendAction.USER_INFO, user);
     }
 
     /**
@@ -444,11 +479,15 @@ public class User implements IUser {
      * @param user Zu entfernender Benutzer.
      */
     public void unignoreUser(@NotNull final User user) {
+        if (!ignoredUsers.containsKey(user.getUserId())) {
+            return;
+        }
+
         ignoredUsers.remove(user.getUserId());
         updateCommunicableUsers();
         database.removeIgnoredUser(this, user);
-        // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
-        updateUserInfo();
+
+        send(SendAction.USER_INFO, user);
     }
 
     /**
@@ -611,14 +650,13 @@ public class User implements IUser {
     public void setStatus(@NotNull final Status status) {
         this.status = status;
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
-        updateUserInfo();
+        updateUserInfo(true);
     }
 
     /**
      * Aktualisiert den Zeitpunkt, an dem der Benutzer sich das letzte Mal ausgeloggt hat.
      */
     public void updateLastLogoutTime() {
-        setStatus(Status.OFFLINE);
         this.lastLogoutTime = LocalDateTime.now();
         TimedEventScheduler.getInstance().put(new AccountDeletion(this));
     }
@@ -708,17 +746,20 @@ public class User implements IUser {
         return lastActivity;
     }
 
-    /**
+    /*
      * Sendet Pakete an alle relevanten Benutzer mit der aktualisierten Benutzerinformation.
      */
-    public void updateUserInfo() {
+    public void updateUserInfo(final boolean includeSelf) {
         final Map<UUID, User> receivers = new HashMap<>(friends);
 
         if (currentWorld != null) {
             receivers.putAll(currentWorld.getUsers());
         }
 
-        receivers.put(userId, this);
+        if (includeSelf) {
+            receivers.put(userId, this);
+        }
+
         receivers.values().stream()
                 .filter(User::isOnline)
                 .forEach(user -> user.send(SendAction.USER_INFO, this));
@@ -761,6 +802,7 @@ public class User implements IUser {
         this.clientSender = sender;
         this.status = Status.ONLINE;
 
+        updateUserInfo(false);
         updateLastActivity();
     }
 
@@ -778,6 +820,7 @@ public class User implements IUser {
         this.clientSender = null;
         this.status = Status.OFFLINE;
 
+        updateUserInfo(false);
         updateLastLogoutTime();
     }
 
