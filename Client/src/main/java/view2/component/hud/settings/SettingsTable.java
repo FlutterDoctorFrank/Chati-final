@@ -19,12 +19,13 @@ import view2.component.menu.table.StartTable;
 
 public class SettingsTable extends HudMenuTable {
 
-    private static final float TOP_SPACING = 20;
-    private static final float VERTICAL_SPACING = 20;
-    private static final float BOTTOM_SPACING  = 10;
+    private static final float TOP_SPACING = 7.5f;
+    private static final float HORIZONTAL_SPACING = 20;
+    private static final float BOTTOM_SPACING  = 7.5f;
 
     private TextButton languageSelectMenuButton;
     private TextButton volumeChangeMenuButton;
+    private TextButton worldSettingsButton;
     private TextButton administratorManageMenuButton;
     private TextButton leaveWorldButton;
     private TextButton logoutButton;
@@ -85,6 +86,18 @@ public class SettingsTable extends HudMenuTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 getStage().addActor(new VolumeChangeWindow());
+            }
+        });
+
+        worldSettingsButton = new TextButton("Welteinstellungen", Assets.SKIN);
+        worldSettingsButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                getStage().addActor(new WorldSettingsTable());
             }
         });
 
@@ -164,9 +177,10 @@ public class SettingsTable extends HudMenuTable {
         window.setMovable(false);
         window.top();
 
-        window.defaults().fill().expand().pad(TOP_SPACING, VERTICAL_SPACING, BOTTOM_SPACING, VERTICAL_SPACING);
+        window.defaults().fill().expand().pad(TOP_SPACING, HORIZONTAL_SPACING, BOTTOM_SPACING, HORIZONTAL_SPACING);
         window.add(languageSelectMenuButton).row();
         window.add(volumeChangeMenuButton).row();
+        window.add(worldSettingsButton).row();
         window.add(administratorManageMenuButton).row();
         window.add(leaveWorldButton).row();
         window.add(logoutButton).row();

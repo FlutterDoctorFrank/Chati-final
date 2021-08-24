@@ -21,6 +21,7 @@ import view2.Chati;
 import view2.Assets;
 import view2.component.ChatiToolTip;
 import view2.component.ChatiWindow;
+import view2.component.UserInfoContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +34,8 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
     private static final float HORIZONTAL_SPACING = 10;
     private static final float BUTTON_SCALE_FACTOR = 0.1f;
 
-    private final List<Image> roleIcons;
+    private UserInfoContainer userInfoContainer;
     private Image statusImage;
-    private Label usernameLabel;
     private ImageButton friendButton;
     private ImageButton ignoreButton;
     private ImageButton roomButton;
@@ -49,47 +49,13 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
     protected UserListEntry(IUserView user) {
         this.user = user;
-        this.roleIcons = new ArrayList<>();
         create();
         setLayout();
     }
 
     protected void create() {
         IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
-
-        usernameLabel = new Label(user.getUsername(), Assets.SKIN);
-
-        if (user.hasRole(Role.OWNER)) {
-            usernameLabel.setColor(Color.GOLD);
-            Image ownerImage = new Image(Assets.OWNER_ICON);
-            ownerImage.addListener(new ChatiToolTip("Besitzer"));
-            roleIcons.add(ownerImage);
-        } else if (user.hasRole(Role.ADMINISTRATOR)) {
-            usernameLabel.setColor(Color.SKY);
-            Image administratorImage = new Image(Assets.ADMINISTRATOR_ICON);
-            administratorImage.addListener(new ChatiToolTip("Administrator"));
-            roleIcons.add(administratorImage);
-        } else if (user.hasRole(Role.MODERATOR)) {
-            usernameLabel.setColor(Color.ORANGE);
-            Image moderatorImage = new Image(Assets.MODERATOR_ICON);
-            moderatorImage.addListener(new ChatiToolTip("Moderator"));
-            roleIcons.add(moderatorImage);
-        }
-        if (user.hasRole(Role.ROOM_OWNER)) {
-            Image roomOwnerImage = new Image(Assets.ROOM_OWNER_ICON);
-            roomOwnerImage.addListener(new ChatiToolTip("Raumbesitzer"));
-            roleIcons.add(roomOwnerImage);
-        }
-        if (user.hasRole(Role.AREA_MANAGER)) {
-            Image areaManagerImage = new Image(Assets.AREA_MANAGER_ICON);
-            areaManagerImage.addListener(new ChatiToolTip("Bereichsberechtigter"));
-            roleIcons.add(areaManagerImage);
-        }
-        if ((internUser.hasPermission(Permission.BAN_MODERATOR) || internUser.hasPermission(Permission.BAN_USER)
-                && !(user.hasPermission(Permission.BAN_USER) || user.hasPermission(Permission.BAN_MODERATOR)))
-                && user.isReported()) {
-            usernameLabel.setColor(Color.RED);
-        }
+        userInfoContainer = new UserInfoContainer(user);
 
         statusImage = new Image();
         switch (user.getStatus()) {
@@ -104,7 +70,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             case OFFLINE:
                 statusImage.setDrawable(Assets.OFFLINE_ICON);
                 statusImage.addListener(new ChatiToolTip("Offline"));
-                usernameLabel.setColor(Color.GRAY);
+                userInfoContainer.getUsernameLabel().setColor(Color.GRAY);
                 break;
             default:
                 throw new IllegalArgumentException("No valid user status.");
@@ -443,15 +409,13 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         setBackground(controlsBackground);
         left().defaults().padTop(VERTICAL_SPACING);
 
-        Table userInfoContainer = new Table();
-        userInfoContainer.add(statusImage).width(USER_INFO_ICON_SIZE).height(USER_INFO_ICON_SIZE).space(HORIZONTAL_SPACING);
-        userInfoContainer.add(usernameLabel).space(HORIZONTAL_SPACING);
-        roleIcons.forEach(roleIcon -> userInfoContainer.add(roleIcon).width(USER_INFO_ICON_SIZE).height(USER_INFO_ICON_SIZE)
-            .space(HORIZONTAL_SPACING / 2));
-        add(userInfoContainer).left().padLeft(HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).row();
+        Table container = new Table();
+        container.add(statusImage).width(USER_INFO_ICON_SIZE).height(USER_INFO_ICON_SIZE).space(HORIZONTAL_SPACING);
+        container.add(userInfoContainer);
+        add(container).left().padLeft(HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).row();
 
         Table buttonContainer = new Table();
-        buttonContainer.defaults().size(BUTTON_SIZE).padBottom(VERTICAL_SPACING).fillX();
+        buttonContainer.defaults().size(BUTTON_SIZE).padBottom(VERTICAL_SPACING).growX();
         buttonContainer.add(friendButton, ignoreButton, roomButton, teleportButton, reportButton, muteButton,
                 banButton, moderatorButton);
         add(buttonContainer).center().growX();
@@ -481,7 +445,6 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         private static final float VERTICAL_SPACING = 15;
         private static final float HORIZONTAL_SPACING = 15;
         private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
-        private static final float TEXTFIELD_FONT_SCALE_FACTOR = 1.6f;
 
         private Label infoLabel;
         private TextArea userMessageArea;

@@ -13,19 +13,19 @@ import view2.component.ChatiWindow;
 
 public class VolumeChangeWindow extends ChatiWindow {
 
-    private static final float MIN_VOLUME = 0f;
-    private static final float MAX_VOLUME = 1f;
-    private static final float VOLUME_STEP_SIZE = 0.01f;
-    private static final float SNAP_VALUE_STEP_SIZE = 0.25f;
-    private static final float SNAP_VALUE_THRESHOLD = 0.05f;
-    private static final float STANDARD_VOLUME = 0.5f;
-
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 500;
     private static final float ROW_WIDTH = 650;
     private static final float ROW_HEIGHT = 60;
     private static final float VERTICAL_SPACING = 15;
     private static final float HORIZONTAL_SPACING = 15;
+
+    private static final float MIN_VOLUME = 0f;
+    private static final float MAX_VOLUME = 1f;
+    private static final float VOLUME_STEP_SIZE = 0.01f;
+    private static final float SNAP_VALUE_STEP_SIZE = 0.25f;
+    private static final float SNAP_VALUE_THRESHOLD = 0.05f;
+    private static final float STANDARD_VOLUME = 0.5f;
 
     private static boolean CHANGED = false;
     private static float TOTAL_VOLUME = 0;
@@ -51,13 +51,6 @@ public class VolumeChangeWindow extends ChatiWindow {
         super("Lautstärke anpassen");
         create();
         setLayout();
-    }
-
-    public void setDefaultVolume() {
-        totalVolumeSlider.setValue(STANDARD_VOLUME);
-        voiceVolumeSlider.setValue(STANDARD_VOLUME);
-        musicVolumeSlider.setValue(STANDARD_VOLUME);
-        soundVolumeSlider.setValue(STANDARD_VOLUME);
     }
 
     @Override
@@ -180,10 +173,17 @@ public class VolumeChangeWindow extends ChatiWindow {
         add(soundVolumeContainer).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
 
         Table buttonContainer = new Table();
-        buttonContainer.defaults().width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
+        buttonContainer.defaults().colspan(3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING).growX();
         buttonContainer.add(confirmButton, defaultButton, cancelButton);
         add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
+    }
+
+    private void setDefaultVolume() {
+        totalVolumeSlider.setValue(STANDARD_VOLUME);
+        voiceVolumeSlider.setValue(STANDARD_VOLUME);
+        musicVolumeSlider.setValue(STANDARD_VOLUME);
+        soundVolumeSlider.setValue(STANDARD_VOLUME);
     }
 }

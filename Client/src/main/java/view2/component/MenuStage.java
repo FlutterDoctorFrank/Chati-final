@@ -1,12 +1,19 @@
 package view2.component;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import view2.Chati;
 import view2.component.hud.ChatWindow;
 import view2.component.hud.HeadUpDisplay;
 
 public class MenuStage extends Stage {
+
+    public MenuStage() {
+        super(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()), Chati.SPRITE_BATCH);
+    }
 
     @Override
     public boolean keyDown(int keycode) {

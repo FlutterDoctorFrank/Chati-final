@@ -2,6 +2,7 @@ package view2;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import controller.network.ServerSender;
 import model.communication.message.MessageType;
@@ -21,6 +22,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Chati extends Game implements ViewControllerInterface, IModelObserver {
+
+    public static SpriteBatch SPRITE_BATCH;
 
     private static Chati CHATI;
 
@@ -62,6 +65,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void create() {
+        SPRITE_BATCH = new SpriteBatch();
         Assets.initialize();
         setScreen(MenuScreen.getInstance());
     }

@@ -5,7 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import model.user.IUserView;
-import view2.Assets;
+import view2.component.UserInfoContainer;
+import view2.component.hud.settings.WorldSettingsTable;
 import view2.component.world.WorldScreen;
 
 public class UserAvatar extends Sprite {
@@ -15,6 +16,8 @@ public class UserAvatar extends Sprite {
 
     protected final IUserView user;
     protected final Body body;
+
+    private UserInfoContainer userInfoContainer;
 
     private TextureRegion avatarStandUp;
     private TextureRegion avatarStandLeft;
@@ -32,6 +35,9 @@ public class UserAvatar extends Sprite {
 
     public UserAvatar(IUserView user) {
         this.user = user;
+        this.userInfoContainer = new UserInfoContainer(user);
+        this.userInfoContainer.setTransform(true);
+
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         this.body = WorldScreen.getInstance().getWorld().createBody(bodyDef);
@@ -54,13 +60,13 @@ public class UserAvatar extends Sprite {
     public void draw(Batch batch, float delta) {
         //InteractButtonAnimation animation = new InteractButtonAnimation();
         //animation.draw(batch);
-        if (WorldScreen.getInstance().getWorldInputProcessor().isShowNamesPressed()) {
-            GlyphLayout glyphLayout = new GlyphLayout();
-            glyphLayout.setText(Assets.WORLD_FONT, user.getUsername());
-            Assets.WORLD_FONT.draw(batch, glyphLayout,
-                    body.getPosition().x - glyphLayout.width / 2, body.getPosition().y + getHeight());
+        if (WorldScreen.getInstance().getWorldInputProcessor().isShowNamesPressed()
+            || WorldSettingsTable.SHOW_NAME) {
+            userInfoContainer.setPosition(body.getPosition().x, body.getPosition().y + getHeight());
+            userInfoContainer.setScale(1 / WorldScreen.PPM * WorldScreen.getInstance().getCamera().zoom);
+            userInfoContainer.act(delta);
+            userInfoContainer.draw(batch, 1);
         }
-
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getCurrentFrameRegion(delta));
         super.draw(batch);

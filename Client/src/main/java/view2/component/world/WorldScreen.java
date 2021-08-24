@@ -20,6 +20,7 @@ import model.context.spatial.SpatialMap;
 import model.user.IUserView;
 import view2.Chati;
 import view2.component.AbstractScreen;
+import view2.component.UserInfoContainer;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.world.body.Border;
 import view2.component.world.body.InteractionObject;
@@ -42,7 +43,6 @@ public class WorldScreen extends AbstractScreen {
     private static final float MIN_ZOOM = 0.4f;
     private static final float MAX_ZOOM = 0.8f;
     private static final float ZOOM_STEP = 0.01f;
-    private static final SpriteBatch SPRITE_BATCH = new SpriteBatch();
 
     private static WorldScreen worldScreen;
 
@@ -51,7 +51,7 @@ public class WorldScreen extends AbstractScreen {
     private final OrthographicCamera camera;
     private final Box2DDebugRenderer debugRenderer;
     private final OrthogonalTiledMapRenderer tiledMapRenderer;
-    private World world;
+    private final World world;
 
     private final Map<IUserView, UserAvatar> externUserAvatars;
     private InternUserAvatar internUserAvatar;
@@ -88,11 +88,11 @@ public class WorldScreen extends AbstractScreen {
             externUserAvatars.values().forEach(UserAvatar::update);
             internUserAvatar.update();
 
-            SPRITE_BATCH.setProjectionMatrix(camera.combined);
-            SPRITE_BATCH.begin();
-            internUserAvatar.draw(SPRITE_BATCH, delta);
-            externUserAvatars.values().forEach(avatar -> avatar.draw(SPRITE_BATCH, delta));
-            SPRITE_BATCH.end();
+            Chati.SPRITE_BATCH.setProjectionMatrix(camera.combined);
+            Chati.SPRITE_BATCH.begin();
+            internUserAvatar.draw(Chati.SPRITE_BATCH, delta);
+            externUserAvatars.values().forEach(avatar -> avatar.draw(Chati.SPRITE_BATCH, delta));
+            Chati.SPRITE_BATCH.end();
 
             world.step(1 / WORLD_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
             updateCameraPosition();
@@ -100,7 +100,7 @@ public class WorldScreen extends AbstractScreen {
             tiledMapRenderer.setView(camera);
         }
 
-        SPRITE_BATCH.setProjectionMatrix(stage.getCamera().combined);
+        //Chati.SPRITE_BATCH.setProjectionMatrix(stage.getCamera().combined);
         super.render(delta);
     }
 
@@ -130,6 +130,10 @@ public class WorldScreen extends AbstractScreen {
 
     public World getWorld() {
         return world;
+    }
+
+    public OrthographicCamera getCamera() {
+        return camera;
     }
 
     public WorldInputProcessor getWorldInputProcessor() {

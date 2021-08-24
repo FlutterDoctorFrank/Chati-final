@@ -1,21 +1,17 @@
 package view2.component.hud;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import model.role.Role;
 import model.user.IInternUserView;
 import model.user.Status;
 import view2.Chati;
 import view2.Assets;
 import view2.component.ChatiTable;
 import view2.component.ChatiToolTip;
-
-import java.util.ArrayList;
-import java.util.List;
+import view2.component.UserInfoContainer;
 
 public class InternUserDisplay extends HudMenuTable {
 
@@ -23,16 +19,12 @@ public class InternUserDisplay extends HudMenuTable {
     private static final float VERTICAL_SPACING = 5;
     private static final float HORIZONTAL_SPACING = 10;
 
-    private Table roleIconContainer;
     private StatusSelectTable statusSelectTable;
-
-    private final List<Image> roleIcons;
+    private UserInfoContainer userInfoContainer;
     private Image statusImage;
-    private Label usernameLabel;
     private TextButton statusButton;
 
     public InternUserDisplay() {
-        this.roleIcons = new ArrayList<>();
         create();
         setLayout();
     }
@@ -43,11 +35,7 @@ public class InternUserDisplay extends HudMenuTable {
                 || Chati.getInstance().isRoomChanged()) {
             IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
             if (internUser != null) {
-                //clear();
-                //create();
-                //setLayout();
                 setStatusImage();
-                setRoleImage();
             }
         }
         super.act(delta);
@@ -55,8 +43,7 @@ public class InternUserDisplay extends HudMenuTable {
 
     @Override
     protected void create() {
-        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
-        usernameLabel = new Label(internUser.getUsername(), Assets.SKIN);
+        this.userInfoContainer = new UserInfoContainer(Chati.getInstance().getUserManager().getInternUserView());
 
         statusButton = new TextButton("", Assets.getNewSkin());
         statusButton.addListener(new ClickListener() {
@@ -80,8 +67,6 @@ public class InternUserDisplay extends HudMenuTable {
 
         statusImage = new Image();
         setStatusImage();
-        roleIconContainer = new Table();
-        setRoleImage();
     }
 
     @Override
@@ -92,18 +77,13 @@ public class InternUserDisplay extends HudMenuTable {
         NinePatchDrawable controlsBackground =
                 new NinePatchDrawable(new NinePatch(Assets.SKIN.getRegion("panel1"), 10, 10, 10, 10));
         container.setBackground(controlsBackground);
-
         container.left().defaults().top().padTop(VERTICAL_SPACING);
 
-        Table userInfoContainer = new Table();
         statusButton.add(statusImage).width(USER_INFO_ICON_SIZE).height(USER_INFO_ICON_SIZE)
                 .padLeft(USER_INFO_ICON_SIZE).padRight(USER_INFO_ICON_SIZE);
-        userInfoContainer.add(statusButton).width(2 * USER_INFO_ICON_SIZE).height(2 * USER_INFO_ICON_SIZE).space(HORIZONTAL_SPACING);
-        userInfoContainer.add(usernameLabel).space(HORIZONTAL_SPACING);
-        roleIconContainer.defaults().width(USER_INFO_ICON_SIZE).height(USER_INFO_ICON_SIZE).space(HORIZONTAL_SPACING / 2);
-        userInfoContainer.add(roleIconContainer);
-
-        container.add(userInfoContainer).left().padLeft(HORIZONTAL_SPACING).height(USER_INFO_ICON_SIZE).row();
+        container.add(statusButton).width(2 * USER_INFO_ICON_SIZE).height(2 * USER_INFO_ICON_SIZE)
+                .space(HORIZONTAL_SPACING).padLeft(HORIZONTAL_SPACING);
+        container.add(userInfoContainer).left().center().height(USER_INFO_ICON_SIZE).row();
         add(container).top().left().width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.BUTTON_SIZE).expandY().fillY().row();
     }
 
@@ -122,41 +102,6 @@ public class InternUserDisplay extends HudMenuTable {
             default:
                 throw new IllegalArgumentException("There is no icon for this user status.");
         }
-    }
-
-    private void setRoleImage() {
-        roleIcons.clear();
-        roleIconContainer.clear();
-        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
-        if (internUser.hasRole(Role.OWNER)) {
-            usernameLabel.setColor(Color.GOLD);
-            Image ownerImage = new Image(Assets.OWNER_ICON);
-            ownerImage.addListener(new ChatiToolTip("Besitzer"));
-            roleIcons.add(ownerImage);
-        } else if (internUser.hasRole(Role.ADMINISTRATOR)) {
-            usernameLabel.setColor(Color.SKY);
-            Image administratorImage = new Image(Assets.ADMINISTRATOR_ICON);
-            administratorImage.addListener(new ChatiToolTip("Administrator"));
-            roleIcons.add(administratorImage);
-        } else if (internUser.hasRole(Role.MODERATOR)) {
-            usernameLabel.setColor(Color.ORANGE);
-            Image moderatorImage = new Image(Assets.MODERATOR_ICON);
-            moderatorImage.addListener(new ChatiToolTip("Moderator"));
-            roleIcons.add(moderatorImage);
-        } else {
-            usernameLabel.setColor(Color.WHITE);
-        }
-        if (internUser.hasRole(Role.ROOM_OWNER)) {
-            Image roomOwnerImage = new Image(Assets.ROOM_OWNER_ICON);
-            roomOwnerImage.addListener(new ChatiToolTip("Raumbesitzer"));
-            roleIcons.add(roomOwnerImage);
-        }
-        if (internUser.hasRole(Role.AREA_MANAGER)) {
-            Image areaManagerImage = new Image(Assets.AREA_MANAGER_ICON);
-            areaManagerImage.addListener(new ChatiToolTip("Bereichsberechtigter"));
-            roleIcons.add(areaManagerImage);
-        }
-        roleIcons.forEach(roleIcon -> roleIconContainer.add(roleIcon));
     }
 
     private static class StatusSelectTable extends ChatiTable {
