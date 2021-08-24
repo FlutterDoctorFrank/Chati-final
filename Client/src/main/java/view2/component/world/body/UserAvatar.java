@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import model.user.IUserView;
+import view2.Chati;
 import view2.component.UserInfoContainer;
 import view2.component.hud.settings.WorldSettingsTable;
 import view2.component.world.WorldScreen;
@@ -64,8 +65,8 @@ public class UserAvatar extends Sprite {
             || WorldSettingsTable.SHOW_NAME) {
             userInfoContainer.setPosition(body.getPosition().x, body.getPosition().y + getHeight());
             userInfoContainer.setScale(1 / WorldScreen.PPM * WorldScreen.getInstance().getCamera().zoom);
-            if (user.canCommunicateWith()) {
-                userInfoContainer.scaleBy(2);
+            if (!user.equals(Chati.getInstance().getUserManager().getInternUserView())) {
+                System.out.println(user.canCommunicateWith());
             }
             userInfoContainer.act(delta);
             userInfoContainer.draw(batch, 1);

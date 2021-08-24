@@ -3,22 +3,7 @@ package controller.network;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 import com.esotericsoftware.kryonet.Listener;
-import controller.network.protocol.PacketAvatarMove;
-import controller.network.protocol.PacketChatMessage;
-import controller.network.protocol.PacketInContextInteract;
-import controller.network.protocol.PacketNotificationResponse;
-import controller.network.protocol.PacketInUserManage;
-import controller.network.protocol.PacketMenuOption;
-import controller.network.protocol.PacketOutContextInfo;
-import controller.network.protocol.PacketOutContextJoin;
-import controller.network.protocol.PacketOutContextList;
-import controller.network.protocol.PacketOutContextRole;
-import controller.network.protocol.PacketOutMenuAction;
-import controller.network.protocol.PacketOutNotification;
-import controller.network.protocol.PacketOutUserInfo;
-import controller.network.protocol.PacketProfileAction;
-import controller.network.protocol.PacketVoiceMessage;
-import controller.network.protocol.PacketWorldAction;
+import controller.network.protocol.*;
 import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 
@@ -72,6 +57,7 @@ public abstract class NetworkManager<T extends EndPoint> extends Listener {
         kryo.register(PacketOutMenuAction.class);
         kryo.register(PacketOutNotification.class);
         kryo.register(PacketOutUserInfo.class);
+        kryo.register(PacketOutCommunicable.class);
     }
 
     /**
