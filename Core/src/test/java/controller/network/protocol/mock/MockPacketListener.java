@@ -5,6 +5,7 @@ import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketChatMessage;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketMenuOption;
+import controller.network.protocol.PacketNotificationResponse;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
@@ -41,6 +42,11 @@ public class MockPacketListener implements PacketListener {
 
     @Override
     public void handle(@NotNull final PacketMenuOption packet) {
+        this.calls.add(packet.getClass());
+    }
+
+    @Override
+    public void handle(@NotNull final PacketNotificationResponse packet) {
         this.calls.add(packet.getClass());
     }
 

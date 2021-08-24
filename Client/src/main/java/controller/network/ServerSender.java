@@ -4,7 +4,7 @@ import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketChatMessage;
 import controller.network.protocol.PacketInContextInteract;
-import controller.network.protocol.PacketInNotificationReply;
+import controller.network.protocol.PacketNotificationResponse;
 import controller.network.protocol.PacketInUserManage;
 import controller.network.protocol.PacketMenuOption;
 import controller.network.protocol.PacketProfileAction;
@@ -211,9 +211,9 @@ public interface ServerSender {
                     if (objects[0] instanceof Float && objects[1] instanceof Float) {
                         final float posX = (float) objects[0];
                         final float posY = (float) objects[1];
-                        final boolean isSprinting = (boolean) objects[2];
+                        final boolean sprinting = (boolean) objects[2];
 
-                        return new PacketAvatarMove(posX, posY, isSprinting);
+                        return new PacketAvatarMove(posX, posY, sprinting);
                     } else {
                         throw new IllegalArgumentException("Expected Float, Float and Boolean, got "
                                 + objects[0].getClass() + ", " + objects[1].getClass() + " and " + objects[2].getClass());
@@ -315,7 +315,7 @@ public interface ServerSender {
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
                 if (objects.length == 1) {
                     if (objects[0] instanceof UUID) {
-                        return new PacketInNotificationReply((UUID) objects[0], PacketInNotificationReply.Action.DELETE);
+                        return new PacketNotificationResponse((UUID) objects[0], PacketNotificationResponse.Action.DELETE);
                     } else {
                         throw new IllegalArgumentException("Expected UUID, got " + objects[0].getClass());
                     }
@@ -338,8 +338,8 @@ public interface ServerSender {
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
                 if (objects.length == 2) {
                     if (objects[0] instanceof UUID && objects[1] instanceof Boolean) {
-                        return new PacketInNotificationReply((UUID) objects[0], (boolean) objects[1] ?
-                                PacketInNotificationReply.Action.ACCEPT : PacketInNotificationReply.Action.DECLINE);
+                        return new PacketNotificationResponse((UUID) objects[0], (boolean) objects[1] ?
+                                PacketNotificationResponse.Action.ACCEPT : PacketNotificationResponse.Action.DECLINE);
                     } else {
                         throw new IllegalArgumentException("Expected UUID and Boolean, got " + objects[0].getClass()
                                 + " and " + objects[1].getClass());

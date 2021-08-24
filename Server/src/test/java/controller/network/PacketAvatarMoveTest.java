@@ -56,6 +56,7 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         Assert.assertEquals(target.getUserId(), packet.getUserId());
         Assert.assertEquals(location.getPosX(), packet.getPosX(), 0.0f);
         Assert.assertEquals(location.getPosY(), packet.getPosY(), 0.0f);
+        Assert.assertFalse(packet.isSprinting());
     }
 
     @Test
@@ -69,6 +70,7 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         Mockito.when(location.getPosY()).thenReturn(randomFloat());
         Mockito.when(target.getUserId()).thenReturn(randomUniqueId());
         Mockito.when(target.getLocation()).thenReturn(location);
+        Mockito.when(target.isSprinting()).thenReturn(randomBoolean());
         Mockito.when(this.user.getLocation()).thenReturn(location);
 
         final PacketAvatarMove packet = this.getPacket(SendAction.AVATAR_MOVE, PacketAvatarMove.class, target);
@@ -78,6 +80,7 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         Assert.assertEquals(target.getUserId(), packet.getUserId());
         Assert.assertEquals(location.getPosX(), packet.getPosX(), 0.0f);
         Assert.assertEquals(location.getPosY(), packet.getPosY(), 0.0f);
+        Assert.assertEquals(target.isSprinting(), packet.isSprinting());
     }
 
     @Test

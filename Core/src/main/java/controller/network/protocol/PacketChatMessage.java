@@ -30,6 +30,7 @@ public class PacketChatMessage implements Packet<PacketListener> {
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
+    @Deprecated
     public PacketChatMessage() {
 
     }

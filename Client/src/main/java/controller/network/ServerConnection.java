@@ -8,6 +8,7 @@ import controller.network.protocol.PacketChatMessage;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerOut;
 import controller.network.protocol.PacketMenuOption;
+import controller.network.protocol.PacketNotificationResponse;
 import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextList;
@@ -25,6 +26,7 @@ import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
 import model.context.ContextID;
 import model.exception.ContextNotFoundException;
+import model.exception.NotificationNotFoundException;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserController;
 import model.user.IUserController;
@@ -267,6 +269,26 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     }
 
     @Override
+    public void handle(@NotNull final PacketNotificationResponse packet) {
+        if (this.userId == null) {
+            this.logUnexpectedPacket(packet, "Can not receive notification response while user is not logged in");
+            return;
+        }
+
+        try {
+            if (packet.getAction() != PacketNotificationResponse.Action.DELETE) {
+                this.logInvalidPacket(packet, "Only Notification-Action DELETE is allowed");
+                return;
+            }
+
+            this.getIntern().removeNotification(packet.getNotificationId());
+        } catch (NotificationNotFoundException ex) {
+            // Die angegebene Benachrichtigung wurde nicht gefunden.
+            LOGGER.warning("Server tried to send notification delete for unknown notification with id: " + ex.getNotificationId());
+        }
+    }
+
+    @Override
     public void handle(@NotNull final PacketWorldAction packet) {
         if (this.userId == null) {
             this.logUnexpectedPacket(packet, "Can not receive world action while user is not logged in");
@@ -303,14 +325,17 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         return;
                     }
 
-                    if (packet.getName() == null) {
-                        this.logInvalidPacket(packet, "Name of the joining world can not be null");
-                        return;
+                    if (packet.isSuccess()) {
+                        if (packet.getName() == null) {
+                            this.logInvalidPacket(packet, "Name of the joining world can not be null");
+                            return;
+                        }
+
+                        this.getIntern().joinWorld(packet.getName());
+                        this.worldId = packet.getContextId();
                     }
 
-                    this.getIntern().joinWorld(packet.getName());
                     this.manager.getView().joinWorldResponse(packet.isSuccess(), packet.getMessage());
-                    this.worldId = packet.getContextId();
                     break;
 
                 case CREATE:

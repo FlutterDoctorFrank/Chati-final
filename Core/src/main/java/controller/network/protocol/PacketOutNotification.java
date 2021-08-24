@@ -30,6 +30,7 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
+    @Deprecated
     public PacketOutNotification() {
 
     }

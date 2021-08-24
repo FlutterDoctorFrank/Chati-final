@@ -25,6 +25,7 @@ public class PacketOutContextJoin implements Packet<PacketListenerOut> {
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
+    @Deprecated
     public PacketOutContextJoin() {
 
     }

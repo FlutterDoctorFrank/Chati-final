@@ -53,5 +53,6 @@ public class PacketAvatarMoveTest extends PacketTest<PacketAvatarMove> {
         // Vergleiche Position:
         Assert.assertEquals(this.before.getPosX(), this.after.getPosX(), 0.0f);
         Assert.assertEquals(this.before.getPosY(), this.after.getPosY(), 0.0f);
+        Assert.assertEquals(this.before.isSprinting(), this.after.isSprinting());
     }
 }

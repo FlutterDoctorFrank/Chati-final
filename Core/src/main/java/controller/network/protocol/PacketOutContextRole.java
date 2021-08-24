@@ -26,6 +26,7 @@ public class PacketOutContextRole implements Packet<PacketListenerOut> {
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
+    @Deprecated
     public PacketOutContextRole() {
 
     }

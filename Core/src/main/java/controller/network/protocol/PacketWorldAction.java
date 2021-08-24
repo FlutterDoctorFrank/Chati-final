@@ -32,6 +32,7 @@ public class PacketWorldAction implements Packet<PacketListener> {
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
+    @Deprecated
     public PacketWorldAction() {
 
     }

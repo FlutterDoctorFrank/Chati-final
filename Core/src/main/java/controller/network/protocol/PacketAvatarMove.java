@@ -23,7 +23,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
     private UUID userId;
     private float posX;
     private float posY;
-    private boolean isSprinting;
+    private boolean sprinting;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -37,10 +37,10 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Client-Anwendung.
      * @param posX Die neue X-Koordinate.
      * @param posY Die neue Y-Koordinate.
-     * @param isSprinting Die Information, ob sich der Benutzer schnell fortbewegt.
+     * @param sprinting true, wenn ob sich der Benutzer schnell fortbewegt, ansonsten false.
      */
-    public PacketAvatarMove(final float posX, final float posY, final boolean isSprinting) {
-        this(AvatarAction.MOVE_AVATAR, null, posX, posY, isSprinting);
+    public PacketAvatarMove(final float posX, final float posY, final boolean sprinting) {
+        this(AvatarAction.MOVE_AVATAR, null, posX, posY, sprinting);
     }
 
     /**
@@ -58,14 +58,14 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * @param userId Die ID des bewegenden Benutzers.
      * @param posX Die neue X-Koordinate.
      * @param posY Die neue Y-Koordinate.
-     * @param isSprinting Die Information, ob sich der Benutzer schnell fortbewegt.
+     * @param sprinting true, wenn sich der Benutzer schnell fortbewegt, ansonsten false.
      */
-    public PacketAvatarMove(@NotNull final AvatarAction action, @Nullable final UUID userId, final float posX, final float posY, final boolean isSprinting) {
+    public PacketAvatarMove(@NotNull final AvatarAction action, @Nullable final UUID userId, final float posX, final float posY, final boolean sprinting) {
         this.action = action;
         this.userId = userId;
         this.posX = posX;
         this.posY = posY;
-        this.isSprinting = isSprinting;
+        this.sprinting = sprinting;
     }
 
     @Override
@@ -79,7 +79,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
         PacketUtils.writeNullableUniqueId(output, this.userId);
         output.writeFloat(this.posX);
         output.writeFloat(this.posY);
-        output.writeBoolean(this.isSprinting);
+        output.writeBoolean(this.sprinting);
     }
 
     @Override
@@ -88,13 +88,13 @@ public class PacketAvatarMove implements Packet<PacketListener> {
         this.userId = PacketUtils.readNullableUniqueId(input);
         this.posX = input.readFloat();
         this.posY = input.readFloat();
-        this.isSprinting = input.readBoolean();
+        this.sprinting = input.readBoolean();
     }
 
     @Override
     public @NotNull String toString() {
         return this.getClass().getSimpleName() + "{action=" + this.action + ", userId=" + this.userId
-                + ", posX=" + this.posX + ", posY=" + this.posY + ", isSprinting=" + this.isSprinting + "}";
+                + ", posX=" + this.posX + ", posY=" + this.posY + ", sprinting=" + this.sprinting + "}";
     }
 
     /**
@@ -130,11 +130,11 @@ public class PacketAvatarMove implements Packet<PacketListener> {
     }
 
     /**
-     * Gibt die Information zurück, ob sich der Benutzer schnell fortbewegt.
-     * @return true, wenn sich der Benutzer schnell fortbewegt, sonst false.
+     * Gibt zurück, ob sich der Benutzer schnell fortbewegt.
+     * @return true, wenn sich der Benutzer schnell fortbewegt, ansonsten false.
      */
     public boolean isSprinting() {
-        return this.isSprinting;
+        return this.sprinting;
     }
 
     /**

@@ -20,6 +20,7 @@ public class PacketInContextInteract implements Packet<PacketListenerIn> {
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
+    @Deprecated
     public PacketInContextInteract() {
 
     }

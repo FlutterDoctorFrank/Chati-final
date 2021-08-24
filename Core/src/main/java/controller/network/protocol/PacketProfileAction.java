@@ -31,6 +31,7 @@ public class PacketProfileAction implements Packet<PacketListener> {
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
+    @Deprecated
     public PacketProfileAction() {
 
     }

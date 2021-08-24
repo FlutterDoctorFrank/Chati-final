@@ -7,7 +7,7 @@ import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
 import controller.network.protocol.PacketChatMessage;
 import controller.network.protocol.PacketInContextInteract;
-import controller.network.protocol.PacketInNotificationReply;
+import controller.network.protocol.PacketNotificationResponse;
 import controller.network.protocol.PacketInUserManage;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerIn;
@@ -245,6 +245,38 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
     }
 
     @Override
+    public void handle(@NotNull final PacketNotificationResponse packet) {
+        if (this.user == null) {
+            this.logUnexpectedPacket(packet, "Can not interact with notification while not logged in");
+            return;
+        }
+
+        try {
+            switch (packet.getAction()) {
+                case ACCEPT:
+                    this.user.manageNotification(packet.getNotificationId(), true);
+                    break;
+
+                case DECLINE:
+                    this.user.manageNotification(packet.getNotificationId(), false);
+                    break;
+
+                case DELETE:
+                    this.user.deleteNotification(packet.getNotificationId());
+                    break;
+            }
+
+            this.send(new PacketNotificationResponse(packet.getNotificationId(), PacketNotificationResponse.Action.DELETE));
+        } catch (IllegalNotificationActionException ex) {
+            // Auf die Benachrichtigung wurde eine ungültige Aktion ausgeführt.
+            LOGGER.warning("User " + this + " tried illegal notification action: " + ex.getMessage());
+        } catch (NotificationNotFoundException ex) {
+            // Unbekannte Benachrichtigung, auf die zugegriffen werden soll.
+            LOGGER.warning("User " + this + " tried to access unknown notification");
+        }
+    }
+
+    @Override
     public void handle(@NotNull final PacketWorldAction packet) {
         if (this.user == null) {
             this.logUnexpectedPacket(packet, "Can not perform world action while not logged in");
@@ -431,36 +463,6 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             }
         } else {
             this.logUnexpectedPacket(packet, "Can not interact with context while not in a world");
-        }
-    }
-
-    @Override
-    public void handle(@NotNull final PacketInNotificationReply packet) {
-        if (this.user == null) {
-            this.logUnexpectedPacket(packet, "Can not interact with notification while not logged in");
-            return;
-        }
-
-        try {
-            switch (packet.getAction()) {
-                case ACCEPT:
-                    this.user.manageNotification(packet.getNotificationId(), true);
-                    break;
-
-                case DECLINE:
-                    this.user.manageNotification(packet.getNotificationId(), false);
-                    break;
-
-                case DELETE:
-                    this.user.deleteNotification(packet.getNotificationId());
-                    break;
-            }
-        } catch (IllegalNotificationActionException ex) {
-            // Auf die Benachrichtigung wurde eine ungültige Aktion ausgeführt.
-            LOGGER.warning("User " + this + " tried illegal notification action: " + ex.getMessage());
-        } catch (NotificationNotFoundException ex) {
-            // Unbekannte Benachrichtigung, auf die zugegriffen werden soll.
-            LOGGER.warning("User " + this + " tried to access unknown notification");
         }
     }
 

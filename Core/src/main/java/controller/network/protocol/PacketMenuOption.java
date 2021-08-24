@@ -29,6 +29,7 @@ public class PacketMenuOption implements Packet<PacketListener> {
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
+    @Deprecated
     public PacketMenuOption() {
 
     }

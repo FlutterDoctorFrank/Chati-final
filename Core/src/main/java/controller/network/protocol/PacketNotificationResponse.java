@@ -14,7 +14,7 @@ import java.util.UUID;
  *     reagiert hat.
  * </p>
  */
-public class PacketInNotificationReply implements Packet<PacketListenerIn> {
+public class PacketNotificationResponse implements Packet<PacketListener> {
 
     private UUID notificationId;
     private Action action;
@@ -22,7 +22,8 @@ public class PacketInNotificationReply implements Packet<PacketListenerIn> {
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
-    public PacketInNotificationReply() {
+    @Deprecated
+    public PacketNotificationResponse() {
 
     }
 
@@ -31,13 +32,13 @@ public class PacketInNotificationReply implements Packet<PacketListenerIn> {
      * @param notificationId die ID der Benachrichtigung auf der eine Aktion ausgeführt werden soll.
      * @param action die Aktion die auf die Benachrichtigung ausgeführt werden soll.
      */
-    public PacketInNotificationReply(@NotNull final UUID notificationId, @NotNull final Action action) {
+    public PacketNotificationResponse(@NotNull final UUID notificationId, @NotNull final Action action) {
         this.notificationId = notificationId;
         this.action = action;
     }
 
     @Override
-    public void call(@NotNull final PacketListenerIn listener) {
+    public void call(@NotNull final PacketListener listener) {
         listener.handle(this);
     }
 

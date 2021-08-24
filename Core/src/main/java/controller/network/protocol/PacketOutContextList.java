@@ -26,6 +26,7 @@ public class PacketOutContextList implements Packet<PacketListenerOut> {
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
+    @Deprecated
     public PacketOutContextList() {
 
     }

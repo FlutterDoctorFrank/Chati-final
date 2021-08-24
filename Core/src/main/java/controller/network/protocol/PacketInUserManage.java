@@ -25,6 +25,7 @@ public class PacketInUserManage implements Packet<PacketListenerIn> {
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
+    @Deprecated
     public PacketInUserManage() {
         this.arguments = new String[0];
     }

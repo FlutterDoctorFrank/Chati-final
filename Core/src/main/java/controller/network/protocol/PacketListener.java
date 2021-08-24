@@ -36,6 +36,12 @@ public interface PacketListener {
      * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.
      * @param packet Das zu verarbeitende Paket.
      */
+    void handle(@NotNull final PacketNotificationResponse packet);
+
+    /**
+     * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.
+     * @param packet Das zu verarbeitende Paket.
+     */
     void handle(@NotNull final PacketWorldAction packet);
 
     /**

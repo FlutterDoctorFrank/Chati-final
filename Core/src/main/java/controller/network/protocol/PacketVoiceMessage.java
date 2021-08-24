@@ -26,6 +26,7 @@ public class PacketVoiceMessage implements Packet<PacketListener> {
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
+    @Deprecated
     public PacketVoiceMessage() {
 
     }

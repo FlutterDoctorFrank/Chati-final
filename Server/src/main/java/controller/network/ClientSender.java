@@ -209,6 +209,12 @@ public interface ClientSender {
             }
         },
 
+        /**
+         * Information, dass die Position eines Avatars im Raum gesetzt werden soll.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link model.user.IUser}
+         * </p>
+         */
         AVATAR_SPAWN {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
@@ -247,9 +253,8 @@ public interface ClientSender {
 
                     float posX = other.getLocation().getPosX();
                     float posY = other.getLocation().getPosY();
-                    boolean isSprinting = other.isSprinting();
 
-                    return new PacketAvatarMove(AvatarAction.MOVE_AVATAR, other.getUserId(), posX, posY, isSprinting);
+                    return new PacketAvatarMove(AvatarAction.MOVE_AVATAR, other.getUserId(), posX, posY, other.isSprinting());
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }
