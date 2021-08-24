@@ -160,30 +160,28 @@ public class VolumeChangeWindow extends ChatiWindow {
         add(labelContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(VERTICAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
 
         Table totalVolumeContainer = new Table();
-        totalVolumeContainer.add(totalVolumeLabel).width(ROW_WIDTH / 3).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING);
-        totalVolumeContainer.add(totalVolumeSlider).width(2 * ROW_WIDTH / 3).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING);
+        totalVolumeContainer.defaults().colspan(2).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).growX();
+        totalVolumeContainer.add(totalVolumeLabel, totalVolumeSlider);
         add(totalVolumeContainer).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
 
         Table voiceVolumeContainer = new Table();
-        voiceVolumeContainer.add(voiceVolumeLabel).width(ROW_WIDTH / 3).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING);
-        voiceVolumeContainer.add(voiceVolumeSlider).width(2 * ROW_WIDTH / 3).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING);
+        voiceVolumeContainer.defaults().colspan(2).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).growX();
+        voiceVolumeContainer.add(voiceVolumeLabel, voiceVolumeSlider);
         add(voiceVolumeContainer).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
 
         Table musicVolumeContainer = new Table();
-        musicVolumeContainer.add(musicVolumeLabel).width(ROW_WIDTH / 3).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING);
-        musicVolumeContainer.add(musicVolumeSlider).width(2 * ROW_WIDTH / 3).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING);
+        musicVolumeContainer.defaults().colspan(2).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).growX();
+        musicVolumeContainer.add(musicVolumeLabel, musicVolumeSlider);
         add(musicVolumeContainer).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
 
         Table soundVolumeContainer = new Table();
-        soundVolumeContainer.add(soundVolumeLabel).width(ROW_WIDTH / 3).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING);
-        soundVolumeContainer.add(soundVolumeSlider).width(2 * ROW_WIDTH / 3).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING);
+        soundVolumeContainer.defaults().colspan(2).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).growX();
+        soundVolumeContainer.add(soundVolumeLabel, soundVolumeSlider);
         add(soundVolumeContainer).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
 
-
         Table buttonContainer = new Table();
-        buttonContainer.add(confirmButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
-        buttonContainer.add(defaultButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
-        buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
+        buttonContainer.defaults().width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
+        buttonContainer.add(confirmButton, defaultButton, cancelButton);
         add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));

@@ -100,6 +100,9 @@ public class InternUser extends User implements IInternUserController, IInternUs
 
     @Override
     public void setMusic(ContextID spatialId, Music music) throws ContextNotFoundException {
+        if (this.music == music) {
+            return; // Nothing to change
+        }
         Context current = getDeepestContext();
         do {
             if (!current.getContextId().equals(spatialId)) {

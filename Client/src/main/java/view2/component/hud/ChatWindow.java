@@ -124,15 +124,12 @@ public class ChatWindow extends ChatiWindow {
         setHeight(DEFAULT_HEIGHT);
 
         messageLabelContainer.top();
-        add(historyScrollPane).top().fillX().expandX().fillY().expandY().padBottom(SPACE).row();
-
+        add(historyScrollPane).top().grow().padBottom(SPACE).row();
         Table sendContainer = new Table();
-        sendContainer.add(typeMessageArea).height(SEND_BUTTON_HEIGHT).expandX().fillX()
-                .padLeft(SPACE).padRight(SPACE);
-        sendContainer.add(sendButton).width(SEND_BUTTON_WIDTH).height(SEND_BUTTON_HEIGHT)
-                .padLeft(SPACE).padRight(SPACE);
-        add(sendContainer).height(SEND_BUTTON_HEIGHT).expandX().fillX();
-
+        sendContainer.defaults().height(SEND_BUTTON_HEIGHT).padLeft(SPACE).padRight(SPACE);
+        sendContainer.add(typeMessageArea).growX();
+        sendContainer.add(sendButton).width(SEND_BUTTON_WIDTH);
+        add(sendContainer).height(SEND_BUTTON_HEIGHT).growX();
         getTitleTable().add(minimizeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
         HeadUpDisplay.getInstance().getStage().addActor(this);
     }

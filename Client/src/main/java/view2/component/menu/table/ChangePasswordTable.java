@@ -133,7 +133,7 @@ public class ChangePasswordTable extends MenuTable {
         container.add(newPasswordField).row();
         container.add(confirmNewPasswordField).row();
         Table buttonContainer = new Table();
-        buttonContainer.defaults().height(ROW_HEIGHT).fillX().expandX();
+        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).fillX().expandX();
         buttonContainer.add(confirmButton).spaceRight(SPACING);
         buttonContainer.add(cancelButton);
         container.add(buttonContainer);

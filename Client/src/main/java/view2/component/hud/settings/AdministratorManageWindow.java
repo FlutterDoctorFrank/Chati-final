@@ -45,9 +45,7 @@ public class AdministratorManageWindow extends ChatiWindow {
     protected void create() {
         infoLabel = new Label("Erteile oder entziehe die Rolle des Administrators!", Assets.SKIN);
 
-        Skin usernameFieldSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        usernameFieldSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
-        usernameField = new TextField("Benutzername", usernameFieldSkin);
+        usernameField = new TextField("Benutzername", Assets.getNewSkin());
         usernameField.getStyle().fontColor = Color.GRAY;
         usernameField.addListener(new FocusListener() {
             @Override
@@ -62,9 +60,7 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
         });
 
-        Skin messageAreaSkin = new Skin(Gdx.files.internal("shadeui/uiskin.json"));
-        messageAreaSkin.get(TextField.TextFieldStyle.class).font.getData().setScale(TEXTFIELD_FONT_SCALE_FACTOR);
-        messageArea = new TextArea("Füge eine Nachricht hinzu!", messageAreaSkin);
+        messageArea = new TextArea("Füge eine Nachricht hinzu!", Assets.getNewSkin());
         messageArea.getStyle().fontColor = Color.GRAY;
         messageArea.addListener(new FocusListener() {
             @Override
@@ -204,9 +200,8 @@ public class AdministratorManageWindow extends ChatiWindow {
         add(messageArea).width(ROW_WIDTH).height(2 * ROW_HEIGHT).spaceBottom(VERTICAL_SPACING).row();
 
         Table buttonContainer = new Table();
-        buttonContainer.add(assignButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
-        buttonContainer.add(withdrawButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
-        buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
+        buttonContainer.defaults().width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
+        buttonContainer.add(assignButton, withdrawButton, cancelButton);
         add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));

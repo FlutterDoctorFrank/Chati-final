@@ -174,12 +174,10 @@ public class UserListTable extends HudMenuTable {
 
         Table buttonContainer = new Table();
         buttonContainer.defaults().colspan(3).growX();
-        buttonContainer.add(friendTabButton);
-        buttonContainer.add(activeUserTabButton);
-        buttonContainer.add(bannedUserTabButton);
-        window.add(buttonContainer).fillX().expandX().row();
+        buttonContainer.add(friendTabButton, activeUserTabButton, bannedUserTabButton);
+        window.add(buttonContainer).growX().row();
 
-        window.add(userListScrollPane).fillX().expandX().fillY().expandY();
+        window.add(userListScrollPane).grow();
         add(window).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT);
 
         HeadUpDisplay.getInstance().getStage().setScrollFocus(userListScrollPane);
@@ -193,31 +191,6 @@ public class UserListTable extends HudMenuTable {
                     .forEach(friend -> friendEntries.add(new UserListEntry(friend)));
             layoutEntries(friendEntries);
         }
-        // TEST ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-        String[] names = {"Jürgen", "Hans-Peter", "Detlef", "Olaf", "Markus", "Dietrich", "Dieter", "Siegbert", "Siegmund",
-                "Joseph", "Ferdinand", "Alexander", "Analia", "Inkontinentia", "Vera Agina", "Agathe Bauer", "Bertha", "Hannelore",
-                "Sieglinde", "Josephine", "Brigitte", "Luise-Annegret", "Alma-Dorothea", "Magdalena", "Brunhilde", "Herbert", "Gertrud", "Hiltrud",
-                "Hagen", "Heinz", "Son-Goku", "Vegeta", "Axel Schweiß", "Rosa Schlüpfer", "Reinhold", "Mr.WasGehtSieDasAn", "Peter Enis",
-                "Schwanzus-Longus", "G4meMason", "Franz Joseph", "Peter Silie", "Wilma Ficken", "Anna Bolika", "Anna Nass", "Deine Mutter"};
-        List<String> namesList = Arrays.asList(names);
-        Collections.shuffle(namesList, new Random());
-        for (int i = 0; i<namesList.size(); i++) {
-            User user = new User(UUID.randomUUID(), namesList.get(i), Status.values()[new Random().nextInt(Status.values().length)], null);
-            try {
-                if (new Random().nextBoolean()) {
-                    user.setRoles(Context.getGlobal().getContextId(), Collections.singleton(Role.values()[new Random().nextInt(Role.values().length)]));
-                }
-                //user.setRoles(Context.getGlobal().getContextId(), Collections.singleton(Role.values()[new Random().nextInt(Role.values().length)]));
-            } catch (ContextNotFoundException e) {
-                e.printStackTrace();
-            }
-            UserListEntry entry = new UserListEntry(user);
-            friendEntries.add(entry);
-        }
-        layoutEntries(friendEntries);
- */
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
     private void showActiveUsers() {

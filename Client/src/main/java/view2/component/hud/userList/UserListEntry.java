@@ -441,7 +441,6 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         NinePatchDrawable controlsBackground =
                 new NinePatchDrawable(new NinePatch(Assets.SKIN.getRegion("panel1"), 10, 10, 10, 10));
         setBackground(controlsBackground);
-
         left().defaults().padTop(VERTICAL_SPACING);
 
         Table userInfoContainer = new Table();
@@ -449,19 +448,13 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         userInfoContainer.add(usernameLabel).space(HORIZONTAL_SPACING);
         roleIcons.forEach(roleIcon -> userInfoContainer.add(roleIcon).width(USER_INFO_ICON_SIZE).height(USER_INFO_ICON_SIZE)
             .space(HORIZONTAL_SPACING / 2));
-
         add(userInfoContainer).left().padLeft(HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).row();
 
         Table buttonContainer = new Table();
-        buttonContainer.add(friendButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).fillX().expandX();
-        buttonContainer.add(ignoreButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).fillX().expandX();
-        buttonContainer.add(roomButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).fillX().expandX();
-        buttonContainer.add(teleportButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).fillX().expandX();
-        buttonContainer.add(reportButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).fillX().expandX();
-        buttonContainer.add(muteButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).fillX().expandX();
-        buttonContainer.add(banButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).fillX().expandX();
-        buttonContainer.add(moderatorButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING).fillX().expandX();
-        add(buttonContainer).center().fillX().expandX();
+        buttonContainer.defaults().size(BUTTON_SIZE).padBottom(VERTICAL_SPACING).fillX();
+        buttonContainer.add(friendButton, ignoreButton, roomButton, teleportButton, reportButton, muteButton,
+                banButton, moderatorButton);
+        add(buttonContainer).center().growX();
     }
 
     @Override
@@ -583,12 +576,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             setWidth(WINDOW_WIDTH);
             setHeight(WINDOW_HEIGHT);
 
-            Table labelContainer = new Table(Assets.SKIN);
+            Table labelContainer = new Table();
             labelContainer.add(infoLabel).center();
-
             add(labelContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(VERTICAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
             add(userMessageArea).width(ROW_WIDTH).height(2 * ROW_HEIGHT).spaceBottom(VERTICAL_SPACING).row();
-
             Table buttonContainer = new Table(Assets.SKIN);
             buttonContainer.add(confirmButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(BUTTON_SIZE).space(HORIZONTAL_SPACING);
             buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(BUTTON_SIZE);

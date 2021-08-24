@@ -187,28 +187,25 @@ public class HeadUpDisplay extends Table {
 
         Table hudButtonContainer = new Table();
         hudButtonContainer.setFillParent(true);
-        hudButtonContainer.top().right();
-        hudButtonContainer.add(userListButton).width(BUTTON_SIZE).height(BUTTON_SIZE).space(BUTTON_SPACING);
-        hudButtonContainer.add(notificationListButton).width(BUTTON_SIZE).height(BUTTON_SIZE).space(BUTTON_SPACING);
-        hudButtonContainer.add(settingsButton).width(BUTTON_SIZE).height(BUTTON_SIZE);
+        hudButtonContainer.top().right().defaults().size(BUTTON_SIZE).space(BUTTON_SPACING);
+        hudButtonContainer.add(userListButton, notificationListButton, settingsButton);
         addActor(hudButtonContainer);
 
         Table chatButtonContainer = new Table();
         chatButtonContainer.setFillParent(true);
-        chatButtonContainer.bottom().right();
-        chatButtonContainer.add(chatButton).width(BUTTON_SIZE).height(BUTTON_SIZE);
+        chatButtonContainer.bottom().right().defaults().size(BUTTON_SIZE);
+        chatButtonContainer.add(chatButton);
         addActor(chatButtonContainer);
 
         currentMenuContainer = new Table();
         currentMenuContainer.setFillParent(true);
-        currentMenuContainer.top().right().padTop(BUTTON_SIZE);
-        currentMenuContainer.defaults().width(HUD_MENU_TABLE_WIDTH).height(HUD_MENU_TABLE_HEIGHT);
+        currentMenuContainer.top().right().padTop(BUTTON_SIZE)
+                .defaults().width(HUD_MENU_TABLE_WIDTH).height(HUD_MENU_TABLE_HEIGHT);
         addActor(currentMenuContainer);
 
         internUserDisplayContainer = new Table();
         internUserDisplayContainer.setFillParent(true);
-        internUserDisplayContainer.top().left();
-        internUserDisplayContainer.defaults().width(HUD_MENU_TABLE_WIDTH).height(HUD_MENU_TABLE_HEIGHT);
+        internUserDisplayContainer.top().left().defaults().width(HUD_MENU_TABLE_WIDTH).height(HUD_MENU_TABLE_HEIGHT);
         addActor(internUserDisplayContainer);
     }
 
@@ -217,18 +214,6 @@ public class HeadUpDisplay extends Table {
         chatButton.getStyle().imageUp = Assets.CHECKED_CHAT_ICON;
         ChatWindow.getInstance().setVisible(true);
         ChatWindow.getInstance().focus();
-
-        //////////////////////// TEST ////////////////////////
-        /*
-        for (int i = 0; i <10; i++) {
-            UUID id = Chati.getInstance().getUserManager().getInternUserView().getUserId();
-            String message = "uihferuwihfieeraofhvueifhuiergfbrgfiqeowjderniogwuihfosdhvwrbfhdsvbworgbuiaeofjdhioh0";
-            MessageType type = MessageType.values()[new Random().nextInt(MessageType.values().length)];
-            LocalDateTime stamp = LocalDateTime.now();
-            ChatWindow.getInstance().showMessage(id, message, type, stamp);
-        }
-         */
-        ////////////////// TEST ENDE ///////////////////////////
     }
 
     public void hideChatWindow() {

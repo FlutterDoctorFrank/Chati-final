@@ -124,11 +124,11 @@ public class NotificationListTable extends HudMenuTable {
         notificationListContainer.top();
 
         Table buttonContainer = new Table();
-        buttonContainer.add(globalNotificationTabButton).fillX().expandX();
-        buttonContainer.add(worldNotificationTabButton).fillX().expandX();
-        window.add(buttonContainer).fillX().expandX().row();
+        buttonContainer.defaults().growX();
+        buttonContainer.add(globalNotificationTabButton, worldNotificationTabButton);
+        window.add(buttonContainer).growX().row();
 
-        window.add(notificationListScrollPane).fillX().expandX().fillY().expandY();
+        window.add(notificationListScrollPane).grow();
         add(window).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT);
 
         HeadUpDisplay.getInstance().getStage().setScrollFocus(notificationListScrollPane);
@@ -142,17 +142,6 @@ public class NotificationListTable extends HudMenuTable {
                     .forEach(notification -> globalNotificationEntries.add(new NotificationListEntry(notification)));
             layoutEntries(globalNotificationEntries);
         }
-        // TEEEEESST //
-        /*
-        for (int i = 0; i <20; i++) {
-            Notification notification = new Notification(UUID.randomUUID(), null, new MessageBundle("Ich bin ein globaler Nachricht"), LocalDateTime.now(),
-                    NotificationType.values()[new Random().nextInt(NotificationType.values().length)]);
-            globalNotificationEntries.add(new NotificationListEntry(notification));
-        }
-        layoutEntries(globalNotificationEntries);
-
-         */
-        // TEEESST ENDE //
     }
 
     private void showWorldNotifications() {

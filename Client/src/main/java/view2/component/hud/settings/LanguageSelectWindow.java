@@ -92,8 +92,9 @@ public class LanguageSelectWindow extends ChatiWindow {
         add(languageSelectBox).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
 
         Table buttonContainer = new Table();
-        buttonContainer.add(confirmButton).width((ROW_WIDTH - HORIZONTAL_SPACING) / 2).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
-        buttonContainer.add(cancelButton).width((ROW_WIDTH - HORIZONTAL_SPACING) / 2).height(ROW_HEIGHT);
+        buttonContainer.defaults().colspan(2).width((ROW_WIDTH - HORIZONTAL_SPACING) / 2).height(ROW_HEIGHT);
+        buttonContainer.add(confirmButton).spaceRight(HORIZONTAL_SPACING);
+        buttonContainer.add(cancelButton);
         add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));

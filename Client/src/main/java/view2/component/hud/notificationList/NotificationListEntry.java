@@ -164,25 +164,20 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         NinePatchDrawable controlsBackground =
                 new NinePatchDrawable(new NinePatch(Assets.SKIN.getRegion("panel1"), 10, 10, 10, 10));
         setBackground(controlsBackground);
-
         left().defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).padTop(VERTICAL_SPACING);
 
         Table labelContainer = new Table();
-        labelContainer.add(titleLabel).left().fillX().expandX();
+        labelContainer.add(titleLabel).left().growX();
         labelContainer.add(dateLabel).right().padRight(VERTICAL_SPACING);
 
-        add(labelContainer).spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).fillX().expandX().row();
+        add(labelContainer).spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).growX().row();
 
         Table buttonContainer = new Table();
-        buttonContainer.add(showButton).left().width(SHOW_BUTTON_WIDTH).height(BUTTON_SIZE).fillX().expandX()
-                .padBottom(VERTICAL_SPACING).space(HORIZONTAL_SPACING);
-        buttonContainer.add(acceptButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
-                .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
-        buttonContainer.add(declineButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
-                .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
-
-        buttonContainer.add(deleteButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padBottom(VERTICAL_SPACING);
-        add(buttonContainer).fillX().expandX();
+        buttonContainer.defaults().size(BUTTON_SIZE).padRight(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING)
+                .space(HORIZONTAL_SPACING);
+        buttonContainer.add(showButton).left().width(SHOW_BUTTON_WIDTH).growX();
+        buttonContainer.add(acceptButton, declineButton, deleteButton);
+        add(buttonContainer).growX();
     }
 
     @Override
@@ -356,11 +351,9 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
             setWidth(WINDOW_WIDTH);
             setHeight(WINDOW_HEIGHT);
-            defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING);
+            left().defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).padTop(VERTICAL_SPACING);
 
             getTitleTable().add(dateLabel).right().padRight(VERTICAL_SPACING);
-
-            left().defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).padTop(VERTICAL_SPACING);
 
             Table labelContainer = new Table();
             labelContainer.add(showLabel).center();
@@ -368,15 +361,11 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                     .spaceTop(HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
 
             Table buttonContainer = new Table();
-            buttonContainer.add(okButton).left().width(SHOW_BUTTON_WIDTH).height(BUTTON_SIZE).fillX().expandX()
-                    .padBottom(VERTICAL_SPACING).padLeft(HORIZONTAL_SPACING).space(HORIZONTAL_SPACING);
-            buttonContainer.add(acceptButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
-                    .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
-            buttonContainer.add(declineButton).width(BUTTON_SIZE).height(BUTTON_SIZE).padRight(HORIZONTAL_SPACING)
-                    .space(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING);
-            buttonContainer.add(deleteButton).width(BUTTON_SIZE).height(BUTTON_SIZE)
-                    .padBottom(VERTICAL_SPACING).padRight(HORIZONTAL_SPACING);
-            add(buttonContainer).center().fillX().expandX().padBottom(VERTICAL_SPACING).row();
+            buttonContainer.defaults().size(BUTTON_SIZE).padRight(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING)
+                    .space(HORIZONTAL_SPACING);
+            buttonContainer.add(okButton).left().width(SHOW_BUTTON_WIDTH).growX().padLeft(HORIZONTAL_SPACING);
+            buttonContainer.add(acceptButton, declineButton, deleteButton);
+            add(buttonContainer).center().growX().padBottom(VERTICAL_SPACING).row();
 
             getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
         }
