@@ -4,6 +4,7 @@ import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
 import controller.network.protocol.PacketChatMessage;
+import controller.network.protocol.PacketOutCommunicable;
 import controller.network.protocol.PacketOutContextList;
 import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextInfo;
@@ -50,6 +51,29 @@ public interface ClientSender {
      * Eine Enumeration über die verschiedenen Informationen, die vom Model aus an den Client gesendet werden können.
      */
     enum SendAction {
+
+        /**
+         * Information, dass die Benutzer, mit denen kommuniziert werden kann, versendet werden sollen.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link IUser} (Der eigene Benutzer)
+         * </p>
+         */
+        COMMUNICABLES {
+            @Override
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
+                if (object instanceof IUser) {
+                    final IUser other = (IUser) object;
+
+                    if (!other.equals(user)) {
+                        throw new IllegalArgumentException("Can not send communicable users for an another user");
+                    }
+
+                    return new PacketOutCommunicable(other.getCommunicableIUsers().keySet());
+                } else {
+                    throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
+                }
+            }
+        },
 
         /**
          * Information, dass neue Informationen über Benutzer versendet werden sollen.

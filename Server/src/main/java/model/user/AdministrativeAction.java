@@ -195,6 +195,11 @@ public enum AdministrativeAction {
             // Überprüfe, ob beide Benutzer sich innerhalb eines Kontextes befinden, in dem der ausführende Benutzer
             // die Berechtigung zum Teleportieren besitzt, oder ob die Benutzer befreundet sind.
             Context commonContext = performerArea.lastCommonAncestor(targetArea);
+
+            if (commonContext.equals(GlobalContext.getInstance())) {
+                throw new IllegalStateException("Performer and Target must be in the same world");
+            }
+
             if (!(performer.hasPermission(commonContext, Permission.TELEPORT_TO_USER) && !performer.isFriend(target))) {
                 throw new NoPermissionException("Performer has not the required permission.", performer,
                         Permission.TELEPORT_TO_USER);

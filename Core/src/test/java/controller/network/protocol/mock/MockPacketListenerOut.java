@@ -1,6 +1,7 @@
 package controller.network.protocol.mock;
 
 import controller.network.protocol.PacketListenerOut;
+import controller.network.protocol.PacketOutCommunicable;
 import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextList;
@@ -11,6 +12,11 @@ import controller.network.protocol.PacketOutUserInfo;
 import org.jetbrains.annotations.NotNull;
 
 public class MockPacketListenerOut extends MockPacketListener implements PacketListenerOut {
+
+    @Override
+    public void handle(@NotNull final PacketOutCommunicable packet) {
+        this.calls.add(packet.getClass());
+    }
 
     @Override
     public void handle(@NotNull final PacketOutContextList packet) {

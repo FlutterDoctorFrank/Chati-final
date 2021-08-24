@@ -9,6 +9,7 @@ import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerOut;
 import controller.network.protocol.PacketMenuOption;
 import controller.network.protocol.PacketNotificationResponse;
+import controller.network.protocol.PacketOutCommunicable;
 import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextList;
@@ -424,6 +425,31 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                     this.manager.getView().deleteAccountResponse(packet.isSuccess(), packet.getMessage());
                     break;
             }
+        }
+    }
+
+    @Override
+    public void handle(@NotNull final PacketOutCommunicable packet) {
+        if (this.userId == null) {
+            this.logUnexpectedPacket(packet, "Can not receive communicable users while user is not logged in");
+            return;
+        }
+
+        if (this.worldId != null) {
+            for (final IUserController extern : this.manager.getUserManager().getExternUsers().values()) {
+                extern.setCommunicable(false);
+            }
+
+            for (final UUID userId : packet.getCommunicables()) {
+                try {
+                    this.getExtern(userId).setCommunicable(true);
+                } catch (UserNotFoundException ex) {
+                    // Der Benutzer mit der momentanen ID ist dem Model nicht bekannt.
+                    LOGGER.warning("Server tried to send unknown communicable user with id: " + userId);
+                }
+            }
+        } else {
+            this.logUnexpectedPacket(packet, "Can not receive communicable users while user is not in a world");
         }
     }
 
