@@ -618,15 +618,15 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="135" name="Rezeption" x="1344" y="224" width="384" height="64">
+  <object id="135" name="Reception" x="1344" y="224" width="384" height="64">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
-    <property name="contextType" value="roomRezeption"/>
+    <property name="contextType" value="roomReception"/>
     <property name="text" type="bool" value="true"/>
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="136" name="Juckebox" x="928" y="192" width="64" height="64">
+  <object id="136" name="Jukebox" x="928" y="192" width="64" height="64">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="musicPlayer"/>
