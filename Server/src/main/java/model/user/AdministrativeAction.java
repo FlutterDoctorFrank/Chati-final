@@ -483,6 +483,12 @@ public enum AdministrativeAction {
             if (!performer.hasPermission(performerWorld, Permission.ASSIGN_MODERATOR)) {
                 throw new NoPermissionException("no permission", performer, Permission.ASSIGN_MODERATOR);
             }
+            // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt.
+            if (target.hasRole(GlobalContext.getInstance(), Role.ADMINISTRATOR)
+                    || target.hasRole(GlobalContext.getInstance(), Role.OWNER)) {
+                throw new IllegalAdministrativeActionException("Cannot assign the moderator role to an administrator or owner.",
+                        performer, target, ASSIGN_MODERATOR);
+            }
             // Überprüfe, ob der Benutzer bereits die Rolle des Moderators in dem Kontext besitzt.
             if (target.hasRole(performerWorld, Role.MODERATOR)) {
                 throw new IllegalAdministrativeActionException("Target is already moderator in this world.",
@@ -516,6 +522,12 @@ public enum AdministrativeAction {
             if (!performer.hasPermission(performerWorld, Permission.ASSIGN_MODERATOR)) {
                 throw new NoPermissionException("no permission", performer, Permission.ASSIGN_MODERATOR);
             }
+            // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt.
+            if (target.hasRole(GlobalContext.getInstance(), Role.ADMINISTRATOR)
+                    || target.hasRole(GlobalContext.getInstance(), Role.OWNER)) {
+                throw new IllegalAdministrativeActionException("Cannot withdraw the moderator role from an administrator or owner.",
+                        performer, target, ASSIGN_MODERATOR);
+            }
             // Überprüfe, ob der Benutzer die Rolle des Moderators in dem Kontext besitzt.
             if (!target.hasRole(performerWorld, Role.MODERATOR)) {
                 throw new IllegalAdministrativeActionException("Target is not moderator in this world.",
@@ -544,11 +556,18 @@ public enum AdministrativeAction {
             if (!performer.hasPermission(global, Permission.ASSIGN_ADMINISTRATOR)) {
                 throw new NoPermissionException("no permission", performer, Permission.ASSIGN_ADMINISTRATOR);
             }
+            // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt.
+            if (target.hasRole(GlobalContext.getInstance(), Role.OWNER)) {
+                throw new IllegalAdministrativeActionException("Cannot assign the administrator role to an owner.",
+                        performer, target, ASSIGN_ADMINISTRATOR);
+            }
             // Überprüfe, ob der Benutzer bereits die Rolle des Administrators in dem Kontext besitzt.
             if (target.hasRole(global, Role.ADMINISTRATOR)) {
                 throw new IllegalAdministrativeActionException("Target is already administrator.",
                         performer, target, ASSIGN_ADMINISTRATOR);
             }
+            // Entferne die Rollen des Moderators in jeder Welt von diesem Benutzer.
+            GlobalContext.getInstance().getWorlds().values().forEach(world -> target.removeRole(world, Role.MODERATOR));
             // Füge die Rolle hinzu.
             target.addRole(global, Role.ADMINISTRATOR);
             // Informiere den Benutzer über den Erhalt der Rolle.
@@ -571,6 +590,11 @@ public enum AdministrativeAction {
             // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung in dem Kontext besitzt.
             if (!performer.hasPermission(global, Permission.ASSIGN_ADMINISTRATOR)) {
                 throw new NoPermissionException("no permission", performer, Permission.ASSIGN_ADMINISTRATOR);
+            }
+            // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt.
+            if (target.hasRole(GlobalContext.getInstance(), Role.OWNER)) {
+                throw new IllegalAdministrativeActionException("Cannot withdraw the administrator role from an owner.",
+                        performer, target, ASSIGN_ADMINISTRATOR);
             }
             // Überprüfe, ob der Benutzer die Rolle des Administrators in dem Kontext besitzt.
             if (!target.hasRole(global, Role.ADMINISTRATOR)) {

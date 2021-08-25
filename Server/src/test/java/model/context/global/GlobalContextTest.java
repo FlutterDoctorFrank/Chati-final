@@ -93,8 +93,8 @@ public class GlobalContextTest {
             UUID performer_id = performer.getUserId();
             this.globalContext.createWorld(performer_id, "testWorld", SpatialMap.PUBLIC_ROOM_MAP);
 
-            Assert.assertEquals(1, this.globalContext.getWorlds().size());
-            ContextID actual_world_id = this.globalContext.getWorlds().keySet().iterator().next();
+            Assert.assertEquals(1, this.globalContext.getIWorlds().size());
+            ContextID actual_world_id = this.globalContext.getIWorlds().keySet().iterator().next();
             Assert.assertEquals("testWorld", this.globalContext.getWorld(actual_world_id).getContextName());
             //auch mit getChildren Methode
             Assert.assertEquals(1, this.globalContext.getChildren().size());
@@ -119,8 +119,8 @@ public class GlobalContextTest {
             UUID performer_id = performer.getUserId();
             this.globalContext.createWorld(performer_id, "testWorld", SpatialMap.PUBLIC_ROOM_MAP);
 
-            Assert.assertEquals(1, this.globalContext.getWorlds().size());
-            ContextID actual_world_id = this.globalContext.getWorlds().keySet().iterator().next();
+            Assert.assertEquals(1, this.globalContext.getIWorlds().size());
+            ContextID actual_world_id = this.globalContext.getIWorlds().keySet().iterator().next();
             Assert.assertEquals("testWorld", this.globalContext.getWorld(actual_world_id).getContextName());
 
             Assert.assertEquals(1, this.globalContext.getChildren().size());
@@ -128,7 +128,7 @@ public class GlobalContextTest {
 
             //Nach erfolgreiche addWorld, remove
             this.globalContext.removeWorld(performer_id, actual_world_id);
-            Assert.assertEquals(0, this.globalContext.getWorlds().size());
+            Assert.assertEquals(0, this.globalContext.getIWorlds().size());
             Assert.assertEquals(0, this.globalContext.getChildren().size());
 
         } catch (Exception e) {

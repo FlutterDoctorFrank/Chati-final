@@ -152,7 +152,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
         if (internUser.isInPrivateRoom()
                 && internUser.hasPermission(Permission.MANAGE_PRIVATE_ROOM)) {
-            if (!user.isInCurrentWorld()) {
+            if (!user.isInCurrentRoom()) {
                 roomButton = new ImageButton(Assets.ROOM_INVITE_ICON);
                 roomButton.addListener(new ChatiToolTip("In den Raum einladen"));
             } else {
@@ -357,7 +357,8 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         });
 
         if (internUser.isInCurrentWorld() && user.isInCurrentWorld()
-                && internUser.hasPermission(Permission.ASSIGN_MODERATOR)) {
+                && internUser.hasPermission(Permission.ASSIGN_MODERATOR)
+                && !user.hasRole(Role.ADMINISTRATOR) && !user.hasRole(Role.OWNER)) {
             if (!user.hasRole(Role.MODERATOR)) {
                 moderatorButton = new ImageButton(Assets.ASSIGN_MODERATOR_ICON);
                 moderatorButton.addListener(new ChatiToolTip("Die Rolle des Moderators vergeben"));

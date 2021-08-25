@@ -16,7 +16,6 @@ import model.database.IUserDatabase;
 import model.notification.INotification;
 import model.role.Role;
 import model.user.account.UserAccountManager;
-import model.user.account.UserAccountManagerTest;
 import org.junit.*;
 
 import java.sql.Connection;
@@ -119,11 +118,11 @@ public class UserTesten {
             userAccountManager.registerUser(performerName, "22222");
             User performer = userAccountManager.getUser(performerName);
             performer.addRole(globalContext, Role.OWNER);
-            if (globalContext.getWorlds().size() == 0) {
+            if (globalContext.getIWorlds().size() == 0) {
                 globalContext.createWorld(performer.getUserId(), "test_world", SpatialMap.PUBLIC_ROOM_MAP);
             }
-            ContextID newworld_id = globalContext.getWorlds().keySet().iterator().next();
-            System.out.println(globalContext.getWorlds().size());
+            ContextID newworld_id = globalContext.getIWorlds().keySet().iterator().next();
+            System.out.println(globalContext.getIWorlds().size());
             test_world = globalContext.getWorld(newworld_id);
         } catch (Exception e) {
             e.printStackTrace();

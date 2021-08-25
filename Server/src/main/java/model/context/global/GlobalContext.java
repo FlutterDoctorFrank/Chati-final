@@ -99,8 +99,16 @@ public class GlobalContext extends Context implements IGlobalContext {
     }
 
     @Override
-    public @NotNull Map<ContextID, IWorld> getWorlds() {
+    public @NotNull Map<ContextID, IWorld> getIWorlds() {
         return Collections.unmodifiableMap(worlds);
+    }
+
+    /**
+     * Gibt die Menge aller Welten zurück.
+     * @return Menge aller Welten.
+     */
+    public Map<ContextID, World> getWorlds() {
+        return worlds;
     }
 
     /**

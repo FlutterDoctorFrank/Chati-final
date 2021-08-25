@@ -364,7 +364,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
                         // Informationen über die verfügbaren Welten.
                         final Set<PacketOutContextList.ContextInfo> worlds = new HashSet<>();
-                        for (final IWorld world : this.manager.getGlobal().getWorlds().values()) {
+                        for (final IWorld world : this.manager.getGlobal().getIWorlds().values()) {
                             worlds.add(new PacketOutContextList.ContextInfo(world.getContextId(), world.getContextName()));
                         }
                         this.send(new PacketOutContextList(null, worlds));

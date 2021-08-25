@@ -47,5 +47,5 @@ public interface IGlobalContext extends IContext {
      * Gibt die Menge aller Welten zurück.
      * @return Menge aller Welten.
      */
-    @NotNull Map<ContextID, IWorld> getWorlds();
+    @NotNull Map<ContextID, IWorld> getIWorlds();
 }

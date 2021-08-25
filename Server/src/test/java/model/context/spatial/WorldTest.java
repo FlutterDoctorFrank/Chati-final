@@ -134,7 +134,7 @@ public class WorldTest {
             User performer = userAccountManager.getUser("performer");
             performer.addRole(globalContext, Role.OWNER);
             globalContext.createWorld(performer.getUserId(), "test_world", SpatialMap.PUBLIC_ROOM_MAP);
-            ContextID newworld_id = globalContext.getWorlds().keySet().iterator().next();
+            ContextID newworld_id = globalContext.getIWorlds().keySet().iterator().next();
             test_world = globalContext.getWorld(newworld_id);
         } catch (Exception e) {
             e.printStackTrace();

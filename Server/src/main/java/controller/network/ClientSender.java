@@ -151,7 +151,7 @@ public interface ClientSender {
                     final Set<PacketOutContextList.ContextInfo> infos = new HashSet<>();
 
                     if (object instanceof IGlobalContext) {
-                        for (final IWorld world : ((IGlobalContext) object).getWorlds().values()) {
+                        for (final IWorld world : ((IGlobalContext) object).getIWorlds().values()) {
                             infos.add(new PacketOutContextList.ContextInfo(world.getContextId(), world.getContextName()));
                         }
 

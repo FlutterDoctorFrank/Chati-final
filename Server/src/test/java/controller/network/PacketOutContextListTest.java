@@ -41,7 +41,7 @@ public class PacketOutContextListTest extends PacketServerTest {
         }
 
         Mockito.when(global.getContextId()).thenReturn(randomContextId());
-        Mockito.when(global.getWorlds()).thenReturn(worlds);
+        Mockito.when(global.getIWorlds()).thenReturn(worlds);
 
         final PacketOutContextList packet = this.getPacket(PacketOutContextList.class, global);
 
