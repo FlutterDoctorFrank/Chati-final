@@ -839,6 +839,9 @@ public class User implements IUser {
      * Aktualisiert die Menge der Benutzer, mit denen gerade kommuniziert werden kann.
      */
     private void updateCommunicableUsers() {
+        if (currentLocation == null) {
+            return;
+        }
         Map<UUID, User> currentCommunicableUsers = new HashMap<>(communicableUsers);
         Map<UUID, User> newCommuniableUsers = new HashMap<>(currentLocation.getArea().getCommunicableUsers(this));
         if (currentCommunicableUsers.keySet().equals(newCommuniableUsers.keySet())) {

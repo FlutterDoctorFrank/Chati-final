@@ -134,8 +134,9 @@ public class User implements IUserController, IUserView {
 
     @Override
     public void setFriend(boolean isFriend) {
+        boolean wasFriend = this.isFriend;
         this.isFriend = isFriend;
-        if (!isKnown()) {
+        if (wasFriend && !isFriend && !isKnown()) {
             try {
                 UserManager.getInstance().removeExternUser(userId);
             } catch (UserNotFoundException e) {
