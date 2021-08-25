@@ -50,8 +50,7 @@ public class UserInfoContainer extends Table {
 
     private void setLayout() {
         add(usernameLabel).space(HORIZONTAL_SPACING);
-
-        roleIconContainer.defaults().width(USER_INFO_ICON_SIZE).height(USER_INFO_ICON_SIZE).space(HORIZONTAL_SPACING / 2);
+        roleIconContainer.defaults().size(USER_INFO_ICON_SIZE).space(HORIZONTAL_SPACING / 2);
         updateInfo();
         add(roleIconContainer);
     }

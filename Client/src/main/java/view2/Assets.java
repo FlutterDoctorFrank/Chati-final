@@ -69,6 +69,8 @@ public class Assets {
     public static final TextureRegionDrawable DELETE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_delete_color.png")));
     public static final TextureRegionDrawable DISABLED_DELETE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_delete_grey.png")));
 
+    public static final TextureRegionDrawable COMMUNICABLE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/receiver.jpg")));
+
     public static final Skin SKIN = new Skin();
     private static final int TITLE_FONT_SIZE = 22;
     private static final int LABEL_FONT_SIZE = 24;

@@ -3,8 +3,11 @@ package view2.component.world.body;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import model.user.IUserView;
+import view2.Assets;
 import view2.Chati;
 import view2.component.UserInfoContainer;
 import view2.component.hud.settings.WorldSettingsTable;
@@ -14,11 +17,14 @@ public class UserAvatar extends Sprite {
 
     public static final float DEFAULT_VELOCITY = 12.5f;
     public static final float SPRINT_VELOCITY_FACTOR = 1.75f;
+    public static final float COMMUNICABLE_USER_ICON_SIZE = 35;
 
     protected final IUserView user;
     protected final Body body;
 
-    private UserInfoContainer userInfoContainer;
+    private final UserInfoContainer userInfoContainer;
+    private final Table communicableIconContainer;
+    private final Image communicableIcon;
 
     private TextureRegion avatarStandUp;
     private TextureRegion avatarStandLeft;
@@ -38,6 +44,10 @@ public class UserAvatar extends Sprite {
         this.user = user;
         this.userInfoContainer = new UserInfoContainer(user);
         this.userInfoContainer.setTransform(true);
+        this.communicableIconContainer = new Table();
+        this.communicableIconContainer.setTransform(true);
+        this.communicableIcon = new Image();
+        this.communicableIconContainer.add(communicableIcon).size(COMMUNICABLE_USER_ICON_SIZE);
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -65,11 +75,19 @@ public class UserAvatar extends Sprite {
             || WorldSettingsTable.SHOW_NAME) {
             userInfoContainer.setPosition(body.getPosition().x, body.getPosition().y + getHeight());
             userInfoContainer.setScale(1 / WorldScreen.PPM * WorldScreen.getInstance().getCamera().zoom);
-            if (!user.equals(Chati.getInstance().getUserManager().getInternUserView())) {
-                System.out.println(user.canCommunicateWith());
-            }
             userInfoContainer.act(delta);
             userInfoContainer.draw(batch, 1);
+            if (!user.equals(Chati.getInstance().getUserManager().getInternUserView())) {
+                if (user.canCommunicateWith()) {
+                    communicableIcon.setDrawable(Assets.CHAT_ICON);
+                } else {
+                    communicableIcon.setDrawable(null);
+                }
+                communicableIconContainer.setPosition(body.getPosition().x, body.getPosition().y + 1.5f * getHeight());
+                communicableIconContainer.setScale(1 / WorldScreen.PPM * WorldScreen.getInstance().getCamera().zoom);
+                communicableIconContainer.act(delta);
+                communicableIconContainer.draw(batch, 1);
+            }
         }
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getCurrentFrameRegion(delta));
