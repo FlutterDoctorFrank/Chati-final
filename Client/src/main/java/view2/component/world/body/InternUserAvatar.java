@@ -1,11 +1,13 @@
 package view2.component.world.body;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import model.user.IInternUserView;
 import view2.Chati;
+import view2.component.KeyAction;
 import view2.component.world.WorldScreen;
 
 import java.util.*;
@@ -42,7 +44,7 @@ public class InternUserAvatar extends UserAvatar {
         oldPosition = body.getPosition().cpy();
         Direction currentDirection = getCurrentDirectionalInput();
         float velocity = DEFAULT_VELOCITY;
-        if (WorldScreen.getInstance().getWorldInputProcessor().isSprintPressed()) {
+        if (WorldScreen.getInstance().getWorldInputProcessor().isSprintPressed() && KeyAction.SPRINT.isPressed()) {
             isSprinting = true;
             velocity *= SPRINT_VELOCITY_FACTOR;
         } else {
@@ -53,6 +55,7 @@ public class InternUserAvatar extends UserAvatar {
         } else {
             switch (currentDirection) {
                 case UP:
+                    if (Direction.UP.isPressed())
                     body.setLinearVelocity(0, velocity);
                     break;
                 case LEFT:

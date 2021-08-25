@@ -1,5 +1,6 @@
 package view2.component;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
 public enum KeyAction {
@@ -34,5 +35,14 @@ public enum KeyAction {
             }
         }
         return null;
+    }
+
+    public boolean isPressed() {
+        for (int keycode : keycodes) {
+            if (Gdx.input.isKeyPressed(keycode)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
