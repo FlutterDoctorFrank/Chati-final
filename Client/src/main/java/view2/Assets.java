@@ -70,20 +70,15 @@ public class Assets {
     public static final TextureRegionDrawable DISABLED_DELETE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_delete_grey.png")));
 
     public static final Skin SKIN = new Skin();
-    private static final int TITLE_FONT_SIZE = 20;
-    private static final int LABEL_FONT_SIZE = 22;
-    private static final int BUTTON_FONT_SIZE = 18;
-    private static final int WORLD_FONT_SIZE = 30;
-
-    public static BitmapFont WORLD_FONT;
-
+    private static final int TITLE_FONT_SIZE = 22;
+    private static final int LABEL_FONT_SIZE = 24;
+    private static final int BUTTON_FONT_SIZE = 20;
 
     private Assets() {
     }
 
     public static void initialize() {
         initializeSkin(SKIN);
-        initializeWorldFont();
     }
 
     public static Skin getNewSkin() {
@@ -93,9 +88,9 @@ public class Assets {
     }
 
     private static void initializeSkin(Skin skin) {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/font.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Roboto/Roboto-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.shadowColor = Color.BLACK;
+        parameter.shadowColor = Color.DARK_GRAY;
         parameter.shadowOffsetX = 1;
         parameter.shadowOffsetY = 1;
         parameter.size = TITLE_FONT_SIZE;
@@ -113,17 +108,5 @@ public class Assets {
         skin.add("font-button", fontButton);
         skin.addRegions(new TextureAtlas(Gdx.files.internal("shadeui/uiskin.atlas")));
         skin.load(Gdx.files.internal("shadeui/uiskin.json"));
-    }
-
-    private static void initializeWorldFont() {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/font.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = WORLD_FONT_SIZE;
-        parameter.shadowOffsetX = 2;
-        parameter.shadowOffsetY = 2;
-        parameter.shadowColor = Color.DARK_GRAY;
-        WORLD_FONT = generator.generateFont(parameter);
-        WORLD_FONT.getData().setScale(0.05f);
-        WORLD_FONT.setUseIntegerPositions(false);
     }
 }

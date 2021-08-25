@@ -2,6 +2,7 @@ package view2.component.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -39,6 +40,8 @@ public class ChatWindow extends ChatiWindow {
     private TextArea typeMessageArea;
     private TextButton sendButton;
     private TextButton minimizeButton;
+
+    private boolean scrollDown;
 
     private ChatWindow() {
         super("Chat");
@@ -190,7 +193,11 @@ public class ChatWindow extends ChatiWindow {
         showLabel.setWrap(true);
 
         messageLabelContainer.add(showLabel).top().left().padLeft(SPACE).padBottom(SPACE).expandX().fillX().row();
+        // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
+        // Ende falls die Nachricht aus mehreren Zeilen besteht!
         historyScrollPane.scrollTo(0, 0, 0, 0);
+        historyScrollPane.scrollTo(0, 0, 0, 0);
+
     }
 
     public void clearChat() {
@@ -200,8 +207,11 @@ public class ChatWindow extends ChatiWindow {
 
     public void focus() {
         getStage().setScrollFocus(historyScrollPane);
-        historyScrollPane.scrollTo(0, 0, 0, 0);
         getStage().setKeyboardFocus(typeMessageArea);
+        // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
+        // Ende falls die Nachricht aus mehreren Zeilen besteht!
+        historyScrollPane.scrollTo(0, 0, 0, 0);
+        historyScrollPane.scrollTo(0, 0, 0, 0);
     }
 
     public static ChatWindow getInstance() {
