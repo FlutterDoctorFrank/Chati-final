@@ -49,7 +49,7 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         Mockito.when(self.getRoom()).thenReturn(Mockito.mock(IRoom.class));
         Mockito.when(this.user.getLocation()).thenReturn(self);
 
-        final PacketAvatarMove packet = this.getPacket(SendAction.AVATAR_MOVE, PacketAvatarMove.class, target);
+        final PacketAvatarMove packet = this.getPacket(SendAction.AVATAR_SPAWN, PacketAvatarMove.class, target);
 
         Assert.assertEquals(AvatarAction.SPAWN_AVATAR, packet.getAction());
         Assert.assertNotNull(packet.getUserId());
