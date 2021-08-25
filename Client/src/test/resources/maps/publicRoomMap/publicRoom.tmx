@@ -557,7 +557,7 @@
   <object id="119" name="Bank_3" x="544" y="1888" width="32" height="32">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
-    <property name="contextType" value="seta"/>
+    <property name="contextType" value="seat"/>
     <property name="text" type="bool" value="true"/>
     <property name="voice" type="bool" value="true"/>
    </properties>
