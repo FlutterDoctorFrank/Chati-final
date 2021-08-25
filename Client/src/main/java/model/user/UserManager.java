@@ -200,7 +200,7 @@ public class UserManager implements IUserManagerController, IUserManagerView {
      * @throws IllegalStateException wenn der intern angemeldete Benutzer in keiner Welt ist.
      */
     private void throwIfNotInWorld() {
-        if (!internUser.isInCurrentWorld()) {
+        if (internUser == null || !internUser.isInCurrentWorld()) {
             throw new IllegalStateException("User is not in world.");
         }
     }
