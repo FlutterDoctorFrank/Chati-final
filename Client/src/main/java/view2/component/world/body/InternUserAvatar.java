@@ -19,7 +19,7 @@ public class InternUserAvatar extends UserAvatar {
     private boolean isSprinting;
     private boolean canInteract;
 
-    public InternUserAvatar(World world) {
+    public InternUserAvatar() {
         super(Chati.getInstance().getUserManager().getInternUserView());
         body.setUserData(BodyType.INTERN_USER);
         body.destroyFixture(body.getFixtureList().get(0));

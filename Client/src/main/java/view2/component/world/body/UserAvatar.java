@@ -79,7 +79,7 @@ public class UserAvatar extends Sprite {
             userInfoContainer.draw(batch, 1);
             if (!user.equals(Chati.getInstance().getUserManager().getInternUserView())) {
                 if (user.canCommunicateWith()) {
-                    communicableIcon.setDrawable(Assets.CHAT_ICON);
+                    communicableIcon.setDrawable(Assets.COMMUNICABLE_ICON);
                 } else {
                     communicableIcon.setDrawable(null);
                 }

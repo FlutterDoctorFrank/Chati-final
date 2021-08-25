@@ -170,7 +170,7 @@ public class WorldScreen extends AbstractScreen {
     }
 
     private void initialize() {
-        this.internUserAvatar = new InternUserAvatar(world);
+        this.internUserAvatar = new InternUserAvatar();
         loadExternUserAvatars();
     }
 
