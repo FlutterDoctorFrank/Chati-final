@@ -105,8 +105,8 @@ public class ChangePasswordTable extends MenuTable {
                     resetConfirmNewPasswordField();
                     return;
                 }
-                MenuScreen.getInstance().setPendingResponse(MenuResponse.PASSWORD_CHANGE);
-                Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE,
+                Chati.CHATI.getMenuScreen().setPendingResponse(MenuResponse.PASSWORD_CHANGE);
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE,
                     passwordField.getText(), newPasswordField.getText());
             }
         });
@@ -119,7 +119,7 @@ public class ChangePasswordTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                MenuScreen.getInstance().setMenuTable(new ProfileSettingsTable());
+                Chati.CHATI.getMenuScreen().setMenuTable(new ProfileSettingsTable());
             }
         });
     }

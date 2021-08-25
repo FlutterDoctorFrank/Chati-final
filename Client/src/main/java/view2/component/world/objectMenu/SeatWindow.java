@@ -52,7 +52,7 @@ public class SeatWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.getInstance().getServerSender().send(ServerSender.SendAction.MENU_OPTION, seatId, new String[0], 1);
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, seatId, new String[0], 1);
             }
         });
 
@@ -64,7 +64,7 @@ public class SeatWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.getInstance().getServerSender().send(ServerSender.SendAction.MENU_OPTION, seatId, new String[0], 0);
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, seatId, new String[0], 0);
             }
         });
 
@@ -76,7 +76,7 @@ public class SeatWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.getInstance().getServerSender().send(ServerSender.SendAction.MENU_OPTION, seatId, new String[0], 0);
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, seatId, new String[0], 0);
             }
         });
     }

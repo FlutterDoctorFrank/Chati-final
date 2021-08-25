@@ -1,6 +1,7 @@
 package view2.component.world;
 
 import com.badlogic.gdx.physics.box2d.*;
+import view2.Chati;
 import view2.component.world.body.BodyType;
 
 public class WorldContactListener implements ContactListener {
@@ -12,7 +13,7 @@ public class WorldContactListener implements ContactListener {
         if ((fixtureA.getBody().getUserData() == BodyType.INTERN_USER || fixtureB.getBody().getUserData() == BodyType.INTERN_USER)
             && (fixtureA.getBody().getUserData() == BodyType.INTERACTION_AREA
                 || fixtureB.getBody().getUserData() == BodyType.INTERACTION_AREA)) {
-            WorldScreen.getInstance().getInternUserAvatar().setCanInteract(true);
+            Chati.CHATI.getWorldScreen().getInternUserAvatar().setCanInteract(true);
         }
     }
 
@@ -23,7 +24,7 @@ public class WorldContactListener implements ContactListener {
         if ((fixtureA.getBody().getUserData() == BodyType.INTERN_USER || fixtureB.getBody().getUserData() == BodyType.INTERN_USER)
                 && (fixtureA.getBody().getUserData() == BodyType.INTERACTION_AREA
                 || fixtureB.getBody().getUserData() == BodyType.INTERACTION_AREA)) {
-            WorldScreen.getInstance().getInternUserAvatar().setCanInteract(false);
+            Chati.CHATI.getWorldScreen().getInternUserAvatar().setCanInteract(false);
         }
     }
 

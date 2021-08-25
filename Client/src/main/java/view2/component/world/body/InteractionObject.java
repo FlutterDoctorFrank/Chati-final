@@ -3,6 +3,7 @@ package view2.component.world.body;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.*;
+import view2.Chati;
 import view2.component.world.WorldScreen;
 
 public class InteractionObject {
@@ -16,7 +17,7 @@ public class InteractionObject {
         bodyDef.type = BodyDef.BodyType.StaticBody;
         bodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / WorldScreen.PPM,
                 (rectangle.getY() + rectangle.getHeight() / 2) / WorldScreen.PPM);
-        Body body = WorldScreen.getInstance().getWorld().createBody(bodyDef);
+        Body body = Chati.CHATI.getWorldScreen().getWorld().createBody(bodyDef);
 
         FixtureDef fixtureDef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
@@ -30,13 +31,13 @@ public class InteractionObject {
     }
 
     private void createInteractiveArea() {
-        int tileWidth = ((TiledMapTileLayer) WorldScreen.getInstance().getTiledMap().getLayers().get(0)).getTileWidth();
+        int tileWidth = ((TiledMapTileLayer) Chati.CHATI.getWorldScreen().getTiledMap().getLayers().get(0)).getTileWidth();
 
         BodyDef areaBodyDef = new BodyDef();
         areaBodyDef.type = BodyDef.BodyType.StaticBody;
         areaBodyDef.position.set((rectangle.getX() + rectangle.getWidth() / 2) / WorldScreen.PPM,
                 (rectangle.getY() + rectangle.getHeight() / 2) / WorldScreen.PPM);
-        Body areaBody = WorldScreen.getInstance().getWorld().createBody(areaBodyDef);
+        Body areaBody = Chati.CHATI.getWorldScreen().getWorld().createBody(areaBodyDef);
         areaBody.setUserData(BodyType.INTERACTION_AREA);
 
         FixtureDef areaFixtureDef = new FixtureDef();

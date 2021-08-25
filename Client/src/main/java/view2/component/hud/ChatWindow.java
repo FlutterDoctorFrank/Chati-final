@@ -146,13 +146,13 @@ public class ChatWindow extends ChatiWindow {
         if (typeMessageArea.getStyle().fontColor == Color.GRAY || typeMessageArea.getText().isBlank()) {
             return;
         }
-        Chati.getInstance().getServerSender().send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());
+        Chati.CHATI.getServerSender().send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());
         typeMessageArea.setText("");
     }
 
     public void showMessage(UUID userId, String message, MessageType messageType, LocalDateTime timestamp) {
         String username;
-        IUserManagerView userManager = Chati.getInstance().getUserManager();
+        IUserManagerView userManager = Chati.CHATI.getUserManager();
         if (messageType == MessageType.INFO) {
             username = "Info";
         } else if (userManager.getInternUserView() != null && userManager.getInternUserView().getUserId().equals(userId)) {

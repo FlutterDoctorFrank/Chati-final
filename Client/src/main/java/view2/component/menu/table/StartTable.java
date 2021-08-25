@@ -24,7 +24,7 @@ public class StartTable extends MenuTable {
 
     @Override
     public void act(float delta) {
-        if (Chati.getInstance().isWorldListUpdated()) {
+        if (Chati.CHATI.isWorldListUpdated()) {
             updateWorldList();
         }
         super.act(delta);
@@ -50,8 +50,8 @@ public class StartTable extends MenuTable {
                     infoLabel.setText("Bitte wähle eine Welt aus!");
                     return;
                 }
-                MenuScreen.getInstance().setPendingResponse(MenuResponse.JOIN_WORLD);
-                Chati.getInstance().getServerSender()
+                Chati.CHATI.getMenuScreen().setPendingResponse(MenuResponse.JOIN_WORLD);
+                Chati.CHATI.getServerSender()
                     .send(ServerSender.SendAction.WORLD_ACTION, worldSelectBox.getSelected().getContextId(), true);
             }
         });
@@ -64,7 +64,7 @@ public class StartTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                MenuScreen.getInstance().setMenuTable(new WorldCreateTable());
+                Chati.CHATI.getMenuScreen().setMenuTable(new WorldCreateTable());
             }
         });
 
@@ -80,8 +80,8 @@ public class StartTable extends MenuTable {
                     infoLabel.setText("Bitte wähle eine Welt aus!");
                     return;
                 }
-                MenuScreen.getInstance().setPendingResponse(MenuResponse.DELETE_WORLD);
-                Chati.getInstance().getServerSender()
+                Chati.CHATI.getMenuScreen().setPendingResponse(MenuResponse.DELETE_WORLD);
+                Chati.CHATI.getServerSender()
                         .send(ServerSender.SendAction.WORLD_DELETE, worldSelectBox.getSelected().getContextId());
             }
         });
@@ -94,7 +94,7 @@ public class StartTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                MenuScreen.getInstance().setMenuTable(new AvatarSelectTable());
+                Chati.CHATI.getMenuScreen().setMenuTable(new AvatarSelectTable());
             }
         });
 
@@ -106,7 +106,7 @@ public class StartTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                MenuScreen.getInstance().setMenuTable(new ProfileSettingsTable());
+                Chati.CHATI.getMenuScreen().setMenuTable(new ProfileSettingsTable());
             }
         });
 
@@ -118,8 +118,8 @@ public class StartTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
-                MenuScreen.getInstance().setMenuTable(new LoginTable());
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
+                Chati.CHATI.getMenuScreen().setMenuTable(new LoginTable());
             }
         });
     }
@@ -153,6 +153,6 @@ public class StartTable extends MenuTable {
     }
 
     private void updateWorldList() {
-        worldSelectBox.setItems(MenuScreen.getInstance().getWorlds().toArray(new ContextEntry[0]));
+        worldSelectBox.setItems(Chati.CHATI.getMenuScreen().getWorlds().toArray(new ContextEntry[0]));
     }
 }

@@ -31,9 +31,9 @@ public class InternUserDisplay extends HudMenuTable {
 
     @Override
     public void act(float delta) {
-        if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()
-                || Chati.getInstance().isRoomChanged()) {
-            IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()
+                || Chati.CHATI.isRoomChanged()) {
+            IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
             if (internUser != null) {
                 setStatusImage();
             }
@@ -43,7 +43,7 @@ public class InternUserDisplay extends HudMenuTable {
 
     @Override
     protected void create() {
-        this.userInfoContainer = new UserInfoContainer(Chati.getInstance().getUserManager().getInternUserView());
+        this.userInfoContainer = new UserInfoContainer(Chati.CHATI.getUserManager().getInternUserView());
 
         statusButton = new TextButton("", Assets.getNewSkin());
         statusButton.addListener(new ClickListener() {
@@ -88,7 +88,7 @@ public class InternUserDisplay extends HudMenuTable {
     }
 
     private void setStatusImage() {
-        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
         statusImage.getListeners().forEach(statusImage::removeListener);
         switch (internUser.getStatus()) {
             case ONLINE:
@@ -121,7 +121,7 @@ public class InternUserDisplay extends HudMenuTable {
 
         @Override
         protected void create() {
-            IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+            IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
             statusButtonGroup = new ButtonGroup<>();
             statusButtonGroup.setMinCheckCount(1);
             statusButtonGroup.setMaxCheckCount(1);

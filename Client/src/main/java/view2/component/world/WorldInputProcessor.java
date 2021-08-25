@@ -1,6 +1,7 @@
 package view2.component.world;
 
 import com.badlogic.gdx.InputProcessor;
+import view2.Chati;
 import view2.component.KeyAction;
 
 public class WorldInputProcessor implements InputProcessor {
@@ -33,7 +34,7 @@ public class WorldInputProcessor implements InputProcessor {
             showNamesPressed = true;
         }
         if (KeyAction.getAction(keycode) == KeyAction.INTERACT) {
-            WorldScreen.getInstance().getInternUserAvatar().interact();
+            Chati.CHATI.getWorldScreen().getInternUserAvatar().interact();
         }
         return true;
     }
@@ -88,7 +89,7 @@ public class WorldInputProcessor implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        WorldScreen.getInstance().zoom(amountY > 0);
+        Chati.CHATI.getWorldScreen().zoom(amountY > 0);
         return true;
     }
 

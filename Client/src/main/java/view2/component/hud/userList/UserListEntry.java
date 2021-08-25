@@ -54,7 +54,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
     }
 
     protected void create() {
-        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
         userInfoContainer = new UserInfoContainer(user);
 
         statusImage = new Image();
@@ -95,7 +95,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 if (friendButton.getImage().getDrawable().equals(Assets.ADD_FRIEND_ICON)) {
                     getStage().addActor(new MessageWindow(AdministrativeAction.INVITE_FRIEND));
                 } else {
-                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.REMOVE_FRIEND, "");
                 }
             }
@@ -130,10 +130,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 ignoreButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (ignoreButton.getImage().getDrawable().equals(Assets.IGNORE_ICON)) {
-                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.IGNORE_USER, "");
                 } else {
-                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.UNIGNORE_USER, "");
                 }
             }
@@ -177,7 +177,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 if (roomButton.getImage().getDrawable().equals(Assets.ROOM_INVITE_ICON)) {
                     getStage().addActor(new MessageWindow(AdministrativeAction.ROOM_INVITE));
                 } else if (roomButton.getImage().getDrawable().equals(Assets.ROOM_KICK_ICON)) {
-                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.ROOM_KICK, "");
                 }
             }
@@ -213,7 +213,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 teleportButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (teleportButton.getImage().getDrawable().equals(Assets.TELEPORT_ICON)) {
-                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.TELEPORT_TO_USER, "");
                 }
             }
@@ -292,10 +292,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 muteButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (muteButton.getImage().getDrawable().equals(Assets.MUTE_ICON)) {
-                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.MUTE_USER, "");
                 } else if (muteButton.getImage().getDrawable().equals(Assets.UNMUTE_ICON)) {
-                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.UNMUTE_USER, "");
                 }
             }
@@ -381,10 +381,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 moderatorButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (moderatorButton.getImage().getDrawable().equals(Assets.ASSIGN_MODERATOR_ICON)) {
-                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.ASSIGN_MODERATOR, "");
                 } else if (moderatorButton.getImage().getDrawable().equals(Assets.WITHDRAW_MODERATOR_ICON)) {
-                    Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.WITHDRAW_MODERATOR, "");
                 }
             }
@@ -500,7 +500,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    Chati.getInstance().getServerSender()
+                    Chati.CHATI.getServerSender()
                             .send(ServerSender.SendAction.USER_MANAGE, user.getUserId(), action, userMessageArea.getText());
                     MessageWindow.this.remove();
                 }

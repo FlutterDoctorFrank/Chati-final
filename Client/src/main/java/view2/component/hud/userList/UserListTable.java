@@ -35,10 +35,10 @@ public class UserListTable extends HudMenuTable {
 
     @Override
     public void act(float delta) {
-        if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()
-                || Chati.getInstance().isRoomChanged()) {
+        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()
+                || Chati.CHATI.isRoomChanged()) {
             System.out.println("Methode wird aufgerufen");
-            IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
+            IInternUserView user = Chati.CHATI.getUserManager().getInternUserView();
             if (user == null && !friendTabButton.isDisabled()) {
                 disableBannedUsersTab();
                 disableActiveUsersTab();
@@ -138,7 +138,7 @@ public class UserListTable extends HudMenuTable {
             }
         });
 
-        IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
+        IInternUserView user = Chati.CHATI.getUserManager().getInternUserView();
         if (user == null) {
             disableFriendsTab();
             disableActiveUsersTab();
@@ -185,9 +185,9 @@ public class UserListTable extends HudMenuTable {
 
     private void showFriends() {
         friendEntries.clear();
-        IUserManagerView userManager = Chati.getInstance().getUserManager();
+        IUserManagerView userManager = Chati.CHATI.getUserManager();
         if (userManager.isLoggedIn() && userManager.getInternUserView() != null) {
-            Chati.getInstance().getUserManager().getFriends().values()
+            Chati.CHATI.getUserManager().getFriends().values()
                     .forEach(friend -> friendEntries.add(new UserListEntry(friend)));
             layoutEntries(friendEntries);
         }
@@ -195,9 +195,9 @@ public class UserListTable extends HudMenuTable {
 
     private void showActiveUsers() {
         activeUserEntries.clear();
-        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
         if (internUser != null && internUser.isInCurrentWorld()) {
-            Chati.getInstance().getUserManager().getActiveUsers().values()
+            Chati.CHATI.getUserManager().getActiveUsers().values()
                     .forEach(activeUser -> activeUserEntries.add(new UserListEntry(activeUser)));
             layoutEntries(activeUserEntries);
         }
@@ -205,10 +205,10 @@ public class UserListTable extends HudMenuTable {
 
     private void showBannedUsers() {
         bannedUserEntries.clear();
-        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
         if (internUser != null && internUser.isInCurrentWorld()
                 && (internUser.hasPermission(Permission.BAN_USER) || internUser.hasPermission(Permission.BAN_MODERATOR))) {
-            Chati.getInstance().getUserManager().getBannedUsers().values()
+            Chati.CHATI.getUserManager().getBannedUsers().values()
                     .forEach(bannedUser -> bannedUserEntries.add(new UserListEntry(bannedUser)));
             layoutEntries(bannedUserEntries);
         }

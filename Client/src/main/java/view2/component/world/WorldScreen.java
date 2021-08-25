@@ -44,8 +44,6 @@ public class WorldScreen extends AbstractScreen {
     private static final float MAX_ZOOM = 0.8f;
     private static final float ZOOM_STEP = 0.01f;
 
-    private static WorldScreen worldScreen;
-
     private final WorldInputProcessor worldInputProcessor;
     private final FitViewport viewport;
     private final OrthographicCamera camera;
@@ -56,7 +54,7 @@ public class WorldScreen extends AbstractScreen {
     private final Map<IUserView, UserAvatar> externUserAvatars;
     private InternUserAvatar internUserAvatar;
 
-    private WorldScreen() {
+    public WorldScreen() {
         this.worldInputProcessor = new WorldInputProcessor();
         this.externUserAvatars = new HashMap<>();
         this.camera = new OrthographicCamera();
@@ -71,18 +69,16 @@ public class WorldScreen extends AbstractScreen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        if (Chati.getInstance().isRoomChanged()) {
+        if (Chati.CHATI.isRoomChanged()) {
             destroy();
             createMap();
             initialize();
         }
-
         if (tiledMapRenderer.getMap() != null) {
             tiledMapRenderer.render();
             debugRenderer.render(world, camera.combined);
 
-            if (Chati.getInstance().isUserInfoChanged()) {
+            if (Chati.CHATI.isUserInfoChanged()) {
                 loadExternUserAvatars();
             }
             externUserAvatars.values().forEach(UserAvatar::update);
@@ -99,19 +95,19 @@ public class WorldScreen extends AbstractScreen {
             sendPosition();
             tiledMapRenderer.setView(camera);
         }
-
-        //Chati.SPRITE_BATCH.setProjectionMatrix(stage.getCamera().combined);
         super.render(delta);
     }
 
     @Override
     public void show() {
+        super.show();
         initialize();
     }
 
     @Override
     public void hide() {
         destroy();
+        super.hide();
     }
 
     @Override
@@ -152,14 +148,6 @@ public class WorldScreen extends AbstractScreen {
         }
     }
 
-    public static WorldScreen getInstance() {
-        if (worldScreen == null) {
-            worldScreen = new WorldScreen();
-            worldScreen.getStage().addActor(HeadUpDisplay.getInstance());
-        }
-        return worldScreen;
-    }
-
     private void destroy() {
         Array<Body> bodies = new Array<>();
         world.getBodies(bodies);
@@ -175,7 +163,7 @@ public class WorldScreen extends AbstractScreen {
     }
 
     private void createMap() {
-        SpatialMap spatialMap = Chati.getInstance().getUserManager().getInternUserView().getCurrentRoom().getMap();
+        SpatialMap spatialMap = Chati.CHATI.getUserManager().getInternUserView().getCurrentRoom().getMap();
         TiledMap tiledMap = new TmxMapLoader().load(spatialMap.getPath());
         tiledMapRenderer.setMap(tiledMap);
         tiledMapRenderer.getMap().getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class)
@@ -185,7 +173,7 @@ public class WorldScreen extends AbstractScreen {
     }
 
     private void loadExternUserAvatars() {
-        Chati.getInstance().getUserManager().getUsersInRoom().values().forEach(externUser -> {
+        Chati.CHATI.getUserManager().getUsersInRoom().values().forEach(externUser -> {
             if (!externUserAvatars.containsKey(externUser)) {
                 UserAvatar newUserAvatar = new UserAvatar(externUser);
                 externUserAvatars.put(externUser, newUserAvatar);
@@ -195,7 +183,7 @@ public class WorldScreen extends AbstractScreen {
         Iterator<Map.Entry<IUserView, UserAvatar>> iterator = externUserAvatars.entrySet().iterator();
         while (iterator.hasNext()) {
             UserAvatar userAvatar = iterator.next().getValue();
-            if (!Chati.getInstance().getUserManager().getUsersInRoom().containsValue(userAvatar.getUser())) {
+            if (!Chati.CHATI.getUserManager().getUsersInRoom().containsValue(userAvatar.getUser())) {
                 world.destroyBody(userAvatar.getBody());
                 iterator.remove();
             }
@@ -241,7 +229,7 @@ public class WorldScreen extends AbstractScreen {
         Vector2 oldPosition = internUserAvatar.getOldPosition();
         Vector2 newPosition = internUserAvatar.getPosition();
         if (!oldPosition.epsilonEquals(newPosition)) {
-            Chati.getInstance().getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
+            Chati.CHATI.getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
                     newPosition.x * WorldScreen.PPM, newPosition.y * WorldScreen.PPM, internUserAvatar.isSprinting());
         }
     }

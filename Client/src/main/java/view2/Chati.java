@@ -24,11 +24,12 @@ import java.util.UUID;
 public class Chati extends Game implements ViewControllerInterface, IModelObserver {
 
     public static SpriteBatch SPRITE_BATCH;
-
-    private static Chati CHATI;
+    public static Chati CHATI;
 
     private final IUserManagerView userManager;
     private ServerSender serverSender;
+    private MenuScreen menuScreen;
+    private WorldScreen worldScreen;
 
     private boolean userInfoChangeReceived;
     private boolean userNotificationChangeReceived;
@@ -53,10 +54,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         this.userManager = userManager;
     }
 
-    public static Chati getInstance() {
-        return CHATI;
-    }
-
     public void setScreen(AbstractScreen screen) {
         Gdx.input.setInputProcessor(screen.getInputProcessor());
         screen.getStage().addActor(HeadUpDisplay.getInstance());
@@ -67,13 +64,16 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public void create() {
         SPRITE_BATCH = new SpriteBatch();
         Assets.initialize();
-        setScreen(MenuScreen.getInstance());
+        this.menuScreen = new MenuScreen();
+        this.worldScreen = new WorldScreen();
+        setScreen(menuScreen);
     }
 
     @Override
     public void render() {
         transferFlags();
         resetModelChangeReceivedFlags();
+
         super.render();
         resetModelChangedFlags();
     }
@@ -118,15 +118,15 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void updateWorlds(Map<ContextID, String> worlds) {
-        if (this.screen.equals(MenuScreen.getInstance())) {
-            MenuScreen.getInstance().updateWorlds(worlds);
+        if (this.screen.equals(menuScreen)) {
+            menuScreen.updateWorlds(worlds);
         }
         worldListUpdateReceived = true;
     }
 
     @Override
     public void updateRooms(ContextID worldId, Map<ContextID, String> privateRooms) {
-        if (this.screen.equals(WorldScreen.getInstance())) {
+        if (this.screen.equals(worldScreen)) {
             // TODO
         }
         roomListUpdateReceived = true;
@@ -134,91 +134,91 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void registrationResponse(boolean success, String messageKey) {
-        if (this.screen.equals(MenuScreen.getInstance())) {
-            MenuScreen.getInstance().registrationResponse(success, messageKey);
+        if (this.screen.equals(menuScreen)) {
+            menuScreen.registrationResponse(success, messageKey);
         }
     }
 
     @Override
     public void loginResponse(boolean success, String messageKey) {
-        if (this.screen.equals(MenuScreen.getInstance())) {
-            MenuScreen.getInstance().loginResponse(success, messageKey);
+        if (this.screen.equals(menuScreen)) {
+            menuScreen.loginResponse(success, messageKey);
         }
     }
 
     @Override
     public void passwordChangeResponse(boolean success, String messageKey) {
-        if (this.screen.equals(MenuScreen.getInstance())) {
-            MenuScreen.getInstance().passwordChangeResponse(success, messageKey);
+        if (this.screen.equals(menuScreen)) {
+            menuScreen.passwordChangeResponse(success, messageKey);
         }
     }
 
     @Override
     public void deleteAccountResponse(boolean success, String messageKey) {
-        if (this.screen.equals(MenuScreen.getInstance())) {
-            MenuScreen.getInstance().deleteAccountResponse(success, messageKey);
+        if (this.screen.equals(menuScreen)) {
+            menuScreen.deleteAccountResponse(success, messageKey);
         }
     }
 
     @Override
     public void avatarChangeResponse(boolean success, String messageKey) {
-        if (this.screen.equals(MenuScreen.getInstance())) {
-            MenuScreen.getInstance().avatarChangeResponse(success, messageKey);
+        if (this.screen.equals(menuScreen)) {
+            menuScreen.avatarChangeResponse(success, messageKey);
         }
     }
 
     @Override
     public void createWorldResponse(boolean success, String messageKey) {
-        if (this.screen.equals(MenuScreen.getInstance())) {
-            MenuScreen.getInstance().createWorldResponse(success, messageKey);
+        if (this.screen.equals(menuScreen)) {
+            menuScreen.createWorldResponse(success, messageKey);
         }
     }
 
     @Override
     public void deleteWorldResponse(boolean success, String messageKey) {
-        if (this.screen.equals(MenuScreen.getInstance())) {
-            MenuScreen.getInstance().deleteWorldResponse(success, messageKey);
+        if (this.screen.equals(menuScreen)) {
+            menuScreen.deleteWorldResponse(success, messageKey);
         }
     }
 
     @Override
     public void joinWorldResponse(boolean success, String messageKey) {
-        if (this.screen.equals(MenuScreen.getInstance())) {
-            MenuScreen.getInstance().joinWorldResponse(success, messageKey);
+        if (this.screen.equals(menuScreen)) {
+            menuScreen.joinWorldResponse(success, messageKey);
         }
     }
 
     @Override
     public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message) {
-        if (this.screen.equals(WorldScreen.getInstance())) {
+        if (this.screen.equals(worldScreen)) {
             Gdx.app.postRunnable(() -> ChatWindow.getInstance().showMessage(userId, message, messageType, timestamp));
         }
     }
 
     @Override
     public void playVoiceData(UUID userID, LocalDateTime timestamp, byte[] voiceData) {
-        if (this.screen.equals(WorldScreen.getInstance())) {
+        if (this.screen.equals(worldScreen)) {
             // TODO
         }
     }
 
     @Override
     public void openMenu(Menu menu) {
-        if (this.screen.equals(WorldScreen.getInstance())) {
+        if (this.screen.equals(worldScreen)) {
             // TODO
         }
     }
 
     @Override
     public void closeMenu(Menu menu) {
-        if (this.screen.equals(WorldScreen.getInstance())) {
+        if (this.screen.equals(worldScreen)) {
             // TODO
         }
     }
 
     @Override
     public void menuActionResponse(boolean success, String messageKey) {
-        if (this.screen.equals(WorldScreen.getInstance())) {
+        if (this.screen.equals(worldScreen)) {
             // TODO
         }
     }
@@ -226,8 +226,10 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void logout() {
         Gdx.app.postRunnable(() -> {
-            MenuScreen.getInstance().setMenuTable(new LoginTable());
-            setScreen(MenuScreen.getInstance());
+            menuScreen.setMenuTable(new LoginTable());
+            if (!screen.equals(menuScreen)) {
+                setScreen(menuScreen);
+            }
         });
     }
 
@@ -249,6 +251,14 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     public boolean isRoomChanged() {
         return changeRoom;
+    }
+
+    public MenuScreen getMenuScreen() {
+        return menuScreen;
+    }
+
+    public WorldScreen getWorldScreen() {
+        return worldScreen;
     }
 
     private void resetModelChangeReceivedFlags() {

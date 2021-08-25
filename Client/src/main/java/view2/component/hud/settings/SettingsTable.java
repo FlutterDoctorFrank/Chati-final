@@ -38,8 +38,8 @@ public class SettingsTable extends HudMenuTable {
 
     @Override
     public void act(float delta) {
-        if (Chati.getInstance().isUserInfoChanged() || Chati.getInstance().isWorldChanged()) {
-            IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
+            IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
             if (!administratorManageMenuButton.isDisabled()
                     && (internUser == null || !internUser.hasPermission(Permission.ASSIGN_ADMINISTRATOR))) {
                 disableButton(administratorManageMenuButton);
@@ -63,7 +63,7 @@ public class SettingsTable extends HudMenuTable {
 
     @Override
     protected void create() {
-        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
 
         languageSelectMenuButton = new TextButton("Sprache wählen", Assets.SKIN);
         languageSelectMenuButton.addListener(new ClickListener() {
@@ -128,11 +128,11 @@ public class SettingsTable extends HudMenuTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 disableButton(leaveWorldButton);
-                ContextID currentWorldID = Chati.getInstance().getUserManager()
+                ContextID currentWorldID = Chati.CHATI.getUserManager()
                         .getInternUserView().getCurrentWorld().getContextId();
-                Chati.getInstance().getServerSender().send(ServerSender.SendAction.WORLD_ACTION, currentWorldID, false);
-                Chati.getInstance().setScreen(MenuScreen.getInstance());
-                MenuScreen.getInstance().setMenuTable(new StartTable());
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.WORLD_ACTION, currentWorldID, false);
+                Chati.CHATI.setScreen(Chati.CHATI.getMenuScreen());
+                Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
             }
         });
 
@@ -148,11 +148,11 @@ public class SettingsTable extends HudMenuTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 disableButton(logoutButton);
-                Chati.getInstance().getServerSender().send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
-                if (!Chati.getInstance().getScreen().equals(MenuScreen.getInstance())) {
-                    Chati.getInstance().setScreen(MenuScreen.getInstance());
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
+                if (!Chati.CHATI.getScreen().equals(Chati.CHATI.getMenuScreen())) {
+                    Chati.CHATI.setScreen(Chati.CHATI.getMenuScreen());
                 }
-                MenuScreen.getInstance().setMenuTable(new LoginTable());
+                Chati.CHATI.getMenuScreen().setMenuTable(new LoginTable());
             }
         });
 

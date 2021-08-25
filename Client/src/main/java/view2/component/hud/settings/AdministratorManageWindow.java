@@ -87,14 +87,14 @@ public class AdministratorManageWindow extends ChatiWindow {
                     infoLabel.setText("Bitte gib einen Benutzernamen ein!");
                     return;
                 }
-                if (usernameField.getText().equals(Chati.getInstance().getUserManager().getInternUserView().getUsername())) {
+                if (usernameField.getText().equals(Chati.CHATI.getUserManager().getInternUserView().getUsername())) {
                     infoLabel.setText("Du kannst dir nicht selbst eine Rolle erteilen!");
                     resetTextFields();
                     return;
                 }
                 IUserView externUser;
                 try {
-                     externUser = Chati.getInstance().getUserManager().getExternUserView(usernameField.getText());
+                     externUser = Chati.CHATI.getUserManager().getExternUserView(usernameField.getText());
                 } catch (UserNotFoundException e) {
                     infoLabel.setText("Es existiert kein Benutzer mit diesem Namen.");
                     resetTextFields();
@@ -109,7 +109,7 @@ public class AdministratorManageWindow extends ChatiWindow {
                 if (!messageArea.getText().isEmpty() && messageArea.getStyle().fontColor != Color.GRAY) {
                     message = messageArea.getText();
                 }
-                Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),
                         AdministrativeAction.ASSIGN_ADMINISTRATOR, message);
                 infoLabel.setText("Die Aktion war erfolgreich!");
                 resetTextFields();
@@ -128,14 +128,14 @@ public class AdministratorManageWindow extends ChatiWindow {
                     infoLabel.setText("Bitte gib einen Benutzernamen ein!");
                     return;
                 }
-                if (usernameField.getText().equals(Chati.getInstance().getUserManager().getInternUserView().getUsername())) {
+                if (usernameField.getText().equals(Chati.CHATI.getUserManager().getInternUserView().getUsername())) {
                     infoLabel.setText("Du kannst dir nicht selbst eine Rolle entziehen!");
                     resetTextFields();
                     return;
                 }
                 IUserView externUser;
                 try {
-                    externUser = Chati.getInstance().getUserManager().getExternUserView(usernameField.getText());
+                    externUser = Chati.CHATI.getUserManager().getExternUserView(usernameField.getText());
                 } catch (UserNotFoundException e) {
                     infoLabel.setText("Es existiert kein Benutzer mit diesem Namen.");
                     resetTextFields();
@@ -150,7 +150,7 @@ public class AdministratorManageWindow extends ChatiWindow {
                 if (!messageArea.getText().isEmpty() && messageArea.getStyle().fontColor != Color.GRAY) {
                     message = messageArea.getText();
                 }
-                Chati.getInstance().getServerSender().send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),
                         AdministrativeAction.WITHDRAW_ADMINISTRATOR, message);
                 infoLabel.setText("Die Aktion war erfolgreich!");
                 resetTextFields();

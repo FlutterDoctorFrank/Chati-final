@@ -32,8 +32,8 @@ public class NotificationListTable extends HudMenuTable {
 
     @Override
     public void act(float delta) {
-        if (Chati.getInstance().isUserNotificationChanged() || Chati.getInstance().isWorldChanged()) {
-            IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
+        if (Chati.CHATI.isUserNotificationChanged() || Chati.CHATI.isWorldChanged()) {
+            IInternUserView user = Chati.CHATI.getUserManager().getInternUserView();
             if (user == null && !globalNotificationTabButton.isDisabled()) {
                 disableWorldNotificationTab();
                 disableGlobalNotificationTab();
@@ -94,7 +94,7 @@ public class NotificationListTable extends HudMenuTable {
             }
         });
 
-        IInternUserView user = Chati.getInstance().getUserManager().getInternUserView();
+        IInternUserView user = Chati.CHATI.getUserManager().getInternUserView();
         if (user == null) {
             disableGlobalNotificationTab();
             disableWorldNotificationTab();
@@ -136,7 +136,7 @@ public class NotificationListTable extends HudMenuTable {
 
     private void showGlobalNotifications() {
         globalNotificationEntries.clear();
-        IUserManagerView userManager = Chati.getInstance().getUserManager();
+        IUserManagerView userManager = Chati.CHATI.getUserManager();
         if (userManager.isLoggedIn() && userManager.getInternUserView() != null) {
             userManager.getInternUserView().getGlobalNotifications().values()
                     .forEach(notification -> globalNotificationEntries.add(new NotificationListEntry(notification)));
@@ -146,7 +146,7 @@ public class NotificationListTable extends HudMenuTable {
 
     private void showWorldNotifications() {
         worldNotificationEntries.clear();
-        IInternUserView internUser = Chati.getInstance().getUserManager().getInternUserView();
+        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
         if (internUser != null && internUser.isInCurrentWorld()) {
             internUser.getWorldNotifications().values()
                     .forEach(notification -> worldNotificationEntries.add(new NotificationListEntry(notification)));

@@ -6,11 +6,9 @@ import com.badlogic.gdx.graphics.GL20;
 import model.context.ContextID;
 import view2.Chati;
 import view2.component.AbstractScreen;
-import view2.component.hud.HeadUpDisplay;
 import view2.component.menu.table.LoginTable;
 import view2.component.menu.table.MenuTable;
 import view2.component.menu.table.StartTable;
-import view2.component.world.WorldScreen;
 
 import java.util.*;
 
@@ -18,14 +16,12 @@ public class MenuScreen extends AbstractScreen {
 
     private static int loginFailCounter = 0;
 
-    private static MenuScreen menuScreen;
-
     private MenuTable currentMenuTable;
     private MenuResponse pendingMenuResponse;
 
     private final Set<ContextEntry> worlds;
 
-    private MenuScreen() {
+    public MenuScreen() {
         this.worlds = new HashSet<>();
         this.pendingMenuResponse = MenuResponse.NONE;
         setMenuTable(new LoginTable());
@@ -156,7 +152,7 @@ public class MenuScreen extends AbstractScreen {
         setPendingResponse(MenuResponse.NONE);
         if (success) {
             Gdx.app.postRunnable(() -> {
-                Chati.getInstance().setScreen(WorldScreen.getInstance());
+                Chati.CHATI.setScreen(Chati.CHATI.getWorldScreen());
             });
         } else {
             currentMenuTable.showMessage(messageKey);
@@ -181,13 +177,5 @@ public class MenuScreen extends AbstractScreen {
 
     public Set<ContextEntry> getWorlds() {
         return Collections.unmodifiableSet(worlds);
-    }
-
-    public static MenuScreen getInstance() {
-        if (menuScreen == null) {
-            menuScreen = new MenuScreen();
-            menuScreen.getStage().addActor(HeadUpDisplay.getInstance());
-        }
-        return menuScreen;
     }
 }

@@ -77,7 +77,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                Chati.getInstance().getServerSender()
+                Chati.CHATI.getServerSender()
                         .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), true);
                 remove();
             }
@@ -112,7 +112,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                Chati.getInstance().getServerSender()
+                Chati.CHATI.getServerSender()
                         .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), false);
                 remove();
             }
@@ -141,7 +141,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 deleteButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                Chati.getInstance().getServerSender()
+                Chati.CHATI.getServerSender()
                         .send(ServerSender.SendAction.NOTIFICATION_DELETE, notification.getNotificationId());
                 remove();
             }
@@ -246,7 +246,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                    Chati.getInstance().getServerSender()
+                    Chati.CHATI.getServerSender()
                             .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), true);
                     NotificationListEntry.this.remove();
                     NotificationWindow.this.remove();
@@ -282,7 +282,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                    Chati.getInstance().getServerSender()
+                    Chati.CHATI.getServerSender()
                             .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), false);
                     NotificationListEntry.this.remove();
                     NotificationWindow.this.remove();
@@ -312,7 +312,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     deleteButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                    Chati.getInstance().getServerSender()
+                    Chati.CHATI.getServerSender()
                             .send(ServerSender.SendAction.NOTIFICATION_DELETE, notification.getNotificationId());
                     NotificationListEntry.this.remove();
                     remove();

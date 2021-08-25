@@ -51,7 +51,7 @@ public class UserAvatar extends Sprite {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        this.body = WorldScreen.getInstance().getWorld().createBody(bodyDef);
+        this.body = Chati.CHATI.getWorldScreen().getWorld().createBody(bodyDef);
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.filter.categoryBits = WorldScreen.USER_BIT;
         fixtureDef.filter.maskBits = 0;
@@ -71,20 +71,20 @@ public class UserAvatar extends Sprite {
     public void draw(Batch batch, float delta) {
         //InteractButtonAnimation animation = new InteractButtonAnimation();
         //animation.draw(batch);
-        if (WorldScreen.getInstance().getWorldInputProcessor().isShowNamesPressed()
+        if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isShowNamesPressed()
             || WorldSettingsTable.SHOW_NAME) {
             userInfoContainer.setPosition(body.getPosition().x, body.getPosition().y + getHeight());
-            userInfoContainer.setScale(1 / WorldScreen.PPM * WorldScreen.getInstance().getCamera().zoom);
+            userInfoContainer.setScale(1 / WorldScreen.PPM * Chati.CHATI.getWorldScreen().getCamera().zoom);
             userInfoContainer.act(delta);
             userInfoContainer.draw(batch, 1);
-            if (!user.equals(Chati.getInstance().getUserManager().getInternUserView())) {
+            if (!user.equals(Chati.CHATI.getUserManager().getInternUserView())) {
                 if (user.canCommunicateWith()) {
                     communicableIcon.setDrawable(Assets.COMMUNICABLE_ICON);
                 } else {
                     communicableIcon.setDrawable(null);
                 }
                 communicableIconContainer.setPosition(body.getPosition().x, body.getPosition().y + 1.5f * getHeight());
-                communicableIconContainer.setScale(1 / WorldScreen.PPM * WorldScreen.getInstance().getCamera().zoom);
+                communicableIconContainer.setScale(1 / WorldScreen.PPM * Chati.CHATI.getWorldScreen().getCamera().zoom);
                 communicableIconContainer.act(delta);
                 communicableIconContainer.draw(batch, 1);
             }

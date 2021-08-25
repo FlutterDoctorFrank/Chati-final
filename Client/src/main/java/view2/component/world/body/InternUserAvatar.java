@@ -1,11 +1,8 @@
 package view2.component.world.body;
 
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
-import model.user.IInternUserView;
 import view2.Chati;
 import view2.component.KeyAction;
 import view2.component.world.WorldScreen;
@@ -20,7 +17,7 @@ public class InternUserAvatar extends UserAvatar {
     private boolean canInteract;
 
     public InternUserAvatar() {
-        super(Chati.getInstance().getUserManager().getInternUserView());
+        super(Chati.CHATI.getUserManager().getInternUserView());
         body.setUserData(BodyType.INTERN_USER);
         body.destroyFixture(body.getFixtureList().get(0));
         FixtureDef fixtureDef = new FixtureDef();
@@ -44,7 +41,7 @@ public class InternUserAvatar extends UserAvatar {
         oldPosition = body.getPosition().cpy();
         Direction currentDirection = getCurrentDirectionalInput();
         float velocity = DEFAULT_VELOCITY;
-        if (WorldScreen.getInstance().getWorldInputProcessor().isSprintPressed() && KeyAction.SPRINT.isPressed()) {
+        if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isSprintPressed() && KeyAction.SPRINT.isPressed()) {
             isSprinting = true;
             velocity *= SPRINT_VELOCITY_FACTOR;
         } else {

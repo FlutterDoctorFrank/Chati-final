@@ -65,8 +65,8 @@ public class WorldCreateTable extends MenuTable {
                     infoLabel.setText("Bitte wähle eine Karte aus!");
                     return;
                 }
-                MenuScreen.getInstance().setPendingResponse(MenuResponse.CREATE_WORLD);
-                Chati.getInstance().getServerSender()
+                Chati.CHATI.getMenuScreen().setPendingResponse(MenuResponse.CREATE_WORLD);
+                Chati.CHATI.getServerSender()
                         .send(ServerSender.SendAction.WORLD_CREATE, mapSelectBox.getSelected(), worldNameField.getText());
             }
         });
@@ -79,7 +79,7 @@ public class WorldCreateTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                MenuScreen.getInstance().setMenuTable(new StartTable());
+                Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
             }
         });
     }
