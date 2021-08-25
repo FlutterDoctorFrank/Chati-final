@@ -50,8 +50,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private boolean changeWorldList;
     private boolean changeRoomList;
 
-    private GLProfiler profiler;
-
     public Chati(IUserManagerView userManager) {
         CHATI = this;
         this.userManager = userManager;
@@ -207,14 +205,14 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void openMenu(Menu menu) {
+    public void openMenu(ContextID contextId, Menu menu) {
         if (this.screen.equals(worldScreen)) {
             // TODO
         }
     }
 
     @Override
-    public void closeMenu(Menu menu) {
+    public void closeMenu(ContextID contextId, Menu menu) {
         if (this.screen.equals(worldScreen)) {
             // TODO
         }

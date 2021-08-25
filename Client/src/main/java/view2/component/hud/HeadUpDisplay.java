@@ -29,6 +29,8 @@ public class HeadUpDisplay extends Table {
     private ImageButton settingsButton;
     private ImageButton chatButton;
 
+
+
     private HeadUpDisplay() {
         create();
         setLayout();

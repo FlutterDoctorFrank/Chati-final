@@ -193,8 +193,10 @@ public class ChatWindow extends ChatiWindow {
         showLabel.setWrap(true);
 
         messageLabelContainer.add(showLabel).top().left().padLeft(SPACE).padBottom(SPACE).expandX().fillX().row();
+
         // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
-        // Ende falls die Nachricht aus mehreren Zeilen besteht!
+        // Ende falls die Nachricht aus mehreren Zeilen besteht! Es hängt warscheinlich mit der Art und Weise zusammen
+        // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.
         historyScrollPane.scrollTo(0, 0, 0, 0);
         historyScrollPane.scrollTo(0, 0, 0, 0);
 
@@ -206,10 +208,14 @@ public class ChatWindow extends ChatiWindow {
     }
 
     public void focus() {
-        getStage().setScrollFocus(historyScrollPane);
-        getStage().setKeyboardFocus(typeMessageArea);
+        if (getStage() != null) {
+            getStage().setScrollFocus(historyScrollPane);
+            getStage().setKeyboardFocus(typeMessageArea);
+        }
+
         // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
-        // Ende falls die Nachricht aus mehreren Zeilen besteht!
+        // Ende falls die Nachricht aus mehreren Zeilen besteht! Es hängt warscheinlich mit der Art und Weise zusammen
+        // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.
         historyScrollPane.scrollTo(0, 0, 0, 0);
         historyScrollPane.scrollTo(0, 0, 0, 0);
     }

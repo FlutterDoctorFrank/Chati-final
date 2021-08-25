@@ -347,12 +347,12 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
-    public void openMenu(Menu menu) {
+    public void openMenu(ContextID contextId, Menu menu) {
 
     }
 
     @Override
-    public void closeMenu(Menu menu) {
+    public void closeMenu(ContextID contextId, Menu menu) {
 
     }
 

@@ -564,12 +564,10 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         if (this.worldId != null) {
-            //TODO Die View benötigt die Information zu welchem context das Menü gehört.
-
             if (packet.isOpen()) {
-                this.manager.getView().openMenu(packet.getMenu());
+                this.manager.getView().openMenu(packet.getContextId(), packet.getMenu());
             } else {
-                this.manager.getView().closeMenu(packet.getMenu());
+                this.manager.getView().closeMenu(packet.getContextId(), packet.getMenu());
             }
         } else {
             this.logUnexpectedPacket(packet, "Can not receive menu action while user is not in a world");

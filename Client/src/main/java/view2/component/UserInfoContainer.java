@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import model.role.Role;
 import model.user.IUserView;
+import model.user.Status;
 import view2.Assets;
 import view2.Chati;
 
@@ -60,7 +61,9 @@ public class UserInfoContainer extends Table {
         roleIconContainer.clear();
 
         usernameLabel.setText(user.getUsername());
-        if (user.hasRole(Role.OWNER)) {
+        if (user.getStatus() == Status.OFFLINE) {
+            usernameLabel.setColor(Color.GRAY);
+        } else if (user.hasRole(Role.OWNER)) {
             usernameLabel.setColor(Color.GOLD);
             Image ownerImage = new Image(Assets.OWNER_ICON);
             ownerImage.addListener(new ChatiToolTip("Besitzer"));

@@ -30,8 +30,8 @@ public interface ViewControllerInterface {
     void joinWorldResponse(boolean success, String messageKey);
     void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message) throws UserNotFoundException;
     void playVoiceData(UUID userID, LocalDateTime timestamp, byte[] voiceData); //throws UserNotFoundException;
-    void openMenu(Menu menu);
-    void closeMenu(Menu menu);
+    void openMenu(ContextID contextId, Menu menu);
+    void closeMenu(ContextID contextId, Menu menu);
     void menuActionResponse(boolean success, String messageKey);
     void logout();
     void leaveWorld();

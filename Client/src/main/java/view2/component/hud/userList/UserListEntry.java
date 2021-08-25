@@ -70,7 +70,6 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             case OFFLINE:
                 statusImage.setDrawable(Assets.OFFLINE_ICON);
                 statusImage.addListener(new ChatiToolTip("Offline"));
-                userInfoContainer.getUsernameLabel().setColor(Color.GRAY);
                 break;
             default:
                 throw new IllegalArgumentException("No valid user status.");
