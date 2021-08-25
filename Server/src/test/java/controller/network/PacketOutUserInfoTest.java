@@ -124,7 +124,7 @@ public class PacketOutUserInfoTest extends PacketServerTest {
         Assert.assertNotNull(packet.getInfo().getName());
         Assert.assertEquals(target.getUsername(), packet.getInfo().getName());
         Assert.assertNotNull(packet.getInfo().getStatus());
-        Assert.assertEquals(target.getStatus(), packet.getInfo().getStatus());
+        Assert.assertEquals(Status.OFFLINE, packet.getInfo().getStatus());
         Assert.assertTrue(packet.getInfo().getFlags().contains(Flag.BANNED));
     }
 
@@ -144,13 +144,13 @@ public class PacketOutUserInfoTest extends PacketServerTest {
 
         final PacketOutUserInfo packet = this.getPacket(PacketOutUserInfo.class, target);
 
-        Assert.assertEquals(world.getContextId(), packet.getContextId());
+        Assert.assertNull(packet.getContextId());
         Assert.assertEquals(Action.REMOVE_USER, packet.getAction());
         Assert.assertEquals(target.getUserId(), packet.getInfo().getUserId());
         Assert.assertNotNull(packet.getInfo().getName());
         Assert.assertEquals(target.getUsername(), packet.getInfo().getName());
         Assert.assertNotNull(packet.getInfo().getStatus());
-        Assert.assertEquals(target.getStatus(), packet.getInfo().getStatus());
+        Assert.assertEquals(Status.OFFLINE, packet.getInfo().getStatus());
         Assert.assertTrue(packet.getInfo().getFlags().isEmpty());
     }
 }
