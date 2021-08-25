@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import controller.network.ServerSender;
+import model.MessageBundle;
 import model.context.spatial.SpatialMap;
 import model.exception.ContextNotFoundException;
 import model.communication.message.MessageType;
@@ -327,8 +328,12 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     }
 
-
     @Override
+    public void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message, MessageBundle messageBundle) throws UserNotFoundException {
+
+    }
+
+
     public void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message) throws UserNotFoundException {
         Gdx.app.postRunnable(new Runnable() {
             @Override

@@ -1,6 +1,7 @@
 package view2;
 
 import controller.network.ServerSender;
+import model.MessageBundle;
 import model.exception.ContextNotFoundException;
 import model.communication.message.MessageType;
 import model.context.ContextID;
@@ -28,7 +29,7 @@ public interface ViewControllerInterface {
     void createWorldResponse(boolean success, String messageKey);
     void deleteWorldResponse(boolean success, String messageKey);
     void joinWorldResponse(boolean success, String messageKey);
-    void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message) throws UserNotFoundException;
+    void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message, MessageBundle messageBundle) throws UserNotFoundException;
     void playVoiceData(UUID userID, LocalDateTime timestamp, byte[] voiceData); //throws UserNotFoundException;
     void openMenu(ContextID contextId, Menu menu);
     void closeMenu(ContextID contextId, Menu menu);

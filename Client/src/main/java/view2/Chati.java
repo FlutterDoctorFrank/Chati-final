@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import controller.network.ServerSender;
+import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.Menu;
@@ -191,9 +192,11 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message) {
+    public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message,
+            MessageBundle messageBundle) {
         if (this.screen.equals(worldScreen)) {
-            Gdx.app.postRunnable(() -> ChatWindow.getInstance().showMessage(userId, message, messageType, timestamp));
+            Gdx.app.postRunnable(() -> HeadUpDisplay.getInstance()
+                    .showChatMessage(userId, timestamp, messageType, message, messageBundle));
         }
     }
 

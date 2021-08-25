@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
+import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.exception.UserNotFoundException;
 import model.user.IUserManagerView;
@@ -150,12 +151,10 @@ public class ChatWindow extends ChatiWindow {
         typeMessageArea.setText("");
     }
 
-    public void showMessage(UUID userId, String message, MessageType messageType, LocalDateTime timestamp) {
+    public void showUserMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String userMessage) {
         String username;
         IUserManagerView userManager = Chati.CHATI.getUserManager();
-        if (messageType == MessageType.INFO) {
-            username = "Info";
-        } else if (userManager.getInternUserView() != null && userManager.getInternUserView().getUserId().equals(userId)) {
+        if (userManager.getInternUserView() != null && userManager.getInternUserView().getUserId().equals(userId)) {
             username = userManager.getInternUserView().getUsername();
         } else {
             try {
@@ -178,28 +177,17 @@ public class ChatWindow extends ChatiWindow {
             case WORLD:
                 messageColor = Color.SKY;
                 break;
-            case INFO:
-                messageColor = Color.RED;
-                break;
             default:
                 throw new IllegalArgumentException("No valid messagetype.");
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        String timeString = timestamp.format(formatter);
+        String message = username + ": " + userMessage;
+        showMessage(timestamp, message, messageColor);
+    }
 
-        String showMessage = "[" + timeString + "] " + username + ": " + message;
-        Label showLabel = new Label(showMessage, Assets.SKIN);
-        showLabel.setColor(messageColor);
-        showLabel.setWrap(true);
-
-        messageLabelContainer.add(showLabel).top().left().padLeft(SPACE).padBottom(SPACE).expandX().fillX().row();
-
-        // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
-        // Ende falls die Nachricht aus mehreren Zeilen besteht! Es hängt warscheinlich mit der Art und Weise zusammen
-        // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.
-        historyScrollPane.scrollTo(0, 0, 0, 0);
-        historyScrollPane.scrollTo(0, 0, 0, 0);
-
+    public void showInfoMessage(LocalDateTime timestamp, MessageBundle messageBundle) {
+        // TODO get Message from messageBundle with Arguments.
+        String message = "Info: " + messageBundle.getMessageKey();  // vorläufig
+        showMessage(timestamp, message, Color.RED);
     }
 
     public void clearChat() {
@@ -212,7 +200,6 @@ public class ChatWindow extends ChatiWindow {
             getStage().setScrollFocus(historyScrollPane);
             getStage().setKeyboardFocus(typeMessageArea);
         }
-
         // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
         // Ende falls die Nachricht aus mehreren Zeilen besteht! Es hängt warscheinlich mit der Art und Weise zusammen
         // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.
@@ -225,5 +212,20 @@ public class ChatWindow extends ChatiWindow {
             chatWindow = new ChatWindow();
         }
         return chatWindow;
+    }
+
+    private void showMessage(LocalDateTime timestamp, String message, Color messageColor) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String timeString = timestamp.format(formatter);
+        String showMessage = "[" + timeString + "] " + message;
+        Label showLabel = new Label(showMessage, Assets.SKIN);
+        showLabel.setColor(messageColor);
+        showLabel.setWrap(true);
+        messageLabelContainer.add(showLabel).top().left().padLeft(SPACE).padBottom(SPACE).growX().row();
+        // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
+        // Ende falls die Nachricht aus mehreren Zeilen besteht! Es hängt warscheinlich mit der Art und Weise zusammen
+        // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.
+        historyScrollPane.scrollTo(0, 0, 0, 0);
+        historyScrollPane.scrollTo(0, 0, 0, 0);
     }
 }

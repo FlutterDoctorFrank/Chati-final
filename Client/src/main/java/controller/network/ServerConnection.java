@@ -211,8 +211,6 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             this.logInvalidPacket(packet, "Message can not be null");
                             return;
                         }
-
-                        this.manager.getView().showChatMessage(packet.getSenderId(), packet.getTimestamp(), packet.getMessageType(), packet.getMessage());
                         break;
 
                     case INFO:
@@ -220,10 +218,16 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             this.logInvalidPacket(packet, "MessageBundle can not be null");
                             return;
                         }
+
+                        /*
                         //TODO Vielleicht eine showInfoMessage(LocalDateTime timestamp, MessageBundle message) Methode?
                         this.manager.getView().showChatMessage(null, packet.getTimestamp(), packet.getMessageType(), packet.getBundle().getMessageKey());
+                         */
                         break;
                 }
+                this.manager.getView().showChatMessage(packet.getSenderId(), packet.getTimestamp(),
+                        packet.getMessageType(), packet.getMessage(), packet.getBundle());
+
             } catch (UserNotFoundException ex) {
                 // Unbekannter Sender.
                 LOGGER.warning("Server tried to send message from unknown sender with id: " + ex.getUserID());

@@ -4,12 +4,17 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import model.MessageBundle;
+import model.communication.message.MessageType;
 import model.user.IInternUserView;
 import view2.Chati;
 import view2.Assets;
 import view2.component.hud.notificationList.NotificationListTable;
 import view2.component.hud.settings.SettingsTable;
 import view2.component.hud.userList.UserListTable;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class HeadUpDisplay extends Table {
 
@@ -209,6 +214,15 @@ public class HeadUpDisplay extends Table {
         internUserDisplayContainer.setFillParent(true);
         internUserDisplayContainer.top().left().defaults().width(HUD_MENU_TABLE_WIDTH).height(HUD_MENU_TABLE_HEIGHT);
         addActor(internUserDisplayContainer);
+    }
+
+    public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message,
+                                MessageBundle messageBundle) {
+        if (messageType == MessageType.INFO) {
+            ChatWindow.getInstance().showInfoMessage(timestamp, messageBundle);
+        } else {
+            ChatWindow.getInstance().showUserMessage(userId, timestamp, messageType, message);
+        }
     }
 
     public void showChatWindow() {
