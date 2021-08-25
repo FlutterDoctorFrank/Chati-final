@@ -19,7 +19,7 @@ public class MenuStage extends Stage {
     public boolean keyDown(int keycode) {
         if (!(getKeyboardFocus() instanceof TextField)) {
             if (KeyAction.getAction(keycode) == KeyAction.OPEN_CHAT && HeadUpDisplay.getInstance().isChatEnabled()
-                    && !ChatWindow.getInstance().isVisible()) {
+                    && !HeadUpDisplay.getInstance().getChatWindow().isVisible()) {
                 HeadUpDisplay.getInstance().showChatWindow();
             }
             if (KeyAction.getAction(keycode) == KeyAction.OPEN_USER_LIST) {
@@ -47,7 +47,7 @@ public class MenuStage extends Stage {
         }
         if (KeyAction.getAction(keycode) == KeyAction.CLOSE) {
             setKeyboardFocus(null);
-            if (HeadUpDisplay.getInstance().isChatEnabled() && ChatWindow.getInstance().isVisible()) {
+            if (HeadUpDisplay.getInstance().isChatEnabled() && HeadUpDisplay.getInstance().getChatWindow().isVisible()) {
                 HeadUpDisplay.getInstance().hideChatWindow();
             } else if (HeadUpDisplay.getInstance().isUserMenuOpen()
                     || HeadUpDisplay.getInstance().isNotificationMenuOpen()
@@ -63,7 +63,7 @@ public class MenuStage extends Stage {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (HeadUpDisplay.getInstance().isChatEnabled()) {
-            ChatWindow chatWindow = ChatWindow.getInstance();
+            ChatWindow chatWindow = HeadUpDisplay.getInstance().getChatWindow();
             if (screenX < chatWindow.getX() || screenX > chatWindow.getX() + chatWindow.getWidth()
                     || Gdx.graphics.getHeight() - screenY < chatWindow.getY()
                     || Gdx.graphics.getHeight() - screenY > chatWindow.getY() + chatWindow.getHeight()) {

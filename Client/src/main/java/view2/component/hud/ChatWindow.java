@@ -2,8 +2,6 @@ package view2.component.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -42,9 +40,7 @@ public class ChatWindow extends ChatiWindow {
     private TextButton sendButton;
     private TextButton minimizeButton;
 
-    private boolean scrollDown;
-
-    private ChatWindow() {
+    public ChatWindow() {
         super("Chat");
         create();
         setLayout();
@@ -135,7 +131,6 @@ public class ChatWindow extends ChatiWindow {
         sendContainer.add(sendButton).width(SEND_BUTTON_WIDTH);
         add(sendContainer).height(SEND_BUTTON_HEIGHT).growX();
         getTitleTable().add(minimizeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
-        HeadUpDisplay.getInstance().getStage().addActor(this);
     }
 
     private void resetMessageArea() {
@@ -205,13 +200,6 @@ public class ChatWindow extends ChatiWindow {
         // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.
         historyScrollPane.scrollTo(0, 0, 0, 0);
         historyScrollPane.scrollTo(0, 0, 0, 0);
-    }
-
-    public static ChatWindow getInstance() {
-        if (chatWindow == null) {
-            chatWindow = new ChatWindow();
-        }
-        return chatWindow;
     }
 
     private void showMessage(LocalDateTime timestamp, String message, Color messageColor) {

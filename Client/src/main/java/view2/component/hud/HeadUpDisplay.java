@@ -26,6 +26,8 @@ public class HeadUpDisplay extends Table {
 
     private static HeadUpDisplay headUpDisplay;
 
+    private ChatWindow chatWindow;
+
     private Table internUserDisplayContainer;
     private Table currentMenuContainer;
 
@@ -33,8 +35,6 @@ public class HeadUpDisplay extends Table {
     private ImageButton notificationListButton;
     private ImageButton settingsButton;
     private ImageButton chatButton;
-
-
 
     private HeadUpDisplay() {
         create();
@@ -54,7 +54,7 @@ public class HeadUpDisplay extends Table {
             if (internUser != null && internUser.isInCurrentWorld() && !chatButton.isVisible()) {
                 chatButton.setVisible(true);
             } else if ((internUser == null || !internUser.isInCurrentWorld()) && chatButton.isVisible()) {
-                ChatWindow.getInstance().clearChat();
+                chatWindow.clearChat();
                 hideChatWindow();
                 chatButton.setVisible(false);
             }
@@ -63,6 +63,8 @@ public class HeadUpDisplay extends Table {
     }
 
     protected void create() {
+        this.chatWindow = new ChatWindow();
+
         userListButton = new ImageButton(Assets.USER_ICON);
         userListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         userListButton.addListener(new ClickListener() {
@@ -219,24 +221,24 @@ public class HeadUpDisplay extends Table {
     public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message,
                                 MessageBundle messageBundle) {
         if (messageType == MessageType.INFO) {
-            ChatWindow.getInstance().showInfoMessage(timestamp, messageBundle);
+            chatWindow.showInfoMessage(timestamp, messageBundle);
         } else {
-            ChatWindow.getInstance().showUserMessage(userId, timestamp, messageType, message);
+            chatWindow.showUserMessage(userId, timestamp, messageType, message);
         }
     }
 
     public void showChatWindow() {
         chatButton.setChecked(true);
         chatButton.getStyle().imageUp = Assets.CHECKED_CHAT_ICON;
-        ChatWindow.getInstance().setVisible(true);
-        ChatWindow.getInstance().focus();
+        chatWindow.setVisible(true);
+        chatWindow.focus();
     }
 
     public void hideChatWindow() {
         chatButton.setChecked(false);
         chatButton.getStyle().imageUp = Assets.CHAT_ICON;
-        ChatWindow.getInstance().setVisible(false);
-        getStage().unfocus(ChatWindow.getInstance());
+        chatWindow.setVisible(false);
+        getStage().unfocus(chatWindow);
     }
 
     public boolean isChatEnabled() {
@@ -297,5 +299,9 @@ public class HeadUpDisplay extends Table {
         notificationListButton.getStyle().imageUp = Assets.NOTIFICATION_ICON;
         settingsButton.getStyle().imageUp = Assets.SETTINGS_ICON;
         currentMenuContainer.clearChildren();
+    }
+
+    public ChatWindow getChatWindow() {
+        return chatWindow;
     }
 }

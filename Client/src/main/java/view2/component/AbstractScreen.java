@@ -21,6 +21,7 @@ public abstract class AbstractScreen extends ScreenAdapter {
     @Override
     public void show() {
         stage.addActor(HeadUpDisplay.getInstance());
+        stage.addActor(HeadUpDisplay.getInstance().getChatWindow());
     }
 
     @Override
