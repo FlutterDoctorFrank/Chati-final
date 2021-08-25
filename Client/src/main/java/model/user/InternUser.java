@@ -65,18 +65,11 @@ public class InternUser extends User implements IInternUserController, IInternUs
         if (currentWorld == null) {
             throw new IllegalStateException("User is not in a world.");
         }
-        // Entferne alle Referenzen auf die Welt und alle untergeordneten Kontexte.
-        reportedContexts.values().removeIf(context -> !context.equals(Context.getGlobal()));
-        mutedContexts.values().removeIf(context -> !context.equals(Context.getGlobal()));
-        bannedContexts.values().removeIf(context -> !context.equals(Context.getGlobal()));
-        contextRoles.keySet().removeIf(context -> !context.equals(Context.getGlobal()));
+        UserManager.getInstance().discardWorldInfo();
         notifications.values().removeIf(notification -> !notification.getContext().equals(Context.getGlobal()));
         Context.getGlobal().removeChild(currentWorld);
-        currentLocation = null;
         currentRoom = null;
-        isInCurrentRoom = false;
         currentWorld = null;
-        isInCurrentWorld = false;
         music = null;
         UserManager.getInstance().getModelObserver().setWorldChanged();
     }
@@ -91,10 +84,8 @@ public class InternUser extends User implements IInternUserController, IInternUs
         if (currentRoom != null) {
             leaveRoom();
         }
-
         this.currentRoom = new SpatialContext(roomName, currentWorld);
         Gdx.app.postRunnable(() -> currentRoom.build(map));
-
         isInCurrentRoom = true;
     }
 
@@ -173,16 +164,9 @@ public class InternUser extends User implements IInternUserController, IInternUs
      */
     public void leaveRoom() {
         // Entferne alle Referenzen auf den Raum und allen untergeordneten Kontexten.
-        reportedContexts.values()
-                .removeIf(context -> !context.equals(Context.getGlobal()) || !context.equals(currentWorld));
-        mutedContexts.values()
-                .removeIf(context -> !context.equals(Context.getGlobal()) || !context.equals(currentWorld));
-        bannedContexts.values()
-                .removeIf(context -> !context.equals(Context.getGlobal()) || !context.equals(currentWorld));
-        contextRoles.keySet()
-                .removeIf(context -> !context.equals(Context.getGlobal()) || !context.equals(currentWorld));
-        currentWorld.removeChild(currentRoom);
+        UserManager.getInstance().discardRoomInfo();
+        music = null;
+        currentLocation = null;
         currentRoom = null;
-        isInCurrentRoom = false;
     }
 }

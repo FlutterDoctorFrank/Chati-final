@@ -1,6 +1,7 @@
 package model.user;
 
 import model.exception.UserNotFoundException;
+import model.role.Permission;
 import view2.IModelObserver;
 
 import java.util.HashMap;
@@ -157,6 +158,36 @@ public class UserManager implements IUserManagerController, IUserManagerView {
      */
     public InternUser getInternUser() {
         return internUser;
+    }
+
+    /**
+     * Wird aufgerufen, wenn der intern angemeldete Benutzer die Welt verlässt. Veranlasst, dass die Informationen
+     * zu allen Kontexten innerhalb einer Welt für alle Benutzer verworfen werden. Entfernt externe Benutzer, mit denen
+     * der intern angemeldete Benutzer nicht befreundet ist oder Benutzer, die nicht gesperrt sind sofern der intern
+     * angemeldete Benutzer die Berechtigung zum Sperren besitzt.
+     */
+    public void discardWorldInfo() {
+        externUsers.values().forEach(user -> {
+            if (!user.isKnown()) {
+                try {
+                    removeExternUser(user.getUserId());
+                } catch (UserNotFoundException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                user.discardWorldInfo();
+            }
+        });
+        internUser.discardWorldInfo();
+    }
+
+    /**
+     * Wird aufgerufen, wenn der intern angemeldete Benutzer einen Raum verlässt. Veranlasst, dass die Informationen
+     * zu allen Kontexten innerhalb des Raums für alle Benutzer verworfen werden.
+     */
+    public void discardRoomInfo() {
+        externUsers.values().forEach(User::discardRoomInfo);
+        internUser.discardRoomInfo();
     }
 
     /**

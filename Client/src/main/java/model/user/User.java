@@ -4,6 +4,7 @@ import model.context.Context;
 import model.context.spatial.Location;
 import model.exception.ContextNotFoundException;
 import model.context.ContextID;
+import model.exception.UserNotFoundException;
 import model.role.Permission;
 import model.role.Role;
 
@@ -117,7 +118,7 @@ public class User implements IUserController, IUserView {
     public void setInCurrentWorld(boolean isInCurrentWorld) {
         this.isInCurrentWorld = isInCurrentWorld;
         if (!isInCurrentWorld) {
-            setInCurrentRoom(false);
+            discardWorldInfo();
         }
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
@@ -125,12 +126,22 @@ public class User implements IUserController, IUserView {
     @Override
     public void setInCurrentRoom(boolean isInCurrentRoom) {
         this.isInCurrentRoom = isInCurrentRoom;
+        if (!isInCurrentRoom) {
+            discardRoomInfo();
+        }
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
     public void setFriend(boolean isFriend) {
         this.isFriend = isFriend;
+        if (!isKnown()) {
+            try {
+                UserManager.getInstance().removeExternUser(userId);
+            } catch (UserNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
@@ -158,7 +169,6 @@ public class User implements IUserController, IUserView {
         } else {
             reportedContexts.remove(contextId);
         }
-
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
@@ -174,13 +184,17 @@ public class User implements IUserController, IUserView {
 
     @Override
     public void setBan(ContextID contextId, boolean isBanned) throws ContextNotFoundException {
-        //System.out.println("banned context id " + contextId);
-        //System.out.println(UserManager.getInstance().getBannedUsers());
         if (isBanned) {
             bannedContexts.put(contextId, Context.getGlobal().getContext(contextId));
-            // System.out.println(UserManager.getInstance().getBannedUsers());
         } else {
             bannedContexts.remove(contextId);
+        }
+        if (!isKnown()) {
+            try {
+                UserManager.getInstance().removeExternUser(userId);
+            } catch (UserNotFoundException e) {
+                e.printStackTrace();
+            }
         }
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
@@ -337,6 +351,45 @@ public class User implements IUserController, IUserView {
                 : currentLocation.getArea()));
     }
 
+    /**
+     * Veranlasst das Löschen aller Informationen zu Kontexten innerhalb der Welt des intern angemeldeten Benutzers.
+     */
+    public void discardWorldInfo() {
+        reportedContexts.values().removeIf(context -> !context.equals(Context.getGlobal()));
+        mutedContexts.values().removeIf(context -> !context.equals(Context.getGlobal()));
+        bannedContexts.values().removeIf(context -> !context.equals(Context.getGlobal()));
+        contextRoles.keySet().removeIf(context -> !context.equals(Context.getGlobal()));
+        isInCurrentWorld = false;
+        isInCurrentRoom = false;
+        currentLocation = null;
+    }
+
+    /**
+     * Veranlasst das Löschen aller Informationen zu Kontexten innerhalb des Raums des intern angemeldeten Benutzers.
+     */
+    public void discardRoomInfo() {
+        reportedContexts.values().removeIf(context -> !context.equals(Context.getGlobal())
+                || !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
+        mutedContexts.values().removeIf(context -> !context.equals(Context.getGlobal())
+                || !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
+        bannedContexts.values().removeIf(context -> !context.equals(Context.getGlobal())
+                || !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
+        contextRoles.keySet().removeIf(context -> !context.equals(Context.getGlobal())
+                || !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
+        isInCurrentRoom = false;
+        currentLocation = null;
+    }
+
+    /**
+     * Überprüft, ob dieser Benutzer dem aktuell angemeldeten internen Benutzer noch bekannt ist.
+     * @return true, wenn der Benutzer noch bekannt ist, sonst false.
+     */
+    public boolean isKnown() {
+        return isInCurrentWorld || isFriend
+                || isBanned() && UserManager.getInstance().getInternUser().hasPermission(Permission.BAN_USER)
+                && UserManager.getInstance().getInternUser().hasPermission(Permission.BAN_MODERATOR);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -357,7 +410,6 @@ public class User implements IUserController, IUserView {
      * @return true, wenn der Benutzer die Rolle in dem Kontext besitzt, sonst false.
      */
     private boolean hasRole(Context context, Role role) {
-        //System.out.println(context.getContextId());
         return contextRoles.containsKey(context) && contextRoles.get(context).contains(role)
                 || context.getParent() != null && hasRole(context.getParent(), role);
     }
