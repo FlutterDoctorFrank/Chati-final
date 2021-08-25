@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
+import model.context.spatial.ILocationView;
 import model.user.IUserView;
 import view2.Assets;
 import view2.Chati;
@@ -173,13 +174,20 @@ public class UserAvatar extends Sprite {
     }
 
     public void teleport() {
-        Vector2 newPosition = new Vector2(user.getLocation().getPosX() / WorldScreen.PPM,
-                user.getLocation().getPosY() / WorldScreen.PPM);
+        ILocationView location = user.getLocation();
+        if (location == null) {
+            return;
+        }
+        Vector2 newPosition = new Vector2(location.getPosX() / WorldScreen.PPM, location.getPosY() / WorldScreen.PPM);
         body.setTransform(newPosition, body.getAngle());
         body.setAwake(true);
     }
 
     public void update() {
+        ILocationView location = user.getLocation();
+        if (location == null) {
+            return;
+        }
         if (user.isTeleporting()) {
             teleport();
         } else {
@@ -187,8 +195,7 @@ public class UserAvatar extends Sprite {
             if (user.isSprinting()) {
                 velocity *= SPRINT_VELOCITY_FACTOR;
             }
-            Vector2 destination = new Vector2(user.getLocation().getPosX() / WorldScreen.PPM,
-                    user.getLocation().getPosY() / WorldScreen.PPM);
+            Vector2 destination = new Vector2(location.getPosX() / WorldScreen.PPM, location.getPosY() / WorldScreen.PPM);
             if (body.getPosition().epsilonEquals(destination)) {
                 body.setLinearVelocity(0, 0);
             } else {
