@@ -4,10 +4,7 @@ import model.exception.UserNotFoundException;
 import model.role.Permission;
 import view2.IModelObserver;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -167,17 +164,15 @@ public class UserManager implements IUserManagerController, IUserManagerView {
      * angemeldete Benutzer die Berechtigung zum Sperren besitzt.
      */
     public void discardWorldInfo() {
-        externUsers.values().forEach(user -> {
+        Iterator<User> iterator = externUsers.values().iterator();
+        while (iterator.hasNext()) {
+            User user = iterator.next();
             if (!user.isKnown()) {
-                try {
-                    removeExternUser(user.getUserId());
-                } catch (UserNotFoundException e) {
-                    e.printStackTrace();
-                }
+                iterator.remove();
             } else {
                 user.discardWorldInfo();
             }
-        });
+        }
         internUser.discardWorldInfo();
     }
 
