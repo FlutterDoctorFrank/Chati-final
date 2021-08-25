@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum SpatialMap implements Resource {
 
-    DEFAULT_WORLD("Standardwelt", "worlds/default-world"),
+    //DEFAULT_WORLD("Standardwelt", "worlds/default-world"),
     PUBLIC_ROOM_MAP("Public Room", "publicRoomMap/publicRoom"),
     PRIVATE_ROOM_MAP("Private Room", "privateRoomMap/privateRoom");
 
