@@ -57,7 +57,7 @@ public class MenuScreen extends AbstractScreen {
         }
         setPendingResponse(MenuResponse.NONE);
         if (success) {
-            Gdx.app.postRunnable(() -> setMenuTable(new StartTable()));
+            setMenuTable(new StartTable());
             loginFailCounter = 0;
         } else {
             if (loginFailCounter == 2) {
@@ -76,10 +76,8 @@ public class MenuScreen extends AbstractScreen {
         }
         setPendingResponse(MenuResponse.NONE);
         if (success) {
-            Gdx.app.postRunnable(() -> {
-                setMenuTable(new StartTable());
-                currentMenuTable.showMessage("Dein Passwort wurde geändert!");
-            });
+            setMenuTable(new StartTable());
+            currentMenuTable.showMessage("Dein Passwort wurde geändert!");
         } else {
             currentMenuTable.showMessage(messageKey);
             currentMenuTable.resetTextFields();
@@ -92,10 +90,8 @@ public class MenuScreen extends AbstractScreen {
         }
         setPendingResponse(MenuResponse.NONE);
         if (success) {
-            Gdx.app.postRunnable(() -> {
-                setMenuTable(new LoginTable());
-                currentMenuTable.showMessage("Dein Konto wurde gelöscht.");
-            });
+            setMenuTable(new LoginTable());
+            currentMenuTable.showMessage("Dein Konto wurde gelöscht.");
         } else {
             currentMenuTable.showMessage(messageKey);
             currentMenuTable.resetTextFields();
@@ -108,10 +104,8 @@ public class MenuScreen extends AbstractScreen {
         }
         setPendingResponse(MenuResponse.NONE);
         if (success) {
-            Gdx.app.postRunnable(() -> {
-                setMenuTable(new StartTable());
-                currentMenuTable.showMessage("Dein Avatar wurde geändert!");
-            });
+            setMenuTable(new StartTable());
+            currentMenuTable.showMessage("Dein Avatar wurde geändert!");
         } else {
             currentMenuTable.showMessage(messageKey);
         }
@@ -123,10 +117,8 @@ public class MenuScreen extends AbstractScreen {
         }
         setPendingResponse(MenuResponse.NONE);
         if (success) {
-            Gdx.app.postRunnable(() -> {
-                setMenuTable(new StartTable());
-                currentMenuTable.showMessage("Die Welt wurde erfolgreich erstellt!");
-            });
+            setMenuTable(new StartTable());
+            currentMenuTable.showMessage("Die Welt wurde erfolgreich erstellt!");
         } else {
             currentMenuTable.showMessage(messageKey);
             currentMenuTable.resetTextFields();
@@ -151,9 +143,7 @@ public class MenuScreen extends AbstractScreen {
         }
         setPendingResponse(MenuResponse.NONE);
         if (success) {
-            Gdx.app.postRunnable(() -> {
-                Chati.CHATI.setScreen(Chati.CHATI.getWorldScreen());
-            });
+            Chati.CHATI.setScreen(Chati.CHATI.getWorldScreen());
         } else {
             currentMenuTable.showMessage(messageKey);
         }

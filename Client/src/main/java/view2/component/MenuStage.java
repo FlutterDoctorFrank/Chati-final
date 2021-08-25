@@ -67,7 +67,9 @@ public class MenuStage extends Stage {
             if (screenX < chatWindow.getX() || screenX > chatWindow.getX() + chatWindow.getWidth()
                     || Gdx.graphics.getHeight() - screenY < chatWindow.getY()
                     || Gdx.graphics.getHeight() - screenY > chatWindow.getY() + chatWindow.getHeight()) {
-                chatWindow.getStage().unfocus(chatWindow);
+                if (chatWindow.getStage() != null) {
+                    chatWindow.getStage().unfocus(chatWindow);
+                }
             }
         }
         return super.touchDown(screenX, screenY, pointer, button);

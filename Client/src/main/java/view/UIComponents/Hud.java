@@ -366,6 +366,11 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     }
 
+    @Override
+    public void leaveWorld() {
+
+    }
+
     public WidgetGroup getGroup() {
         return group;
     }

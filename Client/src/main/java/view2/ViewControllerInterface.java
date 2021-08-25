@@ -34,4 +34,5 @@ public interface ViewControllerInterface {
     void closeMenu(Menu menu);
     void menuActionResponse(boolean success, String messageKey);
     void logout();
+    void leaveWorld();
 }

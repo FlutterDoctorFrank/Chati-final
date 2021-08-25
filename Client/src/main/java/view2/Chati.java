@@ -15,6 +15,7 @@ import view2.component.hud.ChatWindow;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.menu.table.LoginTable;
 import view2.component.menu.MenuScreen;
+import view2.component.menu.table.StartTable;
 import view2.component.world.WorldScreen;
 
 import java.time.LocalDateTime;
@@ -30,6 +31,8 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private ServerSender serverSender;
     private MenuScreen menuScreen;
     private WorldScreen worldScreen;
+
+    private boolean loggedIn;
 
     private boolean userInfoChangeReceived;
     private boolean userNotificationChangeReceived;
@@ -135,56 +138,57 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void registrationResponse(boolean success, String messageKey) {
         if (this.screen.equals(menuScreen)) {
-            menuScreen.registrationResponse(success, messageKey);
+            Gdx.app.postRunnable(() -> menuScreen.registrationResponse(success, messageKey));
         }
     }
 
     @Override
     public void loginResponse(boolean success, String messageKey) {
+        loggedIn = success;
         if (this.screen.equals(menuScreen)) {
-            menuScreen.loginResponse(success, messageKey);
+            Gdx.app.postRunnable(() -> menuScreen.loginResponse(success, messageKey));
         }
     }
 
     @Override
     public void passwordChangeResponse(boolean success, String messageKey) {
         if (this.screen.equals(menuScreen)) {
-            menuScreen.passwordChangeResponse(success, messageKey);
+            Gdx.app.postRunnable(() -> menuScreen.passwordChangeResponse(success, messageKey));
         }
     }
 
     @Override
     public void deleteAccountResponse(boolean success, String messageKey) {
         if (this.screen.equals(menuScreen)) {
-            menuScreen.deleteAccountResponse(success, messageKey);
+            Gdx.app.postRunnable(() -> menuScreen.deleteAccountResponse(success, messageKey));
         }
     }
 
     @Override
     public void avatarChangeResponse(boolean success, String messageKey) {
         if (this.screen.equals(menuScreen)) {
-            menuScreen.avatarChangeResponse(success, messageKey);
+            Gdx.app.postRunnable(() -> menuScreen.avatarChangeResponse(success, messageKey));
         }
     }
 
     @Override
     public void createWorldResponse(boolean success, String messageKey) {
         if (this.screen.equals(menuScreen)) {
-            menuScreen.createWorldResponse(success, messageKey);
+            Gdx.app.postRunnable(() -> menuScreen.createWorldResponse(success, messageKey));
         }
     }
 
     @Override
     public void deleteWorldResponse(boolean success, String messageKey) {
         if (this.screen.equals(menuScreen)) {
-            menuScreen.deleteWorldResponse(success, messageKey);
+            Gdx.app.postRunnable(() -> menuScreen.deleteWorldResponse(success, messageKey));
         }
     }
 
     @Override
     public void joinWorldResponse(boolean success, String messageKey) {
         if (this.screen.equals(menuScreen)) {
-            menuScreen.joinWorldResponse(success, messageKey);
+            Gdx.app.postRunnable(() -> menuScreen.joinWorldResponse(success, messageKey));
         }
     }
 
@@ -225,12 +229,24 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void logout() {
-        Gdx.app.postRunnable(() -> {
-            menuScreen.setMenuTable(new LoginTable());
-            if (!screen.equals(menuScreen)) {
+        if (loggedIn) {
+            Gdx.app.postRunnable(() -> {
+                menuScreen.setMenuTable(new LoginTable());
+                if (!screen.equals(menuScreen)) {
+                    setScreen(menuScreen);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void leaveWorld() {
+        if (screen.equals(worldScreen)) {
+            Gdx.app.postRunnable(() -> {
+                menuScreen.setMenuTable(new StartTable());
                 setScreen(menuScreen);
-            }
-        });
+            });
+        }
     }
 
     public boolean isUserInfoChanged() {

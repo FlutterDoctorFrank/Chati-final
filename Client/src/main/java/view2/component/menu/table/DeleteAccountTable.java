@@ -43,7 +43,7 @@ public class DeleteAccountTable extends MenuTable {
             }
         });
 
-        confirmPasswordField = new TextField("Neues Passwort", Assets.getNewSkin());
+        confirmPasswordField = new TextField("Passwort bestätigen", Assets.getNewSkin());
         confirmPasswordField.getStyle().fontColor = Color.GRAY;
         confirmPasswordField.setPasswordCharacter('*');
         confirmPasswordField.addListener(new FocusListener() {
