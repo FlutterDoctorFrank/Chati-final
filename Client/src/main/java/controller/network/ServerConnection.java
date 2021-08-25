@@ -103,7 +103,9 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         if (object instanceof Packet<?>) {
-            LOGGER.info(String.format("Received packet from server: %s", object));
+            if (!(object instanceof PacketAvatarMove)) {
+                LOGGER.info(String.format("Received packet from server: %s", object));
+            }
 
             try {
                 call((Packet<?>) object, this);
