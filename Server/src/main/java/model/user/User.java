@@ -649,8 +649,13 @@ public class User implements IUser {
      */
     public void setStatus(@NotNull final Status status) {
         this.status = status;
+
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
-        updateUserInfo(true);
+        Map<UUID, User> receivers = new HashMap<>(friends);
+
+        receivers.put(userId, this);
+        receivers.putAll(currentWorld != null ? currentWorld.getUsers() : Collections.emptyMap());
+        receivers.values().forEach(receiver -> receiver.send(SendAction.USER_INFO, this));
     }
 
     /**
@@ -749,6 +754,7 @@ public class User implements IUser {
     /*
      * Sendet Pakete an alle relevanten Benutzer mit der aktualisierten Benutzerinformation.
      */
+    /*
     public void updateUserInfo(final boolean includeSelf) {
         final Map<UUID, User> receivers = new HashMap<>(friends);
 
@@ -760,10 +766,9 @@ public class User implements IUser {
             receivers.put(userId, this);
         }
 
-        receivers.values().stream()
-                .filter(User::isOnline)
-                .forEach(user -> user.send(SendAction.USER_INFO, this));
+        receivers.values().forEach(user -> user.send(SendAction.USER_INFO, this));
     }
+    */
 
     /**
      * Sendet Pakete an alle relevanten Benutzer mit der aktualisierten Rolleninformation.
@@ -801,8 +806,8 @@ public class User implements IUser {
 
         this.clientSender = sender;
         this.status = Status.ONLINE;
+        this.friends.values().forEach(friend -> friend.send(SendAction.USER_INFO, this));
 
-        updateUserInfo(false);
         updateLastActivity();
     }
 
@@ -817,11 +822,11 @@ public class User implements IUser {
             // Benutzer ist nicht in einer Welt
         }
 
+        updateLastLogoutTime();
+
         this.clientSender = null;
         this.status = Status.OFFLINE;
-
-        updateUserInfo(false);
-        updateLastLogoutTime();
+        this.friends.values().forEach(friend -> friend.send(SendAction.USER_INFO, this));
     }
 
     public void send(@NotNull final SendAction action, @NotNull final Object object) {

@@ -2,13 +2,12 @@ package model.context.global;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backend.headless.mock.graphics.MockGL20;
+import com.badlogic.gdx.backends.headless.mock.graphics.MockGL20;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import model.communication.CommunicationMedium;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.SpatialMap;
-import model.context.spatial.World;
 import model.database.Database;
 import model.database.IContextDatabase;
 import model.database.IUserAccountManagerDatabase;
@@ -23,7 +22,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 public class GlobalContextTest {

@@ -2,9 +2,8 @@ package model.context.spatial.objects;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backend.headless.mock.graphics.MockGL20;
+import com.badlogic.gdx.backends.headless.mock.graphics.MockGL20;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
-import model.context.global.GlobalContext;
 import model.context.spatial.Location;
 import model.context.spatial.SpatialMap;
 import model.context.spatial.World;

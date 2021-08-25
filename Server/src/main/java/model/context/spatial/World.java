@@ -91,8 +91,15 @@ public class World extends Area implements IWorld {
             containedUsers.values().stream()
                     .filter(receiver -> !receiver.equals(user))
                     .forEach(receiver -> {
-                        receiver.send(SendAction.USER_INFO, user);
+                        // Versenden der Benutzerinformationen.
                         user.send(SendAction.USER_INFO, receiver);
+                        receiver.send(SendAction.USER_INFO, user);
+                        // Versenden der globalen Rollen.
+                        user.send(SendAction.CONTEXT_ROLE, receiver.getGlobalRoles());
+                        receiver.send(SendAction.CONTEXT_ROLE, user.getGlobalRoles());
+                        // Versenden der Weltrollen.
+                        user.getWorldRoles().values().forEach(role -> receiver.send(SendAction.CONTEXT_ROLE, role));
+                        receiver.getWorldRoles().values().forEach(role -> user.send(SendAction.CONTEXT_ROLE, role));
                     });
 
             if (user.hasPermission(this, Permission.BAN_USER) || user.hasPermission(this, Permission.BAN_MODERATOR)) {
@@ -101,7 +108,6 @@ public class World extends Area implements IWorld {
 
             publicRoom.addUser(user);
 
-            // Die Rollen erst senden, wenn die Baumstruktur im Client aufgebaut ist.
             user.getWorldRoles().values().forEach(role -> user.send(SendAction.CONTEXT_ROLE, role));
             user.getWorldNotifications().values().forEach(notification -> user.send(SendAction.NOTIFICATION, notification));
         }

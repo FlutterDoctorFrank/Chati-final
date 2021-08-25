@@ -201,8 +201,8 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
          * Gibt den Online-Status des Benutzers zurück.
          * @return der aktuelle Status des Benutzers.
          */
-        public @Nullable Status getStatus() {
-            return this.status;
+        public @NotNull Status getStatus() {
+            return this.status != null ? this.status : Status.OFFLINE;
         }
 
         public void setStatus(@NotNull final Status status) {

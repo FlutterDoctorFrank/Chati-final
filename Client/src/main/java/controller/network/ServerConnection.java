@@ -309,6 +309,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
             if (packet.getContextId().equals(this.worldId)) {
                 this.getIntern().leaveWorld();
+                this.manager.getView().leaveWorld();
                 this.worldId = null;
             } else {
                 this.logUnexpectedPacket(packet, "Can not leave a world that has not been entered");
@@ -614,13 +615,10 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                     case UPDATE_USER:
                         try {
                             user = this.getUser(info.getUserId());
+                            user.setStatus(info.getStatus());
 
                             if (info.getAvatar() != null) {
                                 user.setAvatar(info.getAvatar());
-                            }
-
-                            if (info.getStatus() != null) {
-                                user.setStatus(info.getStatus());
                             }
                         } catch (UserNotFoundException ex) {
                             // Externer Benutzer existiert noch nicht. Füge neuen hinzu.
@@ -629,31 +627,24 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             user = this.getExtern(info.getUserId());
                         }
 
+                        user.setFriend(info.getFlags().contains(Flag.FRIEND));
+
                         if (info.getFlags().contains(Flag.BANNED)) {
                             user.setTeleportable(false);
-                            user.setInCurrentRoom(false);
-                            // Muss das trotzdem true sein, obwohl der Benutzer nicht in der Welt sein kann? Oder auf welchen Wert muss das gesetzt werden?
                             user.setInCurrentWorld(false);
                             user.setBan(packet.getContextId(), true);
                             return;
                         }
 
-                        user.setFriend(info.getFlags().contains(Flag.FRIEND));
                         user.setIgnored(info.getFlags().contains(Flag.IGNORED));
                         user.setReport(packet.getContextId(), info.getFlags().contains(Flag.REPORTED));
-                        user.setInCurrentWorld(true);
                         user.setTeleportable(info.getTeleportTo());
+                        user.setInCurrentWorld(true);
                         break;
 
                     case REMOVE_USER:
-                        user = this.getExtern(info.getUserId());
-                        user.setTeleportable(info.getTeleportTo());
-                        user.setInCurrentRoom(false);
-                        user.setInCurrentWorld(false);
-
-                        if (!info.getFlags().contains(Flag.FRIEND)) {
-                            this.manager.getUserManager().removeExternUser(info.getUserId());
-                        }
+                        this.manager.getUserManager().removeExternUser(info.getUserId());
+                        break;
                 }
             } else {
                 switch (packet.getAction()) {
@@ -662,7 +653,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                         try {
                             user = this.getUser(info.getUserId());
-                            user.setStatus(info.getStatus() != null ? info.getStatus() : Status.OFFLINE);
+                            user.setStatus(info.getStatus());
                         } catch (UserNotFoundException ex) {
                             // Externer Benutzer existiert noch nicht. Füge neuen hinzu.
                             this.manager.getUserManager().addExternUser(info.getUserId(), info.getName(),
@@ -672,7 +663,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                         user.setFriend(info.getFlags().contains(Flag.FRIEND));
                         user.setIgnored(info.getFlags().contains(Flag.IGNORED));
-                        user.setTeleportable(info.getTeleportTo());
+                        user.setTeleportable(false);
+                        user.setInCurrentWorld(false);
                         break;
 
                     case REMOVE_USER:

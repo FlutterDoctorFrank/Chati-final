@@ -15,6 +15,7 @@ import controller.network.protocol.PacketOutNotification.Notification;
 import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.Action;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
+import controller.network.protocol.PacketOutUserInfo.UserInfo.Flag;
 import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
 import model.communication.message.ITextMessage;
@@ -89,14 +90,16 @@ public interface ClientSender {
 
                     if (user.getWorld() != null) {
                         final IWorld world = user.getWorld();
-                        final UserInfo info = new UserInfo(other.getUserId(), other.getUsername(), other.getStatus());
+                        final UserInfo info = new UserInfo(other.getUserId(), other.getUsername());
 
                         if (user.getFriends().containsKey(other.getUserId())) {
                             info.addFlag(UserInfo.Flag.FRIEND);
+                            info.setStatus(other.getStatus());
                         }
 
                         if (world.equals(other.getWorld())) {
                             info.setAvatar(other.getAvatar());
+                            info.setStatus(other.getStatus());
 
                             if (user.getIgnoredUsers().containsKey(other.getUserId())) {
                                 info.addFlag(UserInfo.Flag.IGNORED);
@@ -115,13 +118,14 @@ public interface ClientSender {
                             return new PacketOutUserInfo(world.getContextId(), Action.UPDATE_USER, info);
                         }
 
-                        return new PacketOutUserInfo(world.getContextId(), Action.REMOVE_USER, info);
+                        return new PacketOutUserInfo(null, info.getFlags().contains(Flag.FRIEND) ?
+                                Action.UPDATE_USER : Action.REMOVE_USER, info);
                     } else {
                         if (user.getFriends().containsKey(other.getUserId())) {
                             final UserInfo info = new UserInfo(other.getUserId(), other.getUsername());
 
-                            info.addFlag(UserInfo.Flag.FRIEND);
                             info.setStatus(other.getStatus());
+                            info.addFlag(Flag.FRIEND);
 
                             return new PacketOutUserInfo(null, Action.UPDATE_USER, info);
                         }

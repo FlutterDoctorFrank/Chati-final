@@ -1,4 +1,4 @@
-package com.badlogic.gdx.backend.headless.mock.graphics;
+package com.badlogic.gdx.backends.headless.mock.graphics;
 
 import com.badlogic.gdx.graphics.GL20;
 import java.nio.Buffer;
