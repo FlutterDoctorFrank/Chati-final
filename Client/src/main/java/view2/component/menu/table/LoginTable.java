@@ -34,7 +34,7 @@ public class LoginTable extends MenuTable {
                     usernameField.setText("");
                     usernameField.getStyle().fontColor = Color.BLACK;
                 }
-                else if (usernameField.getText().isEmpty()) {
+                else if (usernameField.getText().isBlank()) {
                     resetUsernameField();
                 }
             }
@@ -51,7 +51,7 @@ public class LoginTable extends MenuTable {
                     passwordField.setText("");
                     passwordField.setPasswordMode(true);
                 }
-                else if (passwordField.getText().isEmpty()) {
+                else if (passwordField.getText().isBlank()) {
                     resetPasswordField();
                 }
             }
@@ -65,7 +65,7 @@ public class LoginTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (usernameField.getText().isEmpty() || passwordField.getText().isEmpty()
+                if (usernameField.getText().isBlank() || passwordField.getText().isBlank()
                         || usernameField.getStyle().fontColor == Color.GRAY
                         || passwordField.getStyle().fontColor == Color.GRAY) {
                     infoLabel.setText("Bitte fülle alle Felder aus.");
@@ -85,7 +85,7 @@ public class LoginTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (usernameField.getText().isEmpty() || passwordField.getText().isEmpty()
+                if (usernameField.getText().isBlank() || passwordField.getText().isBlank()
                         || usernameField.getStyle().fontColor == Color.GRAY
                         || passwordField.getStyle().fontColor == Color.GRAY) {
                     infoLabel.setText("Bitte fülle alle Felder aus.");

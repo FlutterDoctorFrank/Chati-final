@@ -42,7 +42,7 @@ public class WorldCreateTable extends MenuTable {
                     worldNameField.getStyle().fontColor = Color.BLACK;
                     worldNameField.setText("");
                 }
-                else if (worldNameField.getText().isEmpty()) {
+                else if (worldNameField.getText().isBlank()) {
                     resetTextFields();
                 }
             }
@@ -56,7 +56,7 @@ public class WorldCreateTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (worldNameField.getText().isEmpty()
+                if (worldNameField.getText().isBlank()
                         || worldNameField.getStyle().fontColor == Color.GRAY) {
                     infoLabel.setText("Bitte gib den Namen der zu erstellenden Welt ein!");
                     return;

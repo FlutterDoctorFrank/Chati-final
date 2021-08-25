@@ -54,7 +54,7 @@ public class AdministratorManageWindow extends ChatiWindow {
                     usernameField.setText("");
                     usernameField.getStyle().fontColor = Color.BLACK;
                 }
-                else if (usernameField.getText().isEmpty()) {
+                else if (usernameField.getText().isBlank()) {
                     resetUsernameField();
                 }
             }
@@ -69,7 +69,7 @@ public class AdministratorManageWindow extends ChatiWindow {
                     messageArea.setText("");
                     messageArea.getStyle().fontColor = Color.BLACK;
                 }
-                else if (messageArea.getText().isEmpty()) {
+                else if (messageArea.getText().isBlank()) {
                     resetMessageArea();
                 }
             }
@@ -83,7 +83,7 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (usernameField.getText().isEmpty() || usernameField.getStyle().fontColor == Color.GRAY) {
+                if (usernameField.getText().isBlank() || usernameField.getStyle().fontColor == Color.GRAY) {
                     infoLabel.setText("Bitte gib einen Benutzernamen ein!");
                     return;
                 }
@@ -106,7 +106,7 @@ public class AdministratorManageWindow extends ChatiWindow {
                     return;
                 }
                 String message = "";
-                if (!messageArea.getText().isEmpty() && messageArea.getStyle().fontColor != Color.GRAY) {
+                if (!messageArea.getText().isBlank() && messageArea.getStyle().fontColor != Color.GRAY) {
                     message = messageArea.getText();
                 }
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),
@@ -124,7 +124,7 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (usernameField.getText().isEmpty() || usernameField.getStyle().fontColor == Color.GRAY) {
+                if (usernameField.getText().isBlank() || usernameField.getStyle().fontColor == Color.GRAY) {
                     infoLabel.setText("Bitte gib einen Benutzernamen ein!");
                     return;
                 }
@@ -152,7 +152,7 @@ public class AdministratorManageWindow extends ChatiWindow {
                     return;
                 }
                 String message = "";
-                if (!messageArea.getText().isEmpty() && messageArea.getStyle().fontColor != Color.GRAY) {
+                if (!messageArea.getText().isBlank() && messageArea.getStyle().fontColor != Color.GRAY) {
                     message = messageArea.getText();
                 }
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),

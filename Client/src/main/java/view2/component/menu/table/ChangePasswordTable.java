@@ -37,7 +37,7 @@ public class ChangePasswordTable extends MenuTable {
                     passwordField.setText("");
                     passwordField.setPasswordMode(true);
                 }
-                else if (passwordField.getText().isEmpty()) {
+                else if (passwordField.getText().isBlank()) {
                     resetPasswordField();
                 }
             }
@@ -54,7 +54,7 @@ public class ChangePasswordTable extends MenuTable {
                     newPasswordField.setText("");
                     newPasswordField.setPasswordMode(true);
                 }
-                else if (newPasswordField.getText().isEmpty()) {
+                else if (newPasswordField.getText().isBlank()) {
                     resetNewPasswordField();
                 }
             }
@@ -71,7 +71,7 @@ public class ChangePasswordTable extends MenuTable {
                     confirmNewPasswordField.setText("");
                     confirmNewPasswordField.setPasswordMode(true);
                 }
-                else if (confirmNewPasswordField.getText().isEmpty()) {
+                else if (confirmNewPasswordField.getText().isBlank()) {
                     resetConfirmNewPasswordField();
                 }
             }
@@ -85,8 +85,8 @@ public class ChangePasswordTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (passwordField.getText().isEmpty() || newPasswordField.getText().isEmpty()
-                    || confirmNewPasswordField.getText().isEmpty()
+                if (passwordField.getText().isBlank() || newPasswordField.getText().isBlank()
+                    || confirmNewPasswordField.getText().isBlank()
                     || passwordField.getStyle().fontColor == Color.GRAY
                     || newPasswordField.getStyle().fontColor == Color.GRAY
                     || confirmNewPasswordField.getStyle().fontColor == Color.GRAY) {

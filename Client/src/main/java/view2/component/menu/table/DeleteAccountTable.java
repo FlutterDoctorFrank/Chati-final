@@ -37,7 +37,7 @@ public class DeleteAccountTable extends MenuTable {
                     passwordField.setText("");
                     passwordField.setPasswordMode(true);
                 }
-                else if (passwordField.getText().isEmpty()) {
+                else if (passwordField.getText().isBlank()) {
                     resetPasswordField();
                 }
             }
@@ -54,7 +54,7 @@ public class DeleteAccountTable extends MenuTable {
                     confirmPasswordField.setText("");
                     confirmPasswordField.setPasswordMode(true);
                 }
-                else if (confirmPasswordField.getText().isEmpty()) {
+                else if (confirmPasswordField.getText().isBlank()) {
                     resetPasswordField();
                 }
             }
@@ -64,7 +64,7 @@ public class DeleteAccountTable extends MenuTable {
         confirmButton.addListener(new ClickListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (passwordField.getText().isEmpty() || confirmPasswordField.getText().isEmpty()
+                if (passwordField.getText().isBlank() || confirmPasswordField.getText().isBlank()
                     || passwordField.getStyle().fontColor == Color.GRAY
                     || confirmPasswordField.getStyle().fontColor == Color.GRAY) {
                     infoLabel.setText("Bitte fülle alle Felder aus.");
