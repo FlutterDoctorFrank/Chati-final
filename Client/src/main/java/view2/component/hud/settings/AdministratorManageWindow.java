@@ -146,6 +146,11 @@ public class AdministratorManageWindow extends ChatiWindow {
                     resetTextFields();
                     return;
                 }
+                if (externUser.hasRole(Role.OWNER)) {
+                    infoLabel.setText("Du kannst einem anderen Besitzer nicht die Rechte wegnehmen.");
+                    resetTextFields();
+                    return;
+                }
                 String message = "";
                 if (!messageArea.getText().isEmpty() && messageArea.getStyle().fontColor != Color.GRAY) {
                     message = messageArea.getText();
