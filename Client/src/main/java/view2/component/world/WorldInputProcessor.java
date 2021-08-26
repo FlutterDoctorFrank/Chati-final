@@ -89,31 +89,31 @@ public class WorldInputProcessor implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        Chati.CHATI.getWorldScreen().zoom(amountY > 0);
+        Chati.CHATI.getWorldScreen().getCamera().zoom(amountY > 0);
         return true;
     }
 
     public boolean isMoveUpPressed() {
-        return moveUpPressed;
+        return moveUpPressed && KeyAction.MOVE_UP.isPressed();
     }
 
     public boolean isMoveLeftPressed() {
-        return moveLeftPressed;
+        return moveLeftPressed && KeyAction.MOVE_LEFT.isPressed();
     }
 
     public boolean isMoveDownPressed() {
-        return moveDownPressed;
+        return moveDownPressed && KeyAction.MOVE_DOWN.isPressed();
     }
 
     public boolean isMoveRightPressed() {
-        return moveRightPressed;
+        return moveRightPressed && KeyAction.MOVE_RIGHT.isPressed();
     }
 
     public boolean isSprintPressed() {
-        return sprintPressed;
+        return sprintPressed && KeyAction.SPRINT.isPressed();
     }
 
     public boolean isShowNamesPressed() {
-        return showNamesPressed;
+        return showNamesPressed && KeyAction.SHOW_NAMES.isPressed();
     }
 }

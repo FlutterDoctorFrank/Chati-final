@@ -12,6 +12,7 @@ import view2.Assets;
 import view2.Chati;
 import view2.component.UserInfoContainer;
 import view2.component.hud.settings.WorldSettingsTable;
+import view2.component.world.WorldCamera;
 import view2.component.world.WorldScreen;
 
 public class UserAvatar extends Sprite {
@@ -57,7 +58,7 @@ public class UserAvatar extends Sprite {
         fixtureDef.filter.categoryBits = WorldScreen.USER_BIT;
         fixtureDef.filter.maskBits = 0;
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox((32 - 1) / WorldScreen.PPM / 2, (32 - 1) / WorldScreen.PPM / 2);
+        shape.setAsBox((32 - 1) / WorldCamera.PPM / 2, (32 - 1) / WorldCamera.PPM / 2);
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
         body.setUserData(BodyType.USER);
@@ -75,7 +76,7 @@ public class UserAvatar extends Sprite {
         if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isShowNamesPressed()
             || WorldSettingsTable.SHOW_NAME) {
             userInfoContainer.setPosition(body.getPosition().x, body.getPosition().y + getHeight());
-            userInfoContainer.setScale(1 / WorldScreen.PPM * Chati.CHATI.getWorldScreen().getCamera().zoom);
+            userInfoContainer.setScale(1 / WorldCamera.PPM * Chati.CHATI.getWorldScreen().getCamera().zoom);
             userInfoContainer.act(delta);
             userInfoContainer.draw(batch, 1);
             if (!user.equals(Chati.CHATI.getUserManager().getInternUserView())) {
@@ -85,7 +86,7 @@ public class UserAvatar extends Sprite {
                     communicableIcon.setDrawable(null);
                 }
                 communicableIconContainer.setPosition(body.getPosition().x, body.getPosition().y + 1.5f * getHeight());
-                communicableIconContainer.setScale(1 / WorldScreen.PPM * Chati.CHATI.getWorldScreen().getCamera().zoom);
+                communicableIconContainer.setScale(1 / WorldCamera.PPM * Chati.CHATI.getWorldScreen().getCamera().zoom);
                 communicableIconContainer.act(delta);
                 communicableIconContainer.draw(batch, 1);
             }
@@ -123,7 +124,7 @@ public class UserAvatar extends Sprite {
         avatarRunDown = new Animation<>(0.1f, frames);
         frames.clear();
 
-        setBounds(0, 0, 32 / WorldScreen.PPM, 32 / WorldScreen.PPM);
+        setBounds(0, 0, 32 / WorldCamera.PPM, 32 / WorldCamera.PPM);
         setRegion(avatarStandDown);
     }
 
@@ -178,7 +179,7 @@ public class UserAvatar extends Sprite {
         if (location == null) {
             return;
         }
-        Vector2 newPosition = new Vector2(location.getPosX() / WorldScreen.PPM, location.getPosY() / WorldScreen.PPM);
+        Vector2 newPosition = new Vector2(location.getPosX() / WorldCamera.PPM, location.getPosY() / WorldCamera.PPM);
         body.setTransform(newPosition, body.getAngle());
         body.setAwake(true);
     }
@@ -195,7 +196,7 @@ public class UserAvatar extends Sprite {
             if (user.isSprinting()) {
                 velocity *= SPRINT_VELOCITY_FACTOR;
             }
-            Vector2 destination = new Vector2(location.getPosX() / WorldScreen.PPM, location.getPosY() / WorldScreen.PPM);
+            Vector2 destination = new Vector2(location.getPosX() / WorldCamera.PPM, location.getPosY() / WorldCamera.PPM);
             if (body.getPosition().epsilonEquals(destination)) {
                 body.setLinearVelocity(0, 0);
             } else {
@@ -235,7 +236,7 @@ public class UserAvatar extends Sprite {
                 frames.add(new TextureRegion(buttonAtlas.findRegion("button"), i * 16, 0, 16, 16)); /** Hard gecoded...*/
             }
             interactionButton = new Animation<>(0.1f, frames);
-            setBounds(0, 0, 16 / WorldScreen.PPM, 16 / WorldScreen.PPM);
+            setBounds(0, 0, 16 / WorldCamera.PPM, 16 / WorldCamera.PPM);
             setRegion(buttonAtlas.findRegion("button"), 0, 0, 16, 16);
         }
 

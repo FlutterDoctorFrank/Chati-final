@@ -3,8 +3,10 @@ package view2.component.world.body;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import controller.network.ServerSender;
 import view2.Chati;
 import view2.component.KeyAction;
+import view2.component.world.WorldCamera;
 import view2.component.world.WorldScreen;
 
 import java.util.*;
@@ -24,7 +26,7 @@ public class InternUserAvatar extends UserAvatar {
         fixtureDef.filter.categoryBits = WorldScreen.INTERN_USER_BIT;
         fixtureDef.filter.maskBits = WorldScreen.OBJECT_BIT | WorldScreen.BORDER_BIT;
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox((32 - 1) / WorldScreen.PPM / 2, (32 - 1) / WorldScreen.PPM / 2);
+        shape.setAsBox((32 - 1) / WorldCamera.PPM / 2, (32 - 1) / WorldCamera.PPM / 2); // TODO auf 32 ändern
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
 
@@ -41,7 +43,7 @@ public class InternUserAvatar extends UserAvatar {
         oldPosition = body.getPosition().cpy();
         Direction currentDirection = getCurrentDirectionalInput();
         float velocity = DEFAULT_VELOCITY;
-        if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isSprintPressed() && KeyAction.SPRINT.isPressed()) {
+        if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isSprintPressed()) {
             isSprinting = true;
             velocity *= SPRINT_VELOCITY_FACTOR;
         } else {
@@ -52,7 +54,6 @@ public class InternUserAvatar extends UserAvatar {
         } else {
             switch (currentDirection) {
                 case UP:
-                    if (Direction.UP.isPressed())
                     body.setLinearVelocity(0, velocity);
                     break;
                 case LEFT:
@@ -70,12 +71,21 @@ public class InternUserAvatar extends UserAvatar {
         }
     }
 
-    public Vector2 getOldPosition() {
-        return oldPosition;
+    public void setCanInteract(boolean canInteract) {
+        this.canInteract = canInteract;
     }
 
-    public boolean isSprinting() {
-        return isSprinting;
+    public void interact() {
+        if (canInteract) {
+            System.out.println("");
+        }
+    }
+
+    public void sendPosition() {
+        if (!oldPosition.epsilonEquals(getPosition())) {
+            Chati.CHATI.getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
+                    getPosition().x * WorldCamera.PPM, getPosition().y * WorldCamera.PPM, isSprinting);
+        }
     }
 
     private Direction getCurrentDirectionalInput() {
@@ -88,15 +98,5 @@ public class InternUserAvatar extends UserAvatar {
             }
         });
         return currentDirectionalInputs.peekLast();
-    }
-
-    public void setCanInteract(boolean canInteract) {
-        this.canInteract = canInteract;
-    }
-
-    public void interact() {
-        if (canInteract) {
-            System.out.println("penis");
-        }
     }
 }
