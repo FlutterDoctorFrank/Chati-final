@@ -1,14 +1,11 @@
 package view2.component.world.body;
 
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import controller.network.ServerSender;
-import model.context.ContextID;
 import model.context.spatial.ISpatialContextView;
 import view2.Chati;
-import view2.component.KeyAction;
 import view2.component.world.WorldCamera;
 import view2.component.world.WorldScreen;
 

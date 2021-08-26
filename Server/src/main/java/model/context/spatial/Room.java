@@ -126,6 +126,7 @@ public class Room extends Area implements IRoom {
     public void removeUser(@NotNull final User user) {
         if (contains(user)) {
             super.removeUser(user);
+            user.setMovable(true);
             user.teleport(null);
 
             containedUsers.values().forEach(receiver -> receiver.send(SendAction.AVATAR_REMOVE, user));
