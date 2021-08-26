@@ -2,6 +2,8 @@ package view2;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import controller.network.ServerSender;
@@ -51,19 +53,31 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private boolean changeWorldList;
     private boolean changeRoomList;
 
+    private GLProfiler profiler;
+
     public Chati(IUserManagerView userManager) {
         CHATI = this;
         this.userManager = userManager;
     }
 
+    public void start() {
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+        config.setForegroundFPS(60);
+        config.setTitle("Chati");
+        new Lwjgl3Application(this, config);
+    }
+
     public void setScreen(AbstractScreen screen) {
         Gdx.input.setInputProcessor(screen.getInputProcessor());
-        screen.getStage().addActor(HeadUpDisplay.getInstance());
         super.setScreen(screen);
     }
 
     @Override
     public void create() {
+        this.profiler = new GLProfiler(Gdx.graphics);
+        profiler.enable();
+
         SPRITE_BATCH = new SpriteBatch();
         Assets.initialize();
         this.menuScreen = new MenuScreen();
@@ -75,9 +89,10 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public void render() {
         transferFlags();
         resetModelChangeReceivedFlags();
-
         super.render();
         resetModelChangedFlags();
+
+        System.out.println(Gdx.graphics.getFramesPerSecond());
     }
 
     public ServerSender getServerSender() {

@@ -49,12 +49,7 @@ public class Launcher {
             view2.Chati chati = new view2.Chati(this.manager);
             setControllerView(chati);
             setModelObserver(chati);
-
-            Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-            config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
-            config.setIdleFPS(30);
-            config.setTitle("Chati");
-            new Lwjgl3Application(chati, config);
+            chati.start();
             return;
         }
 

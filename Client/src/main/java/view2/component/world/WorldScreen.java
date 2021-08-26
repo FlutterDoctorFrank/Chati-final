@@ -56,7 +56,11 @@ public class WorldScreen extends AbstractScreen {
 
     @Override
     public void render(float delta) {
+        if (!active) {
+            return;
+        }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         if (Chati.CHATI.isRoomChanged()) {
             destroy();
             createMap();

@@ -29,6 +29,10 @@ public class MenuScreen extends AbstractScreen {
 
     @Override
     public void render(float delta) {
+        if (!active) {
+            return;
+        }
+
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         super.render(delta);
     }
