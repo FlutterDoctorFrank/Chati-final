@@ -27,7 +27,7 @@ public class InternUserAvatar extends UserAvatar {
         body.destroyFixture(body.getFixtureList().get(0));
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.filter.categoryBits = WorldScreen.INTERN_USER_BIT;
-        fixtureDef.filter.maskBits = WorldScreen.OBJECT_BIT | WorldScreen.BORDER_BIT;
+        fixtureDef.filter.maskBits = WorldScreen.BORDER_BIT;
         PolygonShape shape = new PolygonShape();
         shape.setAsBox((32 - 1) / WorldCamera.PPM / 2, (32 - 1) / WorldCamera.PPM / 2); // TODO auf 32 ändern
         fixtureDef.shape = shape;

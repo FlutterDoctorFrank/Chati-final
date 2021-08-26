@@ -28,7 +28,6 @@ public class WorldScreen extends AbstractScreen {
     public static final short BORDER_BIT = 1;
     public static final short USER_BIT = 2;
     public static final short INTERN_USER_BIT = 4;
-    public static final short OBJECT_BIT = 8;
 
     public static final float WORLD_STEP = 30;
     private static final int VELOCITY_ITERATIONS = 6;
