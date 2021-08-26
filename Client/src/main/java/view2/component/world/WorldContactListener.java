@@ -6,14 +6,17 @@ import view2.component.world.body.BodyType;
 
 public class WorldContactListener implements ContactListener {
 
+    private boolean canInteract;
+
     @Override
     public void beginContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
-        if ((fixtureA.getBody().getUserData() == BodyType.INTERN_USER || fixtureB.getBody().getUserData() == BodyType.INTERN_USER)
+        if ((fixtureA.getBody().getUserData() == BodyType.INTERN_USER
+                || fixtureB.getBody().getUserData() == BodyType.INTERN_USER)
             && (fixtureA.getBody().getUserData() == BodyType.INTERACTION_AREA
                 || fixtureB.getBody().getUserData() == BodyType.INTERACTION_AREA)) {
-            Chati.CHATI.getWorldScreen().getInternUserAvatar().setCanInteract(true);
+            Chati.CHATI.getWorldScreen().getInternUserAvatar().canInteract(true);
         }
     }
 
@@ -21,10 +24,11 @@ public class WorldContactListener implements ContactListener {
     public void endContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
-        if ((fixtureA.getBody().getUserData() == BodyType.INTERN_USER || fixtureB.getBody().getUserData() == BodyType.INTERN_USER)
+        if ((fixtureA.getBody().getUserData() == BodyType.INTERN_USER
+                || fixtureB.getBody().getUserData() == BodyType.INTERN_USER)
                 && (fixtureA.getBody().getUserData() == BodyType.INTERACTION_AREA
                 || fixtureB.getBody().getUserData() == BodyType.INTERACTION_AREA)) {
-            Chati.CHATI.getWorldScreen().getInternUserAvatar().setCanInteract(false);
+            Chati.CHATI.getWorldScreen().getInternUserAvatar().canInteract(false);
         }
     }
 

@@ -75,11 +75,14 @@ public class SpatialContext extends Context implements ISpatialContextView {
     }
 
     /**
-     * Gibt den untergeordnetsten Kontext zurück, auf dem sich die übergebenen Koordinaten befinden.
-     * @param posX X-Koordinate.
-     * @param posY Y-Koordinate.
-     * @return Untergeordnetster Kontext, auf dem sich die Koordinaten befinden.
+     * Gibt die räumliche Ausdehnung dieses Kontextes zurück.
+     * @return Räumliche Ausdehnung dieses Kontextes.
      */
+    public Expanse getExpanse() {
+        return expanse;
+    }
+
+    @Override
     public SpatialContext getArea(float posX, float posY) {
         try {
             return children.values().stream().filter(child -> child.getExpanse().isIn(posX, posY))
@@ -87,14 +90,6 @@ public class SpatialContext extends Context implements ISpatialContextView {
         } catch (NoSuchElementException e) {
             return this;
         }
-    }
-
-    /**
-     * Gibt die räumliche Ausdehnung dieses Kontextes zurück.
-     * @return Räumliche Ausdehnung dieses Kontextes.
-     */
-    public Expanse getExpanse() {
-        return expanse;
     }
 
     @Override

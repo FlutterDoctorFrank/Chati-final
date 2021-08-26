@@ -1,9 +1,12 @@
 package view2.component.world.body;
 
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import controller.network.ServerSender;
+import model.context.ContextID;
+import model.context.spatial.ISpatialContextView;
 import view2.Chati;
 import view2.component.KeyAction;
 import view2.component.world.WorldCamera;
@@ -71,13 +74,28 @@ public class InternUserAvatar extends UserAvatar {
         }
     }
 
-    public void setCanInteract(boolean canInteract) {
+    public void canInteract(boolean canInteract) {
         this.canInteract = canInteract;
     }
 
     public void interact() {
         if (canInteract) {
-            System.out.println("");
+            float interactionDistance = getWidth();
+            Vector2 positionInLookingDirection;
+            if (body.getAngle() == Math.PI) {
+                positionInLookingDirection = new Vector2(body.getPosition().x, body.getPosition().y + interactionDistance);
+            } else if (body.getAngle() == Math.PI) {
+                positionInLookingDirection = new Vector2(body.getPosition().x - interactionDistance, body.getPosition().y);
+            } else if (body.getAngle() == 0) {
+                positionInLookingDirection = new Vector2(body.getPosition().x + interactionDistance, body.getPosition().y);
+            } else {
+                positionInLookingDirection = new Vector2(body.getPosition().x, body.getPosition().y + interactionDistance);
+            }
+            ISpatialContextView context = Chati.CHATI.getUserManager().getInternUserView().getCurrentRoom()
+                    .getArea(positionInLookingDirection.x * WorldCamera.PPM, positionInLookingDirection.y * WorldCamera.PPM);
+            if (context != null) {
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.CONTEXT_INTERACT, context.getContextId());
+            }
         }
     }
 

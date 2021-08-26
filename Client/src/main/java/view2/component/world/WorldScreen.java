@@ -4,24 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import controller.network.ServerSender;
 import model.context.spatial.SpatialMap;
 import model.user.IUserView;
 import view2.Chati;
 import view2.component.AbstractScreen;
-import view2.component.UserInfoContainer;
-import view2.component.hud.HeadUpDisplay;
 import view2.component.world.body.Border;
 import view2.component.world.body.InteractionObject;
 import view2.component.world.body.InternUserAvatar;
@@ -35,6 +29,7 @@ public class WorldScreen extends AbstractScreen {
     public static final short USER_BIT = 2;
     public static final short INTERN_USER_BIT = 4;
     public static final short OBJECT_BIT = 8;
+
     public static final float WORLD_STEP = 30;
     private static final int VELOCITY_ITERATIONS = 6;
     private static final int POSITION_ITERATIONS = 2;
@@ -135,6 +130,11 @@ public class WorldScreen extends AbstractScreen {
         return internUserAvatar;
     }
 
+    private void initialize() {
+        this.internUserAvatar = new InternUserAvatar();
+        loadExternUserAvatars();
+    }
+
     private void destroy() {
         Array<Body> bodies = new Array<>();
         world.getBodies(bodies);
@@ -142,11 +142,6 @@ public class WorldScreen extends AbstractScreen {
         internUserAvatar = null;
         externUserAvatars.clear();
         tiledMapRenderer.setMap(null);
-    }
-
-    private void initialize() {
-        this.internUserAvatar = new InternUserAvatar();
-        loadExternUserAvatars();
     }
 
     private void createMap() {
