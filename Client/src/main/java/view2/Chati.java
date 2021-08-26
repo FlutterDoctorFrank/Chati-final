@@ -102,8 +102,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         resetModelChangeReceivedFlags();
         super.render();
         resetModelChangedFlags();
-
-        System.out.println(Gdx.graphics.getFramesPerSecond());
     }
 
     public ServerSender getServerSender() {
