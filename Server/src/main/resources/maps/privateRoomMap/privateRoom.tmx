@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="24" height="24" tilewidth="32" tileheight="32" infinite="0" nextlayerid="15" nextobjectid="24">
+<map version="1.5" tiledversion="1.7.1" orientation="orthogonal" renderorder="right-down" width="24" height="24" tilewidth="32" tileheight="32" infinite="0" nextlayerid="15" nextobjectid="31">
  <properties>
   <property name="communicationRegion" value="areaCommunication"/>
-  <property name="spawnPosX" type="float" value="180"/>
-  <property name="spawnPosY" type="float" value="310"/>
+  <property name="spawnPosX" type="float" value="380"/>
+  <property name="spawnPosY" type="float" value="610"/>
   <property name="text" type="bool" value="true"/>
   <property name="voice" type="bool" value="true"/>
  </properties>
@@ -96,7 +96,7 @@
 3221231966,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231964,3221231963
 </data>
  </layer>
- <objectgroup id="12" name="Borders">
+ <objectgroup id="12" name="Borders" visible="0">
   <object id="1" x="0" y="0" width="32" height="768"/>
   <object id="2" x="32" y="0" width="736" height="96"/>
   <object id="3" x="736" y="96" width="32" height="672"/>
@@ -107,9 +107,25 @@
   <object id="8" x="256" y="320" width="256" height="160"/>
   <object id="9" x="704" y="96" width="32" height="32"/>
   <object id="17" x="32" y="544" width="96" height="64"/>
+  <object id="24" name="Juckebox" x="64.3333" y="575.167" width="64" height="47">
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="musicPlayer"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="25" name="Juckebox" x="528.667" y="562.5" width="94.6667" height="76">
+   <properties>
+    <property name="communicationRegion" value="radiusCommunication"/>
+    <property name="contextType" value="musicPlayer"/>
+    <property name="text" type="bool" value="true"/>
+    <property name="voice" type="bool" value="true"/>
+   </properties>
+  </object>
  </objectgroup>
- <objectgroup id="13" name="contextLayer">
-  <object id="11" name="gameBoard_1" x="512" y="544" width="128" height="96">
+ <objectgroup id="13" name="contextLayer" visible="0">
+  <object id="11" name="gameBoard_1" x="527.333" y="561" width="96.6667" height="74.6667">
    <properties>
     <property name="communicationRegion" value="areaCommunication"/>
     <property name="contextType" value="gameBoard"/>
@@ -117,7 +133,7 @@
     <property name="voice" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="14" name="Juckebox" x="64" y="576" width="64" height="64">
+  <object id="14" name="Juckebox" x="64" y="576" width="64" height="47">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
     <property name="contextType" value="musicPlayer"/>
@@ -135,8 +151,11 @@
   </object>
  </objectgroup>
  <objectgroup id="14" name="InteractiveObject" visible="0">
-  <object id="21" x="64" y="576" width="64" height="64"/>
-  <object id="22" x="512" y="544" width="128" height="96"/>
-  <object id="23" x="352" y="32" width="64" height="64"/>
+  <object id="21" x="64" y="623.5" width="64" height="20.25"/>
+  <object id="23" x="352" y="93.6667" width="64" height="26.6667"/>
+  <object id="26" x="526.333" y="542.208" width="97.3333" height="20.25"/>
+  <object id="27" x="525" y="637.208" width="97.3333" height="20.25"/>
+  <object id="28" x="505.667" y="638.875" width="76" height="20.25" rotation="-90"/>
+  <object id="30" x="623.667" y="638.875" width="76" height="20.25" rotation="-90"/>
  </objectgroup>
 </map>
