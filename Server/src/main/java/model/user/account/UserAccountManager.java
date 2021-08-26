@@ -85,7 +85,7 @@ public class UserAccountManager implements IUserAccountManager {
         User user;
         // Überprüfe, ob ein Benutzer mit dem übergebenen Benutzernamen existiert.
         try {
-            user = getUser(username);
+            user = getUser(username, false);
         } catch (UserNotFoundException e) {
             throw new IllegalAccountActionException("", "Login fehlgeschlagen. Bitte überprüfe deine Eingaben.", e);
         }
@@ -176,7 +176,7 @@ public class UserAccountManager implements IUserAccountManager {
      */
     public boolean isRegistered(@NotNull final String username) {
         return registeredUsers.values().stream()
-                .anyMatch(user -> user.getUsername().equals(username));
+                .anyMatch(user -> user.getUsername().equalsIgnoreCase(username));
     }
 
     /**
@@ -200,12 +200,16 @@ public class UserAccountManager implements IUserAccountManager {
      * @throws UserNotFoundException: wenn kein Benutzer mit dem Benutzernamen existiert.
      */
     public @NotNull User getUser(@NotNull final String username) throws UserNotFoundException {
+        return this.getUser(username, true);
+    }
+
+    private @NotNull User getUser(@NotNull final String username, final boolean ignoreCase) throws UserNotFoundException {
         try {
-            return registeredUsers.values().stream()
-                    .filter(user -> user.getUsername().equals(username))
+            return this.registeredUsers.values().stream()
+                    .filter(user -> ignoreCase ? user.getUsername().equalsIgnoreCase(username) : user.getUsername().equals(username))
                     .findFirst().orElseThrow();
-        } catch(NoSuchElementException e) {
-            throw new UserNotFoundException("User does not exist.", username, e);
+        } catch (NoSuchElementException ex) {
+            throw new UserNotFoundException("User does not exist.", username, ex);
         }
     }
 

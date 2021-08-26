@@ -206,7 +206,7 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#ROOM
          */
-        ROOM_MESSAGE_COMMAND("room\\s.*") {
+        ROOM_MESSAGE_COMMAND("(?i)room\\s.*") {
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message) {
                 String sendMessage = message.split("\\s", 2)[1];
@@ -251,7 +251,7 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#WORLD
          */
-        WORLD_MESSAGE_COMMAND("world\\s.*"){
+        WORLD_MESSAGE_COMMAND("(?i)world\\s.*"){
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message) {
                 String sendMessage = message.split("\\s", 2)[1];
