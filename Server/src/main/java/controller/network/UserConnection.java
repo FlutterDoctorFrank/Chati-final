@@ -18,6 +18,7 @@ import controller.network.protocol.PacketOutNotification;
 import controller.network.protocol.PacketOutNotification.Notification;
 import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
+import controller.network.protocol.PacketOutUserInfo.UserInfo.Flag;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketProfileAction.Action;
 import controller.network.protocol.PacketVoiceMessage;
@@ -375,8 +376,12 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
                         // Informationen über die befreundeten Benutzer.
                         for (final IUser friend : this.user.getFriends().values()) {
-                            this.send(new PacketOutUserInfo(null, PacketOutUserInfo.Action.UPDATE_USER,
-                                    new UserInfo(friend.getUserId(), friend.getUsername(), friend.getStatus())));
+                            final UserInfo info = new UserInfo(friend.getUserId(), friend.getUsername());
+
+                            info.setStatus(friend.getStatus());
+                            info.addFlag(Flag.FRIEND);
+
+                            this.send(new PacketOutUserInfo(null, PacketOutUserInfo.Action.UPDATE_USER, info));
                         }
 
                         // Informationen über die erhaltenen globalen Benachrichtigungen.

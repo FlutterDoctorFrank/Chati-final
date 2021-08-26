@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class Area extends Context implements IArea {
 
@@ -216,6 +217,16 @@ public class Area extends Context implements IArea {
             super.addUser(user);
 
             user.send(SendAction.CONTEXT_INFO, this);
+
+            /*
+             * Ist der Benutzer im Kontext stumm geschaltet, so erhalten alle anderen Benutzer in diesem Kontext die
+             * Information der Stummschaltung.
+             */
+            if (this.mutedUsers.containsKey(user.getUserId())) {
+                this.containedUsers.values().stream()
+                        .filter(Predicate.not(user::equals))
+                        .forEach(receiver -> receiver.send(SendAction.CONTEXT_INFO, this));
+            }
         }
     }
 }

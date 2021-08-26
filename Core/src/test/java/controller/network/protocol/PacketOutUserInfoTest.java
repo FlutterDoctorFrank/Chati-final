@@ -90,13 +90,7 @@ public class PacketOutUserInfoTest extends PacketTest<PacketOutUserInfo> {
             Assert.assertNull(this.after.getInfo().getAvatar());
         }
 
-        if (this.before.getInfo().getStatus() != null) {
-            Assert.assertNotNull(this.after.getInfo().getStatus());
-            Assert.assertEquals(this.before.getInfo().getStatus(), this.after.getInfo().getStatus());
-        } else {
-            Assert.assertNull(this.after.getInfo().getStatus());
-        }
-
+        Assert.assertEquals(this.before.getInfo().getStatus(), this.after.getInfo().getStatus());
         Assert.assertEquals(this.before.getInfo().getTeleportTo(), this.after.getInfo().getTeleportTo());
         Assert.assertEquals(this.before.getInfo().getFlags(), this.after.getInfo().getFlags());
     }

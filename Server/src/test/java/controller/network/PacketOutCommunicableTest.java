@@ -27,6 +27,7 @@ public class PacketOutCommunicableTest extends PacketServerTest {
         final IUser user = Mockito.mock(IUser.class);
 
         Mockito.when(user.getCommunicableIUsers()).thenReturn(Collections.emptyMap());
+        Mockito.when(this.user.getUserId()).thenReturn(randomUniqueId());
         Mockito.when(this.user.getCommunicableIUsers()).thenReturn(Collections.emptyMap());
 
         this.getPacket(PacketOutCommunicable.class, user);
@@ -46,6 +47,7 @@ public class PacketOutCommunicableTest extends PacketServerTest {
             communicables.put(uniqueId, user);
         }
 
+        Mockito.when(this.user.getUserId()).thenReturn(randomUniqueId());
         Mockito.when(this.user.getCommunicableIUsers()).thenReturn(communicables);
 
         final PacketOutCommunicable packet = this.getPacket(PacketOutCommunicable.class, this.user);

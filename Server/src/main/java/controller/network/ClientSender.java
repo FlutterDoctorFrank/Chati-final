@@ -34,6 +34,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Eine Schnittstelle, welche als Beobachter für das Model dient.
@@ -69,7 +71,8 @@ public interface ClientSender {
                         throw new IllegalArgumentException("Can not send communicable users for an another user");
                     }
 
-                    return new PacketOutCommunicable(other.getCommunicableIUsers().keySet());
+                    return new PacketOutCommunicable(other.getCommunicableIUsers().keySet().stream()
+                            .filter(Predicate.not(user.getUserId()::equals)).collect(Collectors.toSet()));
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }
@@ -90,16 +93,14 @@ public interface ClientSender {
 
                     if (user.getWorld() != null) {
                         final IWorld world = user.getWorld();
-                        final UserInfo info = new UserInfo(other.getUserId(), other.getUsername());
+                        final UserInfo info = new UserInfo(other.getUserId(), other.getUsername(), other.getStatus());
 
                         if (user.getFriends().containsKey(other.getUserId())) {
                             info.addFlag(UserInfo.Flag.FRIEND);
-                            info.setStatus(other.getStatus());
                         }
 
                         if (world.equals(other.getWorld())) {
                             info.setAvatar(other.getAvatar());
-                            info.setStatus(other.getStatus());
 
                             if (user.getIgnoredUsers().containsKey(other.getUserId())) {
                                 info.addFlag(UserInfo.Flag.IGNORED);

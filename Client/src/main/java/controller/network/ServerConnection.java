@@ -521,13 +521,21 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
         if (this.worldId != null) {
             try {
-                this.getIntern().setMusic(packet.getContextId(), packet.getMusic());
+                final IInternUserController user = this.getIntern();
+
+                user.setMusic(packet.getContextId(), packet.getMusic());
+                user.setMute(packet.getContextId(), false);
 
                 for (final IUserController extern : this.manager.getUserManager().getExternUsers().values()) {
                     extern.setMute(packet.getContextId(), false);
                 }
 
                 for (final UUID mute : packet.getMutes()) {
+                    if (mute.equals(this.userId)) {
+                        user.setMute(packet.getContextId(), true);
+                        continue;
+                    }
+
                     this.getExtern(mute).setMute(packet.getContextId(), true);
                 }
             } catch (UserNotFoundException ex) {
