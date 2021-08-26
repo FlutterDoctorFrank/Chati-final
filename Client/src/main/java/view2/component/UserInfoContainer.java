@@ -40,10 +40,6 @@ public class UserInfoContainer extends Table {
         super.act(delta);
     }
 
-    public Label getUsernameLabel() {
-        return usernameLabel;
-    }
-
     private void create() {
         usernameLabel = new Label("", Assets.SKIN);
         roleIconContainer = new Table();

@@ -1,7 +1,6 @@
 package view2.component.hud.userList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -23,19 +22,17 @@ import view2.component.ChatiToolTip;
 import view2.component.ChatiWindow;
 import view2.component.UserInfoContainer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
     private static final float BUTTON_SIZE = 30;
-    private static final float USER_INFO_ICON_SIZE = 22.5f;
+    private static final float ICON_SIZE = 22.5f;
     private static final float VERTICAL_SPACING = 5;
     private static final float HORIZONTAL_SPACING = 10;
     private static final float BUTTON_SCALE_FACTOR = 0.1f;
 
     private UserInfoContainer userInfoContainer;
     private Image statusImage;
+    private Image currentWorldImage;
     private ImageButton friendButton;
     private ImageButton ignoreButton;
     private ImageButton roomButton;
@@ -73,6 +70,12 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 break;
             default:
                 throw new IllegalArgumentException("No valid user status.");
+        }
+
+        currentWorldImage = new Image();
+        if (user.isInCurrentWorld()) {
+            currentWorldImage.setDrawable(Assets.CURRENT_WORLD_ICON);
+            currentWorldImage.addListener(new ChatiToolTip("In deiner Welt!"));
         }
 
         if (!user.isFriend()) {
@@ -410,9 +413,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         left().defaults().padTop(VERTICAL_SPACING);
 
         Table container = new Table();
-        container.add(statusImage).width(USER_INFO_ICON_SIZE).height(USER_INFO_ICON_SIZE).space(HORIZONTAL_SPACING);
-        container.add(userInfoContainer);
-        add(container).left().padLeft(HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).row();
+        container.add(statusImage).left().size(ICON_SIZE).padRight(HORIZONTAL_SPACING);
+        container.add(userInfoContainer).left();
+        container.add(currentWorldImage).right().size(ICON_SIZE).padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).growX();
+        add(container).left().padLeft(HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).growX().row();
 
         Table buttonContainer = new Table();
         buttonContainer.defaults().size(BUTTON_SIZE).padBottom(VERTICAL_SPACING).growX();
