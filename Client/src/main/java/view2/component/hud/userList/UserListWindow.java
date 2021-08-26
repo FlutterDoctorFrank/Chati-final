@@ -2,18 +2,24 @@ package view2.component.hud.userList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import model.role.Permission;
-import model.user.*;
+import model.user.IInternUserView;
+import model.user.IUserManagerView;
 import view2.Assets;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
-import view2.component.hud.HudMenuTable;
+import view2.component.hud.HudMenuWindow;
 
-import java.util.*;
+import java.util.Set;
+import java.util.TreeSet;
 
-public class UserListTable extends HudMenuTable {
+public class UserListWindow extends HudMenuWindow {
 
     private final Set<UserListEntry> friendEntries;
     private final Set<UserListEntry> activeUserEntries;
@@ -25,7 +31,8 @@ public class UserListTable extends HudMenuTable {
     private ScrollPane userListScrollPane;
     private Table userListContainer;
 
-    public UserListTable() {
+    public UserListWindow() {
+        super("Benutzer");
         this.friendEntries = new TreeSet<>();
         this.activeUserEntries = new TreeSet<>();
         this.bannedUserEntries = new TreeSet<>();
@@ -77,6 +84,7 @@ public class UserListTable extends HudMenuTable {
         super.act(delta);
     }
 
+    @Override
     protected void create() {
         userListContainer = new Table();
         userListScrollPane = new ScrollPane(userListContainer, Assets.SKIN);
@@ -164,23 +172,15 @@ public class UserListTable extends HudMenuTable {
         tabButtonGroup.add(bannedUserTabButton);
     }
 
+    @Override
     protected void setLayout() {
-        top().right().padTop(HeadUpDisplay.BUTTON_SIZE);
-        Window window = new Window("Benutzer", Assets.SKIN);
-        window.setMovable(false);
-        window.top();
-
         userListContainer.top();
-
         Table buttonContainer = new Table();
         buttonContainer.defaults().colspan(3).growX();
         buttonContainer.add(friendTabButton, activeUserTabButton, bannedUserTabButton);
-        window.add(buttonContainer).growX().row();
-
-        window.add(userListScrollPane).grow();
-        add(window).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT);
-
-        HeadUpDisplay.getInstance().getStage().setScrollFocus(userListScrollPane);
+        add(buttonContainer).growX().row();
+        add(userListScrollPane).grow();
+        Chati.CHATI.getScreen().getStage().setScrollFocus(userListScrollPane);
     }
 
     private void showFriends() {

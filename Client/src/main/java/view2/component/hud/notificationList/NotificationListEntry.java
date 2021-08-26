@@ -56,7 +56,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                getStage().addActor(new NotificationWindow());
+                Chati.CHATI.getScreen().getStage().openWindow(new NotificationWindow());
             }
         });
 
@@ -249,7 +249,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                     Chati.CHATI.getServerSender()
                             .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), true);
                     NotificationListEntry.this.remove();
-                    NotificationWindow.this.remove();
+                    Chati.CHATI.getScreen().getStage().closeWindow(NotificationWindow.this);
                 }
                 @Override
                 public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -285,7 +285,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                     Chati.CHATI.getServerSender()
                             .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), false);
                     NotificationListEntry.this.remove();
-                    NotificationWindow.this.remove();
+                    Chati.CHATI.getScreen().getStage().closeWindow(NotificationWindow.this);
                 }
                 @Override
                 public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -315,7 +315,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                     Chati.CHATI.getServerSender()
                             .send(ServerSender.SendAction.NOTIFICATION_DELETE, notification.getNotificationId());
                     NotificationListEntry.this.remove();
-                    remove();
+                    Chati.CHATI.getScreen().getStage().closeWindow(NotificationWindow.this);
                 }
                 @Override
                 public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -339,7 +339,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    remove();
+                    Chati.CHATI.getScreen().getStage().closeWindow(NotificationWindow.this);
                 }
             });
         }

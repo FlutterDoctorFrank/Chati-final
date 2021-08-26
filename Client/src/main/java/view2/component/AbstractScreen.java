@@ -17,12 +17,10 @@ public abstract class AbstractScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        if (!active) {
-            return;
-        }
-
         stage.act(delta);
-        stage.draw();
+        if (active) {
+            stage.draw();
+        }
     }
 
     @Override

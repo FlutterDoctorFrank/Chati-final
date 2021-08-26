@@ -74,6 +74,17 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
+    public AbstractScreen getScreen() {
+        if (screen.equals(menuScreen)) {
+            return menuScreen;
+        }
+        if (screen.equals(worldScreen)) {
+            return worldScreen;
+        }
+        return null;
+    }
+
+    @Override
     public void create() {
         this.profiler = new GLProfiler(Gdx.graphics);
         profiler.enable();

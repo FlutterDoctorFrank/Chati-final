@@ -170,7 +170,7 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                remove();
+                Chati.CHATI.getScreen().getStage().closeWindow(AdministratorManageWindow.this);
             }
         });
 
@@ -182,7 +182,7 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                remove();
+                Chati.CHATI.getScreen().getStage().closeWindow(AdministratorManageWindow.this);
             }
         });
     }

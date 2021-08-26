@@ -1,19 +1,22 @@
 package view2.component.hud.notificationList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.user.IInternUserView;
 import model.user.IUserManagerView;
 import view2.Assets;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
-import view2.component.hud.HudMenuTable;
+import view2.component.hud.HudMenuWindow;
 
-import java.util.*;
+import java.util.Set;
+import java.util.TreeSet;
 
-public class NotificationListTable extends HudMenuTable {
+public class NotificationListWindow extends HudMenuWindow {
 
     private final Set<NotificationListEntry> globalNotificationEntries;
     private final Set<NotificationListEntry> worldNotificationEntries;
@@ -23,7 +26,8 @@ public class NotificationListTable extends HudMenuTable {
     private ScrollPane notificationListScrollPane;
     private Table notificationListContainer;
 
-    public NotificationListTable() {
+    public NotificationListWindow() {
+        super("Benachrichtigungen");
         this.globalNotificationEntries = new TreeSet<>();
         this.worldNotificationEntries = new TreeSet<>();
         create();
@@ -58,6 +62,7 @@ public class NotificationListTable extends HudMenuTable {
         super.act(delta);
     }
 
+    @Override
     protected void create() {
         notificationListContainer = new Table();
         notificationListScrollPane = new ScrollPane(notificationListContainer, Assets.SKIN);
@@ -115,23 +120,15 @@ public class NotificationListTable extends HudMenuTable {
         tabButtonGroup.add(worldNotificationTabButton);
     }
 
+    @Override
     protected void setLayout() {
-        top().right().padTop(HeadUpDisplay.BUTTON_SIZE);
-        Window window = new Window("Benachrichtigungen", Assets.SKIN);
-        window.setMovable(false);
-        window.top();
-
         notificationListContainer.top();
-
         Table buttonContainer = new Table();
         buttonContainer.defaults().growX();
         buttonContainer.add(globalNotificationTabButton, worldNotificationTabButton);
-        window.add(buttonContainer).growX().row();
-
-        window.add(notificationListScrollPane).grow();
-        add(window).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT);
-
-        HeadUpDisplay.getInstance().getStage().setScrollFocus(notificationListScrollPane);
+        add(buttonContainer).growX().row();
+        add(notificationListScrollPane).grow();
+        Chati.CHATI.getScreen().getStage().setScrollFocus(notificationListScrollPane);
     }
 
     private void showGlobalNotifications() {

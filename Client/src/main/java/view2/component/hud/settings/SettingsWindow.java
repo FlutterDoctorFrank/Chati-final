@@ -3,7 +3,6 @@ package view2.component.hud.settings;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import model.context.ContextID;
@@ -12,12 +11,11 @@ import model.user.IInternUserView;
 import view2.Assets;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
-import view2.component.hud.HudMenuTable;
+import view2.component.hud.HudMenuWindow;
 import view2.component.menu.table.LoginTable;
-import view2.component.menu.MenuScreen;
 import view2.component.menu.table.StartTable;
 
-public class SettingsTable extends HudMenuTable {
+public class SettingsWindow extends HudMenuWindow {
 
     private static final float TOP_SPACING = 7.5f;
     private static final float HORIZONTAL_SPACING = 20;
@@ -31,7 +29,8 @@ public class SettingsTable extends HudMenuTable {
     private TextButton logoutButton;
     private TextButton closeApplicationButton;
 
-    public SettingsTable() {
+    public SettingsWindow() {
+        super("Einstellungen");
         create();
         setLayout();
     }
@@ -73,7 +72,7 @@ public class SettingsTable extends HudMenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                getStage().addActor(new LanguageSelectWindow());
+                Chati.CHATI.getScreen().getStage().openWindow(new LanguageSelectWindow());
             }
         });
 
@@ -85,7 +84,7 @@ public class SettingsTable extends HudMenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                getStage().addActor(new VolumeChangeWindow());
+                Chati.CHATI.getScreen().getStage().openWindow(new VolumeChangeWindow());
             }
         });
 
@@ -97,7 +96,7 @@ public class SettingsTable extends HudMenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                getStage().addActor(new WorldSettingsTable());
+                Chati.CHATI.getScreen().getStage().openWindow(new WorldSettingsTable());
             }
         });
 
@@ -112,7 +111,7 @@ public class SettingsTable extends HudMenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                getStage().addActor(new AdministratorManageWindow());
+                Chati.CHATI.getScreen().getStage().openWindow(new AdministratorManageWindow());
             }
         });
 
@@ -172,20 +171,13 @@ public class SettingsTable extends HudMenuTable {
 
     @Override
     protected void setLayout() {
-        top().right().padTop(HeadUpDisplay.BUTTON_SIZE);
-        Window window = new Window("Einstellungen", Assets.SKIN);
-        window.setMovable(false);
-        window.top();
-
-        window.defaults().fill().expand().pad(TOP_SPACING, HORIZONTAL_SPACING, BOTTOM_SPACING, HORIZONTAL_SPACING);
-        window.add(languageSelectMenuButton).row();
-        window.add(volumeChangeMenuButton).row();
-        window.add(worldSettingsButton).row();
-        window.add(administratorManageMenuButton).row();
-        window.add(leaveWorldButton).row();
-        window.add(logoutButton).row();
-        window.add(closeApplicationButton);
-
-        add(window).width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.HUD_MENU_TABLE_HEIGHT);
+        defaults().pad(TOP_SPACING, HORIZONTAL_SPACING, BOTTOM_SPACING, HORIZONTAL_SPACING).grow();
+        add(languageSelectMenuButton).row();
+        add(volumeChangeMenuButton).row();
+        add(worldSettingsButton).row();
+        add(administratorManageMenuButton).row();
+        add(leaveWorldButton).row();
+        add(logoutButton).row();
+        add(closeApplicationButton);
     }
 }

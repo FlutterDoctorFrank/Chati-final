@@ -95,7 +95,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 friendButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (friendButton.getImage().getDrawable().equals(Assets.ADD_FRIEND_ICON)) {
-                    getStage().addActor(new MessageWindow(AdministrativeAction.INVITE_FRIEND));
+                    Chati.CHATI.getScreen().getStage().openWindow(new MessageWindow(AdministrativeAction.INVITE_FRIEND));
                 } else {
                     Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.REMOVE_FRIEND, "");
@@ -177,7 +177,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 roomButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (roomButton.getImage().getDrawable().equals(Assets.ROOM_INVITE_ICON)) {
-                    getStage().addActor(new MessageWindow(AdministrativeAction.ROOM_INVITE));
+                    Chati.CHATI.getScreen().getStage().openWindow(new MessageWindow(AdministrativeAction.ROOM_INVITE));
                 } else if (roomButton.getImage().getDrawable().equals(Assets.ROOM_KICK_ICON)) {
                     Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.ROOM_KICK, "");
@@ -253,7 +253,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 reportButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (reportButton.getImage().getDrawable().equals(Assets.REPORT_ICON)) {
-                    getStage().addActor(new MessageWindow(AdministrativeAction.REPORT_USER));
+                    Chati.CHATI.getScreen().getStage().openWindow(new MessageWindow(AdministrativeAction.REPORT_USER));
                 }
             }
             @Override
@@ -340,9 +340,9 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 banButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (banButton.getImage().getDrawable().equals(Assets.BAN_ICON)) {
-                    getStage().addActor(new MessageWindow(AdministrativeAction.BAN_USER));
+                    Chati.CHATI.getScreen().getStage().openWindow(new MessageWindow(AdministrativeAction.BAN_USER));
                 } else if (banButton.getImage().getDrawable().equals(Assets.UNBAN_ICON)) {
-                    getStage().addActor(new MessageWindow(AdministrativeAction.UNBAN_USER));
+                    Chati.CHATI.getScreen().getStage().openWindow(new MessageWindow(AdministrativeAction.UNBAN_USER));
                 }
             }
             @Override
@@ -506,7 +506,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     Chati.CHATI.getServerSender()
                             .send(ServerSender.SendAction.USER_MANAGE, user.getUserId(), action, userMessageArea.getText());
-                    MessageWindow.this.remove();
+                    Chati.CHATI.getScreen().getStage().closeWindow(MessageWindow.this);
                 }
             });
 
@@ -518,7 +518,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    MessageWindow.this.remove();
+                    Chati.CHATI.getScreen().getStage().closeWindow(MessageWindow.this);
                 }
             });
 
@@ -530,7 +530,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    remove();
+                    Chati.CHATI.getScreen().getStage().closeWindow(MessageWindow.this);
                 }
             });
         }

@@ -56,9 +56,6 @@ public class WorldScreen extends AbstractScreen {
 
     @Override
     public void render(float delta) {
-        if (!active) {
-            return;
-        }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (Chati.CHATI.isRoomChanged()) {
@@ -76,11 +73,13 @@ public class WorldScreen extends AbstractScreen {
             externUserAvatars.values().forEach(UserAvatar::update);
             internUserAvatar.update();
 
-            Chati.SPRITE_BATCH.setProjectionMatrix(camera.combined);
-            Chati.SPRITE_BATCH.begin();
-            internUserAvatar.draw(Chati.SPRITE_BATCH, delta);
-            externUserAvatars.values().forEach(avatar -> avatar.draw(Chati.SPRITE_BATCH, delta));
-            Chati.SPRITE_BATCH.end();
+            if (active) {
+                Chati.SPRITE_BATCH.setProjectionMatrix(camera.combined);
+                Chati.SPRITE_BATCH.begin();
+                internUserAvatar.draw(Chati.SPRITE_BATCH, delta);
+                externUserAvatars.values().forEach(avatar -> avatar.draw(Chati.SPRITE_BATCH, delta));
+                Chati.SPRITE_BATCH.end();
+            }
 
             world.step(1 / WORLD_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 

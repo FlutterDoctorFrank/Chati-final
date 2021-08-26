@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import view2.Assets;
+import view2.Chati;
 import view2.component.ChatiWindow;
 
 public class WorldSettingsTable extends ChatiWindow {
@@ -56,7 +57,7 @@ public class WorldSettingsTable extends ChatiWindow {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 CHANGED = true;
                 SHOW_NAME = showNameCheckBox.isChecked();
-                remove();
+                Chati.CHATI.getScreen().getStage().closeWindow(WorldSettingsTable.this);
             }
         });
 
@@ -80,7 +81,7 @@ public class WorldSettingsTable extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                remove();
+                Chati.CHATI.getScreen().getStage().closeWindow(WorldSettingsTable.this);
             }
         });
 
@@ -92,7 +93,7 @@ public class WorldSettingsTable extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                remove();
+                Chati.CHATI.getScreen().getStage().closeWindow(WorldSettingsTable.this);
             }
         });
     }
