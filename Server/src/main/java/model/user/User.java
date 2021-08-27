@@ -651,11 +651,7 @@ public class User implements IUser {
         this.status = status;
 
         // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
-        Map<UUID, User> receivers = new HashMap<>(friends);
-
-        receivers.put(userId, this);
-        receivers.putAll(currentWorld != null ? currentWorld.getUsers() : Collections.emptyMap());
-        receivers.values().forEach(receiver -> receiver.send(SendAction.USER_INFO, this));
+        updateUserInfo(true);
     }
 
     /**
@@ -754,21 +750,23 @@ public class User implements IUser {
     /*
      * Sendet Pakete an alle relevanten Benutzer mit der aktualisierten Benutzerinformation.
      */
-    /*
     public void updateUserInfo(final boolean includeSelf) {
         final Map<UUID, User> receivers = new HashMap<>(friends);
-
-        if (currentWorld != null) {
-            receivers.putAll(currentWorld.getUsers());
-        }
 
         if (includeSelf) {
             receivers.put(userId, this);
         }
 
+        if (currentWorld != null) {
+            receivers.putAll(currentWorld.getUsers());
+        }
+
         receivers.values().forEach(user -> user.send(SendAction.USER_INFO, this));
+        // Aktualisiere die Benutzerinformation von gesperrten Benutzern auch für die Benutzer in den Welten.
+        GlobalContext.getInstance().getWorlds().values().stream()
+                .filter(world -> world.isBanned(this))
+                .forEach(world -> world.getUsers().values().forEach(user -> user.send(SendAction.USER_INFO, this)));
     }
-    */
 
     /**
      * Sendet Pakete an alle relevanten Benutzer mit der aktualisierten Rolleninformation.
@@ -806,8 +804,8 @@ public class User implements IUser {
 
         this.clientSender = sender;
         this.status = Status.ONLINE;
-        this.friends.values().forEach(friend -> friend.send(SendAction.USER_INFO, this));
 
+        updateUserInfo(false);
         updateLastActivity();
     }
 
@@ -822,11 +820,11 @@ public class User implements IUser {
             // Benutzer ist nicht in einer Welt
         }
 
-        updateLastLogoutTime();
-
         this.clientSender = null;
         this.status = Status.OFFLINE;
-        this.friends.values().forEach(friend -> friend.send(SendAction.USER_INFO, this));
+
+        updateUserInfo(false);
+        updateLastLogoutTime();
     }
 
     public void send(@NotNull final SendAction action, @NotNull final Object object) {
@@ -843,17 +841,17 @@ public class User implements IUser {
             return;
         }
         Map<UUID, User> currentCommunicableUsers = new HashMap<>(communicableUsers);
-        Map<UUID, User> newCommuniableUsers = new HashMap<>(currentLocation.getArea().getCommunicableUsers(this));
-        if (currentCommunicableUsers.keySet().equals(newCommuniableUsers.keySet())) {
+        Map<UUID, User> newCommunicableUsers = new HashMap<>(currentLocation.getArea().getCommunicableUsers(this));
+        if (currentCommunicableUsers.keySet().equals(newCommunicableUsers.keySet())) {
             return;
         }
-        CommunicationHandler.filterIgnoredUsers(this, newCommuniableUsers);
+        CommunicationHandler.filterIgnoredUsers(this, newCommunicableUsers);
         communicableUsers.clear();
-        communicableUsers.putAll(newCommuniableUsers);
+        communicableUsers.putAll(newCommunicableUsers);
 
         this.send(SendAction.COMMUNICABLES, this);
 
-        Sets.symmetricDifference(currentCommunicableUsers.entrySet(), newCommuniableUsers.entrySet())
+        Sets.symmetricDifference(currentCommunicableUsers.entrySet(), newCommunicableUsers.entrySet())
                 .forEach(entry -> entry.getValue().updateCommunicableUsers());
     }
 

@@ -234,6 +234,15 @@ public class UserAccountManager implements IUserAccountManager {
      */
     public void deleteUser(@NotNull final User user) throws UserNotFoundException {
         logoutUser(user.getUserId());
+
+        // Gibt es möglicherweise eine Möglichkeit ohne Cast?
+        user.getFriends().values().stream()
+                .map(friend -> (User) friend)
+                .forEach(user::removeFriend);
+        GlobalContext.getInstance().getWorlds().values().stream()
+                .filter(world -> world.isBanned(user))
+                .forEach(world -> world.removeBannedUser(user));
+
         registeredUsers.remove(user.getUserId());
         database.deleteAccount(user);
     }
