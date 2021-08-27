@@ -71,7 +71,7 @@ public class InternUserDisplay extends AbstractTable {
 
     @Override
     protected void setLayout() {
-        setFillParent(false);
+        top().left();
         Table container = new Table();
 
         NinePatchDrawable controlsBackground =
@@ -84,7 +84,7 @@ public class InternUserDisplay extends AbstractTable {
         container.add(statusButton).width(2 * USER_INFO_ICON_SIZE).height(2 * USER_INFO_ICON_SIZE)
                 .space(HORIZONTAL_SPACING).padLeft(HORIZONTAL_SPACING);
         container.add(userInfoContainer).left().center().height(USER_INFO_ICON_SIZE).row();
-        add(container).top().left().width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.BUTTON_SIZE).expandY().fillY().row();
+        add(container).top().left().width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.BUTTON_SIZE).growY().row();
     }
 
     private void setStatusImage() {

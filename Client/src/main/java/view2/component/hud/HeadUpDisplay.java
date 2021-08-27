@@ -48,9 +48,10 @@ public class HeadUpDisplay extends Table {
             IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
             if (internUser != null && internUserDisplay == null) {
                 internUserDisplay = new InternUserDisplay();
-                add(internUserDisplay).top().left().width(HUD_MENU_TABLE_WIDTH).grow();
+                addActor(internUserDisplay);
             } else if (internUser == null && internUserDisplay != null) {
                 internUserDisplay.remove();
+                internUserDisplay = null;
             }
             if (internUser != null && internUser.isInCurrentWorld() && !chatButton.isVisible()) {
                 chatButton.setVisible(true);
