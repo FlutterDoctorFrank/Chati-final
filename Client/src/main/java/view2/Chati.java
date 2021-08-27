@@ -281,8 +281,12 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return changeNotificationInfo;
     }
 
-    public boolean isWorldListUpdated() {
+    public boolean isWorldListChanged() {
         return changeWorldList;
+    }
+
+    public boolean isRoomListChanged() {
+        return changeRoomList;
     }
 
     public boolean isWorldChanged() {
@@ -301,7 +305,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return worldScreen;
     }
 
-    public boolean isMusicChanged() { return changeMusic; }
+    public boolean isMusicChanged() {
+        return changeMusic;
+    }
 
     private void resetModelChangeReceivedFlags() {
         userInfoChangeReceived = false;

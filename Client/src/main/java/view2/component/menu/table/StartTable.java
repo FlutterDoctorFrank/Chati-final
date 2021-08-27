@@ -23,7 +23,7 @@ public class StartTable extends MenuTable {
 
     @Override
     public void act(float delta) {
-        if (Chati.CHATI.isWorldListUpdated()) {
+        if (Chati.CHATI.isWorldListChanged()) {
             updateWorldList();
         }
         super.act(delta);

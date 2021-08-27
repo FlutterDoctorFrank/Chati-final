@@ -4,6 +4,7 @@ import controller.network.ClientSender;
 import controller.network.ClientSender.SendAction;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
+import model.context.ContextID;
 import model.context.spatial.*;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
@@ -71,7 +72,7 @@ public class RoomReception extends Interactable {
         switch (menuOption) {
             case MENU_OPTION_CREATE: // Erzeuge einen privaten Raum.
                 if (args.length < 3) {
-                    throw new IllegalMenuActionException("", "Die angegeben Argument sind nicht ausreichend.");
+                    throw new IllegalMenuActionException("", "Die angegeben Argumente sind nicht ausreichend.");
                 }
 
                 String createRoomName = args[0];
@@ -122,7 +123,7 @@ public class RoomReception extends Interactable {
                 break;
             case MENU_OPTION_JOIN: // Betrete einen existierenden privaten Raum.
                 if (args.length < 2) {
-                    throw new IllegalMenuActionException("", "Die angegeben Argument sind nicht ausreichend.");
+                    throw new IllegalMenuActionException("", "Die angegeben Argumente sind nicht ausreichend.");
                 }
 
                 if (user.getWorld() == null) {
@@ -139,11 +140,20 @@ public class RoomReception extends Interactable {
                     throw new IllegalMenuActionException("", "Der zu betretende private Raum existiert nicht.", e);
                 }
 
-                password = args[2];
-                // Prüfe, ob das Passwort korrekt übergeben wurde.
-                if (!privateRoom.checkPassword(password)) {
-                    throw new IllegalMenuActionException("", "Das eingegebene Passwort ist nicht korrekt.");
+                // Prüfe, ob sich der Benutzer bereits in diesem Raum befindet.
+                if (privateRoom.contains(user)) {
+                    throw new IllegalMenuActionException("", "Du befindest dich bereits in diesem Raum.");
                 }
+
+                // Prüfe, ob der Benutzer die Berechtigung besitzt, den Raum ohne Passworteingabe zu betreten.
+                if (!user.hasPermission(privateRoom, Permission.ENTER_PRIVATE_ROOM)) {
+                    password = args[1];
+                    // Prüfe, ob das Passwort korrekt übergeben wurde.
+                    if (!privateRoom.checkPassword(password)) {
+                        throw new IllegalMenuActionException("", "Das eingegebene Passwort ist nicht korrekt.");
+                    }
+                }
+
                 // Schließe das Menü beim Benutzer.
                 user.setCurrentInteractable(null);
                 user.setMovable(true);
@@ -152,7 +162,7 @@ public class RoomReception extends Interactable {
                 break;
             case MENU_OPTION_REQUEST: // Stelle eine Anfrage zum Beitritt eines privaten Raums.
                 if (args.length < 2) {
-                    throw new IllegalMenuActionException("", "Die angegeben Argument sind nicht ausreichend.");
+                    throw new IllegalMenuActionException("", "Die angegeben Argumente sind nicht ausreichend.");
                 }
 
                 if (user.getWorld() == null) {
@@ -168,6 +178,12 @@ public class RoomReception extends Interactable {
                 } catch (NoSuchElementException e) {
                     throw new IllegalMenuActionException("", "Der angefragte private Raum existiert nicht.", e);
                 }
+
+                // Prüfe, ob sich der Benutzer bereits in diesem Raum befindet.
+                if (requestedPrivateRoom.contains(user)) {
+                    throw new IllegalMenuActionException("", "Du befindest dich bereits in diesem Raum.");
+                }
+
                 // Ermittle den Rauminhaber.
                 Map<UUID, User> users = requestedPrivateRoom.getUsers();
                 User roomOwner;

@@ -11,6 +11,7 @@ import controller.network.ServerSender;
 import model.context.ContextID;
 import model.context.spatial.Menu;
 import model.context.spatial.SpatialMap;
+import model.role.Permission;
 import view2.Assets;
 import view2.Chati;
 import view2.component.Response;
@@ -27,12 +28,7 @@ public class RoomReceptionWindow extends InteractableWindow {
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 500;
-    private static final float ROW_WIDTH = 650;
-    private static final float ROW_HEIGHT = 60;
-    private static final float BUTTON_WIDTH = 180;
-    private static final float BUTTON_HEIGHT = 60;
-    private static final float SPACING = 15;
-    private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
+    private static final float MESSAGE_AREA_HEIGHT = 120;
 
     private TextButton closeButton;
 
@@ -78,9 +74,9 @@ public class RoomReceptionWindow extends InteractableWindow {
     }
 
     public void setCurrentTable(MenuTable table) {
-        clearChildren();
+        removeActor(currentTable);
         currentTable = table;
-        add(currentTable).width(WINDOW_WIDTH).height(WINDOW_HEIGHT - getPadTop());
+        addActor(currentTable);
     }
 
     private class RoomSelectTable extends MenuTable {
@@ -93,8 +89,11 @@ public class RoomReceptionWindow extends InteractableWindow {
         private TextButton cancelButton;
 
         @Override
-        public void resetTextFields() {
-
+        public void act(float delta) {
+            if (Chati.CHATI.isRoomListChanged()) {
+                updateRoomList();
+            }
+            super.act(delta);
         }
 
         @Override
@@ -129,7 +128,12 @@ public class RoomReceptionWindow extends InteractableWindow {
                         infoLabel.setText("Bitte wähle einen Raum aus.");
                         return;
                     }
-                    setCurrentTable(new RoomJoinTable());
+                    if (Chati.CHATI.getUserManager().getInternUserView().hasPermission(Permission.ENTER_PRIVATE_ROOM)) {
+                        Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
+                                new String[]{roomSelectBox.getSelected().getName(), ""}, MENU_OPTION_JOIN);
+                    } else {
+                        setCurrentTable(new RoomJoinTable(roomSelectBox.getSelected()));
+                    }
                 }
             });
 
@@ -145,7 +149,7 @@ public class RoomReceptionWindow extends InteractableWindow {
                         infoLabel.setText("Bitte wähle einen Raum aus.");
                         return;
                     }
-                    setCurrentTable(new RoomRequestTable());
+                    setCurrentTable(new RoomRequestTable(roomSelectBox.getSelected()));
                 }
             });
 
@@ -181,6 +185,10 @@ public class RoomReceptionWindow extends InteractableWindow {
             add(container).width(ROW_WIDTH);
         }
 
+        @Override
+        public void resetTextFields() {
+        }
+
         private void updateRoomList() {
             roomSelectBox.setItems(Chati.CHATI.getWorldScreen().getPrivateRooms().toArray(new ContextEntry[0]));
         }
@@ -214,7 +222,7 @@ public class RoomReceptionWindow extends InteractableWindow {
                 }
             });
 
-            passwordField = new TextField("Passwort des Raums", Assets.getNewSkin());
+            passwordField = new TextField("Passwort", Assets.getNewSkin());
             passwordField.getStyle().fontColor = Color.GRAY;
             passwordField.setPasswordCharacter('*');
             passwordField.addListener(new FocusListener() {
@@ -253,7 +261,6 @@ public class RoomReceptionWindow extends InteractableWindow {
                         infoLabel.setText("Bitte wähle eine Karte aus!");
                         return;
                     }
-                    Chati.CHATI.getWorldScreen().setPendingResponse(Response.MENU_ACTION_RESPONSE);
                     Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
                             new String[]{roomnameField.getText(), passwordField.getText(),
                                     String.valueOf(mapSelectBox.getSelected())}, MENU_OPTION_CREATE);
@@ -306,48 +313,184 @@ public class RoomReceptionWindow extends InteractableWindow {
 
         private void resetPasswordField() {
             passwordField.getStyle().fontColor = Color.GRAY;
-            passwordField.setText("Passwort des Raums");
+            passwordField.setText("Passwort");
             passwordField.setPasswordMode(false);
             getStage().unfocus(passwordField);
         }
     }
 
-    private static class RoomJoinTable extends MenuTable {
+    private class RoomJoinTable extends MenuTable {
+
+        private final ContextEntry roomEntry;
 
         private TextField passwordField;
-        private TextButton acceptButton;
+        private TextButton confirmButton;
         private TextButton cancelButton;
+
+        public RoomJoinTable(ContextEntry roomEntry) {
+            this.roomEntry = roomEntry;
+        }
 
         @Override
         protected void create() {
+            infoLabel.setText("Bitte gib das Passwort ein!");
+
+            passwordField = new TextField("Passwort", Assets.getNewSkin());
+            passwordField.getStyle().fontColor = Color.GRAY;
+            passwordField.setPasswordCharacter('*');
+            passwordField.addListener(new FocusListener() {
+                @Override
+                public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
+                    if(focused && passwordField.getStyle().fontColor == Color.GRAY) {
+                        passwordField.getStyle().fontColor = Color.BLACK;
+                        passwordField.setText("");
+                        passwordField.setPasswordMode(true);
+                    }
+                    else if (passwordField.getText().isBlank()) {
+                        resetTextFields();
+                    }
+                }
+            });
+
+            confirmButton = new TextButton("Bestätigen", Assets.SKIN);
+            confirmButton.addListener(new ClickListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    if (passwordField.getText().isBlank() || passwordField.getStyle().fontColor == Color.GRAY) {
+                        infoLabel.setText("Bitte gib das Passwort ein!");
+                        return;
+                    }
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
+                            new String[]{roomEntry.getName(), passwordField.getText()}, MENU_OPTION_JOIN);
+                }
+            });
+
+            cancelButton = new TextButton("Zurück", Assets.SKIN);
+            cancelButton.addListener(new ClickListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    setCurrentTable(new RoomSelectTable());
+                }
+            });
         }
 
         @Override
         protected void setLayout() {
-
+            Table container = new Table();
+            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+            container.add(infoLabel).row();
+            container.add(passwordField).row();
+            Table buttonContainer = new Table();
+            buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
+            buttonContainer.add(confirmButton).spaceRight(SPACING);
+            buttonContainer.add(cancelButton);
+            container.add(buttonContainer);
+            add(container).width(ROW_WIDTH);
         }
 
         @Override
         public void resetTextFields() {
-
+            passwordField.getStyle().fontColor = Color.GRAY;
+            passwordField.setText("Passwort");
+            passwordField.setPasswordMode(false);
+            getStage().unfocus(passwordField);
         }
     }
 
-    private static class RoomRequestTable extends MenuTable {
+    private class RoomRequestTable extends MenuTable {
+
+        private final ContextEntry roomEntry;
+
+        private TextArea messageArea;
+        private TextButton confirmButton;
+        private TextButton cancelButton;
+
+        public RoomRequestTable(ContextEntry roomEntry) {
+            this.roomEntry = roomEntry;
+        }
 
         @Override
         protected void create() {
+            infoLabel.setText("Füge deiner Anfrage eine Nachricht hinzu!");
 
+            messageArea = new TextArea("Nachricht", Assets.SKIN);
+            messageArea.getStyle().fontColor = Color.GRAY;
+            messageArea.addListener(new FocusListener() {
+                @Override
+                public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
+                    if(focused && messageArea.getStyle().fontColor == Color.GRAY) {
+                        messageArea.getStyle().fontColor = Color.BLACK;
+                        messageArea.setText("");
+                    }
+                    else if (messageArea.getText().isBlank()) {
+                        resetTextFields();
+                    }
+                }
+            });
+
+            confirmButton = new TextButton("Bestätigen", Assets.SKIN);
+            confirmButton.addListener(new ClickListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    String message;
+                    if (messageArea.getText().isBlank() || messageArea.getStyle().fontColor == Color.GRAY) {
+                        message = "";
+                    } else {
+                        message = messageArea.getText().trim();
+                    }
+
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
+                            new String[]{roomEntry.getName(), message}, MENU_OPTION_REQUEST);
+
+                    setCurrentTable(new RoomSelectTable());
+                    infoLabel.setText("Deine Anfrage wurde übermittelt!");
+                }
+            });
+
+            cancelButton = new TextButton("Zurück", Assets.SKIN);
+            cancelButton.addListener(new ClickListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    setCurrentTable(new RoomSelectTable());
+                }
+            });
         }
 
         @Override
         protected void setLayout() {
-
+            Table container = new Table();
+            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+            container.add(infoLabel).row();
+            container.add(messageArea).height(MESSAGE_AREA_HEIGHT).spaceBottom(2 * SPACING).row();
+            Table buttonContainer = new Table();
+            buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
+            buttonContainer.add(confirmButton).spaceRight(SPACING);
+            buttonContainer.add(cancelButton);
+            container.add(buttonContainer);
+            add(container).width(ROW_WIDTH);
         }
 
         @Override
         public void resetTextFields() {
-
+            messageArea.getStyle().fontColor = Color.GRAY;
+            messageArea.setText("Nachricht");
+            getStage().unfocus(messageArea);
         }
     }
 }

@@ -26,16 +26,11 @@ public class ContextID {
     }
 
     @Override
-    public boolean equals(@Nullable final Object object) {
-        if (this == object) {
-            return true;
-        }
-
-        if (object == null || this.getClass() != object.getClass()) {
-            return false;
-        }
-
-        return this.contextId.equals(((ContextID) object).contextId);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ContextID contextID = (ContextID) o;
+        return Objects.equals(contextId, contextID.contextId);
     }
 
     @Override

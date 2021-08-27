@@ -370,13 +370,13 @@ public class User implements IUserController, IUserView {
      */
     public void discardRoomInfo() {
         reportedContexts.values().removeIf(context -> !context.equals(Context.getGlobal())
-                || !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
+                && !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
         mutedContexts.values().removeIf(context -> !context.equals(Context.getGlobal())
-                || !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
+                && !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
         bannedContexts.values().removeIf(context -> !context.equals(Context.getGlobal())
-                || !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
+                && !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
         contextRoles.keySet().removeIf(context -> !context.equals(Context.getGlobal())
-                || !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
+                && !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
         isInCurrentRoom = false;
         currentLocation = null;
     }

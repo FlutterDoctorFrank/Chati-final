@@ -1,6 +1,7 @@
 package view2.component.hud.userList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import controller.network.ServerSender;
 import model.role.Permission;
@@ -494,7 +496,20 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                     infoLabel.setText("Füge eine Nachricht zu deiner Einladung hinzu!");
             }
 
-            userMessageArea = new TextArea("", Assets.getNewSkin());
+            userMessageArea = new TextArea("Nachricht", Assets.getNewSkin());
+            userMessageArea.getStyle().fontColor = Color.GRAY;
+            userMessageArea.addListener(new FocusListener() {
+                @Override
+                public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
+                    if(focused && userMessageArea.getStyle().fontColor == Color.GRAY) {
+                        userMessageArea.getStyle().fontColor = Color.BLACK;
+                        userMessageArea.setText("");
+                    }
+                    else if (userMessageArea.getText().isBlank()) {
+                        resetTextFields();
+                    }
+                }
+            });
 
             confirmButton = new TextButton("Bestätigen", Assets.SKIN);
             confirmButton.addListener(new ClickListener() {
@@ -504,8 +519,15 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    String message;
+                    if (userMessageArea.getText().isBlank() || userMessageArea.getStyle().fontColor == Color.GRAY) {
+                        message = "";
+                    } else {
+                        message = userMessageArea.getText();
+                    }
+
                     Chati.CHATI.getServerSender()
-                            .send(ServerSender.SendAction.USER_MANAGE, user.getUserId(), action, userMessageArea.getText());
+                            .send(ServerSender.SendAction.USER_MANAGE, user.getUserId(), action, message);
                     close();
                 }
             });
@@ -553,6 +575,12 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
 
             getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
+        }
+
+        public void resetTextFields() {
+            userMessageArea.getStyle().fontColor = Color.GRAY;
+            userMessageArea.setText("Nachricht");
+            getStage().unfocus(userMessageArea);
         }
     }
 }
