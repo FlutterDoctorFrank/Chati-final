@@ -702,7 +702,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             while (entries.hasNext()) {
                 Map.Entry<UUID, User> user = entries.next();
                 UUID user_id = user.getKey();
-                System.out.println(user_id);
+                //System.out.println(user_id);
                 //Context_Role
                 ResultSet res_cr = st.executeQuery("SELECT * FROM ROLE_WITH_CONTEXT WHERE USER_ID = " + "'" +
                         user_id.toString()+ "'");
@@ -742,6 +742,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 //erzeuge friend
                 if (friends_id.size() != 0) {
                     for (UUID id : friends_id) {
+                        /*
                         User friend = null;
                         ResultSet friend_res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_ID = " + "'" +
                                 id.toString()+ "'");
@@ -766,6 +767,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
                             friend = new User(id, friend_name, friend_avatar, friend_localDateTime);
                         }
+                         */
+                        User friend = users.get(id);
                         if (!friends.containsKey(id)) {
                             friends.put(id, friend);
                         }
@@ -788,6 +791,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 //erzeuge ignoredUser
                 if (ignores_id.size() != 0) {
                     for (UUID id : ignores_id) {
+                        /*
                         User ignore_user = null;
                         ResultSet ignore_res = st.executeQuery("SELECT * FROM USER_ACCOUNT WHERE USER_ID = " + "'" +
                                 id.toString()+ "'");
@@ -811,6 +815,9 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                             }
                             ignore_user = new User(id, ignore_name, ignore_avatar, ignore_localDateTime);
                         }
+
+                         */
+                        User ignore_user = users.get(id);
                         if (!ignores.containsKey(id)) {
                             ignores.put(id, ignore_user);
                         }
