@@ -10,6 +10,10 @@ import model.role.Role;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
 public class Room extends Area implements IRoom {
 
     /** Karte dieses Raums. */
@@ -44,7 +48,13 @@ public class Room extends Area implements IRoom {
             throw new IllegalStateException("LibGDX environment is not available");
         }
 
-        Gdx.app.postRunnable(this::build);
+        FutureTask<Void> buildTask = new FutureTask<>(this::build);
+        Gdx.app.postRunnable(buildTask);
+        try {
+            buildTask.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -156,8 +166,9 @@ public class Room extends Area implements IRoom {
     /**
      * Setzt die Parameter dieses Raums, die in der Datenstruktur der Karte enthalten sind.
      * @see MapUtils
+     * @return
      */
-    private void build() {
+    private Void build() {
         TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
         communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
         communicationRegion.setArea(this);
@@ -166,5 +177,6 @@ public class Room extends Area implements IRoom {
         //this.collisionMap = MapUtils.getCollisionMap(tiledMap);
         spawnLocation = new Location(this, MapUtils.getSpawnPosX(tiledMap), MapUtils.getSpawnPosY(tiledMap));
         MapUtils.buildChildTree(this, tiledMap);
+        return null;
     }
 }

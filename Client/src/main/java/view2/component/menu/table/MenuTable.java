@@ -16,6 +16,7 @@ public abstract class MenuTable extends AbstractTable {
     public MenuTable() {
         this.infoLabel = new Label("", Assets.getNewSkin());
         infoLabel.setAlignment(Align.center, Align.center);
+        infoLabel.setWrap(true);
         create();
         setLayout();
     }

@@ -108,7 +108,7 @@ public class MapUtils {
         // richtige Stelle in der Kontexthierarchie eingefügt werden.
         contextRectangles.sort((o1, o2) -> Float.compare(o2.getRectangle().area(), o1.getRectangle().area()));
         // Erzeuge alle Kontexte nacheinander.
-        contextRectangles.forEach(contextRectangle -> createByType(room, contextRectangle));
+        contextRectangles.forEach(contextRectangle -> createByType(room, contextRectangle, tiledMap));
     }
 
     /**
@@ -116,8 +116,9 @@ public class MapUtils {
      * diese.
      * @param room Übergeordneter Raum der zu erzeugenden Kontexte.
      * @param contextRectangle Quadrat der TiledMap, das die Informationen über den Kontext enthält.
+     * @param tiledMap TiledMap, die weitere notwendige Parameter enthält.
      */
-    private static void createByType(@NotNull final Room room, @NotNull final RectangleMapObject contextRectangle) {
+    private static void createByType(@NotNull final Room room, @NotNull final RectangleMapObject contextRectangle, @NotNull TiledMap tiledMap) {
         // Ermittle alle Parameter zur Erzeugung des Kontextes.
         String areaName = contextRectangle.getName();
         CommunicationRegion communicationRegion = getCommunicationRegion(contextRectangle.getProperties());
@@ -153,7 +154,8 @@ public class MapUtils {
                 parent.addInteractable(musicPlayer);
                 break;
             case "portal": // Erzeuge Portal.
-                Portal portal = new Portal(areaName, parent, communicationRegion, communicationMedia, expanse);
+                Location destination = new Location(room, getSpawnPosX(tiledMap), getSpawnPosY(tiledMap));
+                Portal portal = new Portal(areaName, parent, communicationRegion, communicationMedia, expanse, destination);
                 parent.addChild(portal);
                 parent.addInteractable(portal);
                 break;

@@ -15,6 +15,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -82,7 +85,14 @@ public class InternUser extends User implements IInternUserController, IInternUs
         }
         this.currentRoom = new SpatialContext(roomName, currentWorld);
         this.isInCurrentRoom = true;
-        Gdx.app.postRunnable(() -> currentRoom.build(map));
+
+        FutureTask<Void> buildTask = new FutureTask<>(() -> currentRoom.build(map));
+        Gdx.app.postRunnable(buildTask);
+        try {
+            buildTask.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

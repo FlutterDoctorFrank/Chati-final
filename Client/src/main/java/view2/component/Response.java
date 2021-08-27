@@ -12,7 +12,5 @@ public enum Response {
     JOIN_WORLD,
     INTERACT,
     CLOSE_MENU,
-    CREATE_ROOM,
-    JOIN_ROOM,
-    REQUEST_ROOM
+    MENU_ACTION_RESPONSE
 }

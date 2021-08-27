@@ -126,20 +126,20 @@ public class StartTable extends MenuTable {
     @Override
     protected void setLayout() {
         Table container = new Table();
-        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().fillX().expandX();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
         container.add(infoLabel).row();
         Table worldSelectContainer = new Table();
         worldSelectContainer.add(worldSelectLabel).width(ROW_WIDTH / 8f);
-        worldSelectContainer.add(worldSelectBox).fillX().expandX();
+        worldSelectContainer.add(worldSelectBox).growX();
         container.add(worldSelectContainer).row();
         Table worldButtonContainer = new Table();
-        worldButtonContainer.defaults().colspan(3).height(ROW_HEIGHT).fillX().expandX();
+        worldButtonContainer.defaults().colspan(3).height(ROW_HEIGHT).growX();
         worldButtonContainer.add(joinWorldButton).spaceRight(SPACING);
         worldButtonContainer.add(createWorldButton).spaceRight(SPACING);
         worldButtonContainer.add(deleteWorldButton);
         container.add(worldButtonContainer).row();
         Table settingsButtonContainer = new Table();
-        settingsButtonContainer.defaults().colspan(2).height(ROW_HEIGHT).fillX().expandX();
+        settingsButtonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
         settingsButtonContainer.add(changeAvatarButton).spaceRight(SPACING);
         settingsButtonContainer.add(profileSettingsButton);
         container.add(settingsButtonContainer).row();

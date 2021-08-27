@@ -53,7 +53,7 @@ public class MusicPlayerWindow extends InteractableWindow {
     }
 
     @Override
-    public void showResponse(boolean success, String messageKey) {
+    public void showMessage(String messageKey) {
 
     }
 }

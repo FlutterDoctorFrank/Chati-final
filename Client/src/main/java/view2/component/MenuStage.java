@@ -3,7 +3,6 @@ package view2.component;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import view2.Chati;
 import view2.component.hud.ChatWindow;
@@ -22,7 +21,7 @@ public class MenuStage extends Stage {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (!(getKeyboardFocus() instanceof TextField)) {
+        if (!(getKeyboardFocus() instanceof TextField ) && openWindows.isEmpty()) {
             if (KeyAction.getAction(keycode) == KeyAction.OPEN_CHAT && !HeadUpDisplay.getInstance().isChatOpen()) {
                 HeadUpDisplay.getInstance().showChatWindow();
             }

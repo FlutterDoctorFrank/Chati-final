@@ -84,15 +84,15 @@ public class WorldCreateTable extends MenuTable {
     @Override
     protected void setLayout() {
         Table container = new Table();
-        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().fillX().expandX();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
         container.add(infoLabel).row();
         container.add(worldNameField).row();
         Table mapSelectContainer = new Table();
         mapSelectContainer.add(mapSelectLabel).width(ROW_WIDTH / 8f);
-        mapSelectContainer.add(mapSelectBox).fillX().expandX();
+        mapSelectContainer.add(mapSelectBox).growX();
         container.add(mapSelectContainer).row();
         Table buttonContainer = new Table();
-        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).fillX().expandX();
+        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
         buttonContainer.add(confirmButton).spaceRight(SPACING);
         buttonContainer.add(cancelButton);
         container.add(buttonContainer);

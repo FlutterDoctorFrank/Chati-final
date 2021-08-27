@@ -21,22 +21,7 @@ public class Portal extends Interactable {
     private static final int MENU_OPTION_TELEPORT = 1;
 
     /** Position, an die man teleportiert wird. */
-    private Location destination;
-
-    /**
-     * Erzeugt eines neue Instanz des MusicPlayer.
-     * @param objectName Name des Objekts.
-     * @param parent Übergeordneter Kontext.
-     * @param expanse Räumliche Ausdehnung des Kontexts.
-     * @param communicationRegion Geltende Kommunikationsform.
-     * @param communicationMedia Benutzbare Kommunikationsmedien.
-     */
-    public Portal(@NotNull final String objectName, @NotNull final Area parent,
-                  @NotNull final CommunicationRegion communicationRegion, @NotNull final Set<CommunicationMedium> communicationMedia,
-                  @NotNull final Expanse expanse) {
-        super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.PORTAL_MENU);
-        this.destination = getWorld().getPublicRoom().getSpawnLocation();
-    }
+    private final Location destination;
 
     /**
      * Erzeugt eines neue Instanz des MusicPlayer.
