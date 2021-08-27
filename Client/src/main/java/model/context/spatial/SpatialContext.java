@@ -71,10 +71,10 @@ public class SpatialContext extends Context implements ISpatialContextView {
         parent.addChild(this);
     }
 
-    public Void build(SpatialMap map) {
+    public void build(SpatialMap map) {
         // Raum wurde bereits initialisiert.
         if (this.map != null) {
-            return null;
+            return;
         }
         this.map = map;
         TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
@@ -83,7 +83,6 @@ public class SpatialContext extends Context implements ISpatialContextView {
         this.expanse = new Expanse(new Location(0, 0), MapUtils.getWidth(tiledMap), MapUtils.getHeight(tiledMap));
         MapUtils.buildChildTree(this, tiledMap);
         UserManager.getInstance().getModelObserver().setRoomChanged();
-        return null;
     }
 
     /**

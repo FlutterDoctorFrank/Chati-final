@@ -10,12 +10,10 @@ import model.exception.NotificationNotFoundException;
 import model.notification.INotificationView;
 import model.notification.Notification;
 import model.notification.NotificationType;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.function.Function;
@@ -86,7 +84,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
         this.currentRoom = new SpatialContext(roomName, currentWorld);
         this.isInCurrentRoom = true;
 
-        FutureTask<Void> buildTask = new FutureTask<>(() -> currentRoom.build(map));
+        FutureTask<?> buildTask = new FutureTask<>(() -> currentRoom.build(map), null);
         Gdx.app.postRunnable(buildTask);
         try {
             buildTask.get();
