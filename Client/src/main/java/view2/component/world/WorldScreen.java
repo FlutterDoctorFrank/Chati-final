@@ -213,11 +213,6 @@ public class WorldScreen extends AbstractScreen {
     }
 
     public void closeMenu(ContextID contextId, Menu menu) {
-        if (pendingResponse != Response.CLOSE_MENU) {
-            return;
-        }
-        pendingResponse = Response.NONE;
-
         if (currentInteractableWindow != null && (!currentInteractableWindow.getInteractableId().equals(contextId)
             || currentInteractableWindow.getInteractableMenu() != menu)) {
             throw new IllegalArgumentException("Tried to close a menu that is not open.");
@@ -227,11 +222,9 @@ public class WorldScreen extends AbstractScreen {
     }
 
     public void menuActionResponse(boolean success, String messageKey) {
-        if (pendingResponse != Response.MENU_ACTION_RESPONSE || currentInteractableWindow == null) {
+        if (currentInteractableWindow == null) {
             return;
         }
-        pendingResponse = Response.NONE;
-
         if (!success) {
             currentInteractableWindow.showMessage(messageKey);
         }

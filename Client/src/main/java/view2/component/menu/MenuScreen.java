@@ -59,8 +59,8 @@ public class MenuScreen extends AbstractScreen {
             setMenuTable(new StartTable());
             loginFailCounter = 0;
         } else {
-            if (loginFailCounter == 2) {
-                currentMenuTable.showMessage("Bist du zu blöd dir dein Passwort zu merken?");
+            if (loginFailCounter == 1) {
+                currentMenuTable.showMessage("Mann Frank, merk dir doch mal deine Kontodaten.");
             } else {
                 currentMenuTable.showMessage(messageKey);
             }

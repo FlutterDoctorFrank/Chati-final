@@ -91,13 +91,18 @@ public class RoomReception extends Interactable {
                 } catch (IllegalArgumentException e) {
                     throw new IllegalMenuActionException("", "Die anzuzeigende Karte existiert nicht.", e);
                 }
-                // Erzeuge den privaten Raum, füge ihn der Welt hinzu, gebe dem erzeugenden Benutzer die Rolle des
-                // Rauminhabers und teleportiere ihn in den privaten Raum.
+                // Prüfe, ob bereits ein privater Raum mit diesem Namen existiert.
                 World world = user.getWorld();
-
                 if (world == null) {
                     throw new IllegalStateException("Users world is not available");
                 }
+                if (world.getPrivateRooms()
+                        .values().stream().anyMatch(room -> room.getContextName().equals(createRoomName))) {
+                    throw new IllegalMenuActionException("", "Es existiert bereits ein privater Raum mit diesem Namen.");
+                }
+
+                // Erzeuge den privaten Raum, füge ihn der Welt hinzu, gebe dem erzeugenden Benutzer die Rolle des
+                // Rauminhabers und teleportiere ihn in den privaten Raum.
 
                 Room privateRoom = new Room(createRoomName, world, map, password);
                 world.addPrivateRoom(privateRoom);
