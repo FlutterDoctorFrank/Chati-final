@@ -1,15 +1,16 @@
-package view2.component.world.objectMenu;
+package view2.component.world.interactableMenu;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import model.context.ContextID;
+import model.context.spatial.Menu;
 import model.context.spatial.Music;
 import view2.Assets;
 import view2.component.ChatiWindow;
 
 import java.util.EnumSet;
 
-public class MusicPlayerWindow extends ChatiWindow {
+public class MusicPlayerWindow extends InteractableWindow {
 
     private static final float WINDOW_WIDTH = 550;
     private static final float WINDOW_HEIGHT = 350;
@@ -18,8 +19,6 @@ public class MusicPlayerWindow extends ChatiWindow {
     private static final float VERTICAL_SPACING = 15;
     private static final float HORIZONTAL_SPACING = 15;
     private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
-
-    private ContextID contextId;
 
     private Label infoLabel;
     private Label musicSelectLabel;
@@ -30,8 +29,8 @@ public class MusicPlayerWindow extends ChatiWindow {
     private TextButton nextButton;
     private ProgressBar musicProgressBar;
 
-    public MusicPlayerWindow() {
-        super("Musik abspielen");
+    public MusicPlayerWindow(ContextID musicPlayerId) {
+        super("Jukebox", musicPlayerId, Menu.MUSIC_PLAYER_MENU);
     }
 
     @Override

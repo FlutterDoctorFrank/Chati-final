@@ -1,4 +1,4 @@
-package view2.component.world.objectMenu;
+package view2.component.world.interactableMenu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -9,11 +9,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import model.context.ContextID;
+import model.context.spatial.Menu;
 import view2.Assets;
 import view2.Chati;
 import view2.component.ChatiWindow;
 
-public class PortalWindow extends ChatiWindow {
+public class SeatWindow extends InteractableWindow {
 
     private static final float WINDOW_WIDTH = 550;
     private static final float WINDOW_HEIGHT = 350;
@@ -23,16 +24,13 @@ public class PortalWindow extends ChatiWindow {
     private static final float HORIZONTAL_SPACING = 15;
     private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
 
-    private final ContextID portalId;
-
     private Label infoLabel;
     private TextButton confirmButton;
     private TextButton cancelButton;
     private TextButton closeButton;
 
-    public PortalWindow(ContextID portalId) {
-        super("Raum verlassen");
-        this.portalId = portalId;
+    public SeatWindow(ContextID seatId) {
+        super("Hinsetzen", seatId, Menu.SEAT_MENU);
         create();
         setLayout();
     }
@@ -42,7 +40,7 @@ public class PortalWindow extends ChatiWindow {
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = new BitmapFont();
         style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
-        infoLabel = new Label("Möchtest du den Raum wirklich verlassen?", style);
+        infoLabel = new Label("Möchtest du hier Platz nehmen?", style);
 
         confirmButton = new TextButton("Ja", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
@@ -52,7 +50,7 @@ public class PortalWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, portalId, new String[0], 1);
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], 1);
             }
         });
 
@@ -64,7 +62,7 @@ public class PortalWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, portalId, new String[0], 0);
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], 0);
             }
         });
 
@@ -76,7 +74,7 @@ public class PortalWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, portalId, new String[0], 0);
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], 0);
             }
         });
     }

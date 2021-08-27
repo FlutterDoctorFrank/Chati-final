@@ -132,7 +132,6 @@ public class Area extends Context implements IArea {
      */
     public void addInteractable(@NotNull final Interactable interactable) {
         interactables.put(interactable.getContextId(), interactable);
-        addChild(interactable);
     }
 
     /**
@@ -176,7 +175,19 @@ public class Area extends Context implements IArea {
     public @NotNull Interactable getInteractable(@NotNull final ContextID interactableId) throws ContextNotFoundException {
         Interactable interactable = interactables.get(interactableId);
         if (interactable == null) {
-            throw new ContextNotFoundException("key", interactableId);
+            for (Area child : children.values()) {
+                try {
+                    interactable = child.getInteractable(interactableId);
+                } catch (ContextNotFoundException e) {
+                    // Nothing to do here
+                }
+                if (interactable != null) {
+                    return interactable;
+                }
+            }
+        }
+        if (interactable == null) {
+            throw new ContextNotFoundException("No interactable with this ID found.", interactableId);
         }
         return interactable;
     }

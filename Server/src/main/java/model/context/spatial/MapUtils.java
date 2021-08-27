@@ -139,26 +139,32 @@ public class MapUtils {
                 break;
             case "areaPlanner": // Erzeuge AreaPlanner.
                 AreaPlanner areaPlanner = new AreaPlanner(areaName, parent, communicationRegion, communicationMedia, expanse);
+                parent.addChild(areaPlanner);
                 parent.addInteractable(areaPlanner);
                 break;
             case "gameBoard": // Erzeuge GameBoard.
                 GameBoard gameBoard = new GameBoard(areaName, parent, communicationRegion, communicationMedia, expanse);
+                parent.addChild(gameBoard);
                 parent.addInteractable(gameBoard);
                 break;
             case "musicPlayer": // Erzeuge MusicPlayer.
                 MusicPlayer musicPlayer = new MusicPlayer(areaName, parent, communicationRegion, communicationMedia, expanse);
+                parent.addChild(musicPlayer);
                 parent.addInteractable(musicPlayer);
                 break;
             case "portal": // Erzeuge Portal.
                 Portal portal = new Portal(areaName, parent, communicationRegion, communicationMedia, expanse);
+                parent.addChild(portal);
                 parent.addInteractable(portal);
                 break;
             case "roomReception": // Erzeuge RoomReception.
                 RoomReception roomReception = new RoomReception(areaName, parent, communicationRegion, communicationMedia, expanse);
+                parent.addChild(roomReception);
                 parent.addInteractable(roomReception);
                 break;
             case "seat": // Erzeuge Seat.
                 Seat seat = new Seat(areaName, parent, communicationRegion, communicationMedia, expanse);
+                parent.addChild(seat);
                 parent.addInteractable(seat);
                 break;
             default: // Zu erzeugender Kontext existiert nicht.

@@ -234,14 +234,14 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void openMenu(ContextID contextId, Menu menu) {
         if (this.screen.equals(worldScreen)) {
-            // TODO
+            Gdx.app.postRunnable(() -> worldScreen.openMenu(contextId, menu));
         }
     }
 
     @Override
     public void closeMenu(ContextID contextId, Menu menu) {
         if (this.screen.equals(worldScreen)) {
-            // TODO
+            Gdx.app.postRunnable(() -> worldScreen.closeMenu(contextId, menu));
         }
     }
 

@@ -12,6 +12,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import model.context.ContextID;
+import model.context.spatial.Menu;
 import model.context.spatial.SpatialMap;
 import model.user.IUserView;
 import view2.Chati;
@@ -20,6 +22,7 @@ import view2.component.world.body.Border;
 import view2.component.world.body.InteractionObject;
 import view2.component.world.body.InternUserAvatar;
 import view2.component.world.body.UserAvatar;
+import view2.component.world.interactableMenu.*;
 
 import java.util.*;
 
@@ -42,6 +45,7 @@ public class WorldScreen extends AbstractScreen {
 
     private final Map<IUserView, UserAvatar> externUserAvatars;
     private InternUserAvatar internUserAvatar;
+    private InteractableWindow currentInteractableWindow;
 
     public WorldScreen() {
         this.worldInputProcessor = new WorldInputProcessor();
@@ -172,5 +176,40 @@ public class WorldScreen extends AbstractScreen {
                 iterator.remove();
             }
         }
+    }
+
+    public void openMenu(ContextID contextId, Menu menu) {
+        switch (menu) {
+            case ROOM_RECEPTION_MENU:
+                currentInteractableWindow = new RoomReceptionWindow(contextId);
+                break;
+            case MUSIC_PLAYER_MENU:
+                currentInteractableWindow = new MusicPlayerWindow(contextId);
+                break;
+            case AREA_PLANNER_MENU:
+                currentInteractableWindow = new AreaPlannerWindow(contextId);
+                break;
+            case GAME_BOARD_MENU:
+                currentInteractableWindow = new GameBoardWindow(contextId);
+                break;
+            case SEAT_MENU:
+                currentInteractableWindow = new SeatWindow(contextId);
+                break;
+            case PORTAL_MENU:
+                currentInteractableWindow = new PortalWindow(contextId);
+                break;
+            default:
+                throw new IllegalArgumentException("Tried to open an unsupported menu.");
+        }
+        stage.openWindow(currentInteractableWindow);
+    }
+
+    public void closeMenu(ContextID contextId, Menu menu) {
+        if (!currentInteractableWindow.getInteractableId().equals(contextId)
+            || currentInteractableWindow.getInteractableMenu() != menu) {
+            throw new IllegalArgumentException("Tried to close a menu that is not open.");
+        }
+        stage.closeWindow(currentInteractableWindow);
+        currentInteractableWindow = null;
     }
 }

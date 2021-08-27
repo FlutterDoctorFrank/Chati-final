@@ -1,4 +1,4 @@
-package view2.component.world.objectMenu;
+package view2.component.world.interactableMenu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -6,12 +6,13 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.context.ContextID;
+import model.context.spatial.Menu;
 import view2.Assets;
 import view2.component.ChatiTable;
 import view2.component.ChatiWindow;
 import view2.component.menu.ContextEntry;
 
-public class RoomReceptionWindow extends ChatiWindow {
+public class RoomReceptionWindow extends InteractableWindow {
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 500;
@@ -20,8 +21,6 @@ public class RoomReceptionWindow extends ChatiWindow {
     private static final float VERTICAL_SPACING = 15;
     private static final float HORIZONTAL_SPACING = 15;
     private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
-
-    private final ContextID roomReceptionId;
 
     private Label infoLabel;
 
@@ -33,9 +32,8 @@ public class RoomReceptionWindow extends ChatiWindow {
 
     private Table roomCreateTable;
 
-    protected RoomReceptionWindow(ContextID roomReceptionId) {
-        super("Raumrezeption");
-        this.roomReceptionId = roomReceptionId;
+    public RoomReceptionWindow(ContextID roomReceptionId) {
+        super("Raumrezeption", roomReceptionId, Menu.ROOM_RECEPTION_MENU);
         create();
         setLayout();
     }
