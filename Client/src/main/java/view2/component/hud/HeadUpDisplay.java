@@ -223,15 +223,13 @@ public class HeadUpDisplay extends Table {
         }
         chatButton.setChecked(true);
         chatButton.getStyle().imageUp = Assets.CHECKED_CHAT_ICON;
-        chatWindow.setVisible(true);
-        chatWindow.focus();
+        chatWindow.open();
     }
 
     public void hideChatWindow() {
         chatButton.setChecked(false);
         chatButton.getStyle().imageUp = Assets.CHAT_ICON;
-        chatWindow.setVisible(false);
-        getStage().unfocus(chatWindow);
+        chatWindow.close();
     }
 
     public boolean isChatOpen() {
@@ -267,8 +265,7 @@ public class HeadUpDisplay extends Table {
         userListButton.getStyle().imageUp = Assets.CHECKED_USER_ICON;
         notificationListButton.getStyle().imageUp = Assets.NOTIFICATION_ICON;
         settingsButton.getStyle().imageUp = Assets.SETTINGS_ICON;
-        currentMenuWindow = new UserListWindow();
-        Chati.CHATI.getScreen().getStage().addActor(currentMenuWindow);
+        (currentMenuWindow = new UserListWindow()).open();
     }
 
     public void openNotificationMenu() {
@@ -277,8 +274,7 @@ public class HeadUpDisplay extends Table {
         notificationListButton.getStyle().imageUp = Assets.CHECKED_NOTIFICATION_ICON;
         userListButton.getStyle().imageUp = Assets.USER_ICON;
         settingsButton.getStyle().imageUp = Assets.SETTINGS_ICON;
-        currentMenuWindow = new NotificationListWindow();
-        Chati.CHATI.getScreen().getStage().addActor(currentMenuWindow);
+        (currentMenuWindow = new NotificationListWindow()).open();
     }
 
     public void openSettingsMenu() {
@@ -287,8 +283,7 @@ public class HeadUpDisplay extends Table {
         settingsButton.getStyle().imageUp = Assets.CHECKED_SETTINGS_ICON;
         userListButton.getStyle().imageUp = Assets.USER_ICON;
         notificationListButton.getStyle().imageUp = Assets.NOTIFICATION_ICON;
-        currentMenuWindow = new SettingsWindow();
-        Chati.CHATI.getScreen().getStage().addActor(currentMenuWindow);
+        (currentMenuWindow = new SettingsWindow()).open();
     }
 
     public void closeCurrentMenu() {
@@ -301,7 +296,7 @@ public class HeadUpDisplay extends Table {
         userListButton.getStyle().imageUp = Assets.USER_ICON;
         notificationListButton.getStyle().imageUp = Assets.NOTIFICATION_ICON;
         settingsButton.getStyle().imageUp = Assets.SETTINGS_ICON;
-        currentMenuWindow.remove();
+        currentMenuWindow.close();
         currentMenuWindow = null;
     }
 
@@ -309,5 +304,7 @@ public class HeadUpDisplay extends Table {
         return chatWindow;
     }
 
-
+    public HudMenuWindow getCurrentMenuWindow() {
+        return currentMenuWindow;
+    }
 }

@@ -10,7 +10,6 @@ import model.user.IInternUserView;
 import model.user.IUserManagerView;
 import view2.Assets;
 import view2.Chati;
-import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuWindow;
 
 import java.util.Set;

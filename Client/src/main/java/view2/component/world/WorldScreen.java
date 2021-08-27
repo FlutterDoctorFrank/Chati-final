@@ -201,7 +201,7 @@ public class WorldScreen extends AbstractScreen {
             default:
                 throw new IllegalArgumentException("Tried to open an unsupported menu.");
         }
-        stage.openWindow(currentInteractableWindow);
+        currentInteractableWindow.open();
     }
 
     public void closeMenu(ContextID contextId, Menu menu) {

@@ -9,9 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import view2.Assets;
 import view2.Chati;
-import view2.component.ChatiWindow;
+import view2.component.AbstractWindow;
 
-public class WorldSettingsTable extends ChatiWindow {
+public class WorldSettingsWindow extends AbstractWindow {
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 350;
@@ -33,7 +33,7 @@ public class WorldSettingsTable extends ChatiWindow {
     private TextButton cancelButton;
     private TextButton closeButton;
 
-    public WorldSettingsTable() {
+    public WorldSettingsWindow() {
         super("Welteinstellungen");
         create();
         setLayout();
@@ -57,7 +57,7 @@ public class WorldSettingsTable extends ChatiWindow {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 CHANGED = true;
                 SHOW_NAME = showNameCheckBox.isChecked();
-                Chati.CHATI.getScreen().getStage().closeWindow(WorldSettingsTable.this);
+                close();
             }
         });
 
@@ -81,7 +81,7 @@ public class WorldSettingsTable extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getScreen().getStage().closeWindow(WorldSettingsTable.this);
+                close();
             }
         });
 
@@ -93,7 +93,7 @@ public class WorldSettingsTable extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getScreen().getStage().closeWindow(WorldSettingsTable.this);
+                close();
             }
         });
     }

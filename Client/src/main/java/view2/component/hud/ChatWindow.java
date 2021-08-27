@@ -15,14 +15,14 @@ import model.exception.UserNotFoundException;
 import model.user.IUserManagerView;
 import view2.Assets;
 import view2.Chati;
-import view2.component.ChatiWindow;
+import view2.component.AbstractWindow;
 import view2.component.KeyAction;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-public class ChatWindow extends ChatiWindow {
+public class ChatWindow extends AbstractWindow {
 
     private static final float DEFAULT_WIDTH = 650;
     private static final float DEFAULT_HEIGHT = 400;
@@ -31,8 +31,6 @@ public class ChatWindow extends ChatiWindow {
     private static final float SPACE = 5;
     private static final float SEND_BUTTON_WIDTH = 120;
     private static final float SEND_BUTTON_HEIGHT = 60;
-
-    private static ChatWindow chatWindow;
 
     private Table messageLabelContainer;
     private ScrollPane historyScrollPane;
@@ -133,6 +131,25 @@ public class ChatWindow extends ChatiWindow {
         getTitleTable().add(minimizeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }
 
+    @Override
+    public void open() {
+        setVisible(true);
+        // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
+        // Ende falls die Nachricht aus mehreren Zeilen besteht! Es hängt warscheinlich mit der Art und Weise zusammen
+        // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.
+        historyScrollPane.scrollTo(0, 0, 0, 0);
+        historyScrollPane.scrollTo(0, 0, 0, 0);
+
+        Chati.CHATI.getScreen().getStage().setKeyboardFocus(typeMessageArea);
+        Chati.CHATI.getScreen().getStage().setScrollFocus(typeMessageArea);
+    }
+
+    @Override
+    public void close() {
+        setVisible(false);
+        Chati.CHATI.getScreen().getStage().unfocus(this);
+    }
+
     private void resetMessageArea() {
         typeMessageArea.setText("Nachricht");
         typeMessageArea.getStyle().fontColor = Color.GRAY;
@@ -188,18 +205,6 @@ public class ChatWindow extends ChatiWindow {
     public void clearChat() {
         resetMessageArea();
         messageLabelContainer.clearChildren();
-    }
-
-    public void focus() {
-        if (getStage() != null) {
-            getStage().setScrollFocus(historyScrollPane);
-            getStage().setKeyboardFocus(typeMessageArea);
-        }
-        // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
-        // Ende falls die Nachricht aus mehreren Zeilen besteht! Es hängt warscheinlich mit der Art und Weise zusammen
-        // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.
-        historyScrollPane.scrollTo(0, 0, 0, 0);
-        historyScrollPane.scrollTo(0, 0, 0, 0);
     }
 
     private void showMessage(LocalDateTime timestamp, String message, Color messageColor) {

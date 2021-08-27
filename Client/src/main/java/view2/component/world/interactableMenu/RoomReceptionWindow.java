@@ -8,8 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.context.ContextID;
 import model.context.spatial.Menu;
 import view2.Assets;
-import view2.component.ChatiTable;
-import view2.component.ChatiWindow;
+import view2.component.AbstractTable;
 import view2.component.menu.ContextEntry;
 
 public class RoomReceptionWindow extends InteractableWindow {
@@ -57,7 +56,7 @@ public class RoomReceptionWindow extends InteractableWindow {
         add(new RoomSelectTable());
     }
 
-    private class RoomSelectTable extends ChatiTable {
+    private class RoomSelectTable extends AbstractTable {
 
         private Label roomSelectLabel;
         private SelectBox<ContextEntry> roomSelectBox;
@@ -99,7 +98,7 @@ public class RoomReceptionWindow extends InteractableWindow {
         }
     }
 
-    private static class RoomJoinTable extends ChatiTable {
+    private static class RoomJoinTable extends AbstractTable {
 
         private TextField passwordField;
         private TextButton acceptButton;
@@ -115,7 +114,7 @@ public class RoomReceptionWindow extends InteractableWindow {
         }
     }
 
-    private static class RoomCreateTable extends ChatiTable {
+    private static class RoomCreateTable extends AbstractTable {
 
         private TextField roomnameField;
         private TextField passwordField;

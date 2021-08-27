@@ -2,7 +2,6 @@ package view2.component.hud.settings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -15,9 +14,9 @@ import model.user.AdministrativeAction;
 import model.user.IUserView;
 import view2.Assets;
 import view2.Chati;
-import view2.component.ChatiWindow;
+import view2.component.AbstractWindow;
 
-public class AdministratorManageWindow extends ChatiWindow {
+public class AdministratorManageWindow extends AbstractWindow {
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 500;
@@ -170,7 +169,7 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getScreen().getStage().closeWindow(AdministratorManageWindow.this);
+                close();
             }
         });
 
@@ -182,7 +181,7 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getScreen().getStage().closeWindow(AdministratorManageWindow.this);
+                close();
             }
         });
     }

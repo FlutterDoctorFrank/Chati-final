@@ -6,7 +6,6 @@ import model.context.ContextID;
 import model.context.spatial.Menu;
 import model.context.spatial.Music;
 import view2.Assets;
-import view2.component.ChatiWindow;
 
 import java.util.EnumSet;
 

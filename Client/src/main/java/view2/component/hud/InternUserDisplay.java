@@ -1,6 +1,5 @@
 package view2.component.hud;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -10,11 +9,11 @@ import model.user.IInternUserView;
 import model.user.Status;
 import view2.Chati;
 import view2.Assets;
-import view2.component.ChatiTable;
-import view2.component.ChatiToolTip;
+import view2.component.AbstractTable;
+import view2.component.InformationToolTip;
 import view2.component.UserInfoContainer;
 
-public class InternUserDisplay extends HudMenuTable {
+public class InternUserDisplay extends AbstractTable {
 
     private static final float USER_INFO_ICON_SIZE = 22.5f;
     private static final float VERTICAL_SPACING = 5;
@@ -57,11 +56,11 @@ public class InternUserDisplay extends HudMenuTable {
                 if (statusSelectTable == null) {
                     statusSelectTable = new StatusSelectTable();
                     add(statusSelectTable).top().left().row();
-                    statusButton.getStyle().up = HudMenuTable.PRESSED_BUTTON_IMAGE;
+                    statusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
                 } else {
                     statusSelectTable.remove();
                     statusSelectTable = null;
-                    statusButton.getStyle().up = HudMenuTable.UNPRESSED_BUTTON_IMAGE;
+                    statusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
                 }
             }
         });
@@ -94,18 +93,18 @@ public class InternUserDisplay extends HudMenuTable {
         switch (internUser.getStatus()) {
             case ONLINE:
                 statusImage.setDrawable(Assets.ONLINE_ICON);
-                statusImage.addListener(new ChatiToolTip("Online"));
+                statusImage.addListener(new InformationToolTip("Online"));
                 break;
             case AWAY:
                 statusImage.setDrawable(Assets.AWAY_ICON);
-                statusImage.addListener(new ChatiToolTip("Abwesend"));
+                statusImage.addListener(new InformationToolTip("Abwesend"));
                 break;
             default:
                 throw new IllegalArgumentException("There is no icon for this user status.");
         }
     }
 
-    private static class StatusSelectTable extends ChatiTable {
+    private static class StatusSelectTable extends AbstractTable {
 
         ButtonGroup<TextButton> statusButtonGroup;
         private Image onlineStatusImage;
@@ -133,10 +132,10 @@ public class InternUserDisplay extends HudMenuTable {
             offlineStatusImage = new Image(Assets.OFFLINE_ICON);
 
             onlineStatusButton = new TextButton("", Assets.getNewSkin());
-            onlineStatusButton.addListener(new ChatiToolTip("Online"));
+            onlineStatusButton.addListener(new InformationToolTip("Online"));
             if (internUser.getStatus() == Status.ONLINE || internUser.getStatus() == Status.AWAY) {
                 onlineStatusButton.setChecked(true);
-                onlineStatusButton.getStyle().up = PRESSED_BUTTON_IMAGE;
+                onlineStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
             }
             onlineStatusButton.addListener(new ClickListener() {
                 @Override
@@ -145,14 +144,14 @@ public class InternUserDisplay extends HudMenuTable {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    onlineStatusButton.getStyle().up = PRESSED_BUTTON_IMAGE;
-                    busyStatusButton.getStyle().up = UNPRESSED_BUTTON_IMAGE;
-                    offlineStatusButton.getStyle().up = UNPRESSED_BUTTON_IMAGE;
+                    onlineStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
+                    busyStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
+                    offlineStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
                 }
             });
 
             busyStatusButton = new TextButton("", Assets.getNewSkin());
-            busyStatusButton.addListener(new ChatiToolTip("Beschäftigt"));
+            busyStatusButton.addListener(new InformationToolTip("Beschäftigt"));
             /*
             if (internUser.getStatus() == Status.BUSY) {
                 busyStatusButton.setChecked(true);
@@ -168,14 +167,14 @@ public class InternUserDisplay extends HudMenuTable {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    onlineStatusButton.getStyle().up = UNPRESSED_BUTTON_IMAGE;
-                    busyStatusButton.getStyle().up = PRESSED_BUTTON_IMAGE;
-                    offlineStatusButton.getStyle().up = UNPRESSED_BUTTON_IMAGE;
+                    onlineStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
+                    busyStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
+                    offlineStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
                 }
             });
 
             offlineStatusButton = new TextButton("", Assets.getNewSkin());
-            offlineStatusButton.addListener(new ChatiToolTip("Unsichtbar"));
+            offlineStatusButton.addListener(new InformationToolTip("Unsichtbar"));
             /*
             if (internUser.getStatus() == Status.INVISIBLE) {
                 offlineStatusButton.setChecked(true);
@@ -191,9 +190,9 @@ public class InternUserDisplay extends HudMenuTable {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    onlineStatusButton.getStyle().up = UNPRESSED_BUTTON_IMAGE;
-                    busyStatusButton.getStyle().up = UNPRESSED_BUTTON_IMAGE;
-                    offlineStatusButton.getStyle().up = PRESSED_BUTTON_IMAGE;
+                    onlineStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
+                    busyStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
+                    offlineStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
                 }
             });
 

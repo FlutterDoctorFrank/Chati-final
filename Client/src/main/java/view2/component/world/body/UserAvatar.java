@@ -11,7 +11,7 @@ import model.user.IUserView;
 import view2.Assets;
 import view2.Chati;
 import view2.component.UserInfoContainer;
-import view2.component.hud.settings.WorldSettingsTable;
+import view2.component.hud.settings.WorldSettingsWindow;
 import view2.component.world.WorldCamera;
 import view2.component.world.WorldScreen;
 
@@ -74,7 +74,7 @@ public class UserAvatar extends Sprite {
         //InteractButtonAnimation animation = new InteractButtonAnimation();
         //animation.draw(batch);
         if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isShowNamesPressed()
-            || WorldSettingsTable.SHOW_NAME) {
+            || WorldSettingsWindow.SHOW_NAME) {
             userInfoContainer.setPosition(body.getPosition().x, body.getPosition().y + getHeight());
             userInfoContainer.setScale(1 / WorldCamera.PPM * Chati.CHATI.getWorldScreen().getCamera().zoom);
             userInfoContainer.act(delta);

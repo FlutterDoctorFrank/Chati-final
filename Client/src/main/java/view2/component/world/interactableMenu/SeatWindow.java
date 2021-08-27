@@ -12,7 +12,6 @@ import model.context.ContextID;
 import model.context.spatial.Menu;
 import view2.Assets;
 import view2.Chati;
-import view2.component.ChatiWindow;
 
 public class SeatWindow extends InteractableWindow {
 
@@ -62,7 +61,7 @@ public class SeatWindow extends InteractableWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], 0);
+                close();
             }
         });
 
@@ -74,7 +73,7 @@ public class SeatWindow extends InteractableWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], 0);
+                close();
             }
         });
     }

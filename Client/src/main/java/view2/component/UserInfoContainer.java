@@ -62,29 +62,29 @@ public class UserInfoContainer extends Table {
         } else if (user.hasRole(Role.OWNER)) {
             usernameLabel.setColor(Color.GOLD);
             Image ownerImage = new Image(Assets.OWNER_ICON);
-            ownerImage.addListener(new ChatiToolTip("Besitzer"));
+            ownerImage.addListener(new InformationToolTip("Besitzer"));
             roleIcons.add(ownerImage);
         } else if (user.hasRole(Role.ADMINISTRATOR)) {
             usernameLabel.setColor(Color.SKY);
             Image administratorImage = new Image(Assets.ADMINISTRATOR_ICON);
-            administratorImage.addListener(new ChatiToolTip("Administrator"));
+            administratorImage.addListener(new InformationToolTip("Administrator"));
             roleIcons.add(administratorImage);
         } else if (user.hasRole(Role.MODERATOR)) {
             usernameLabel.setColor(Color.ORANGE);
             Image moderatorImage = new Image(Assets.MODERATOR_ICON);
-            moderatorImage.addListener(new ChatiToolTip("Moderator"));
+            moderatorImage.addListener(new InformationToolTip("Moderator"));
             roleIcons.add(moderatorImage);
         } else {
             usernameLabel.setColor(Color.WHITE);
         }
         if (user.hasRole(Role.ROOM_OWNER)) {
             Image roomOwnerImage = new Image(Assets.ROOM_OWNER_ICON);
-            roomOwnerImage.addListener(new ChatiToolTip("Raumbesitzer"));
+            roomOwnerImage.addListener(new InformationToolTip("Raumbesitzer"));
             roleIcons.add(roomOwnerImage);
         }
         if (user.hasRole(Role.AREA_MANAGER)) {
             Image areaManagerImage = new Image(Assets.AREA_MANAGER_ICON);
-            areaManagerImage.addListener(new ChatiToolTip("Bereichsberechtigter"));
+            areaManagerImage.addListener(new InformationToolTip("Bereichsberechtigter"));
             roleIcons.add(areaManagerImage);
         }
 

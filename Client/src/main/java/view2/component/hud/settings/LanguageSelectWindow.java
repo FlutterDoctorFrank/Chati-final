@@ -9,9 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import view2.Assets;
 import view2.Chati;
-import view2.component.ChatiWindow;
+import view2.component.AbstractWindow;
 
-public class LanguageSelectWindow extends ChatiWindow {
+public class LanguageSelectWindow extends AbstractWindow {
 
     private static final float WINDOW_WIDTH = 550;
     private static final float WINDOW_HEIGHT = 350;
@@ -48,7 +48,7 @@ public class LanguageSelectWindow extends ChatiWindow {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 // Das kommt noch
-                Chati.CHATI.getScreen().getStage().closeWindow(LanguageSelectWindow.this);
+                close();
             }
         });
 
@@ -60,7 +60,7 @@ public class LanguageSelectWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getScreen().getStage().closeWindow(LanguageSelectWindow.this);
+                close();
             }
         });
 
@@ -72,7 +72,7 @@ public class LanguageSelectWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                remove();
+                close();
             }
         });
     }

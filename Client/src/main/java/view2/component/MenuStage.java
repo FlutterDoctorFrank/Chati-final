@@ -13,7 +13,7 @@ import java.util.Stack;
 
 public class MenuStage extends Stage {
 
-    private final Stack<Window> openWindows;
+    private final Stack<AbstractWindow> openWindows;
 
     public MenuStage() {
         super(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()), Chati.SPRITE_BATCH);
@@ -53,7 +53,7 @@ public class MenuStage extends Stage {
         if (KeyAction.getAction(keycode) == KeyAction.CLOSE) {
             setKeyboardFocus(null);
             if (!openWindows.isEmpty()) {
-                closeWindow();
+                openWindows.peek().close();
             } else if (HeadUpDisplay.getInstance().isChatOpen()) {
                 HeadUpDisplay.getInstance().hideChatWindow();
             } else if (HeadUpDisplay.getInstance().isMenuOpen()) {
@@ -80,20 +80,13 @@ public class MenuStage extends Stage {
         return super.touchDown(screenX, screenY, pointer, button);
     }
 
-    public void openWindow(Window window) {
+    public void openWindow(AbstractWindow window) {
         openWindows.push(window);
         addActor(window);
     }
 
-    public void closeWindow(Window window) {
+    public void closeWindow(AbstractWindow window) {
         if (openWindows.remove(window)) {
-            window.remove();
-        }
-    }
-
-    public void closeWindow() {
-        Window window = openWindows.pop();
-        if (window != null) {
             window.remove();
         }
     }

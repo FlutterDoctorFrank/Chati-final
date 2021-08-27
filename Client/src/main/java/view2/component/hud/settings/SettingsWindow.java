@@ -10,7 +10,6 @@ import model.role.Permission;
 import model.user.IInternUserView;
 import view2.Assets;
 import view2.Chati;
-import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuWindow;
 import view2.component.menu.table.LoginTable;
 import view2.component.menu.table.StartTable;
@@ -72,7 +71,7 @@ public class SettingsWindow extends HudMenuWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getScreen().getStage().openWindow(new LanguageSelectWindow());
+                new LanguageSelectWindow().open();
             }
         });
 
@@ -84,7 +83,7 @@ public class SettingsWindow extends HudMenuWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getScreen().getStage().openWindow(new VolumeChangeWindow());
+                new VolumeChangeWindow().open();
             }
         });
 
@@ -96,7 +95,7 @@ public class SettingsWindow extends HudMenuWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getScreen().getStage().openWindow(new WorldSettingsTable());
+                new WorldSettingsWindow().open();
             }
         });
 
@@ -111,7 +110,7 @@ public class SettingsWindow extends HudMenuWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getScreen().getStage().openWindow(new AdministratorManageWindow());
+                new AdministratorManageWindow().open();
             }
         });
 

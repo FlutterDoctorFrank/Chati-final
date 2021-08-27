@@ -5,10 +5,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import controller.network.ServerSender;
 import view2.Assets;
-import view2.component.ChatiWindow;
+import view2.Chati;
+import view2.component.AbstractWindow;
 
-public abstract class HudMenuWindow extends ChatiWindow {
+public abstract class HudMenuWindow extends AbstractWindow {
 
     private static final float HUD_WINDOW_WIDTH = 450;
     private static final float HUD_WINDOW_HEIGHT = 600;
@@ -48,5 +50,15 @@ public abstract class HudMenuWindow extends ChatiWindow {
         button.setChecked(false);
         button.getLabel().setColor(Color.WHITE);
         button.getStyle().up = UNPRESSED_BUTTON_IMAGE;
+    }
+
+    @Override
+    public void open() {
+        Chati.CHATI.getScreen().getStage().addActor(this);
+    }
+
+    @Override
+    public void close() {
+        remove();
     }
 }

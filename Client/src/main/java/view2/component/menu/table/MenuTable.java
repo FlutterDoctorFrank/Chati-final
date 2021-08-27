@@ -3,9 +3,9 @@ package view2.component.menu.table;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
 import view2.Assets;
-import view2.component.ChatiTable;
+import view2.component.AbstractTable;
 
-public abstract class MenuTable extends ChatiTable {
+public abstract class MenuTable extends AbstractTable {
 
     protected static final float ROW_WIDTH = 600;
     protected static final float ROW_HEIGHT = 60;
