@@ -244,7 +244,7 @@ public class RoomReceptionWindow extends InteractableWindow {
             mapSelectBox = new SelectBox<>(Assets.SKIN);
             mapSelectBox.setItems(EnumSet.allOf(SpatialMap.class)
                     .stream().filter(Predicate.not(SpatialMap::isPublicRoomMap)).toArray(SpatialMap[]::new));
-//test
+
             confirmButton = new TextButton("Bestätigen", Assets.SKIN);
             confirmButton.addListener(new ClickListener() {
                 @Override
