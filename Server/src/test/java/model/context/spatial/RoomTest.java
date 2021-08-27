@@ -80,6 +80,8 @@ public class RoomTest {
         deleteData("USER_RESERVATION");
         deleteData("ROLE_WITH_CONTEXT");
         deleteData("NOTIFICATION");
+        this.userAccountManager.load();
+        this.globalContext.load();
 
     }
 
@@ -109,12 +111,11 @@ public class RoomTest {
             World test_world = this.globalContext.getWorld(test_world_id);
 
             // Erstelle ein Raum
-            Room test_proom = new Room("test_room", test_world, SpatialMap.PUBLIC_ROOM_MAP, "11111");
+            Room test_proom = new Room("testa_room", test_world, SpatialMap.PRIVATE_ROOM_MAP, "11111");
             test_world.addPrivateRoom(test_proom);
             Assert.assertTrue(test_proom.isPrivate());
 
             // addUser
-            Thread.sleep(1500);
             privateRoomTester.joinWorld(test_world_id);
             test_proom.addUser(privateRoomTester);
 
@@ -144,14 +145,14 @@ public class RoomTest {
             World test_world = this.globalContext.getWorld(test_world_id);
 
             // Erstelle ein Raum
-            Room test_proom = new Room("test_room", test_world, SpatialMap.PUBLIC_ROOM_MAP, "11111");
+            Room test_proom = new Room("testr_room", test_world, SpatialMap.PRIVATE_ROOM_MAP, "11111");
             test_world.addPrivateRoom(test_proom);
-            privateRoomTester.addRole(test_proom, Role.ROOM_OWNER);
+
 
             // addUser
-            Thread.sleep(1500);
             privateRoomTester.joinWorld(test_world_id);
             test_proom.addUser(privateRoomTester);
+            privateRoomTester.addRole(test_proom, Role.ROOM_OWNER);
             Assert.assertEquals(1, test_proom.getUsers().size());
 
             // Der einzige Benutzer geht raus und dann dieses Raum wird geloescht

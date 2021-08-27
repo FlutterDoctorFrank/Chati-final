@@ -5,10 +5,7 @@ import model.MessageBundle;
 import model.context.global.GlobalContext;
 import model.user.User;
 import model.user.account.UserAccountManager;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,19 +16,13 @@ public class FriendRequestTest {
     FriendRequest test_fr;
     User sender;
     User receiver;
+    UserAccountManager userAccountManager;
     private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
 
     @Before
     public void setUp() {
         try {
-            UserAccountManager.getInstance().registerUser("fr_sender", "11111");
-            this.sender = UserAccountManager.getInstance().getUser("fr_sender");
-            UserAccountManager.getInstance().registerUser("fr_receiver", "22222");
-            this.receiver = UserAccountManager.getInstance().getUser("fr_receiver");
-            this.test_fr = new FriendRequest(this.receiver, "hallo", this.sender);
-            if (!this.receiver.getGlobalNotifications().values().contains(test_fr)) {
-                this.receiver.addNotification(this.test_fr);
-            }
+            this.userAccountManager = UserAccountManager.getInstance();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,17 +51,8 @@ public class FriendRequestTest {
         deleteData("USER_RESERVATION");
         deleteData("ROLE_WITH_CONTEXT");
         deleteData("NOTIFICATION");
+        this.userAccountManager.load();
 
-        try {
-            if (UserAccountManager.getInstance().isRegistered("fr_sender")) {
-                UserAccountManager.getInstance().deleteUser(this.sender);
-            }
-            if (UserAccountManager.getInstance().isRegistered("fr_receiver")) {
-                UserAccountManager.getInstance().deleteUser(this.receiver);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
 
     }
@@ -78,6 +60,14 @@ public class FriendRequestTest {
     @Test
     public void normalAcceptTest() {
         try {
+            this.userAccountManager.registerUser("frn_sender", "11111");
+            sender = UserAccountManager.getInstance().getUser("frn_sender");
+            this.userAccountManager.registerUser("frn_receiver", "22222");
+            receiver = UserAccountManager.getInstance().getUser("frn_receiver");
+            test_fr = new FriendRequest(receiver, "hallo", sender);
+            if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
+                receiver.addNotification(test_fr);
+            }
             Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
             Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
 
@@ -88,6 +78,7 @@ public class FriendRequestTest {
             Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
 
         } catch (Exception e) {
+            e.printStackTrace();
 
         }
 
@@ -97,6 +88,14 @@ public class FriendRequestTest {
     @Test
     public void uselessAcceptTest() {
         try {
+            this.userAccountManager.registerUser("fru_sender", "11111");
+            sender = UserAccountManager.getInstance().getUser("fru_sender");
+            this.userAccountManager.registerUser("fru_receiver", "22222");
+            receiver = UserAccountManager.getInstance().getUser("fru_receiver");
+            test_fr = new FriendRequest(receiver, "hallo", sender);
+            if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
+                receiver.addNotification(test_fr);
+            }
             Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
             Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
 
@@ -107,6 +106,7 @@ public class FriendRequestTest {
             Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
 
         } catch (Exception e) {
+            e.printStackTrace();
 
         }
 
@@ -116,6 +116,16 @@ public class FriendRequestTest {
     @Test
     public void ignoredAcceptTest() {
         try {
+            this.userAccountManager.registerUser("fri_sender", "11111");
+
+            sender = UserAccountManager.getInstance().getUser("fri_sender");
+            this.userAccountManager.registerUser("fri_receiver", "22222");
+
+            receiver = UserAccountManager.getInstance().getUser("fri_receiver");
+            test_fr = new FriendRequest(receiver, "hallo", sender);
+            if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
+                receiver.addNotification(test_fr);
+            }
             Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
             Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
 
@@ -126,6 +136,7 @@ public class FriendRequestTest {
             Assert.assertFalse(this.sender.getFriends().values().contains(this.receiver));
 
         } catch (Exception e) {
+            e.printStackTrace();
 
         }
 
@@ -135,6 +146,16 @@ public class FriendRequestTest {
     @Test
     public void notExistSenderAcceptTest() {
         try {
+            this.userAccountManager.registerUser("frne_sender", "11111");
+
+            sender = UserAccountManager.getInstance().getUser("frne_sender");
+            this.userAccountManager.registerUser("frne_receiver", "22222");
+
+            receiver = UserAccountManager.getInstance().getUser("frne_receiver");
+            test_fr = new FriendRequest(receiver, "hallo", sender);
+            if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
+                receiver.addNotification(test_fr);
+            }
             Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
             Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
 
@@ -145,6 +166,7 @@ public class FriendRequestTest {
             Assert.assertFalse(this.sender.getFriends().values().contains(this.receiver));
 
         } catch (Exception e) {
+            e.printStackTrace();
 
         }
 
@@ -153,6 +175,16 @@ public class FriendRequestTest {
     @Test
     public void normalDeclineTest() {
         try {
+            this.userAccountManager.registerUser("frnd_sender", "11111");
+
+            sender = UserAccountManager.getInstance().getUser("frnd_sender");
+            this.userAccountManager.registerUser("frnd_receiver", "22222");
+
+            receiver = UserAccountManager.getInstance().getUser("frnd_receiver");
+            test_fr = new FriendRequest(receiver, "hallo", sender);
+            if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
+                receiver.addNotification(test_fr);
+            }
             Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
             Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
 
@@ -163,6 +195,7 @@ public class FriendRequestTest {
             Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
 
         } catch (Exception e) {
+            e.printStackTrace();
 
         }
 
@@ -172,6 +205,16 @@ public class FriendRequestTest {
     @Test
     public void uselessDeclineTest() {
         try {
+            this.userAccountManager.registerUser("frud_sender", "11111");
+
+            sender = UserAccountManager.getInstance().getUser("frud_sender");
+            this.userAccountManager.registerUser("frud_receiver", "22222");
+
+            receiver = UserAccountManager.getInstance().getUser("frud_receiver");
+            test_fr = new FriendRequest(receiver, "hallo", sender);
+            if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
+                receiver.addNotification(test_fr);
+            }
             Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
             Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
 
@@ -184,6 +227,7 @@ public class FriendRequestTest {
             Assert.assertTrue(this.sender.getFriends().values().contains(this.receiver));
 
         } catch (Exception e) {
+            e.printStackTrace();
 
         }
 
@@ -193,6 +237,16 @@ public class FriendRequestTest {
     @Test
     public void notExistSenderDeclineTest() {
         try {
+            this.userAccountManager.registerUser("frned_sender", "11111");
+
+            sender = UserAccountManager.getInstance().getUser("frned_sender");
+            this.userAccountManager.registerUser("frned_receiver", "22222");
+
+            receiver = UserAccountManager.getInstance().getUser("frned_receiver");
+            test_fr = new FriendRequest(receiver, "hallo", sender);
+            if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
+                receiver.addNotification(test_fr);
+            }
             Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
             Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
 
