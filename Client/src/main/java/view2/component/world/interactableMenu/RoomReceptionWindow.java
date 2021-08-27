@@ -19,6 +19,7 @@ import view2.component.menu.ContextEntry;
 import view2.component.menu.table.MenuTable;
 
 import java.util.EnumSet;
+import java.util.function.Predicate;
 
 public class RoomReceptionWindow extends InteractableWindow {
 
@@ -241,7 +242,8 @@ public class RoomReceptionWindow extends InteractableWindow {
 
             mapSelectLabel = new Label("Karte: ", Assets.SKIN);
             mapSelectBox = new SelectBox<>(Assets.SKIN);
-            mapSelectBox.setItems(EnumSet.allOf(SpatialMap.class).toArray(new SpatialMap[0]));
+            mapSelectBox.setItems(EnumSet.allOf(SpatialMap.class)
+                    .stream().filter(Predicate.not(SpatialMap::isPublicRoomMap)).toArray(SpatialMap[]::new));
 
             confirmButton = new TextButton("Bestätigen", Assets.SKIN);
             confirmButton.addListener(new ClickListener() {

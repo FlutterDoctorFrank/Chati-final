@@ -62,6 +62,9 @@ public class RoomReception extends Interactable {
         user.setCurrentInteractable(this);
         user.setMovable(false);
         user.send(SendAction.OPEN_MENU, this);
+
+        // Sende die Liste aller privaten Räume an den Benutzer.
+        user.send(SendAction.CONTEXT_LIST, world);
     }
 
     @Override

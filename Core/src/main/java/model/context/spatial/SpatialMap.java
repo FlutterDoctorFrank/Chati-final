@@ -9,17 +9,19 @@ import org.jetbrains.annotations.NotNull;
 public enum SpatialMap implements Resource {
 
     //DEFAULT_WORLD("Standardwelt", "worlds/default-world"),
-    PUBLIC_ROOM_MAP("Public Room", "publicRoomMap/publicRoom"),
-    PRIVATE_ROOM_MAP("Private Room", "privateRoomMap/privateRoom");
+    PUBLIC_ROOM_MAP("Public Room", "publicRoomMap/publicRoom", true),
+    PRIVATE_ROOM_MAP("Private Room", "privateRoomMap/privateRoom", false);
 
     private static final String MAPS_PATH = "maps/";
 
     private final String name;
     private final String path;
+    private final boolean publicRoomMap;
 
-    SpatialMap(@NotNull final String name, @NotNull final String path) {
+    SpatialMap(@NotNull final String name, @NotNull final String path, final boolean publicRoomMap) {
         this.name = name;
         this.path = MAPS_PATH + path + ".tmx";
+        this.publicRoomMap = publicRoomMap;
     }
 
     @Override
@@ -30,5 +32,9 @@ public enum SpatialMap implements Resource {
     @Override
     public @NotNull String getPath() {
         return this.path;
+    }
+
+    public boolean isPublicRoomMap() {
+        return publicRoomMap;
     }
 }

@@ -12,6 +12,7 @@ import view2.Assets;
 import view2.Chati;
 import view2.component.Response;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 
 public class WorldCreateTable extends MenuTable {
@@ -28,7 +29,8 @@ public class WorldCreateTable extends MenuTable {
 
         mapSelectLabel = new Label("Karte: ", Assets.SKIN);
         mapSelectBox = new SelectBox<>(Assets.SKIN);
-        mapSelectBox.setItems(EnumSet.allOf(SpatialMap.class).toArray(new SpatialMap[0]));
+        mapSelectBox.setItems(EnumSet.allOf(SpatialMap.class)
+                .stream().filter(SpatialMap::isPublicRoomMap).toArray(SpatialMap[]::new));
 
         worldNameField = new TextField("Name der Welt", Assets.getNewSkin());
         worldNameField.getStyle().fontColor = Color.GRAY;
