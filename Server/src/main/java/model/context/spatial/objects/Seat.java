@@ -9,6 +9,7 @@ import model.context.spatial.Area;
 import model.context.spatial.Expanse;
 import model.context.spatial.Menu;
 import model.exception.IllegalInteractionException;
+import model.exception.IllegalMenuActionException;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
 import java.util.Set;
@@ -18,6 +19,9 @@ import java.util.Set;
  * Benutzern kommunizieren kann. Hat immer den Typ {@link model.context.spatial.SpatialContextType#OBJECT}.
  */
 public class Seat extends Interactable {
+
+    /** Menü-Option, um den Benutzer auf den Platz zu setzen. */
+    private static final int MENU_OPTION_SIT = 1;
 
     /**
      * Erzeugt eines neue Instanz des Seat.
@@ -60,27 +64,20 @@ public class Seat extends Interactable {
 
     @Override
     public void executeMenuOption(@NotNull final User user, final int menuOption,
-                                  @NotNull final String[] args) throws IllegalInteractionException {
-        throwIfUserNotAvailable(user);
+                                  @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
+        super.executeMenuOption(user, menuOption, args);
 
-        switch (menuOption) {
-            case 0: // Schließe das Menü beim Benutzer.
-                user.setCurrentInteractable(null);
+        if (menuOption == MENU_OPTION_SIT) { // Bewege den Benutzer auf den Platz.
+            user.send(ClientSender.SendAction.CLOSE_MENU, this);
+            try {
                 user.setMovable(true);
-                user.send(ClientSender.SendAction.CLOSE_MENU, this);
-                break;
-            case 1: // Bewege den Benutzer auf den Platz.
-                user.send(ClientSender.SendAction.CLOSE_MENU, this);
-                try {
-                    user.setMovable(true);
-                    user.move(expanse.getBottomLeft().getPosX(), expanse.getBottomLeft().getPosY(), false);
-                    user.setMovable(false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            default:
-                throw new IllegalInteractionException("No valid menu option", user);
+                user.move(expanse.getBottomLeft().getPosX(), expanse.getBottomLeft().getPosY(), false);
+                user.setMovable(false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            throw new IllegalInteractionException("No valid menu option", user);
         }
     }
 }

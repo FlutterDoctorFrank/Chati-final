@@ -5,8 +5,11 @@ import model.context.ContextID;
 import model.context.spatial.Menu;
 import view2.Chati;
 import view2.component.AbstractWindow;
+import view2.component.Response;
 
 public abstract class InteractableWindow extends AbstractWindow {
+
+    protected static final int MENU_OPTION_CLOSE = 0;
 
     protected final ContextID interactableId;
     protected final Menu interactableMenu;
@@ -25,8 +28,12 @@ public abstract class InteractableWindow extends AbstractWindow {
         return interactableMenu;
     }
 
+    public abstract void showResponse(boolean success, String messageKey);
+
     @Override
     public void close() {
-        Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], 0);
+        Chati.CHATI.getWorldScreen().setPendingResponse(Response.CLOSE_MENU);
+        Chati.CHATI.getServerSender()
+                .send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_CLOSE);
     }
 }

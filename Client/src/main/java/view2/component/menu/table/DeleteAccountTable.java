@@ -12,8 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import view2.Assets;
 import view2.Chati;
-import view2.component.menu.MenuResponse;
-import view2.component.menu.MenuScreen;
+import view2.component.Response;
 
 public class DeleteAccountTable extends MenuTable {
 
@@ -140,7 +139,7 @@ public class DeleteAccountTable extends MenuTable {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    Chati.CHATI.getMenuScreen().setPendingResponse(MenuResponse.DELETE_ACCOUNT);
+                    Chati.CHATI.getMenuScreen().setPendingResponse(Response.DELETE_ACCOUNT);
                     Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_LOGOUT,
                             passwordField.getText(), true);
                 }

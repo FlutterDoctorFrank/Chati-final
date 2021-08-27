@@ -11,8 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import view2.Assets;
 import view2.Chati;
-import view2.component.menu.MenuResponse;
-import view2.component.menu.MenuScreen;
+import view2.component.Response;
 
 public class ChangePasswordTable extends MenuTable {
 
@@ -105,7 +104,7 @@ public class ChangePasswordTable extends MenuTable {
                     resetConfirmNewPasswordField();
                     return;
                 }
-                Chati.CHATI.getMenuScreen().setPendingResponse(MenuResponse.PASSWORD_CHANGE);
+                Chati.CHATI.getMenuScreen().setPendingResponse(Response.PASSWORD_CHANGE);
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE,
                     passwordField.getText(), newPasswordField.getText());
             }

@@ -8,8 +8,7 @@ import controller.network.ServerSender;
 import view2.Assets;
 import view2.Chati;
 import view2.component.menu.ContextEntry;
-import view2.component.menu.MenuResponse;
-import view2.component.menu.MenuScreen;
+import view2.component.Response;
 
 public class StartTable extends MenuTable {
 
@@ -50,7 +49,7 @@ public class StartTable extends MenuTable {
                     infoLabel.setText("Bitte wähle eine Welt aus!");
                     return;
                 }
-                Chati.CHATI.getMenuScreen().setPendingResponse(MenuResponse.JOIN_WORLD);
+                Chati.CHATI.getMenuScreen().setPendingResponse(Response.JOIN_WORLD);
                 Chati.CHATI.getServerSender()
                     .send(ServerSender.SendAction.WORLD_ACTION, worldSelectBox.getSelected().getContextId(), true);
             }
@@ -80,7 +79,7 @@ public class StartTable extends MenuTable {
                     infoLabel.setText("Bitte wähle eine Welt aus!");
                     return;
                 }
-                Chati.CHATI.getMenuScreen().setPendingResponse(MenuResponse.DELETE_WORLD);
+                Chati.CHATI.getMenuScreen().setPendingResponse(Response.DELETE_WORLD);
                 Chati.CHATI.getServerSender()
                         .send(ServerSender.SendAction.WORLD_DELETE, worldSelectBox.getSelected().getContextId());
             }

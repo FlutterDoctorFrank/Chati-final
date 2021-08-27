@@ -18,6 +18,8 @@ import model.context.spatial.SpatialMap;
 import model.user.IUserView;
 import view2.Chati;
 import view2.component.AbstractScreen;
+import view2.component.Response;
+import view2.component.menu.ContextEntry;
 import view2.component.world.body.Border;
 import view2.component.world.body.InteractionObject;
 import view2.component.world.body.InternUserAvatar;
@@ -47,9 +49,12 @@ public class WorldScreen extends AbstractScreen {
     private InternUserAvatar internUserAvatar;
     private InteractableWindow currentInteractableWindow;
 
+    private final Set<ContextEntry> privateRooms;
+
     public WorldScreen() {
         this.worldInputProcessor = new WorldInputProcessor();
         this.externUserAvatars = new HashMap<>();
+        this.privateRooms = new HashSet<>();
         this.camera = new WorldCamera();
         this.viewport = new FitViewport(Gdx.graphics.getWidth() / WorldCamera.PPM, Gdx.graphics.getHeight() / WorldCamera.PPM, camera);
         this.tiledMapRenderer = new OrthogonalTiledMapRenderer(null, 1 / WorldCamera.PPM);
@@ -179,6 +184,9 @@ public class WorldScreen extends AbstractScreen {
     }
 
     public void openMenu(ContextID contextId, Menu menu) {
+        if (pendingResponse == Response.INTERACT) {
+            return;
+        }
         switch (menu) {
             case ROOM_RECEPTION_MENU:
                 currentInteractableWindow = new RoomReceptionWindow(contextId);
@@ -205,11 +213,38 @@ public class WorldScreen extends AbstractScreen {
     }
 
     public void closeMenu(ContextID contextId, Menu menu) {
-        if (!currentInteractableWindow.getInteractableId().equals(contextId)
-            || currentInteractableWindow.getInteractableMenu() != menu) {
+        if (pendingResponse != Response.CLOSE_MENU) {
+            return;
+        }
+        if (currentInteractableWindow != null && (!currentInteractableWindow.getInteractableId().equals(contextId)
+            || currentInteractableWindow.getInteractableMenu() != menu)) {
             throw new IllegalArgumentException("Tried to close a menu that is not open.");
         }
         stage.closeWindow(currentInteractableWindow);
         currentInteractableWindow = null;
+    }
+
+    public void menuActionResponse(boolean success, String messageKey) {
+        if (pendingResponse == Response.NONE || currentInteractableWindow == null) {
+            return;
+        }
+        switch (pendingResponse) {
+            case CREATE_ROOM:
+                break;
+            case JOIN_ROOM:
+                break;
+            case REQUEST_ROOM:
+                break;
+            default:
+        }
+    }
+
+    public void updatePrivateRooms(Map<ContextID, String> privateRooms) {
+        this.privateRooms.clear();
+        privateRooms.forEach((key, value) -> this.privateRooms.add(new ContextEntry(key, value)));
+    }
+
+    public Set<ContextEntry> getPrivateRooms() {
+        return Collections.unmodifiableSet(privateRooms);
     }
 }

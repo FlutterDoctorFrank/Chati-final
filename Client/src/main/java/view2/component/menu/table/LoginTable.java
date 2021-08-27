@@ -10,8 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import view2.Assets;
 import view2.Chati;
-import view2.component.menu.MenuResponse;
-import view2.component.menu.MenuScreen;
+import view2.component.Response;
 
 public class LoginTable extends MenuTable {
 
@@ -71,7 +70,7 @@ public class LoginTable extends MenuTable {
                     infoLabel.setText("Bitte fülle alle Felder aus.");
                     return;
                 }
-                Chati.CHATI.getMenuScreen().setPendingResponse(MenuResponse.LOGIN);
+                Chati.CHATI.getMenuScreen().setPendingResponse(Response.LOGIN);
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_LOGIN,
                         usernameField.getText(), passwordField.getText(), false);
             }
@@ -91,7 +90,7 @@ public class LoginTable extends MenuTable {
                     infoLabel.setText("Bitte fülle alle Felder aus.");
                     return;
                 }
-                Chati.CHATI.getMenuScreen().setPendingResponse(MenuResponse.REGISTRATION);
+                Chati.CHATI.getMenuScreen().setPendingResponse(Response.REGISTRATION);
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_LOGIN,
                         usernameField.getText(), passwordField.getText(), true);
             }

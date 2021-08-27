@@ -14,7 +14,6 @@ import model.context.spatial.Menu;
 import model.user.IUserManagerView;
 import org.jetbrains.annotations.Nullable;
 import view2.component.AbstractScreen;
-import view2.component.hud.ChatWindow;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.menu.table.LoginTable;
 import view2.component.menu.MenuScreen;
@@ -153,7 +152,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void updateRooms(ContextID worldId, Map<ContextID, String> privateRooms) {
         if (this.screen.equals(worldScreen)) {
-            // TODO
+            worldScreen.updatePrivateRooms(privateRooms);
         }
         roomListUpdateReceived = true;
     }
@@ -248,7 +247,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void menuActionResponse(boolean success, String messageKey) {
         if (this.screen.equals(worldScreen)) {
-            // TODO
+            Gdx.app.postRunnable(() -> worldScreen.menuActionResponse(success, messageKey));
         }
     }
 

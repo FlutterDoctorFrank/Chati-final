@@ -17,6 +17,12 @@ import java.util.Set;
  */
 public class MusicPlayer extends Interactable {
 
+    /** Menü-Option zum Abspielen eines Musikstücks. */
+    private static final int MENU_OPTION_PLAY = 1;
+
+    /** Menü-Option zum Stoppen des gerade abgespielten Musikstücks. */
+    private static final int MENU_OPTION_STOP = 2;
+
     /**
      * Erzeugt eines neue Instanz des MusicPlayer.
      * @param objectName Name des Objekts.
@@ -44,15 +50,10 @@ public class MusicPlayer extends Interactable {
     @Override
     public void executeMenuOption(@NotNull final User user, final int menuOption,
                                   @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
-        throwIfUserNotAvailable(user);
+        super.executeMenuOption(user, menuOption, args);
 
         switch (menuOption) {
-            case 0: // Schließe das Menü beim Benutzer.
-                user.setCurrentInteractable(null);
-                user.setMovable(true);
-                user.send(SendAction.CLOSE_MENU, this);
-                break;
-            case 1: // Spiele ein Musikstück ab.
+            case MENU_OPTION_PLAY: // Spiele ein Musikstück ab.
                 if (args.length < 1) {
                     throw new IllegalMenuActionException("", "Die angegeben Argument sind nicht ausreichend.");
                 }
@@ -65,7 +66,7 @@ public class MusicPlayer extends Interactable {
                 }
                 getParent().playMusic(music);
                 break;
-            case 2: // Stoppe das Abspielen eines Musikstücks.
+            case MENU_OPTION_STOP: // Stoppe das Abspielen eines Musikstücks.
                 getParent().stopMusic();
                 break;
             default:

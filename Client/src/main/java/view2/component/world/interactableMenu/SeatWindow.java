@@ -99,4 +99,9 @@ public class SeatWindow extends InteractableWindow {
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }
+
+    @Override
+    public void showResponse(boolean success, String messageKey) {
+
+    }
 }

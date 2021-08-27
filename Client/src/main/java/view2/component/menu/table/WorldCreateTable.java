@@ -10,10 +10,7 @@ import controller.network.ServerSender;
 import model.context.spatial.SpatialMap;
 import view2.Assets;
 import view2.Chati;
-import view2.component.menu.MenuResponse;
-import view2.component.menu.MenuScreen;
-import view2.component.menu.table.MenuTable;
-import view2.component.menu.table.StartTable;
+import view2.component.Response;
 
 import java.util.EnumSet;
 
@@ -65,7 +62,7 @@ public class WorldCreateTable extends MenuTable {
                     infoLabel.setText("Bitte wähle eine Karte aus!");
                     return;
                 }
-                Chati.CHATI.getMenuScreen().setPendingResponse(MenuResponse.CREATE_WORLD);
+                Chati.CHATI.getMenuScreen().setPendingResponse(Response.CREATE_WORLD);
                 Chati.CHATI.getServerSender()
                         .send(ServerSender.SendAction.WORLD_CREATE, mapSelectBox.getSelected(), worldNameField.getText());
             }

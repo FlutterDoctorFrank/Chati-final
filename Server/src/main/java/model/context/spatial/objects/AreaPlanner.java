@@ -26,6 +26,9 @@ import java.util.UUID;
  */
 public class AreaPlanner extends Interactable {
 
+    /** Menü-Option zum Anfragen der Rolle des Bereichsberechtigten in einem Bereich. */
+    private static final int MENU_OPTION_REQUEST_ROLE = 1;
+
     /**
      * Erzeugt eine neue Instanz des AreaPlanner.
      * @param objectName Name des Objekts.
@@ -52,50 +55,43 @@ public class AreaPlanner extends Interactable {
     @Override
     public void executeMenuOption(@NotNull final User user, final int menuOption,
                                   @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
-        throwIfUserNotAvailable(user);
+        super.executeMenuOption(user, menuOption, args);
 
-        switch (menuOption) {
-            case 0: // Schließt das Menü.
-                user.setCurrentInteractable(null);
-                user.setMovable(true);
-                user.send(SendAction.CLOSE_MENU, this);
-                break;
-            case 1: // Stellt eine Anfrage zur Reservierung zum Erhalt der Rolle des Bereichsberechtigten im übergeordneten
-                    // Kontext.
-                if (args.length < 2) {
-                    throw new IllegalMenuActionException("", "Die angegeben Argument sind nicht ausreichend.");
-                }
-                if (user.getWorld() == null) {
-                    throw new IllegalStateException("Users world is not available");
-                }
+        if (menuOption == MENU_OPTION_REQUEST_ROLE) {// Stellt eine Anfrage zur Reservierung zum Erhalt der Rolle des Bereichsberechtigten im übergeordneten
+            // Kontext.
+            if (args.length < 2) {
+                throw new IllegalMenuActionException("", "Die angegeben Argument sind nicht ausreichend.");
+            }
+            if (user.getWorld() == null) {
+                throw new IllegalStateException("Users world is not available");
+            }
 
-                LocalDateTime from;
-                LocalDateTime to;
-                try {
-                    from = LocalDateTime.parse(args[0]);
-                    to = LocalDateTime.parse(args[1]);
-                } catch (DateTimeParseException e) {
-                    throw new IllegalMenuActionException("", "Ungültige Zeit.");
-                }
-                if (from.isAfter(to) || from.getMinute() != 0 || to.getMinute() != 0 || to.getHour() - from.getHour() != 1) {
-                    throw new IllegalMenuActionException("", "Ungültige Zeit.");
-                }
-                if (getParent().isReservedBy(user)) {
-                   throw new IllegalMenuActionException("", "Du hast diesen Bereich bereits einmal reserviert.");
-                }
-                if (getParent().isReservedAt(from, to)) {
-                    throw new IllegalMenuActionException("", "Dieser Zeitraum ist bereits belegt. Bitte probiere einen anderen.");
-                }
+            LocalDateTime from;
+            LocalDateTime to;
+            try {
+                from = LocalDateTime.parse(args[0]);
+                to = LocalDateTime.parse(args[1]);
+            } catch (DateTimeParseException e) {
+                throw new IllegalMenuActionException("", "Ungültige Zeit.");
+            }
+            if (from.isAfter(to) || from.getMinute() != 0 || to.getMinute() != 0 || to.getHour() - from.getHour() != 1) {
+                throw new IllegalMenuActionException("", "Ungültige Zeit.");
+            }
+            if (getParent().isReservedBy(user)) {
+                throw new IllegalMenuActionException("", "Du hast diesen Bereich bereits einmal reserviert.");
+            }
+            if (getParent().isReservedAt(from, to)) {
+                throw new IllegalMenuActionException("", "Dieser Zeitraum ist bereits belegt. Bitte probiere einen anderen.");
+            }
 
-                Map<UUID, User> receivers = UserAccountManager.getInstance().getUsersWithPermission(user.getWorld(), Permission.ASSIGN_AREA_MANAGER);
+            Map<UUID, User> receivers = UserAccountManager.getInstance().getUsersWithPermission(user.getWorld(), Permission.ASSIGN_AREA_MANAGER);
 
-                receivers.values().forEach(receiver -> {
-                    AreaManagingRequest areaManagingRequest = new AreaManagingRequest(receiver, user, getParent(), from, to);
-                    receiver.addNotification(areaManagingRequest);
-                });
-                break;
-            default:
-                throw new IllegalInteractionException("No valid menu option", user);
+            receivers.values().forEach(receiver -> {
+                AreaManagingRequest areaManagingRequest = new AreaManagingRequest(receiver, user, getParent(), from, to);
+                receiver.addNotification(areaManagingRequest);
+            });
+        } else {
+            throw new IllegalInteractionException("No valid menu option", user);
         }
     }
 }

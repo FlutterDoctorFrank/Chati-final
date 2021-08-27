@@ -51,4 +51,9 @@ public class MusicPlayerWindow extends InteractableWindow {
     protected void setLayout() {
 
     }
+
+    @Override
+    public void showResponse(boolean success, String messageKey) {
+
+    }
 }

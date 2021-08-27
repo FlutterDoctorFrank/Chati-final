@@ -1,5 +1,6 @@
 package model.context.spatial.objects;
 
+import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.spatial.*;
@@ -13,6 +14,9 @@ public abstract class Interactable extends Area implements IInteractable {
 
     /** Die maximale Distanz, über die eine Interaktion erfolgen darf. */
     protected static final int INTERACTION_DISTANCE = 1 * 32;
+
+    /** Menü-Option zum Schließen des Menüs. */
+    protected static final int MENU_OPTION_CLOSE = 0;
 
     protected final Area parent;
 
@@ -55,8 +59,16 @@ public abstract class Interactable extends Area implements IInteractable {
      * @throws IllegalMenuActionException wenn die Menü-Option nicht unterstützt wird oder die übergebenen Argumente
      * ungültig sind.
      */
-    public abstract void executeMenuOption(@NotNull final User user, final int menuOption,
-                                           @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException;
+    public void executeMenuOption(@NotNull final User user, final int menuOption,
+                                           @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
+        throwIfUserNotAvailable(user);
+
+        if (menuOption == MENU_OPTION_CLOSE) {
+            user.setCurrentInteractable(null);
+            user.setMovable(true);
+            user.send(ClientSender.SendAction.CLOSE_MENU, this);
+        }
+    }
 
     /**
      * Überprüft, ob ein Benutzer mit diesem Kontext interagieren darf.

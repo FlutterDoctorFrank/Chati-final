@@ -2,17 +2,19 @@ package view2.component;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
-import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 
 public abstract class AbstractScreen extends ScreenAdapter {
 
     protected final MenuStage stage;
 
+    protected Response pendingResponse;
+
     protected boolean active;
 
     protected AbstractScreen() {
         this.stage = new MenuStage();
+        this.pendingResponse = Response.NONE;
     }
 
     @Override
@@ -56,4 +58,8 @@ public abstract class AbstractScreen extends ScreenAdapter {
     }
 
     public abstract InputProcessor getInputProcessor();
+
+    public void setPendingResponse(Response pendingResponse) {
+        this.pendingResponse = pendingResponse;
+    }
 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import model.context.ContextID;
 import view2.Chati;
 import view2.component.AbstractScreen;
+import view2.component.Response;
 import view2.component.menu.table.LoginTable;
 import view2.component.menu.table.MenuTable;
 import view2.component.menu.table.StartTable;
@@ -17,13 +18,11 @@ public class MenuScreen extends AbstractScreen {
     private static int loginFailCounter = 0;
 
     private MenuTable currentMenuTable;
-    private MenuResponse pendingMenuResponse;
 
     private final Set<ContextEntry> worlds;
 
     public MenuScreen() {
         this.worlds = new HashSet<>();
-        this.pendingMenuResponse = MenuResponse.NONE;
         setMenuTable(new LoginTable());
     }
 
@@ -39,10 +38,10 @@ public class MenuScreen extends AbstractScreen {
     }
 
     public void registrationResponse(boolean success, String messageKey) {
-        if (pendingMenuResponse != MenuResponse.REGISTRATION) {
+        if (pendingResponse != Response.REGISTRATION) {
             return;
         }
-        setPendingResponse(MenuResponse.NONE);
+        setPendingResponse(Response.NONE);
         if (success) {
             currentMenuTable.showMessage("Die Registrierung war erfolgreich!");
         } else {
@@ -52,10 +51,10 @@ public class MenuScreen extends AbstractScreen {
     }
 
     public void loginResponse(boolean success, String messageKey) {
-        if (pendingMenuResponse != MenuResponse.LOGIN) {
+        if (pendingResponse != Response.LOGIN) {
             return;
         }
-        setPendingResponse(MenuResponse.NONE);
+        setPendingResponse(Response.NONE);
         if (success) {
             setMenuTable(new StartTable());
             loginFailCounter = 0;
@@ -71,10 +70,10 @@ public class MenuScreen extends AbstractScreen {
     }
 
     public void passwordChangeResponse(boolean success, String messageKey) {
-        if (pendingMenuResponse != MenuResponse.PASSWORD_CHANGE) {
+        if (pendingResponse != Response.PASSWORD_CHANGE) {
             return;
         }
-        setPendingResponse(MenuResponse.NONE);
+        setPendingResponse(Response.NONE);
         if (success) {
             setMenuTable(new StartTable());
             currentMenuTable.showMessage("Dein Passwort wurde geändert!");
@@ -85,10 +84,10 @@ public class MenuScreen extends AbstractScreen {
     }
 
     public void deleteAccountResponse(boolean success, String messageKey) {
-        if (pendingMenuResponse != MenuResponse.DELETE_ACCOUNT) {
+        if (pendingResponse != Response.DELETE_ACCOUNT) {
             return;
         }
-        setPendingResponse(MenuResponse.NONE);
+        setPendingResponse(Response.NONE);
         if (success) {
             setMenuTable(new LoginTable());
             currentMenuTable.showMessage("Dein Konto wurde gelöscht.");
@@ -99,10 +98,10 @@ public class MenuScreen extends AbstractScreen {
     }
 
     public void avatarChangeResponse(boolean success, String messageKey) {
-        if (pendingMenuResponse != MenuResponse.AVATAR_CHANGE) {
+        if (pendingResponse != Response.AVATAR_CHANGE) {
             return;
         }
-        setPendingResponse(MenuResponse.NONE);
+        setPendingResponse(Response.NONE);
         if (success) {
             setMenuTable(new StartTable());
             currentMenuTable.showMessage("Dein Avatar wurde geändert!");
@@ -112,10 +111,10 @@ public class MenuScreen extends AbstractScreen {
     }
 
     public void createWorldResponse(boolean success, String messageKey) {
-        if (pendingMenuResponse != MenuResponse.CREATE_WORLD) {
+        if (pendingResponse != Response.CREATE_WORLD) {
             return;
         }
-        setPendingResponse(MenuResponse.NONE);
+        setPendingResponse(Response.NONE);
         if (success) {
             setMenuTable(new StartTable());
             currentMenuTable.showMessage("Die Welt wurde erfolgreich erstellt!");
@@ -126,10 +125,10 @@ public class MenuScreen extends AbstractScreen {
     }
 
     public void deleteWorldResponse(boolean success, String messageKey) {
-        if (pendingMenuResponse != MenuResponse.DELETE_WORLD) {
+        if (pendingResponse != Response.DELETE_WORLD) {
             return;
         }
-        setPendingResponse(MenuResponse.NONE);
+        setPendingResponse(Response.NONE);
         if (success) {
             currentMenuTable.showMessage("Die Welt wurde erfolgreich gelöscht.");
         } else {
@@ -138,10 +137,10 @@ public class MenuScreen extends AbstractScreen {
     }
 
     public void joinWorldResponse(boolean success, String messageKey) {
-        if (pendingMenuResponse != MenuResponse.JOIN_WORLD) {
+        if (pendingResponse != Response.JOIN_WORLD) {
             return;
         }
-        setPendingResponse(MenuResponse.NONE);
+        setPendingResponse(Response.NONE);
         if (success) {
             Chati.CHATI.setScreen(Chati.CHATI.getWorldScreen());
         } else {
@@ -159,10 +158,6 @@ public class MenuScreen extends AbstractScreen {
             currentMenuTable.remove();
         }
         stage.addActor(currentMenuTable = table);
-    }
-
-    public void setPendingResponse(MenuResponse pendingMenuResponse) {
-        this.pendingMenuResponse = pendingMenuResponse;
     }
 
     public Set<ContextEntry> getWorlds() {

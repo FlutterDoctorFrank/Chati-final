@@ -24,6 +24,15 @@ import java.util.regex.Pattern;
  */
 public class RoomReception extends Interactable {
 
+    /** Menü-Option zum Erzeugen eines privaten Raums. */
+    private static final int MENU_OPTION_CREATE = 1;
+
+    /** Menü-Option zum Betreten eines privaten Raums. */
+    private static final int MENU_OPTION_JOIN = 2;
+
+    /** Menü-Option zum Anfragen zum Beitritt eines privaten Raums. */
+    private static final int MENU_OPTION_REQUEST = 3;
+
     /** Regulärer Ausdruck der das Format eines Raumnamens festlegt. */
     private static final Pattern ROOMNAME_PATTERN = Pattern.compile("^\\w{2,16}");
 
@@ -57,15 +66,10 @@ public class RoomReception extends Interactable {
     @Override
     public void executeMenuOption(@NotNull final User user, final int menuOption,
                                   @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
-        throwIfUserNotAvailable(user);
+        super.executeMenuOption(user, menuOption, args);
 
         switch (menuOption) {
-            case 0: // Schließe das Menü beim Benutzer.
-                user.setCurrentInteractable(null);
-                user.setMovable(true);
-                user.send(SendAction.CLOSE_MENU, this);
-                break;
-            case 1: // Erzeuge einen privaten Raum.
+            case MENU_OPTION_CREATE: // Erzeuge einen privaten Raum.
                 if (args.length < 3) {
                     throw new IllegalMenuActionException("", "Die angegeben Argument sind nicht ausreichend.");
                 }
@@ -111,7 +115,7 @@ public class RoomReception extends Interactable {
                         .filter(receiver -> receiver.getCurrentMenu() == Menu.ROOM_RECEPTION_MENU)
                         .forEach(receiver -> receiver.send(SendAction.CONTEXT_LIST, world));
                 break;
-            case 2: // Betrete einen existierenden privaten Raum.
+            case MENU_OPTION_JOIN: // Betrete einen existierenden privaten Raum.
                 if (args.length < 2) {
                     throw new IllegalMenuActionException("", "Die angegeben Argument sind nicht ausreichend.");
                 }
@@ -141,7 +145,7 @@ public class RoomReception extends Interactable {
                 user.send(SendAction.CLOSE_MENU, this);
                 user.teleport(privateRoom.getSpawnLocation());
                 break;
-            case 3: // Stelle eine Anfrage zum Beitritt eines privaten Raums.
+            case MENU_OPTION_REQUEST: // Stelle eine Anfrage zum Beitritt eines privaten Raums.
                 if (args.length < 2) {
                     throw new IllegalMenuActionException("", "Die angegeben Argument sind nicht ausreichend.");
                 }

@@ -6,6 +6,8 @@ import model.communication.CommunicationRegion;
 import model.context.spatial.Area;
 import model.context.spatial.Expanse;
 import model.context.spatial.Menu;
+import model.exception.IllegalInteractionException;
+import model.exception.IllegalMenuActionException;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
 import java.util.Set;
@@ -41,7 +43,9 @@ public class GameBoard extends Interactable {
     }
 
     @Override
-    public void executeMenuOption(@NotNull final User user, final int menuOption, @NotNull final String[] args) {
+    public void executeMenuOption(@NotNull final User user, final int menuOption, @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
+        super.executeMenuOption(user, menuOption, args);
+
         // TODO
     }
 }
