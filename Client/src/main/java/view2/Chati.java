@@ -301,6 +301,8 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return worldScreen;
     }
 
+    public boolean isMusicChanged() { return changeMusic; }
+
     private void resetModelChangeReceivedFlags() {
         userInfoChangeReceived = false;
         userNotificationChangeReceived = false;
