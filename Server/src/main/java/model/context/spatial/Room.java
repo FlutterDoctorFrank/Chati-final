@@ -147,7 +147,6 @@ public class Room extends Area implements IRoom {
 
                 if (containedUsers.isEmpty()) {
                     world.removePrivateRoom(this);
-                    world.removeChild(this);
 
                     /*
                      * Sende an alle Benutzer, die gerade das Menü einer Rezeption geöffnet haben, die neue Liste

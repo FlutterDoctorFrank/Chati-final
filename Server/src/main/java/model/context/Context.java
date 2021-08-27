@@ -139,7 +139,19 @@ public abstract class Context implements IContext {
         if (this.contains(user)) {
             this.containedUsers.remove(user.getUserId());
             System.out.println("User '" + user.getUsername() + "' removed from context: " + this.contextId);
-            this.children.values().forEach(child -> child.removeUser(user));
+
+            if (parent != null && parent.equals(GlobalContext.getInstance())) {
+                /*
+                 * Wenn es sich bei diesem Kontext um eine Welt handelt, wird über eine Kopie der Kind-Kontexte
+                 * iteriert, da die originale Map durch das Entfernen von privaten Räumen gleichzeitig modifiziert
+                 * werden könnte.
+                 */
+                for (final Context children : new HashSet<>(this.children.values())) {
+                    children.removeUser(user);
+                }
+            } else {
+                this.children.values().forEach(children -> children.removeUser(user));
+            }
         }
     }
 
