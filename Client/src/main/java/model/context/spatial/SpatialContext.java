@@ -8,6 +8,8 @@ import model.communication.CommunicationMedium;
 import model.context.ContextID;
 import model.user.UserManager;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -15,6 +17,10 @@ import java.util.Set;
  * Eine Klasse, welche einen räumlichen Kontext der Anwendung repräsentiert.
  */
 public class SpatialContext extends Context implements ISpatialContextView {
+
+    /** Der Abstand, den der Benutzer maximal von einem interagierbaren Kontext entfernt sein darf, um mit diesem zu
+      * interagieren. */
+    public static final float INTERACTION_DISTANCE = 32;
 
     /** Die räumliche Ausdehnung dieses Kontextes. */
     private Expanse expanse;
@@ -28,6 +34,9 @@ public class SpatialContext extends Context implements ISpatialContextView {
     /** Karte dieses Kontextes. */
     private SpatialMap map;
 
+    /** Die Information, ob mit diesem Kontext interagiert werden darf. */
+    private boolean interactable;
+
     /**
      * Erzeugt eine neue Instanz eines räumlichen Kontextes.
      * @param contextName Name des Kontextes.
@@ -37,12 +46,13 @@ public class SpatialContext extends Context implements ISpatialContextView {
      * @param expanse Räumliche Ausdehnung des Kontextes.
      */
     public SpatialContext(String contextName, Context parent, CommunicationRegion communicationRegion,
-                          Set<CommunicationMedium> communicationMedia, Expanse expanse) {
+                          Set<CommunicationMedium> communicationMedia, Expanse expanse, boolean interactable) {
         super(contextName, parent);
         this.communicationRegion = communicationRegion;
         this.communicationMedia = communicationMedia;
         this.expanse = expanse;
         this.map = null;
+        this.interactable = interactable;
         parent.addChild(this);
     }
 
@@ -57,6 +67,7 @@ public class SpatialContext extends Context implements ISpatialContextView {
         this.communicationMedia = null;
         this.expanse = null;
         this.map = null;
+        this.interactable = false;
         parent.addChild(this);
     }
 
@@ -82,6 +93,24 @@ public class SpatialContext extends Context implements ISpatialContextView {
         return expanse;
     }
 
+    /**
+     * Gibt die Information zurück, ob mit diesem Kontext interagiert werden kann.
+     * @return true, wenn mit dem Kontext interagiert werden kann, sonst false.
+     */
+    public boolean isInteractable() {
+        return interactable;
+    }
+
+    /**
+     * Gibt alle untergeordneten Kontexte dieses Kontextes zurück.
+     * @return Alle untergeordneten Kontexte.
+     */
+    public Map<ContextID, SpatialContext> getDescendants() {
+        Map<ContextID, SpatialContext> descentants = new HashMap<>(children);
+        children.values().forEach(child -> descentants.putAll(child.getDescendants()));
+        return descentants;
+    }
+
     @Override
     public SpatialContext getArea(float posX, float posY) {
         try {
@@ -105,5 +134,10 @@ public class SpatialContext extends Context implements ISpatialContextView {
     @Override
     public SpatialMap getMap() {
         return map;
+    }
+
+    @Override
+    public ILocationView getCenter() {
+        return expanse.getCenter();
     }
 }

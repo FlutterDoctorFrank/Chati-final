@@ -4,10 +4,7 @@ import com.badlogic.gdx.Gdx;
 import model.MessageBundle;
 import model.context.Context;
 import model.context.ContextID;
-import model.context.spatial.Location;
-import model.context.spatial.Music;
-import model.context.spatial.SpatialContext;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.*;
 import model.exception.ContextNotFoundException;
 import model.exception.NotificationNotFoundException;
 import model.notification.INotificationView;
@@ -156,6 +153,15 @@ public class InternUser extends User implements IInternUserController, IInternUs
     @Override
     public boolean isInPrivateRoom() {
         return currentWorld != null && currentRoom != null && !currentWorld.equals(currentRoom);
+    }
+
+    @Override
+    public Map<ContextID, ISpatialContextView> getCurrentInteractables() {
+        float posX = currentLocation.getPosX();
+        float posY = currentLocation.getPosY();
+        return currentRoom.getDescendants().values().stream()
+                .filter(context -> context.getExpanse().isAround(posX, posY, SpatialContext.INTERACTION_DISTANCE)
+                && context.isInteractable()).collect(Collectors.toUnmodifiableMap(SpatialContext::getContextId, Function.identity()));
     }
 
     /**

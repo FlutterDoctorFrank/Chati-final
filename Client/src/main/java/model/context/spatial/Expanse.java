@@ -32,8 +32,27 @@ public class Expanse {
      * @param posY Zu überprüfende Y-Koordinate.
      * @return true, wenn sich die Koordinaten in der Ausdehnung befinden, sonst false.
      */
-    public boolean isIn(float posX, float posY) {
-        return bottomLeft.getPosX() <= posX && posX <= bottomLeft.getPosX() + width
-                && bottomLeft.getPosY() <= posY && posY <= bottomLeft.getPosY() + height;
+    public boolean isIn(final float posX, final float posY) {
+        return isAround(posX, posY, 0);
+    }
+
+    /**
+     * Überprüft, ob gegebene Koordinate eine maximale Distanz zur räumlichen Ausdehnung eines Kontextes haben.
+     * @param posX Zu überprüfende X-Koordinate.
+     * @param posY Zu überprüfende Y-Koordinate.
+     * @param distance Maximale Distanz.
+     * @return true, wenn die Koordinaten die maximale Distanz zur Ausdehnung haben, sonst false.
+     */
+    public boolean isAround(final float posX, final float posY, final float distance) {
+        return bottomLeft.getPosX() - distance <= posX && posX <= bottomLeft.getPosX() + distance + width
+                && bottomLeft.getPosY() - distance <= posY && posY <= bottomLeft.getPosY() + distance + height;
+    }
+
+    /**
+     * Gibt den Mittelpunkt der Ausdehnung zurück.
+     * @return Mittelpunkt der Ausdehnung.
+     */
+    public Location getCenter() {
+        return new Location(bottomLeft.getPosX() + width / 2, bottomLeft.getPosY() + height / 2);
     }
 }

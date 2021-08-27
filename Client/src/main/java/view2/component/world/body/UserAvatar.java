@@ -38,8 +38,8 @@ public class UserAvatar extends Sprite {
     private Animation<TextureRegion> avatarRunRight;
     // private Animation<TextureRegion> avatarDance;
 
-    private Direction currentDirection;
-    private Direction previousDirection;
+    protected Direction currentDirection;
+    protected Direction previousDirection;
     private float stateTimer;
 
     public UserAvatar(IUserView user) {
@@ -129,7 +129,7 @@ public class UserAvatar extends Sprite {
     }
 
     private TextureRegion getCurrentFrameRegion(float delta) {
-        currentDirection = getCurrentDirection();
+        currentDirection = getMovingDirection();
         stateTimer = currentDirection == previousDirection ? stateTimer + delta : 0;
         if (currentDirection == null) {
             if (previousDirection == Direction.UP) {
@@ -157,7 +157,7 @@ public class UserAvatar extends Sprite {
         }
     }
 
-    private Direction getCurrentDirection() {
+    private Direction getMovingDirection() {
         Vector2 velocity = body.getLinearVelocity();
         if (velocity.y > Math.abs(velocity.x)) {
             return Direction.UP;

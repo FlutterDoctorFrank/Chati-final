@@ -77,15 +77,9 @@ public class MapUtils {
         Array<RectangleMapObject> contextRectangles = contextLayer.getObjects().getByType(RectangleMapObject.class);
         // Sortiere die Quadrate ihrer Größe nach absteigend. Dadurch wird garantiert, dass die Kontexte immer an die
         // richtige Stelle in der Kontexthierarchie eingefügt werden.
-        contextRectangles.sort((o1, o2) -> {
-            float size1 = o1.getRectangle().getHeight() * o1.getRectangle().getWidth();
-            float size2 = o2.getRectangle().getHeight() * o2.getRectangle().getWidth();
-            return Float.compare(size2, size1);
-        });
+        contextRectangles.sort((o1, o2) -> Float.compare(o2.getRectangle().area(), o1.getRectangle().area()));
         // Erzeuge alle Kontexte nacheinander.
-        contextRectangles.forEach(contextRectangle -> {
-            create(room, contextRectangle);
-        });
+        contextRectangles.forEach(contextRectangle -> create(room, contextRectangle));
     }
 
     /**
@@ -104,11 +98,10 @@ public class MapUtils {
         float width = contextRectangle.getRectangle().getWidth();
         float height = contextRectangle.getRectangle().getHeight();
         Expanse expanse = new Expanse(new Location(posX, posY), width, height);
+        boolean interactable = !contextRectangle.getProperties().get("contextType", String.class).equals("area");
         // Ermittle den übergeordneten Kontext. Da die Quadrate absteigend ihrer Grö0e sortiert eingefügt werden,
         // befindet sich der übergeordnete Kontext immer bereits in der Kontexthierarchie.
         SpatialContext parent = room.getArea(posX + width / 2, posY + height / 2);
-        SpatialContext child = new SpatialContext(contextName, parent, communicationRegion, communicationMedia, expanse);
-
-        System.out.println(child.getContextId());
+        new SpatialContext(contextName, parent, communicationRegion, communicationMedia, expanse, interactable);
     }
 }

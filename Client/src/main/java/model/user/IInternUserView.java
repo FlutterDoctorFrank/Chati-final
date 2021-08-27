@@ -1,5 +1,6 @@
 package model.user;
 
+import model.context.ContextID;
 import model.context.spatial.ISpatialContextView;
 import model.context.spatial.Music;
 import model.context.spatial.SpatialContext;
@@ -55,4 +56,10 @@ public interface IInternUserView extends IUserView {
      * @return true, wenn der Benutzer in einem privaten Raum ist, sonst false.
      */
     boolean isInPrivateRoom();
+
+    /**
+     * Gibt die Kontexte zurück, mit denen der Benutzer gerade interagieren kann.
+     * @return Kontexte, mit denen der Benutzer gerade interagieren kann.
+     */
+    Map<ContextID, ISpatialContextView> getCurrentInteractables();
 }

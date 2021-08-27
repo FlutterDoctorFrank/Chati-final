@@ -4,7 +4,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import controller.network.ServerSender;
+import model.context.ContextID;
 import model.context.spatial.ISpatialContextView;
+import model.user.IInternUserView;
 import view2.Chati;
 import view2.component.world.WorldCamera;
 import view2.component.world.WorldScreen;
@@ -77,22 +79,39 @@ public class InternUserAvatar extends UserAvatar {
 
     public void interact() {
         if (canInteract) {
-            float interactionDistance = getWidth();
-            Vector2 positionInLookingDirection;
-            if (body.getAngle() == Math.PI) {
-                positionInLookingDirection = new Vector2(body.getPosition().x, body.getPosition().y + interactionDistance);
-            } else if (body.getAngle() == Math.PI) {
-                positionInLookingDirection = new Vector2(body.getPosition().x - interactionDistance, body.getPosition().y);
-            } else if (body.getAngle() == 0) {
-                positionInLookingDirection = new Vector2(body.getPosition().x + interactionDistance, body.getPosition().y);
+            IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
+            Set<ISpatialContextView> currentInteractables = new HashSet<>(internUser.getCurrentInteractables().values());
+            // Falls sich um den Benutzer mehrere Kontexte befinden, mit denen interagiert werden kann, entscheide
+            // anhand der Blickrichtung, mit welchem Kontext interagiert werden soll.
+            if (currentInteractables.isEmpty()) {
+                return;
+            }
+            ISpatialContextView interactingContext = null;
+            if (currentInteractables.size() == 1) {
+                interactingContext = currentInteractables.iterator().next();
             } else {
-                positionInLookingDirection = new Vector2(body.getPosition().x, body.getPosition().y + interactionDistance);
+                if (previousDirection == Direction.UP) {
+                    interactingContext = currentInteractables.stream()
+                            .filter(interactable -> interactable.getCenter().getPosY() > internUser.getLocation().getPosY())
+                            .iterator().next();
+                } else if (previousDirection == Direction.LEFT) {
+                    interactingContext = currentInteractables.stream()
+                            .filter(interactable -> interactable.getCenter().getPosX() < internUser.getLocation().getPosX())
+                            .iterator().next();
+                } else if (previousDirection == Direction.DOWN) {
+                    interactingContext = currentInteractables.stream()
+                            .filter(interactable -> interactable.getCenter().getPosY() < internUser.getLocation().getPosY())
+                            .iterator().next();
+                } else if (previousDirection == Direction.RIGHT) {
+                    interactingContext = currentInteractables.stream()
+                            .filter(interactable -> interactable.getCenter().getPosX() > internUser.getLocation().getPosX())
+                            .iterator().next();
+                }
             }
-            ISpatialContextView context = Chati.CHATI.getUserManager().getInternUserView().getCurrentRoom()
-                    .getArea(positionInLookingDirection.x * WorldCamera.PPM, positionInLookingDirection.y * WorldCamera.PPM);
-            if (context != null) {
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.CONTEXT_INTERACT, context.getContextId());
+            if (interactingContext == null) {
+                return;
             }
+            Chati.CHATI.getServerSender().send(ServerSender.SendAction.CONTEXT_INTERACT, interactingContext.getContextId());
         }
     }
 
