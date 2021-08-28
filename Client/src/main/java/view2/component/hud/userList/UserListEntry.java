@@ -450,7 +450,6 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         private static final float ROW_HEIGHT = 60;
         private static final float VERTICAL_SPACING = 15;
         private static final float HORIZONTAL_SPACING = 15;
-        private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
 
         private Label infoLabel;
         private TextArea userMessageArea;
@@ -469,10 +468,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
         @Override
         protected void create() {
-            Label.LabelStyle style = new Label.LabelStyle();
-            style.font = new BitmapFont();
-            style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
-            this.infoLabel = new Label("", style);
+            this.infoLabel = new Label("", Assets.SKIN);
 
             switch(action) {
                 case INVITE_FRIEND:

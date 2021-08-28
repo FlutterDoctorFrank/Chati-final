@@ -154,7 +154,7 @@ public class MapUtils {
                 parent.addInteractable(musicPlayer);
                 break;
             case "portal": // Erzeuge Portal.
-                Location destination = new Location(room, getSpawnPosX(tiledMap), getSpawnPosY(tiledMap));
+                Location destination = new Location(room.getWorld().getPublicRoom(), getSpawnPosX(tiledMap), getSpawnPosY(tiledMap));
                 Portal portal = new Portal(areaName, parent, communicationRegion, communicationMedia, expanse, destination);
                 parent.addChild(portal);
                 parent.addInteractable(portal);
