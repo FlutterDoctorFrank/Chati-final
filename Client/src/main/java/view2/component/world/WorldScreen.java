@@ -82,13 +82,11 @@ public class WorldScreen extends AbstractScreen {
             externUserAvatars.values().forEach(UserAvatar::update);
             internUserAvatar.update();
 
-            if (active) {
-                Chati.SPRITE_BATCH.setProjectionMatrix(camera.combined);
-                Chati.SPRITE_BATCH.begin();
-                internUserAvatar.draw(Chati.SPRITE_BATCH, delta);
-                externUserAvatars.values().forEach(avatar -> avatar.draw(Chati.SPRITE_BATCH, delta));
-                Chati.SPRITE_BATCH.end();
-            }
+            Chati.SPRITE_BATCH.setProjectionMatrix(camera.combined);
+            Chati.SPRITE_BATCH.begin();
+            internUserAvatar.draw(Chati.SPRITE_BATCH, delta);
+            externUserAvatars.values().forEach(avatar -> avatar.draw(Chati.SPRITE_BATCH, delta));
+            Chati.SPRITE_BATCH.end();
 
             world.step(1 / WORLD_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 
