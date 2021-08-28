@@ -10,6 +10,7 @@ import model.context.spatial.ILocationView;
 import model.user.IUserView;
 import view2.Assets;
 import view2.Chati;
+import view2.Settings;
 import view2.component.UserInfoContainer;
 import view2.component.hud.settings.WorldSettingsWindow;
 import view2.component.world.WorldCamera;
@@ -74,7 +75,7 @@ public class UserAvatar extends Sprite {
         //InteractButtonAnimation animation = new InteractButtonAnimation();
         //animation.draw(batch);
         if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isShowNamesPressed()
-            || WorldSettingsWindow.SHOW_NAME) {
+            || Settings.getShowNamesInWorld()) {
             userInfoContainer.setPosition(body.getPosition().x, body.getPosition().y + getHeight());
             userInfoContainer.setScale(1 / WorldCamera.PPM * Chati.CHATI.getWorldScreen().getCamera().zoom);
             userInfoContainer.act(delta);

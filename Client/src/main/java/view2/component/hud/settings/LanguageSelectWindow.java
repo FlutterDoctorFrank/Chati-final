@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import view2.Assets;
 import view2.Chati;
 import view2.component.AbstractWindow;
@@ -15,10 +16,8 @@ public class LanguageSelectWindow extends AbstractWindow {
 
     private static final float WINDOW_WIDTH = 550;
     private static final float WINDOW_HEIGHT = 350;
-    private static final float ROW_WIDTH = 450;
     private static final float ROW_HEIGHT = 60;
-    private static final float VERTICAL_SPACING = 15;
-    private static final float HORIZONTAL_SPACING = 15;
+    private static final float SPACING = 15;
 
     private Label infoLabel;
     private SelectBox<String> languageSelectBox;
@@ -37,7 +36,7 @@ public class LanguageSelectWindow extends AbstractWindow {
         this.infoLabel = new Label("Wähle eine Sprache aus!", Assets.SKIN);
 
         languageSelectBox = new SelectBox<>(Assets.SKIN);
-        // Das kommt noch
+        // TODO
 
         confirmButton = new TextButton("Bestätigen", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
@@ -47,7 +46,7 @@ public class LanguageSelectWindow extends AbstractWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                // Das kommt noch
+                // TODO
                 close();
             }
         });
@@ -85,17 +84,18 @@ public class LanguageSelectWindow extends AbstractWindow {
         setWidth(WINDOW_WIDTH);
         setHeight(WINDOW_HEIGHT);
 
-        Table labelContainer = new Table();
-        labelContainer.add(infoLabel).center();
-        add(labelContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(VERTICAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
-
-        add(languageSelectBox).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
-
+        Table container = new Table();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+        infoLabel.setAlignment(Align.center, Align.center);
+        container.add(infoLabel).row();
+        Table languageSelectContainer = new Table();
+        languageSelectContainer.add(languageSelectBox).growX();
+        container.add(languageSelectContainer).row();
         Table buttonContainer = new Table();
-        buttonContainer.defaults().colspan(2).width((ROW_WIDTH - HORIZONTAL_SPACING) / 2).height(ROW_HEIGHT);
-        buttonContainer.add(confirmButton).spaceRight(HORIZONTAL_SPACING);
-        buttonContainer.add(cancelButton);
-        add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
+        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).space(SPACING).growX();
+        buttonContainer.add(confirmButton, cancelButton);
+        container.add(buttonContainer);
+        add(container).padLeft(SPACING).padRight(SPACING).grow();
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }

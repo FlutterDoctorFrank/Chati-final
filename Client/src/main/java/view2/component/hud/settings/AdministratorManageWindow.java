@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
+import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.exception.UserNotFoundException;
 import model.role.Role;
@@ -19,12 +20,9 @@ import view2.component.AbstractWindow;
 public class AdministratorManageWindow extends AbstractWindow {
 
     private static final float WINDOW_WIDTH = 750;
-    private static final float WINDOW_HEIGHT = 500;
-    private static final float ROW_WIDTH = 650;
+    private static final float WINDOW_HEIGHT = 450;
     private static final float ROW_HEIGHT = 60;
-    private static final float VERTICAL_SPACING = 15;
-    private static final float HORIZONTAL_SPACING = 15;
-    private static final float TEXTFIELD_FONT_SCALE_FACTOR = 1.6f;
+    private static final float SPACING = 15;
 
     private Label infoLabel;
     private TextField usernameField;
@@ -186,8 +184,6 @@ public class AdministratorManageWindow extends AbstractWindow {
         });
     }
 
-
-
     @Override
     protected void setLayout() {
         setModal(true);
@@ -196,17 +192,17 @@ public class AdministratorManageWindow extends AbstractWindow {
         setWidth(WINDOW_WIDTH);
         setHeight(WINDOW_HEIGHT);
 
-        Table labelContainer = new Table();
-        labelContainer.add(infoLabel).center();
-        add(labelContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(VERTICAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
-
-        add(usernameField).width(ROW_WIDTH).height(ROW_HEIGHT).spaceBottom(VERTICAL_SPACING).row();
-        add(messageArea).width(ROW_WIDTH).height(2 * ROW_HEIGHT).spaceBottom(VERTICAL_SPACING).row();
-
+        Table container = new Table();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+        infoLabel.setAlignment(Align.center, Align.center);
+        container.add(infoLabel).row();
+        container.add(usernameField).row();
+        container.add(messageArea).height(2 * ROW_HEIGHT).row();
         Table buttonContainer = new Table();
-        buttonContainer.defaults().width((ROW_WIDTH - VERTICAL_SPACING) / 3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
+        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).space(SPACING).growX();
         buttonContainer.add(assignButton, withdrawButton, cancelButton);
-        add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
+        container.add(buttonContainer);
+        add(container).padLeft(SPACING).padRight(SPACING).grow();
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }

@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.notification.INotificationView;
 import model.notification.NotificationType;
@@ -195,6 +196,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         private static final float WINDOW_HEIGHT = 350;
         private static final float ROW_WIDTH = 450;
         private static final float ROW_HEIGHT = 60;
+        private static final float SPACING = 15;
 
         private Label showLabel;
         private Label dateLabel;
@@ -213,6 +215,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         @Override
         protected void create() {
             showLabel = new Label(notification.getMessageBundle().getMessageKey(), Assets.SKIN);
+            showLabel.setWrap(true);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm");
             dateLabel = new Label(notification.getTimestamp().format(formatter), Assets.SKIN);
@@ -353,20 +356,18 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             setHeight(WINDOW_HEIGHT);
             left().defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).padTop(VERTICAL_SPACING);
 
-            getTitleTable().add(dateLabel).right().padRight(VERTICAL_SPACING);
-
-            Table labelContainer = new Table();
-            labelContainer.add(showLabel).center();
-            add(labelContainer).top().width(ROW_WIDTH).height(ROW_HEIGHT).fillY().expandY()
-                    .spaceTop(HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
-
+            Table container = new Table();
+            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+            showLabel.setAlignment(Align.center, Align.center);
+            container.add(showLabel).row();
             Table buttonContainer = new Table();
-            buttonContainer.defaults().size(BUTTON_SIZE).padRight(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING)
-                    .space(HORIZONTAL_SPACING);
-            buttonContainer.add(okButton).left().width(SHOW_BUTTON_WIDTH).growX().padLeft(HORIZONTAL_SPACING);
+            buttonContainer.defaults().bottom().right().size(BUTTON_SIZE).space(SPACING);
+            buttonContainer.add(okButton).left().width(SHOW_BUTTON_WIDTH).growX();
             buttonContainer.add(acceptButton, declineButton, deleteButton);
-            add(buttonContainer).center().growX().padBottom(VERTICAL_SPACING).row();
+            container.add(buttonContainer).bottom().padBottom(VERTICAL_SPACING).grow().row();
+            add(container).padLeft(SPACING).padRight(SPACING).grow();
 
+            getTitleTable().add(dateLabel).right().padRight(VERTICAL_SPACING);
             getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
         }
     }

@@ -7,31 +7,24 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import view2.Assets;
 import view2.Chati;
+import view2.Settings;
 import view2.component.AbstractWindow;
 
 public class VolumeChangeWindow extends AbstractWindow {
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 500;
-    private static final float ROW_WIDTH = 650;
     private static final float ROW_HEIGHT = 60;
-    private static final float VERTICAL_SPACING = 15;
-    private static final float HORIZONTAL_SPACING = 15;
+    private static final float SPACING = 15;
 
     private static final float MIN_VOLUME = 0f;
     private static final float MAX_VOLUME = 1f;
     private static final float VOLUME_STEP_SIZE = 0.01f;
     private static final float SNAP_VALUE_STEP_SIZE = 0.25f;
     private static final float SNAP_VALUE_THRESHOLD = 0.05f;
-    private static final float STANDARD_VOLUME = 0.5f;
-
-    private static boolean CHANGED = false;
-    private static float TOTAL_VOLUME = 0;
-    private static float VOICE_VOLUME = 0;
-    private static float MUSIC_VOLUME = 0;
-    private static float SOUND_VOLUME = 0;
 
     private Label infoLabel;
     private Label totalVolumeLabel;
@@ -63,28 +56,24 @@ public class VolumeChangeWindow extends AbstractWindow {
         soundVolumeLabel = new Label("Hintergrundgeräusche", Assets.SKIN);
 
         totalVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
-        totalVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE, 3 * SNAP_VALUE_STEP_SIZE}
-                , SNAP_VALUE_THRESHOLD);
-        totalVolumeSlider.setValue(TOTAL_VOLUME);
+        totalVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
+                        3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
+        totalVolumeSlider.setValue(Settings.getTotalVolume());
 
         voiceVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
-        voiceVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE, 3 * SNAP_VALUE_STEP_SIZE}
-                , SNAP_VALUE_THRESHOLD);
-        voiceVolumeSlider.setValue(VOICE_VOLUME);
+        voiceVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
+                        3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
+        voiceVolumeSlider.setValue(Settings.getVoiceVolume());
 
         musicVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
-        musicVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE, 3 * SNAP_VALUE_STEP_SIZE}
-                , SNAP_VALUE_THRESHOLD);
-        musicVolumeSlider.setValue(MUSIC_VOLUME);
+        musicVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
+                        3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
+        musicVolumeSlider.setValue(Settings.getMusicVolume());
 
         soundVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
-        soundVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE, 3 * SNAP_VALUE_STEP_SIZE}
-                , SNAP_VALUE_THRESHOLD);
-        soundVolumeSlider.setValue(SOUND_VOLUME);
-
-        if (!CHANGED) {
-            setDefaultVolume();
-        }
+        soundVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
+                        3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
+        soundVolumeSlider.setValue(Settings.getSoundVolume());
 
         confirmButton = new TextButton("Bestätigen", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
@@ -94,12 +83,11 @@ public class VolumeChangeWindow extends AbstractWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                CHANGED = true;
-                TOTAL_VOLUME = totalVolumeSlider.getValue();
-                VOICE_VOLUME = voiceVolumeSlider.getValue();
-                MUSIC_VOLUME = musicVolumeSlider.getValue();
-                SOUND_VOLUME = soundVolumeSlider.getValue();
-                close();
+                Settings.setTotalVolume(totalVolumeSlider.getValue());
+                Settings.setVoiceVolume(voiceVolumeSlider.getValue());
+                Settings.setMusicVolume(musicVolumeSlider.getValue());
+                Settings.setSoundVolume(soundVolumeSlider.getValue());
+                infoLabel.setText("Deine Änderungen wurden gespeichert!");
             }
         });
 
@@ -111,7 +99,10 @@ public class VolumeChangeWindow extends AbstractWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                setDefaultVolume();
+                totalVolumeSlider.setValue(Settings.DEFAULT_TOTAL_VOLUME);
+                voiceVolumeSlider.setValue(Settings.DEFAULT_VOICE_VOLUME);
+                musicVolumeSlider.setValue(Settings.DEFAULT_MUSIC_VOLUME);
+                soundVolumeSlider.setValue(Settings.DEFAULT_SOUND_VOLUME);
             }
         });
 
@@ -148,42 +139,32 @@ public class VolumeChangeWindow extends AbstractWindow {
         setWidth(WINDOW_WIDTH);
         setHeight(WINDOW_HEIGHT);
 
-        Table labelContainer = new Table();
-        labelContainer.add(infoLabel).center();
-        add(labelContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(VERTICAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
-
+        Table container = new Table();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+        infoLabel.setAlignment(Align.center, Align.center);
+        container.add(infoLabel).row();
         Table totalVolumeContainer = new Table();
-        totalVolumeContainer.defaults().colspan(2).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).growX();
+        totalVolumeContainer.defaults().colspan(2).height(ROW_HEIGHT).space(SPACING).growX();
         totalVolumeContainer.add(totalVolumeLabel, totalVolumeSlider);
-        add(totalVolumeContainer).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
-
+        container.add(totalVolumeContainer).row();
         Table voiceVolumeContainer = new Table();
-        voiceVolumeContainer.defaults().colspan(2).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).growX();
+        voiceVolumeContainer.defaults().colspan(2).height(ROW_HEIGHT).space(SPACING).growX();
         voiceVolumeContainer.add(voiceVolumeLabel, voiceVolumeSlider);
-        add(voiceVolumeContainer).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
-
+        container.add(voiceVolumeContainer).row();
         Table musicVolumeContainer = new Table();
-        musicVolumeContainer.defaults().colspan(2).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).growX();
+        musicVolumeContainer.defaults().colspan(2).height(ROW_HEIGHT).space(SPACING).growX();
         musicVolumeContainer.add(musicVolumeLabel, musicVolumeSlider);
-        add(musicVolumeContainer).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
-
+        container.add(musicVolumeContainer).row();
         Table soundVolumeContainer = new Table();
-        soundVolumeContainer.defaults().colspan(2).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).growX();
+        soundVolumeContainer.defaults().colspan(2).height(ROW_HEIGHT).space(SPACING).growX();
         soundVolumeContainer.add(soundVolumeLabel, soundVolumeSlider);
-        add(soundVolumeContainer).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
-
+        container.add(soundVolumeContainer).row();
         Table buttonContainer = new Table();
-        buttonContainer.defaults().colspan(3).height(ROW_HEIGHT).space(HORIZONTAL_SPACING).growX();
+        buttonContainer.defaults().colspan(3).bottom().height(ROW_HEIGHT).space(SPACING).growX();
         buttonContainer.add(confirmButton, defaultButton, cancelButton);
-        add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
+        container.add(buttonContainer);
+        add(container).padLeft(SPACING).padRight(SPACING).grow();
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
-    }
-
-    private void setDefaultVolume() {
-        totalVolumeSlider.setValue(STANDARD_VOLUME);
-        voiceVolumeSlider.setValue(STANDARD_VOLUME);
-        musicVolumeSlider.setValue(STANDARD_VOLUME);
-        soundVolumeSlider.setValue(STANDARD_VOLUME);
     }
 }

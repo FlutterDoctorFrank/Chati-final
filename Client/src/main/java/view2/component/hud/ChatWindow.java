@@ -128,6 +128,7 @@ public class ChatWindow extends AbstractWindow {
         sendContainer.add(typeMessageArea).growX();
         sendContainer.add(sendButton).width(SEND_BUTTON_WIDTH);
         add(sendContainer).height(SEND_BUTTON_HEIGHT).growX();
+
         getTitleTable().add(minimizeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }
 

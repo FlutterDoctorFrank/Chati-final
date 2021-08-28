@@ -7,23 +7,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import view2.Assets;
-import view2.Chati;
+import view2.Settings;
 import view2.component.AbstractWindow;
 
 public class WorldSettingsWindow extends AbstractWindow {
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 350;
-    private static final float ROW_WIDTH = 650;
     private static final float ROW_HEIGHT = 60;
-    private static final float VERTICAL_SPACING = 15;
-    private static final float HORIZONTAL_SPACING = 15;
-
-    private static final boolean SHOW_NAME_DEFAULT = true;
-
-    private static boolean CHANGED = false;
-    public static boolean SHOW_NAME = SHOW_NAME_DEFAULT;
+    private static final float SPACING = 15;
 
     private Label infoLabel;
     private Label showNameLabel;
@@ -45,7 +39,7 @@ public class WorldSettingsWindow extends AbstractWindow {
 
         showNameLabel = new Label("Benutzernamen dauerhaft anzeigen.", Assets.SKIN);
         showNameCheckBox = new CheckBox("", Assets.SKIN);
-        showNameCheckBox.setChecked(SHOW_NAME);
+        showNameCheckBox.setChecked(Settings.getShowNamesInWorld());
 
         confirmButton = new TextButton("Bestätigen", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
@@ -55,9 +49,8 @@ public class WorldSettingsWindow extends AbstractWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                CHANGED = true;
-                SHOW_NAME = showNameCheckBox.isChecked();
-                close();
+                Settings.setShowNamesInWorld(showNameCheckBox.isChecked());
+                infoLabel.setText("Deine Änderungen wurden gespeichert!");
             }
         });
 
@@ -69,7 +62,7 @@ public class WorldSettingsWindow extends AbstractWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                showNameCheckBox.setChecked(SHOW_NAME_DEFAULT);
+                showNameCheckBox.setChecked(Settings.DEFAULT_SHOW_NAMES_IN_WORLD);
             }
         });
 
@@ -106,21 +99,20 @@ public class WorldSettingsWindow extends AbstractWindow {
         setWidth(WINDOW_WIDTH);
         setHeight(WINDOW_HEIGHT);
 
-        Table labelContainer = new Table();
-        labelContainer.add(infoLabel).center();
-        add(labelContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(VERTICAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
-
+        Table container = new Table();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+        infoLabel.setAlignment(Align.center, Align.center);
+        container.add(infoLabel).row();
         Table showNameContainer = new Table();
-        showNameContainer.defaults().colspan(2).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).expandX();
-        showNameContainer.add(showNameLabel).padLeft(2 * HORIZONTAL_SPACING);
-        showNameCheckBox.getImage().scaleBy(0.5f);
-        showNameContainer.add(showNameCheckBox).right().padRight(2 * HORIZONTAL_SPACING);
-        add(showNameContainer).width(ROW_WIDTH).spaceTop(VERTICAL_SPACING).spaceBottom(2 * VERTICAL_SPACING).row();
-
+        showNameContainer.defaults().colspan(16).height(ROW_HEIGHT).space(SPACING).growX();
+        showNameContainer.add(showNameLabel).colspan(15);
+        showNameContainer.add(showNameCheckBox).colspan(1);
+        container.add(showNameContainer).row();
         Table buttonContainer = new Table();
-        buttonContainer.defaults().colspan(3).bottom().height(ROW_HEIGHT).space(HORIZONTAL_SPACING).growX();
+        buttonContainer.defaults().colspan(3).bottom().height(ROW_HEIGHT).space(SPACING).growX();
         buttonContainer.add(confirmButton, defaultButton, cancelButton);
-        add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
+        container.add(buttonContainer);
+        add(container).padLeft(SPACING).padRight(SPACING).grow();
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }

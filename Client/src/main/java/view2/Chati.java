@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import controller.network.ServerSender;
 import model.MessageBundle;
 import model.communication.message.MessageType;
@@ -52,8 +51,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private boolean changeWorldList;
     private boolean changeRoomList;
 
-    private GLProfiler profiler;
-
     public Chati(IUserManagerView userManager) {
         CHATI = this;
         this.userManager = userManager;
@@ -85,11 +82,10 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void create() {
-        this.profiler = new GLProfiler(Gdx.graphics);
-        profiler.enable();
-
-        SPRITE_BATCH = new SpriteBatch();
+        Settings.initialize();
         Assets.initialize();
+        SPRITE_BATCH = new SpriteBatch();
+
         this.menuScreen = new MenuScreen();
         this.worldScreen = new WorldScreen();
         setScreen(menuScreen);

@@ -479,7 +479,7 @@ public class RoomReceptionWindow extends InteractableWindow {
             Table container = new Table();
             container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
             container.add(infoLabel).row();
-            container.add(messageArea).height(MESSAGE_AREA_HEIGHT).spaceBottom(2 * SPACING).row();
+            container.add(messageArea).height(MESSAGE_AREA_HEIGHT).spaceBottom(SPACING).row();
             Table buttonContainer = new Table();
             buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
             buttonContainer.add(confirmButton).spaceRight(SPACING);

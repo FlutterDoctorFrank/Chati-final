@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.role.Permission;
 import model.role.Role;
@@ -448,8 +449,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         private static final float WINDOW_HEIGHT = 350;
         private static final float ROW_WIDTH = 450;
         private static final float ROW_HEIGHT = 60;
-        private static final float VERTICAL_SPACING = 15;
-        private static final float HORIZONTAL_SPACING = 15;
+        private static final float SPACING = 15;
 
         private Label infoLabel;
         private TextArea userMessageArea;
@@ -561,14 +561,16 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             setWidth(WINDOW_WIDTH);
             setHeight(WINDOW_HEIGHT);
 
-            Table labelContainer = new Table();
-            labelContainer.add(infoLabel).center();
-            add(labelContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(VERTICAL_SPACING).spaceBottom(VERTICAL_SPACING).row();
-            add(userMessageArea).width(ROW_WIDTH).height(2 * ROW_HEIGHT).spaceBottom(VERTICAL_SPACING).row();
-            Table buttonContainer = new Table(Assets.SKIN);
-            buttonContainer.add(confirmButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(BUTTON_SIZE).space(HORIZONTAL_SPACING);
-            buttonContainer.add(cancelButton).width((ROW_WIDTH - VERTICAL_SPACING) / 2).height(BUTTON_SIZE);
-            add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT);
+            Table container = new Table();
+            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+            infoLabel.setAlignment(Align.center, Align.center);
+            container.add(infoLabel).row();
+            container.add(userMessageArea).height(2 * ROW_HEIGHT).row();
+            Table buttonContainer = new Table();
+            buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).space(SPACING).growX();
+            buttonContainer.add(confirmButton, cancelButton);
+            container.add(buttonContainer);
+            add(container).padLeft(SPACING).padRight(SPACING).grow();
 
             getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
         }
