@@ -41,18 +41,6 @@ public class Room extends Area implements IRoom {
         this.map = map;
         this.isPrivate = false;
         this.password = null;
-
-        if (Gdx.app == null) {
-            throw new IllegalStateException("LibGDX environment is not available");
-        }
-
-        FutureTask<?> buildTask = new FutureTask<>(this::build, null);
-        Gdx.app.postRunnable(buildTask);
-        try {
-            buildTask.get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -164,14 +152,25 @@ public class Room extends Area implements IRoom {
      * Setzt die Parameter dieses Raums, die in der Datenstruktur der Karte enthalten sind.
      * @see MapUtils
      */
-    private void build() {
-        TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
-        communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
-        communicationRegion.setArea(this);
-        communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
-        expanse = new Expanse(new Location(this, 0, 0), MapUtils.getWidth(tiledMap) , MapUtils.getHeight(tiledMap));
-        //this.collisionMap = MapUtils.getCollisionMap(tiledMap);
-        spawnLocation = new Location(this, MapUtils.getSpawnPosX(tiledMap), MapUtils.getSpawnPosY(tiledMap));
-        MapUtils.buildChildTree(this, tiledMap);
+    public void build() {
+        if (Gdx.app == null) {
+            throw new IllegalStateException("LibGDX environment is not available");
+        }
+        FutureTask<?> buildTask = new FutureTask<>(() -> {
+            TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
+            communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
+            communicationRegion.setArea(Room.this);
+            communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
+            expanse = new Expanse(new Location(Room.this, 0, 0), MapUtils.getWidth(tiledMap) , MapUtils.getHeight(tiledMap));
+            //this.collisionMap = MapUtils.getCollisionMap(tiledMap);
+            spawnLocation = new Location(Room.this, MapUtils.getSpawnPosX(tiledMap), MapUtils.getSpawnPosY(tiledMap));
+            MapUtils.buildChildTree(Room.this, tiledMap);
+        }, null);
+        Gdx.app.postRunnable(buildTask);
+        try {
+            buildTask.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

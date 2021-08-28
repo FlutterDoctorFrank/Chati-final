@@ -83,14 +83,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
         }
         this.currentRoom = new SpatialContext(roomName, currentWorld);
         this.isInCurrentRoom = true;
-
-        FutureTask<?> buildTask = new FutureTask<>(() -> currentRoom.build(map), null);
-        Gdx.app.postRunnable(buildTask);
-        try {
-            buildTask.get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        this.currentRoom.build(map);
     }
 
     @Override

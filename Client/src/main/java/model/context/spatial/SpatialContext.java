@@ -1,5 +1,6 @@
 package model.context.spatial;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import model.communication.CommunicationRegion;
@@ -12,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * Eine Klasse, welche einen räumlichen Kontext der Anwendung repräsentiert.
@@ -72,17 +75,25 @@ public class SpatialContext extends Context implements ISpatialContextView {
     }
 
     public void build(SpatialMap map) {
-        // Raum wurde bereits initialisiert.
-        if (this.map != null) {
-            return;
+        FutureTask<?> buildTask = new FutureTask<>(() -> {
+            // Raum wurde bereits initialisiert.
+            if (this.map != null) {
+                return;
+            }
+            this.map = map;
+            TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
+            this.communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
+            this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
+            this.expanse = new Expanse(new Location(0, 0), MapUtils.getWidth(tiledMap), MapUtils.getHeight(tiledMap));
+            MapUtils.buildChildTree(this, tiledMap);
+            UserManager.getInstance().getModelObserver().setRoomChanged();
+        }, null);
+        Gdx.app.postRunnable(buildTask);
+        try {
+            buildTask.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
         }
-        this.map = map;
-        TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
-        this.communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
-        this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
-        this.expanse = new Expanse(new Location(0, 0), MapUtils.getWidth(tiledMap), MapUtils.getHeight(tiledMap));
-        MapUtils.buildChildTree(this, tiledMap);
-        UserManager.getInstance().getModelObserver().setRoomChanged();
     }
 
     /**

@@ -31,6 +31,7 @@ public class World extends Area implements IWorld {
     public World(@NotNull final String worldName, @NotNull final SpatialMap map) {
         super(worldName, GlobalContext.getInstance(), null, null, null, null);
         this.publicRoom = new Room(PUBLIC_ROOM_NAME, this, map);
+        this.publicRoom.build();
         addChild(publicRoom);
         this.privateRooms = new HashMap<>();
     }

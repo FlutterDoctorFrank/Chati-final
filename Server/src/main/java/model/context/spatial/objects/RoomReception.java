@@ -109,6 +109,7 @@ public class RoomReception extends Interactable {
                 // Rauminhabers und teleportiere ihn in den privaten Raum.
 
                 Room privateRoom = new Room(createRoomName, world, map, password);
+                privateRoom.build();
                 world.addPrivateRoom(privateRoom);
 
                 // Schließe das Menü des Benutzers.
