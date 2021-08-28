@@ -5,18 +5,17 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import controller.network.ServerSender;
 import view2.Assets;
 import view2.Chati;
 import view2.component.AbstractWindow;
 
 public abstract class HudMenuWindow extends AbstractWindow {
 
+    public static final Drawable PRESSED_BUTTON_IMAGE = new TextButton("", Assets.SKIN).getStyle().down;
+    public static final Drawable UNPRESSED_BUTTON_IMAGE = new TextButton("", Assets.SKIN).getStyle().up;
+
     private static final float HUD_WINDOW_WIDTH = 450;
     private static final float HUD_WINDOW_HEIGHT = 600;
-
-    protected static final Drawable PRESSED_BUTTON_IMAGE = new TextButton("", Assets.SKIN).getStyle().down;
-    protected static final Drawable UNPRESSED_BUTTON_IMAGE = new TextButton("", Assets.SKIN).getStyle().up;
 
     protected HudMenuWindow(String title) {
         super(title);

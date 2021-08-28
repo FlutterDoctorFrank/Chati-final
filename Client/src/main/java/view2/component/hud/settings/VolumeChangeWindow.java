@@ -1,17 +1,22 @@
 package view2.component.hud.settings;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import view2.Assets;
-import view2.Chati;
 import view2.Settings;
 import view2.component.AbstractWindow;
+import view2.component.hud.HeadUpDisplay;
+import view2.component.hud.HudMenuWindow;
 
 public class VolumeChangeWindow extends AbstractWindow {
 
@@ -59,23 +64,52 @@ public class VolumeChangeWindow extends AbstractWindow {
         totalVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                         3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
         totalVolumeSlider.setValue(Settings.getTotalVolume());
+        totalVolumeSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                enableButton();
+                infoLabel.setText("Ändere die Lautstärke!");
+            }
+        });
 
         voiceVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
         voiceVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                         3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
         voiceVolumeSlider.setValue(Settings.getVoiceVolume());
+        voiceVolumeSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                enableButton();
+                infoLabel.setText("Ändere die Lautstärke!");
+            }
+        });
 
         musicVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
         musicVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                         3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
         musicVolumeSlider.setValue(Settings.getMusicVolume());
+        musicVolumeSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                enableButton();
+                infoLabel.setText("Ändere die Lautstärke!");
+            }
+        });
 
         soundVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
         soundVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                         3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
         soundVolumeSlider.setValue(Settings.getSoundVolume());
+        soundVolumeSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                enableButton();
+                infoLabel.setText("Ändere die Lautstärke!");
+            }
+        });
 
-        confirmButton = new TextButton("Bestätigen", Assets.SKIN);
+        confirmButton = new TextButton("Übernehmen", Assets.getNewSkin());
+        disableButton();
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -83,6 +117,7 @@ public class VolumeChangeWindow extends AbstractWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                disableButton();
                 Settings.setTotalVolume(totalVolumeSlider.getValue());
                 Settings.setVoiceVolume(voiceVolumeSlider.getValue());
                 Settings.setMusicVolume(musicVolumeSlider.getValue());
@@ -99,10 +134,12 @@ public class VolumeChangeWindow extends AbstractWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                enableButton();
                 totalVolumeSlider.setValue(Settings.DEFAULT_TOTAL_VOLUME);
                 voiceVolumeSlider.setValue(Settings.DEFAULT_VOICE_VOLUME);
                 musicVolumeSlider.setValue(Settings.DEFAULT_MUSIC_VOLUME);
                 soundVolumeSlider.setValue(Settings.DEFAULT_SOUND_VOLUME);
+                infoLabel.setText("Ändere die Lautstärke!");
             }
         });
 
@@ -166,5 +203,19 @@ public class VolumeChangeWindow extends AbstractWindow {
         add(container).padLeft(SPACING).padRight(SPACING).grow();
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
+    }
+
+    private void enableButton() {
+        confirmButton.setDisabled(false);
+        confirmButton.setTouchable(Touchable.enabled);
+        confirmButton.getLabel().setColor(Color.WHITE);
+        confirmButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
+    }
+
+    private void disableButton() {
+        confirmButton.setDisabled(true);
+        confirmButton.setTouchable(Touchable.disabled);
+        confirmButton.getLabel().setColor(Color.DARK_GRAY);
+        confirmButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
     }
 }

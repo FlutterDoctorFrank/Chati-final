@@ -182,9 +182,6 @@ public class WorldScreen extends AbstractScreen {
     }
 
     public void openMenu(ContextID contextId, Menu menu) {
-        if (pendingResponse == Response.INTERACT) {
-            return;
-        }
         switch (menu) {
             case ROOM_RECEPTION_MENU:
                 currentInteractableWindow = new RoomReceptionWindow(contextId);

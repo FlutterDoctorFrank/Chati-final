@@ -1,16 +1,21 @@
 package view2.component.hud.settings;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import view2.Assets;
 import view2.Settings;
 import view2.component.AbstractWindow;
+import view2.component.hud.HudMenuWindow;
 
 public class WorldSettingsWindow extends AbstractWindow {
 
@@ -40,8 +45,16 @@ public class WorldSettingsWindow extends AbstractWindow {
         showNameLabel = new Label("Benutzernamen dauerhaft anzeigen.", Assets.SKIN);
         showNameCheckBox = new CheckBox("", Assets.SKIN);
         showNameCheckBox.setChecked(Settings.getShowNamesInWorld());
+        showNameCheckBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                enableButton();
+                infoLabel.setText("Führe Welteinstellungen durch.");
+            }
+        });
 
-        confirmButton = new TextButton("Bestätigen", Assets.SKIN);
+        confirmButton = new TextButton("Übernehmen", Assets.getNewSkin());
+        disableButton();
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -49,6 +62,7 @@ public class WorldSettingsWindow extends AbstractWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                disableButton();
                 Settings.setShowNamesInWorld(showNameCheckBox.isChecked());
                 infoLabel.setText("Deine Änderungen wurden gespeichert!");
             }
@@ -62,7 +76,9 @@ public class WorldSettingsWindow extends AbstractWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                enableButton();
                 showNameCheckBox.setChecked(Settings.DEFAULT_SHOW_NAMES_IN_WORLD);
+                infoLabel.setText("Führe Welteinstellungen durch.");
             }
         });
 
@@ -115,5 +131,19 @@ public class WorldSettingsWindow extends AbstractWindow {
         add(container).padLeft(SPACING).padRight(SPACING).grow();
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
+    }
+
+    private void enableButton() {
+        confirmButton.setDisabled(false);
+        confirmButton.setTouchable(Touchable.enabled);
+        confirmButton.getLabel().setColor(Color.WHITE);
+        confirmButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
+    }
+
+    private void disableButton() {
+        confirmButton.setDisabled(true);
+        confirmButton.setTouchable(Touchable.disabled);
+        confirmButton.getLabel().setColor(Color.DARK_GRAY);
+        confirmButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
     }
 }

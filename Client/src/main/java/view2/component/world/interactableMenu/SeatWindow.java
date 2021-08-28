@@ -1,12 +1,12 @@
 package view2.component.world.interactableMenu;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.context.ContextID;
 import model.context.spatial.Menu;
@@ -15,13 +15,12 @@ import view2.Chati;
 
 public class SeatWindow extends InteractableWindow {
 
+    private static final int MENU_OPTION_SIT = 1;
+
     private static final float WINDOW_WIDTH = 550;
-    private static final float WINDOW_HEIGHT = 350;
-    private static final float ROW_WIDTH = 450;
+    private static final float WINDOW_HEIGHT = 250;
     private static final float ROW_HEIGHT = 60;
-    private static final float VERTICAL_SPACING = 15;
-    private static final float HORIZONTAL_SPACING = 15;
-    private static final float LABEL_FONT_SCALE_FACTOR = 0.5f;
+    private static final float SPACING = 15;
 
     private Label infoLabel;
     private TextButton confirmButton;
@@ -36,10 +35,7 @@ public class SeatWindow extends InteractableWindow {
 
     @Override
     protected void create() {
-        Label.LabelStyle style = new Label.LabelStyle();
-        style.font = new BitmapFont();
-        style.font.getData().scale(LABEL_FONT_SCALE_FACTOR);
-        infoLabel = new Label("Möchtest du hier Platz nehmen?", style);
+        infoLabel = new Label("Möchtest du hier Platz nehmen?", Assets.SKIN);
 
         confirmButton = new TextButton("Ja", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
@@ -49,7 +45,8 @@ public class SeatWindow extends InteractableWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], 1);
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
+                        new String[0], MENU_OPTION_SIT);
             }
         });
 
@@ -86,16 +83,16 @@ public class SeatWindow extends InteractableWindow {
         setWidth(WINDOW_WIDTH);
         setHeight(WINDOW_HEIGHT);
 
-        Table labelContainer = new Table();
-        labelContainer.add(infoLabel).center();
-
-        add(labelContainer).top().width(ROW_WIDTH).height(ROW_HEIGHT).spaceTop(VERTICAL_SPACING)
-                .spaceBottom(VERTICAL_SPACING).expandY().row();
-
+        Table container = new Table();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+        infoLabel.setAlignment(Align.center, Align.center);
+        container.add(infoLabel).row();
         Table buttonContainer = new Table();
-        buttonContainer.add(confirmButton).width((ROW_WIDTH - HORIZONTAL_SPACING) / 2).height(ROW_HEIGHT).space(HORIZONTAL_SPACING);
-        buttonContainer.add(cancelButton).width((ROW_WIDTH - HORIZONTAL_SPACING) / 2).height(ROW_HEIGHT);
-        add(buttonContainer).width(ROW_WIDTH).height(ROW_HEIGHT).spaceBottom(VERTICAL_SPACING);
+        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
+        buttonContainer.add(confirmButton).spaceRight(SPACING);
+        buttonContainer.add(cancelButton);
+        container.add(buttonContainer);
+        add(container).padLeft(SPACING).padRight(SPACING).grow();
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }

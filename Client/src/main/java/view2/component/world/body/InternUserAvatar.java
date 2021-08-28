@@ -82,11 +82,10 @@ public class InternUserAvatar extends UserAvatar {
             Set<ISpatialContextView> currentInteractables = new HashSet<>(internUser.getCurrentInteractables().values());
             // Falls sich um den Benutzer mehrere Kontexte befinden, mit denen interagiert werden kann, entscheide
             // anhand der Blickrichtung, mit welchem Kontext interagiert werden soll.
+            ISpatialContextView interactingContext = null;
             if (currentInteractables.isEmpty()) {
                 return;
-            }
-            ISpatialContextView interactingContext = null;
-            if (currentInteractables.size() == 1) {
+            } else if (currentInteractables.size() == 1) {
                 interactingContext = currentInteractables.iterator().next();
             } else {
                 if (previousDirection == Direction.UP) {

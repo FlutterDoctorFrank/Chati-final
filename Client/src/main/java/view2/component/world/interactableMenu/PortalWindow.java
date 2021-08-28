@@ -85,7 +85,6 @@ public class PortalWindow extends InteractableWindow {
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
         infoLabel.setAlignment(Align.center, Align.center);
         container.add(infoLabel).row();
-
         Table buttonContainer = new Table();
         buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
         buttonContainer.add(confirmButton).spaceRight(SPACING);
