@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import model.role.Permission;
 import model.role.Role;
 import model.user.IUserView;
 import model.user.Status;
@@ -88,6 +89,12 @@ public class UserInfoContainer extends Table {
         }
         if (user.getStatus() == Status.OFFLINE) {
             usernameLabel.setColor(Color.GRAY);
+        } else if (user.isReported() && !user.equals(Chati.CHATI.getUserManager().getInternUserView())
+                && (Chati.CHATI.getUserManager().getInternUserView().hasPermission(Permission.BAN_MODERATOR)
+                && !user.hasPermission(Permission.BAN_MODERATOR)
+                || Chati.CHATI.getUserManager().getInternUserView().hasPermission(Permission.BAN_USER)
+                && !user.hasPermission(Permission.BAN_USER) && !user.hasPermission(Permission.BAN_MODERATOR))) {
+            usernameLabel.setColor(Color.RED);
         }
 
         roleIcons.forEach(roleIconContainer::add);

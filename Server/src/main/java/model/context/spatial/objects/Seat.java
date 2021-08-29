@@ -16,7 +16,7 @@ import java.util.Set;
 
 /**
  * Eine Klasse, welche ein Objekt repräsentiert, durch welches der Benutzer an eine Stelle bewegt wird und mit anderen
- * Benutzern kommunizieren kann. Hat immer den Typ {@link model.context.spatial.SpatialContextType#OBJECT}.
+ * Benutzern kommunizieren kann.
  */
 public class Seat extends Interactable {
 

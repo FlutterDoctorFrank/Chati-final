@@ -1,6 +1,6 @@
 package view2.component.hud;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -85,7 +85,8 @@ public class InternUserDisplay extends AbstractTable {
         container.add(statusButton).width(2 * USER_INFO_ICON_SIZE).height(2 * USER_INFO_ICON_SIZE)
                 .space(HORIZONTAL_SPACING).padLeft(HORIZONTAL_SPACING);
         container.add(userInfoContainer).left().center().height(USER_INFO_ICON_SIZE).row();
-        add(container).top().left().width(HeadUpDisplay.HUD_MENU_TABLE_WIDTH).height(HeadUpDisplay.BUTTON_SIZE).growY().row();
+        add(container).top().left().width(HudMenuWindow.HUD_WINDOW_WIDTH)
+                .height(HeadUpDisplay.BUTTON_SIZE).grow().row();
     }
 
     private void setStatusImage() {

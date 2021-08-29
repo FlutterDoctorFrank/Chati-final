@@ -214,17 +214,17 @@ public class User implements IUser {
     }
 
     @Override
-    public void executeAdministrativeAction(@NotNull final UUID targetID, @NotNull final AdministrativeAction administrativeAction,
+    public void executeAdministrativeAction(@NotNull final UUID targetId, @NotNull final AdministrativeAction administrativeAction,
                                             @NotNull final String[] args)
             throws UserNotFoundException, IllegalAdministrativeActionException, NoPermissionException {
         throwIfNotOnline();
         updateLastActivity();
-        User target = UserAccountManager.getInstance().getUser(targetID);
+        User target = UserAccountManager.getInstance().getUser(targetId);
         administrativeAction.execute(this, target, args);
     }
 
     @Override
-    public void interact(@NotNull final ContextID spatialID) throws IllegalInteractionException, ContextNotFoundException {
+    public void interact(@NotNull final ContextID spatialId) throws IllegalInteractionException, ContextNotFoundException {
         throwIfNotOnline();
         throwIfNotInWorld();
         updateLastActivity();
@@ -233,7 +233,7 @@ public class User implements IUser {
             throw new IllegalInteractionException("User is already interacting with a context.", this);
         }
         Area currentArea = currentLocation.getArea();
-        Interactable interactable = currentArea.getInteractable(spatialID);
+        Interactable interactable = currentArea.getInteractable(spatialId);
         // Überprüfe, ob ein Objekt in der Nähe des Benutzers mit dieser ID vorhanden ist und ob der Benutzer mit diesem
         // interagieren kann.
         if (!interactable.canInteract(this)) {
@@ -244,13 +244,13 @@ public class User implements IUser {
     }
 
     @Override
-    public void executeOption(@NotNull final ContextID spatialID, final int menuOption,
+    public void executeOption(@NotNull final ContextID spatialId, final int menuOption,
                               @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException, ContextNotFoundException {
         throwIfNotOnline();
         throwIfNotInWorld();
         updateLastActivity();
         Area currentArea = currentLocation.getArea();
-        Interactable interactable = currentArea.getInteractable(spatialID);
+        Interactable interactable = currentArea.getInteractable(spatialId);
         // Überprüfe, ob ein Objekt in der Nähe des Benutzers mit dieser ID vorhanden ist und ob der Benutzer mit diesem
         // interagieren kann.
         if (!interactable.canInteract(this)) {
@@ -266,25 +266,25 @@ public class User implements IUser {
     }
 
     @Override
-    public void deleteNotification(@NotNull final UUID notificationID) throws NotificationNotFoundException {
+    public void deleteNotification(@NotNull final UUID notificationId) throws NotificationNotFoundException {
         throwIfNotOnline();
         updateLastActivity();
-        Notification notification = notifications.get(notificationID);
+        Notification notification = notifications.remove(notificationId);
         if (notification == null) {
-            throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationID);
+            throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationId);
         }
         database.removeNotification(this, notification);
     }
 
     @Override
-    public void manageNotification(@NotNull final UUID notificationID, final boolean accept) throws NotificationNotFoundException,
+    public void manageNotification(@NotNull final UUID notificationId, final boolean accept) throws NotificationNotFoundException,
             IllegalNotificationActionException {
         throwIfNotOnline();
         updateLastActivity();
-        Notification notification = notifications.get(notificationID);
+        Notification notification = notifications.get(notificationId);
         // Überprüfe, ob die Benachrichtigung vorhanden ist.
         if (notification == null) {
-            throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationID);
+            throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationId);
         }
         // Akzeptiere die Benachrichtigung, oder lehne sie ab.
         if (accept) {
@@ -293,7 +293,7 @@ public class User implements IUser {
             notification.decline();
         }
         // Lösche die entsprechende Benachrichtigung.
-        deleteNotification(notificationID);
+        deleteNotification(notificationId);
     }
 
     @Override
@@ -552,7 +552,7 @@ public class User implements IUser {
         database.addNotification(this, notification);
 
         // Sende Benachrichtigung an Benutzer.
-        this.send(ClientSender.SendAction.NOTIFICATION, notification);
+        this.send(SendAction.NOTIFICATION, notification);
     }
 
     /**
@@ -686,19 +686,18 @@ public class User implements IUser {
     }
 
     /**
-     * Gibt die Rollen des Benutzers innerhalb seines aktuellen Raums und allen untergeordneten Kontexten zurück.
-     * @return Menge der Rollen des Benutzers in seinem aktuellen Raum und allen untergeordneten Kontexten.
-     * @throws IllegalStateException wenn sich der Benutzer in keinem Raum befindet.
+     * Gibt die Rollen des Benutzers innerhalb seiner aktuellen Welt und allen untergeordneten Kontexten zurück.
+     * @return Menge der Rollen des Benutzers in seiner aktuellen Welt und allen untergeordneten Kontexten.
+     * @throws IllegalStateException wenn sich der Benutzer in keiner Welt befindet.
      */
-    public @NotNull Map<Context, ContextRole> getRoomRoles() throws IllegalStateException {
-        // Prüfe, ob der Benutzer in einer Welt beziehungsweise in einen Raum ist.
-        if (currentWorld == null || currentLocation == null) {
+    public @NotNull Map<Context, ContextRole> getWorldRoles() throws IllegalStateException {
+        // Prüfe, ob Benutzer in einer Welt ist.
+        if (currentWorld == null) {
             throw new IllegalStateException("User is not in a world.");
         }
-
-        Map<Context, ContextRole> roomRoles = new HashMap<>();
-        addChildRoles(roomRoles, currentLocation.getRoom());
-        return roomRoles;
+        Map<Context, ContextRole> worldRoles = new HashMap<>();
+        addChildRoles(worldRoles, currentWorld);
+        return worldRoles;
     }
 
     /**

@@ -5,7 +5,6 @@ import model.context.spatial.Location;
 import model.context.spatial.SpatialContext;
 import model.exception.ContextNotFoundException;
 import model.context.ContextID;
-import model.context.spatial.SpatialContextType;
 import model.role.Role;
 
 import java.util.Set;
@@ -37,7 +36,6 @@ public interface IUserController {
      * Setzt die Information, ob ein Benutzer sich in der aktuellen Welt des intern angemeldeten Benutzers befindet.
      * @param isInCurrentWorld true, wenn der Benutzer in der aktuellen Welt ist, sonst false.
      * @see SpatialContext
-     * @see SpatialContextType#WORLD
      */
     void setInCurrentWorld(boolean isInCurrentWorld);
 
@@ -46,7 +44,6 @@ public interface IUserController {
      * auf der aktuell auf dem Client gezeigten Karte dargestellt werden soll.
      * @param isInCurrentRoom true, wenn der Benutzer im aktuellen Raum ist, sonst false.
      * @see SpatialContext
-     * @see SpatialContextType#ROOM
      */
     void setInCurrentRoom(boolean isInCurrentRoom);
 

@@ -255,7 +255,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                 return;
             }
 
-            this.manager.getView().playVoiceData(packet.getSenderId(), packet.getTimestamp(), packet.getVoiceData());
+            try {
+                this.manager.getView().playVoiceData(packet.getSenderId(), packet.getTimestamp(), packet.getVoiceData());
+            } catch (UserNotFoundException e) {
+                // TODO Sven: Fehlerbehandlung
+            }
         } else {
             this.logUnexpectedPacket(packet, "Can not receive voice message while user is not in a world");
         }

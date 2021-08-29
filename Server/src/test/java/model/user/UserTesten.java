@@ -139,7 +139,7 @@ public class UserTesten {
     public void joinWorldTest() {
 
         setTestWorld("forJoin");
-        UserTesten.TestClientSender testClientSender = new UserTesten.TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("join", "11111");
             this.userAccountManager.loginUser("join", "11111", testClientSender);
@@ -160,7 +160,7 @@ public class UserTesten {
     @Test
     public void leaveWorldTest() {
         setTestWorld("forLeave");
-        UserTesten.TestClientSender testClientSender = new UserTesten.TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("leave", "11111");
             this.userAccountManager.loginUser("leave", "11111", testClientSender);
@@ -181,7 +181,7 @@ public class UserTesten {
     @Test
     public void moveTest() {
         setTestWorld("forMove");
-        UserTesten.TestClientSender testClientSender = new UserTesten.TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("move", "11111");
             this.userAccountManager.loginUser("move", "11111", testClientSender);
@@ -214,7 +214,7 @@ public class UserTesten {
 
     @Test
     public void executeAdministrativeActionTest() {
-        UserTesten.TestClientSender testClientSender = new UserTesten.TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
 
         try {
             // Invite Friend
@@ -528,7 +528,7 @@ public class UserTesten {
     @Test
     public void logoutTest() {
         setTestWorld("forLogout");
-        UserTesten.TestClientSender testClientSender = new UserTesten.TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
         try {
             userAccountManager.registerUser("logout", "11111");
             this.user = userAccountManager.loginUser("logout", "11111", testClientSender);

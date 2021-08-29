@@ -21,8 +21,7 @@ import java.util.UUID;
 
 /**
  * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer die Rolle des Bereichsberechtigten für einen
- * zukünftigen Zeitpunkt für einen festgelegten räumlichen Kontext beantragen kann. Ist immer vom Typ
- * {@link model.context.spatial.SpatialContextType#OBJECT}.
+ * zukünftigen Zeitpunkt für einen festgelegten räumlichen Kontext beantragen kann.
  */
 public class AreaPlanner extends Interactable {
 

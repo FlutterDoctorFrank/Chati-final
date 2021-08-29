@@ -15,7 +15,7 @@ public class PacketInUserManageTest extends PacketTest<PacketInUserManage> {
     public void callListenerTest() {
         final MockPacketListenerIn listener = new MockPacketListenerIn();
 
-        this.before = new PacketInUserManage(randomUniqueId(), randomEnum(PacketInUserManage.Action.class), null);
+        this.before = new PacketInUserManage(randomUniqueId(), randomEnum(Action.class), null);
         this.before.call(listener);
 
         Assert.assertTrue(listener.handled(PacketInUserManage.class));

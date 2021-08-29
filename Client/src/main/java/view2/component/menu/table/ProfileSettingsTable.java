@@ -58,10 +58,10 @@ public class ProfileSettingsTable extends MenuTable {
     @Override
     protected void setLayout() {
         Table container = new Table();
-        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().fillX().expandX();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
         container.add(infoLabel).row();
         Table buttonContainer = new Table();
-        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).fillX().expandX();
+        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
         buttonContainer.add(changePasswordButton).spaceRight(SPACING);
         buttonContainer.add(deleteAccountButton);
         container.add(buttonContainer).row();

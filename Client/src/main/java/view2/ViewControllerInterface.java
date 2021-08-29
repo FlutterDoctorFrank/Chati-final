@@ -20,7 +20,7 @@ public interface ViewControllerInterface {
      */
     void setSender(@Nullable final ServerSender sender);
     void updateWorlds(Map<ContextID, String> worlds);
-    void updateRooms(ContextID worldId, Map<ContextID,String> privateRooms) throws ContextNotFoundException;
+    void updateRooms(ContextID worldId, Map<ContextID, String> privateRooms) throws ContextNotFoundException;
     void registrationResponse(boolean success, String messageKey);
     void loginResponse(boolean success, String messageKey);
     void passwordChangeResponse(boolean success, String messageKey);
@@ -29,8 +29,8 @@ public interface ViewControllerInterface {
     void createWorldResponse(boolean success, String messageKey);
     void deleteWorldResponse(boolean success, String messageKey);
     void joinWorldResponse(boolean success, String messageKey);
-    void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message, MessageBundle messageBundle) throws UserNotFoundException;
-    void playVoiceData(UUID userID, LocalDateTime timestamp, byte[] voiceData); //throws UserNotFoundException;
+    void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message, MessageBundle messageBundle) throws UserNotFoundException;
+    void playVoiceData(UUID userId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException;
     void openMenu(ContextID contextId, Menu menu);
     void closeMenu(ContextID contextId, Menu menu);
     void menuActionResponse(boolean success, String messageKey);

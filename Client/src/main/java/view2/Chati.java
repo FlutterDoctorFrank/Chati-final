@@ -10,8 +10,10 @@ import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.Menu;
+import model.exception.UserNotFoundException;
 import model.user.IUserManagerView;
 import org.jetbrains.annotations.Nullable;
+import view2.audio.VoiceChat;
 import view2.component.AbstractScreen;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.menu.table.LoginTable;
@@ -85,6 +87,8 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         Settings.initialize();
         Assets.initialize();
         SPRITE_BATCH = new SpriteBatch();
+
+        VoiceChat.getInstance().start();
 
         this.menuScreen = new MenuScreen();
         this.worldScreen = new WorldScreen();
@@ -220,9 +224,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void playVoiceData(UUID userID, LocalDateTime timestamp, byte[] voiceData) {
+    public void playVoiceData(UUID userId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
         if (this.screen.equals(worldScreen)) {
-            // TODO
+            VoiceChat.getInstance().receiveData(userId, timestamp, voiceData);
         }
     }
 

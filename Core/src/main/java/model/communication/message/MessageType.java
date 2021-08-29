@@ -1,7 +1,6 @@
 package model.communication.message;
 
 import model.communication.CommunicationMedium;
-import model.context.spatial.SpatialContextType;
 
 /**
  * Eine Enumeration, welche den durch ein vom Benutzer am Anfang der Nachricht eingegebenes Muster definierten
@@ -23,14 +22,14 @@ public enum MessageType {
     WHISPER,
 
     /**
-     * Kann durch die Eingabe eines Chatbefehls am Anfang der Nachricht verwendet werden.
-     * Nachricht im gesamten {@link SpatialContextType#ROOM Raum} des Senders.
+     * Kann durch die Eingabe eines Chatbefehls am Anfang der Nachricht verwendet werden. Nachricht im gesamten Raum
+     * des Senders.
      */
     ROOM,
 
     /**
-     * Kann durch die Eingabe eines Chatbefehls am Anfang der Nachricht verwendet werden.
-     * Nachricht in der gesamten {@link SpatialContextType#WORLD Welt} des Senders.
+     * Kann durch die Eingabe eines Chatbefehls am Anfang der Nachricht verwendet werden. Nachricht in der gesamten Welt
+     * des Senders.
      */
     WORLD,
 

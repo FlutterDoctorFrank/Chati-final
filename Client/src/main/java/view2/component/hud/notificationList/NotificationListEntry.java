@@ -28,6 +28,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
     private static final float HORIZONTAL_SPACING = 7.5f;
     private static final float BUTTON_SCALE_FACTOR = 0.1f;
 
+    private NotificationWindow openWindow;
     private Label titleLabel;
     private Label dateLabel;
     private TextButton showButton;
@@ -57,7 +58,8 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                new NotificationWindow().open();
+                openWindow = new NotificationWindow();
+                openWindow.open();
             }
         });
 
@@ -78,9 +80,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                Chati.CHATI.getServerSender()
-                        .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), true);
-                remove();
+                new ConfirmWindow(NotificationAction.ACCEPT).open();
             }
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -113,9 +113,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                Chati.CHATI.getServerSender()
-                        .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), false);
-                remove();
+                new ConfirmWindow(NotificationAction.DECLINE).open();
             }
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -142,9 +140,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 deleteButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                Chati.CHATI.getServerSender()
-                        .send(ServerSender.SendAction.NOTIFICATION_DELETE, notification.getNotificationId());
-                remove();
+                new ConfirmWindow(NotificationAction.DELETE).open();
             }
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -183,18 +179,17 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
 
     @Override
     public int compareTo(@NotNull NotificationListEntry other) {
-        if (this.notification.getTimestamp().compareTo(other.notification.getTimestamp()) == 0) {
+        if (other.notification.getTimestamp().compareTo(this.notification.getTimestamp()) == 0) {
             return this.notification.getNotificationId().compareTo(other.notification.getNotificationId());
         } else {
-            return this.notification.getTimestamp().compareTo(other.notification.getTimestamp());
+            return other.notification.getTimestamp().compareTo(this.notification.getTimestamp());
         }
     }
 
     private class NotificationWindow extends AbstractWindow {
 
-        private static final float WINDOW_WIDTH = 550;
+        private static final float WINDOW_WIDTH = 750;
         private static final float WINDOW_HEIGHT = 350;
-        private static final float ROW_WIDTH = 450;
         private static final float ROW_HEIGHT = 60;
         private static final float SPACING = 15;
 
@@ -228,7 +223,8 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    NotificationWindow.this.remove();
+                    openWindow = null;
+                    close();
                 }
             });
 
@@ -249,10 +245,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     acceptButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                    Chati.CHATI.getServerSender()
-                            .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), true);
-                    NotificationListEntry.this.remove();
-                    close();
+                    new ConfirmWindow(NotificationAction.ACCEPT).open();
                 }
                 @Override
                 public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -285,10 +278,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     declineButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                    Chati.CHATI.getServerSender()
-                            .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), false);
-                    NotificationListEntry.this.remove();
-                    close();
+                    new ConfirmWindow(NotificationAction.DECLINE).open();
                 }
                 @Override
                 public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -315,10 +305,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     deleteButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                    Chati.CHATI.getServerSender()
-                            .send(ServerSender.SendAction.NOTIFICATION_DELETE, notification.getNotificationId());
-                    NotificationListEntry.this.remove();
-                    close();
+                    new ConfirmWindow(NotificationAction.DELETE).open();
                 }
                 @Override
                 public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -342,6 +329,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    openWindow = null;
                     close();
                 }
             });
@@ -370,5 +358,128 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             getTitleTable().add(dateLabel).right().padRight(VERTICAL_SPACING);
             getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
         }
+    }
+
+    private class ConfirmWindow extends AbstractWindow {
+        private static final float WINDOW_WIDTH = 550;
+        private static final float WINDOW_HEIGHT = 300;
+        private static final float ROW_HEIGHT = 60;
+        private static final float SPACING = 15;
+
+        private final NotificationAction action;
+        private Label infoLabel;
+        private TextButton confirmButton;
+        private TextButton cancelButton;
+        private TextButton closeButton;
+
+        public ConfirmWindow(NotificationAction action) {
+            super("Bestätigen");
+            this.action = action;
+            create();
+            setLayout();
+        }
+
+        @Override
+        protected void create() {
+            String text;
+            switch (action) {
+                case ACCEPT:
+                    text = "Bist du sicher, dass du diese " + titleLabel.getText() + " annehmen möchtest?";
+                    break;
+                case DECLINE:
+                    text = "Bist du sicher, dass du diese " + titleLabel.getText() + " ablehnen möchtest?";
+                    break;
+                case DELETE:
+                    text = "Bist du sicher, dass du diese " + titleLabel.getText() + " löschen möchtest?";
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + action);
+            }
+            infoLabel = new Label(text, Assets.SKIN);
+
+            confirmButton = new TextButton("Ja", Assets.SKIN);
+            confirmButton.addListener(new ClickListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    switch (action) {
+                        case ACCEPT:
+                            Chati.CHATI.getServerSender()
+                                    .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), true);
+                            break;
+                        case DECLINE:
+                            Chati.CHATI.getServerSender()
+                                    .send(ServerSender.SendAction.NOTIFICATION_RESPONSE, notification.getNotificationId(), false);
+                            break;
+                        case DELETE:
+                            Chati.CHATI.getServerSender()
+                                    .send(ServerSender.SendAction.NOTIFICATION_DELETE, notification.getNotificationId());
+                            break;
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + action);
+                    }
+                    if (openWindow != null) {
+                        openWindow.close();
+                        openWindow = null;
+                    }
+                    close();
+                    NotificationListEntry.this.remove();
+                }
+            });
+
+            cancelButton = new TextButton("Nein", Assets.SKIN);
+            cancelButton.addListener(new ClickListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    close();
+                }
+            });
+
+            closeButton = new TextButton("X", Assets.SKIN);
+            closeButton.addListener(new ClickListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    return true;
+                }
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    close();
+                }
+            });
+        }
+
+        @Override
+        protected void setLayout() {
+            setModal(true);
+            setMovable(false);
+            setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
+            setWidth(WINDOW_WIDTH);
+            setHeight(WINDOW_HEIGHT);
+
+            Table container = new Table();
+            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+            infoLabel.setAlignment(Align.center, Align.center);
+            infoLabel.setWrap(true);
+            container.add(infoLabel).spaceBottom(2 * SPACING).row();
+            Table buttonContainer = new Table();
+            buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
+            buttonContainer.add(confirmButton).spaceRight(SPACING);
+            buttonContainer.add(cancelButton);
+            container.add(buttonContainer);
+            add(container).padLeft(SPACING).padRight(SPACING).grow();
+
+            getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
+        }
+    }
+
+    private enum NotificationAction {
+        ACCEPT, DECLINE, DELETE
     }
 }

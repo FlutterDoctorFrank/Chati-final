@@ -267,6 +267,8 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                     this.user.deleteNotification(packet.getNotificationId());
                     break;
             }
+
+            this.send(new PacketNotificationResponse(packet.getNotificationId(), PacketNotificationResponse.Action.DELETE));
         } catch (IllegalNotificationActionException ex) {
             // Auf die Benachrichtigung wurde eine ungültige Aktion ausgeführt.
             LOGGER.warning("User " + this + " tried illegal notification action: " + ex.getMessage());
@@ -274,8 +276,6 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             // Unbekannte Benachrichtigung, auf die zugegriffen werden soll.
             LOGGER.warning("User " + this + " tried to access unknown notification");
         }
-
-        this.send(new PacketNotificationResponse(packet.getNotificationId(), PacketNotificationResponse.Action.DELETE));
     }
 
     @Override

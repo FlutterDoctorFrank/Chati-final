@@ -97,7 +97,7 @@ public class RoomTest {
 
             // Erstelle eine Welt
             this.userAccountManager.registerUser("pRATester", "11111");
-            RoomTest.TestClientSender testClientSender = new TestClientSender();
+            TestClientSender testClientSender = new TestClientSender();
             User privateRoomTester = this.userAccountManager.loginUser("pRATester", "11111",
                     testClientSender);
             privateRoomTester.addRole(this.globalContext, Role.OWNER);
@@ -131,7 +131,7 @@ public class RoomTest {
         try {
             // Erstelle eine Welt
             this.userAccountManager.registerUser("pRRTester", "11111");
-            RoomTest.TestClientSender testClientSender = new TestClientSender();
+            TestClientSender testClientSender = new TestClientSender();
             User privateRoomTester = this.userAccountManager.loginUser("pRRTester", "11111",
                     testClientSender);
             privateRoomTester.addRole(this.globalContext, Role.OWNER);
@@ -169,7 +169,7 @@ public class RoomTest {
         try {
             // Erstelle eine Welt
             this.userAccountManager.registerUser("pRCTester", "11111");
-            RoomTest.TestClientSender testClientSender = new TestClientSender();
+            TestClientSender testClientSender = new TestClientSender();
             User privateRoomTester = this.userAccountManager.loginUser("pRCTester", "11111",
                     testClientSender);
             privateRoomTester.addRole(this.globalContext, Role.OWNER);

@@ -568,6 +568,8 @@ public enum AdministrativeAction {
             }
             // Entferne die Rollen des Moderators in jeder Welt von diesem Benutzer.
             GlobalContext.getInstance().getWorlds().values().forEach(world -> target.removeRole(world, Role.MODERATOR));
+            // Entferne Benutzer aus allen Kontexten als gemeldeter Benutzer.
+            GlobalContext.getInstance().getWorlds().values().forEach(world -> world.removeReportedUser(target));
             // Füge die Rolle hinzu.
             target.addRole(global, Role.ADMINISTRATOR);
             // Informiere den Benutzer über den Erhalt der Rolle.

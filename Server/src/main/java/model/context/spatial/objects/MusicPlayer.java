@@ -12,8 +12,7 @@ import java.util.Set;
 
 /**
  * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer ein Musikstück in einem räumlichen Kontext
- * auswählen und abspielen lassen kann, oder das Abspielen beenden kann. Ist immer vom Typ
- * {@link model.context.spatial.SpatialContextType#OBJECT}.
+ * auswählen und abspielen lassen kann, oder das Abspielen beenden kann.
  */
 public class MusicPlayer extends Interactable {
 

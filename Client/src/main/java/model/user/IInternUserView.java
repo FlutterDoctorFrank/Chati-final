@@ -4,7 +4,6 @@ import model.context.ContextID;
 import model.context.spatial.ISpatialContextView;
 import model.context.spatial.Music;
 import model.context.spatial.SpatialContext;
-import model.context.spatial.SpatialContextType;
 import model.notification.INotificationView;
 import model.notification.Notification;
 
@@ -41,7 +40,6 @@ public interface IInternUserView extends IUserView {
      * @return Die lokalen Benachrichtigungen des Benutzers.
      * @see Notification
      * @see SpatialContext
-     * @see SpatialContextType#WORLD
      */
     Map<UUID, INotificationView> getWorldNotifications();
 

@@ -45,13 +45,12 @@ public class AvatarSelectTable extends MenuTable {
     @Override
     protected void setLayout() {
         Table container = new Table();
-        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().fillX().expandX();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
         container.add(infoLabel).row();
         // avatar scrollpane kommt hier rein
         Table buttonContainer = new Table();
         buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).spaceRight(SPACING).growX();
-        buttonContainer.add(confirmButton).padRight(SPACING);
-        buttonContainer.add(cancelButton);
+        buttonContainer.add(confirmButton, cancelButton);
         container.add(buttonContainer);
         add(container).width(ROW_WIDTH);
     }

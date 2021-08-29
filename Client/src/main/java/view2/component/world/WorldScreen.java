@@ -17,6 +17,7 @@ import model.context.spatial.Menu;
 import model.context.spatial.SpatialMap;
 import model.user.IUserView;
 import view2.Chati;
+import view2.audio.VoiceChat;
 import view2.component.AbstractScreen;
 import view2.component.Response;
 import view2.component.menu.ContextEntry;
@@ -76,6 +77,8 @@ public class WorldScreen extends AbstractScreen {
             tiledMapRenderer.render();
             debugRenderer.render(world, camera.combined);
 
+            //VoiceChat.getInstance().startSending();
+
             if (Chati.CHATI.isUserInfoChanged()) {
                 loadExternUserAvatars();
             }
@@ -84,8 +87,8 @@ public class WorldScreen extends AbstractScreen {
 
             Chati.SPRITE_BATCH.setProjectionMatrix(camera.combined);
             Chati.SPRITE_BATCH.begin();
-            internUserAvatar.draw(Chati.SPRITE_BATCH, delta);
             externUserAvatars.values().forEach(avatar -> avatar.draw(Chati.SPRITE_BATCH, delta));
+            internUserAvatar.draw(Chati.SPRITE_BATCH, delta);
             Chati.SPRITE_BATCH.end();
 
             world.step(1 / WORLD_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);

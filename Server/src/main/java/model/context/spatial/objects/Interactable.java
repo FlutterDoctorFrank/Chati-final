@@ -42,16 +42,15 @@ public abstract class Interactable extends Area implements IInteractable {
     }
 
     /**
-     * Lässt einen Benutzer mit dem Kontext interagieren. Es kann nur mit Kontexten des Typs
-     * {@link SpatialContextType#OBJECT} interagiert werden.
+     * Lässt einen Benutzer mit dem Kontext interagieren. Es kann nur mit {@link Interactable} interagiert werden.
      * @param user Interagierender Benutzer.
      * @throws IllegalInteractionException wenn mit diesem Kontext keine Interaktion möglich ist.
      */
     public abstract void interact(@NotNull final User user) throws IllegalInteractionException;
 
     /**
-     * Lässt einen Benutzer eine Menü-Option dieses Kontextes ausführen. Es können nur Menü-Optionen von Kontexten des
-     * Typs {@link SpatialContextType#OBJECT} ausgeführt werden.
+     * Lässt einen Benutzer eine Menü-Option dieses Kontextes ausführen. Es können nur Menü-Optionen von
+     * {@link Interactable} ausgeführt werden.
      * @param user Ausführender Benutzer.
      * @param menuOption Auszuführende Menü-Option.
      * @param args Argumente, mit denen die Menü-Option ausgeführt werden sollen.

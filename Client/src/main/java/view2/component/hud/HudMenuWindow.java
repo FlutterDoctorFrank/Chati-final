@@ -14,8 +14,8 @@ public abstract class HudMenuWindow extends AbstractWindow {
     public static final Drawable PRESSED_BUTTON_IMAGE = new TextButton("", Assets.SKIN).getStyle().down;
     public static final Drawable UNPRESSED_BUTTON_IMAGE = new TextButton("", Assets.SKIN).getStyle().up;
 
-    private static final float HUD_WINDOW_WIDTH = 450;
-    private static final float HUD_WINDOW_HEIGHT = 600;
+    protected static final float HUD_WINDOW_WIDTH = 500;
+    protected static final float HUD_WINDOW_HEIGHT = 600;
 
     protected HudMenuWindow(String title) {
         super(title);

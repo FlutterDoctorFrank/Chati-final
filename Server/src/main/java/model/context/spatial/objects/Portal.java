@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer zu einer festgelegten Position teleportiert
- * wird. Ist immer vom Typ {@link model.context.spatial.SpatialContextType#OBJECT}.
+ * wird.
  */
 public class Portal extends Interactable {
 

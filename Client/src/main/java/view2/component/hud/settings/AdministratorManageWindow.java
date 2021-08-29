@@ -16,6 +16,8 @@ import model.user.IUserView;
 import view2.Assets;
 import view2.Chati;
 import view2.component.AbstractWindow;
+import view2.component.ChatiTextArea;
+import view2.component.ChatiTextField;
 
 public class AdministratorManageWindow extends AbstractWindow {
 
@@ -25,8 +27,8 @@ public class AdministratorManageWindow extends AbstractWindow {
     private static final float SPACING = 15;
 
     private Label infoLabel;
-    private TextField usernameField;
-    private TextArea messageArea;
+    private ChatiTextField usernameField;
+    private ChatiTextArea messageArea;
     private TextButton assignButton;
     private TextButton withdrawButton;
     private TextButton cancelButton;
@@ -42,35 +44,8 @@ public class AdministratorManageWindow extends AbstractWindow {
     protected void create() {
         infoLabel = new Label("Erteile oder entziehe die Rolle des Administrators!", Assets.SKIN);
 
-        usernameField = new TextField("Benutzername", Assets.getNewSkin());
-        usernameField.getStyle().fontColor = Color.GRAY;
-        usernameField.addListener(new FocusListener() {
-            @Override
-            public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
-                if (focused && usernameField.getStyle().fontColor == Color.GRAY) {
-                    usernameField.setText("");
-                    usernameField.getStyle().fontColor = Color.BLACK;
-                }
-                else if (usernameField.getText().isBlank()) {
-                    resetUsernameField();
-                }
-            }
-        });
-
-        messageArea = new TextArea("Füge eine Nachricht hinzu!", Assets.getNewSkin());
-        messageArea.getStyle().fontColor = Color.GRAY;
-        messageArea.addListener(new FocusListener() {
-            @Override
-            public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
-                if (focused && messageArea.getStyle().fontColor == Color.GRAY) {
-                    messageArea.setText("");
-                    messageArea.getStyle().fontColor = Color.BLACK;
-                }
-                else if (messageArea.getText().isBlank()) {
-                    resetMessageArea();
-                }
-            }
-        });
+        usernameField = new ChatiTextField("Benutzername", false);
+        messageArea = new ChatiTextArea("Füge eine Nachricht hinzu!", true);
 
         assignButton = new TextButton("Rolle erteilen", Assets.SKIN);
         assignButton.addListener(new ClickListener() {
@@ -208,19 +183,7 @@ public class AdministratorManageWindow extends AbstractWindow {
     }
 
     private void resetTextFields() {
-        resetUsernameField();
-        resetMessageArea();
-    }
-
-    private void resetUsernameField() {
-        usernameField.getStyle().fontColor = Color.GRAY;
-        usernameField.setText("Benutzername");
-        getStage().unfocus(usernameField);
-    }
-
-    private void resetMessageArea() {
-        messageArea.getStyle().fontColor = Color.GRAY;
-        messageArea.setText("Füge eine Nachricht hinzu!");
-        getStage().unfocus(messageArea);
+        usernameField.reset();
+        messageArea.reset();
     }
 }

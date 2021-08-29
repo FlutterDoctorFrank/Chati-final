@@ -25,9 +25,12 @@ public abstract class AbstractScreen extends ScreenAdapter {
         stage.act(delta);
         stage.draw();
 
+        /*
         if (Chati.CHATI.isMusicChanged()) {
             playMusic();
         }
+
+         */
     }
 
     @Override

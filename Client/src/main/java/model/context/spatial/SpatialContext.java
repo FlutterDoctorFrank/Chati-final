@@ -38,7 +38,7 @@ public class SpatialContext extends Context implements ISpatialContextView {
     private SpatialMap map;
 
     /** Die Information, ob mit diesem Kontext interagiert werden darf. */
-    private boolean interactable;
+    private final boolean interactable;
 
     /**
      * Erzeugt eine neue Instanz eines räumlichen Kontextes.

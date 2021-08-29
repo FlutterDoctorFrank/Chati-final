@@ -12,12 +12,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import view2.Assets;
 import view2.Chati;
+import view2.component.ChatiTextField;
 import view2.component.Response;
 
 public class DeleteAccountTable extends MenuTable {
 
-    private TextField passwordField;
-    private TextField confirmPasswordField;
+    private ChatiTextField passwordField;
+    private ChatiTextField confirmPasswordField;
     private TextButton confirmButton;
     private TextButton cancelButton;
 
@@ -25,39 +26,8 @@ public class DeleteAccountTable extends MenuTable {
     protected void create() {
         infoLabel.setText("Gib dein aktuelles Passwort ein!");
 
-        passwordField = new TextField("Passwort", Assets.getNewSkin());
-        passwordField.getStyle().fontColor = Color.GRAY;
-        passwordField.setPasswordCharacter('*');
-        passwordField.addListener(new FocusListener() {
-            @Override
-            public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
-                if(focused && passwordField.getStyle().fontColor == Color.GRAY) {
-                    passwordField.getStyle().fontColor = Color.BLACK;
-                    passwordField.setText("");
-                    passwordField.setPasswordMode(true);
-                }
-                else if (passwordField.getText().isBlank()) {
-                    resetPasswordField();
-                }
-            }
-        });
-
-        confirmPasswordField = new TextField("Passwort bestätigen", Assets.getNewSkin());
-        confirmPasswordField.getStyle().fontColor = Color.GRAY;
-        confirmPasswordField.setPasswordCharacter('*');
-        confirmPasswordField.addListener(new FocusListener() {
-            @Override
-            public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
-                if(focused && confirmPasswordField.getStyle().fontColor == Color.GRAY) {
-                    confirmPasswordField.getStyle().fontColor = Color.BLACK;
-                    confirmPasswordField.setText("");
-                    confirmPasswordField.setPasswordMode(true);
-                }
-                else if (confirmPasswordField.getText().isBlank()) {
-                    resetPasswordField();
-                }
-            }
-        });
+        passwordField = new ChatiTextField("Passwort", true);
+        confirmPasswordField = new ChatiTextField("Passwort bestätigen", true);
 
         confirmButton = new TextButton("Bestätigen", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
@@ -90,12 +60,12 @@ public class DeleteAccountTable extends MenuTable {
     @Override
     protected void setLayout() {
         Table container = new Table();
-        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().fillX().expandX();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
         container.add(infoLabel).row();
         container.add(passwordField).row();
         container.add(confirmPasswordField).row();
         Table buttonContainer = new Table();
-        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).fillX().expandX();
+        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
         buttonContainer.add(confirmButton).spaceRight(SPACING);
         buttonContainer.add(cancelButton);
         container.add(buttonContainer);
@@ -104,22 +74,8 @@ public class DeleteAccountTable extends MenuTable {
 
     @Override
     public void resetTextFields() {
-        resetPasswordField();
-        resetConfirmPasswordField();
-    }
-
-    private void resetPasswordField() {
-        passwordField.getStyle().fontColor = Color.GRAY;
-        passwordField.setText("Passwort");
-        passwordField.setPasswordMode(false);
-        getStage().unfocus(passwordField);
-    }
-
-    private void resetConfirmPasswordField() {
-        confirmPasswordField.getStyle().fontColor = Color.GRAY;
-        confirmPasswordField.setText("Passwort bestätigen");
-        confirmPasswordField.setPasswordMode(false);
-        getStage().unfocus(confirmPasswordField);
+        passwordField.reset();
+        confirmPasswordField.reset();
     }
 
     private class ConfirmDeletionTable extends MenuTable {
@@ -161,10 +117,10 @@ public class DeleteAccountTable extends MenuTable {
         @Override
         protected void setLayout() {
             Table container = new Table();
-            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().fillX().expandX();
+            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
             container.add(infoLabel).row();
             Table buttonContainer = new Table();
-            buttonContainer.defaults().height(ROW_HEIGHT).fillX().expandX();
+            buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
             buttonContainer.add(confirmButton).spaceRight(SPACING);
             buttonContainer.add(cancelButton);
             container.add(buttonContainer);

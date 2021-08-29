@@ -16,6 +16,7 @@ import model.user.IUserManagerView;
 import view2.Assets;
 import view2.Chati;
 import view2.component.AbstractWindow;
+import view2.component.ChatiTextArea;
 import view2.component.KeyAction;
 
 import java.time.LocalDateTime;
@@ -34,7 +35,7 @@ public class ChatWindow extends AbstractWindow {
 
     private Table messageLabelContainer;
     private ScrollPane historyScrollPane;
-    private TextArea typeMessageArea;
+    private ChatiTextArea typeMessageArea;
     private TextButton sendButton;
     private TextButton minimizeButton;
 
@@ -50,33 +51,16 @@ public class ChatWindow extends AbstractWindow {
 
         historyScrollPane = new ScrollPane(messageLabelContainer, Assets.SKIN);
 
-        typeMessageArea = new TextArea("Nachricht", Assets.getNewSkin());
-        typeMessageArea.getStyle().fontColor = Color.GRAY;
-        typeMessageArea.addListener(new FocusListener() {
-            @Override
-            public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
-                if (focused && typeMessageArea.getStyle().fontColor == Color.GRAY) {
-                    typeMessageArea.setText("");
-                    typeMessageArea.getStyle().fontColor = Color.BLACK;
-                }
-                else if (typeMessageArea.getText().isBlank()) {
-                    resetMessageArea();
-                }
-            }
-        });
+        typeMessageArea = new ChatiTextArea("Nachricht", false);
         typeMessageArea.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                return KeyAction.getAction(keycode) == KeyAction.SEND_CHAT_MESSAGE
-                        || KeyAction.getAction(keycode) == KeyAction.OPEN_CHAT && typeMessageArea.getText().isBlank();
+                return KeyAction.getAction(keycode) == KeyAction.SEND_CHAT_MESSAGE;
             }
             @Override
             public boolean keyUp(InputEvent event, int keycode) {
                 if (KeyAction.getAction(keycode) == KeyAction.SEND_CHAT_MESSAGE) {
                     sendMessage();
-                    return true;
-                } else if (KeyAction.getAction(keycode) == KeyAction.OPEN_CHAT && typeMessageArea.getText().isBlank()) {
-                    typeMessageArea.setText("");
                     return true;
                 }
                 return false;
@@ -152,8 +136,7 @@ public class ChatWindow extends AbstractWindow {
     }
 
     private void resetMessageArea() {
-        typeMessageArea.setText("Nachricht");
-        typeMessageArea.getStyle().fontColor = Color.GRAY;
+        typeMessageArea.reset();
     }
 
     private void sendMessage() {

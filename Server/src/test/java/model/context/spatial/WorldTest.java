@@ -141,7 +141,7 @@ public class WorldTest {
         }
 
         UserAccountManager userAccountManager = UserAccountManager.getInstance();
-        WorldTest.TestClientSender testClientSender = new TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
         try {
             Thread.sleep(1500);
             userAccountManager.registerUser("addUser", "11111");

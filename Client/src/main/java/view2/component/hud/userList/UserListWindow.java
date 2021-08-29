@@ -1,19 +1,16 @@
 package view2.component.hud.userList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import model.role.Permission;
 import model.user.IInternUserView;
 import model.user.IUserManagerView;
 import view2.Assets;
 import view2.Chati;
-import view2.component.hud.HeadUpDisplay;
 import view2.component.hud.HudMenuWindow;
 
 import java.util.Set;

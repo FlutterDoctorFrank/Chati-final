@@ -119,7 +119,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
         if(notifications.remove(notificationId) == null){
             throw new NotificationNotFoundException("There is no notification with this ID.", notificationId);
         }
-        UserManager.getInstance().getModelObserver().setUserNotificationChanged();
     }
 
     @Override

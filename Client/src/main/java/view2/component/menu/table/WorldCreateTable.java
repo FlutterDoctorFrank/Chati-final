@@ -10,6 +10,7 @@ import controller.network.ServerSender;
 import model.context.spatial.SpatialMap;
 import view2.Assets;
 import view2.Chati;
+import view2.component.ChatiTextField;
 import view2.component.Response;
 
 import java.util.Arrays;
@@ -17,7 +18,7 @@ import java.util.EnumSet;
 
 public class WorldCreateTable extends MenuTable {
 
-    private TextField worldNameField;
+    private ChatiTextField worldNameField;
     private Label mapSelectLabel;
     private SelectBox<SpatialMap> mapSelectBox;
     private TextButton confirmButton;
@@ -32,20 +33,7 @@ public class WorldCreateTable extends MenuTable {
         mapSelectBox.setItems(EnumSet.allOf(SpatialMap.class)
                 .stream().filter(SpatialMap::isPublicRoomMap).toArray(SpatialMap[]::new));
 
-        worldNameField = new TextField("Name der Welt", Assets.getNewSkin());
-        worldNameField.getStyle().fontColor = Color.GRAY;
-        worldNameField.addListener(new FocusListener() {
-            @Override
-            public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
-                if(focused && worldNameField.getStyle().fontColor == Color.GRAY) {
-                    worldNameField.getStyle().fontColor = Color.BLACK;
-                    worldNameField.setText("");
-                }
-                else if (worldNameField.getText().isBlank()) {
-                    resetTextFields();
-                }
-            }
-        });
+        worldNameField = new ChatiTextField("Name der Welt", false);
 
         confirmButton = new TextButton("Bestätigen", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
@@ -103,8 +91,6 @@ public class WorldCreateTable extends MenuTable {
 
     @Override
     public void resetTextFields() {
-        worldNameField.getStyle().fontColor = Color.GRAY;
-        worldNameField.setText("Name der Welt");
-        getStage().unfocus(worldNameField);
+        worldNameField.reset();
     }
 }

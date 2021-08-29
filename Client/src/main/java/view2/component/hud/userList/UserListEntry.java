@@ -21,9 +21,12 @@ import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.Assets;
+import view2.component.ChatiTextArea;
 import view2.component.InformationToolTip;
 import view2.component.AbstractWindow;
 import view2.component.UserInfoContainer;
+
+import java.util.Objects;
 
 public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
@@ -445,14 +448,13 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
     private class MessageWindow extends AbstractWindow {
 
-        private static final float WINDOW_WIDTH = 550;
+        private static final float WINDOW_WIDTH = 750;
         private static final float WINDOW_HEIGHT = 350;
-        private static final float ROW_WIDTH = 450;
         private static final float ROW_HEIGHT = 60;
         private static final float SPACING = 15;
 
         private Label infoLabel;
-        private TextArea userMessageArea;
+        private ChatiTextArea userMessageArea;
         private TextButton confirmButton;
         private TextButton cancelButton;
         private TextButton closeButton;
@@ -492,20 +494,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                     infoLabel.setText("Füge eine Nachricht zu deiner Einladung hinzu!");
             }
 
-            userMessageArea = new TextArea("Nachricht", Assets.getNewSkin());
-            userMessageArea.getStyle().fontColor = Color.GRAY;
-            userMessageArea.addListener(new FocusListener() {
-                @Override
-                public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
-                    if(focused && userMessageArea.getStyle().fontColor == Color.GRAY) {
-                        userMessageArea.getStyle().fontColor = Color.BLACK;
-                        userMessageArea.setText("");
-                    }
-                    else if (userMessageArea.getText().isBlank()) {
-                        resetTextFields();
-                    }
-                }
-            });
+            userMessageArea = new ChatiTextArea("Nachricht", true);
 
             confirmButton = new TextButton("Bestätigen", Assets.SKIN);
             confirmButton.addListener(new ClickListener() {
@@ -564,6 +553,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             Table container = new Table();
             container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
             infoLabel.setAlignment(Align.center, Align.center);
+            infoLabel.setWrap(true);
             container.add(infoLabel).row();
             container.add(userMessageArea).height(2 * ROW_HEIGHT).row();
             Table buttonContainer = new Table();
@@ -576,9 +566,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         }
 
         public void resetTextFields() {
-            userMessageArea.getStyle().fontColor = Color.GRAY;
-            userMessageArea.setText("Nachricht");
-            getStage().unfocus(userMessageArea);
+            userMessageArea.reset();
         }
     }
 }

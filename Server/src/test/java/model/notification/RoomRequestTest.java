@@ -99,7 +99,7 @@ public class RoomRequestTest {
 
     @Test
     public void normalAcceptTest() {
-        RoomRequestTest.TestClientSender testClientSender = new RoomRequestTest.TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("rrn_sender", "11111");
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
@@ -131,7 +131,7 @@ public class RoomRequestTest {
     // Falls Raum nicht mehr existiert
     @Test
     public void roomNotExistAcceptTest() {
-        RoomRequestTest.TestClientSender testClientSender = new RoomRequestTest.TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("rrn_sender", "11111");
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
@@ -164,7 +164,7 @@ public class RoomRequestTest {
     // If sender doesn't exist
     @Test
     public void notExistSenderAcceptTest() {
-        RoomRequestTest.TestClientSender testClientSender = new RoomRequestTest.TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("rrn_sender", "11111");
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
@@ -195,7 +195,7 @@ public class RoomRequestTest {
 
     @Test
     public void normalDeclineTest() {
-        RoomRequestTest.TestClientSender testClientSender = new RoomRequestTest.TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("rrn_sender", "11111");
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
@@ -227,7 +227,7 @@ public class RoomRequestTest {
     // Falls Raum nicht mehr existiert
     @Test
     public void roomNotExistDeclineTest() {
-        RoomRequestTest.TestClientSender testClientSender = new RoomRequestTest.TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("rrn_sender", "11111");
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
@@ -260,7 +260,7 @@ public class RoomRequestTest {
     // If sender doesn't exist
     @Test
     public void notExistSenderDeclineTest() {
-        RoomRequestTest.TestClientSender testClientSender = new RoomRequestTest.TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("rrn_sender", "11111");
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);

@@ -96,25 +96,25 @@ public interface ClientSender {
                         final UserInfo info = new UserInfo(other.getUserId(), other.getUsername(), other.getStatus());
 
                         if (user.getFriends().containsKey(other.getUserId())) {
-                            info.addFlag(UserInfo.Flag.FRIEND);
+                            info.addFlag(Flag.FRIEND);
                         }
 
                         if (world.equals(other.getWorld())) {
                             info.setAvatar(other.getAvatar());
 
                             if (user.getIgnoredUsers().containsKey(other.getUserId())) {
-                                info.addFlag(UserInfo.Flag.IGNORED);
+                                info.addFlag(Flag.IGNORED);
                             }
 
                             if (world.getReportedUsers().containsKey(other.getUserId())) {
-                                info.addFlag(UserInfo.Flag.REPORTED);
+                                info.addFlag(Flag.REPORTED);
                             }
 
                             return new PacketOutUserInfo(world.getContextId(), Action.UPDATE_USER, info);
                         }
 
                         if (world.getBannedUsers().containsKey(other.getUserId())) {
-                            info.addFlag(UserInfo.Flag.BANNED);
+                            info.addFlag(Flag.BANNED);
 
                             return new PacketOutUserInfo(world.getContextId(), Action.UPDATE_USER, info);
                         }
@@ -173,9 +173,7 @@ public interface ClientSender {
         /**
          * Information, dass eine Welt beziehungsweise ein Raum betreten werden soll.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link IRoom} mit
-         *     {@link model.context.spatial.SpatialContextType#WORLD} oder
-         *     {@link model.context.spatial.SpatialContextType#ROOM}
+         *     Erwartet als Objekt die Schnittstelle: {@link IRoom}
          * </p>
          */
         CONTEXT_JOIN {
@@ -241,7 +239,7 @@ public interface ClientSender {
         /**
          * Information, dass die Position eines Avatars im Raum gesetzt werden soll.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link model.user.IUser}
+         *     Erwartet als Objekt die Schnittstelle: {@link IUser}
          * </p>
          */
         AVATAR_SPAWN {
@@ -267,7 +265,7 @@ public interface ClientSender {
         /**
          * Information, dass die Position eines Avatars im Raum aktualisiert werden soll.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link model.user.IUser}
+         *     Erwartet als Objekt die Schnittstelle: {@link IUser}
          * </p>
          */
         AVATAR_MOVE {
@@ -293,7 +291,7 @@ public interface ClientSender {
         /**
          * Information, dass ein Avatar aus dem aktuellen Raum entfernt werden soll.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link model.user.IUser}
+         *     Erwartet als Objekt die Schnittstelle: {@link IUser}
          * </p>
          */
         AVATAR_REMOVE {

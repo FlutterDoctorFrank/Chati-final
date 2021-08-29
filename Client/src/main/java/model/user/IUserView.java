@@ -3,7 +3,6 @@ package model.user;
 import model.context.spatial.ILocationView;
 import model.context.spatial.Location;
 import model.context.spatial.SpatialContext;
-import model.context.spatial.SpatialContextType;
 import model.role.Permission;
 import model.role.Role;
 

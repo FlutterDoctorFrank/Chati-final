@@ -1,9 +1,15 @@
 package view2.component.hud;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Align;
 import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.user.IInternUserView;
@@ -21,8 +27,6 @@ public class HeadUpDisplay extends Table {
     public static final float BUTTON_SCALE_FACTOR = 0.1f;
     public static final float BUTTON_SIZE = 75;
     public static final float BUTTON_SPACING = 10f;
-    public static final float HUD_MENU_TABLE_WIDTH = 450;
-    public static final float HUD_MENU_TABLE_HEIGHT = 600;
 
     private static HeadUpDisplay headUpDisplay;
 
@@ -32,9 +36,9 @@ public class HeadUpDisplay extends Table {
     private Table internUserDisplay;
 
     private ImageButton userListButton;
-    private ImageButton notificationListButton;
+    private NotificationButton notificationListButton;
     private ImageButton settingsButton;
-    private ImageButton chatButton;
+    private ChatButton chatButton;
 
     private HeadUpDisplay() {
         create();
@@ -96,7 +100,7 @@ public class HeadUpDisplay extends Table {
             }
         });
 
-        notificationListButton = new ImageButton(Assets.NOTIFICATION_ICON);
+        notificationListButton = new NotificationButton(Assets.NOTIFICATION_ICON);
         notificationListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         notificationListButton.addListener(new ClickListener() {
             @Override
@@ -154,7 +158,7 @@ public class HeadUpDisplay extends Table {
             }
         });
 
-        chatButton = new ImageButton(Assets.CHAT_ICON);
+        chatButton = new ChatButton(Assets.CHAT_ICON);
         chatButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
         chatButton.setVisible(false);
         chatButton.addListener(new ClickListener() {
@@ -199,18 +203,25 @@ public class HeadUpDisplay extends Table {
         Table hudButtonContainer = new Table();
         hudButtonContainer.setFillParent(true);
         hudButtonContainer.top().right().defaults().size(BUTTON_SIZE).space(BUTTON_SPACING);
+        userListButton.getImage().setOrigin(BUTTON_SIZE/ 2, BUTTON_SIZE / 2);
+        notificationListButton.getImage().setOrigin(BUTTON_SIZE/ 2, BUTTON_SIZE / 2);
+        settingsButton.getImage().setOrigin(BUTTON_SIZE/ 2, BUTTON_SIZE / 2);
         hudButtonContainer.add(userListButton, notificationListButton, settingsButton);
         addActor(hudButtonContainer);
 
         Table chatButtonContainer = new Table();
         chatButtonContainer.setFillParent(true);
         chatButtonContainer.bottom().right().defaults().size(BUTTON_SIZE);
+        chatButton.getImage().setOrigin(BUTTON_SIZE/ 2, BUTTON_SIZE / 2);
         chatButtonContainer.add(chatButton);
         addActor(chatButtonContainer);
     }
 
     public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message,
                                 MessageBundle messageBundle) {
+        if (!isChatOpen()) {
+            chatButton.startBlinking();
+        }
         if (messageType == MessageType.INFO) {
             chatWindow.showInfoMessage(timestamp, messageBundle);
         } else {
@@ -222,6 +233,7 @@ public class HeadUpDisplay extends Table {
         if (!chatButton.isVisible()) {
             return;
         }
+        chatButton.stopBlinking();
         chatButton.setChecked(true);
         chatButton.getStyle().imageUp = Assets.CHECKED_CHAT_ICON;
         chatWindow.open();
@@ -307,5 +319,61 @@ public class HeadUpDisplay extends Table {
 
     public HudMenuWindow getCurrentMenuWindow() {
         return currentMenuWindow;
+    }
+
+    private class ChatButton extends ImageButton {
+
+        private static final float BLINKING_FREQUENCY = 2; // Pro Sekunde
+
+        private boolean blinking;
+        private boolean visible;
+        private float delta;
+
+        public ChatButton(Drawable imageUp) {
+            super(imageUp);
+        }
+
+        @Override
+        public void draw(Batch batch, float parentAlpha) {
+            delta += Gdx.graphics.getDeltaTime();
+            if (blinking) {
+                if (delta >= 1 / BLINKING_FREQUENCY) {
+                    delta = 0;
+                    visible = !visible;
+                }
+                if (visible) {
+                    super.draw(batch, parentAlpha);
+                } else {
+                    super.draw(batch, 0);
+                }
+            } else {
+                super.draw(batch, parentAlpha);
+            }
+        }
+
+        public void startBlinking() {
+            blinking = true;
+        }
+
+        public void stopBlinking() {
+            blinking = false;
+        }
+    }
+
+    private class NotificationButton extends ImageButton {
+
+        private static final float DURATION = 2; // In Sekunden
+        private static final float ANGLE = 15;
+
+        public NotificationButton(Drawable imageUp) {
+            super(imageUp);
+        }
+
+        public void startAnimation() {
+            getImage().addAction(Actions.sequence(Actions.scaleBy(BUTTON_SCALE_FACTOR, BUTTON_SCALE_FACTOR, DURATION / 8),
+                    Actions.rotateBy(ANGLE, DURATION / 8), Actions.rotateBy(-2 * ANGLE, DURATION / 4),
+                    Actions.rotateBy(2 * ANGLE, DURATION / 4), Actions.rotateBy(-ANGLE, DURATION / 8),
+                    Actions.scaleBy(-BUTTON_SCALE_FACTOR, -BUTTON_SCALE_FACTOR, DURATION / 8)));
+        }
     }
 }

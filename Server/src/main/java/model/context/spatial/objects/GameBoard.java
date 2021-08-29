@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 /**
- * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer ein Minispiel spielen kann. Ist immer vom
- * Typ {@link model.context.spatial.SpatialContextType#OBJECT}.
+ * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer ein Minispiel spielen kann.
  */
 public class GameBoard extends Interactable {
 

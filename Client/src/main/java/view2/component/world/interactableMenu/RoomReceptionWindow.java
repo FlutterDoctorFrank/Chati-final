@@ -14,7 +14,8 @@ import model.context.spatial.SpatialMap;
 import model.role.Permission;
 import view2.Assets;
 import view2.Chati;
-import view2.component.Response;
+import view2.component.ChatiTextArea;
+import view2.component.ChatiTextField;
 import view2.component.menu.ContextEntry;
 import view2.component.menu.table.MenuTable;
 
@@ -28,7 +29,7 @@ public class RoomReceptionWindow extends InteractableWindow {
     private static final int MENU_OPTION_REQUEST = 3;
 
     private static final float WINDOW_WIDTH = 750;
-    private static final float WINDOW_HEIGHT = 500;
+    private static final float WINDOW_HEIGHT = 450;
     private static final float MESSAGE_AREA_HEIGHT = 120;
 
     private TextButton closeButton;
@@ -183,7 +184,7 @@ public class RoomReceptionWindow extends InteractableWindow {
             roomButtonContainer.add(createButton);
             container.add(roomButtonContainer).row();
             container.add(cancelButton);
-            add(container).width(ROW_WIDTH);
+            add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
         }
 
         @Override
@@ -197,8 +198,8 @@ public class RoomReceptionWindow extends InteractableWindow {
 
     private class RoomCreateTable extends MenuTable {
 
-        private TextField roomnameField;
-        private TextField passwordField;
+        private ChatiTextField roomnameField;
+        private ChatiTextField passwordField;
         private Label mapSelectLabel;
         private SelectBox<SpatialMap> mapSelectBox;
         private TextButton confirmButton;
@@ -208,37 +209,8 @@ public class RoomReceptionWindow extends InteractableWindow {
         protected void create() {
             infoLabel.setText("Erstelle einen privaten Raum!");
 
-            roomnameField = new TextField("Name des Raums", Assets.getNewSkin());
-            roomnameField.getStyle().fontColor = Color.GRAY;
-            roomnameField.addListener(new FocusListener() {
-                @Override
-                public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
-                    if(focused && roomnameField.getStyle().fontColor == Color.GRAY) {
-                        roomnameField.getStyle().fontColor = Color.BLACK;
-                        roomnameField.setText("");
-                    }
-                    else if (roomnameField.getText().isBlank()) {
-                        resetRoomnameField();
-                    }
-                }
-            });
-
-            passwordField = new TextField("Passwort", Assets.getNewSkin());
-            passwordField.getStyle().fontColor = Color.GRAY;
-            passwordField.setPasswordCharacter('*');
-            passwordField.addListener(new FocusListener() {
-                @Override
-                public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
-                    if(focused && passwordField.getStyle().fontColor == Color.GRAY) {
-                        passwordField.getStyle().fontColor = Color.BLACK;
-                        passwordField.setText("");
-                        passwordField.setPasswordMode(true);
-                    }
-                    else if (passwordField.getText().isBlank()) {
-                        resetPasswordField();
-                    }
-                }
-            });
+            roomnameField = new ChatiTextField("Name des Raums", false);
+            passwordField = new ChatiTextField("Passwort", true);
 
             mapSelectLabel = new Label("Karte: ", Assets.SKIN);
             mapSelectBox = new SelectBox<>(Assets.SKIN);
@@ -298,26 +270,13 @@ public class RoomReceptionWindow extends InteractableWindow {
             buttonContainer.add(confirmButton).spaceRight(SPACING);
             buttonContainer.add(cancelButton);
             container.add(buttonContainer);
-            add(container).width(ROW_WIDTH);
+            add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
         }
 
         @Override
         public void resetTextFields() {
-            resetRoomnameField();
-            resetPasswordField();
-        }
-
-        private void resetRoomnameField() {
-            roomnameField.getStyle().fontColor = Color.GRAY;
-            roomnameField.setText("Name des Raums");
-            getStage().unfocus(roomnameField);
-        }
-
-        private void resetPasswordField() {
-            passwordField.getStyle().fontColor = Color.GRAY;
-            passwordField.setText("Passwort");
-            passwordField.setPasswordMode(false);
-            getStage().unfocus(passwordField);
+            roomnameField.reset();
+            passwordField.reset();
         }
     }
 
@@ -325,7 +284,7 @@ public class RoomReceptionWindow extends InteractableWindow {
 
         private final ContextEntry roomEntry;
 
-        private TextField passwordField;
+        private ChatiTextField passwordField;
         private TextButton confirmButton;
         private TextButton cancelButton;
 
@@ -337,22 +296,7 @@ public class RoomReceptionWindow extends InteractableWindow {
         protected void create() {
             infoLabel.setText("Bitte gib das Passwort ein!");
 
-            passwordField = new TextField("Passwort", Assets.getNewSkin());
-            passwordField.getStyle().fontColor = Color.GRAY;
-            passwordField.setPasswordCharacter('*');
-            passwordField.addListener(new FocusListener() {
-                @Override
-                public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
-                    if(focused && passwordField.getStyle().fontColor == Color.GRAY) {
-                        passwordField.getStyle().fontColor = Color.BLACK;
-                        passwordField.setText("");
-                        passwordField.setPasswordMode(true);
-                    }
-                    else if (passwordField.getText().isBlank()) {
-                        resetTextFields();
-                    }
-                }
-            });
+            passwordField = new ChatiTextField("Passwort", true);
 
             confirmButton = new TextButton("Bestätigen", Assets.SKIN);
             confirmButton.addListener(new ClickListener() {
@@ -395,15 +339,12 @@ public class RoomReceptionWindow extends InteractableWindow {
             buttonContainer.add(confirmButton).spaceRight(SPACING);
             buttonContainer.add(cancelButton);
             container.add(buttonContainer);
-            add(container).width(ROW_WIDTH);
+            add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
         }
 
         @Override
         public void resetTextFields() {
-            passwordField.getStyle().fontColor = Color.GRAY;
-            passwordField.setText("Passwort");
-            passwordField.setPasswordMode(false);
-            getStage().unfocus(passwordField);
+            passwordField.reset();
         }
     }
 
@@ -411,7 +352,7 @@ public class RoomReceptionWindow extends InteractableWindow {
 
         private final ContextEntry roomEntry;
 
-        private TextArea messageArea;
+        private ChatiTextArea messageArea;
         private TextButton confirmButton;
         private TextButton cancelButton;
 
@@ -423,20 +364,7 @@ public class RoomReceptionWindow extends InteractableWindow {
         protected void create() {
             infoLabel.setText("Füge deiner Anfrage eine Nachricht hinzu!");
 
-            messageArea = new TextArea("Nachricht", Assets.SKIN);
-            messageArea.getStyle().fontColor = Color.GRAY;
-            messageArea.addListener(new FocusListener() {
-                @Override
-                public void keyboardFocusChanged(FocusListener.FocusEvent event, Actor actor, boolean focused) {
-                    if(focused && messageArea.getStyle().fontColor == Color.GRAY) {
-                        messageArea.getStyle().fontColor = Color.BLACK;
-                        messageArea.setText("");
-                    }
-                    else if (messageArea.getText().isBlank()) {
-                        resetTextFields();
-                    }
-                }
-            });
+            messageArea = new ChatiTextArea("Nachricht", true);
 
             confirmButton = new TextButton("Bestätigen", Assets.SKIN);
             confirmButton.addListener(new ClickListener() {
@@ -457,7 +385,7 @@ public class RoomReceptionWindow extends InteractableWindow {
                             new String[]{roomEntry.getName(), message}, MENU_OPTION_REQUEST);
 
                     setCurrentTable(new RoomSelectTable());
-                    infoLabel.setText("Deine Anfrage wurde übermittelt!");
+                    currentTable.showMessage("Deine Anfrage wurde übermittelt!");
                 }
             });
 
@@ -485,14 +413,12 @@ public class RoomReceptionWindow extends InteractableWindow {
             buttonContainer.add(confirmButton).spaceRight(SPACING);
             buttonContainer.add(cancelButton);
             container.add(buttonContainer);
-            add(container).width(ROW_WIDTH);
+            add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
         }
 
         @Override
         public void resetTextFields() {
-            messageArea.getStyle().fontColor = Color.GRAY;
-            messageArea.setText("Nachricht");
-            getStage().unfocus(messageArea);
+            messageArea.reset();
         }
     }
 }

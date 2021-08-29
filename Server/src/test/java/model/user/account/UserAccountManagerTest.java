@@ -88,7 +88,7 @@ public class UserAccountManagerTest {
     @Test
     public void loginUserTest() {
 
-        UserAccountManagerTest.TestClientSender testClientSender = new TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
 
         try {
             this.userAccountManager.registerUser("login", "11111");
@@ -117,7 +117,7 @@ public class UserAccountManagerTest {
 
     @Test
     public void logoutUserTest() {
-        UserAccountManagerTest.TestClientSender testClientSender = new TestClientSender();
+        TestClientSender testClientSender = new TestClientSender();
 
         try {
             this.userAccountManager.registerUser("logoutUser", "11111");

@@ -21,6 +21,7 @@ public class Assets {
     public static final TextureRegionDrawable CHECKED_SETTINGS_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/settingsIconChecked.png")));
     public static final TextureRegionDrawable CHAT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/chatIcon.png")));
     public static final TextureRegionDrawable CHECKED_CHAT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/chatIcon_checked.png")));
+    public static final TextureRegionDrawable NEW_MESSAGE_CHAT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/chatIcon_new.png")));
 
     public static final TextureRegionDrawable ONLINE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/online.png")));
     public static final TextureRegionDrawable AWAY_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/away.png")));
@@ -36,17 +37,12 @@ public class Assets {
     public static final TextureRegionDrawable AREA_MANAGER_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/crown_green.png")));
 
     public static final TextureRegionDrawable ADD_FRIEND_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_addFriend_color.png")));
-    public static final TextureRegionDrawable DISABLED_ADD_FRIEND_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_addFriend_grey.png")));
     public static final TextureRegionDrawable REMOVE_FRIEND_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_removeFriend_color.png")));
-    public static final TextureRegionDrawable DISABLED_REMOVE_FRIEND_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_removeFriend_grey.png")));
     public static final TextureRegionDrawable IGNORE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_ignore_color.png")));
-    public static final TextureRegionDrawable DISABLED_IGNORE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_ignore_grey.png")));
     public static final TextureRegionDrawable UNIGNORE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_unignore_color.png")));
-    public static final TextureRegionDrawable DISABLED_UNIGNORE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_unignore_grey.png")));
     public static final TextureRegionDrawable ROOM_INVITE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_invite_color.png")));
     public static final TextureRegionDrawable DISABLED_ROOM_INVITE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_invite_grey.png")));
     public static final TextureRegionDrawable ROOM_KICK_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_kick_color.png")));
-    public static final TextureRegionDrawable DISABLED_ROOM_KICK_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_kick_grey.png")));
     public static final TextureRegionDrawable TELEPORT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_teleport_color.png")));
     public static final TextureRegionDrawable DISABLED_TELEPORT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_teleport_grey.png")));
     public static final TextureRegionDrawable REPORT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_report_color.png")));
@@ -54,22 +50,18 @@ public class Assets {
     public static final TextureRegionDrawable MUTE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_mute_color.png")));
     public static final TextureRegionDrawable DISABLED_MUTE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_mute_grey.png")));
     public static final TextureRegionDrawable UNMUTE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_unmute_color.png")));
-    public static final TextureRegionDrawable DISABLED_UNMUTE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_unmute_grey.png")));
     public static final TextureRegionDrawable BAN_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_ban_color.png")));
     public static final TextureRegionDrawable DISABLED_BAN_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_ban_grey.png")));
     public static final TextureRegionDrawable UNBAN_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_unban_color.png")));
-    public static final TextureRegionDrawable DISABLED_UNBAN_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_unban_grey.png")));
     public static final TextureRegionDrawable ASSIGN_MODERATOR_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_addModerator_color.png")));
     public static final TextureRegionDrawable DISABLED_ASSIGN_MODERATOR_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_addModerator_grey.png")));
     public static final TextureRegionDrawable WITHDRAW_MODERATOR_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_removeModerator_color.png")));
-    public static final TextureRegionDrawable DISABLED_WITHDRAW_MODERATOR_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_removeModerator_grey.png")));
 
     public static final TextureRegionDrawable ACCEPT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_accept_color.png")));
     public static final TextureRegionDrawable DISABLED_ACCEPT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_accept_grey.png")));
     public static final TextureRegionDrawable DECLINE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_decline_color.png")));
     public static final TextureRegionDrawable DISABLED_DECLINE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_decline_grey.png")));
     public static final TextureRegionDrawable DELETE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_delete_color.png")));
-    public static final TextureRegionDrawable DISABLED_DELETE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_delete_grey.png")));
 
     public static final TextureRegionDrawable COMMUNICABLE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/communicable.png")));
 

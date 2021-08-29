@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 /**
  * Eine Klasse, welche ein Objekt repräsentiert, durch welches ein Benutzer private Räume erstellen, diesen beitreten
- * oder den Beitritt in diesen anfragen kann. Ist immer vom Typ {@link model.context.spatial.SpatialContextType#OBJECT}.
+ * oder den Beitritt in diesen anfragen kann.
  */
 public class RoomReception extends Interactable {
 
@@ -115,7 +115,7 @@ public class RoomReception extends Interactable {
                 // Schließe das Menü des Benutzers.
                 user.setCurrentInteractable(null);
                 user.setMovable(true);
-                user.send(ClientSender.SendAction.CLOSE_MENU, this);
+                user.send(SendAction.CLOSE_MENU, this);
                 user.teleport(privateRoom.getSpawnLocation());
                 user.addRole(privateRoom, Role.ROOM_OWNER);
 
