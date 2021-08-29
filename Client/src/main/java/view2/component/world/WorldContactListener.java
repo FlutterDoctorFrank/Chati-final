@@ -6,8 +6,6 @@ import view2.component.world.body.BodyType;
 
 public class WorldContactListener implements ContactListener {
 
-    private boolean canInteract;
-
     @Override
     public void beginContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();

@@ -1,20 +1,22 @@
 package view2.component.menu.table;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import controller.network.ServerSender;
 import model.user.Avatar;
+import org.jetbrains.annotations.NotNull;
 import view2.Assets;
 import view2.Chati;
+import view2.component.Response;
+import view2.component.hud.HudMenuWindow;
 
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class AvatarSelectTable extends MenuTable {
 
@@ -30,19 +32,22 @@ public class AvatarSelectTable extends MenuTable {
     private TextButton cancelButton;
 
     public AvatarSelectTable() {
-        this.avatarEntries = new HashSet<>();
+        this.avatarEntries = new TreeSet<>();
         create();
         setLayout();
     }
 
     @Override
     protected void create() {
+        ButtonGroup<AvatarListEntry> avatarButtonGroup = new ButtonGroup<>();
+        avatarButtonGroup.setMinCheckCount(1);
+        avatarButtonGroup.setMaxCheckCount(1);
+        avatarButtonGroup.setUncheckLast(true);
+
         infoLabel.setText("Bitte wähle einen Avatar!");
 
         avatarListContainer = new Table();
         avatarScrollPane = new ScrollPane(avatarListContainer, Assets.SKIN);
-
-        EnumSet.allOf(Avatar.class).forEach(avatar -> avatarEntries.add(new AvatarListEntry(avatar)));
 
         confirmButton = new TextButton("Bestätigen", Assets.SKIN);
         confirmButton.addListener(new ClickListener() {
@@ -52,7 +57,9 @@ public class AvatarSelectTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
+                Chati.CHATI.getScreen().setPendingResponse(Response.AVATAR_CHANGE);
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE,
+                        avatarButtonGroup.getChecked().getAvatar());
             }
         });
 
@@ -65,6 +72,29 @@ public class AvatarSelectTable extends MenuTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
+            }
+        });
+
+        EnumSet.allOf(Avatar.class).forEach(avatar -> {
+            AvatarListEntry avatarListEntry = new AvatarListEntry(avatar);
+            avatarEntries.add(avatarListEntry);
+            avatarListEntry.addListener(new ClickListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    if (!avatarListEntry.isChecked()) {
+                        unselectButton(avatarButtonGroup.getChecked());
+                        return true;
+                    }
+                    return false;
+                }
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    selectButton(avatarListEntry);
+                }
+            });
+            avatarButtonGroup.add(avatarListEntry);
+            if (avatar == Chati.CHATI.getUserManager().getInternUserView().getAvatar()) {
+                selectButton(avatarListEntry);
             }
         });
     }
@@ -93,20 +123,33 @@ public class AvatarSelectTable extends MenuTable {
         buttonContainer.add(confirmButton, cancelButton);
         container.add(buttonContainer);
         add(container).width(ROW_WIDTH);
+
+        Chati.CHATI.getScreen().getStage().setScrollFocus(avatarScrollPane);
     }
 
     @Override
     public void resetTextFields() {
     }
 
-    private class AvatarListEntry extends TextButton {
+    private void selectButton(TextButton button) {
+        button.setChecked(true);
+        button.getLabel().setColor(Color.MAGENTA);
+        button.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
+    }
+
+    private void unselectButton(TextButton button) {
+        button.setChecked(false);
+        button.getLabel().setColor(Color.WHITE);
+        button.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
+    }
+
+    private static class AvatarListEntry extends TextButton implements Comparable<AvatarListEntry> {
 
         private final Avatar avatar;
-
         private Image avatarImage;
 
         public AvatarListEntry(Avatar avatar) {
-            super(avatar.getName(), Assets.SKIN);
+            super(avatar.getName(), Assets.getNewSkin());
             this.avatar = avatar;
             create();
             setLayout();
@@ -122,6 +165,16 @@ public class AvatarSelectTable extends MenuTable {
         private void setLayout() {
             getLabelCell().padTop(-2 * SPACING).row();
             add(avatarImage).center().size(AVATAR_IMAGE_SIZE).padBottom(2 * SPACING);
+        }
+
+        public Avatar getAvatar() {
+            return avatar;
+        }
+
+        @Override
+        public int compareTo(@NotNull AvatarSelectTable.AvatarListEntry other) {
+            return this.avatar == Chati.CHATI.getUserManager().getInternUserView().getAvatar() ? 1
+                    : this.avatar.getName().compareTo(other.avatar.getName());
         }
     }
 }

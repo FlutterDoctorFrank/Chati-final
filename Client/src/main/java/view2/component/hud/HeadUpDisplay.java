@@ -26,7 +26,7 @@ public class HeadUpDisplay extends Table {
 
     public static final float BUTTON_SCALE_FACTOR = 0.1f;
     public static final float BUTTON_SIZE = 75;
-    public static final float BUTTON_SPACING = 10f;
+    public static final float BUTTON_SPACING = 10;
 
     private static HeadUpDisplay headUpDisplay;
 
