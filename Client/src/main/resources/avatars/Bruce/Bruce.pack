@@ -5,7 +5,7 @@ filter: Nearest,Nearest
 repeat: none
 Bruce_run
   rotate: false
-  xy: 0, 48
+  xy: 0, 46
   size: 768, 48
   orig: 768, 64
   offset: 0, 0
@@ -19,7 +19,7 @@ Bruce_sit
   index: -1
 Bruce_idle
   rotate: false
-  xy: 770, 50
+  xy: 768, 48
   size: 128, 46
   orig: 128, 64
   offset: 0, 0
