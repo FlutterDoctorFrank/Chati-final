@@ -138,6 +138,12 @@ public interface IUser {
     void setAvatar(@NotNull final Avatar avatar);
 
     /**
+     * Ändert den Status des Benutzers.
+     * @param status Neuer Status des Benutzers.
+     */
+    void setStatus(@NotNull final Status status);
+
+    /**
      * Gibt die ID des Benutzers zurück.
      * @return ID des Benutzers.
      */

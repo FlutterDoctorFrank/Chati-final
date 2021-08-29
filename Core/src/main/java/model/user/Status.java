@@ -16,6 +16,18 @@ public enum Status {
     AWAY,
 
     /**
+     * Status eines Benutzers, der gerade beschäftigt ist. An einem beschäftigten Benutzer können die administrativen
+     * Aktionen Teleportieren und in den Raum einladen nicht ausgeführt werden.
+     */
+    BUSY,
+
+    /**
+     * Status eines unsichtbaren Benutzers. Ist ein Benutzer unsichtbar, wird er allen Benutzern, außer Benutzern mit
+     * der nötigen Berechtigung außerhalb seines Raums als Offline angezeigt
+     */
+    INVISIBLE,
+
+    /**
      * Status eines nicht eingeloggten Benutzers.
      */
     OFFLINE;

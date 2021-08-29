@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import model.user.Avatar;
+import model.user.Status;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
@@ -23,6 +24,7 @@ public class PacketProfileAction implements Packet<PacketListener> {
     private String password;
     private String newPassword;
     private Avatar avatar;
+    private Status status;
 
     private Action action;
     private String message;
@@ -66,6 +68,15 @@ public class PacketProfileAction implements Packet<PacketListener> {
     public PacketProfileAction(@NotNull final Avatar avatar) {
         this.action = Action.CHANGE_AVATAR;
         this.avatar = avatar;
+    }
+
+    /**
+     * Ausschließlich für die Erzeugung des Netzwerkpakets zum Ändern des Status von der Client-Anwendung.
+     * @param status der neue Status für den Benutzer.
+     */
+    public PacketProfileAction(@NotNull final Status status) {
+        this.action = Action.CHANGE_STATUS;
+        this.status = status;
     }
 
     /**
@@ -126,6 +137,7 @@ public class PacketProfileAction implements Packet<PacketListener> {
         output.writeString(this.password);
         output.writeString(this.newPassword);
         PacketUtils.writeNullableEnum(output, this.avatar);
+        PacketUtils.writeNullableEnum(output, this.status);
         PacketUtils.writeEnum(output, this.action);
         output.writeString(this.message);
         output.writeBoolean(this.success);
@@ -138,6 +150,7 @@ public class PacketProfileAction implements Packet<PacketListener> {
         this.password = input.readString();
         this.newPassword = input.readString();
         this.avatar = PacketUtils.readNullableEnum(input, Avatar.class);
+        this.status = PacketUtils.readNullableEnum(input, Status.class);
         this.action = PacketUtils.readEnum(input, Action.class);
         this.message = input.readString();
         this.success = input.readBoolean();
@@ -188,6 +201,14 @@ public class PacketProfileAction implements Packet<PacketListener> {
      */
     public @Nullable Avatar getAvatar() {
         return this.avatar;
+    }
+
+    /**
+     * Gibt den Status des Benutzerprofils zurück.
+     * @return der Status des Benutzers, oder null.
+     */
+    public @Nullable Status getStatus() {
+        return this.status;
     }
 
     /**
@@ -247,6 +268,11 @@ public class PacketProfileAction implements Packet<PacketListener> {
         /**
          * Führt dazu, dass der Avatar eines vorhandenen Profils geändert wird.
          */
-        CHANGE_AVATAR
+        CHANGE_AVATAR,
+
+        /**
+         * Führt dazu, dass der Status eines vorhandenen Profils geändert wird.
+         */
+        CHANGE_STATUS
     }
 }

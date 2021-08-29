@@ -62,6 +62,11 @@ public class Room extends Area implements IRoom {
         return map;
     }
 
+    @Override
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
     /**
      * Überprüft, ob ein übergebenes Passwort mit dem Passwort dieses Kontextes übereinstimmt.
      * @param password Zu überprüfendes Passwort.
@@ -88,14 +93,6 @@ public class Room extends Area implements IRoom {
      */
     public @NotNull Location getSpawnLocation() {
         return spawnLocation;
-    }
-
-    /**
-     * Gibt zurück, ob dieser Kontext privat ist.
-     * @return true, wenn der Kontext privat ist, sonst false.
-     */
-    public boolean isPrivate() {
-        return isPrivate;
     }
 
     @Override

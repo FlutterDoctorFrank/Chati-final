@@ -317,6 +317,14 @@ public class User implements IUser {
     }
 
     @Override
+    public void setStatus(@NotNull final Status status) {
+        this.status = status;
+
+        // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
+        updateUserInfo(true);
+    }
+
+    @Override
     public @NotNull UUID getUserId() {
         return userId;
     }
@@ -641,17 +649,6 @@ public class User implements IUser {
      */
     public void setCurrentInteractable(@Nullable final Interactable interactable) {
         this.currentInteractable = interactable;
-    }
-
-    /**
-     * Ändert den Status eines Benutzers.
-     * @param status Neuer Status des Benutzers.
-     */
-    public void setStatus(@NotNull final Status status) {
-        this.status = status;
-
-        // Sende geänderte Benutzerinformationen an alle relevanten Benutzer.
-        updateUserInfo(true);
     }
 
     /**

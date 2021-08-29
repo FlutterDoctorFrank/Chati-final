@@ -15,23 +15,24 @@ public enum Role {
     /**
      * Repräsentiert die Rolle eines Besitzers.
      */
-    OWNER(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.TELEPORT_TO_USER,
-            Permission.ENTER_PRIVATE_ROOM, Permission.MUTE, Permission.BAN_MODERATOR, Permission.BAN_USER,
-            Permission.ASSIGN_AREA_MANAGER, Permission.ASSIGN_MODERATOR, Permission.ASSIGN_ADMINISTRATOR,
-            Permission.MANAGE_WORLDS),
+    OWNER(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.SEE_INVISIBLE_USERS,
+            Permission.TELEPORT_TO_USER, Permission.ENTER_PRIVATE_ROOM, Permission.MUTE, Permission.BAN_MODERATOR,
+            Permission.BAN_USER, Permission.ASSIGN_AREA_MANAGER, Permission.ASSIGN_MODERATOR,
+            Permission.ASSIGN_ADMINISTRATOR, Permission.MANAGE_WORLDS),
 
     /**
      * Repräsentiert die Rolle eines Administrators.
      */
-    ADMINISTRATOR(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.TELEPORT_TO_USER,
-            Permission.ENTER_PRIVATE_ROOM, Permission.MUTE, Permission.BAN_MODERATOR, Permission.BAN_USER,
-            Permission.ASSIGN_AREA_MANAGER, Permission.ASSIGN_MODERATOR, Permission.MANAGE_WORLDS),
+    ADMINISTRATOR(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.SEE_INVISIBLE_USERS,
+            Permission.TELEPORT_TO_USER, Permission.ENTER_PRIVATE_ROOM, Permission.MUTE, Permission.BAN_MODERATOR,
+            Permission.BAN_USER, Permission.ASSIGN_AREA_MANAGER, Permission.ASSIGN_MODERATOR, Permission.MANAGE_WORLDS),
 
     /**
      * Repräsentiert die Rolle eines Moderators.
      */
-    MODERATOR(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.TELEPORT_TO_USER,
-            Permission.ENTER_PRIVATE_ROOM, Permission.MUTE, Permission.BAN_USER, Permission.ASSIGN_AREA_MANAGER),
+    MODERATOR(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.SEE_INVISIBLE_USERS,
+            Permission.TELEPORT_TO_USER, Permission.ENTER_PRIVATE_ROOM, Permission.MUTE, Permission.BAN_USER,
+            Permission.ASSIGN_AREA_MANAGER),
 
     /**
      * Repräsentiert die Rolle eines Rauminhabers.

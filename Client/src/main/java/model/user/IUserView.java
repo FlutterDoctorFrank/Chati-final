@@ -51,11 +51,16 @@ public interface IUserView {
     boolean isIgnored();
 
     /**
-     * Gibt zurück, ob der intern angemeldete Benutzer diesen Benutzer in einen Raum einladen, oder ihn aus diesem
-     * entfernen kann.
-     * @return true, wenn eine Einladung in den Raum, oder eine Entfernung aus dem Raum möglich ist.
+     * Gibt zurück, ob der intern angemeldete Benutzer diesen Benutzer in einen privaten Raum einladen kann.
+     * @return true, wenn eine Einladung in den Raum möglich ist, sonst false.
      */
-    boolean canManageInRoom();
+    boolean canInvite();
+
+    /**
+     * Gibt zurück, ob der intern angemeldete Benutzer diesen Benutzer aus einem privaten Raum entfernen kann.
+     * @return true, wenn eine Entfernung möglich ist, sonst false.
+     */
+    boolean canKick();
 
     /**
      * Gibt zurück, ob sich der intern angemeldete Benutzer zu diesem Benutzer teleportieren kann.

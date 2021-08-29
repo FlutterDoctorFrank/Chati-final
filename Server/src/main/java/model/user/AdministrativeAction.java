@@ -140,6 +140,11 @@ public enum AdministrativeAction {
                 throw new IllegalAdministrativeActionException("Invited user is already in the private room.",
                         performer, target, ROOM_INVITE);
             }
+            // Überprüfe, ob der eingeladene Benutzer gerade beschäftigt ist.
+            if (target.getStatus() == Status.BUSY) {
+                throw new IllegalAdministrativeActionException("Busy users can't be invited in a room.",
+                        performer, target, ROOM_INVITE);
+            }
             // Schicke die Raumeinladung.
             RoomInvitation roomInvitation = new RoomInvitation(target, args[0], performer, invitedRoom);
             target.addNotification(roomInvitation);
@@ -196,11 +201,8 @@ public enum AdministrativeAction {
             // die Berechtigung zum Teleportieren besitzt, oder ob die Benutzer befreundet sind.
             Context commonContext = performerArea.lastCommonAncestor(targetArea);
 
-            if (commonContext.equals(GlobalContext.getInstance())) {
-                throw new IllegalStateException("Performer and Target must be in the same world");
-            }
-
-            if (!performer.hasPermission(commonContext, Permission.TELEPORT_TO_USER) && !performer.isFriend(target)) {
+            if (!performer.hasPermission(commonContext, Permission.TELEPORT_TO_USER)
+                    && (!performer.isFriend(target) || target.getStatus() == Status.BUSY)) {
                 throw new NoPermissionException("Performer has not the required permission.", performer,
                         Permission.TELEPORT_TO_USER);
             }

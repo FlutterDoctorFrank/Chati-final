@@ -13,4 +13,10 @@ public interface IRoom extends IArea {
      * @return Karte des Raumes.
      */
     @NotNull SpatialMap getMap();
+
+    /**
+     * Gibt zurück, ob dieser Raum ein privater Raum ist.
+     * @return true, wenn der Raum privat ist, sonst false.
+     */
+    boolean isPrivate();
 }

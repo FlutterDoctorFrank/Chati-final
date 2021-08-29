@@ -14,6 +14,7 @@ import model.user.AdministrativeAction;
 import model.context.ContextID;
 import model.context.spatial.SpatialMap;
 import model.user.Avatar;
+import model.user.Status;
 import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.UUID;
@@ -73,6 +74,10 @@ public interface ServerSender {
          *     Zum Ändern des Avatars wird folgendes Objekt Array erwartet:<br>
          *     - {@code 0}: {@link Avatar}, der neue Avatar für den Benutzer
          * </p>
+         * <p>
+         *     Zum Ändern des Status wird folgendes Objekt Array erwartet:<br>
+         *     - {@code 0}: {@link Status}, der neue Status für den Benutzer
+         * </p>
          */
         PROFILE_CHANGE {
             @Override
@@ -91,7 +96,12 @@ public interface ServerSender {
                         return new PacketProfileAction((Avatar) objects[0]);
                     }
 
-                    throw new IllegalArgumentException("Expected Avatar, got " + objects[0].getClass());
+                    if (objects[0] instanceof Status) {
+                        // Sende Paket zum Ändern des Status.
+                        return new PacketProfileAction((Status) objects[0]);
+                    }
+
+                    throw new IllegalArgumentException("Expected Avatar or Status, got " + objects[0].getClass());
                 } else {
                     throw new IllegalArgumentException("Expected Array size of 1 to 2, got " + objects.length);
                 }

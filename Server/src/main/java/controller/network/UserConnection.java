@@ -422,6 +422,15 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                         this.user.setAvatar(packet.getAvatar());
                         break;
 
+                    case CHANGE_STATUS:
+                        if (packet.getStatus() == null) {
+                            this.logInvalidPacket(packet, "Missing status for change-status action");
+                            return;
+                        }
+
+                        this.user.setStatus(packet.getStatus());
+                        break;
+
                     case DELETE:
                         if (packet.getPassword() == null) {
                             this.logInvalidPacket(packet, "Missing password for delete action");

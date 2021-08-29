@@ -48,6 +48,13 @@ public interface IUserController {
     void setInCurrentRoom(boolean isInCurrentRoom);
 
     /**
+     * Setzt die Information, ob sich dieser Benutzer in einem privaten Raum befindet.
+     * @param isInPrivateRoom true, wenn sich der Benutzer in einem privaten Raum befindet, sonst false.
+     * @see SpatialContext
+     */
+    void setInPrivateRoom(boolean isInPrivateRoom);
+
+    /**
      * Setzt die Information, ob ein Benutzer ein Freund des intern angemeldeten Benutzers ist.
      * @param isFriend true, wenn der Benutzer ein Freund ist, sonst false.
      */

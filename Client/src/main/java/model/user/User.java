@@ -35,6 +35,9 @@ public class User implements IUserController, IUserView {
         Clients befindet. */
     protected boolean isInCurrentRoom;
 
+    /** Die Information, ob sich der Benutzer in einem privaten Raum befindet. */
+    protected boolean isInPrivateRoom;
+
     /** Die aktuelle Position des Benutzers auf der Karte des aktuell angezeigten Raums. */
     protected Location currentLocation;
 
@@ -129,6 +132,12 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
+    public void setInPrivateRoom(boolean isInPrivateRoom) {
+        this.isInPrivateRoom = isInPrivateRoom;
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
+    }
+
+    @Override
     public void setFriend(boolean isFriend) {
         boolean wasFriend = this.isFriend;
         this.isFriend = isFriend;
@@ -216,7 +225,12 @@ public class User implements IUserController, IUserView {
 
     @Override
     public Status getStatus() {
-        return status;
+        if (status != Status.INVISIBLE) {
+            return status;
+        }
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        return !this.isInCurrentRoom && !internUser.hasPermission(Permission.SEE_INVISIBLE_USERS)
+                ? Status.OFFLINE : Status.INVISIBLE;
     }
 
     @Override
@@ -235,14 +249,25 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public boolean canManageInRoom() {
-        return UserManager.getInstance().getInternUser().isInPrivateRoom()
-                && UserManager.getInstance().getInternUser().hasPermission(Permission.MANAGE_PRIVATE_ROOM);
+    public boolean canInvite() {
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        return internUser.isInCurrentRoom && internUser.isInPrivateRoom && !this.isInCurrentRoom
+                && hasPermission(Permission.MANAGE_PRIVATE_ROOM) && this.status != Status.BUSY;
+    }
+
+    @Override
+    public boolean canKick() {
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        return internUser.isInCurrentRoom && this.isInCurrentRoom && internUser.isInPrivateRoom
+                && internUser.hasPermission(Permission.MANAGE_PRIVATE_ROOM)
+                && !this.hasPermission(Permission.ENTER_PRIVATE_ROOM);
     }
 
     @Override
     public boolean canTeleportTo() {
-        return true;
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        return (!isInPrivateRoom || internUser.hasPermission(Permission.ENTER_PRIVATE_ROOM))
+                && ((isFriend && this.status != Status.BUSY) || internUser.hasPermission(Permission.TELEPORT_TO_USER));
     }
 
     @Override
@@ -263,9 +288,9 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canBan() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return internUser.isInCurrentWorld() && internUser.hasPermission(Permission.BAN_MODERATOR)
-                && !this.hasPermission(Permission.BAN_MODERATOR) || internUser.hasPermission(Permission.BAN_USER)
-                && !this.hasPermission(Permission.BAN_MODERATOR) && !this.hasPermission(Permission.BAN_USER);
+        return !this.hasPermission(Permission.BAN_MODERATOR) && ((internUser.isInCurrentWorld()
+                && internUser.hasPermission(Permission.BAN_MODERATOR)) || (internUser.hasPermission(Permission.BAN_USER)
+                && !this.hasPermission(Permission.BAN_USER)));
     }
 
     @Override

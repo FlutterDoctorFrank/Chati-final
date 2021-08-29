@@ -25,6 +25,7 @@ public class Assets {
     public static final TextureRegionDrawable ONLINE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/online.png")));
     public static final TextureRegionDrawable AWAY_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/away.png")));
     public static final TextureRegionDrawable BUSY_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/busy.png")));
+    public static final TextureRegionDrawable INVISIBLE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/invisible.png")));
     public static final TextureRegionDrawable OFFLINE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/offline.png")));
 
     public static final TextureRegionDrawable CURRENT_WORLD_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/currentWorld.png")));

@@ -63,6 +63,12 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 statusImage.setDrawable(Assets.AWAY_ICON);
                 statusImage.addListener(new InformationToolTip("Abwesend"));
                 break;
+            case BUSY:
+                statusImage.setDrawable(Assets.BUSY_ICON);
+                statusImage.addListener(new InformationToolTip("Beschäftigt"));
+            case INVISIBLE:
+                statusImage.setDrawable(Assets.INVISIBLE_ICON);
+                statusImage.addListener(new InformationToolTip("Unsichtbar"));
             case OFFLINE:
                 statusImage.setDrawable(Assets.OFFLINE_ICON);
                 statusImage.addListener(new InformationToolTip("Offline"));
@@ -152,14 +158,12 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (user.canManageInRoom()) {
-            if (!user.isInCurrentRoom()) {
-                roomButton = new ImageButton(Assets.ROOM_INVITE_ICON);
-                roomButton.addListener(new InformationToolTip("In den Raum einladen"));
-            } else {
-                roomButton = new ImageButton(Assets.ROOM_KICK_ICON);
-                roomButton.addListener(new InformationToolTip("Aus dem Raum entfernen"));
-            }
+        if (user.canInvite()) {
+            roomButton = new ImageButton(Assets.ROOM_INVITE_ICON);
+            roomButton.addListener(new InformationToolTip("In den Raum einladen"));
+        } else if (user.canKick()) {
+            roomButton = new ImageButton(Assets.ROOM_KICK_ICON);
+            roomButton.addListener(new InformationToolTip("Aus dem Raum entfernen"));
         } else {
             roomButton = new ImageButton(Assets.DISABLED_ROOM_INVITE_ICON);
             roomButton.setDisabled(true);
@@ -174,13 +178,11 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 roomButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (user.canManageInRoom()) {
-                    if (!user.isInCurrentRoom()) {
-                        new MessageWindow(AdministrativeAction.ROOM_INVITE).open();
-                    } else {
-                        Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
-                                AdministrativeAction.ROOM_KICK, "");
-                    }
+                if (user.canInvite()) {
+                    new MessageWindow(AdministrativeAction.ROOM_INVITE).open();
+                } else if (user.canKick()) {
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                            AdministrativeAction.ROOM_KICK, "");
                 }
             }
             @Override

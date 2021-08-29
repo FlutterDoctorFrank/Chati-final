@@ -1,11 +1,11 @@
 package view2.component.hud;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import controller.network.ServerSender;
 import model.user.IInternUserView;
 import model.user.Status;
 import view2.Chati;
@@ -101,6 +101,16 @@ public class InternUserDisplay extends AbstractTable {
                 statusImage.setDrawable(Assets.AWAY_ICON);
                 statusImage.addListener(new InformationToolTip("Abwesend"));
                 break;
+            case BUSY:
+                statusImage.setDrawable(Assets.BUSY_ICON);
+                statusImage.addListener(new InformationToolTip("Beschäftigt"));
+                break;
+            case INVISIBLE:
+                statusImage.setDrawable(Assets.INVISIBLE_ICON);
+                statusImage.addListener(new InformationToolTip("Unsichtbar"));
+                break;
+            case OFFLINE:
+                throw new IllegalArgumentException("Intern user cannot be offline");
             default:
                 throw new IllegalArgumentException("There is no icon for this user status.");
         }
@@ -111,10 +121,10 @@ public class InternUserDisplay extends AbstractTable {
         ButtonGroup<TextButton> statusButtonGroup;
         private Image onlineStatusImage;
         private Image busyStatusImage;
-        private Image offlineStatusImage;
+        private Image invisibleStatusImage;
         private TextButton onlineStatusButton;
         private TextButton busyStatusButton;
-        private TextButton offlineStatusButton;
+        private TextButton invisibleStatusButton;
 
         public StatusSelectTable() {
             create();
@@ -131,7 +141,7 @@ public class InternUserDisplay extends AbstractTable {
 
             onlineStatusImage = new Image(Assets.ONLINE_ICON);
             busyStatusImage = new Image(Assets.BUSY_ICON);
-            offlineStatusImage = new Image(Assets.OFFLINE_ICON);
+            invisibleStatusImage = new Image(Assets.OFFLINE_ICON);
 
             onlineStatusButton = new TextButton("", Assets.getNewSkin());
             onlineStatusButton.addListener(new InformationToolTip("Online"));
@@ -148,20 +158,17 @@ public class InternUserDisplay extends AbstractTable {
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     onlineStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
                     busyStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
-                    offlineStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
+                    invisibleStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE, Status.ONLINE);
                 }
             });
 
             busyStatusButton = new TextButton("", Assets.getNewSkin());
             busyStatusButton.addListener(new InformationToolTip("Beschäftigt"));
-            /*
             if (internUser.getStatus() == Status.BUSY) {
                 busyStatusButton.setChecked(true);
-                busyStatusButton.getStyle().up = PRESSED_BUTTON_IMAGE;
+                busyStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
             }
-
-             */
-
             busyStatusButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -171,36 +178,34 @@ public class InternUserDisplay extends AbstractTable {
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     onlineStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
                     busyStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
-                    offlineStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
+                    invisibleStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE, Status.BUSY);
                 }
             });
 
-            offlineStatusButton = new TextButton("", Assets.getNewSkin());
-            offlineStatusButton.addListener(new InformationToolTip("Unsichtbar"));
-            /*
+            invisibleStatusButton = new TextButton("", Assets.getNewSkin());
+            invisibleStatusButton.addListener(new InformationToolTip("Unsichtbar"));
             if (internUser.getStatus() == Status.INVISIBLE) {
-                offlineStatusButton.setChecked(true);
-                offlineStatusButton.getStyle().up = PRESSED_BUTTON_IMAGE;
+                invisibleStatusButton.setChecked(true);
+                invisibleStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
             }
-
-             */
-
-            offlineStatusButton.addListener(new ClickListener() {
+            invisibleStatusButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return !offlineStatusButton.isChecked();
+                    return !invisibleStatusButton.isChecked();
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     onlineStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
                     busyStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
-                    offlineStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
+                    invisibleStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE, Status.INVISIBLE);
                 }
             });
 
             statusButtonGroup.add(onlineStatusButton);
             statusButtonGroup.add(busyStatusButton);
-            statusButtonGroup.add(offlineStatusButton);
+            statusButtonGroup.add(invisibleStatusButton);
         }
 
         @Override
@@ -213,13 +218,13 @@ public class InternUserDisplay extends AbstractTable {
 
             onlineStatusButton.add(onlineStatusImage).size(USER_INFO_ICON_SIZE).pad(USER_INFO_ICON_SIZE);
             busyStatusButton.add(busyStatusImage).size(USER_INFO_ICON_SIZE).pad(USER_INFO_ICON_SIZE);
-            offlineStatusButton.add(offlineStatusImage).size(USER_INFO_ICON_SIZE).pad(USER_INFO_ICON_SIZE);
+            invisibleStatusButton.add(invisibleStatusImage).size(USER_INFO_ICON_SIZE).pad(USER_INFO_ICON_SIZE);
 
             container.add(onlineStatusButton).size(2 * USER_INFO_ICON_SIZE)
                    .spaceBottom(VERTICAL_SPACING).padTop(VERTICAL_SPACING).row();
             container.add(busyStatusButton).size(2 * USER_INFO_ICON_SIZE)
                     .spaceBottom(VERTICAL_SPACING).row();
-            container.add(offlineStatusButton).size(2 * USER_INFO_ICON_SIZE)
+            container.add(invisibleStatusButton).size(2 * USER_INFO_ICON_SIZE)
                     .spaceBottom(VERTICAL_SPACING).padBottom(VERTICAL_SPACING);
 
             add(container).top().left().width(HeadUpDisplay.BUTTON_SIZE + HORIZONTAL_SPACING)

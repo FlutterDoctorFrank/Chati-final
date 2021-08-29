@@ -19,6 +19,11 @@ public enum Permission {
     CONTACT_CONTEXT,
 
     /**
+     * Erlaubt es zu sehen, wenn ein unsichtbarer Benutzer online ist.
+     */
+    SEE_INVISIBLE_USERS,
+
+    /**
      * Erlaubt das Teleportieren zu Benutzern, die sich nicht in der Freundesliste befinden.
      * Befindet sich der Benutzer, zu dem sich teleportiert werden soll, in einem privaten Raum, ist zusätzlich die
      * Berechtigung {@link Permission#ENTER_PRIVATE_ROOM} erforderlich.
