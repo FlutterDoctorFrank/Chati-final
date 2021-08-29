@@ -98,9 +98,6 @@ public class World extends Area implements IWorld {
                         // Versenden der globalen Rollen.
                         user.send(SendAction.CONTEXT_ROLE, receiver.getGlobalRoles());
                         receiver.send(SendAction.CONTEXT_ROLE, user.getGlobalRoles());
-                        // Versenden der Weltrollen.
-                        user.getWorldRoles().values().forEach(role -> receiver.send(SendAction.CONTEXT_ROLE, role));
-                        receiver.getWorldRoles().values().forEach(role -> user.send(SendAction.CONTEXT_ROLE, role));
                     });
 
             if (user.hasPermission(this, Permission.BAN_USER) || user.hasPermission(this, Permission.BAN_MODERATOR)) {
@@ -109,7 +106,6 @@ public class World extends Area implements IWorld {
 
             publicRoom.addUser(user);
 
-            user.getWorldRoles().values().forEach(role -> user.send(SendAction.CONTEXT_ROLE, role));
             user.getWorldNotifications().values().forEach(notification -> user.send(SendAction.NOTIFICATION, notification));
         }
     }

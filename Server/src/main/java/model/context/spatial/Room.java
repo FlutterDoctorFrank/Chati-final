@@ -102,11 +102,17 @@ public class Room extends Area implements IRoom {
     public void addUser(@NotNull final User user) {
         if (!contains(user)) {
             user.send(SendAction.CONTEXT_JOIN, this);
-            // Sende die Positionen der anderen Benutzer an den beitretenden Benutzer.
-            containedUsers.values().forEach(other -> user.send(SendAction.AVATAR_SPAWN, other));
-
             super.addUser(user);
             user.teleport(spawnLocation);
+            user.getRoomRoles().values().forEach(role -> user.send(SendAction.CONTEXT_ROLE, role));
+
+            // Sende die Positionen der anderen Benutzer an den beitretenden Benutzer.
+            containedUsers.values().stream().filter(other -> !other.equals(user)).forEach(other -> {
+                user.send(SendAction.AVATAR_SPAWN, other);
+                // Versenden der Raumrollen.
+                user.getRoomRoles().values().forEach(role -> other.send(SendAction.CONTEXT_ROLE, role));
+                other.getRoomRoles().values().forEach(role -> user.send(SendAction.CONTEXT_ROLE, role));
+            });
 
             if (isPrivate) {
                 final TextMessage info = new TextMessage(new MessageBundle("key"));
@@ -133,17 +139,10 @@ public class Room extends Area implements IRoom {
 
                 if (containedUsers.isEmpty()) {
                     world.removePrivateRoom(this);
-
-                    /*
-                     * Sende an alle Benutzer, die gerade das Menü einer Rezeption geöffnet haben, die neue Liste
-                     * aller privaten Räume.
-                     */
-                    world.getUsers().values().stream()
-                            .filter(receiver -> receiver.getCurrentMenu() == Menu.ROOM_RECEPTION_MENU)
-                            .forEach(receiver -> receiver.send(SendAction.CONTEXT_LIST, this.world));
-                } else {
-                    containedUsers.values().stream().findAny().get().addRole(this, Role.ROOM_OWNER);
+                    return;
                 }
+
+                containedUsers.values().stream().findAny().get().addRole(this, Role.ROOM_OWNER);
             }
         }
     }
