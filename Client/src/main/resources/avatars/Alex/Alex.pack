@@ -5,22 +5,22 @@ filter: Nearest,Nearest
 repeat: none
 Alex_run
   rotate: false
-  xy: 0, 46
-  size: 764, 46
+  xy: 1, 67
+  size: 768, 64
   orig: 768, 64
-  offset: 2, 0
+  offset: 0, 0
   index: -1
 Alex_sit
   rotate: false
-  xy: 0, 0
-  size: 376, 44
+  xy: 1, 1
+  size: 384, 64
   orig: 384, 64
-  offset: 4, 2
+  offset: 0, 0
   index: -1
 Alex_idle
   rotate: false
-  xy: 766, 48
-  size: 126, 44
+  xy: 771, 67
+  size: 128, 64
   orig: 128, 64
-  offset: 2, 0
+  offset: 0, 0
   index: -1
