@@ -139,7 +139,19 @@ public abstract class Context implements IContext {
         if (this.contains(user)) {
             this.containedUsers.remove(user.getUserId());
             System.out.println("User '" + user.getUsername() + "' removed from context: " + this.contextId);
-            this.children.values().forEach(children -> children.removeUser(user));
+
+            if (parent != null && parent.equals(GlobalContext.getInstance())) {
+                /*
+                 * Wenn es sich bei diesem Kontext um eine Welt handelt, wird über eine Kopie der Kind-Kontexte
+                 * iteriert, da die originale Map durch das Entfernen von privaten Räumen gleichzeitig modifiziert
+                 * werden könnte.
+                 */
+                for (final Context children : new HashSet<>(this.children.values())) {
+                    children.removeUser(user);
+                }
+            } else {
+                this.children.values().forEach(children -> children.removeUser(user));
+            }
         }
     }
 
@@ -354,14 +366,6 @@ public abstract class Context implements IContext {
      * @return Menge aller untergeordneter Kontexte.
      */
     public @NotNull Map<ContextID, Area> getChildren() {
-        /*
-         * Wenn es sich bei diesem Kontext um eine Welt handelt, wird eine Kopie der Kind-Kontexte zurückgegeben, da
-         * die originale Map, während dem iterieren durch die zurückgegebene Map, durch das Entfernen von privaten
-         * Räumen gleichzeitig modifiziert werden könnte.
-         */
-        if (parent != null && parent.equals(GlobalContext.getInstance())) {
-            return Map.copyOf(children);
-        }
         return Collections.unmodifiableMap(children);
     }
 

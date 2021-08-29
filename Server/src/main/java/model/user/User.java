@@ -686,19 +686,18 @@ public class User implements IUser {
     }
 
     /**
-     * Gibt die Rollen des Benutzers innerhalb seines aktuellen Raums und allen untergeordneten Kontexten zurück.
-     * @return Menge der Rollen des Benutzers in seinem aktuellen Raum und allen untergeordneten Kontexten.
-     * @throws IllegalStateException wenn sich der Benutzer in keinem Raum befindet.
+     * Gibt die Rollen des Benutzers innerhalb seiner aktuellen Welt und allen untergeordneten Kontexten zurück.
+     * @return Menge der Rollen des Benutzers in seiner aktuellen Welt und allen untergeordneten Kontexten.
+     * @throws IllegalStateException wenn sich der Benutzer in keiner Welt befindet.
      */
-    public @NotNull Map<Context, ContextRole> getRoomRoles() throws IllegalStateException {
-        // Prüfe, ob der Benutzer in einer Welt beziehungsweise in einen Raum ist.
-        if (currentWorld == null || currentLocation == null) {
+    public @NotNull Map<Context, ContextRole> getWorldRoles() throws IllegalStateException {
+        // Prüfe, ob Benutzer in einer Welt ist.
+        if (currentWorld == null) {
             throw new IllegalStateException("User is not in a world.");
         }
-
-        Map<Context, ContextRole> roomRoles = new HashMap<>();
-        addChildRoles(roomRoles, currentLocation.getRoom());
-        return roomRoles;
+        Map<Context, ContextRole> worldRoles = new HashMap<>();
+        addChildRoles(worldRoles, currentWorld);
+        return worldRoles;
     }
 
     /**
