@@ -12,7 +12,6 @@ import view2.Assets;
 import view2.Chati;
 import view2.Settings;
 import view2.component.UserInfoContainer;
-import view2.component.hud.settings.WorldSettingsWindow;
 import view2.component.world.WorldCamera;
 import view2.component.world.WorldScreen;
 
@@ -21,6 +20,7 @@ public class UserAvatar extends Sprite {
     public static final float DEFAULT_VELOCITY = 12.5f;
     public static final float SPRINT_VELOCITY_FACTOR = 1.75f;
     public static final float COMMUNICABLE_USER_ICON_SIZE = 35;
+    private static final float AVATAR_SIZE = 32;
 
     protected final IUserView user;
     protected final Body body;
@@ -59,7 +59,7 @@ public class UserAvatar extends Sprite {
         fixtureDef.filter.categoryBits = WorldScreen.USER_BIT;
         fixtureDef.filter.maskBits = 0;
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox((32 - 1) / WorldCamera.PPM / 2, (32 - 1) / WorldCamera.PPM / 2);
+        shape.setAsBox(AVATAR_SIZE / WorldCamera.PPM / 2, AVATAR_SIZE / WorldCamera.PPM / 2);
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
         body.setUserData(BodyType.USER);
@@ -100,13 +100,13 @@ public class UserAvatar extends Sprite {
     private void initializeSprite() {
         TextureAtlas atlas = new TextureAtlas(user.getAvatar().getPath());
 
-        TextureAtlas.AtlasRegion stand = atlas.findRegion(user.getAvatar().getIdleRegion());
+        TextureAtlas.AtlasRegion stand = atlas.findRegion(user.getAvatar().getIdleRegionName());
         avatarStandRight = new TextureRegion(stand, 0, 16, 32, 48);
         avatarStandUp = new TextureRegion(stand, 32, 16, 32, 48);
         avatarStandLeft = new TextureRegion(stand, 64, 16, 32, 48);
-        avatarStandDown = new TextureRegion(stand, 96, 16, 32, 48); /** Alles hardgecoded... */
+        avatarStandDown = new TextureRegion(stand, 96, 16, 32, 48);
 
-        TextureAtlas.AtlasRegion run = atlas.findRegion(user.getAvatar().getRunRegion());
+        TextureAtlas.AtlasRegion run = atlas.findRegion(user.getAvatar().getRunRegionName());
         Array<TextureRegion> frames = new Array<>();
         //running right animation
         for (int i = 0; i < 6; i++) frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
@@ -125,7 +125,7 @@ public class UserAvatar extends Sprite {
         avatarRunDown = new Animation<>(0.1f, frames);
         frames.clear();
 
-        setBounds(0, 0, 32 / WorldCamera.PPM, 32 / WorldCamera.PPM);
+        setBounds(0, 0, AVATAR_SIZE / WorldCamera.PPM, AVATAR_SIZE / WorldCamera.PPM);
         setRegion(avatarStandDown);
     }
 

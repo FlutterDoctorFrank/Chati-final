@@ -362,7 +362,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
 
     private class ConfirmWindow extends AbstractWindow {
         private static final float WINDOW_WIDTH = 550;
-        private static final float WINDOW_HEIGHT = 300;
+        private static final float WINDOW_HEIGHT = 275;
         private static final float ROW_HEIGHT = 60;
         private static final float SPACING = 15;
 

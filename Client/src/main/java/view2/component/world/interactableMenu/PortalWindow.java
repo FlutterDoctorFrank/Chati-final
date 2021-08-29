@@ -17,7 +17,7 @@ import view2.Chati;
 public class PortalWindow extends InteractableWindow {
 
     private static final float WINDOW_WIDTH = 550;
-    private static final float WINDOW_HEIGHT = 250;
+    private static final float WINDOW_HEIGHT = 275;
     private static final float ROW_HEIGHT = 60;
     private static final float SPACING = 15;
 

@@ -57,6 +57,5 @@ public class AvatarSelectTable extends MenuTable {
 
     @Override
     public void resetTextFields() {
-
     }
 }

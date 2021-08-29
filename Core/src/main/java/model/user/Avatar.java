@@ -8,21 +8,31 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum Avatar implements Resource {
 
-    PLACEHOLDER("Adam/Adam.pack", "Adam_idle", "Adam_run"),
-    ADAM("Adam/Adam.pack", "Adam_idle", "Adam_run");
+    PLACEHOLDER("Adam", "Adam/Adam", "Adam_idle", "Adam_run"),
+    ADAM("Adam", "Adam/Adam", "Adam_idle", "Adam_run"),
+    ALEX("Alex", "Alex/Alex", "Alex_idle", "Alex_run"),
+    AMELIA("Amelia", "Amelia/Amelia", "Amelia_idle", "Amelia_run"),
+    ASH("Ash", "Ash/Ash", "Ash_idle", "Ash_run"),
+    BOB("Bob", "Bob/Bob", "Bob_idle", "Bob_run"),
+    BRUCE("Bruce", "Bruce/Bruce", "Bruce_idle", "Bruce_run"),
+    DAN("Dan", "Dan/Dan", "Dan_idle", "Dan_run"),
+    EDWARD("Edward", "Edward/Edward", "Edward_idle", "Edward_run"),
+    LUCY("Lucy", "Lucy/Lucy", "Lucy_idle", "Lucy_run"),
+    RICK("Rick", "Rick/Rick", "Rick_idle", "Rick_run");
 
-    private static final String PATH = "avatars/";
+    private static final String AVATARS_PATH = "avatars/";
 
     private final String name;
     private final String path;
-    private final String idleRegion;
-    private final String runRegion;
+    private final String idleRegionName;
+    private final String runRegionName;
 
-    Avatar(@NotNull final String name, @NotNull final String idleRegion, @NotNull final String runRegion) {
+    Avatar(@NotNull final String name, @NotNull final String path,
+           @NotNull final String idleRegionName, @NotNull final String runRegionName) {
         this.name = name;
-        this.path = PATH + this.name.toLowerCase();
-        this.idleRegion = idleRegion;
-        this.runRegion = runRegion;
+        this.path = AVATARS_PATH + path + ".pack";
+        this.idleRegionName = idleRegionName;
+        this.runRegionName = runRegionName;
     }
 
     @Override
@@ -35,11 +45,11 @@ public enum Avatar implements Resource {
         return this.path;
     }
 
-    public @NotNull String getIdleRegion() {
-        return this.idleRegion;
+    public @NotNull String getIdleRegionName() {
+        return this.idleRegionName;
     }
 
-    public @NotNull String getRunRegion() {
-        return this.runRegion;
+    public @NotNull String getRunRegionName() {
+        return this.runRegionName;
     }
 }
