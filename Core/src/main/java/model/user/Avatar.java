@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum Avatar implements Resource {
 
-    PLACEHOLDER("Adam", "Adam/Adam", "Adam_idle", "Adam_run"),
     ADAM("Adam", "Adam/Adam", "Adam_idle", "Adam_run"),
     ALEX("Alex", "Alex/Alex", "Alex_idle", "Alex_run"),
     AMELIA("Amelia", "Amelia/Amelia", "Amelia_idle", "Amelia_run"),

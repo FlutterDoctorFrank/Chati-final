@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 public class User implements IUser {
 
     /** Standard-Avatar eines Benutzers */
-    private static final Avatar DEFAULT_AVATAR = Avatar.PLACEHOLDER;
+    private static final Avatar DEFAULT_AVATAR = Avatar.ADAM;
 
     /** Wird zur eindeutigen Identifikation eines Benutzers verwendet. */
     private final UUID userId;

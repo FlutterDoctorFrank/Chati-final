@@ -61,7 +61,7 @@ public class IUserManagerTest {
     @Test
     public void login_getInternUser_logout() {
         UUID userId = UUID.randomUUID();
-        UserManager.getInstance().login(userId, "internUser", Status.ONLINE, Avatar.PLACEHOLDER);
+        UserManager.getInstance().login(userId, "internUser", Status.ONLINE, Avatar.ADAM);
         Assert.assertEquals(userId, UserManager.getInstance().getInternUser().getUserId());
         Assert.assertEquals(userId, testUserManagerView.getInternUserView().getUserId());
         UserManager.getInstance().logout();
@@ -73,8 +73,8 @@ public class IUserManagerTest {
         UUID userId1 = UUID.randomUUID();
         UUID userId2 = UUID.randomUUID();
         Set<UUID> userSet = Set.of(userId1, userId2);
-        testUserManagerController.addExternUser(userId1, userId1.toString(), Status.ONLINE, Avatar.PLACEHOLDER);
-        testUserManagerController.addExternUser(userId2, userId2.toString(), Status.ONLINE, Avatar.PLACEHOLDER);
+        testUserManagerController.addExternUser(userId1, userId1.toString(), Status.ONLINE, Avatar.ADAM);
+        testUserManagerController.addExternUser(userId2, userId2.toString(), Status.ONLINE, Avatar.ADAM);
         try {
             Assert.assertEquals(testUserManagerView.getExternUserView(userId1).getUserId(), userId1);
             Assert.assertEquals(testUserManagerView.getExternUserView(userId2.toString()).getUserId(), userId2);
@@ -96,9 +96,9 @@ public class IUserManagerTest {
         UUID userId1 = UUID.randomUUID();
         UUID userId2 = UUID.randomUUID();
         Set<UUID> userSet = Set.of(userId1, userId2);
-        UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.PLACEHOLDER);
-        testUserManagerController.addExternUser(userId1, userId1.toString(), Status.ONLINE, Avatar.PLACEHOLDER);
-        testUserManagerController.addExternUser(userId2, userId2.toString(), Status.ONLINE, Avatar.PLACEHOLDER);
+        UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.ADAM);
+        testUserManagerController.addExternUser(userId1, userId1.toString(), Status.ONLINE, Avatar.ADAM);
+        testUserManagerController.addExternUser(userId2, userId2.toString(), Status.ONLINE, Avatar.ADAM);
         SpatialContext world = new SpatialContext("World", Context.getGlobal());
         SpatialContext room = new SpatialContext("Room", world);
         Game game = new Game() {

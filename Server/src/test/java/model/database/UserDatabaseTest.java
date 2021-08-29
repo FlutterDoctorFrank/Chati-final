@@ -64,7 +64,7 @@ public class UserDatabaseTest {
     public void changeAvatarTest() {
         User test = this.account_database.createAccount("changeAvatar", "111");
         String test_id = test.getUserId().toString();
-        this.user_database.changeAvatar(test, Avatar.PLACEHOLDER);
+        this.user_database.changeAvatar(test, Avatar.ADAM);
 
         //pruefe ob Avatar in Datenbank geaendert ist
         String actual_avatar_name = null;
@@ -89,7 +89,7 @@ public class UserDatabaseTest {
             System.out.println(e);
         }
 
-        Assert.assertEquals(Avatar.PLACEHOLDER.getName(), actual_avatar_name);
+        Assert.assertEquals(Avatar.ADAM.getName(), actual_avatar_name);
 
     }
 
