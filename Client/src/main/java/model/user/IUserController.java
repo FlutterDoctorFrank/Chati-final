@@ -60,12 +60,6 @@ public interface IUserController {
     void setIgnored(boolean isIgnored);
 
     /**
-     * Setzt die Information, ob der intern angemeldete Benutzer sich zu diesem Benutzer teleportieren kann.
-     * @param canTeleportTo true, wenn eine Teleportation möglich ist, sonst false.
-     */
-    void setTeleportable(boolean canTeleportTo);
-
-    /**
      * Setzt die Information, ob der intern angemeldete Benutzer mit diesem Benutzer gerade kommunizieren kann.
      * @param canCommunicateWith true, wenn eine Kommunikation möglich ist, sonst false.
      */

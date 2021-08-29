@@ -200,7 +200,7 @@ public enum AdministrativeAction {
                 throw new IllegalStateException("Performer and Target must be in the same world");
             }
 
-            if (!(performer.hasPermission(commonContext, Permission.TELEPORT_TO_USER) && !performer.isFriend(target))) {
+            if (!performer.hasPermission(commonContext, Permission.TELEPORT_TO_USER) && !performer.isFriend(target)) {
                 throw new NoPermissionException("Performer has not the required permission.", performer,
                         Permission.TELEPORT_TO_USER);
             }

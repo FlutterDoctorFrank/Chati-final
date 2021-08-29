@@ -145,13 +145,6 @@ public class IUserTest {
     }
 
     @Test
-    public void setTeleportable_canTeleportTo() {
-        boolean teleportable = new Random().nextBoolean();
-        testUserController.setTeleportable(teleportable);
-        Assert.assertEquals(teleportable, testUserView.canTeleportTo());
-    }
-
-    @Test
     public void setIsReport() {
         int posX = 500;
         int posY = 1500;

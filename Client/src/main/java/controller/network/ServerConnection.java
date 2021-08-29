@@ -646,7 +646,6 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         user.setFriend(info.getFlags().contains(Flag.FRIEND));
 
                         if (info.getFlags().contains(Flag.BANNED)) {
-                            user.setTeleportable(false);
                             user.setInCurrentWorld(false);
                             user.setBan(packet.getContextId(), true);
                             return;
@@ -654,7 +653,6 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                         user.setIgnored(info.getFlags().contains(Flag.IGNORED));
                         user.setReport(packet.getContextId(), info.getFlags().contains(Flag.REPORTED));
-                        user.setTeleportable(info.getTeleportTo());
                         user.setInCurrentWorld(true);
                         break;
 
@@ -679,7 +677,6 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                         user.setFriend(info.getFlags().contains(Flag.FRIEND));
                         user.setIgnored(info.getFlags().contains(Flag.IGNORED));
-                        user.setTeleportable(false);
                         user.setInCurrentWorld(false);
                         break;
 

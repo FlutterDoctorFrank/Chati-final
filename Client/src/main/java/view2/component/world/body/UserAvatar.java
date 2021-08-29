@@ -17,8 +17,8 @@ import view2.component.world.WorldScreen;
 
 public class UserAvatar extends Sprite {
 
-    public static final float DEFAULT_VELOCITY = 12.5f;
-    public static final float SPRINT_VELOCITY_FACTOR = 1.75f;
+    public static final float DEFAULT_VELOCITY = 10f;
+    public static final float SPRINT_VELOCITY_FACTOR = 1.67f;
     public static final float COMMUNICABLE_USER_ICON_SIZE = 35;
     private static final float AVATAR_SIZE = 32;
 
@@ -234,7 +234,7 @@ public class UserAvatar extends Sprite {
             Array<TextureRegion> frames = new Array<>();
             TextureAtlas buttonAtlas = new TextureAtlas("icons/interact_button/rotating_button.pack");
             for (int i = 0; i < 4; i++) {
-                frames.add(new TextureRegion(buttonAtlas.findRegion("button"), i * 16, 0, 16, 16)); /** Hard gecoded...*/
+                frames.add(new TextureRegion(buttonAtlas.findRegion("button"), i * 16, 0, 16, 16));
             }
             interactionButton = new Animation<>(0.1f, frames);
             setBounds(0, 0, 16 / WorldCamera.PPM, 16 / WorldCamera.PPM);

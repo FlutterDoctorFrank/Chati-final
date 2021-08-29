@@ -93,7 +93,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 friendButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (friendButton.getImage().getDrawable().equals(Assets.ADD_FRIEND_ICON)) {
+                if (!user.isFriend()) {
                     new MessageWindow(AdministrativeAction.INVITE_FRIEND).open();
                 } else {
                     Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
@@ -130,7 +130,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 ignoreButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (ignoreButton.getImage().getDrawable().equals(Assets.IGNORE_ICON)) {
+                if (!user.isIgnored()) {
                     Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.IGNORE_USER, "");
                 } else {
@@ -152,8 +152,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (internUser.isInPrivateRoom()
-                && internUser.hasPermission(Permission.MANAGE_PRIVATE_ROOM)) {
+        if (user.canManageInRoom()) {
             if (!user.isInCurrentRoom()) {
                 roomButton = new ImageButton(Assets.ROOM_INVITE_ICON);
                 roomButton.addListener(new InformationToolTip("In den Raum einladen"));
@@ -175,11 +174,13 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 roomButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (roomButton.getImage().getDrawable().equals(Assets.ROOM_INVITE_ICON)) {
-                    new MessageWindow(AdministrativeAction.ROOM_INVITE).open();
-                } else if (roomButton.getImage().getDrawable().equals(Assets.ROOM_KICK_ICON)) {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
-                            AdministrativeAction.ROOM_KICK, "");
+                if (user.canManageInRoom()) {
+                    if (!user.isInCurrentRoom()) {
+                        new MessageWindow(AdministrativeAction.ROOM_INVITE).open();
+                    } else {
+                        Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                                AdministrativeAction.ROOM_KICK, "");
+                    }
                 }
             }
             @Override
@@ -196,7 +197,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (internUser.isInCurrentWorld() && user.isInCurrentWorld() && user.canTeleportTo()) {
+        if (user.canTeleportTo()) {
             teleportButton = new ImageButton(Assets.TELEPORT_ICON);
             teleportButton.addListener(new InformationToolTip("Zu Benutzer teleportieren"));
         } else {
@@ -213,7 +214,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 teleportButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (teleportButton.getImage().getDrawable().equals(Assets.TELEPORT_ICON)) {
+                if (user.canTeleportTo()) {
                     Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.TELEPORT_TO_USER, "");
                 }
@@ -232,9 +233,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (internUser.isInCurrentWorld() && user.isInCurrentWorld()
-                && !internUser.hasPermission(Permission.BAN_MODERATOR) && !user.hasPermission(Permission.BAN_MODERATOR)
-                && (!internUser.hasPermission(Permission.BAN_USER) || user.hasPermission(Permission.BAN_USER))) {
+        if (user.canReport()) {
             reportButton = new ImageButton(Assets.REPORT_ICON);
             reportButton.addListener(new InformationToolTip("Melden"));
         } else {
@@ -251,7 +250,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 reportButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (reportButton.getImage().getDrawable().equals(Assets.REPORT_ICON)) {
+                if (user.canReport()) {
                     new MessageWindow(AdministrativeAction.REPORT_USER).open();
                 }
             }
@@ -269,8 +268,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (internUser.isInCurrentWorld() && user.isInCurrentWorld()
-                && internUser.hasPermission(Permission.MUTE) && !user.hasPermission(Permission.MUTE)) {
+        if (user.canMute()) {
             if (!user.isMuted()) {
                 muteButton = new ImageButton(Assets.MUTE_ICON);
                 muteButton.addListener(new InformationToolTip("Stummschalten"));
@@ -292,12 +290,14 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 muteButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (muteButton.getImage().getDrawable().equals(Assets.MUTE_ICON)) {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
-                            AdministrativeAction.MUTE_USER, "");
-                } else if (muteButton.getImage().getDrawable().equals(Assets.UNMUTE_ICON)) {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
-                            AdministrativeAction.UNMUTE_USER, "");
+                if (user.canMute()) {
+                    if (!user.isMuted()) {
+                        Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                                AdministrativeAction.MUTE_USER, "");
+                    } else {
+                        Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                                AdministrativeAction.UNMUTE_USER, "");
+                    }
                 }
             }
             @Override
@@ -314,9 +314,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (internUser.isInCurrentWorld() && internUser.hasPermission(Permission.BAN_MODERATOR)
-                && !user.hasPermission(Permission.BAN_MODERATOR) || internUser.hasPermission(Permission.BAN_USER)
-                && !user.hasPermission(Permission.BAN_MODERATOR) && !user.hasPermission(Permission.BAN_USER)) {
+        if (user.canBan()) {
             if (!user.isBanned()) {
                 banButton = new ImageButton(Assets.BAN_ICON);
                 banButton.addListener(new InformationToolTip("Sperren"));
@@ -338,10 +336,12 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 banButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (banButton.getImage().getDrawable().equals(Assets.BAN_ICON)) {
-                    new MessageWindow(AdministrativeAction.BAN_USER).open();
-                } else if (banButton.getImage().getDrawable().equals(Assets.UNBAN_ICON)) {
-                    new MessageWindow(AdministrativeAction.UNBAN_USER).open();
+                if (user.canBan()) {
+                    if (!user.isBanned()) {
+                        new MessageWindow(AdministrativeAction.BAN_USER).open();
+                    } else {
+                        new MessageWindow(AdministrativeAction.UNBAN_USER).open();
+                    }
                 }
             }
             @Override
@@ -358,9 +358,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (internUser.isInCurrentWorld() && user.isInCurrentWorld()
-                && internUser.hasPermission(Permission.ASSIGN_MODERATOR)
-                && !user.hasRole(Role.ADMINISTRATOR) && !user.hasRole(Role.OWNER)) {
+        if (user.canAssignModerator()) {
             if (!user.hasRole(Role.MODERATOR)) {
                 moderatorButton = new ImageButton(Assets.ASSIGN_MODERATOR_ICON);
                 moderatorButton.addListener(new InformationToolTip("Die Rolle des Moderators vergeben"));
@@ -382,12 +380,14 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 moderatorButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (moderatorButton.getImage().getDrawable().equals(Assets.ASSIGN_MODERATOR_ICON)) {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
-                            AdministrativeAction.ASSIGN_MODERATOR, "");
-                } else if (moderatorButton.getImage().getDrawable().equals(Assets.WITHDRAW_MODERATOR_ICON)) {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
-                            AdministrativeAction.WITHDRAW_MODERATOR, "");
+                if (user.canAssignModerator()) {
+                    if (!user.hasRole(Role.MODERATOR)) {
+                        Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                                AdministrativeAction.ASSIGN_MODERATOR, "");
+                    } else {
+                        Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                                AdministrativeAction.WITHDRAW_MODERATOR, "");
+                    }
                 }
             }
             @Override

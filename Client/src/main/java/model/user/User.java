@@ -51,9 +51,6 @@ public class User implements IUserController, IUserView {
     /** Die Information, ob der Benutzer von dem intern angemeldeten Benutzer dieses Clients ignoriert wird. */
     private boolean isIgnored;
 
-    /** Die Information, ob sich der intern angemeldete Benutzer zu diesem Benutzer teleportieren kann. */
-    private boolean canTeleportTo;
-
     /** Die Information, ob der intern angemeldete Benutzer mit diesem Benutzer gerade kommunizieren kann. */
     private boolean canCommunicateWith;
 
@@ -88,7 +85,6 @@ public class User implements IUserController, IUserView {
         this.isTeleporting = false;
         this.isFriend = false;
         this.isIgnored = false;
-        this.canTeleportTo = false;
         this.canCommunicateWith = false;
         this.reportedContexts = new HashMap<>();
         this.mutedContexts = new HashMap<>();
@@ -149,12 +145,6 @@ public class User implements IUserController, IUserView {
     @Override
     public void setIgnored(boolean isIgnored) {
         this.isIgnored = isIgnored;
-        UserManager.getInstance().getModelObserver().setUserInfoChanged();
-    }
-
-    @Override
-    public void setTeleportable(boolean canTeleportTo) {
-        this.canTeleportTo = canTeleportTo;
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
@@ -245,8 +235,45 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
+    public boolean canManageInRoom() {
+        return UserManager.getInstance().getInternUser().isInPrivateRoom()
+                && UserManager.getInstance().getInternUser().hasPermission(Permission.MANAGE_PRIVATE_ROOM);
+    }
+
+    @Override
     public boolean canTeleportTo() {
-        return canTeleportTo;
+        return true;
+    }
+
+    @Override
+    public boolean canReport() {
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        return internUser.isInCurrentWorld && this.isInCurrentWorld
+                && !internUser.hasPermission(Permission.BAN_MODERATOR) && !this.hasPermission(Permission.BAN_MODERATOR)
+                && (!internUser.hasPermission(Permission.BAN_USER) || this.hasPermission(Permission.BAN_USER));
+    }
+
+    @Override
+    public boolean canMute() {
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        return internUser.isInCurrentWorld() && this.isInCurrentWorld()
+                && internUser.hasPermission(Permission.MUTE) && !this.hasPermission(Permission.MUTE);
+    }
+
+    @Override
+    public boolean canBan() {
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        return internUser.isInCurrentWorld() && internUser.hasPermission(Permission.BAN_MODERATOR)
+                && !this.hasPermission(Permission.BAN_MODERATOR) || internUser.hasPermission(Permission.BAN_USER)
+                && !this.hasPermission(Permission.BAN_MODERATOR) && !this.hasPermission(Permission.BAN_USER);
+    }
+
+    @Override
+    public boolean canAssignModerator() {
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        return internUser.isInCurrentWorld() && this.isInCurrentWorld()
+                && internUser.hasPermission(Permission.ASSIGN_MODERATOR)
+                && !this.hasRole(Role.ADMINISTRATOR) && !this.hasRole(Role.OWNER);
     }
 
     @Override
