@@ -168,6 +168,6 @@ public class NotificationListWindow extends HudMenuWindow {
 
     private void layoutEntries(Set<NotificationListEntry> entries) {
         notificationListContainer.clearChildren();
-        entries.forEach(entry -> notificationListContainer.add(entry).fillX().expandX().row());
+        entries.forEach(entry -> notificationListContainer.add(entry).growX().row());
     }
 }

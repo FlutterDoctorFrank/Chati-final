@@ -1,14 +1,11 @@
 package view2.component.menu.table;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import view2.Assets;
 import view2.Chati;
@@ -21,6 +18,11 @@ public class DeleteAccountTable extends MenuTable {
     private ChatiTextField confirmPasswordField;
     private TextButton confirmButton;
     private TextButton cancelButton;
+
+    public DeleteAccountTable() {
+        create();
+        setLayout();
+    }
 
     @Override
     protected void create() {
@@ -82,6 +84,11 @@ public class DeleteAccountTable extends MenuTable {
 
         private TextButton confirmButton;
         private TextButton cancelButton;
+
+        public ConfirmDeletionTable() {
+            create();
+            setLayout();
+        }
 
         @Override
         protected void create() {

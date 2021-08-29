@@ -22,6 +22,11 @@ public class ChangePasswordTable extends MenuTable {
     private TextButton confirmButton;
     private TextButton cancelButton;
 
+    public ChangePasswordTable() {
+        create();
+        setLayout();
+    }
+
     @Override
     protected void create() {
         infoLabel.setText("Gib dein aktuelles und ein neues Passwort ein!");

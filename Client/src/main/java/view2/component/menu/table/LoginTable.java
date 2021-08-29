@@ -2,11 +2,9 @@ package view2.component.menu.table;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import view2.Assets;
 import view2.Chati;
@@ -20,6 +18,11 @@ public class LoginTable extends MenuTable {
     private TextButton registerButton;
     private TextButton loginButton;
     private TextButton exitButton;
+
+    public LoginTable() {
+        create();
+        setLayout();
+    }
 
     @Override
     protected void create() {

@@ -239,6 +239,6 @@ public class UserListWindow extends HudMenuWindow {
 
     private void layoutEntries(Set<UserListEntry> entries) {
         userListContainer.clearChildren();
-        entries.forEach(entry -> userListContainer.add(entry).fillX().expandX().row());
+        entries.forEach(entry -> userListContainer.add(entry).growX().row());
     }
 }

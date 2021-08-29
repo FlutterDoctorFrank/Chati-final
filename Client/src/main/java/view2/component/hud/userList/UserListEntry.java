@@ -2,14 +2,12 @@ package view2.component.hud.userList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
@@ -21,12 +19,7 @@ import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.Assets;
-import view2.component.ChatiTextArea;
-import view2.component.InformationToolTip;
-import view2.component.AbstractWindow;
-import view2.component.UserInfoContainer;
-
-import java.util.Objects;
+import view2.component.*;
 
 public class UserListEntry extends Table implements Comparable<UserListEntry> {
 

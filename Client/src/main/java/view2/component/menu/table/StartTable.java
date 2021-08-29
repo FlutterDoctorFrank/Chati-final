@@ -21,6 +21,11 @@ public class StartTable extends MenuTable {
     private TextButton profileSettingsButton;
     private TextButton logoutButton;
 
+    public StartTable() {
+        create();
+        setLayout();
+    }
+
     @Override
     public void act(float delta) {
         if (Chati.CHATI.isWorldListChanged()) {

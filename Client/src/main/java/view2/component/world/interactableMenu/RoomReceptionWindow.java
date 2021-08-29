@@ -90,6 +90,11 @@ public class RoomReceptionWindow extends InteractableWindow {
         private TextButton createButton;
         private TextButton cancelButton;
 
+        public RoomSelectTable() {
+            create();
+            setLayout();
+        }
+
         @Override
         public void act(float delta) {
             if (Chati.CHATI.isRoomListChanged()) {
@@ -205,6 +210,11 @@ public class RoomReceptionWindow extends InteractableWindow {
         private TextButton confirmButton;
         private TextButton cancelButton;
 
+        public RoomCreateTable() {
+            create();
+            setLayout();
+        }
+
         @Override
         protected void create() {
             infoLabel.setText("Erstelle einen privaten Raum!");
@@ -290,6 +300,8 @@ public class RoomReceptionWindow extends InteractableWindow {
 
         public RoomJoinTable(ContextEntry roomEntry) {
             this.roomEntry = roomEntry;
+            create();
+            setLayout();
         }
 
         @Override
@@ -358,6 +370,8 @@ public class RoomReceptionWindow extends InteractableWindow {
 
         public RoomRequestTable(ContextEntry roomEntry) {
             this.roomEntry = roomEntry;
+            create();
+            setLayout();
         }
 
         @Override

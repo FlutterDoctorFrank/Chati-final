@@ -6,13 +6,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import view2.Assets;
 import view2.Chati;
-import view2.component.menu.MenuScreen;
 
 public class ProfileSettingsTable extends MenuTable {
 
     private TextButton changePasswordButton;
     private TextButton deleteAccountButton;
     private TextButton cancelButton;
+
+    public ProfileSettingsTable() {
+        create();
+        setLayout();
+    }
 
     @Override
     protected void create() {

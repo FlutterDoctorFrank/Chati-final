@@ -1,11 +1,9 @@
 package view2.component.menu.table;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import model.context.spatial.SpatialMap;
 import view2.Assets;
@@ -13,7 +11,6 @@ import view2.Chati;
 import view2.component.ChatiTextField;
 import view2.component.Response;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 
 public class WorldCreateTable extends MenuTable {
@@ -23,6 +20,11 @@ public class WorldCreateTable extends MenuTable {
     private SelectBox<SpatialMap> mapSelectBox;
     private TextButton confirmButton;
     private TextButton cancelButton;
+
+    public WorldCreateTable() {
+        create();
+        setLayout();
+    }
 
     @Override
     protected void create() {
