@@ -158,7 +158,7 @@ public class AvatarSelectTable extends MenuTable {
         private void create() {
             TextureAtlas atlas = new TextureAtlas(avatar.getPath());
             TextureAtlas.AtlasRegion stand = atlas.findRegion(avatar.getIdleRegionName());
-            TextureRegion avatarStandDown = new TextureRegion(stand, 96, 16, 32, 48);
+            TextureRegion avatarStandDown = new TextureRegion(stand, 96, 0, 32, 48);
             avatarImage = new Image(avatarStandDown);
         }
 
@@ -173,7 +173,7 @@ public class AvatarSelectTable extends MenuTable {
 
         @Override
         public int compareTo(@NotNull AvatarSelectTable.AvatarListEntry other) {
-            return this.avatar == Chati.CHATI.getUserManager().getInternUserView().getAvatar() ? 1
+            return this.avatar == Chati.CHATI.getUserManager().getInternUserView().getAvatar() ? -1
                     : this.avatar.getName().compareTo(other.avatar.getName());
         }
     }

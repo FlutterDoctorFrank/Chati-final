@@ -101,27 +101,27 @@ public class UserAvatar extends Sprite {
         TextureAtlas atlas = new TextureAtlas(user.getAvatar().getPath());
 
         TextureAtlas.AtlasRegion stand = atlas.findRegion(user.getAvatar().getIdleRegionName());
-        avatarStandRight = new TextureRegion(stand, 0, 16, 32, 48);
-        avatarStandUp = new TextureRegion(stand, 32, 16, 32, 48);
-        avatarStandLeft = new TextureRegion(stand, 64, 16, 32, 48);
-        avatarStandDown = new TextureRegion(stand, 96, 16, 32, 48);
+        avatarStandRight = new TextureRegion(stand, 0, 0, 32, 48);
+        avatarStandUp = new TextureRegion(stand, 32, 0, 32, 48);
+        avatarStandLeft = new TextureRegion(stand, 64, 0, 32, 48);
+        avatarStandDown = new TextureRegion(stand, 96, 0, 32, 48);
 
         TextureAtlas.AtlasRegion run = atlas.findRegion(user.getAvatar().getRunRegionName());
         Array<TextureRegion> frames = new Array<>();
         //running right animation
-        for (int i = 0; i < 6; i++) frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
+        for (int i = 0; i < 6; i++) frames.add(new TextureRegion(run, i * 32, 0, 32, 48));
         avatarRunRight = new Animation<>(0.1f, frames);
         frames.clear();
         //running up animation
-        for (int i = 6; i < 12; i++) frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
+        for (int i = 6; i < 12; i++) frames.add(new TextureRegion(run, i * 32, 0, 32, 48));
         avatarRunUp = new Animation<>(0.1f, frames);
         frames.clear();
         //running left animation
-        for (int i = 12; i < 18; i++) frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
+        for (int i = 12; i < 18; i++) frames.add(new TextureRegion(run, i * 32, 0, 32, 48));
         avatarRunLeft = new Animation<>(0.1f, frames);
         frames.clear();
         //running down animation
-        for (int i = 18; i < 24; i++) frames.add(new TextureRegion(run, i * 32, 16, 32, 48));
+        for (int i = 18; i < 24; i++) frames.add(new TextureRegion(run, i * 32, 0, 32, 48));
         avatarRunDown = new Animation<>(0.1f, frames);
         frames.clear();
 

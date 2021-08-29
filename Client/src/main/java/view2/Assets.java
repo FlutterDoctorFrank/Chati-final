@@ -21,7 +21,6 @@ public class Assets {
     public static final TextureRegionDrawable CHECKED_SETTINGS_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/settingsIconChecked.png")));
     public static final TextureRegionDrawable CHAT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/chatIcon.png")));
     public static final TextureRegionDrawable CHECKED_CHAT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/chatIcon_checked.png")));
-    public static final TextureRegionDrawable NEW_MESSAGE_CHAT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/chatIcon_new.png")));
 
     public static final TextureRegionDrawable ONLINE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/online.png")));
     public static final TextureRegionDrawable AWAY_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/away.png")));
