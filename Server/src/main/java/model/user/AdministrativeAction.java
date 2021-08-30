@@ -367,7 +367,7 @@ public enum AdministrativeAction {
             // Überprüfe, ob der Benutzer in dieser Welt bereits gesperrt ist.
             if (performerWorld.isBanned(target)) {
                 throw new IllegalAdministrativeActionException("User is already banned in this world.",
-                        "action.user-ban.not-permitted", performer, target, BAN_USER);
+                        performer, target, BAN_USER);
             }
 
             // Sperre den Benutzer.
@@ -396,9 +396,8 @@ public enum AdministrativeAction {
             });
 
             // Sende eine Benachrichtigung an den gesperrten Benutzer.
-            MessageBundle targetMessageBundle =
-                    new MessageBundle("action.user-ban.info-user", performer.getUsername(),
-                            performerWorld.getContextName(), args[0]);
+            MessageBundle targetMessageBundle = new MessageBundle("action.user-ban.info-user",
+                    performer.getUsername(), performerWorld.getContextName(), args[0]);
             // Die Benachrichtigung muss zum globalen Kontext gehören, da sonst der gesperrte Benutzer niemals diese
             // Benachrichtigung lesen wird, weil er der Welt nicht mehr beitreten kann oder kurz nach Erhalt von der
             // Welt entfernt wird.
