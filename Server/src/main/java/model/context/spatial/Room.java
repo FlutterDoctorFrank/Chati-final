@@ -101,6 +101,8 @@ public class Room extends Area implements IRoom {
             user.send(SendAction.CONTEXT_JOIN, this);
             super.addUser(user);
             user.teleport(spawnLocation);
+
+            user.updateUserInfo(true);
             user.getRoomRoles().values().forEach(role -> user.send(SendAction.CONTEXT_ROLE, role));
 
             // Sende die Positionen der anderen Benutzer an den beitretenden Benutzer.
@@ -113,7 +115,6 @@ public class Room extends Area implements IRoom {
 
             if (isPrivate) {
                 final TextMessage info = new TextMessage("context.room.joined", user.getUsername());
-
                 containedUsers.values().stream()
                         .filter(receiver -> !receiver.equals(user))
                         .forEach(receiver -> receiver.send(SendAction.MESSAGE, info));
