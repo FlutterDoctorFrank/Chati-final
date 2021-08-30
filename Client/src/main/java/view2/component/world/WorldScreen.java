@@ -18,6 +18,8 @@ import model.context.spatial.SpatialMap;
 import model.user.IUserView;
 import view2.Chati;
 import view2.audio.VoiceChat;
+import view2.audio.VoiceChatV2;
+import view2.audio.VoiceChatV3;
 import view2.component.AbstractScreen;
 import view2.component.Response;
 import view2.component.menu.ContextEntry;
@@ -77,7 +79,7 @@ public class WorldScreen extends AbstractScreen {
             tiledMapRenderer.render();
             debugRenderer.render(world, camera.combined);
 
-            //VoiceChat.getInstance().startSending();
+            VoiceChatV2.getInstance().startSending();
 
             if (Chati.CHATI.isUserInfoChanged()) {
                 loadExternUserAvatars();

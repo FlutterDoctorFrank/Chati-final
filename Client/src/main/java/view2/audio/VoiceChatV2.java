@@ -3,35 +3,27 @@ package view2.audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.audio.AudioRecorder;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import controller.network.ServerSender;
-import model.context.spatial.Expanse;
-import model.context.spatial.Location;
-import model.context.spatial.MapUtils;
 import model.exception.UserNotFoundException;
 import model.user.IUserView;
 import view2.Chati;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class VoiceChat {
-
-    private static final int SAMPLE_RATE = 22000;
+public class VoiceChatV2 {
+    private static final int SAMPLE_RATE = 8000;
     private static final int SEND_RATE = 30;
     private static final int PACKET_SIZE = SAMPLE_RATE / SEND_RATE;
     private static final int GATE = 1024;
     private static final long STOP_RECORD_DELAY = 250;
 
-    private static VoiceChat voiceChat;
+    private static VoiceChatV2 voiceChat;
 
-    private final ConcurrentHashMap<IUserView, short[]> mixDataBuffer;
+    private final Map<IUserView, VoiceDataQueue> mixDataBuffer;
     private final AudioRecorder recorder;
     private final AudioDevice player;
 
@@ -41,7 +33,7 @@ public class VoiceChat {
     private boolean isRunning;
     private boolean recordAndSend;
 
-    private VoiceChat() {
+    private VoiceChatV2() {
         this.recorder = Gdx.audio.newAudioRecorder(SAMPLE_RATE, true);
         this.player = Gdx.audio.newAudioDevice(SAMPLE_RATE, true);
         this.mixDataBuffer = new ConcurrentHashMap<>();
@@ -73,7 +65,11 @@ public class VoiceChat {
             return;
         }
         IUserView user = Chati.CHATI.getUserManager().getExternUserView(userId);
-        mixDataBuffer.put(user, toShort(voiceData, false));
+        if (!mixDataBuffer.containsKey(user)) {
+            mixDataBuffer.put(user, new VoiceDataQueue(user));
+        }
+        mixDataBuffer.get(user).addData(timestamp, toShort(voiceData, false));
+
         playSemaphore.release();
     }
 
@@ -130,13 +126,27 @@ public class VoiceChat {
                 }
                 // Mixe alle Audiodaten zusammen
                 int[] temp = new int[PACKET_SIZE];
-                for (int i = 0; i < PACKET_SIZE; i++) {
-                    int j = i;
-                    mixDataBuffer.forEach((id, data) -> temp[j] += data[j]);
-                    mixedData[j] = (short) (temp[j] / mixDataBuffer.size());
+                int numProducers = 0;
+                Iterator<VoiceDataQueue> iterator = mixDataBuffer.values().iterator();
+                while (iterator.hasNext()) {
+                    VoiceDataQueue queue = iterator.next();
+                    if (queue.hasData()) {
+                        VoiceDataQueue.VoiceDataBlock dataBlock = queue.getData();
+                        for (int i = 0; i < PACKET_SIZE; i++) {
+                            temp[i] += dataBlock.getVoiceData()[i];
+                        }
+                        numProducers++;
+                    } else {
+                        iterator.remove();
+                    }
                 }
-                // Lösche Bufferinhalte erhaltener Pakete nach dem Mixen
-                mixDataBuffer.clear();
+                if (numProducers == 0) {
+                    continue;
+                }
+                for (int i = 0; i < PACKET_SIZE; i++) {
+                    mixedData[i] = (short) (temp[i] / numProducers);
+                }
+                System.out.println(mixedData);
                 player.writeSamples(mixedData, 0, mixedData.length);
             }
         });
@@ -174,10 +184,56 @@ public class VoiceChat {
         return shorts;
     }
 
-    public static VoiceChat getInstance() {
+    public static VoiceChatV2 getInstance() {
         if (voiceChat == null) {
-            voiceChat = new VoiceChat();
+            voiceChat = new VoiceChatV2();
         }
         return voiceChat;
+    }
+
+    private static class VoiceDataQueue {
+
+        private final IUserView sender;
+        private final Queue<VoiceDataBlock> voiceDataQueue;
+
+        private VoiceDataQueue(IUserView sender) {
+            this.sender = sender;
+            this.voiceDataQueue = new LinkedBlockingQueue<>();
+        }
+
+        private void addData(LocalDateTime timestamp, short[] voiceData) {
+            this.voiceDataQueue.add(new VoiceDataBlock(timestamp, voiceData));
+        }
+
+        private boolean hasData() {
+            return !voiceDataQueue.isEmpty();
+        }
+
+        private IUserView getSender() {
+            return sender;
+        }
+
+        private VoiceDataBlock getData() {
+            return voiceDataQueue.poll();
+        }
+
+        private static class VoiceDataBlock {
+
+            private final LocalDateTime timestamp;
+            private final short[] voiceData;
+
+            private VoiceDataBlock(LocalDateTime timestamp, short[] voiceData) {
+                this.timestamp = timestamp;
+                this.voiceData = voiceData;
+            }
+
+            private LocalDateTime getTimestamp() {
+                return timestamp;
+            }
+
+            private short[] getVoiceData() {
+                return voiceData;
+            }
+        }
     }
 }

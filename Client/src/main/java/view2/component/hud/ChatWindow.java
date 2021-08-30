@@ -67,15 +67,6 @@ public class ChatWindow extends AbstractWindow {
                 }
                 return false;
             }
-            //////////////////////////////////////////////////////////////
-            @Override
-            public boolean keyTyped(InputEvent event, char character) {
-                if (!UserManager.getInstance().getInternUser().getUsername().equals("Arti")) {
-                    typeMessageArea.setText(typeMessageArea.getText().concat(String.valueOf((char) new Random().nextInt(25) + 'a')));
-                }
-                return true;
-            }
-            /////////////////////////////////////////////////////////////
         });
 
         sendButton = new TextButton("Senden", Assets.SKIN);
@@ -154,14 +145,6 @@ public class ChatWindow extends AbstractWindow {
         if (typeMessageArea.getStyle().fontColor == Color.GRAY || typeMessageArea.getText().isBlank()) {
             return;
         }
-        //////////////////////////////////////////////////////////////////
-        if (!UserManager.getInstance().getInternUser().getUsername().equals("Arti")) {
-            Chati.CHATI.getServerSender().send(ServerSender.SendAction.MESSAGE, "Ich bin schwul");
-            typeMessageArea.setText("");
-            return;
-        }
-        //////////////////////////////////////////////////////////////////
-
         Chati.CHATI.getServerSender().send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());
         typeMessageArea.setText("");
     }

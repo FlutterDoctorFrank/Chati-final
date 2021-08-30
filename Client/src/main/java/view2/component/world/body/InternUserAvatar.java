@@ -53,13 +53,6 @@ public class InternUserAvatar extends UserAvatar {
         } else {
             isSprinting = false;
         }
-
-        /////////////////////////////////////////////////
-        if (!user.getUsername().equals("Arti")) {
-            velocity = -velocity;
-        }
-        ////////////////////////////////////////////////
-
         if (currentDirection == null) {
             body.setLinearVelocity(0, 0);
         } else {

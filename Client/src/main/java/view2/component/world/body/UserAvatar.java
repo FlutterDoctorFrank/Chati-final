@@ -160,13 +160,6 @@ public class UserAvatar extends Sprite {
 
     private Direction getMovingDirection() {
         Vector2 velocity = body.getLinearVelocity();
-
-        /////////////////////////////////////////////
-        if (!user.getUsername().equals("Arti")) {
-            velocity = new Vector2().sub(velocity);
-        }
-        /////////////////////////////////////////////
-
         if (velocity.y > Math.abs(velocity.x)) {
             return Direction.UP;
         }
