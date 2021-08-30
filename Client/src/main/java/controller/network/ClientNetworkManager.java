@@ -14,6 +14,8 @@ import java.util.logging.Logger;
  */
 public class ClientNetworkManager extends NetworkManager<Client> implements Runnable {
 
+    private static final int BUFFER_SIZE = 65536;
+
     private static final Logger LOGGER = Logger.getLogger("chati.network");
 
     private final IUserManagerController userManager;
@@ -23,7 +25,7 @@ public class ClientNetworkManager extends NetworkManager<Client> implements Runn
     private Thread networkThread;
 
     public ClientNetworkManager(@NotNull final IUserManagerController userManager) {
-        super(new Client());
+        super(new Client(BUFFER_SIZE, BUFFER_SIZE));
 
         this.userManager = userManager;
     }

@@ -17,6 +17,8 @@ import java.util.logging.Logger;
  */
 public class ServerNetworkManager extends NetworkManager<Server> {
 
+    private static final int BUFFER_SIZE = 65536;
+
     private static final Logger LOGGER = Logger.getLogger("chati.network");
     private final Map<Integer, UserConnection> connections;
 
@@ -25,7 +27,7 @@ public class ServerNetworkManager extends NetworkManager<Server> {
 
     public ServerNetworkManager(@NotNull final IUserAccountManager accountManager,
                                 @NotNull final IGlobalContext global) {
-        super(new Server());
+        super(new Server(BUFFER_SIZE, BUFFER_SIZE));
 
         this.connections = new ConcurrentHashMap<>();
         this.accountManager = accountManager;
