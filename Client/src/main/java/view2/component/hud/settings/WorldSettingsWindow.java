@@ -125,8 +125,10 @@ public class WorldSettingsWindow extends AbstractWindow {
         showNameContainer.add(showNameCheckBox).colspan(1);
         container.add(showNameContainer).row();
         Table buttonContainer = new Table();
-        buttonContainer.defaults().colspan(3).bottom().height(ROW_HEIGHT).space(SPACING).growX();
-        buttonContainer.add(confirmButton, defaultButton, cancelButton);
+        buttonContainer.defaults().colspan(3).bottom().height(ROW_HEIGHT).growX();
+        buttonContainer.add(confirmButton).padRight(SPACING / 2);
+        buttonContainer.add(defaultButton).padLeft(SPACING / 2).padRight(SPACING / 2);
+        buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
 

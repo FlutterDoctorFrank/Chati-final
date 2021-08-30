@@ -68,8 +68,8 @@ public class DeleteAccountTable extends MenuTable {
         container.add(confirmPasswordField).row();
         Table buttonContainer = new Table();
         buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
-        buttonContainer.add(confirmButton).spaceRight(SPACING);
-        buttonContainer.add(cancelButton);
+        buttonContainer.add(confirmButton).padRight(SPACING / 2);
+        buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).width(ROW_WIDTH);
     }
@@ -128,8 +128,8 @@ public class DeleteAccountTable extends MenuTable {
             container.add(infoLabel).row();
             Table buttonContainer = new Table();
             buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
-            buttonContainer.add(confirmButton).spaceRight(SPACING);
-            buttonContainer.add(cancelButton);
+            buttonContainer.add(confirmButton).padRight(SPACING / 2);
+            buttonContainer.add(cancelButton).padLeft(SPACING / 2);
             container.add(buttonContainer);
             add(container).width(ROW_WIDTH);
         }

@@ -119,8 +119,9 @@ public class AvatarSelectTable extends MenuTable {
         container.add(avatarScrollPane).height(2 * AVATAR_BUTTON_MAX_SIZE).grow().row();
 
         Table buttonContainer = new Table();
-        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).spaceRight(SPACING).growX();
-        buttonContainer.add(confirmButton, cancelButton);
+        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
+        buttonContainer.add(confirmButton).padRight(SPACING / 2);
+        buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).width(ROW_WIDTH);
 

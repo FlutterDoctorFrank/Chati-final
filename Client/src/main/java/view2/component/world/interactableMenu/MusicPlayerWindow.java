@@ -136,8 +136,11 @@ public class MusicPlayerWindow extends InteractableWindow {
         container.add(musicSelectContainer).row();
 
         Table buttonContainer = new Table();
-        buttonContainer.defaults().colspan(4).height(ROW_HEIGHT).space(SPACING).growX();
-        buttonContainer.add(playButton, stopButton, randomButton, cancelButton);
+        buttonContainer.defaults().colspan(4).height(ROW_HEIGHT).growX();
+        buttonContainer.add(playButton).padRight(SPACING / 2);
+        buttonContainer.add(stopButton).padLeft(SPACING / 2).padRight(SPACING / 2);
+        buttonContainer.add(randomButton).padLeft(SPACING / 2).padRight(SPACING / 2);
+        buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
 

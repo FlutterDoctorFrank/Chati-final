@@ -174,8 +174,10 @@ public class AdministratorManageWindow extends AbstractWindow {
         container.add(usernameField).row();
         container.add(messageArea).height(2 * ROW_HEIGHT).row();
         Table buttonContainer = new Table();
-        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).space(SPACING).growX();
-        buttonContainer.add(assignButton, withdrawButton, cancelButton);
+        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
+        buttonContainer.add(assignButton).padRight(SPACING / 2);
+        buttonContainer.add(withdrawButton).padLeft(SPACING / 2).padRight(SPACING / 2);
+        buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
 

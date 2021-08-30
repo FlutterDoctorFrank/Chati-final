@@ -11,6 +11,7 @@ import model.context.spatial.Room;
 import model.context.spatial.World;
 import model.exception.UserNotFoundException;
 import model.role.Permission;
+import model.user.Status;
 import model.user.User;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
@@ -180,12 +181,14 @@ public class CommunicationHandler {
 
                 // Überprüfe, ob die Benutzer gemäß der Kommunikationsform kommunizieren können, ob sich beide Benutzer
                 // innerhalb eines Kontextes befinden, in dem einer der beiden Benutzer die Berechtigung zum Kontaktieren
-                // anderer Benutzer hat und ob einer der beiden Benutzer den jeweils anderen ignoriert.
+                // anderer Benutzer hat, ob einer der beiden Benutzer den jeweils anderen ignoriert oder der Benutzer,
+                // an den die Nachricht gerichtet ist, beschäftigt ist.
                 Context commonContext = communicationContext.lastCommonAncestor(receiver.getLocation().getArea());
 
-                if (!communicableUsers.containsKey(receiver.getUserId())
-                        && !sender.hasPermission(commonContext, Permission.CONTACT_USER)
-                        && !receiver.hasPermission(commonContext, Permission.CONTACT_USER)
+                if ((((!communicableUsers.containsKey(receiver.getUserId())
+                        && !receiver.hasPermission(commonContext, Permission.CONTACT_USER))
+                        || receiver.getStatus() == Status.BUSY)
+                        && !sender.hasPermission(commonContext, Permission.CONTACT_USER))
                         || sender.isIgnoring(receiver) || receiver.isIgnoring(sender)) {
                     // Informiere den kommunizierenden Benutzer darüber, dass die Flüsterkommunikation nicht möglich ist.
                     MessageBundle messageBundle = new MessageBundle("Eine Flüsterkommunikation mit diesem Benutzer ist nicht möglich.");

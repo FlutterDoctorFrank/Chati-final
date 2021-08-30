@@ -552,8 +552,9 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             container.add(infoLabel).row();
             container.add(userMessageArea).height(2 * ROW_HEIGHT).row();
             Table buttonContainer = new Table();
-            buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).space(SPACING).growX();
-            buttonContainer.add(confirmButton, cancelButton);
+            buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
+            buttonContainer.add(confirmButton).padRight(SPACING / 2);
+            buttonContainer.add(cancelButton).padLeft(SPACING / 2);
             container.add(buttonContainer);
             add(container).padLeft(SPACING).padRight(SPACING).grow();
 

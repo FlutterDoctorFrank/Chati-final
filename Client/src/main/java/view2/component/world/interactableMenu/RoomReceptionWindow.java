@@ -184,9 +184,9 @@ public class RoomReceptionWindow extends InteractableWindow {
             container.add(roomSelectContainer).row();
             Table roomButtonContainer = new Table();
             roomButtonContainer.defaults().colspan(3).height(ROW_HEIGHT).growX();
-            roomButtonContainer.add(joinButton).spaceRight(SPACING);
-            roomButtonContainer.add(requestButton).spaceRight(SPACING);
-            roomButtonContainer.add(createButton);
+            roomButtonContainer.add(joinButton).padRight(SPACING / 2);
+            roomButtonContainer.add(requestButton).padLeft(SPACING / 2).padRight(SPACING / 2);
+            roomButtonContainer.add(createButton).padLeft(SPACING / 2);
             container.add(roomButtonContainer).row();
             container.add(cancelButton);
             add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
@@ -277,8 +277,8 @@ public class RoomReceptionWindow extends InteractableWindow {
             container.add(mapSelectContainer).row();
             Table buttonContainer = new Table();
             buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
-            buttonContainer.add(confirmButton).spaceRight(SPACING);
-            buttonContainer.add(cancelButton);
+            buttonContainer.add(confirmButton).padRight(SPACING / 2);
+            buttonContainer.add(cancelButton).padLeft(SPACING / 2);
             container.add(buttonContainer);
             add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
         }
@@ -348,8 +348,8 @@ public class RoomReceptionWindow extends InteractableWindow {
             container.add(passwordField).row();
             Table buttonContainer = new Table();
             buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
-            buttonContainer.add(confirmButton).spaceRight(SPACING);
-            buttonContainer.add(cancelButton);
+            buttonContainer.add(confirmButton).padRight(SPACING / 2);
+            buttonContainer.add(cancelButton).padLeft(SPACING / 2);
             container.add(buttonContainer);
             add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
         }
@@ -424,8 +424,8 @@ public class RoomReceptionWindow extends InteractableWindow {
             container.add(messageArea).height(MESSAGE_AREA_HEIGHT).spaceBottom(SPACING).row();
             Table buttonContainer = new Table();
             buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
-            buttonContainer.add(confirmButton).spaceRight(SPACING);
-            buttonContainer.add(cancelButton);
+            buttonContainer.add(confirmButton).padRight(SPACING / 2);
+            buttonContainer.add(cancelButton).padLeft(SPACING / 2);
             container.add(buttonContainer);
             add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
         }

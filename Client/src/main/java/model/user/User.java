@@ -232,9 +232,9 @@ public class User implements IUserController, IUserView {
     public Status getStatus() {
         InternUser internUser = UserManager.getInstance().getInternUser();
         return (this.equals(internUser) || status != Status.INVISIBLE) ? status
+                : (internUser.hasPermission(Permission.SEE_INVISIBLE_USERS) ? Status.INVISIBLE
                 : (this.isInCurrentRoom ? Status.ONLINE
-                : (!internUser.hasPermission(Permission.SEE_INVISIBLE_USERS) ? Status.OFFLINE
-                : (Status.INVISIBLE)));
+                : Status.OFFLINE));
     }
 
     @Override

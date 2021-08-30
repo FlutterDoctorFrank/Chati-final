@@ -350,7 +350,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             container.add(showLabel).row();
             Table buttonContainer = new Table();
             buttonContainer.defaults().bottom().right().size(BUTTON_SIZE).space(SPACING);
-            buttonContainer.add(okButton).left().width(SHOW_BUTTON_WIDTH).growX();
+            buttonContainer.add(okButton).left().height(ROW_HEIGHT).width(SHOW_BUTTON_WIDTH).growX();
             buttonContainer.add(acceptButton, declineButton, deleteButton);
             container.add(buttonContainer).bottom().padBottom(VERTICAL_SPACING).grow().row();
             add(container).padLeft(SPACING).padRight(SPACING).grow();
@@ -470,8 +470,8 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             container.add(infoLabel).spaceBottom(2 * SPACING).row();
             Table buttonContainer = new Table();
             buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
-            buttonContainer.add(confirmButton).spaceRight(SPACING);
-            buttonContainer.add(cancelButton);
+            buttonContainer.add(confirmButton).padRight(SPACING / 2);
+            buttonContainer.add(cancelButton).padLeft(SPACING / 2);
             container.add(buttonContainer);
             add(container).padLeft(SPACING).padRight(SPACING).grow();
 
