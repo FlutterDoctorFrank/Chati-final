@@ -26,7 +26,6 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     private static Database database;
 
     private Database() {
-
 /*
         dropTable("USER_ACCOUNT");
         dropTable("WORLDS");
@@ -38,17 +37,11 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         dropTable("NOTIFICATION");
 
  */
-
-
-
         initialize();
     }
 
-
-
     @Override
     public void addWorld(@NotNull final World world) {
-
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
@@ -58,15 +51,13 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             ps.setString(3, world.getPublicRoom().getMap().name());
             ps.executeUpdate();
             con.close();
-        } catch (Exception e) {
-            System.out.print("Fehler in Database-addWorld: " + e);
+        } catch (ClassNotFoundException | SQLException e) {
+            System.out.println("Fehler in Database-addWorld: " + e);
         }
-
     }
 
     @Override
     public void removeWorld(@NotNull final World world) {
-
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
@@ -74,11 +65,9 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             PreparedStatement ps = con.prepareStatement("DELETE FROM WORLDS WHERE WORLD_ID = " + "'" + worldId + "'");
             ps.executeUpdate();
             con.close();
-        } catch (Exception e) {
-            System.out.print("Fehler in Database-removeWorld: " + e);
+        } catch (ClassNotFoundException | SQLException e) {
+            System.out.println("Fehler in Database-removeWorld: " + e);
         }
-
-
     }
 
     @Override
@@ -88,22 +77,22 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
-            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
-            //Suche die Welt in Datenbank
+            // Suche die Welt in der Datenbank
             ResultSet res = st.executeQuery("SELECT * FROM WORLDS WHERE WORLD_ID = " + "'" + worldID.getId()+ "'");
             int row = 0;
-            while (res.next()){
+            while (res.next()) {
                 row ++;
             }
-            //Falls diese Welt existiert
+            // Falls diese Welt existiert
             if (row == 1) {
                 res.first();
-                String world_name = res.getString("WORLD_NAME");
-                String map_name = res.getString("MAP_NAME");
-                SpatialMap world_map = SpatialMap.valueOf(map_name);
+                String worldName = res.getString("WORLD_NAME");
+                String mapName = res.getString("MAP_NAME");
+                SpatialMap worldMap = SpatialMap.valueOf(mapName);
 
-                world = new World(world_name, world_map);
+                world = new World(worldName, worldMap);
             } else {
                 System.out.println("world mehr als 1 or not exist");
             }
@@ -251,7 +240,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             Connection con = DriverManager.getConnection(dbURL);
-            PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET AVATAR_NAME = " + "'" + avatar.getName() + "'" +
+            PreparedStatement ps = con.prepareStatement("UPDATE USER_ACCOUNT SET AVATAR_NAME = " + "'" + avatar.name() + "'" +
                     " WHERE USER_ID = " + "'" + user.getUserId().toString() + "'");
             ps.executeUpdate();
             con.close();

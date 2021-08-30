@@ -3,27 +3,20 @@ package view2.audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.audio.AudioRecorder;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import controller.network.ServerSender;
-import model.context.spatial.Expanse;
-import model.context.spatial.Location;
-import model.context.spatial.MapUtils;
 import model.exception.UserNotFoundException;
 import model.user.IUserView;
 import view2.Chati;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class VoiceChat {
 
-    private static final int SAMPLE_RATE = 22000;
+    private static final int SAMPLE_RATE = 32000;
     private static final int SEND_RATE = 30;
     private static final int PACKET_SIZE = SAMPLE_RATE / SEND_RATE;
     private static final int GATE = 1024;
@@ -31,7 +24,7 @@ public class VoiceChat {
 
     private static VoiceChat voiceChat;
 
-    private final ConcurrentHashMap<IUserView, short[]> mixDataBuffer;
+    private final Map<IUserView, VoiceDataQueue> mixDataBuffer;
     private final AudioRecorder recorder;
     private final AudioDevice player;
 
@@ -39,7 +32,7 @@ public class VoiceChat {
     private final Semaphore playSemaphore;
 
     private boolean isRunning;
-    private boolean recordAndSend;
+    private boolean record;
 
     private VoiceChat() {
         this.recorder = Gdx.audio.newAudioRecorder(SAMPLE_RATE, true);
@@ -52,7 +45,7 @@ public class VoiceChat {
     public void start() {
         isRunning = true;
         recordAndSend();
-        mixAndPlaybackAudio();
+        mixAndPlayback();
     }
 
     public void stop() {
@@ -60,12 +53,12 @@ public class VoiceChat {
     }
 
     public void startSending() {
-        recordAndSend = true;
+        record = true;
         recordSemaphore.release();
     }
 
     public void stopSending() {
-        recordAndSend = false;
+        record = false;
     }
 
     public void receiveData(UUID userId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
@@ -73,7 +66,11 @@ public class VoiceChat {
             return;
         }
         IUserView user = Chati.CHATI.getUserManager().getExternUserView(userId);
-        mixDataBuffer.put(user, toShort(voiceData, false));
+        if (!mixDataBuffer.containsKey(user)) {
+            mixDataBuffer.put(user, new VoiceDataQueue(user));
+        }
+        mixDataBuffer.get(user).addData(timestamp, toShort(voiceData, false));
+
         playSemaphore.release();
     }
 
@@ -83,9 +80,9 @@ public class VoiceChat {
     private void recordAndSend() {
         Thread recordAndSendThread = new Thread(() -> {
             long timestamp = System.currentTimeMillis();
-            short[] recordData = new short[SAMPLE_RATE / SEND_RATE];
+            short[] recordData = new short[PACKET_SIZE];
             while (isRunning) {
-                while (!recordAndSend) {
+                while (!record) {
                     try {
                         recordSemaphore.acquire();
                     } catch (InterruptedException e) {
@@ -115,9 +112,9 @@ public class VoiceChat {
     }
 
     /*
-        Mixe erhaltene Audiopakete und spiele Ergebnisse in einem Thread ab.
+        Startet Thread zum mischen und Abspielen von erhaltenen Samples.
      */
-    private void mixAndPlaybackAudio() {
+    private void mixAndPlayback() {
         Thread mixAndPlaybackThread = new Thread(() -> {
             short[] mixedData = new short[PACKET_SIZE];
             while (isRunning) {
@@ -130,13 +127,26 @@ public class VoiceChat {
                 }
                 // Mixe alle Audiodaten zusammen
                 int[] temp = new int[PACKET_SIZE];
-                for (int i = 0; i < PACKET_SIZE; i++) {
-                    int j = i;
-                    mixDataBuffer.forEach((id, data) -> temp[j] += data[j]);
-                    mixedData[j] = (short) (temp[j] / mixDataBuffer.size());
+                int producerCount = 0;
+                Iterator<VoiceDataQueue> iterator = mixDataBuffer.values().iterator();
+                while (iterator.hasNext()) {
+                    VoiceDataQueue queue = iterator.next();
+                    if (queue.hasData()) {
+                        VoiceDataQueue.VoiceDataBlock dataBlock = queue.getData();
+                        for (int i = 0; i < PACKET_SIZE; i++) {
+                            temp[i] += dataBlock.getVoiceData()[i];
+                        }
+                        producerCount++;
+                    } else {
+                        iterator.remove();
+                    }
                 }
-                // Lösche Bufferinhalte erhaltener Pakete nach dem Mixen
-                mixDataBuffer.clear();
+                if (producerCount == 0) {
+                    continue;
+                }
+                for (int i = 0; i < PACKET_SIZE; i++) {
+                    mixedData[i] = (short) (temp[i] / producerCount);
+                }
                 player.writeSamples(mixedData, 0, mixedData.length);
             }
         });
@@ -179,5 +189,51 @@ public class VoiceChat {
             voiceChat = new VoiceChat();
         }
         return voiceChat;
+    }
+
+    private static class VoiceDataQueue {
+
+        private final IUserView sender;
+        private final Queue<VoiceDataBlock> voiceDataQueue;
+
+        private VoiceDataQueue(IUserView sender) {
+            this.sender = sender;
+            this.voiceDataQueue = new LinkedBlockingQueue<>();
+        }
+
+        private void addData(LocalDateTime timestamp, short[] voiceData) {
+            this.voiceDataQueue.add(new VoiceDataBlock(timestamp, voiceData));
+        }
+
+        private boolean hasData() {
+            return !voiceDataQueue.isEmpty();
+        }
+
+        private IUserView getSender() {
+            return sender;
+        }
+
+        private VoiceDataBlock getData() {
+            return voiceDataQueue.poll();
+        }
+
+        private static class VoiceDataBlock {
+
+            private final LocalDateTime timestamp;
+            private final short[] voiceData;
+
+            private VoiceDataBlock(LocalDateTime timestamp, short[] voiceData) {
+                this.timestamp = timestamp;
+                this.voiceData = voiceData;
+            }
+
+            private LocalDateTime getTimestamp() {
+                return timestamp;
+            }
+
+            private short[] getVoiceData() {
+                return voiceData;
+            }
+        }
     }
 }

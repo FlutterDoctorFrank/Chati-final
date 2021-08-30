@@ -17,7 +17,7 @@ import model.context.spatial.Menu;
 import model.context.spatial.SpatialMap;
 import model.user.IUserView;
 import view2.Chati;
-import view2.audio.VoiceChatV2;
+import view2.audio.VoiceChat;
 import view2.component.AbstractScreen;
 import view2.component.menu.ContextEntry;
 import view2.component.world.body.Border;
@@ -76,7 +76,7 @@ public class WorldScreen extends AbstractScreen {
             tiledMapRenderer.render();
             debugRenderer.render(world, camera.combined);
 
-            VoiceChatV2.getInstance().startSending();
+            VoiceChat.getInstance().startSending();
 
             if (Chati.CHATI.isUserInfoChanged()) {
                 loadExternUserAvatars();

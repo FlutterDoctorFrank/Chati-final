@@ -97,7 +97,7 @@ public class User implements IUser {
         this.userId = UUID.randomUUID();
         this.username = username;
         this.status = Status.OFFLINE;
-        this.avatar = Avatar.values()[new Random(Avatar.values().length).nextInt()];
+        this.avatar = Avatar.values()[new Random().nextInt(Avatar.values().length)];
         this.lastLogoutTime = LocalDateTime.now();
         this.lastActivity = LocalDateTime.now();
         this.currentWorld = null;
