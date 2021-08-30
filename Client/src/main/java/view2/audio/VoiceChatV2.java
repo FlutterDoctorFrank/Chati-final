@@ -15,7 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 public class VoiceChatV2 {
-    private static final int SAMPLE_RATE = 8000;
+    private static final int SAMPLE_RATE = 32000;
     private static final int SEND_RATE = 30;
     private static final int PACKET_SIZE = SAMPLE_RATE / SEND_RATE;
     private static final int GATE = 1024;
