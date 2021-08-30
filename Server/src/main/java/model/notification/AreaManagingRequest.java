@@ -102,14 +102,6 @@ public class AreaManagingRequest extends Notification {
             owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
-        // Überprüfe, ob der anfragende Benutzer diesen Bereich bereits zu diesem Zeitpunkt reserviert.
-        /*
-        if (requestedArea.isReservedAtBy(requestingUser, from, to)) {
-            TextMessage infoMessage = new TextMessage("request.area-manage.already-reserved", requestedArea.getContextName());
-            owner.send(SendAction.MESSAGE, infoMessage);
-            return;
-        }
-         */
 
         if (owner.getWorld() == null) {
             throw new IllegalStateException("Owners world is not available");
