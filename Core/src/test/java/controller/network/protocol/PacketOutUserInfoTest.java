@@ -31,7 +31,7 @@ public class PacketOutUserInfoTest extends PacketTest<PacketOutUserInfo> {
                 new UserInfo(randomUniqueId(), randomString()));
 
         // Hier werden zufällige Werte in die Benutzerinformation geschrieben
-        this.before.getInfo().setTeleportTo(randomBoolean());
+        this.before.getInfo().setInPrivateRoom(randomBoolean());
         this.before.getInfo().setAvatar(randomEnum(Avatar.class));
         this.before.getInfo().setStatus(randomEnum(Status.class));
 
@@ -91,7 +91,7 @@ public class PacketOutUserInfoTest extends PacketTest<PacketOutUserInfo> {
         }
 
         Assert.assertEquals(this.before.getInfo().getStatus(), this.after.getInfo().getStatus());
-        Assert.assertEquals(this.before.getInfo().getTeleportTo(), this.after.getInfo().getTeleportTo());
+        Assert.assertEquals(this.before.getInfo().getInPrivateRoom(), this.after.getInfo().getInPrivateRoom());
         Assert.assertEquals(this.before.getInfo().getFlags(), this.after.getInfo().getFlags());
     }
 }

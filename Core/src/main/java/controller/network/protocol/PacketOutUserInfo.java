@@ -66,7 +66,7 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         output.writeAscii(this.info.name);
         PacketUtils.writeNullableEnum(output, this.info.avatar);
         PacketUtils.writeNullableEnum(output, this.info.status);
-        output.writeBoolean(this.info.teleportTo);
+        output.writeBoolean(this.info.inPrivateRoom);
 
         /*
          * Um die gesetzten Flags der Benutzerinformation in serialisierter Form kompakt zu halten, werden die Flags
@@ -91,7 +91,7 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         this.info.name = input.readString();
         this.info.avatar = PacketUtils.readNullableEnum(input, Avatar.class);
         this.info.status = PacketUtils.readNullableEnum(input, Status.class);
-        this.info.teleportTo = input.readBoolean();
+        this.info.inPrivateRoom = input.readBoolean();
 
         /*
          * Wie in der #write()-Methode beschrieben, werden die gesetzten Flags in ein Bitfeld geschrieben und
@@ -147,7 +147,7 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         private String name;
         private Avatar avatar;
         private Status status;
-        private boolean teleportTo;
+        private boolean inPrivateRoom;
 
         private Set<Flag> flags;
 
@@ -222,21 +222,21 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         }
 
         /**
-         * Gibt zurück, ob der Benutzer durch Teleportieren erreichbar ist.
-         * @return true, wenn der Benutzer erreichbar ist, ansonsten false.
+         * Gibt zurück, ob sich der Benutzer in einem privaten Raum befindet.
+         * @return true, wenn der Benutzer in einem privaten Raum ist, ansonsten false.
          */
-        public boolean getTeleportTo() {
-            return this.teleportTo;
+        public boolean getInPrivateRoom() {
+            return this.inPrivateRoom;
         }
 
-        public void setTeleportTo(final boolean canTeleportTo) {
-            this.teleportTo = canTeleportTo;
+        public void setInPrivateRoom(final boolean inPrivateRoom) {
+            this.inPrivateRoom = inPrivateRoom;
         }
 
         @Override
         public @NotNull String toString() {
             return "{userId=" + this.userId + ", name='" + this.name + "', avatar=" + this.avatar + ", status="
-                    + this.status + ", teleportTo=" + this.teleportTo + ", flags=" + this.flags + "}";
+                    + this.status + ", inPrivateRoom=" + this.inPrivateRoom + ", flags=" + this.flags + "}";
         }
 
         @Override
@@ -258,7 +258,7 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         }
 
         /**
-         * Eine Enumeration für die weiteren Informationen über einem Benutzer.
+         * Eine Enumeration für die weiteren Informationen über einen Benutzer.
          */
         public enum Flag {
 
@@ -273,7 +273,7 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
             IGNORED,
 
             /**
-             * Information, dass der Benutzer aus der Welt gesperrt ist.
+             * Information, dass der Benutzer aus der Welt gesperrt wurde.
              */
             BANNED,
 

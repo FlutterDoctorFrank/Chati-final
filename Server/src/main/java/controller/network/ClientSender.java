@@ -119,6 +119,10 @@ public interface ClientSender {
                             return new PacketOutUserInfo(world.getContextId(), Action.UPDATE_USER, info);
                         }
 
+                        if (user.getLocation() != null) {
+                            info.setInPrivateRoom(user.getLocation().getRoom().isPrivate());
+                        }
+
                         return new PacketOutUserInfo(null, info.getFlags().contains(Flag.FRIEND) ?
                                 Action.UPDATE_USER : Action.REMOVE_USER, info);
                     } else {

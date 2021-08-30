@@ -219,7 +219,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             return;
                         }
 
-                        //TODO Vielleicht eine showInfoMessage(LocalDateTime timestamp, MessageBundle message) Methode?
+                        // TODO Vielleicht eine showInfoMessage(LocalDateTime timestamp, MessageBundle message) Methode?
+                        // Befindet sich schon in der View. Übers Interface läuft alles über die gleiche Methode.
                         break;
                 }
 
@@ -660,6 +661,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                         user.setIgnored(info.getFlags().contains(Flag.IGNORED));
                         user.setReport(packet.getContextId(), info.getFlags().contains(Flag.REPORTED));
+                        user.setInPrivateRoom(info.getInPrivateRoom());
                         user.setInCurrentWorld(true);
                         break;
 
@@ -684,6 +686,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                         user.setFriend(info.getFlags().contains(Flag.FRIEND));
                         user.setIgnored(info.getFlags().contains(Flag.IGNORED));
+                        user.setInPrivateRoom(info.getInPrivateRoom());
                         user.setInCurrentWorld(false);
                         break;
 
