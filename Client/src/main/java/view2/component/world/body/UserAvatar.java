@@ -162,7 +162,7 @@ public class UserAvatar extends Sprite {
         Vector2 velocity = body.getLinearVelocity();
 
         /////////////////////////////////////////////
-        if (user.getUsername().equals("Frank")) {
+        if (!user.getUsername().equals("Arti")) {
             velocity = new Vector2().sub(velocity);
         }
         /////////////////////////////////////////////

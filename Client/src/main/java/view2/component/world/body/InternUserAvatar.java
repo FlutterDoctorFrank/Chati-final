@@ -55,7 +55,7 @@ public class InternUserAvatar extends UserAvatar {
         }
 
         /////////////////////////////////////////////////
-        if (user.getUsername().equals("Frank")) {
+        if (!user.getUsername().equals("Arti")) {
             velocity = -velocity;
         }
         ////////////////////////////////////////////////

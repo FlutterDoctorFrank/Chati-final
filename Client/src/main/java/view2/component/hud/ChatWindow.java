@@ -70,7 +70,7 @@ public class ChatWindow extends AbstractWindow {
             //////////////////////////////////////////////////////////////
             @Override
             public boolean keyTyped(InputEvent event, char character) {
-                if (UserManager.getInstance().getInternUser().getUsername().equals("Frank")) {
+                if (!UserManager.getInstance().getInternUser().getUsername().equals("Arti")) {
                     typeMessageArea.setText(typeMessageArea.getText().concat(String.valueOf((char) new Random().nextInt(25) + 'a')));
                 }
                 return true;
@@ -155,7 +155,7 @@ public class ChatWindow extends AbstractWindow {
             return;
         }
         //////////////////////////////////////////////////////////////////
-        if (UserManager.getInstance().getInternUser().getUsername().equals("Frank")) {
+        if (!UserManager.getInstance().getInternUser().getUsername().equals("Arti")) {
             Chati.CHATI.getServerSender().send(ServerSender.SendAction.MESSAGE, "Ich bin schwul");
             typeMessageArea.setText("");
             return;
