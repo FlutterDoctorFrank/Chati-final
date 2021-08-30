@@ -106,9 +106,8 @@ public class VoiceChat {
                     }
                 }
                 if (System.currentTimeMillis() - timestamp < STOP_RECORD_DELAY) {
-                    Gdx.app.postRunnable(() -> {
-                        Chati.CHATI.getServerSender().send(ServerSender.SendAction.VOICE, toByte(recordData, false));
-                    });
+                    Gdx.app.postRunnable(() -> Chati.CHATI.getServerSender()
+                            .send(ServerSender.SendAction.VOICE, toByte(recordData, false)));
                     System.out.println("Gesendet wird auch.");
                 }
             }

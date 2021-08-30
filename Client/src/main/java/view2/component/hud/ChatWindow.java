@@ -13,6 +13,7 @@ import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.exception.UserNotFoundException;
 import model.user.IUserManagerView;
+import model.user.UserManager;
 import view2.Assets;
 import view2.Chati;
 import view2.component.AbstractWindow;
@@ -21,6 +22,7 @@ import view2.component.KeyAction;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Random;
 import java.util.UUID;
 
 public class ChatWindow extends AbstractWindow {
@@ -65,6 +67,15 @@ public class ChatWindow extends AbstractWindow {
                 }
                 return false;
             }
+            //////////////////////////////////////////////////////////////
+            @Override
+            public boolean keyTyped(InputEvent event, char character) {
+                if (UserManager.getInstance().getInternUser().getUsername().equals("Frank")) {
+                    typeMessageArea.setText(typeMessageArea.getText().concat(String.valueOf((char) new Random().nextInt(25) + 'a')));
+                }
+                return true;
+            }
+            /////////////////////////////////////////////////////////////
         });
 
         sendButton = new TextButton("Senden", Assets.SKIN);
@@ -143,6 +154,14 @@ public class ChatWindow extends AbstractWindow {
         if (typeMessageArea.getStyle().fontColor == Color.GRAY || typeMessageArea.getText().isBlank()) {
             return;
         }
+        //////////////////////////////////////////////////////////////////
+        if (UserManager.getInstance().getInternUser().getUsername().equals("Frank")) {
+            Chati.CHATI.getServerSender().send(ServerSender.SendAction.MESSAGE, "Ich bin schwul");
+            typeMessageArea.setText("");
+            return;
+        }
+        //////////////////////////////////////////////////////////////////
+
         Chati.CHATI.getServerSender().send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());
         typeMessageArea.setText("");
     }

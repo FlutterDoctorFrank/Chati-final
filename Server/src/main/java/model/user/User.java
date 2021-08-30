@@ -35,9 +35,6 @@ import java.util.stream.Collectors;
  */
 public class User implements IUser {
 
-    /** Standard-Avatar eines Benutzers */
-    private static final Avatar DEFAULT_AVATAR = Avatar.ADAM;
-
     /** Wird zur eindeutigen Identifikation eines Benutzers verwendet. */
     private final UUID userId;
 
@@ -100,7 +97,7 @@ public class User implements IUser {
         this.userId = UUID.randomUUID();
         this.username = username;
         this.status = Status.OFFLINE;
-        this.avatar = DEFAULT_AVATAR;
+        this.avatar = Avatar.values()[new Random(Avatar.values().length).nextInt()];
         this.lastLogoutTime = LocalDateTime.now();
         this.lastActivity = LocalDateTime.now();
         this.currentWorld = null;
