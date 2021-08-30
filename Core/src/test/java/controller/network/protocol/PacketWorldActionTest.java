@@ -51,7 +51,7 @@ public class PacketWorldActionTest extends PacketTest<PacketWorldAction> {
     @Test
     public void responseSerializationTest() {
         this.before = new PacketWorldAction(randomEnum(Action.class, Action.CREATE), randomContextId(),
-                randomString(), randomString(), randomBoolean());
+                randomString(), randomBundle(), randomBoolean());
 
         this.serialize();
         this.equals();
@@ -70,7 +70,7 @@ public class PacketWorldActionTest extends PacketTest<PacketWorldAction> {
     @Test
     public void responseCreationTest() {
         this.before = new PacketWorldAction(randomEnum(Action.class, Action.CREATE), randomContextId());
-        this.after = new PacketWorldAction(this.before, randomString(), randomBoolean());
+        this.after = new PacketWorldAction(this.before, randomBundle(), randomBoolean());
 
         this.equals();
     }

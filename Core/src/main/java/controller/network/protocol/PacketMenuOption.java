@@ -3,6 +3,7 @@ package controller.network.protocol;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import model.MessageBundle;
 import model.context.ContextID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +24,7 @@ public class PacketMenuOption implements Packet<PacketListener> {
     private String[] arguments;
     private int option;
 
-    private String message;
+    private MessageBundle message;
     private boolean success;
 
     /**
@@ -52,7 +53,7 @@ public class PacketMenuOption implements Packet<PacketListener> {
      * @param message die Nachricht, die durch die Menü-Option erzeugt wurde. Null, falls keine erzeugt wurde.
      * @param success true, wenn die Aktion erfolgreich war, ansonsten false.
      */
-    public PacketMenuOption(@NotNull final PacketMenuOption previous, @Nullable final String message, final boolean success) {
+    public PacketMenuOption(@NotNull final PacketMenuOption previous, @Nullable final MessageBundle message, final boolean success) {
         this.contextId = previous.getContextId();
         this.arguments = previous.getArguments();
         this.option = previous.getOption();
@@ -75,7 +76,7 @@ public class PacketMenuOption implements Packet<PacketListener> {
         }
 
         output.writeVarInt(this.option, true);
-        output.writeString(this.message);
+        PacketUtils.writeNullableBundle(kryo, output, this.message);
         output.writeBoolean(this.success);
     }
 
@@ -89,7 +90,7 @@ public class PacketMenuOption implements Packet<PacketListener> {
         }
 
         this.option = input.readVarInt(true);
-        this.message = input.readString();
+        this.message = PacketUtils.readNullableBundle(kryo, input);
         this.success = input.readBoolean();
     }
 
@@ -128,7 +129,7 @@ public class PacketMenuOption implements Packet<PacketListener> {
      * Gibt den Nachrichten-Schlüssel einer Fehlermeldung zurück, falls ein Fehler aufgetreten ist.
      * @return den Nachrichten-Schlüssel der Meldung.
      */
-    public @Nullable String getMessage() {
+    public @Nullable MessageBundle getMessage() {
         return this.message;
     }
 

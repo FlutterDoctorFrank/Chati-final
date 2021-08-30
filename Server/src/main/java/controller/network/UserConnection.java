@@ -231,9 +231,9 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
                 // Die Menü-Option war erfolgreich. Sende Bestätigung.
                 this.send(new PacketMenuOption(packet, null, true));
-            }catch (IllegalMenuActionException ex) {
+            } catch (IllegalMenuActionException ex) {
                 // Die erhaltenen Argumente enthalten ungültige Daten. Sende Fehlernachricht.
-                this.send(new PacketMenuOption(packet, ex.getClientMessageKey(), false));
+                this.send(new PacketMenuOption(packet, ex.getMessageBundle(), false));
             } catch (IllegalInteractionException ex) {
                 // Mit dem Objekt kann nicht interagiert werden oder das Objekt existiert nicht.
                 LOGGER.warning("User " + this + " tried illegal context-interaction: " + ex.getMessage());
@@ -318,13 +318,13 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             this.send(new PacketWorldAction(packet, null, true));
         } catch (IllegalWorldActionException ex) {
             // Illegale Welt-Aktion erhalten. Sende Fehlermeldung
-            this.send(new PacketWorldAction(packet, ex.getClientMessageKey(), false));
+            this.send(new PacketWorldAction(packet, ex.getMessageBundle(), false));
         } catch (NoPermissionException ex) {
             LOGGER.info("User " + this + " is missing permission " + ex.getPermission()
                     + " for world action: " + packet.getAction().name());
 
             // Unzureichende Berechtigung des Benutzers. Sende zugehörige Fehlermeldung.
-            this.send(new PacketWorldAction(packet, "missing.permission", false));
+            this.send(new PacketWorldAction(packet, ex.getMessageBundle(), false));
         } catch (ContextNotFoundException ex) {
             // Unbekannte Welt, auf die zugegriffen werden soll.
             LOGGER.warning("User " + this + " tried to access unknown world");
@@ -394,7 +394,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 }
             } catch (IllegalAccountActionException ex) {
                 // Illegale Profilaktion erhalten. Sende Fehlermeldung.
-                this.send(new PacketProfileAction(packet, ex.getClientMessageKey(), false));
+                this.send(new PacketProfileAction(packet, ex.getMessageBundle(), false));
             }
         } else {
             if (this.user == null) {
@@ -451,7 +451,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 this.send(new PacketProfileAction(packet, null, true));
             } catch (IllegalAccountActionException ex) {
                 // Illegale Profilaktion erhalten. Sende Fehlermeldung
-                this.send(new PacketProfileAction(packet, ex.getClientMessageKey(), false));
+                this.send(new PacketProfileAction(packet, ex.getMessageBundle(), false));
             } catch (UserNotFoundException ex) {
                 // Sollte niemals der Fall sein.
                 throw new IllegalStateException("Failed to provide corresponding user-id", ex);

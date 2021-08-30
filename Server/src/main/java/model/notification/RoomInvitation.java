@@ -30,7 +30,8 @@ public class RoomInvitation extends Notification {
     public RoomInvitation(@NotNull final User owner, @NotNull final String userMessage,
                           @NotNull final User invitingUser, @NotNull final Room invitedRoom) {
         super(NotificationType.ROOM_INVITATION, owner, Objects.requireNonNull(invitingUser.getWorld()),
-                new MessageBundle("roomInvitationKey", invitingUser.getUsername(), invitedRoom.getContextName(), userMessage));
+                new MessageBundle("request.room-invite.notification", invitingUser.getUsername(),
+                        invitedRoom.getContextName(), userMessage));
         this.invitingUser = invitingUser;
         this.invitedRoom = invitedRoom;
     }
@@ -43,7 +44,9 @@ public class RoomInvitation extends Notification {
      */
     public RoomInvitation(@NotNull final User owner, @NotNull final User invitingUser,
                           @NotNull final Room invitedRoom) {
-        super(NotificationType.ROOM_INVITATION, owner, Objects.requireNonNull(invitingUser.getWorld()), new MessageBundle("roomInvitationKey"));
+        super(NotificationType.ROOM_INVITATION, owner, Objects.requireNonNull(invitingUser.getWorld()),
+                new MessageBundle("request.room-invite.notification", invitingUser.getUsername(),
+                        invitedRoom.getContextName()));
         this.invitingUser = invitingUser;
         this.invitedRoom = invitedRoom;
     }
@@ -56,15 +59,13 @@ public class RoomInvitation extends Notification {
 
         // Überprüfe, ob der Raum, in den eingeladen werden soll, noch existiert.
         if (!owner.getWorld().containsPrivateRoom(invitedRoom)) {
-            MessageBundle messageBundle = new MessageBundle("Der private Raum existiert nicht mehr. Die Einladung ist ungültig.");
-            TextMessage infoMessage = new TextMessage(messageBundle);
+            TextMessage infoMessage = new TextMessage("request.room-invite.not-possible", invitedRoom.getContextName());
             owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
         // Überprüfe, ob der einladende Benutzer noch Rauminhaber ist.
         if (!invitingUser.hasPermission(invitedRoom, Permission.MANAGE_PRIVATE_ROOM)) {
-            MessageBundle messageBundle = new MessageBundle("Der einladende Benutzer ist nicht mehr Rauminhaber. Die Einladung ist ungültig.");
-            TextMessage infoMessage = new TextMessage(messageBundle);
+            TextMessage infoMessage = new TextMessage("request.room-invite.not-valid", invitingUser.getUsername(), invitedRoom.getContextName());
             owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
@@ -75,5 +76,13 @@ public class RoomInvitation extends Notification {
     @Override
     public void decline() {
         // Keine Auswirkungen.
+        if (owner.getWorld() == null) {
+            throw new IllegalStateException("Owners world is not available");
+        }
+
+        // Benachrichtige den anfragenden Benutzer über die abgelehnte Raumeinladung
+        Notification declineNotification = new Notification(invitingUser, owner.getWorld(),
+                new MessageBundle("request.room-invite.declined", owner.getUsername()));
+        invitingUser.addNotification(declineNotification);
     }
 }

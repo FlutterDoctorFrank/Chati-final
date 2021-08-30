@@ -61,7 +61,7 @@ public class PacketProfileActionTest extends PacketTest<PacketProfileAction> {
     @Test
     public void responseLoginSerializationTest() {
         this.before = new PacketProfileAction(new PacketProfileAction(randomString(), randomString(), randomBoolean()),
-                randomUniqueId(), randomEnum(Avatar.class), randomString(), randomBoolean());
+                randomUniqueId(), randomEnum(Avatar.class), randomBundle(), randomBoolean());
 
         this.serialize();
         this.equals();
@@ -79,7 +79,7 @@ public class PacketProfileActionTest extends PacketTest<PacketProfileAction> {
 
     @Test
     public void responseSerializationTest() {
-        this.before = new PacketProfileAction(new PacketProfileAction(randomEnum(Avatar.class)), randomString(), randomBoolean());
+        this.before = new PacketProfileAction(new PacketProfileAction(randomEnum(Avatar.class)), randomBundle(), randomBoolean());
 
         this.serialize();
         this.equals();
@@ -98,7 +98,7 @@ public class PacketProfileActionTest extends PacketTest<PacketProfileAction> {
     @Test
     public void responseCreationTest() {
         this.before = new PacketProfileAction(randomString(), randomString(), randomBoolean());
-        this.after = new PacketProfileAction(this.before, randomString(), randomBoolean());
+        this.after = new PacketProfileAction(this.before, randomBundle(), randomBoolean());
 
         this.equals();
     }

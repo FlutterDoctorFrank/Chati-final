@@ -27,10 +27,10 @@ public class UserAccountManager implements IUserAccountManager {
     public static final int ACCOUNT_DELETION_TIME = 3;
 
     /** Regulärer Ausdruck für das Format von Benutzernamen */
-    private static final String USERNAME_FORMAT = "^\\w{2,16}";
+    private static final String USERNAME_FORMAT = "^\\w{2,16}$";
 
     /** Regulärer Ausdruck für das Format des Passworts */
-    private static final String PASSWORD_FORMAT = "^.{4,32}";
+    private static final String PASSWORD_FORMAT = "^.{4,32}$";
 
     /** Singleton-Instanz der Klasse */
     private static UserAccountManager userAccountManager;
@@ -59,21 +59,21 @@ public class UserAccountManager implements IUserAccountManager {
     public void registerUser(@NotNull final String username, @NotNull final String password) throws IllegalAccountActionException {
         // Überprüfe, ob der übergebene Benutzername dem vorgegebenen Format entspricht.
         if (!username.matches(USERNAME_FORMAT))  {
-            throw new IllegalAccountActionException("errorMsg console", "Der Benutzername hat ein falsches Format. - key");
+            throw new IllegalAccountActionException("errorMsg console", "account.register.illegal-name");
         }
         // Überprüfe, ob das übergebene Passwort dem vorgegebenen Format entspricht.
         if (!password.matches(PASSWORD_FORMAT)) {
-            throw new IllegalAccountActionException("errorMsg console", "Das Passwort hat ein falsches Format. - key");
+            throw new IllegalAccountActionException("errorMsg console", "account.register.illegal-password");
         }
         // Überprüfe, ob bereits ein Konto mit diesem Benutzernamen existiert.
         if (isRegistered(username)) {
-            throw new IllegalAccountActionException("errorMsg console", "Ein Konto mit dem Benutzernamen existiert bereits. - key");
+            throw new IllegalAccountActionException("errorMsg console", "account.register.already-taken", username);
         }
         // Erzeuge Benutzer und füge ihn zu den registrierten Benutzern hinzu.
         User createdUser = database.createAccount(username, password);
 
         if (createdUser == null) {
-            throw new IllegalAccountActionException("errorMsg console", "Das Benutzerkonto konnte nicht erstellt werden");
+            throw new IllegalAccountActionException("errorMsg console", "account.register.failed");
         }
         //User createdUser = new User(username);
         registeredUsers.put(createdUser.getUserId(), createdUser);
@@ -86,16 +86,16 @@ public class UserAccountManager implements IUserAccountManager {
         // Überprüfe, ob ein Benutzer mit dem übergebenen Benutzernamen existiert.
         try {
             user = getUser(username, false);
-        } catch (UserNotFoundException e) {
-            throw new IllegalAccountActionException("", "Login fehlgeschlagen. Bitte überprüfe deine Eingaben.", e);
+        } catch (UserNotFoundException ex) {
+            throw new IllegalAccountActionException("", ex, "account.login.invalid-input");
         }
         // Überprüfe, ob das übergebene Passwort korrekt ist.
         if (!database.checkPassword(username, password)) {
-            throw new IllegalAccountActionException("", "Login fehlgeschlagen. Bitte überprüfe deine Eingaben.");
+            throw new IllegalAccountActionException("", "account.login.invalid-input");
         }
         // Überprüfe, ob der Benutzer bereits eingeloggt ist.
         if (user.isOnline()) {
-            throw new IllegalAccountActionException("", "Das Konto ist bereits verbunden.");
+            throw new IllegalAccountActionException("", "account.login.already-online");
         }
         // Melde den Benutzer an.
         user.login(sender);
@@ -111,10 +111,6 @@ public class UserAccountManager implements IUserAccountManager {
             return;
         }
         // Melde den Benutzer ab.
-        // Yujie Hu: Falls ein Benutzer nur angemeldet hat, noch nicht in eine Welt beigetreten ist und
-        // wollte abmelden, ruft hier user.logout() und bei user.logout() ruft dann noch leaveWorld().
-        // Bei leaveWorld() benutzt dann throwIfNotInWorld(), bekommt dann Exception weil der Benutzer
-        // noch nicht in eine Welt beigetreten ist. Aber ich denke diese Situation ist erlaubt.
         user.logout();
         GlobalContext.getInstance().removeUser(user);
         database.updateLastOnlineTime(user);
@@ -125,7 +121,7 @@ public class UserAccountManager implements IUserAccountManager {
         User user = getUser(userId);
         // Überprüfe, ob das aktuelle Passwort korrekt übergeben wurde.
         if (!database.checkPassword(user.getUsername(), password)) {
-            throw new IllegalAccountActionException("", "Das eingegebene Passwort ist nicht korrekt.");
+            throw new IllegalAccountActionException("", "account.delete.invalid-password");
         }
         // Melde den Benutzer ab und lösche sein Benutzerkonto.
         deleteUser(user);
@@ -139,11 +135,11 @@ public class UserAccountManager implements IUserAccountManager {
         user.updateLastActivity();
         // Überprüfe, ob das aktuelle Passwort korrekt übergeben wurde.
         if (!database.checkPassword(user.getUsername(), password)) {
-            throw new IllegalAccountActionException("", "Das eingegebene Passwort ist nicht korrekt.");
+            throw new IllegalAccountActionException("", "account.change-password.invalid-password");
         }
         // Überprüfe, ob das neue Passwort dem vorgegebenen Format entspricht.
         if (!newPassword.matches(PASSWORD_FORMAT)) {
-            throw new IllegalAccountActionException("", "Das neue Passwort hat nicht das richtige Format.");
+            throw new IllegalAccountActionException("", "account.change-password.illegal-password");
         }
         // Ändere das Passwort.
         database.setPassword(user, newPassword);

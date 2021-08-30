@@ -678,7 +678,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 String avatar_name = res.getString("AVATAR_NAME");
                 Avatar user_avatar = null;
                 if (avatar_name != null){
-                    user_avatar = Avatar.valueOf(avatar_name);
+                    user_avatar = Avatar.valueOf(avatar_name.toUpperCase());
                 }
 
                 User user = new User(user_ID, user_name, user_avatar,
@@ -1130,7 +1130,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             }
             if (!set.contains("NOTIFICATION")) {
                 String sql = "CREATE TABLE NOTIFICATION(USER_ID VARCHAR(36), NOTIFICATION_ID VARCHAR(36), " +
-                        "OWING_CONTEXT_ID VARCHAR(36), SEND_TIME TIMESTAMP, MESSAGE_KEY VARCHAR(16), " +
+                        "OWING_CONTEXT_ID VARCHAR(36), SEND_TIME TIMESTAMP, MESSAGE_KEY VARCHAR(36), " +
                         "NOTIFICATION_TYPE VARCHAR(16), ARGUMENT1 VARCHAR(128), ARGUMENT2 VARCHAR(128), ARGUMENT3 VARCHAR(128), " +
                         "ARGUMENT4 VARCHAR(128))";
                 statement.execute(sql);

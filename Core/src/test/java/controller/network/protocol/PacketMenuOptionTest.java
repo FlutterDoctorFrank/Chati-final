@@ -53,7 +53,7 @@ public class PacketMenuOptionTest extends PacketTest<PacketMenuOption> {
     @Test
     public void responseSerializationTest() {
         this.before = new PacketMenuOption(new PacketMenuOption(randomContextId(),
-                new String[]{randomString()}, randomInt(3)), randomString(), randomBoolean());
+                new String[]{randomString()}, randomInt(3)), randomBundle(), randomBoolean());
 
         this.serialize();
         this.equals();
@@ -72,7 +72,7 @@ public class PacketMenuOptionTest extends PacketTest<PacketMenuOption> {
     @Test
     public void responseCreationTest() {
         this.before = new PacketMenuOption(randomContextId(), new String[]{randomString()}, randomInt(3));
-        this.after = new PacketMenuOption(this.before, randomString(), randomBoolean());
+        this.after = new PacketMenuOption(this.before, randomBundle(), randomBoolean());
 
         this.equals();
     }

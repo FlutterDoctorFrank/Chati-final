@@ -4,21 +4,14 @@ import model.role.Permission;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
 
-public class NoPermissionException extends Exception {
+public class NoPermissionException extends FeedbackException {
 
     private final User user;
     private final Permission permission;
 
-    public NoPermissionException(@NotNull final String errorMessage, @NotNull final User user,
-                                 @NotNull final Permission permission) {
-        super(errorMessage);
-        this.user = user;
-        this.permission = permission;
-    }
-
-    public NoPermissionException(@NotNull final String errorMessage, @NotNull final User user,
-                                 @NotNull final Permission permission, @NotNull final Throwable cause) {
-        super(errorMessage, cause);
+    public NoPermissionException(@NotNull final String message, @NotNull final String key,
+                                 @NotNull final User user, @NotNull final Permission permission) {
+        super(message, key, permission);
         this.user = user;
         this.permission = permission;
     }

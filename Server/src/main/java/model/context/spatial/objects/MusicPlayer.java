@@ -23,7 +23,7 @@ public class MusicPlayer extends Interactable {
     private static final int MENU_OPTION_STOP = 2;
 
     /**
-     * Erzeugt eines neue Instanz des MusicPlayer.
+     * Erzeugt eine neue Instanz des MusicPlayer.
      * @param objectName Name des Objekts.
      * @param parent Übergeordneter Kontext.
      * @param expanse Räumliche Ausdehnung des Kontexts.
@@ -54,14 +54,14 @@ public class MusicPlayer extends Interactable {
         switch (menuOption) {
             case MENU_OPTION_PLAY: // Spiele ein Musikstück ab.
                 if (args.length < 1) {
-                    throw new IllegalMenuActionException("", "Die angegeben Argument sind nicht ausreichend.");
+                    throw new IllegalMenuActionException("", "object.arguments.to-few");
                 }
 
                 Music music;
                 try {
-                    music = Music.valueOf(args[0]);
-                } catch (IllegalArgumentException e) {
-                    throw new IllegalMenuActionException("", "Das abzuspielende Musikstück existiert nicht.", e);
+                    music = Music.valueOf(args[0].toUpperCase());
+                } catch (IllegalArgumentException ex) {
+                    throw new IllegalMenuActionException("", ex, "object.music-player.music-not-found", args[0]);
                 }
                 getParent().playMusic(music);
                 break;

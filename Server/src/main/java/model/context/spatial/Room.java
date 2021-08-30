@@ -4,11 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import controller.network.ClientSender.SendAction;
-import model.MessageBundle;
 import model.communication.message.TextMessage;
 import model.role.Role;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -112,7 +112,7 @@ public class Room extends Area implements IRoom {
             });
 
             if (isPrivate) {
-                final TextMessage info = new TextMessage(new MessageBundle("key"));
+                final TextMessage info = new TextMessage("context.room.joined", user.getUsername());
 
                 containedUsers.values().stream()
                         .filter(receiver -> !receiver.equals(user))
@@ -134,12 +134,19 @@ public class Room extends Area implements IRoom {
             if (isPrivate && user.hasRole(this, Role.ROOM_OWNER)) {
                 user.removeRole(this, Role.ROOM_OWNER);
 
-                if (containedUsers.isEmpty()) {
-                    world.removePrivateRoom(this);
-                    return;
-                }
+                if (!containedUsers.isEmpty()) {
+                    final TextMessage info = new TextMessage("context.room.left", user.getUsername());
 
-                containedUsers.values().stream().findAny().get().addRole(this, Role.ROOM_OWNER);
+                    containedUsers.values().forEach(receiver -> receiver.send(SendAction.MESSAGE, info));
+
+                    try {
+                        containedUsers.values().stream().findAny().orElseThrow().addRole(this, Role.ROOM_OWNER);
+                    } catch (NoSuchElementException ex) {
+                        throw new IllegalStateException("Unable to find new room owner", ex);
+                    }
+                } else {
+                    world.removePrivateRoom(this);
+                }
             }
         }
     }

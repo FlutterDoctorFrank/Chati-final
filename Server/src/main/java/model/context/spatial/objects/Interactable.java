@@ -20,7 +20,7 @@ public abstract class Interactable extends Area implements IInteractable {
 
     protected final Area parent;
 
-    /** Das Menü, dass beim Benutzer bei einer Interaktion mit diesem Kontext geöffnet werden soll. */
+    /** Das Menü das beim Benutzer bei einer Interaktion mit diesem Kontext geöffnet werden soll. */
     private final Menu menu;
 
     /**

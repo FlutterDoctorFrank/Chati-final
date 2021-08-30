@@ -20,6 +20,7 @@ import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
+import model.role.Permission;
 import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 
@@ -57,6 +58,7 @@ public abstract class NetworkManager<T extends EndPoint> extends Listener {
      */
     private void register(@NotNull final Kryo kryo) {
         kryo.register(LocalDateTime.class);
+        kryo.register(Permission.class);
         kryo.register(PacketAvatarMove.class);
         kryo.register(PacketChatMessage.class);
         kryo.register(PacketMenuOption.class);

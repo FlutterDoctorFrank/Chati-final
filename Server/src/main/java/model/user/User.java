@@ -47,7 +47,7 @@ public class User implements IUser {
     /** Der Avatar des Benutzers, der für ihn und andere Spieler auf der Karte sichtbar ist. */
     private Avatar avatar;
 
-    /** Zeitpunkt des letzten Ausloggens eines Benutzers. */
+    /** Zeitpunkt des letzten Ausloggen eines Benutzers. */
     private LocalDateTime lastLogoutTime;
 
     /** Zeitpunkt der letzten Aktivität des Benutzers. */
@@ -83,7 +83,7 @@ public class User implements IUser {
     /** Menge der Benachrichtigungen des Benutzers. */
     private final Map<UUID, Notification> notifications;
 
-    /** Erlaubt Zugriff auf die Datenbank. */
+    /** Erlaubt den Zugriff auf die Datenbank. */
     private final IUserDatabase database;
 
     /** Wird zum Versenden von Informationen an den Client verwendet, der mit diesem Benutzer angemeldet ist. */
@@ -117,7 +117,7 @@ public class User implements IUser {
      * @param userId ID des Benutzers.
      * @param username Benutzername des Benutzers.
      * @param avatar Avatar des Benutzers.
-     * @param lastLogoutTime Zeitpunkt, an dem sich der Benutzer das letzte mal ausgeloggt hat.
+     * @param lastLogoutTime Zeitpunkt, an dem sich der Benutzer das letzte Mal ausgeloggt hat.
      */
     public User(@NotNull final UUID userId, @NotNull final String username, @NotNull final Avatar avatar,
                 @NotNull final LocalDateTime lastLogoutTime) {
@@ -150,7 +150,7 @@ public class User implements IUser {
         World world = GlobalContext.getInstance().getWorld(worldId);
         // Überprüfe, ob Benutzer in der Welt gesperrt ist.
         if (world.isBanned(this)) {
-            throw new IllegalWorldActionException("", "Du bist in dieser Welt gesperrt.");
+            throw new IllegalWorldActionException("", "action.world-join.banned", world.getContextName());
         }
         // Betrete die Welt.
         currentWorld = world;
@@ -811,7 +811,7 @@ public class User implements IUser {
 
         try {
             leaveWorld();
-        } catch(IllegalStateException e) {
+        } catch(IllegalStateException ignored) {
             // Benutzer ist nicht in einer Welt
         }
 

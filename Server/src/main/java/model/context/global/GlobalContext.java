@@ -54,11 +54,11 @@ public class GlobalContext extends Context implements IGlobalContext {
         performer.updateLastActivity();
         // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung besitzt.
         if (!performer.hasPermission(GlobalContext.getInstance(), Permission.MANAGE_WORLDS)) {
-            throw new NoPermissionException("no permission", performer, Permission.MANAGE_WORLDS);
+            throw new NoPermissionException("no permission", "action.world-create.not-permitted", performer, Permission.MANAGE_WORLDS);
         }
         // Überprüfe, ob bereits eine Welt mit diesem Namen existiert.
         if (worlds.values().stream().anyMatch(world -> world.getContextName().equals(worldName))) {
-            throw new IllegalWorldActionException("", "Eine Welt mit diesem Namen existiert bereits");
+            throw new IllegalWorldActionException("", "action.world-create.already-created", worldName);
         }
         // Erzeuge die Welt und füge sie
         World createdWorld = new World(worldName, map);
@@ -75,7 +75,7 @@ public class GlobalContext extends Context implements IGlobalContext {
         performer.updateLastActivity();
         // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung besitzt.
         if (!performer.hasPermission(GlobalContext.getInstance(), Permission.MANAGE_WORLDS)) {
-            throw new NoPermissionException("no permission", performer, Permission.MANAGE_WORLDS);
+            throw new NoPermissionException("no permission", "action.world-delete.not-permitted", performer, Permission.MANAGE_WORLDS);
         }
         // Überprüfe, ob die zu löschende Welt existiert.
         World deleteWorld = worlds.get(worldId);

@@ -34,7 +34,8 @@ public class AreaManagerAssignment extends TimedEvent {
 
         reservedContext.getWorld();
         reserver.addRole(reservedContext, Role.AREA_MANAGER);
-        Notification roleReceiveNotification = new Notification(reserver, reservedContext.getWorld(), new MessageBundle("key"));
+        Notification roleReceiveNotification = new Notification(reserver, reservedContext.getWorld(),
+                new MessageBundle("role.area-manage.assignment", reservedContext.getContextName()));
         reserver.addNotification(roleReceiveNotification);
     }
 

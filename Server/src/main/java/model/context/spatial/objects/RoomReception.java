@@ -1,10 +1,8 @@
 package model.context.spatial.objects;
 
-import controller.network.ClientSender;
 import controller.network.ClientSender.SendAction;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
-import model.context.ContextID;
 import model.context.spatial.*;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
@@ -41,7 +39,7 @@ public class RoomReception extends Interactable {
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^.{4,32}");
 
     /**
-     * Erzeugt eines neue Instanz der RoomReception.
+     * Erzeugt eine neue Instanz der RoomReception.
      * @param objectName Name des Objekts.
      * @param parent Übergeordneter Kontext.
      * @param expanse Räumliche Ausdehnung des Kontexts.
@@ -75,25 +73,25 @@ public class RoomReception extends Interactable {
         switch (menuOption) {
             case MENU_OPTION_CREATE: // Erzeuge einen privaten Raum.
                 if (args.length < 3) {
-                    throw new IllegalMenuActionException("", "Die angegeben Argumente sind nicht ausreichend.");
+                    throw new IllegalMenuActionException("", "object.arguments.to-few");
                 }
 
                 String createRoomName = args[0];
                 // Prüfe, ob der übergebene Raumname das richtige Format hat.
                 if (!ROOMNAME_PATTERN.matcher(createRoomName).matches()) {
-                    throw new IllegalMenuActionException("", "Die eingegebene Raumbezeichnung hat nicht das richtige Format.");
+                    throw new IllegalMenuActionException("", "object.room-reception.illegal-name");
                 }
                 String password = args[1];
                 // Prüfe, ob das übergebene Passwort das richtige Format hat.
                 if (!PASSWORD_PATTERN.matcher(password).matches()) {
-                    throw new IllegalMenuActionException("", "Das eingegebene Passwort hat nicht das richtige Format.");
+                    throw new IllegalMenuActionException("", "object.room-reception.illegal-password");
                 }
                 // Ermittle die Karte, die der private Raum haben soll.
                 SpatialMap map;
                 try {
-                    map = SpatialMap.valueOf(args[2]);
-                } catch (IllegalArgumentException e) {
-                    throw new IllegalMenuActionException("", "Die anzuzeigende Karte existiert nicht.", e);
+                    map = SpatialMap.valueOf(args[2].toUpperCase());
+                } catch (IllegalArgumentException ex) {
+                    throw new IllegalMenuActionException("", ex, "object.room-reception.map-not-found", args[2]);
                 }
                 // Prüfe, ob bereits ein privater Raum mit diesem Namen existiert.
                 World world = user.getWorld();
@@ -102,7 +100,7 @@ public class RoomReception extends Interactable {
                 }
                 if (world.getPrivateRooms()
                         .values().stream().anyMatch(room -> room.getContextName().equals(createRoomName))) {
-                    throw new IllegalMenuActionException("", "Es existiert bereits ein privater Raum mit diesem Namen.");
+                    throw new IllegalMenuActionException("", "object.room-reception.already-created", createRoomName);
                 }
 
                 // Erzeuge den privaten Raum, füge ihn der Welt hinzu, gebe dem erzeugenden Benutzer die Rolle des
@@ -127,7 +125,7 @@ public class RoomReception extends Interactable {
                 break;
             case MENU_OPTION_JOIN: // Betrete einen existierenden privaten Raum.
                 if (args.length < 2) {
-                    throw new IllegalMenuActionException("", "Die angegeben Argumente sind nicht ausreichend.");
+                    throw new IllegalMenuActionException("", "object.arguments.to-few");
                 }
 
                 if (user.getWorld() == null) {
@@ -140,13 +138,13 @@ public class RoomReception extends Interactable {
                     privateRoom = user.getWorld().getPrivateRooms().values().stream()
                             .filter(room -> room.getContextName().equals(joinRoomName))
                             .findFirst().orElseThrow();
-                } catch (NoSuchElementException e) {
-                    throw new IllegalMenuActionException("", "Der zu betretende private Raum existiert nicht.", e);
+                } catch (NoSuchElementException ex) {
+                    throw new IllegalMenuActionException("", ex, "object.room-reception.room-not-found", joinRoomName);
                 }
 
                 // Prüfe, ob sich der Benutzer bereits in diesem Raum befindet.
                 if (privateRoom.contains(user)) {
-                    throw new IllegalMenuActionException("", "Du befindest dich bereits in diesem Raum.");
+                    throw new IllegalMenuActionException("", "object.room-reception.already-joined", privateRoom.getContextName());
                 }
 
                 // Prüfe, ob der Benutzer die Berechtigung besitzt, den Raum ohne Passworteingabe zu betreten.
@@ -154,7 +152,7 @@ public class RoomReception extends Interactable {
                     password = args[1];
                     // Prüfe, ob das Passwort korrekt übergeben wurde.
                     if (!privateRoom.checkPassword(password)) {
-                        throw new IllegalMenuActionException("", "Das eingegebene Passwort ist nicht korrekt.");
+                        throw new IllegalMenuActionException("", "object.room-reception.invalid-password");
                     }
                 }
 
@@ -166,7 +164,7 @@ public class RoomReception extends Interactable {
                 break;
             case MENU_OPTION_REQUEST: // Stelle eine Anfrage zum Beitritt eines privaten Raums.
                 if (args.length < 2) {
-                    throw new IllegalMenuActionException("", "Die angegeben Argumente sind nicht ausreichend.");
+                    throw new IllegalMenuActionException("", "object.arguments.to-few");
                 }
 
                 if (user.getWorld() == null) {
@@ -179,13 +177,13 @@ public class RoomReception extends Interactable {
                     requestedPrivateRoom = user.getWorld().getPrivateRooms().values().stream()
                             .filter(room -> room.getContextName().equals(requestedRoomName))
                             .findFirst().orElseThrow();
-                } catch (NoSuchElementException e) {
-                    throw new IllegalMenuActionException("", "Der angefragte private Raum existiert nicht.", e);
+                } catch (NoSuchElementException ex) {
+                    throw new IllegalMenuActionException("", ex, "object.room-reception.room-not-found", requestedRoomName);
                 }
 
                 // Prüfe, ob sich der Benutzer bereits in diesem Raum befindet.
                 if (requestedPrivateRoom.contains(user)) {
-                    throw new IllegalMenuActionException("", "Du befindest dich bereits in diesem Raum.");
+                    throw new IllegalMenuActionException("", "object.room-reception.already-joined", requestedPrivateRoom.getContextName());
                 }
 
                 // Ermittle den Rauminhaber.
@@ -195,8 +193,8 @@ public class RoomReception extends Interactable {
                     roomOwner = users.values().stream()
                             .filter(containedUser -> containedUser.hasPermission(requestedPrivateRoom, Permission.MANAGE_PRIVATE_ROOM))
                             .findFirst().orElseThrow();
-                } catch (NoSuchElementException e) {
-                    throw new IllegalStateException("This private room does not have a room owner.", e);
+                } catch (NoSuchElementException ex) {
+                    throw new IllegalStateException("This private room does not have a room owner.", ex);
                 }
                 // Sende dem Rauminhaber die Beitrittsanfrage.
                 RoomRequest roomRequest = new RoomRequest(roomOwner, args[1], user, requestedPrivateRoom);

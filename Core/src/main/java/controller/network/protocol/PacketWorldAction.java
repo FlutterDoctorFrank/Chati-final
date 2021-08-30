@@ -3,6 +3,7 @@ package controller.network.protocol;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import model.MessageBundle;
 import model.context.ContextID;
 import model.context.spatial.SpatialMap;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,7 @@ public class PacketWorldAction implements Packet<PacketListener> {
 
     private ContextID contextId;
     private Action action;
-    private String message;
+    private MessageBundle message;
     private boolean success;
 
     // Variablen für die Welterstellung.
@@ -76,7 +77,7 @@ public class PacketWorldAction implements Packet<PacketListener> {
      * @param success true, wenn die Aktion erfolgreich war, ansonsten false.
      */
     public PacketWorldAction(@NotNull final Action action, @NotNull final ContextID contextId,
-                             @NotNull final String name, @Nullable final String message, final boolean success) {
+                             @NotNull final String name, @Nullable final MessageBundle message, final boolean success) {
         if (action == Action.CREATE) {
             throw new IllegalArgumentException("Invalid Constructor for creating WorldCreate-Packets");
         }
@@ -95,7 +96,7 @@ public class PacketWorldAction implements Packet<PacketListener> {
      * @param success true, wenn die Aktion erfolgreich war, ansonsten false.
      */
     public PacketWorldAction(@NotNull final PacketWorldAction previous,
-                             @Nullable final String message, final boolean success) {
+                             @Nullable final MessageBundle message, final boolean success) {
         this.action = previous.getAction();
         this.contextId = previous.getContextId();
         this.map = previous.getMap();
@@ -114,8 +115,8 @@ public class PacketWorldAction implements Packet<PacketListener> {
         PacketUtils.writeNullableContextId(output, this.contextId);
         PacketUtils.writeEnum(output, this.action);
         PacketUtils.writeNullableEnum(output, this.map);
-        output.writeAscii(this.name);
-        output.writeString(this.message);
+        output.writeString(this.name);
+        PacketUtils.writeNullableBundle(kryo, output, this.message);
         output.writeBoolean(this.success);
     }
 
@@ -125,7 +126,7 @@ public class PacketWorldAction implements Packet<PacketListener> {
         this.action = PacketUtils.readEnum(input, Action.class);
         this.map = PacketUtils.readNullableEnum(input, SpatialMap.class);
         this.name = input.readString();
-        this.message = input.readString();
+        this.message = PacketUtils.readNullableBundle(kryo, input);
         this.success = input.readBoolean();
     }
 
@@ -178,7 +179,7 @@ public class PacketWorldAction implements Packet<PacketListener> {
      * Gibt den Nachrichten-Schlüssel einer Fehlermeldung zurück, falls ein Fehler aufgetreten ist.
      * @return den Nachrichten-Schlüssel der Meldung.
      */
-    public @Nullable String getMessage() {
+    public @Nullable MessageBundle getMessage() {
         return this.message;
     }
 

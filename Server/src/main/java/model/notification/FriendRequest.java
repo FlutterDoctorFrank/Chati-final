@@ -22,7 +22,7 @@ public class FriendRequest extends Notification {
      */
     public FriendRequest(@NotNull final User owner, @NotNull final String userMessage, @NotNull final User requestingUser) {
         super(NotificationType.FRIEND_REQUEST, owner, GlobalContext.getInstance(),
-                new MessageBundle("friendRequestKey", requestingUser.getUsername(), userMessage));
+                new MessageBundle("request.friend.notification", requestingUser.getUsername(), userMessage));
         this.requestingUser = requestingUser;
     }
 
@@ -30,22 +30,19 @@ public class FriendRequest extends Notification {
     public void accept() {
         // Überprüfe, ob der anfragende Benutzer noch existiert.
         if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserId())) {
-            MessageBundle messageBundle = new MessageBundle("Der anfragende Benutzer existiert nicht mehr");
-            TextMessage infoMessage = new TextMessage(messageBundle);
+            TextMessage infoMessage = new TextMessage("request.friend.user-not-found", requestingUser.getUsername());
             owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
         // Überprüfe, ob die Benutzer bereits befreundet sind.
         if (owner.isFriend(requestingUser) && requestingUser.isFriend(owner)) {
-            MessageBundle messageBundle = new MessageBundle("Du bist bereits mit diesem Benutzer befreundet.");
-            TextMessage infoMessage = new TextMessage(messageBundle);
+            TextMessage infoMessage = new TextMessage("request.friend.already-friends", requestingUser.getUsername());
             owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
         // Überprüfe, ob der anfragende Benutzer den Eigentümer der Benachrichtigung ignoriert.
         if (requestingUser.isIgnoring(owner)) {
-            MessageBundle messageBundle = new MessageBundle("Eine Freundschaft mit diesem Benutzer ist nicht möglich.");
-            TextMessage infoMessage = new TextMessage(messageBundle);
+            TextMessage infoMessage = new TextMessage("request.friend.not-possible", requestingUser.getUsername());
             owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
@@ -58,7 +55,7 @@ public class FriendRequest extends Notification {
         requestingUser.addFriend(owner);
         // Benachrichtige den anfragenden Benutzer über die Annahme der Freundschaftsanfrage.
         Notification acceptNotification = new Notification(requestingUser, GlobalContext.getInstance(),
-                new MessageBundle("messageKey"));
+                new MessageBundle("request.friend.accepted", owner.getUsername()));
         requestingUser.addNotification(acceptNotification);
     }
 
@@ -66,22 +63,20 @@ public class FriendRequest extends Notification {
     public void decline() {
         // Überprüfe, ob der anfragende Benutzer noch existiert.
         if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserId())) {
-            MessageBundle messageBundle = new MessageBundle("Der anfragende Benutzer existiert nicht mehr");
-            TextMessage infoMessage = new TextMessage(messageBundle);
+            TextMessage infoMessage = new TextMessage("request.friend.user-not-found", requestingUser.getUsername());
             owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
         // Überprüfe, ob die Benutzer bereits befreundet sind.
         if (owner.isFriend(requestingUser) || requestingUser.isFriend(owner)) {
-            MessageBundle messageBundle = new MessageBundle("Du bist bereits mit diesem Benutzer befreundet.");
-            TextMessage infoMessage = new TextMessage(messageBundle);
+            TextMessage infoMessage = new TextMessage("request.friend.already-friends", requestingUser.getUsername());
             owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
 
         // Benachrichtige den anfragenden Benutzer über die Ablehnung der Freundschaftsanfrage.
         Notification declineNotification = new Notification(requestingUser, GlobalContext.getInstance(),
-                new MessageBundle("messageKey"));
+                new MessageBundle("request.friend.declined", owner.getUsername()));
         requestingUser.addNotification(declineNotification);
     }
 }

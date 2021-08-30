@@ -132,8 +132,8 @@ public enum AdministrativeAction {
             Room invitedRoom = performer.getLocation().getRoom();
             // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung für den Raum hat.
             if (!performer.hasPermission(invitedRoom, Permission.MANAGE_PRIVATE_ROOM)) {
-                throw new NoPermissionException("Performer has not the required permission.", performer,
-                        Permission.MANAGE_PRIVATE_ROOM);
+                throw new NoPermissionException("Performer has not the required permission.",
+                        "action.room-invite.not-permitted", performer, Permission.MANAGE_PRIVATE_ROOM);
             }
             // Überprüfe, ob der eingeladene Benutzer bereits in diesem Raum ist.
             if (invitedRoom.contains(target)) {
@@ -166,8 +166,8 @@ public enum AdministrativeAction {
             Room kickedRoom = performer.getLocation().getRoom();
             // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung für den Raum hat.
             if (!performer.hasPermission(kickedRoom, Permission.MANAGE_PRIVATE_ROOM)) {
-                throw new NoPermissionException("Performer has not the required permission.", performer,
-                        Permission.MANAGE_PRIVATE_ROOM);
+                throw new NoPermissionException("Performer has not the required permission.",
+                        "action.room-kick.not-permitted", performer, Permission.MANAGE_PRIVATE_ROOM);
             }
             // Überprüfe, ob sich der zu entfernende Benutzer in diesem Raum befindet.
             if (!kickedRoom.contains(target)) {
@@ -203,8 +203,8 @@ public enum AdministrativeAction {
 
             if (!performer.hasPermission(commonContext, Permission.TELEPORT_TO_USER)
                     && (!performer.isFriend(target) || target.getStatus() == Status.BUSY)) {
-                throw new NoPermissionException("Performer has not the required permission.", performer,
-                        Permission.TELEPORT_TO_USER);
+                throw new NoPermissionException("Performer has not the required permission.",
+                        "action.user-teleport.not-permitted", performer, Permission.TELEPORT_TO_USER);
             }
 
             // Überprüfe, ob sich der Benutzer, zu dem sich teleportiert werden soll, in einem privaten Raum befindet
@@ -212,8 +212,8 @@ public enum AdministrativeAction {
             // besitzt.
             Room targetRoom = target.getLocation().getRoom();
             if (targetRoom.isPrivate() && !performer.hasPermission(targetRoom, Permission.ENTER_PRIVATE_ROOM)) {
-                throw new NoPermissionException("Performer has not the required permission.", performer,
-                        Permission.ENTER_PRIVATE_ROOM);
+                throw new NoPermissionException("Performer has not the required permission.",
+                        "action.room-join.not-permitted", performer, Permission.ENTER_PRIVATE_ROOM);
             }
 
             // Teleportiere zu dem Benutzer.
@@ -254,7 +254,8 @@ public enum AdministrativeAction {
             }
 
             // Sende die Benachrichtigung an alle Benutzer.
-            MessageBundle messageBundle = new MessageBundle("messageKey", performer, target, args[0]);
+            MessageBundle messageBundle = new MessageBundle("action.user-report.info-moderator",
+                    performer.getUsername(), target.getUsername(), args[0]);
             receivers.values().forEach(user -> {
                 Notification reportNotification = new Notification(user, performer.getWorld(), messageBundle);
                 user.addNotification(reportNotification);
@@ -283,8 +284,8 @@ public enum AdministrativeAction {
             Context commonContext = performerArea.lastCommonAncestor(targetArea);
 
             if (!performer.hasPermission(commonContext, Permission.MUTE)) {
-                throw new NoPermissionException("Performer has not the required permission.", performer,
-                        Permission.MUTE);
+                throw new NoPermissionException("Performer has not the required permission.",
+                        "action.user-mute.not-permitted", performer, Permission.MUTE);
             }
             // Überprüfe, ob der stummzuschaltende Benutzer in dem Kontext bereits stummgeschaltet ist.
             if (commonContext.isMuted(target)) {
@@ -297,7 +298,7 @@ public enum AdministrativeAction {
     },
 
     /**
-     * Hebt die Stummschaltung eines Benutzers auf. Es werden alle Stummschaltungen innerhalb des größten Kontext
+     * Hebt die Stummschaltung eines Benutzers auf. Es werden alle Stummschaltungen innerhalb des größten Kontexts
      * aufgehoben, für den der ausführende Benutzer die Berechtigung besitzt.
      */
     UNMUTE_USER {
@@ -315,8 +316,8 @@ public enum AdministrativeAction {
             Context commonContext = performerArea.lastCommonAncestor(targetArea);
 
             if (!performer.hasPermission(commonContext, Permission.MUTE)) {
-                throw new NoPermissionException("Performer has not the required permission.", performer,
-                        Permission.MUTE);
+                throw new NoPermissionException("Performer has not the required permission.",
+                        "action.user-mute.not-permitted", performer, Permission.MUTE);
             }
 
             // Überprüfe, ob der Benutzer, dessen Stummschaltung aufgehoben werden soll, in dem Kontext stummgeschaltet
@@ -351,8 +352,8 @@ public enum AdministrativeAction {
 
             // Überprüfe zuerst die Berechtigung des Performers bevor die Berechtigung des Ziels überprüft wird.
             if (!performer.hasPermission(performerWorld, Permission.BAN_USER)) {
-                throw new NoPermissionException("Performer has not the required permission to ban.", performer,
-                        Permission.BAN_USER);
+                throw new NoPermissionException("Performer has not the required permission to ban.",
+                        "action.user-ban.not-permitted", performer, Permission.BAN_USER);
             }
 
             // Überprüfe, ob der zu sperrende Benutzer ein Administrator oder Besitzer ist.
@@ -367,8 +368,8 @@ public enum AdministrativeAction {
                     Permission.BAN_MODERATOR);
             if (target.hasPermission(performerWorld, Permission.BAN_USER)) {
                 if (!performer.hasPermission(performerWorld, Permission.BAN_MODERATOR)) {
-                    throw new NoPermissionException("Performer has not the required permission to ban.", performer,
-                            Permission.BAN_MODERATOR);
+                    throw new NoPermissionException("Performer has not the required permission to ban.",
+                            "action.user-ban.not-permitted", performer, Permission.BAN_MODERATOR);
                 }
             } else {
                 // java.lang.UnsupportedOperationException (UserTesten - executeAdministrativeActionTest)
@@ -388,7 +389,8 @@ public enum AdministrativeAction {
             performerWorld.addBannedUser(target);
 
             // Sende eine Benachrichtigung mit der Information an alle relevanten Benutzer.
-            MessageBundle messageBundle = new MessageBundle("messageKey", performer, target, args[0]);
+            MessageBundle messageBundle = new MessageBundle("action.user-ban.info-moderator",
+                    performer.getUsername(), target.getUsername(), args[0]);
             receivers.values().forEach(user -> {
                 Notification banNotification = new Notification(user, performerWorld, messageBundle);
                 user.addNotification(banNotification);
@@ -396,7 +398,8 @@ public enum AdministrativeAction {
 
             // Sende eine Benachrichtigung an den gesperrten Benutzer.
             MessageBundle targetMessageBundle =
-                    new MessageBundle("messageKey", performer, performerWorld, args[0]);
+                    new MessageBundle("action.user-ban.info-user", performer.getUsername(),
+                            performerWorld.getContextName(), args[0]);
             // Die Benachrichtigung muss zum globalen Kontext gehören, da sonst der gesperrte Benutzer niemals diese
             // Benachrichtigung lesen wird, weil er der Welt nicht mehr beitreten kann oder kurz nach Erhalt von der
             // Welt entfernt wird.
@@ -425,19 +428,19 @@ public enum AdministrativeAction {
                 throw new IllegalStateException("Performers world is not available");
             }
 
-            // Ermittle die Benutzer, die über das Entsperren informiert werden sollen und überprüfe ob der ausführende
+            // Ermittle die Benutzer, die über das Entsperren informiert werden sollen und überprüfe, ob der ausführende
             // Benutzer die entsprechende Berechtigung besitzt.
             Map<UUID, User> receivers = UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
                     Permission.BAN_MODERATOR);
             if (target.hasPermission(performerWorld, Permission.BAN_USER)) {
                 if (!performer.hasPermission(performerWorld, Permission.BAN_MODERATOR)) {
-                    throw new NoPermissionException("Performer has not the required permission to unban.", performer,
-                            Permission.BAN_MODERATOR);
+                    throw new NoPermissionException("Performer has not the required permission to unban.",
+                            "action.user-ban.not-permitted", performer, Permission.BAN_MODERATOR);
                 }
             } else {
                 if (!performer.hasPermission(performerWorld, Permission.BAN_USER)) {
-                    throw new NoPermissionException("Performer has not the required permission.", performer,
-                            Permission.BAN_USER);
+                    throw new NoPermissionException("Performer has not the required permission.",
+                            "action.user-ban.not-permitted", performer, Permission.BAN_USER);
                 }
                 receivers.putAll(UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
                         Permission.BAN_USER));
@@ -451,7 +454,8 @@ public enum AdministrativeAction {
             // Entsperre den Benutzer.
             performerWorld.removeBannedUser(target);
             // Sende eine Benachrichtigung mit der Information an alle relevanten Benutzer.
-            MessageBundle messageBundle = new MessageBundle("messageKey", performer, target, args[0]);
+            MessageBundle messageBundle = new MessageBundle("action.user-unban.info-moderator",
+                    performer.getUsername(), target.getUsername(), args[0]);
             receivers.values().forEach(user -> {
                 Notification unbanNotification = new Notification(user, performer.getWorld(), messageBundle);
                 user.addNotification(unbanNotification);
@@ -459,7 +463,8 @@ public enum AdministrativeAction {
 
             // Sende eine Benachrichtigung an den entsperrten Benutzer.
             MessageBundle targetMessageBundle =
-                    new MessageBundle("messageKey", performer, performerWorld, args[0]);
+                    new MessageBundle("action.user-unban.info-user", performer.getUsername(),
+                            performerWorld.getContextName(), args[0]);
             // Auch hier muss die Benachrichtigung im globalen Kontext gelten, da der Benutzer diese Benachrichtigung
             // nicht erhalten kann, bevor er versucht hat einer Welt beizutreten, in der er vorher gebannt war.
             Notification unbanNotification = new Notification(target, GlobalContext.getInstance(), targetMessageBundle);
@@ -483,7 +488,8 @@ public enum AdministrativeAction {
 
             // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung in dem Kontext besitzt.
             if (!performer.hasPermission(performerWorld, Permission.ASSIGN_MODERATOR)) {
-                throw new NoPermissionException("no permission", performer, Permission.ASSIGN_MODERATOR);
+                throw new NoPermissionException("no permission", "action.assign-moderator.not-permitted",
+                        performer, Permission.ASSIGN_MODERATOR);
             }
             // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt.
             if (target.hasRole(GlobalContext.getInstance(), Role.ADMINISTRATOR)
@@ -500,7 +506,8 @@ public enum AdministrativeAction {
             // Füge die Rolle hinzu.
             target.addRole(performerWorld, Role.MODERATOR);
             // Informiere den Benutzer über den Erhalt der Rolle.
-            MessageBundle messageBundle = new MessageBundle("messageKey", performer, Role.MODERATOR, args[0]);
+            MessageBundle messageBundle = new MessageBundle("role.moderator.assignment",
+                    performer.getUsername(), performerWorld.getContextName());
             Notification roleReceiveNotification = new Notification(target, performerWorld, messageBundle);
             target.addNotification(roleReceiveNotification);
         }
@@ -522,7 +529,8 @@ public enum AdministrativeAction {
 
             // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung in dem Kontext besitzt.
             if (!performer.hasPermission(performerWorld, Permission.ASSIGN_MODERATOR)) {
-                throw new NoPermissionException("no permission", performer, Permission.ASSIGN_MODERATOR);
+                throw new NoPermissionException("no permission", "action.assign-moderator.not-permitted",
+                        performer, Permission.ASSIGN_MODERATOR);
             }
             // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt.
             if (target.hasRole(GlobalContext.getInstance(), Role.ADMINISTRATOR)
@@ -539,7 +547,8 @@ public enum AdministrativeAction {
             // Entferne die Rolle.
             target.removeRole(performerWorld, Role.MODERATOR);
             // Informiere den Benutzer über den Entzug der Rolle.
-            MessageBundle messageBundle = new MessageBundle("messageKey", performer, Role.MODERATOR, args[0]);
+            MessageBundle messageBundle = new MessageBundle("role.moderator.withdrawal",
+                    performer.getUsername(), performerWorld.getContextName());
             Notification roleLoseNotification = new Notification(target, performerWorld, messageBundle);
             target.addNotification(roleLoseNotification);
         }
@@ -556,7 +565,8 @@ public enum AdministrativeAction {
             GlobalContext global = GlobalContext.getInstance();
             // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung in dem Kontext besitzt.
             if (!performer.hasPermission(global, Permission.ASSIGN_ADMINISTRATOR)) {
-                throw new NoPermissionException("no permission", performer, Permission.ASSIGN_ADMINISTRATOR);
+                throw new NoPermissionException("no permission", "action.assign-administrator.not-permitted",
+                        performer, Permission.ASSIGN_ADMINISTRATOR);
             }
             // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt.
             if (target.hasRole(GlobalContext.getInstance(), Role.OWNER)) {
@@ -575,7 +585,7 @@ public enum AdministrativeAction {
             // Füge die Rolle hinzu.
             target.addRole(global, Role.ADMINISTRATOR);
             // Informiere den Benutzer über den Erhalt der Rolle.
-            MessageBundle messageBundle = new MessageBundle("messageKey", performer, Role.ADMINISTRATOR, args[0]);
+            MessageBundle messageBundle = new MessageBundle("role.administrator.assignment", performer.getUsername());
             Notification roleReceiveNotification = new Notification(target, global, messageBundle);
             target.addNotification(roleReceiveNotification);
         }
@@ -593,7 +603,8 @@ public enum AdministrativeAction {
             GlobalContext global = GlobalContext.getInstance();
             // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung in dem Kontext besitzt.
             if (!performer.hasPermission(global, Permission.ASSIGN_ADMINISTRATOR)) {
-                throw new NoPermissionException("no permission", performer, Permission.ASSIGN_ADMINISTRATOR);
+                throw new NoPermissionException("no permission", "action.assign-administrator.not-permitted",
+                        performer, Permission.ASSIGN_ADMINISTRATOR);
             }
             // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt.
             if (target.hasRole(GlobalContext.getInstance(), Role.OWNER)) {
@@ -608,7 +619,7 @@ public enum AdministrativeAction {
             // Entferne die Rolle.
             target.removeRole(global, Role.ADMINISTRATOR);
             // Informiere den Benutzer über den Verlust der Rolle.
-            MessageBundle messageBundle = new MessageBundle("messageKey", performer, Role.ADMINISTRATOR, args[0]);
+            MessageBundle messageBundle = new MessageBundle("role.administrator.withdrawal", performer.getUsername());
             Notification roleLoseNotification = new Notification(target, global, messageBundle);
             target.addNotification(roleLoseNotification);
         }

@@ -35,7 +35,8 @@ public class AreaManagerWithdrawal extends TimedEvent {
 
         reservedContext.getWorld();
         reserver.removeRole(reservedContext, Role.AREA_MANAGER);
-        Notification roleLoseNotification = new Notification(reserver, reservedContext.getWorld(), new MessageBundle("key"));
+        Notification roleLoseNotification = new Notification(reserver, reservedContext.getWorld(),
+                new MessageBundle("role.area-manage.withdrawal", reservedContext.getContextName()));
         reserver.addNotification(roleLoseNotification);
         reservedContext.removeReservation(reservation);
     }

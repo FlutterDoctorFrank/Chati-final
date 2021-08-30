@@ -31,7 +31,8 @@ public class RoomRequest extends Notification {
     public RoomRequest(@NotNull final User owner, @NotNull final String userMessage,
                        @NotNull final User requestingUser, @NotNull final Room requestedRoom) {
         super(NotificationType.ROOM_REQUEST, owner, Objects.requireNonNull(requestingUser.getWorld()),
-                new MessageBundle("roomRequestKey", requestingUser.getUsername(), requestedRoom.getContextName(), userMessage));
+                new MessageBundle("request.room-request.notification", requestingUser.getUsername(),
+                        requestedRoom.getContextName(), userMessage));
         this.requestingUser = requestingUser;
         this.requestedRoom = requestedRoom;
     }
@@ -44,8 +45,7 @@ public class RoomRequest extends Notification {
 
         // Überprüfe, ob der anfragende Benutzer noch existiert.
         if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserId())) {
-            MessageBundle messageBundle = new MessageBundle("Der anfragende Benutzer existiert nicht mehr.");
-            TextMessage infoMessage = new TextMessage(messageBundle);
+            TextMessage infoMessage = new TextMessage("request.room-request.user-not-found", requestingUser.getUsername());
             owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
@@ -53,8 +53,8 @@ public class RoomRequest extends Notification {
         // Raumbesitzer ist.
         if (!owner.getWorld().containsPrivateRoom(requestedRoom) || !owner.hasPermission(requestedRoom,
                 Permission.MANAGE_PRIVATE_ROOM)) {
-            MessageBundle messageBundle = new MessageBundle("Du hast nicht die nötige Berechtigung für den angefragten Raum.");
-            TextMessage infoMessage = new TextMessage(messageBundle);
+            TextMessage infoMessage = new TextMessage("request.room-request.not-permitted", requestedRoom.getContextName(),
+                    Permission.MANAGE_PRIVATE_ROOM);
             owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
@@ -71,8 +71,7 @@ public class RoomRequest extends Notification {
 
         // Überprüfe, ob der anfragende Benutzer noch existiert.
         if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserId())) {
-            MessageBundle messageBundle = new MessageBundle("Der anfragende Benutzer existiert nicht mehr.");
-            TextMessage infoMessage = new TextMessage(messageBundle);
+            TextMessage infoMessage = new TextMessage("request.room-request.user-not-found", requestingUser.getUsername());
             owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
@@ -80,14 +79,14 @@ public class RoomRequest extends Notification {
         // Raumbesitzer ist.
         if (!owner.getWorld().containsPrivateRoom(requestedRoom) || !owner.hasPermission(requestedRoom,
                 Permission.MANAGE_PRIVATE_ROOM)) {
-            MessageBundle messageBundle = new MessageBundle("Du hast nicht die nötige Berechtigung für den angefragten Raum.");
-            TextMessage infoMessage = new TextMessage(messageBundle);
+            TextMessage infoMessage = new TextMessage("request.room-request.not-permitted", requestedRoom.getContextName(),
+                    Permission.MANAGE_PRIVATE_ROOM);
             owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
         // Benachrichtige den anfragenden Benutzer über die abgelehnte Raumanfrage
         Notification declineNotification = new Notification(requestingUser, owner.getWorld(),
-                new MessageBundle("messageKey"));
+                new MessageBundle("request.room-request.declined", owner.getUsername()));
         requestingUser.addNotification(declineNotification);
     }
 }

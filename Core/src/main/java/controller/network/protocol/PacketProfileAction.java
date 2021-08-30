@@ -3,6 +3,7 @@ package controller.network.protocol;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import model.MessageBundle;
 import model.user.Avatar;
 import model.user.Status;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +28,7 @@ public class PacketProfileAction implements Packet<PacketListener> {
     private Status status;
 
     private Action action;
-    private String message;
+    private MessageBundle message;
     private boolean success;
 
     /**
@@ -100,7 +101,7 @@ public class PacketProfileAction implements Packet<PacketListener> {
      * @param success true, wenn die Aktion erfolgreich war, ansonsten false.
      */
     public PacketProfileAction(@NotNull final PacketProfileAction previous,
-                               @Nullable final String message, final boolean success) {
+                               @Nullable final MessageBundle message, final boolean success) {
         this.name = previous.getName();
         this.password = previous.getPassword();
         this.newPassword = previous.getNewPassword();
@@ -114,11 +115,11 @@ public class PacketProfileAction implements Packet<PacketListener> {
      * Ausschließlich für die Erzeugung einer Antwort des Netzwerkpakets zum Login von der Server-Anwendung.
      * @param previous das Netzwerkpaket auf das geantwortet werden soll.
      * @param userId die Benutzer-ID des angemeldeten Benutzers.
-     * @param message die Nachricht, die durch die Aktion erzeugt wurde. Null, falls keine erzeugt wurde.
+     * @param message der Schlüssel der Nachricht, die durch die Aktion erzeugt wurde. Null, falls keine erzeugt wurde.
      * @param success true, wenn die Aktion erfolgreich war, ansonsten false.
      */
     public PacketProfileAction(@NotNull final PacketProfileAction previous, @NotNull final UUID userId,
-                               @NotNull final Avatar avatar, @Nullable final String message, final boolean success) {
+                               @NotNull final Avatar avatar, @Nullable final MessageBundle message, final boolean success) {
         this(previous, message, success);
 
         this.userId = userId;
@@ -139,7 +140,7 @@ public class PacketProfileAction implements Packet<PacketListener> {
         PacketUtils.writeNullableEnum(output, this.avatar);
         PacketUtils.writeNullableEnum(output, this.status);
         PacketUtils.writeEnum(output, this.action);
-        output.writeString(this.message);
+        PacketUtils.writeNullableBundle(kryo, output, this.message);
         output.writeBoolean(this.success);
     }
 
@@ -152,7 +153,7 @@ public class PacketProfileAction implements Packet<PacketListener> {
         this.avatar = PacketUtils.readNullableEnum(input, Avatar.class);
         this.status = PacketUtils.readNullableEnum(input, Status.class);
         this.action = PacketUtils.readEnum(input, Action.class);
-        this.message = input.readString();
+        this.message = PacketUtils.readNullableBundle(kryo, input);
         this.success = input.readBoolean();
     }
 
@@ -223,7 +224,7 @@ public class PacketProfileAction implements Packet<PacketListener> {
      * Gibt den Nachrichten-Schlüssel einer Fehlermeldung zurück.
      * @return den Schlüssel der Fehlernachricht, oder null.
      */
-    public @Nullable String getMessage() {
+    public @Nullable MessageBundle getMessage() {
         return this.message;
     }
 

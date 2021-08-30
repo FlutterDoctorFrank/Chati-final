@@ -1,7 +1,6 @@
 package model.communication;
 
-import controller.network.ClientSender;
-import model.MessageBundle;
+import controller.network.ClientSender.SendAction;
 import model.communication.message.MessageType;
 import model.communication.message.TextMessage;
 import model.communication.message.VoiceMessage;
@@ -38,8 +37,9 @@ public class CommunicationHandler {
      */
     public static void handleTextMessage(@NotNull final User sender, @NotNull final String receivedMessage) {
         if (receivedMessage.matches(CHAT_COMMAND)) {
+            String commandMessage = receivedMessage.substring(1);
+
             for (ChatCommand command : ChatCommand.values()) {
-                String commandMessage = receivedMessage.substring(1);
                 if (commandMessage.matches(command.commandPattern)) {
                     command.handle(sender, commandMessage);
                     return;
@@ -47,9 +47,8 @@ public class CommunicationHandler {
             }
             // Informiere den kommunizierenden Benutzer darüber, dass er versucht hat, einen nicht existierenden
             // Chatbefehl zu verwenden.
-            MessageBundle messageBundle = new MessageBundle("Dieser Chatbefehl existiert nicht.");
-            TextMessage infoMessage = new TextMessage(messageBundle);
-            sender.send(ClientSender.SendAction.MESSAGE, infoMessage);
+            TextMessage infoMessage = new TextMessage("chat.command.not-found", commandMessage.split("\\s")[0]);
+            sender.send(SendAction.MESSAGE, infoMessage);
         } else {
             handleStandardMessage(sender, receivedMessage);
         }
@@ -70,18 +69,16 @@ public class CommunicationHandler {
         // Überprüfe, ob in dem Bereich des Benutzers Textnachrichten versendet werden können.
         Area communicationContext = sender.getLocation().getArea();
         if (!communicationContext.canCommunicateWith(CommunicationMedium.TEXT)) {
-            MessageBundle messageBundle = new MessageBundle("In diesem Bereich ist keine Kommunikation in Schriftform möglich.");
-            TextMessage infoMessage = new TextMessage(messageBundle);
-            sender.send(ClientSender.SendAction.MESSAGE, infoMessage);
+            TextMessage infoMessage = new TextMessage("chat.standard.not-possible", communicationContext.getContextName());
+            sender.send(SendAction.MESSAGE, infoMessage);
             return;
         }
 
         // Überprüfe, ob der sendende Benutzer in dem Kontext stummgeschaltet ist.
         if (communicationContext.isMuted(sender)) {
             // Informiere den kommunizierenden Benutzer darüber, dass er in dem Kontext stummgeschaltet ist.
-            MessageBundle messageBundle = new MessageBundle("Du bist in diesem Bereich stummgeschaltet.");
-            TextMessage infoMessage = new TextMessage(messageBundle);
-            sender.send(ClientSender.SendAction.MESSAGE, infoMessage);
+            TextMessage infoMessage = new TextMessage("chat.standard.muted", communicationContext.getContextName());
+            sender.send(SendAction.MESSAGE, infoMessage);
             return;
         }
 
@@ -91,7 +88,7 @@ public class CommunicationHandler {
 
         // Versende die Textnachricht.
         TextMessage textMessage = new TextMessage(sender, message, MessageType.STANDARD);
-        receivers.values().forEach(user -> user.send(ClientSender.SendAction.MESSAGE, textMessage));
+        receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
     }
 
     /**
@@ -120,7 +117,7 @@ public class CommunicationHandler {
 
         // Versende die Sprachnachricht.
         VoiceMessage voiceMessage = new VoiceMessage(sender, voiceData);
-        receivers.values().forEach(user -> user.send(ClientSender.SendAction.VOICE, voiceMessage));
+        receivers.values().forEach(user -> user.send(SendAction.VOICE, voiceMessage));
     }
 
     /**
@@ -160,19 +157,17 @@ public class CommunicationHandler {
                     if (receiver.getLocation() == null) {
                         throw new IllegalStateException("Receivers location is not available");
                     }
-                } catch (UserNotFoundException e) {
+                } catch (UserNotFoundException ex) {
                     // Informiere den kommunizierenden Benutzer darüber, dass kein Benutzer mit dem Namen existiert.
-                    MessageBundle messageBundle = new MessageBundle("Es existiert kein Benutzer mit diesem Namen");
-                    TextMessage infoMessage = new TextMessage(messageBundle);
-                    sender.send(ClientSender.SendAction.MESSAGE, infoMessage);
+                    TextMessage infoMessage = new TextMessage("chat.command.whisper.user-not-found", username);
+                    sender.send(SendAction.MESSAGE, infoMessage);
                     return;
                 }
 
                 // Überprüfe, ob der Benutzer mit sich selbst kommunizieren möchte.
                 if (sender.equals(receiver)) {
-                    MessageBundle messageBundle = new MessageBundle("Mit sich selbst zu flüstern ist ein wenig merkwürdig.");
-                    TextMessage infoMessage = new TextMessage(messageBundle);
-                    sender.send(ClientSender.SendAction.MESSAGE, infoMessage);
+                    TextMessage infoMessage = new TextMessage("chat.command.whisper.illegal-user");
+                    sender.send(SendAction.MESSAGE, infoMessage);
                     return;
                 }
 
@@ -191,16 +186,15 @@ public class CommunicationHandler {
                         && !sender.hasPermission(commonContext, Permission.CONTACT_USER))
                         || sender.isIgnoring(receiver) || receiver.isIgnoring(sender)) {
                     // Informiere den kommunizierenden Benutzer darüber, dass die Flüsterkommunikation nicht möglich ist.
-                    MessageBundle messageBundle = new MessageBundle("Eine Flüsterkommunikation mit diesem Benutzer ist nicht möglich.");
-                    TextMessage infoMessage = new TextMessage(messageBundle);
-                    sender.send(ClientSender.SendAction.MESSAGE, infoMessage);
+                    TextMessage infoMessage = new TextMessage("chat.command.whisper.not-possible", receiver.getUsername());
+                    sender.send(SendAction.MESSAGE, infoMessage);
                     return;
                 }
 
                 // Versende die Textnachricht an den Benutzer.
                 TextMessage textMessage = new TextMessage(sender, sendMessage, MessageType.WHISPER);
-                sender.send(ClientSender.SendAction.MESSAGE, textMessage);
-                receiver.send(ClientSender.SendAction.MESSAGE, textMessage);
+                sender.send(SendAction.MESSAGE, textMessage);
+                receiver.send(SendAction.MESSAGE, textMessage);
             }
         },
 
@@ -224,18 +218,17 @@ public class CommunicationHandler {
                 if (!sender.hasPermission(communicationRoom, Permission.CONTACT_CONTEXT)) {
                     // Informiere den kommunizierenden Benutzer darüber, dass er nicht die Berechtigung besitzt, um diesen
                     // Chatbefehl zu verwenden.
-                    MessageBundle messageBundle = new MessageBundle("Du hast nicht die nötige Berechtigung um diesen Chatbefehl zu benutzen.");
-                    TextMessage infoMessage = new TextMessage(messageBundle);
-                    sender.send(ClientSender.SendAction.MESSAGE, infoMessage);
+                    TextMessage infoMessage = new TextMessage("chat.command.room.not-permitted", communicationRoom.getContextName(),
+                            Permission.CONTACT_CONTEXT);
+                    sender.send(SendAction.MESSAGE, infoMessage);
                     return;
                 }
 
                 // Überprüfe, ob der kommunizierende Benutzer in dem Raum oder einem übergeordneten Kontext stummgeschaltet ist.
                 if (communicationRoom.isMuted(sender)) {
                     // Informiere den kommunizierenden Benutzer darüber, dass er in dem Kontext stummgeschaltet ist.
-                    MessageBundle messageBundle = new MessageBundle("Du bist in diesem Bereich stummgeschaltet.");
-                    TextMessage infoMessage = new TextMessage(messageBundle);
-                    sender.send(ClientSender.SendAction.MESSAGE, infoMessage);
+                    TextMessage infoMessage = new TextMessage("chat.standard.muted", communicationRoom.getContextName());
+                    sender.send(SendAction.MESSAGE, infoMessage);
                     return;
                 }
 
@@ -245,7 +238,7 @@ public class CommunicationHandler {
 
                 // Versende die Textnachricht.
                 TextMessage textMessage = new TextMessage(sender, sendMessage, MessageType.ROOM);
-                receivers.values().forEach(user -> user.send(ClientSender.SendAction.MESSAGE, textMessage));
+                receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
             }
         },
 
@@ -273,18 +266,17 @@ public class CommunicationHandler {
                 if (!sender.hasPermission(communicationWorld, Permission.CONTACT_CONTEXT)) {
                     // Informiere den kommunizierenden Benutzer darüber, dass er nicht die Berechtigung besitzt, um diesen
                     // Chatbefehl zu verwenden.
-                    MessageBundle messageBundle = new MessageBundle("Du hast nicht die nötige Berechtigung um diesen Chatbefehl zu benutzen.");
-                    TextMessage infoMessage = new TextMessage(messageBundle);
-                    sender.send(ClientSender.SendAction.MESSAGE, infoMessage);
+                    TextMessage infoMessage = new TextMessage("chat.command.world.not-permitted",
+                            communicationWorld.getContextName(), Permission.CONTACT_CONTEXT);
+                    sender.send(SendAction.MESSAGE, infoMessage);
                     return;
                 }
 
                 // Überprüfe, ob der kommunizierende Benutzer in dem Raum oder einem übergeordneten Kontext stummgeschaltet ist.
                 if (communicationWorld.isMuted(sender)) {
                     // Informiere den kommunizierenden Benutzer darüber, dass er in dem Kontext stummgeschaltet ist.
-                    MessageBundle messageBundle = new MessageBundle("Du bist in diesem Bereich stummgeschaltet.");
-                    TextMessage infoMessage = new TextMessage(messageBundle);
-                    sender.send(ClientSender.SendAction.MESSAGE, infoMessage);
+                    TextMessage infoMessage = new TextMessage("chat.standard.muted", communicationWorld.getContextName());
+                    sender.send(SendAction.MESSAGE, infoMessage);
                     return;
                 }
 
@@ -294,7 +286,7 @@ public class CommunicationHandler {
 
                 // Versende die Textnachricht.
                 TextMessage textMessage = new TextMessage(sender, sendMessage, MessageType.WORLD);
-                receivers.values().forEach(user -> user.send(ClientSender.SendAction.MESSAGE, textMessage));
+                receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
             }
         };
 

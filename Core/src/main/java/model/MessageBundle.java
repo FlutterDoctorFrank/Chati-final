@@ -11,7 +11,7 @@ import java.util.Objects;
 public class MessageBundle {
 
     private final String messageKey;
-    private Object[] arguments;
+    private final Object[] arguments;
 
     public MessageBundle(@NotNull final String messageKey) {
         this.messageKey = messageKey;
@@ -37,14 +37,6 @@ public class MessageBundle {
      */
     public @NotNull Object[] getArguments() {
         return arguments;
-    }
-
-    /**
-     * Sets die Argumente zum Formatieren der Nachricht.
-     * @param arguments die neuen Argumente.
-     */
-    public void setArguments(@NotNull final Object[] arguments) {
-        this.arguments = arguments;
     }
 
     @Override

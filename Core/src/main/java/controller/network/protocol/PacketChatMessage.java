@@ -86,7 +86,7 @@ public class PacketChatMessage implements Packet<PacketListener> {
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeNullableEnum(output, this.type);
-        PacketUtils.writeNullableBundle(output, this.bundle);
+        PacketUtils.writeNullableBundle(kryo, output, this.bundle);
         PacketUtils.writeNullableUniqueId(output, this.senderId);
         output.writeString(this.message);
         kryo.writeObjectOrNull(output, this.timestamp, LocalDateTime.class);
@@ -95,7 +95,7 @@ public class PacketChatMessage implements Packet<PacketListener> {
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.type = PacketUtils.readNullableEnum(input, MessageType.class);
-        this.bundle = PacketUtils.readNullableBundle(input);
+        this.bundle = PacketUtils.readNullableBundle(kryo, input);
         this.senderId = PacketUtils.readNullableUniqueId(input);
         this.message = input.readString();
         this.timestamp = kryo.readObjectOrNull(input, LocalDateTime.class);

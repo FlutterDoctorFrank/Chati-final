@@ -56,10 +56,11 @@ public class AreaPlanner extends Interactable {
                                   @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
         super.executeMenuOption(user, menuOption, args);
 
-        if (menuOption == MENU_OPTION_REQUEST_ROLE) {// Stellt eine Anfrage zur Reservierung zum Erhalt der Rolle des Bereichsberechtigten im übergeordneten
+        if (menuOption == MENU_OPTION_REQUEST_ROLE) {
+            // Stellt eine Anfrage zur Reservierung zum Erhalt der Rolle des Bereichsberechtigten im übergeordneten
             // Kontext.
             if (args.length < 2) {
-                throw new IllegalMenuActionException("", "Die angegeben Argument sind nicht ausreichend.");
+                throw new IllegalMenuActionException("", "object.arguments.to-few");
             }
             if (user.getWorld() == null) {
                 throw new IllegalStateException("Users world is not available");
@@ -71,16 +72,16 @@ public class AreaPlanner extends Interactable {
                 from = LocalDateTime.parse(args[0]);
                 to = LocalDateTime.parse(args[1]);
             } catch (DateTimeParseException e) {
-                throw new IllegalMenuActionException("", "Ungültige Zeit.");
+                throw new IllegalMenuActionException("", "object.area-planner.invalid-time");
             }
             if (from.isAfter(to) || from.getMinute() != 0 || to.getMinute() != 0 || to.getHour() - from.getHour() != 1) {
-                throw new IllegalMenuActionException("", "Ungültige Zeit.");
+                throw new IllegalMenuActionException("", "object.area-planner.invalid-time");
             }
             if (getParent().isReservedBy(user)) {
-                throw new IllegalMenuActionException("", "Du hast diesen Bereich bereits einmal reserviert.");
+                throw new IllegalMenuActionException("", "object.area-planner.already-reserved", getParent().getContextName());
             }
             if (getParent().isReservedAt(from, to)) {
-                throw new IllegalMenuActionException("", "Dieser Zeitraum ist bereits belegt. Bitte probiere einen anderen.");
+                throw new IllegalMenuActionException("", "object.area-planner.already-assigned", getParent().getContextName());
             }
 
             Map<UUID, User> receivers = UserAccountManager.getInstance().getUsersWithPermission(user.getWorld(), Permission.ASSIGN_AREA_MANAGER);

@@ -52,7 +52,7 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeUniqueId(output, this.notification.getNotificationId());
         PacketUtils.writeContextId(output, this.notification.getContextId());
-        PacketUtils.writeBundle(output, this.notification.getMessage());
+        PacketUtils.writeBundle(kryo, output, this.notification.getMessage());
         kryo.writeObject(output, this.notification.getTimestamp());
         PacketUtils.writeEnum(output, this.notification.getType());
     }
@@ -60,7 +60,7 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.notification = new Notification(PacketUtils.readUniqueId(input), PacketUtils.readContextId(input),
-                PacketUtils.readBundle(input), kryo.readObject(input, LocalDateTime.class),
+                PacketUtils.readBundle(kryo, input), kryo.readObject(input, LocalDateTime.class),
                 PacketUtils.readEnum(input, NotificationType.class));
     }
 

@@ -41,11 +41,7 @@ public abstract class RandomTest {
         final Object[] arguments = new Object[randomInt(3)];
 
         for (int index = 0; index < arguments.length; index++) {
-            if (randomBoolean()) {
-                arguments[index] = randomBoolean() ? randomUniqueId() : randomContextId();
-            } else {
-                arguments[index] = randomString();
-            }
+            arguments[index] = randomString();
         }
 
         return new MessageBundle(randomString(), arguments);

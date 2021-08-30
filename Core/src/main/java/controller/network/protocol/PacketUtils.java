@@ -1,5 +1,6 @@
 package controller.network.protocol;
 
+import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import model.MessageBundle;
@@ -44,64 +45,43 @@ public class PacketUtils {
         return object;
     }
 
-    public static void writeNullableBundle(@NotNull final Output output, @Nullable final MessageBundle bundle) {
+    public static void writeNullableBundle(@NotNull final Kryo kryo, @NotNull final Output output,
+                                           @Nullable final MessageBundle bundle) {
         if (bundle != null) {
             output.writeBoolean(true);
-            writeBundle(output, bundle);
+            writeBundle(kryo, output, bundle);
         } else {
             output.writeBoolean(false);
         }
     }
 
-    public static void writeBundle(@NotNull final Output output, @NotNull final MessageBundle bundle) {
+    public static void writeBundle(@NotNull final Kryo kryo, @NotNull final Output output,
+                                   @NotNull final MessageBundle bundle) {
         output.writeString(bundle.getMessageKey());
         output.writeVarInt(bundle.getArguments().length, true);
 
         for (final Object argument : bundle.getArguments()) {
-            if (argument instanceof UUID) {
-                output.writeVarInt(1, true);
-                writeUniqueId(output, (UUID) argument);
-            } else if (argument instanceof ContextID) {
-                output.writeVarInt(2, true);
-                writeContextId(output, (ContextID) argument);
-            } else {
-                output.writeVarInt(0, true);
-                output.writeString(argument.toString());
-            }
+            kryo.writeClassAndObject(output, argument);
         }
     }
 
-    public static @Nullable MessageBundle readNullableBundle(@NotNull final Input input) {
+    public static @Nullable MessageBundle readNullableBundle(@NotNull final Kryo kryo, @NotNull final Input input) {
         if (input.readBoolean()) {
-            return readBundle(input);
+            return readBundle(kryo, input);
         }
 
         return null;
     }
 
-    public static @NotNull MessageBundle readBundle(@NotNull final Input input) {
-        final MessageBundle bundle = new MessageBundle(input.readString());
+    public static @NotNull MessageBundle readBundle(@NotNull final Kryo kryo, @NotNull final Input input) {
+        final String key = input.readString();
         final Object[] arguments = new Object[input.readVarInt(true)];
 
         for (int index = 0; index < arguments.length; index++) {
-            switch (input.readVarInt(true)) {
-                case 1:
-                    arguments[index] = readUniqueId(input);
-                    break;
-
-                case 2:
-                    arguments[index] = readContextId(input);
-                    break;
-
-                case 0:
-                    arguments[index] = input.readString();
-                    break;
-            }
+            arguments[index] = kryo.readClassAndObject(input);
         }
 
-        bundle.setArguments(arguments);
-
-        return bundle;
+        return new MessageBundle(key, arguments);
     }
 
     public static void writeNullableContextId(@NotNull final Output output, @Nullable final ContextID contextId) {

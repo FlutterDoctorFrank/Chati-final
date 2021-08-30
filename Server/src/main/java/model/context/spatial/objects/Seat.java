@@ -1,7 +1,6 @@
 package model.context.spatial.objects;
 
-import controller.network.ClientSender;
-import model.MessageBundle;
+import controller.network.ClientSender.SendAction;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.communication.message.TextMessage;
@@ -24,7 +23,7 @@ public class Seat extends Interactable {
     private static final int MENU_OPTION_SIT = 1;
 
     /**
-     * Erzeugt eines neue Instanz des Seat.
+     * Erzeugt eine neue Instanz des Seat.
      * @param objectName Name des Objekts.
      * @param parent Übergeordneter Kontext.
      * @param expanse Räumliche Ausdehnung des Kontexts.
@@ -50,15 +49,14 @@ public class Seat extends Interactable {
                 user.setMovable(true);
             } else {
                 // Teile dem Benutzer mit, dass der Platz bereits von einem anderen Benutzer belegt ist.
-                MessageBundle messageBundle = new MessageBundle("Dieser Platz ist bereits belegt.");
-                TextMessage infoMessage = new TextMessage(messageBundle);
-                user.send(ClientSender.SendAction.MESSAGE, infoMessage);
+                TextMessage infoMessage = new TextMessage("object.seat.already-occupied");
+                user.send(SendAction.MESSAGE, infoMessage);
             }
         } else {
             // Öffne das Menü beim Benutzer.
             user.setCurrentInteractable(this);
             user.setMovable(false);
-            user.send(ClientSender.SendAction.OPEN_MENU, this);
+            user.send(SendAction.OPEN_MENU, this);
         }
     }
 
@@ -68,7 +66,7 @@ public class Seat extends Interactable {
         super.executeMenuOption(user, menuOption, args);
 
         if (menuOption == MENU_OPTION_SIT) { // Bewege den Benutzer auf den Platz.
-            user.send(ClientSender.SendAction.CLOSE_MENU, this);
+            user.send(SendAction.CLOSE_MENU, this);
             try {
                 user.setMovable(true);
                 user.move(expanse.getBottomLeft().getPosX(), expanse.getBottomLeft().getPosY(), false);

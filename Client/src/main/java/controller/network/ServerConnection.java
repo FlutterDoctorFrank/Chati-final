@@ -219,15 +219,12 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             return;
                         }
 
-                        /*
                         //TODO Vielleicht eine showInfoMessage(LocalDateTime timestamp, MessageBundle message) Methode?
-                        this.manager.getView().showChatMessage(null, packet.getTimestamp(), packet.getMessageType(), packet.getBundle().getMessageKey());
-                         */
                         break;
                 }
+
                 this.manager.getView().showChatMessage(packet.getSenderId(), packet.getTimestamp(),
                         packet.getMessageType(), packet.getMessage(), packet.getBundle());
-
             } catch (UserNotFoundException ex) {
                 // Unbekannter Sender.
                 LOGGER.warning("Server tried to send message from unknown sender with id: " + ex.getUserID());
@@ -257,8 +254,9 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
             try {
                 this.manager.getView().playVoiceData(packet.getSenderId(), packet.getTimestamp(), packet.getVoiceData());
-            } catch (UserNotFoundException e) {
-                // TODO Sven: Fehlerbehandlung
+            } catch (UserNotFoundException ex) {
+                // Unbekannter Sender.
+                LOGGER.warning("Server tried to send voice message from unknown sender with id: " + ex.getUserID());
             }
         } else {
             this.logUnexpectedPacket(packet, "Can not receive voice message while user is not in a world");
@@ -273,7 +271,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         if (this.worldId != null) {
-            this.manager.getView().menuActionResponse(packet.isSuccess(), packet.getMessage());
+            this.manager.getView().menuActionResponse(packet.isSuccess(),
+                    packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
         } else {
             this.logUnexpectedPacket(packet, "Can not receive menu option while user is not in a world");
         }
@@ -347,15 +346,18 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         this.worldId = packet.getContextId();
                     }
 
-                    this.manager.getView().joinWorldResponse(packet.isSuccess(), packet.getMessage());
+                    this.manager.getView().joinWorldResponse(packet.isSuccess(),
+                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
                     break;
 
                 case CREATE:
-                    this.manager.getView().createWorldResponse(packet.isSuccess(), packet.getMessage());
+                    this.manager.getView().createWorldResponse(packet.isSuccess(),
+                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
                     break;
 
                 case DELETE:
-                    this.manager.getView().deleteWorldResponse(packet.isSuccess(), packet.getMessage());
+                    this.manager.getView().deleteWorldResponse(packet.isSuccess(),
+                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
                     break;
             }
         }
@@ -371,7 +373,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
             switch (packet.getAction()) {
                 case REGISTER:
-                    this.manager.getView().registrationResponse(packet.isSuccess(), packet.getMessage());
+                    this.manager.getView().registrationResponse(packet.isSuccess(),
+                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
                     break;
 
                 case LOGIN:
@@ -395,7 +398,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                                 Status.ONLINE, packet.getAvatar());
                     }
 
-                    this.manager.getView().loginResponse(packet.isSuccess(), packet.getMessage());
+                    this.manager.getView().loginResponse(packet.isSuccess(),
+                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
                     break;
             }
         } else {
@@ -415,11 +419,13 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         this.getIntern().setAvatar(packet.getAvatar());
                     }
 
-                    this.manager.getView().avatarChangeResponse(packet.isSuccess(), packet.getMessage());
+                    this.manager.getView().avatarChangeResponse(packet.isSuccess(),
+                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
                     break;
 
                 case CHANGE_PASSWORD:
-                    this.manager.getView().passwordChangeResponse(packet.isSuccess(), packet.getMessage());
+                    this.manager.getView().passwordChangeResponse(packet.isSuccess(),
+                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
                     break;
 
                 case LOGOUT:
@@ -433,7 +439,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                     this.manager.getUserManager().logout();
                     this.worldId = null;
                     this.userId = null;
-                    this.manager.getView().deleteAccountResponse(packet.isSuccess(), packet.getMessage());
+                    this.manager.getView().deleteAccountResponse(packet.isSuccess(),
+                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
                     break;
             }
         }

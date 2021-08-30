@@ -45,6 +45,13 @@ public class TextMessage extends Message implements ITextMessage {
         this.messageType = MessageType.INFO;
     }
 
+    public TextMessage(@NotNull final String key, @NotNull final Object... arguments) {
+        super(null);
+        this.textMessage = null;
+        this.messageBundle = new MessageBundle(key, arguments);
+        this.messageType = MessageType.INFO;
+    }
+
     @Override
     public @Nullable String getTextMessage() {
         return textMessage;

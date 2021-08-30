@@ -1,6 +1,5 @@
 package model.context.spatial.objects;
 
-import controller.network.ClientSender;
 import controller.network.ClientSender.SendAction;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
