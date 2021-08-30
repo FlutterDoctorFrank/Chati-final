@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
-import model.role.Permission;
 import model.role.Role;
 import model.user.AdministrativeAction;
 import model.user.IInternUserView;
@@ -50,7 +49,6 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
     }
 
     protected void create() {
-        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
         userInfoContainer = new UserInfoContainer(user);
 
         statusImage = new Image();
@@ -66,19 +64,21 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             case BUSY:
                 statusImage.setDrawable(Assets.BUSY_ICON);
                 statusImage.addListener(new InformationToolTip("Beschäftigt"));
+                break;
             case INVISIBLE:
                 statusImage.setDrawable(Assets.INVISIBLE_ICON);
                 statusImage.addListener(new InformationToolTip("Unsichtbar"));
+                break;
             case OFFLINE:
                 statusImage.setDrawable(Assets.OFFLINE_ICON);
                 statusImage.addListener(new InformationToolTip("Offline"));
                 break;
             default:
-                throw new IllegalArgumentException("No valid user status.");
+                throw new IllegalArgumentException("Invalid user status");
         }
 
         currentWorldImage = new Image();
-        if (user.isInCurrentWorld()) {
+        if (user.isOnline() && user.isInCurrentWorld()) {
             currentWorldImage.setDrawable(Assets.CURRENT_WORLD_ICON);
             currentWorldImage.addListener(new InformationToolTip("In deiner Welt!"));
         }

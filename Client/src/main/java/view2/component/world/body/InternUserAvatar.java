@@ -16,6 +16,7 @@ public class InternUserAvatar extends UserAvatar {
 
     private final LinkedList<Direction> currentDirectionalInputs;
     private Vector2 oldPosition;
+    private boolean isTeleporting;
     private boolean isSprinting;
     private boolean canInteract;
 
@@ -38,9 +39,11 @@ public class InternUserAvatar extends UserAvatar {
     @Override
     public void update() {
         if (user.isTeleporting()) {
+            isTeleporting = true;
             teleport();
             return;
         }
+        isTeleporting = false;
         oldPosition = body.getPosition().cpy();
         Direction currentDirection = getCurrentDirectionalInput();
         float velocity = DEFAULT_VELOCITY;
@@ -114,7 +117,8 @@ public class InternUserAvatar extends UserAvatar {
     }
 
     public void sendPosition() {
-        if (!oldPosition.epsilonEquals(getPosition())) {
+        if (!isTeleporting && !oldPosition.epsilonEquals(getPosition())) {
+            isTeleporting = false;
             Chati.CHATI.getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
                     getPosition().x * WorldCamera.PPM, getPosition().y * WorldCamera.PPM, isSprinting);
         }

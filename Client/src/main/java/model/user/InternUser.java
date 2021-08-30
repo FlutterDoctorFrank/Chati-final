@@ -1,6 +1,5 @@
 package model.user;
 
-import com.badlogic.gdx.Gdx;
 import model.MessageBundle;
 import model.context.Context;
 import model.context.ContextID;
@@ -14,8 +13,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 

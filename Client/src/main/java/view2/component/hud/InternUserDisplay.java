@@ -141,7 +141,7 @@ public class InternUserDisplay extends AbstractTable {
 
             onlineStatusImage = new Image(Assets.ONLINE_ICON);
             busyStatusImage = new Image(Assets.BUSY_ICON);
-            invisibleStatusImage = new Image(Assets.OFFLINE_ICON);
+            invisibleStatusImage = new Image(Assets.INVISIBLE_ICON);
 
             onlineStatusButton = new TextButton("", Assets.getNewSkin());
             onlineStatusButton.addListener(new InformationToolTip("Online"));

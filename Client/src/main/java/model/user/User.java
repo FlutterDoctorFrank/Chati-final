@@ -224,18 +224,22 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public Status getStatus() {
-        if (status != Status.INVISIBLE) {
-            return status;
-        }
-        InternUser internUser = UserManager.getInstance().getInternUser();
-        return !this.isInCurrentRoom && !internUser.hasPermission(Permission.SEE_INVISIBLE_USERS)
-                ? Status.OFFLINE : Status.INVISIBLE;
+    public Avatar getAvatar() {
+        return avatar;
     }
 
     @Override
-    public Avatar getAvatar() {
-        return avatar;
+    public Status getStatus() {
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        return (this.equals(internUser) || status != Status.INVISIBLE) ? status
+                : (this.isInCurrentRoom ? Status.ONLINE
+                : (!internUser.hasPermission(Permission.SEE_INVISIBLE_USERS) ? Status.OFFLINE
+                : (Status.INVISIBLE)));
+    }
+
+    @Override
+    public boolean isOnline() {
+        return getStatus() != Status.OFFLINE;
     }
 
     @Override
@@ -251,14 +255,14 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canInvite() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return internUser.isInCurrentRoom && internUser.isInPrivateRoom && !this.isInCurrentRoom
+        return this.isOnline() && internUser.isInCurrentRoom && internUser.isInPrivateRoom && !this.isInCurrentRoom
                 && hasPermission(Permission.MANAGE_PRIVATE_ROOM) && this.status != Status.BUSY;
     }
 
     @Override
     public boolean canKick() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return internUser.isInCurrentRoom && this.isInCurrentRoom && internUser.isInPrivateRoom
+        return this.isOnline() && internUser.isInCurrentRoom && this.isInCurrentRoom && internUser.isInPrivateRoom
                 && internUser.hasPermission(Permission.MANAGE_PRIVATE_ROOM)
                 && !this.hasPermission(Permission.ENTER_PRIVATE_ROOM);
     }
@@ -266,14 +270,14 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canTeleportTo() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return (!isInPrivateRoom || internUser.hasPermission(Permission.ENTER_PRIVATE_ROOM))
+        return this.isOnline() && (!isInPrivateRoom || internUser.hasPermission(Permission.ENTER_PRIVATE_ROOM))
                 && ((isFriend && this.status != Status.BUSY) || internUser.hasPermission(Permission.TELEPORT_TO_USER));
     }
 
     @Override
     public boolean canReport() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return internUser.isInCurrentWorld && this.isInCurrentWorld
+        return this.isOnline() && internUser.isInCurrentWorld && this.isInCurrentWorld
                 && !internUser.hasPermission(Permission.BAN_MODERATOR) && !this.hasPermission(Permission.BAN_MODERATOR)
                 && (!internUser.hasPermission(Permission.BAN_USER) || this.hasPermission(Permission.BAN_USER));
     }
@@ -281,7 +285,7 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canMute() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return internUser.isInCurrentWorld() && this.isInCurrentWorld()
+        return this.isOnline() && internUser.isInCurrentWorld() && this.isInCurrentWorld()
                 && internUser.hasPermission(Permission.MUTE) && !this.hasPermission(Permission.MUTE);
     }
 
@@ -296,8 +300,7 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canAssignModerator() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return internUser.isInCurrentWorld() && this.isInCurrentWorld()
-                && internUser.hasPermission(Permission.ASSIGN_MODERATOR)
+        return internUser.hasPermission(Permission.ASSIGN_MODERATOR)
                 && !this.hasRole(Role.ADMINISTRATOR) && !this.hasRole(Role.OWNER);
     }
 

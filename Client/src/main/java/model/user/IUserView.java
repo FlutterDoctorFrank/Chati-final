@@ -27,16 +27,22 @@ public interface IUserView {
     String getUsername();
 
     /**
-     * Gibt den aktuellen Status des Benutzers zurück.
-     * @return Status des Benutzers
-     */
-    Status getStatus();
-
-    /**
      * Gibt den aktuell ausgewählten Avatar des Benutzers zurück.
      * @return Avatar des Benutzers
      */
     Avatar getAvatar();
+
+    /**
+     * Gibt den Status zurück, der für diesen Benutzer angezeigt werden soll.
+     * @return Status des Benutzers.
+     */
+    Status getStatus();
+
+    /**
+     * Gibt zurück, ob der Benutzer als angemeldet angezeigt werden soll.
+     * @return true, wenn der Benutzer als angemeldet angezeigt werden soll, sonst false.
+     */
+    boolean isOnline();
 
     /**
      * Gibt zurück, ob der Benutzer als Freund markiert ist.
