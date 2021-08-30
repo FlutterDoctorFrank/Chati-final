@@ -5,21 +5,21 @@ filter: Nearest,Nearest
 repeat: none
 Bruce_run
   rotate: false
-  xy: 0, 46
+  xy: 2, 50
   size: 768, 48
   orig: 768, 64
   offset: 0, 0
   index: -1
 Bruce_sit
   rotate: false
-  xy: 0, 0
+  xy: 2, 2
   size: 380, 46
   orig: 384, 64
   offset: 2, 2
   index: -1
 Bruce_idle
   rotate: false
-  xy: 768, 48
+  xy: 772, 52
   size: 128, 46
   orig: 128, 64
   offset: 0, 0
