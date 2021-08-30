@@ -256,13 +256,13 @@ public class User implements IUserController, IUserView {
     public boolean canInvite() {
         InternUser internUser = UserManager.getInstance().getInternUser();
         return this.isOnline() && internUser.isInCurrentRoom && internUser.isInPrivateRoom && !this.isInCurrentRoom
-                && hasPermission(Permission.MANAGE_PRIVATE_ROOM) && this.status != Status.BUSY;
+                && internUser.hasPermission(Permission.MANAGE_PRIVATE_ROOM) && this.status != Status.BUSY;
     }
 
     @Override
     public boolean canKick() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return this.isOnline() && internUser.isInCurrentRoom && this.isInCurrentRoom && internUser.isInPrivateRoom
+        return this.isOnline() && internUser.isInCurrentRoom && internUser.isInPrivateRoom && this.isInCurrentRoom
                 && internUser.hasPermission(Permission.MANAGE_PRIVATE_ROOM)
                 && !this.hasPermission(Permission.ENTER_PRIVATE_ROOM);
     }
@@ -300,8 +300,8 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canAssignModerator() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return internUser.hasPermission(Permission.ASSIGN_MODERATOR)
-                && !this.hasRole(Role.ADMINISTRATOR) && !this.hasRole(Role.OWNER);
+        return internUser.hasPermission(Permission.ASSIGN_MODERATOR) && !this.hasRole(Role.ADMINISTRATOR)
+                && !this.hasRole(Role.OWNER) && !this.isBanned();
     }
 
     @Override

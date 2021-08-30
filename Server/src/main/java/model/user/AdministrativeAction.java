@@ -350,8 +350,10 @@ public enum AdministrativeAction {
                 throw new IllegalStateException("Performers world is not available");
             }
 
-            // Überprüfe zuerst die Berechtigung des Performers bevor die Berechtigung des Ziels überprüft wird.
-            if (!performer.hasPermission(performerWorld, Permission.BAN_USER)) {
+            // Überprüfe, ob der Benutzer die Berechtigung zum Sperren des Benutzers hat.
+            if (!performer.hasPermission(performerWorld, Permission.BAN_USER)
+                || (!performer.hasPermission(performerWorld, Permission.BAN_MODERATOR)
+                && target.hasPermission(performerWorld, Permission.BAN_USER))) {
                 throw new NoPermissionException("Performer has not the required permission to ban.",
                         "action.user-ban.not-permitted", performer, Permission.BAN_USER);
             }
@@ -362,31 +364,28 @@ public enum AdministrativeAction {
                         performer, target, BAN_USER);
             }
 
-            // Ermittle die Benutzer, die über das Sperren informiert werden sollen und überprüfe, ob der ausführende
-            // Benutzer die entsprechende Berechtigung besitzt.
-            Map<UUID, User> receivers = UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
-                    Permission.BAN_MODERATOR);
-            if (target.hasPermission(performerWorld, Permission.BAN_USER)) {
-                if (!performer.hasPermission(performerWorld, Permission.BAN_MODERATOR)) {
-                    throw new NoPermissionException("Performer has not the required permission to ban.",
-                            "action.user-ban.not-permitted", performer, Permission.BAN_MODERATOR);
-                }
-            } else {
-                // java.lang.UnsupportedOperationException (UserTesten - executeAdministrativeActionTest)
-                // ^^ Sollte nun nicht mehr auftreten. Das lag an der UnmodifiableMap, die vom UserAccountManager
-                //    zurückgegeben wurde.
-                receivers.putAll(UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
-                        Permission.BAN_USER));
-            }
-
+            // Überprüfe, ob der Benutzer in dieser Welt bereits gesperrt ist.
             if (performerWorld.isBanned(target)) {
-                throw new IllegalAdministrativeActionException("User is already banned from this world.",
-                        performer, target, BAN_USER);
+                throw new IllegalAdministrativeActionException("User is already banned in this world.",
+                        "action.user-ban.not-permitted", performer, target, BAN_USER);
             }
 
             // Sperre den Benutzer.
             performerWorld.removeReportedUser(target);
             performerWorld.addBannedUser(target);
+
+            // Entferne die Rolle des Moderators, falls der Benutzer diese in der Welt besitzt hat.
+            if (target.hasRole(performerWorld, Role.MODERATOR)) {
+                target.removeRole(performerWorld, Role.MODERATOR);
+            }
+
+            // Ermittle die Benutzer, die über das Sperren informiert werden sollen.
+            Map<UUID, User> receivers = UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
+                    Permission.BAN_MODERATOR);
+            if (!target.hasPermission(performerWorld, Permission.BAN_USER)) {
+                receivers.putAll(UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
+                        Permission.BAN_USER));
+            }
 
             // Sende eine Benachrichtigung mit der Information an alle relevanten Benutzer.
             MessageBundle messageBundle = new MessageBundle("action.user-ban.info-moderator",
@@ -428,24 +427,13 @@ public enum AdministrativeAction {
                 throw new IllegalStateException("Performers world is not available");
             }
 
-            // Ermittle die Benutzer, die über das Entsperren informiert werden sollen und überprüfe, ob der ausführende
-            // Benutzer die entsprechende Berechtigung besitzt.
-            Map<UUID, User> receivers = UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
-                    Permission.BAN_MODERATOR);
-            if (target.hasPermission(performerWorld, Permission.BAN_USER)) {
-                if (!performer.hasPermission(performerWorld, Permission.BAN_MODERATOR)) {
-                    throw new NoPermissionException("Performer has not the required permission to unban.",
-                            "action.user-ban.not-permitted", performer, Permission.BAN_MODERATOR);
-                }
-            } else {
-                if (!performer.hasPermission(performerWorld, Permission.BAN_USER)) {
-                    throw new NoPermissionException("Performer has not the required permission.",
-                            "action.user-ban.not-permitted", performer, Permission.BAN_USER);
-                }
-                receivers.putAll(UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
-                        Permission.BAN_USER));
+            // Überprüfe, ob der ausführende Benutzer die Berechtigung zum Entsperren des Benutzers hat.
+            if (!performer.hasPermission(performerWorld, Permission.BAN_USER)) {
+                throw new NoPermissionException("Performer has not the required permission to ban.",
+                        "action.user-ban.not-permitted", performer, Permission.BAN_USER);
             }
 
+            // Überprüfe, ob der Benutzer in dieser Welt gesperrt ist.
             if (!performerWorld.isBanned(target)) {
                 throw new IllegalAdministrativeActionException("User is not banned from this world.",
                         performer, target, UNBAN_USER);
@@ -453,6 +441,12 @@ public enum AdministrativeAction {
 
             // Entsperre den Benutzer.
             performerWorld.removeBannedUser(target);
+
+            // Ermittle die Benutzer, die über das Entsperren informiert werden sollen und überprüfe ob der ausführende
+            // Benutzer die entsprechende Berechtigung besitzt.
+            Map<UUID, User> receivers = UserAccountManager.getInstance().getUsersWithPermission(performerWorld,
+                    Permission.BAN_USER);
+
             // Sende eine Benachrichtigung mit der Information an alle relevanten Benutzer.
             MessageBundle messageBundle = new MessageBundle("action.user-unban.info-moderator",
                     performer.getUsername(), target.getUsername(), args[0]);
@@ -500,6 +494,11 @@ public enum AdministrativeAction {
             // Überprüfe, ob der Benutzer bereits die Rolle des Moderators in dem Kontext besitzt.
             if (target.hasRole(performerWorld, Role.MODERATOR)) {
                 throw new IllegalAdministrativeActionException("Target is already moderator in this world.",
+                        performer, target, ASSIGN_MODERATOR);
+            }
+            // Überprüfe, ob der Benutzer in der Welt gesperrt ist.
+            if (performerWorld.isBanned(target)) {
+                throw new IllegalAdministrativeActionException("Banned users cannot be moderators",
                         performer, target, ASSIGN_MODERATOR);
             }
 
