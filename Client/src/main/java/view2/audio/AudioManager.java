@@ -32,7 +32,6 @@ public class AudioManager {
         } catch (GdxRuntimeException e) {
             e.printStackTrace(); // Line is not available
         }
-
         //this.chatMessageSound = Gdx.audio.newSound(Gdx.files.internal(CHAT_MESSAGE_SOUND_PATH));
         //this.notificationSound = Gdx.audio.newSound(Gdx.files.internal(NOTIFICATION_SOUND_PATH));
         //this.roomEnterSound = Gdx.audio.newSound(Gdx.files.internal(ROOM_ENTER_SOUND_PATH));
@@ -104,10 +103,6 @@ public class AudioManager {
     }
 
     private void playMusic(ContextMusic contextMusic) {
-        if (currentMusic != null) {
-            currentMusic.dispose();
-            currentMusic = null;
-        }
         if (contextMusic != null) {
             currentMusic = Gdx.audio.newMusic(Gdx.files.internal(contextMusic.getPath()));
             currentMusic.setLooping(false);
@@ -115,6 +110,11 @@ public class AudioManager {
                     playMusic(ContextMusic.values()[((contextMusic.ordinal() + 1) % ContextMusic.values().length)]));
             setMusicVolume();
             currentMusic.play();
+        } else {
+            if (currentMusic != null) {
+                currentMusic.dispose();
+                currentMusic = null;
+            }
         }
     }
 }

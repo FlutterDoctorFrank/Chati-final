@@ -86,16 +86,13 @@ public class InternUser extends User implements IInternUserController, IInternUs
 
     @Override
     public void setMusic(ContextID spatialId, ContextMusic music) throws ContextNotFoundException {
-        if (this.music == music) {
-            return; // Nothing to change
-        }
         Context current = getDeepestContext();
-        do {
-            if (!current.getContextId().equals(spatialId)) {
-                throw new ContextNotFoundException("User is not in a context with this ID.", spatialId);
-            }
+        while (current != null && !current.getContextId().equals(spatialId)) {
             current = current.getParent();
-        } while (current != null);
+        }
+        if (current == null) {
+            throw new ContextNotFoundException("User is not in a context with this ID.", spatialId);
+        }
         this.music = music;
         UserManager.getInstance().getModelObserver().setMusicChanged();
     }
