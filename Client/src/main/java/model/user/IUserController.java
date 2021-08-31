@@ -1,6 +1,7 @@
 package model.user;
 
 import model.context.Context;
+import model.context.spatial.Direction;
 import model.context.spatial.Location;
 import model.context.spatial.SpatialContext;
 import model.exception.ContextNotFoundException;
@@ -114,7 +115,8 @@ public interface IUserController {
      * @param posY Y-Koordinate.
      * @param isTeleporting Information, ob der Benutzer zu seiner momentanen Position teleportiert werden soll.
      * @param isSprinting Information, ob der Benutzer sich schnell fortbewegt.
+     * @param direction Richtung, in die der Avatar des Benutzers gerichtet sein soll.
      * @see Location
      */
-    void setLocation(float posX, float posY, boolean isTeleporting, boolean isSprinting);
+    void setLocation(float posX, float posY, boolean isTeleporting, boolean isSprinting, Direction direction);
 }

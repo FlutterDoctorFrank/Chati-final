@@ -1,6 +1,7 @@
 package model.user;
 
 import model.context.Context;
+import model.context.spatial.Direction;
 import model.context.spatial.Location;
 import model.exception.ContextNotFoundException;
 import model.context.ContextID;
@@ -208,7 +209,8 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void setLocation(final float posX, final float posY, final boolean isTeleporting, final boolean isSprinting) {
+    public void setLocation(final float posX, final float posY, final boolean isTeleporting, final boolean isSprinting,
+                            Direction direction) {
         this.currentLocation = new Location(posX, posY);
         this.isTeleporting = isTeleporting;
         this.isSprinting = isSprinting;
