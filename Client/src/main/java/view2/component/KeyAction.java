@@ -15,6 +15,7 @@ public enum KeyAction {
     OPEN_CHAT(Input.Keys.SPACE),
     SEND_CHAT_MESSAGE(Input.Keys.ENTER, Input.Keys.NUMPAD_ENTER),
     SWITCH_MICROPHONE(Input.Keys.Q),
+    PUSH_TO_TALK(Input.Keys.P),
     OPEN_USER_LIST(Input.Keys.NUM_1, Input.Keys.NUMPAD_1, Input.Keys.G),
     OPEN_NOTIFICATION(Input.Keys.NUM_2, Input.Keys.NUMPAD_2, Input.Keys.H),
     OPEN_SETTINGS(Input.Keys.NUM_3, Input.Keys.NUMPAD_3, Input.Keys.J),

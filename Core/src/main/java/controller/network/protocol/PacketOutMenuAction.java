@@ -4,7 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import model.context.ContextID;
-import model.context.spatial.Menu;
+import model.context.spatial.ContextMenu;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public class PacketOutMenuAction implements Packet<PacketListenerOut> {
 
     private ContextID contextId;
-    private Menu menu;
+    private ContextMenu menu;
     private boolean open;
 
     /**
@@ -34,7 +34,7 @@ public class PacketOutMenuAction implements Packet<PacketListenerOut> {
      * @param menu das Menü das geöffnet oder geschlossen werden soll.
      * @param open true, wenn das Menü geöffnet werden soll, ansonsten false.
      */
-    public PacketOutMenuAction(@NotNull final ContextID contextId, @NotNull final Menu menu, final boolean open) {
+    public PacketOutMenuAction(@NotNull final ContextID contextId, @NotNull final ContextMenu menu, final boolean open) {
         this.contextId = contextId;
         this.menu = menu;
         this.open = open;
@@ -55,7 +55,7 @@ public class PacketOutMenuAction implements Packet<PacketListenerOut> {
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.contextId = PacketUtils.readContextId(input);
-        this.menu = PacketUtils.readEnum(input, Menu.class);
+        this.menu = PacketUtils.readEnum(input, ContextMenu.class);
         this.open = input.readBoolean();
     }
 
@@ -76,7 +76,7 @@ public class PacketOutMenuAction implements Packet<PacketListenerOut> {
      * Gibt das Menü, das geöffnet oder geschlossen werden soll, zurück.
      * @return das zugehörige Menü.
      */
-    public @NotNull Menu getMenu() {
+    public @NotNull ContextMenu getMenu() {
         return this.menu;
     }
 

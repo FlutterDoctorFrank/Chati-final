@@ -253,14 +253,14 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public boolean canInvite() {
+    public boolean canBeInvited() {
         InternUser internUser = UserManager.getInstance().getInternUser();
         return this.isOnline() && internUser.isInCurrentRoom && internUser.isInPrivateRoom && !this.isInCurrentRoom
                 && internUser.hasPermission(Permission.MANAGE_PRIVATE_ROOM) && this.status != Status.BUSY;
     }
 
     @Override
-    public boolean canKick() {
+    public boolean canBeKicked() {
         InternUser internUser = UserManager.getInstance().getInternUser();
         return this.isOnline() && internUser.isInCurrentRoom && internUser.isInPrivateRoom && this.isInCurrentRoom
                 && internUser.hasPermission(Permission.MANAGE_PRIVATE_ROOM)
@@ -275,7 +275,7 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public boolean canReport() {
+    public boolean canBeReported() {
         InternUser internUser = UserManager.getInstance().getInternUser();
         return this.isOnline() && internUser.isInCurrentWorld && this.isInCurrentWorld
                 && !internUser.hasPermission(Permission.BAN_MODERATOR) && !this.hasPermission(Permission.BAN_MODERATOR)
@@ -283,14 +283,14 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public boolean canMute() {
+    public boolean canBeMuted() {
         InternUser internUser = UserManager.getInstance().getInternUser();
         return this.isOnline() && internUser.isInCurrentWorld() && this.isInCurrentWorld()
                 && internUser.hasPermission(Permission.MUTE) && !this.hasPermission(Permission.MUTE);
     }
 
     @Override
-    public boolean canBan() {
+    public boolean canBeBanned() {
         InternUser internUser = UserManager.getInstance().getInternUser();
         return !this.hasPermission(Permission.BAN_MODERATOR) && ((internUser.isInCurrentWorld()
                 && internUser.hasPermission(Permission.BAN_MODERATOR)) || (internUser.hasPermission(Permission.BAN_USER)

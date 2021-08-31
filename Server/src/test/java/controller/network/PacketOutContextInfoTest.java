@@ -3,7 +3,7 @@ package controller.network;
 import controller.network.ClientSender.SendAction;
 import controller.network.protocol.PacketOutContextInfo;
 import model.context.spatial.IArea;
-import model.context.spatial.Music;
+import model.context.spatial.ContextMusic;
 import model.user.IUser;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,7 +40,7 @@ public class PacketOutContextInfoTest extends PacketServerTest {
 
         Mockito.when(area.getMutedUsers()).thenReturn(mutes);
         Mockito.when(area.getContextId()).thenReturn(randomContextId());
-        Mockito.when(area.getMusic()).thenReturn(randomEnum(Music.class));
+        Mockito.when(area.getMusic()).thenReturn(randomEnum(ContextMusic.class));
 
         final PacketOutContextInfo packet = this.getPacket(PacketOutContextInfo.class, area);
 

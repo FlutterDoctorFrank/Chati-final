@@ -6,7 +6,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import model.context.Context;
 import model.context.spatial.SpatialContext;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import model.exception.ContextNotFoundException;
 import model.exception.UserNotFoundException;
 import org.junit.After;
@@ -92,7 +92,7 @@ public class IUserManagerTest {
 
     @Test
     public void getActiveUsers_getBannedUsers_getFriends() {
-        SpatialMap map = SpatialMap.PUBLIC_ROOM_MAP;
+        ContextMap map = ContextMap.PUBLIC_ROOM_MAP;
         UUID userId1 = UUID.randomUUID();
         UUID userId2 = UUID.randomUUID();
         Set<UUID> userSet = Set.of(userId1, userId2);

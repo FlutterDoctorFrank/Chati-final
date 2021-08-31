@@ -20,7 +20,7 @@ import java.util.Set;
 public class ISpatialContextTest {
 
     SpatialContext world;
-    SpatialMap map;
+    ContextMap map;
     ISpatialContextView testSpatialContextView;
     ISpatialContextView testWorldView;
 
@@ -49,7 +49,7 @@ public class ISpatialContextTest {
         });
         world = new SpatialContext("world", Context.getGlobal());
         testWorldView = world;
-        map = SpatialMap.PUBLIC_ROOM_MAP;
+        map = ContextMap.PUBLIC_ROOM_MAP;
         Game game = new Game() {
             @Override
             public void create() {

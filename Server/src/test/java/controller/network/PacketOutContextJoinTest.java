@@ -4,7 +4,7 @@ import controller.network.ClientSender.SendAction;
 import controller.network.protocol.PacketOutContextJoin;
 import model.context.spatial.IRoom;
 import model.context.spatial.IWorld;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -26,7 +26,7 @@ public class PacketOutContextJoinTest extends PacketServerTest {
 
         Mockito.when(room.getContextId()).thenReturn(randomContextId());
         Mockito.when(room.getContextName()).thenReturn(randomString());
-        Mockito.when(room.getMap()).thenReturn(randomEnum(SpatialMap.class));
+        Mockito.when(room.getMap()).thenReturn(randomEnum(ContextMap.class));
         Mockito.when(this.user.getWorld()).thenReturn(Mockito.mock(IWorld.class));
 
         final PacketOutContextJoin packet = this.getPacket(PacketOutContextJoin.class, room);

@@ -13,8 +13,8 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import model.context.ContextID;
-import model.context.spatial.Menu;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMenu;
+import model.context.spatial.ContextMap;
 import model.user.IUserView;
 import view2.Chati;
 import view2.audio.VoiceChat;
@@ -75,8 +75,6 @@ public class WorldScreen extends AbstractScreen {
         if (tiledMapRenderer.getMap() != null) {
             tiledMapRenderer.render();
             debugRenderer.render(world, camera.combined);
-
-            VoiceChat.getInstance().startSending();
 
             if (Chati.CHATI.isUserInfoChanged()) {
                 loadExternUserAvatars();
@@ -156,8 +154,8 @@ public class WorldScreen extends AbstractScreen {
     }
 
     private void createMap() {
-        SpatialMap spatialMap = Chati.CHATI.getUserManager().getInternUserView().getCurrentRoom().getMap();
-        TiledMap tiledMap = new TmxMapLoader().load(spatialMap.getPath());
+        ContextMap contextMap = Chati.CHATI.getUserManager().getInternUserView().getCurrentRoom().getMap();
+        TiledMap tiledMap = new TmxMapLoader().load(contextMap.getPath());
         tiledMapRenderer.setMap(tiledMap);
         tiledMapRenderer.getMap().getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class)
                 .forEach(border -> new Border(border.getRectangle()));
@@ -183,8 +181,8 @@ public class WorldScreen extends AbstractScreen {
         }
     }
 
-    public void openMenu(ContextID contextId, Menu menu) {
-        switch (menu) {
+    public void openMenu(ContextID contextId, ContextMenu contextMenu) {
+        switch (contextMenu) {
             case ROOM_RECEPTION_MENU:
                 currentInteractableWindow = new RoomReceptionWindow(contextId);
                 break;
@@ -209,9 +207,9 @@ public class WorldScreen extends AbstractScreen {
         currentInteractableWindow.open();
     }
 
-    public void closeMenu(ContextID contextId, Menu menu) {
+    public void closeMenu(ContextID contextId, ContextMenu contextMenu) {
         if (currentInteractableWindow != null && (!currentInteractableWindow.getInteractableId().equals(contextId)
-            || currentInteractableWindow.getInteractableMenu() != menu)) {
+            || currentInteractableWindow.getInteractableMenu() != contextMenu)) {
             throw new IllegalArgumentException("Tried to close a menu that is not open.");
         }
         stage.closeWindow(currentInteractableWindow);

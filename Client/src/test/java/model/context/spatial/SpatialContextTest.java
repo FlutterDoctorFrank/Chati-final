@@ -20,7 +20,7 @@ public class SpatialContextTest {
 
     SpatialContext world;
     SpatialContext room;
-    SpatialMap map;
+    ContextMap map;
 
     @Before
     public void setUp() throws Exception {
@@ -47,7 +47,7 @@ public class SpatialContextTest {
         });
          world = new SpatialContext("World", Context.getGlobal());
          room = new SpatialContext("Room", world);
-         map = SpatialMap.PUBLIC_ROOM_MAP;
+         map = ContextMap.PUBLIC_ROOM_MAP;
         Game game = new Game() {
             @Override
             public void create() {

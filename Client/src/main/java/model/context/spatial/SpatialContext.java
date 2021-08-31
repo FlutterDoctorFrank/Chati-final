@@ -35,7 +35,7 @@ public class SpatialContext extends Context implements ISpatialContextView {
     private Set<CommunicationMedium> communicationMedia;
 
     /** Karte dieses Kontextes. */
-    private SpatialMap map;
+    private ContextMap map;
 
     /** Die Information, ob mit diesem Kontext interagiert werden darf. */
     private final boolean interactable;
@@ -74,7 +74,7 @@ public class SpatialContext extends Context implements ISpatialContextView {
         parent.addChild(this);
     }
 
-    public void build(SpatialMap map) {
+    public void build(ContextMap map) {
         FutureTask<?> buildTask = new FutureTask<>(() -> {
             // Raum wurde bereits initialisiert.
             if (this.map != null) {
@@ -143,7 +143,7 @@ public class SpatialContext extends Context implements ISpatialContextView {
     }
 
     @Override
-    public SpatialMap getMap() {
+    public ContextMap getMap() {
         return map;
     }
 

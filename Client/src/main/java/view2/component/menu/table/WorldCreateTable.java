@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import view2.Assets;
 import view2.Chati;
 import view2.component.ChatiTextField;
@@ -17,7 +17,7 @@ public class WorldCreateTable extends MenuTable {
 
     private ChatiTextField worldNameField;
     private Label mapSelectLabel;
-    private SelectBox<SpatialMap> mapSelectBox;
+    private SelectBox<ContextMap> mapSelectBox;
     private TextButton confirmButton;
     private TextButton cancelButton;
 
@@ -32,8 +32,8 @@ public class WorldCreateTable extends MenuTable {
 
         mapSelectLabel = new Label("Karte: ", Assets.SKIN);
         mapSelectBox = new SelectBox<>(Assets.SKIN);
-        mapSelectBox.setItems(EnumSet.allOf(SpatialMap.class)
-                .stream().filter(SpatialMap::isPublicRoomMap).toArray(SpatialMap[]::new));
+        mapSelectBox.setItems(EnumSet.allOf(ContextMap.class)
+                .stream().filter(ContextMap::isPublicRoomMap).toArray(ContextMap[]::new));
 
         worldNameField = new ChatiTextField("Name der Welt", false);
 

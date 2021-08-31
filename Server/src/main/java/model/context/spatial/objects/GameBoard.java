@@ -5,7 +5,7 @@ import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.spatial.Area;
 import model.context.spatial.Expanse;
-import model.context.spatial.Menu;
+import model.context.spatial.ContextMenu;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.user.User;
@@ -28,7 +28,7 @@ public class GameBoard extends Interactable {
     public GameBoard(@NotNull final String objectName, @NotNull final Area parent,
                      @NotNull final CommunicationRegion communicationRegion,
                      @NotNull final Set<CommunicationMedium> communicationMedia, @NotNull final Expanse expanse) {
-        super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.GAME_BOARD_MENU);
+        super(objectName, parent, communicationRegion, communicationMedia, expanse, ContextMenu.GAME_BOARD_MENU);
     }
 
     @Override

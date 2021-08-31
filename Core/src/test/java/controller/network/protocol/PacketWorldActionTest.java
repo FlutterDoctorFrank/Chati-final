@@ -2,7 +2,7 @@ package controller.network.protocol;
 
 import controller.network.protocol.PacketWorldAction.Action;
 import controller.network.protocol.mock.MockPacketListener;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,7 +16,7 @@ public class PacketWorldActionTest extends PacketTest<PacketWorldAction> {
     public void callListenerTest() {
         final MockPacketListener listener = new MockPacketListener();
 
-        this.before = new PacketWorldAction(randomEnum(SpatialMap.class), randomString());
+        this.before = new PacketWorldAction(randomEnum(ContextMap.class), randomString());
         this.before.call(listener);
 
         Assert.assertTrue(listener.handled(PacketWorldAction.class));
@@ -34,7 +34,7 @@ public class PacketWorldActionTest extends PacketTest<PacketWorldAction> {
 
     @Test
     public void createSerializationTest() {
-        this.before = new PacketWorldAction(randomEnum(SpatialMap.class), randomString());
+        this.before = new PacketWorldAction(randomEnum(ContextMap.class), randomString());
 
         this.serialize();
         this.equals();

@@ -1,7 +1,7 @@
 package controller.network.protocol;
 
 import controller.network.protocol.mock.MockPacketListenerOut;
-import model.context.spatial.Music;
+import model.context.spatial.ContextMusic;
 import model.role.Role;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,7 +20,7 @@ public class PacketOutContextInfoTest extends PacketTest<PacketOutContextInfo> {
     public void callListenerTest() {
         final MockPacketListenerOut listener = new MockPacketListenerOut();
 
-        this.before = new PacketOutContextInfo(randomContextId(), randomEnum(Music.class), Collections.emptySet());
+        this.before = new PacketOutContextInfo(randomContextId(), randomEnum(ContextMusic.class), Collections.emptySet());
         this.before.call(listener);
 
         Assert.assertTrue(listener.handled(PacketOutContextInfo.class));
@@ -28,7 +28,7 @@ public class PacketOutContextInfoTest extends PacketTest<PacketOutContextInfo> {
 
     @Test
     public void setSerializationTest() {
-        this.before = new PacketOutContextInfo(randomContextId(), randomEnum(Music.class), Collections.emptySet());
+        this.before = new PacketOutContextInfo(randomContextId(), randomEnum(ContextMusic.class), Collections.emptySet());
 
         this.serialize();
         this.equals();

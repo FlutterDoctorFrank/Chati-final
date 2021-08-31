@@ -4,7 +4,7 @@ package model.context.spatial;
  * Eine Enumeration, welche das Menü festlegt, dass durch die Interaktion mit einem räumlichen Kontext beim Benutzer
  * geöffnet werden soll.
  */
-public enum Menu {
+public enum ContextMenu {
 
     /**
      * Repräsentiert das Menü, dass durch die Interaktion mit dem Portal beim Benutzer geöffnet werden soll.

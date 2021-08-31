@@ -2,7 +2,7 @@ package controller.network;
 
 import controller.network.ClientSender.SendAction;
 import controller.network.protocol.PacketOutMenuAction;
-import model.context.spatial.Menu;
+import model.context.spatial.ContextMenu;
 import model.context.spatial.objects.IInteractable;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class PacketOutMenuActionTest extends PacketServerTest {
         final IInteractable interactable = Mockito.mock(IInteractable.class);
 
         Mockito.when(interactable.getContextId()).thenReturn(randomContextId());
-        Mockito.when(interactable.getMenu()).thenReturn(randomEnum(Menu.class));
+        Mockito.when(interactable.getMenu()).thenReturn(randomEnum(ContextMenu.class));
 
         final PacketOutMenuAction packet = this.getPacket(SendAction.OPEN_MENU, PacketOutMenuAction.class, interactable);
 
@@ -43,7 +43,7 @@ public class PacketOutMenuActionTest extends PacketServerTest {
         final IInteractable interactable = Mockito.mock(IInteractable.class);
 
         Mockito.when(interactable.getContextId()).thenReturn(randomContextId());
-        Mockito.when(interactable.getMenu()).thenReturn(randomEnum(Menu.class));
+        Mockito.when(interactable.getMenu()).thenReturn(randomEnum(ContextMenu.class));
 
         final PacketOutMenuAction packet = this.getPacket(SendAction.CLOSE_MENU, PacketOutMenuAction.class, interactable);
 

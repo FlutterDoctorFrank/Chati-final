@@ -5,7 +5,7 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import model.MessageBundle;
 import model.context.ContextID;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,7 @@ public class PacketWorldAction implements Packet<PacketListener> {
     private boolean success;
 
     // Variablen für die Welterstellung.
-    private SpatialMap map;
+    private ContextMap map;
     private String name;
 
     /**
@@ -43,7 +43,7 @@ public class PacketWorldAction implements Packet<PacketListener> {
      * @param map die Karte der zur erstellenden Welt.
      * @param name der Name der zur erstellenden Welt.
      */
-    public PacketWorldAction(@NotNull final SpatialMap map, @NotNull final String name) {
+    public PacketWorldAction(@NotNull final ContextMap map, @NotNull final String name) {
         this.action = Action.CREATE;
         this.map = map;
         this.name = name;
@@ -52,7 +52,7 @@ public class PacketWorldAction implements Packet<PacketListener> {
     /**
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Client-Anwendung.
      * <p><i>
-     *     Dieser Konstruktor erlaubt nicht die Erzeugung des WorldCreate-Pakets. Siehe {@link PacketWorldAction(SpatialMap, String)}
+     *     Dieser Konstruktor erlaubt nicht die Erzeugung des WorldCreate-Pakets. Siehe {@link PacketWorldAction( ContextMap , String)}
      * </i></p>
      * @param action die Aktion die auf die Welt ausgeführt werden soll.
      * @param contextId die Kontext-ID der Welt, auf die die Aktion ausgeführt werden soll.
@@ -69,7 +69,7 @@ public class PacketWorldAction implements Packet<PacketListener> {
     /**
      * Ausschließlich für die Erzeugung einer Antwort des Netzwerkpakets von der Server-Anwendung.
      * <p><i>
-     *     Dieser Konstruktor erlaubt nicht die Erzeugung des WorldCreate-Pakets. Siehe {@link PacketWorldAction(SpatialMap, String)}
+     *     Dieser Konstruktor erlaubt nicht die Erzeugung des WorldCreate-Pakets. Siehe {@link PacketWorldAction( ContextMap , String)}
      * </i></p>
      * @param action die Aktion die auf die Welt ausgeführt wurde.
      * @param contextId die Kontext-ID der Welt, auf die die Aktion ausgeführt wurde.
@@ -124,7 +124,7 @@ public class PacketWorldAction implements Packet<PacketListener> {
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.contextId = PacketUtils.readNullableContextId(input);
         this.action = PacketUtils.readEnum(input, Action.class);
-        this.map = PacketUtils.readNullableEnum(input, SpatialMap.class);
+        this.map = PacketUtils.readNullableEnum(input, ContextMap.class);
         this.name = input.readString();
         this.message = PacketUtils.readNullableBundle(kryo, input);
         this.success = input.readBoolean();
@@ -171,7 +171,7 @@ public class PacketWorldAction implements Packet<PacketListener> {
      * </i></p>
      * @return die Karte der Welt.
      */
-    public @Nullable SpatialMap getMap() {
+    public @Nullable ContextMap getMap() {
         return this.map;
     }
 

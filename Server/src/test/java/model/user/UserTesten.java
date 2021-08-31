@@ -7,7 +7,7 @@ import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import controller.network.ClientSender;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import model.context.spatial.World;
 import model.database.Database;
 import model.database.IContextDatabase;
@@ -60,7 +60,7 @@ public class UserTesten {
         this.account_database = Database.getUserAccountManagerDatabase();
         this.user_database = Database.getUserDatabase();
         this.context_database = Database.getContextDatabase();
-        this.test_world = new World("test_world", SpatialMap.PUBLIC_ROOM_MAP);
+        this.test_world = new World("test_world", ContextMap.PUBLIC_ROOM_MAP);
 
 
 
@@ -119,7 +119,7 @@ public class UserTesten {
             User performer = userAccountManager.getUser(performerName);
             performer.addRole(globalContext, Role.OWNER);
             if (globalContext.getIWorlds().size() == 0) {
-                globalContext.createWorld(performer.getUserId(), "test_world", SpatialMap.PUBLIC_ROOM_MAP);
+                globalContext.createWorld(performer.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
             }
             ContextID newworld_id = globalContext.getIWorlds().keySet().iterator().next();
             System.out.println(globalContext.getIWorlds().size());

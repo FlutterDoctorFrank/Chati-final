@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import view2.Assets;
+import view2.Chati;
 import view2.Settings;
 import view2.component.AbstractWindow;
 import view2.component.hud.HeadUpDisplay;
@@ -25,11 +26,11 @@ public class VolumeChangeWindow extends AbstractWindow {
     private static final float ROW_HEIGHT = 60;
     private static final float SPACING = 15;
 
-    private static final float MIN_VOLUME = 0f;
-    private static final float MAX_VOLUME = 1f;
-    private static final float VOLUME_STEP_SIZE = 0.01f;
-    private static final float SNAP_VALUE_STEP_SIZE = 0.25f;
-    private static final float SNAP_VALUE_THRESHOLD = 0.05f;
+    private static final float MIN_VOLUME = 0;
+    private static final float MAX_VOLUME = 1;
+    private static final float VOLUME_STEP_SIZE = MAX_VOLUME / 100;
+    private static final float SNAP_VALUE_STEP_SIZE = MAX_VOLUME / 4;
+    private static final float SNAP_VALUE_THRESHOLD = SNAP_VALUE_STEP_SIZE / 5;
 
     private Label infoLabel;
     private Label totalVolumeLabel;
@@ -61,7 +62,7 @@ public class VolumeChangeWindow extends AbstractWindow {
         soundVolumeLabel = new Label("Hintergrundgeräusche", Assets.SKIN);
 
         totalVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
-        totalVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
+        totalVolumeSlider.setSnapToValues(new float[]{0, SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                         3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
         totalVolumeSlider.setValue(Settings.getTotalVolume());
         totalVolumeSlider.addListener(new ChangeListener() {
@@ -73,7 +74,7 @@ public class VolumeChangeWindow extends AbstractWindow {
         });
 
         voiceVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
-        voiceVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
+        voiceVolumeSlider.setSnapToValues(new float[]{0, SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                         3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
         voiceVolumeSlider.setValue(Settings.getVoiceVolume());
         voiceVolumeSlider.addListener(new ChangeListener() {
@@ -85,7 +86,7 @@ public class VolumeChangeWindow extends AbstractWindow {
         });
 
         musicVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
-        musicVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
+        musicVolumeSlider.setSnapToValues(new float[]{0, SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                         3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
         musicVolumeSlider.setValue(Settings.getMusicVolume());
         musicVolumeSlider.addListener(new ChangeListener() {
@@ -97,7 +98,7 @@ public class VolumeChangeWindow extends AbstractWindow {
         });
 
         soundVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Assets.SKIN);
-        soundVolumeSlider.setSnapToValues(new float[]{SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
+        soundVolumeSlider.setSnapToValues(new float[]{0, SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                         3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
         soundVolumeSlider.setValue(Settings.getSoundVolume());
         soundVolumeSlider.addListener(new ChangeListener() {

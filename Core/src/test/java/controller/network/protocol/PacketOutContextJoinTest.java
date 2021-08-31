@@ -1,7 +1,7 @@
 package controller.network.protocol;
 
 import controller.network.protocol.mock.MockPacketListenerOut;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ public class PacketOutContextJoinTest extends PacketTest<PacketOutContextJoin> {
     public void callListenerTest() {
         final MockPacketListenerOut listener = new MockPacketListenerOut();
 
-        this.before = new PacketOutContextJoin(randomContextId(), randomString(), randomEnum(SpatialMap.class));
+        this.before = new PacketOutContextJoin(randomContextId(), randomString(), randomEnum(ContextMap.class));
         this.before.call(listener);
 
         Assert.assertTrue(listener.handled(PacketOutContextJoin.class));
@@ -23,7 +23,7 @@ public class PacketOutContextJoinTest extends PacketTest<PacketOutContextJoin> {
 
     @Test
     public void joinSerializationTest() {
-        this.before = new PacketOutContextJoin(randomContextId(), randomString(), randomEnum(SpatialMap.class));
+        this.before = new PacketOutContextJoin(randomContextId(), randomString(), randomEnum(ContextMap.class));
 
         this.serialize();
         this.equals();

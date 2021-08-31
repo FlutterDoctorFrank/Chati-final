@@ -6,7 +6,7 @@ import model.communication.CommunicationRegion;
 import model.communication.message.TextMessage;
 import model.context.spatial.Area;
 import model.context.spatial.Expanse;
-import model.context.spatial.Menu;
+import model.context.spatial.ContextMenu;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.user.User;
@@ -33,7 +33,7 @@ public class Seat extends Interactable {
     public Seat(@NotNull final String objectName, @NotNull final Area parent,
                 @NotNull final CommunicationRegion communicationRegion,
                 @NotNull final Set<CommunicationMedium> communicationMedia, @NotNull final Expanse expanse) {
-        super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.SEAT_MENU);
+        super(objectName, parent, communicationRegion, communicationMedia, expanse, ContextMenu.SEAT_MENU);
     }
 
     @Override

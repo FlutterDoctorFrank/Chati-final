@@ -104,14 +104,14 @@ public class RoomTest {
 
             // Wegen Thread
             if (this.globalContext.getIWorlds().size() == 0) {
-                this.globalContext.createWorld(privateRoomTester.getUserId(), "test_world", SpatialMap.PUBLIC_ROOM_MAP);
+                this.globalContext.createWorld(privateRoomTester.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
                 Assert.assertEquals(1, this.globalContext.getIWorlds().size());
             }
             ContextID test_world_id = this.globalContext.getIWorlds().keySet().iterator().next();
             World test_world = this.globalContext.getWorld(test_world_id);
 
             // Erstelle ein Raum
-            Room test_proom = new Room("testa_room", test_world, SpatialMap.PRIVATE_ROOM_MAP, "11111");
+            Room test_proom = new Room("testa_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
             test_world.addPrivateRoom(test_proom);
             Assert.assertTrue(test_proom.isPrivate());
 
@@ -138,14 +138,14 @@ public class RoomTest {
 
             // Wegen Thread
             if (this.globalContext.getIWorlds().size() == 0) {
-                this.globalContext.createWorld(privateRoomTester.getUserId(), "test_world", SpatialMap.PUBLIC_ROOM_MAP);
+                this.globalContext.createWorld(privateRoomTester.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
                 Assert.assertEquals(1, this.globalContext.getIWorlds().size());
             }
             ContextID test_world_id = this.globalContext.getIWorlds().keySet().iterator().next();
             World test_world = this.globalContext.getWorld(test_world_id);
 
             // Erstelle ein Raum
-            Room test_proom = new Room("testr_room", test_world, SpatialMap.PRIVATE_ROOM_MAP, "11111");
+            Room test_proom = new Room("testr_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
             test_world.addPrivateRoom(test_proom);
 
 
@@ -176,14 +176,14 @@ public class RoomTest {
 
             // Wegen Thread
             if (this.globalContext.getIWorlds().size() == 0) {
-                this.globalContext.createWorld(privateRoomTester.getUserId(), "test_world", SpatialMap.PUBLIC_ROOM_MAP);
+                this.globalContext.createWorld(privateRoomTester.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
                 Assert.assertEquals(1, this.globalContext.getIWorlds().size());
             }
             ContextID test_world_id = this.globalContext.getIWorlds().keySet().iterator().next();
             World test_world = this.globalContext.getWorld(test_world_id);
 
             // Erstelle ein Raum
-            Room test_proom = new Room("test_room", test_world, SpatialMap.PUBLIC_ROOM_MAP, "11111");
+            Room test_proom = new Room("test_room", test_world, ContextMap.PUBLIC_ROOM_MAP, "11111");
             test_world.addPrivateRoom(test_proom);
             privateRoomTester.addRole(test_proom, Role.ROOM_OWNER);
 

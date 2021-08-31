@@ -2,7 +2,7 @@ package view2.component.world.interactableMenu;
 
 import controller.network.ServerSender;
 import model.context.ContextID;
-import model.context.spatial.Menu;
+import model.context.spatial.ContextMenu;
 import view2.Chati;
 import view2.component.AbstractWindow;
 import view2.component.Response;
@@ -12,9 +12,9 @@ public abstract class InteractableWindow extends AbstractWindow {
     protected static final int MENU_OPTION_CLOSE = 0;
 
     protected final ContextID interactableId;
-    protected final Menu interactableMenu;
+    protected final ContextMenu interactableMenu;
 
-    protected InteractableWindow(String title, ContextID interactableId, Menu interactableMenu) {
+    protected InteractableWindow(String title, ContextID interactableId, ContextMenu interactableMenu) {
         super(title);
         this.interactableId = interactableId;
         this.interactableMenu = interactableMenu;
@@ -24,7 +24,7 @@ public abstract class InteractableWindow extends AbstractWindow {
         return interactableId;
     }
 
-    public Menu getInteractableMenu() {
+    public ContextMenu getInteractableMenu() {
         return interactableMenu;
     }
 

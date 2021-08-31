@@ -34,7 +34,7 @@ public class Portal extends Interactable {
     public Portal(@NotNull final String objectName, @NotNull final Area parent,
                   @NotNull final CommunicationRegion communicationRegion, @NotNull final Set<CommunicationMedium> communicationMedia,
                   @NotNull final Expanse expanse, @NotNull final Location destination) {
-        super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.PORTAL_MENU);
+        super(objectName, parent, communicationRegion, communicationMedia, expanse, ContextMenu.PORTAL_MENU);
         this.destination = destination;
     }
 

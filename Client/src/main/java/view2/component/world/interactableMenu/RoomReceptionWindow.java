@@ -2,15 +2,13 @@ package view2.component.world.interactableMenu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import controller.network.ServerSender;
 import model.context.ContextID;
-import model.context.spatial.Menu;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMenu;
+import model.context.spatial.ContextMap;
 import model.role.Permission;
 import view2.Assets;
 import view2.Chati;
@@ -37,7 +35,7 @@ public class RoomReceptionWindow extends InteractableWindow {
     private MenuTable currentTable;
 
     public RoomReceptionWindow(ContextID roomReceptionId) {
-        super("Raumrezeption", roomReceptionId, Menu.ROOM_RECEPTION_MENU);
+        super("Raumrezeption", roomReceptionId, ContextMenu.ROOM_RECEPTION_MENU);
         create();
         setLayout();
     }
@@ -206,7 +204,7 @@ public class RoomReceptionWindow extends InteractableWindow {
         private ChatiTextField roomnameField;
         private ChatiTextField passwordField;
         private Label mapSelectLabel;
-        private SelectBox<SpatialMap> mapSelectBox;
+        private SelectBox<ContextMap> mapSelectBox;
         private TextButton confirmButton;
         private TextButton cancelButton;
 
@@ -224,8 +222,8 @@ public class RoomReceptionWindow extends InteractableWindow {
 
             mapSelectLabel = new Label("Karte: ", Assets.SKIN);
             mapSelectBox = new SelectBox<>(Assets.SKIN);
-            mapSelectBox.setItems(EnumSet.allOf(SpatialMap.class)
-                    .stream().filter(Predicate.not(SpatialMap::isPublicRoomMap)).toArray(SpatialMap[]::new));
+            mapSelectBox.setItems(EnumSet.allOf(ContextMap.class)
+                    .stream().filter(Predicate.not(ContextMap::isPublicRoomMap)).toArray(ContextMap[]::new));
 
             confirmButton = new TextButton("Bestätigen", Assets.SKIN);
             confirmButton.addListener(new ClickListener() {

@@ -5,7 +5,7 @@ import model.communication.CommunicationMedium;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.IWorld;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import model.context.spatial.World;
 import model.exception.ContextNotFoundException;
 import model.exception.IllegalWorldActionException;
@@ -49,7 +49,7 @@ public class GlobalContext extends Context implements IGlobalContext {
 
     @Override
     public void createWorld(@NotNull final UUID performerId, @NotNull final String worldName,
-                            @NotNull final SpatialMap map) throws UserNotFoundException, NoPermissionException, IllegalWorldActionException {
+                            @NotNull final ContextMap map) throws UserNotFoundException, NoPermissionException, IllegalWorldActionException {
         User performer = UserAccountManager.getInstance().getUser(performerId);
         performer.updateLastActivity();
         // Überprüfe, ob der ausführende Benutzer die nötige Berechtigung besitzt.

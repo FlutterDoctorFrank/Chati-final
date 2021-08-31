@@ -7,7 +7,7 @@ import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import model.communication.CommunicationMedium;
 import model.context.Context;
 import model.context.ContextID;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import model.database.Database;
 import model.database.IContextDatabase;
 import model.database.IUserAccountManagerDatabase;
@@ -91,7 +91,7 @@ public class GlobalContextTest {
             User performer = this.userAccountManager.getUser("createWorld");
             performer.addRole(this.globalContext, Role.OWNER);
             UUID performer_id = performer.getUserId();
-            this.globalContext.createWorld(performer_id, "testWorld", SpatialMap.PUBLIC_ROOM_MAP);
+            this.globalContext.createWorld(performer_id, "testWorld", ContextMap.PUBLIC_ROOM_MAP);
 
             Assert.assertEquals(1, this.globalContext.getIWorlds().size());
             ContextID actual_world_id = this.globalContext.getIWorlds().keySet().iterator().next();
@@ -117,7 +117,7 @@ public class GlobalContextTest {
             User performer = this.userAccountManager.getUser("removeWorld");
             performer.addRole(this.globalContext, Role.OWNER);
             UUID performer_id = performer.getUserId();
-            this.globalContext.createWorld(performer_id, "testWorld", SpatialMap.PUBLIC_ROOM_MAP);
+            this.globalContext.createWorld(performer_id, "testWorld", ContextMap.PUBLIC_ROOM_MAP);
 
             Assert.assertEquals(1, this.globalContext.getIWorlds().size());
             ContextID actual_world_id = this.globalContext.getIWorlds().keySet().iterator().next();

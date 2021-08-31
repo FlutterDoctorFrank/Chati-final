@@ -49,7 +49,7 @@ public class RoomReception extends Interactable {
     public RoomReception(@NotNull final String objectName, @NotNull final Area parent,
                          @NotNull final CommunicationRegion communicationRegion,
                          @NotNull final Set<CommunicationMedium> communicationMedia, @NotNull final Expanse expanse) {
-        super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.ROOM_RECEPTION_MENU);
+        super(objectName, parent, communicationRegion, communicationMedia, expanse, ContextMenu.ROOM_RECEPTION_MENU);
     }
 
     @Override
@@ -87,9 +87,9 @@ public class RoomReception extends Interactable {
                     throw new IllegalMenuActionException("", "object.room-reception.illegal-password");
                 }
                 // Ermittle die Karte, die der private Raum haben soll.
-                SpatialMap map;
+                ContextMap map;
                 try {
-                    map = SpatialMap.valueOf(args[2].toUpperCase());
+                    map = ContextMap.valueOf(args[2].toUpperCase());
                 } catch (IllegalArgumentException ex) {
                     throw new IllegalMenuActionException("", ex, "object.room-reception.map-not-found", args[2]);
                 }
@@ -120,7 +120,7 @@ public class RoomReception extends Interactable {
                 // Sende an alle Benutzer, die gerade das Menü einer Rezeption geöffnet haben, die Liste aller
                 // privaten Räume.
                 world.getUsers().values().stream()
-                        .filter(receiver -> receiver.getCurrentMenu() == Menu.ROOM_RECEPTION_MENU)
+                        .filter(receiver -> receiver.getCurrentMenu() == ContextMenu.ROOM_RECEPTION_MENU)
                         .forEach(receiver -> receiver.send(SendAction.CONTEXT_LIST, world));
                 break;
             case MENU_OPTION_JOIN: // Betrete einen existierenden privaten Raum.

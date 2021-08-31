@@ -5,7 +5,7 @@ import model.context.Context;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
 import model.context.spatial.AreaReservation;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import model.context.spatial.World;
 import model.notification.Notification;
 import model.role.ContextRole;
@@ -90,7 +90,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 res.first();
                 String worldName = res.getString("WORLD_NAME");
                 String mapName = res.getString("MAP_NAME");
-                SpatialMap worldMap = SpatialMap.valueOf(mapName);
+                ContextMap worldMap = ContextMap.valueOf(mapName);
 
                 world = new World(worldName, worldMap);
             } else {
@@ -122,7 +122,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 String id_name = res.getString("WORLD_ID");
                 String world_name = res.getString("WORLD_NAME");
                 String map_name = res.getString("MAP_NAME");
-                SpatialMap world_map = SpatialMap.valueOf(map_name);
+                ContextMap world_map = ContextMap.valueOf(map_name);
 
                 ContextID world_id = new ContextID(id_name);
                 World world = new World(world_name, world_map);

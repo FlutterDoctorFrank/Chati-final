@@ -9,11 +9,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import controller.network.ServerSender;
 import model.MessageBundle;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import model.exception.ContextNotFoundException;
 import model.communication.message.MessageType;
 import model.context.ContextID;
-import model.context.spatial.Menu;
+import model.context.spatial.ContextMenu;
 import model.exception.UserNotFoundException;
 import model.user.IUserView;
 import org.jetbrains.annotations.Nullable;
@@ -271,7 +271,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     }
 
-    public void sendCreateWorldRequest(SpatialMap map, String worldName) {
+    public void sendCreateWorldRequest(ContextMap map, String worldName) {
         try {
             Object[] data = {map, worldName};
             sender.send(ServerSender.SendAction.WORLD_CREATE, data);
@@ -352,12 +352,12 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
-    public void openMenu(ContextID contextId, Menu menu) {
+    public void openMenu(ContextID contextId, ContextMenu menu) {
 
     }
 
     @Override
-    public void closeMenu(ContextID contextId, Menu menu) {
+    public void closeMenu(ContextID contextId, ContextMenu menu) {
 
     }
 

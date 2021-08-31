@@ -15,7 +15,7 @@ import java.util.concurrent.FutureTask;
 public class Room extends Area implements IRoom {
 
     /** Karte dieses Raums. */
-    private final SpatialMap map;
+    private final ContextMap map;
 
     /** Enthält Information über erlaubte Positionen auf der Karte. */
     private boolean[][] collisionMap;
@@ -36,7 +36,7 @@ public class Room extends Area implements IRoom {
      * @param map Karte des Raums.
      */
     protected Room(@NotNull final String roomName, @NotNull final World world,
-                   @NotNull final SpatialMap map) {
+                   @NotNull final ContextMap map) {
         super(roomName, world, world, null, null, null);
         this.map = map;
         this.isPrivate = false;
@@ -51,14 +51,14 @@ public class Room extends Area implements IRoom {
      * @param password Passwort des Raums.
      */
     public Room(@NotNull final String roomName, @NotNull final World world,
-                @NotNull final SpatialMap map, @NotNull final String password) {
+                @NotNull final ContextMap map, @NotNull final String password) {
         this(roomName, world, map);
         this.isPrivate = true;
         this.password = password;
     }
 
     @Override
-    public @NotNull SpatialMap getMap() {
+    public @NotNull ContextMap getMap() {
         return map;
     }
 

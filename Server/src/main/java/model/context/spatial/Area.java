@@ -38,7 +38,7 @@ public class Area extends Context implements IArea {
     private final Set<AreaReservation> areaReservations;
 
     /** Die in diesem Kontext laufende Musik.*/
-    private Music music;
+    private ContextMusic music;
 
     /**
      * Erzeugt eine Instanz eines Bereichs.
@@ -66,7 +66,7 @@ public class Area extends Context implements IArea {
     }
 
     @Override
-    public @Nullable Music getMusic() {
+    public @Nullable ContextMusic getMusic() {
         return music;
     }
 
@@ -74,7 +74,7 @@ public class Area extends Context implements IArea {
      * Setzt die momentan abzuspielende Musik in diesem Kontext.
      * @param music Abzuspielende Musik.
      */
-    public void playMusic(@Nullable final Music music) {
+    public void playMusic(@Nullable final ContextMusic music) {
         this.music = music;
         // Sende Information über geänderte Musik an alle Benutzer im Kontext.
         this.containedUsers.values().forEach(user -> user.send(SendAction.CONTEXT_INFO, this));

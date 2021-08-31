@@ -35,7 +35,7 @@ public interface ISpatialContextView extends IContextView {
      * Gibt die Karte des Kontextes zurück.
      * @return Die Karte des Kontextes.
      */
-    SpatialMap getMap();
+    ContextMap getMap();
 
     /**
      * Gibt den Mittelpunkt des Kontextes zurück.

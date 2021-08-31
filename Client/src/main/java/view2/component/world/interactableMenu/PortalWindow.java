@@ -1,7 +1,6 @@
 package view2.component.world.interactableMenu;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -10,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.context.ContextID;
-import model.context.spatial.Menu;
+import model.context.spatial.ContextMenu;
 import view2.Assets;
 import view2.Chati;
 
@@ -27,7 +26,7 @@ public class PortalWindow extends InteractableWindow {
     private TextButton closeButton;
 
     public PortalWindow(ContextID portalId) {
-        super("Raum verlassen", portalId, Menu.PORTAL_MENU);
+        super("Raum verlassen", portalId, ContextMenu.PORTAL_MENU);
         create();
         setLayout();
     }

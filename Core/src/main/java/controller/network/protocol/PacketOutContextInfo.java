@@ -4,7 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import model.context.ContextID;
-import model.context.spatial.Music;
+import model.context.spatial.ContextMusic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
 
     private ContextID contextId;
     private UUID[] mutes;
-    private Music music;
+    private ContextMusic music;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -39,7 +39,7 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
      * @param music die neue Musik im Kontext, oder null, wenn dort keine Musik läuft.
      * @param mutes die im Kontext stumm geschalteten Benutzer.
      */
-    public PacketOutContextInfo(@NotNull final ContextID contextId, @Nullable final Music music,
+    public PacketOutContextInfo(@NotNull final ContextID contextId, @Nullable final ContextMusic music,
                                 @NotNull final Collection<UUID> mutes) {
         this.contextId = contextId;
         this.music = music;
@@ -65,7 +65,7 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.contextId = PacketUtils.readContextId(input);
-        this.music = PacketUtils.readNullableEnum(input, Music.class);
+        this.music = PacketUtils.readNullableEnum(input, ContextMusic.class);
         this.mutes = new UUID[input.readVarInt(true)];
 
         for (int index = 0; index < this.mutes.length; index++) {
@@ -99,7 +99,7 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
      * Gibt die Musik, die innerhalb des Kontexts abgespielt werden soll, zurück.
      * @return die neue Musik im Kontext.
      */
-    public @Nullable Music getMusic() {
+    public @Nullable ContextMusic getMusic() {
         return this.music;
     }
 }

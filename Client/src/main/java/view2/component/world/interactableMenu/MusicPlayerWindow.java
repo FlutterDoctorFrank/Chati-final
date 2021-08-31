@@ -7,8 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.context.ContextID;
-import model.context.spatial.Menu;
-import model.context.spatial.Music;
+import model.context.spatial.ContextMenu;
+import model.context.spatial.ContextMusic;
 import view2.Assets;
 import view2.Chati;
 
@@ -26,7 +26,7 @@ public class MusicPlayerWindow extends InteractableWindow {
 
     private Label infoLabel;
     private Label musicSelectLabel;
-    private SelectBox<Music> musicSelectBox;
+    private SelectBox<ContextMusic> musicSelectBox;
     private TextButton playButton;
     private TextButton stopButton;
     private TextButton randomButton;
@@ -34,7 +34,7 @@ public class MusicPlayerWindow extends InteractableWindow {
     private TextButton closeButton;
 
     public MusicPlayerWindow(ContextID musicPlayerId) {
-        super("Jukebox", musicPlayerId, Menu.MUSIC_PLAYER_MENU);
+        super("Jukebox", musicPlayerId, ContextMenu.MUSIC_PLAYER_MENU);
         create();
         setLayout();
     }
@@ -45,7 +45,7 @@ public class MusicPlayerWindow extends InteractableWindow {
 
         musicSelectLabel = new Label("Musik: ", Assets.SKIN);
         musicSelectBox = new SelectBox<>(Assets.SKIN);
-        musicSelectBox.setItems(EnumSet.allOf(Music.class).toArray(new Music[0]));
+        musicSelectBox.setItems(EnumSet.allOf(ContextMusic.class).toArray(new ContextMusic[0]));
 
        playButton = new TextButton("Abspielen", Assets.SKIN);
        playButton.addListener(new ClickListener() {

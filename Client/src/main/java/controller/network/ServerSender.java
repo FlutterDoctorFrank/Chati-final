@@ -12,7 +12,7 @@ import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
 import model.user.AdministrativeAction;
 import model.context.ContextID;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import model.user.Avatar;
 import model.user.Status;
 import org.jetbrains.annotations.NotNull;
@@ -163,7 +163,7 @@ public interface ServerSender {
          * Information, dass eine neue Welt erstellt werden soll.
          * <p>
          *     Erwartet als Objekt Array die Klassen:<br>
-         *     - {@code 0}: {@link SpatialMap}, die Karte, die die zu erstellende Welt besitzen soll.<br>
+         *     - {@code 0}: {@link ContextMap}, die Karte, die die zu erstellende Welt besitzen soll.<br>
          *     - {@code 1}: {@link String}, der Name der zu erstellenden Welt.
          * </p>
          */
@@ -171,8 +171,8 @@ public interface ServerSender {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
                 if (objects.length == 2) {
-                    if (objects[0] instanceof SpatialMap && objects[1] instanceof String) {
-                        return new PacketWorldAction((SpatialMap) objects[0], (String) objects[1]);
+                    if (objects[0] instanceof ContextMap && objects[1] instanceof String) {
+                        return new PacketWorldAction((ContextMap) objects[0], (String) objects[1]);
                     } else {
                         throw new IllegalArgumentException("Expected SpatialMap and String, got "
                                 + objects[0].getClass() + " and " + objects[1].getClass());

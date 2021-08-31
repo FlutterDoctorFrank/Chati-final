@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.mock.graphics.MockGL20;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import model.context.spatial.Location;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import model.context.spatial.World;
 import org.junit.*;
 
@@ -31,7 +31,7 @@ public class LocationTest {
 
     @Before
     public void setUp() {
-        this.test_world = new World("test_world", SpatialMap.PUBLIC_ROOM_MAP);
+        this.test_world = new World("test_world", ContextMap.PUBLIC_ROOM_MAP);
         this.test_location = new Location(test_world.getPublicRoom(), 1, 1);
     }
 

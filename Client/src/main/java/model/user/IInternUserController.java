@@ -3,9 +3,9 @@ package model.user;
 import model.MessageBundle;
 import model.context.Context;
 import model.context.ContextID;
-import model.context.spatial.Music;
+import model.context.spatial.ContextMusic;
 import model.context.spatial.SpatialContext;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import model.exception.ContextNotFoundException;
 import model.exception.NotificationNotFoundException;
 import model.notification.NotificationType;
@@ -39,7 +39,7 @@ public interface IInternUserController extends IUserController {
      * @throws IllegalStateException wenn es keine aktuelle Welt gibt.
      * @see SpatialContext
      */
-    void joinRoom(ContextID roomId, String roomName, SpatialMap map);
+    void joinRoom(ContextID roomId, String roomName, ContextMap map);
 
     /**
      * Setzt die Musik, die in einem Kontext abgespielt werden soll.
@@ -48,7 +48,7 @@ public interface IInternUserController extends IUserController {
      * @throws ContextNotFoundException falls dem Client kein Kontext mit der ID bekannt ist.
      * @see SpatialContext
      */
-    void setMusic(ContextID spatialId, Music music) throws ContextNotFoundException;
+    void setMusic(ContextID spatialId, ContextMusic music) throws ContextNotFoundException;
 
     /**
      * Fügt dem Benutzer eine Benachrichtigung in einem Kontext hinzu.

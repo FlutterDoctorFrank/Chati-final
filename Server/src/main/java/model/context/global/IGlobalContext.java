@@ -3,7 +3,7 @@ package model.context.global;
 import model.context.ContextID;
 import model.context.IContext;
 import model.context.spatial.IWorld;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import model.exception.ContextNotFoundException;
 import model.exception.IllegalWorldActionException;
 import model.exception.NoPermissionException;
@@ -29,7 +29,7 @@ public interface IGlobalContext extends IContext {
      * @see model.context.spatial.IArea
      * @see model.role.Permission#MANAGE_WORLDS
      */
-    void createWorld(@NotNull final UUID performerId, @NotNull final String worldName, @NotNull final SpatialMap map) throws UserNotFoundException, NoPermissionException, IllegalWorldActionException;
+    void createWorld(@NotNull final UUID performerId, @NotNull final String worldName, @NotNull final ContextMap map) throws UserNotFoundException, NoPermissionException, IllegalWorldActionException;
 
     /**
      * Entfernt eine Welt im Namen eines Benutzers, sofern dieser die nötige Berechtigung dafür besitzt.

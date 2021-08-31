@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import model.context.spatial.SpatialContext;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import model.exception.ContextNotFoundException;
 import model.user.UserManager;
 import org.junit.After;
@@ -18,7 +18,7 @@ public class ContextTest {
 
     SpatialContext world;
     SpatialContext room;
-    SpatialMap map;
+    ContextMap map;
 
     @Before
     public void setUp() throws Exception {
@@ -45,7 +45,7 @@ public class ContextTest {
         });
         world = new SpatialContext("World", Context.getGlobal());
         room = new SpatialContext("Room", world);
-        map = SpatialMap.PUBLIC_ROOM_MAP;
+        map = ContextMap.PUBLIC_ROOM_MAP;
         Game game = new Game() {
             @Override
             public void create() {

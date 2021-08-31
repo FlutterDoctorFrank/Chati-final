@@ -1,12 +1,12 @@
 package view2.component.world.interactableMenu;
 
 import model.context.ContextID;
-import model.context.spatial.Menu;
+import model.context.spatial.ContextMenu;
 
 public class AreaPlannerWindow extends InteractableWindow {
 
     public AreaPlannerWindow(ContextID interactableId) {
-        super("Bereichsplaner", interactableId, Menu.AREA_PLANNER_MENU);
+        super("Bereichsplaner", interactableId, ContextMenu.AREA_PLANNER_MENU);
     }
 
     @Override

@@ -8,11 +8,10 @@ import controller.network.ClientSender;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
 import model.context.spatial.Room;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import model.context.spatial.World;
 import model.role.Role;
 import model.user.User;
-import model.user.UserTesten;
 import model.user.account.UserAccountManager;
 import org.junit.*;
 
@@ -54,7 +53,7 @@ public class RoomRequestTest {
                 userAccountManager.registerUser("performer", "22222");
                 User performer = userAccountManager.getUser("performer");
                 performer.addRole(globalContext, Role.OWNER);
-                globalContext.createWorld(performer.getUserId(), "test_world", SpatialMap.PUBLIC_ROOM_MAP);
+                globalContext.createWorld(performer.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
                 ContextID newworld_id = globalContext.getIWorlds().keySet().iterator().next();
                 test_world = globalContext.getWorld(newworld_id);
 
@@ -105,7 +104,7 @@ public class RoomRequestTest {
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
             this.userAccountManager.registerUser("rrn_receiver", "22222");
             receiver = UserAccountManager.getInstance().loginUser("rrn_receiver", "22222", testClientSender);
-            Room test_room = new Room("test_room", test_world, SpatialMap.PRIVATE_ROOM_MAP, "11111");
+            Room test_room = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
             sender.joinWorld(test_world.getContextId());
             receiver.joinWorld(test_world.getContextId());
             this.test_world.addPrivateRoom(test_room);
@@ -137,7 +136,7 @@ public class RoomRequestTest {
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
             this.userAccountManager.registerUser("rrn_receiver", "22222");
             receiver = UserAccountManager.getInstance().loginUser("rrn_receiver", "22222", testClientSender);
-            Room test_room = new Room("test_room", test_world, SpatialMap.PRIVATE_ROOM_MAP, "11111");
+            Room test_room = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
             sender.joinWorld(test_world.getContextId());
             receiver.joinWorld(test_world.getContextId());
             this.test_world.addPrivateRoom(test_room);
@@ -170,7 +169,7 @@ public class RoomRequestTest {
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
             this.userAccountManager.registerUser("rrn_receiver", "22222");
             receiver = UserAccountManager.getInstance().loginUser("rrn_receiver", "22222", testClientSender);
-            Room test_room = new Room("test_room", test_world, SpatialMap.PRIVATE_ROOM_MAP, "11111");
+            Room test_room = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
             sender.joinWorld(test_world.getContextId());
             receiver.joinWorld(test_world.getContextId());
             this.test_world.addPrivateRoom(test_room);
@@ -201,7 +200,7 @@ public class RoomRequestTest {
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
             this.userAccountManager.registerUser("rrn_receiver", "22222");
             receiver = UserAccountManager.getInstance().loginUser("rrn_receiver", "22222", testClientSender);
-            Room test_room = new Room("test_room", test_world, SpatialMap.PRIVATE_ROOM_MAP, "11111");
+            Room test_room = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
             sender.joinWorld(test_world.getContextId());
             receiver.joinWorld(test_world.getContextId());
             this.test_world.addPrivateRoom(test_room);
@@ -233,7 +232,7 @@ public class RoomRequestTest {
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
             this.userAccountManager.registerUser("rrn_receiver", "22222");
             receiver = UserAccountManager.getInstance().loginUser("rrn_receiver", "22222", testClientSender);
-            Room test_room = new Room("test_room", test_world, SpatialMap.PRIVATE_ROOM_MAP, "11111");
+            Room test_room = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
             sender.joinWorld(test_world.getContextId());
             receiver.joinWorld(test_world.getContextId());
             this.test_world.addPrivateRoom(test_room);
@@ -266,7 +265,7 @@ public class RoomRequestTest {
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
             this.userAccountManager.registerUser("rrn_receiver", "22222");
             receiver = UserAccountManager.getInstance().loginUser("rrn_receiver", "22222", testClientSender);
-            Room test_room = new Room("test_room", test_world, SpatialMap.PRIVATE_ROOM_MAP, "11111");
+            Room test_room = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
             sender.joinWorld(test_world.getContextId());
             receiver.joinWorld(test_world.getContextId());
             this.test_world.addPrivateRoom(test_room);

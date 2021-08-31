@@ -13,7 +13,6 @@ import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.role.Role;
 import model.user.AdministrativeAction;
-import model.user.IInternUserView;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
@@ -158,10 +157,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (user.canInvite()) {
+        if (user.canBeInvited()) {
             roomButton = new ImageButton(Assets.ROOM_INVITE_ICON);
             roomButton.addListener(new InformationToolTip("In den Raum einladen"));
-        } else if (user.canKick()) {
+        } else if (user.canBeKicked()) {
             roomButton = new ImageButton(Assets.ROOM_KICK_ICON);
             roomButton.addListener(new InformationToolTip("Aus dem Raum entfernen"));
         } else {
@@ -178,9 +177,9 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 roomButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (user.canInvite()) {
+                if (user.canBeInvited()) {
                     new MessageWindow(AdministrativeAction.ROOM_INVITE).open();
-                } else if (user.canKick()) {
+                } else if (user.canBeKicked()) {
                     Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.ROOM_KICK, "");
                 }
@@ -235,7 +234,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (user.canReport()) {
+        if (user.canBeReported()) {
             reportButton = new ImageButton(Assets.REPORT_ICON);
             reportButton.addListener(new InformationToolTip("Melden"));
         } else {
@@ -252,7 +251,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 reportButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (user.canReport()) {
+                if (user.canBeReported()) {
                     new MessageWindow(AdministrativeAction.REPORT_USER).open();
                 }
             }
@@ -270,7 +269,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (user.canMute()) {
+        if (user.canBeMuted()) {
             if (!user.isMuted()) {
                 muteButton = new ImageButton(Assets.MUTE_ICON);
                 muteButton.addListener(new InformationToolTip("Stummschalten"));
@@ -292,7 +291,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 muteButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (user.canMute()) {
+                if (user.canBeMuted()) {
                     if (!user.isMuted()) {
                         Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                                 AdministrativeAction.MUTE_USER, "");
@@ -316,7 +315,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        if (user.canBan()) {
+        if (user.canBeBanned()) {
             if (!user.isBanned()) {
                 banButton = new ImageButton(Assets.BAN_ICON);
                 banButton.addListener(new InformationToolTip("Sperren"));
@@ -338,7 +337,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 banButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (user.canBan()) {
+                if (user.canBeBanned()) {
                     if (!user.isBanned()) {
                         new MessageWindow(AdministrativeAction.BAN_USER).open();
                     } else {

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Eine Enumeration, welche die Musikstücke repräsentiert, die in einem räumlichen Kontext abgespielt werden können.
  */
-public enum Music implements Resource {
+public enum ContextMusic implements Resource {
 
     PLACEHOLDER("placeholder");
 
@@ -15,7 +15,7 @@ public enum Music implements Resource {
     private final String name;
     private final String path;
 
-    Music(@NotNull final String name) {
+    ContextMusic(@NotNull final String name) {
         this.name = name;
         this.path = PATH + this.name.toLowerCase();
     }

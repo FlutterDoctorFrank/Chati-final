@@ -4,13 +4,8 @@ package model.database;
 import model.MessageBundle;
 import model.context.Context;
 import model.context.global.GlobalContext;
-import model.context.spatial.SpatialMap;
-import model.context.spatial.World;
-import model.notification.AreaManagingRequest;
 import model.notification.FriendRequest;
 import model.notification.Notification;
-import model.notification.NotificationType;
-import model.role.ContextRole;
 import model.role.Role;
 import model.user.Avatar;
 import model.user.User;
@@ -18,7 +13,6 @@ import org.junit.*;
 
 import java.sql.*;
 import java.time.ZoneOffset;
-import java.util.UUID;
 
 public class UserDatabaseTest {
 

@@ -2,7 +2,7 @@ package model.user;
 
 import model.context.ContextID;
 import model.context.spatial.ISpatialContextView;
-import model.context.spatial.Music;
+import model.context.spatial.ContextMusic;
 import model.context.spatial.SpatialContext;
 import model.notification.INotificationView;
 import model.notification.Notification;
@@ -47,13 +47,13 @@ public interface IInternUserView extends IUserView {
      * Gibt die abzuspielende Musik zurück.
      * @return Abzuspielende Musik.
      */
-    Music getMusic();
+    ContextMusic getMusic();
 
     /**
-     * Gibt zurück, ob sich der Benutzer in einem privaten Raum aufält.
-     * @return true, wenn der Benutzer in einem privaten Raum ist, sonst false.
+     * Gibt zurück, ob der Benutzer gerade Sprachnachrichten versenden darf.
+     * @return true, wenn er Sprachnachrichten versenden darf, sonst false.
      */
-    boolean isInPrivateRoom();
+    boolean canTalk();
 
     /**
      * Gibt die Kontexte zurück, mit denen der Benutzer gerade interagieren kann.

@@ -1,9 +1,7 @@
 package view2.component;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.audio.Music;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 
@@ -13,8 +11,6 @@ public abstract class AbstractScreen extends ScreenAdapter {
 
     protected Response pendingResponse;
 
-    protected Music music;
-
     protected AbstractScreen() {
         this.stage = new MenuStage();
         this.pendingResponse = Response.NONE;
@@ -22,15 +18,9 @@ public abstract class AbstractScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        Chati.CHATI.getAudioManager().update();
         stage.act(delta);
         stage.draw();
-
-        /*
-        if (Chati.CHATI.isMusicChanged()) {
-            playMusic();
-        }
-
-         */
     }
 
     @Override
@@ -55,11 +45,5 @@ public abstract class AbstractScreen extends ScreenAdapter {
 
     public void setPendingResponse(Response pendingResponse) {
         this.pendingResponse = pendingResponse;
-    }
-
-    private void playMusic() {
-        music = Gdx.audio.newMusic(Gdx.files.internal(Chati.CHATI.getUserManager().getInternUserView().getMusic().getPath()));
-        music.setLooping(true);
-        music.play();
     }
 }

@@ -60,13 +60,13 @@ public interface IUserView {
      * Gibt zurück, ob der intern angemeldete Benutzer diesen Benutzer in einen privaten Raum einladen kann.
      * @return true, wenn eine Einladung in den Raum möglich ist, sonst false.
      */
-    boolean canInvite();
+    boolean canBeInvited();
 
     /**
      * Gibt zurück, ob der intern angemeldete Benutzer diesen Benutzer aus einem privaten Raum entfernen kann.
      * @return true, wenn eine Entfernung möglich ist, sonst false.
      */
-    boolean canKick();
+    boolean canBeKicked();
 
     /**
      * Gibt zurück, ob sich der intern angemeldete Benutzer zu diesem Benutzer teleportieren kann.
@@ -78,20 +78,20 @@ public interface IUserView {
      * Gibt zurück, ob der intern angemeldete Benutzer diesen Benutzer melden kann.
      * @return true, wenn der Benutzer gemeldet werden kann, sonst false.
      */
-    boolean canReport();
+    boolean canBeReported();
 
     /**
      * Gibt zurück, ob der intern angemeldete Benutzer diesen Benutzer stummschalten, oder die Stummschaltung aufheben
      * kann.
      * @return true, wenn dieser Benutzer stummgeschaltet, oder die Stummschaltung aufgehoben werden kann, sonst false.
      */
-    boolean canMute();
+    boolean canBeMuted();
 
     /**
      * Gibt zurück, ob der intern angemeldete Benutzer diesen Benutzer sperren oder entsperren kann.
      * @return true, wenn dieser Benutzer gesperrt oder entsperrt werden kann, sonst false
      */
-    boolean canBan();
+    boolean canBeBanned();
 
     /**
      * Gibt zurück, ob der intern angemeldete Benutzer diesem Benutzer die Rolle des Moderators erteilen oder entziehen

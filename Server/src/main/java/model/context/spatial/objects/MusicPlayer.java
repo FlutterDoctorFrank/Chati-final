@@ -33,7 +33,7 @@ public class MusicPlayer extends Interactable {
     public MusicPlayer(@NotNull final String objectName, @NotNull final Area parent,
                        @NotNull final CommunicationRegion communicationRegion,
                        @NotNull final Set<CommunicationMedium> communicationMedia, @NotNull final Expanse expanse) {
-        super(objectName, parent, communicationRegion, communicationMedia, expanse, Menu.MUSIC_PLAYER_MENU);
+        super(objectName, parent, communicationRegion, communicationMedia, expanse, ContextMenu.MUSIC_PLAYER_MENU);
     }
 
     @Override
@@ -57,9 +57,9 @@ public class MusicPlayer extends Interactable {
                     throw new IllegalMenuActionException("", "object.arguments.to-few");
                 }
 
-                Music music;
+                ContextMusic music;
                 try {
-                    music = Music.valueOf(args[0].toUpperCase());
+                    music = ContextMusic.valueOf(args[0].toUpperCase());
                 } catch (IllegalArgumentException ex) {
                     throw new IllegalMenuActionException("", ex, "object.music-player.music-not-found", args[0]);
                 }

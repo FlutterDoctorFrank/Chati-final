@@ -7,7 +7,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.SpatialContext;
-import model.context.spatial.SpatialMap;
+import model.context.spatial.ContextMap;
 import model.exception.ContextNotFoundException;
 import model.role.Permission;
 import model.role.Role;
@@ -27,7 +27,7 @@ public class IUserTest {
 
     SpatialContext world;
     SpatialContext room;
-    SpatialMap map;
+    ContextMap map;
     User testUser;
     UUID userId;
     IUserController testUserController;
@@ -60,7 +60,7 @@ public class IUserTest {
         room = new SpatialContext("Room", world);
         UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.ADAM);
 
-        map = SpatialMap.PUBLIC_ROOM_MAP;
+        map = ContextMap.PUBLIC_ROOM_MAP;
         Game game = new Game() {
             @Override
             public void create() {

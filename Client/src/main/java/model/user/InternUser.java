@@ -1,6 +1,7 @@
 package model.user;
 
 import model.MessageBundle;
+import model.communication.CommunicationMedium;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.*;
@@ -31,7 +32,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
     private final Map<UUID, Notification> notifications;
 
     /** Die Musik, die gerade abgespielt werden soll. */
-    private Music music;
+    private ContextMusic music;
 
     /**
      * Erzeugt eine neue Instanz des intern angemeldeten Benutzers.
@@ -70,7 +71,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void joinRoom(ContextID roomId, String roomName, SpatialMap map) {
+    public void joinRoom(ContextID roomId, String roomName, ContextMap map) {
         if (currentWorld == null) {
             throw new IllegalStateException("User is not in world.");
         }
@@ -84,7 +85,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void setMusic(ContextID spatialId, Music music) throws ContextNotFoundException {
+    public void setMusic(ContextID spatialId, ContextMusic music) throws ContextNotFoundException {
         if (this.music == music) {
             return; // Nothing to change
         }
@@ -143,13 +144,15 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public Music getMusic() {
+    public ContextMusic getMusic() {
         return music;
     }
 
     @Override
-    public boolean isInPrivateRoom() {
-        return currentWorld != null && currentRoom != null && !currentWorld.equals(currentRoom);
+    public boolean canTalk() {
+        return currentWorld != null && currentRoom != null && currentLocation != null
+                && currentLocation.getArea().getCommunicationMedia().contains(CommunicationMedium.VOICE)
+                && !isMuted() && !UserManager.getInstance().getCommunicableUsers().isEmpty();
     }
 
     @Override

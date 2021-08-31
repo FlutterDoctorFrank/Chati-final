@@ -52,7 +52,7 @@ public class WorldTest {
         this.context_database = Database.getContextDatabase();
         this.user_database = Database.getUserDatabase();
         this.account_database = Database.getUserAccountManagerDatabase();
-        this.test_world = new World("test_world", SpatialMap.PUBLIC_ROOM_MAP);
+        this.test_world = new World("test_world", ContextMap.PUBLIC_ROOM_MAP);
         this.globalContext = GlobalContext.getInstance();
         this.userAccountManager = UserAccountManager.getInstance();
 
@@ -88,7 +88,7 @@ public class WorldTest {
 
     @Test
     public void addPrivateRoomTest() {
-        Room test_room = new Room("test_room", this.test_world, SpatialMap.PUBLIC_ROOM_MAP,
+        Room test_room = new Room("test_room", this.test_world, ContextMap.PUBLIC_ROOM_MAP,
                 "11111");
         this.test_world.addPrivateRoom(test_room);
         Assert.assertEquals(1, this.test_world.getPrivateRooms().size());
@@ -106,7 +106,7 @@ public class WorldTest {
     @Test
     public void removePrivateRoomTest() {
         // zuerst add ein Raum
-        Room test_room = new Room("test_room", this.test_world, SpatialMap.PUBLIC_ROOM_MAP,
+        Room test_room = new Room("test_room", this.test_world, ContextMap.PUBLIC_ROOM_MAP,
                 "11111");
         this.test_world.addPrivateRoom(test_room);
         Assert.assertEquals(1, this.test_world.getPrivateRooms().size());
@@ -133,7 +133,7 @@ public class WorldTest {
             userAccountManager.registerUser("performer", "22222");
             User performer = userAccountManager.getUser("performer");
             performer.addRole(globalContext, Role.OWNER);
-            globalContext.createWorld(performer.getUserId(), "test_world", SpatialMap.PUBLIC_ROOM_MAP);
+            globalContext.createWorld(performer.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
             ContextID newworld_id = globalContext.getIWorlds().keySet().iterator().next();
             test_world = globalContext.getWorld(newworld_id);
         } catch (Exception e) {

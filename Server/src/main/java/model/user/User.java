@@ -722,7 +722,7 @@ public class User implements IUser {
      * Gibt das Menü zurück, dass der Benutzer gerade geöffnet hat.
      * @return Interaktionsobjekt, mit dem der Benutzer gerade interagiert.
      */
-    public @Nullable Menu getCurrentMenu() {
+    public @Nullable ContextMenu getCurrentMenu() {
         return currentInteractable == null ? null : currentInteractable.getMenu();
     }
 

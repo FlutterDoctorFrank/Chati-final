@@ -9,11 +9,11 @@ import controller.network.ServerSender;
 import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.context.ContextID;
-import model.context.spatial.Menu;
+import model.context.spatial.ContextMenu;
 import model.exception.UserNotFoundException;
 import model.user.IUserManagerView;
 import org.jetbrains.annotations.Nullable;
-import view2.audio.VoiceChat;
+import view2.audio.AudioManager;
 import view2.component.AbstractScreen;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.menu.table.LoginTable;
@@ -32,6 +32,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     private final IUserManagerView userManager;
     private ServerSender serverSender;
+    private AudioManager audioManager;
     private MenuScreen menuScreen;
     private WorldScreen worldScreen;
 
@@ -72,24 +73,11 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public AbstractScreen getScreen() {
-        if (screen.equals(menuScreen)) {
-            return menuScreen;
-        }
-        if (screen.equals(worldScreen)) {
-            return worldScreen;
-        }
-        return null;
-    }
-
-    @Override
     public void create() {
         Settings.initialize();
         Assets.initialize();
         SPRITE_BATCH = new SpriteBatch();
-
-        VoiceChat.getInstance().start();
-
+        this.audioManager = new AudioManager();
         this.menuScreen = new MenuScreen();
         this.worldScreen = new WorldScreen();
         setScreen(menuScreen);
@@ -101,6 +89,21 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         resetModelChangeReceivedFlags();
         super.render();
         resetModelChangedFlags();
+    }
+
+    @Override
+    public AbstractScreen getScreen() {
+        if (screen.equals(menuScreen)) {
+            return menuScreen;
+        }
+        if (screen.equals(worldScreen)) {
+            return worldScreen;
+        }
+        return null;
+    }
+
+    public AudioManager getAudioManager() {
+        return audioManager;
     }
 
     public ServerSender getServerSender() {
@@ -226,21 +229,21 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void playVoiceData(UUID userId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
         if (this.screen.equals(worldScreen)) {
-            VoiceChat.getInstance().receiveData(userId, timestamp, voiceData);
+            audioManager.playVoiceData(userId, timestamp, voiceData);
         }
     }
 
     @Override
-    public void openMenu(ContextID contextId, Menu menu) {
+    public void openMenu(ContextID contextId, ContextMenu contextMenu) {
         if (this.screen.equals(worldScreen)) {
-            Gdx.app.postRunnable(() -> worldScreen.openMenu(contextId, menu));
+            Gdx.app.postRunnable(() -> worldScreen.openMenu(contextId, contextMenu));
         }
     }
 
     @Override
-    public void closeMenu(ContextID contextId, Menu menu) {
+    public void closeMenu(ContextID contextId, ContextMenu contextMenu) {
         if (this.screen.equals(worldScreen)) {
-            Gdx.app.postRunnable(() -> worldScreen.closeMenu(contextId, menu));
+            Gdx.app.postRunnable(() -> worldScreen.closeMenu(contextId, contextMenu));
         }
     }
 

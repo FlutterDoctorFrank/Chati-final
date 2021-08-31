@@ -28,7 +28,7 @@ public class World extends Area implements IWorld {
      * @param worldName Name der Welt.
      * @param map Karte der Welt.
      */
-    public World(@NotNull final String worldName, @NotNull final SpatialMap map) {
+    public World(@NotNull final String worldName, @NotNull final ContextMap map) {
         super(worldName, GlobalContext.getInstance(), null, null, null, null);
         this.publicRoom = new Room(PUBLIC_ROOM_NAME, this, map);
         this.publicRoom.build();
@@ -136,7 +136,7 @@ public class World extends Area implements IWorld {
 
     public void sendRoomList() {
         containedUsers.values().stream()
-                .filter(user -> user.getCurrentMenu() == Menu.ROOM_RECEPTION_MENU)
+                .filter(user -> user.getCurrentMenu() == ContextMenu.ROOM_RECEPTION_MENU)
                 .forEach(user -> user.send(SendAction.CONTEXT_LIST, this));
     }
 }

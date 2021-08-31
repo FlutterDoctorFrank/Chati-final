@@ -1,12 +1,12 @@
 package view2.component.world.interactableMenu;
 
 import model.context.ContextID;
-import model.context.spatial.Menu;
+import model.context.spatial.ContextMenu;
 
 public class GameBoardWindow extends InteractableWindow {
 
     public GameBoardWindow(ContextID gameBoardId) {
-        super("Minispiel", gameBoardId, Menu.GAME_BOARD_MENU);
+        super("Minispiel", gameBoardId, ContextMenu.GAME_BOARD_MENU);
     }
 
     @Override

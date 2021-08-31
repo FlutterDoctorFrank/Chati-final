@@ -8,11 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import model.context.Context;
-import model.context.spatial.SpatialMap;
-import org.jetbrains.annotations.NotNull;
+import model.context.spatial.ContextMap;
 
-import java.awt.event.ActionListener;
 import java.util.EnumSet;
 
 public class StartScreenTable extends MenuTable {
@@ -144,7 +141,7 @@ public class StartScreenTable extends MenuTable {
                 } else if (mapSelect.getSelected().isEmpty()) {
                     displayMessage("Wehlen Sie eine Karte");
                 } else {
-                    for (var entry : EnumSet.allOf(SpatialMap.class)) {
+                    for (var entry : EnumSet.allOf(ContextMap.class)) {
                         if (entry.getName().equals(mapSelect.getSelected())) {
                             hud.sendCreateWorldRequest(entry, newWorldName.getText());
                         }
@@ -183,7 +180,7 @@ public class StartScreenTable extends MenuTable {
 
 
     private void updateMapList(SelectBox<String> selectBox) {
-       for (var entry : EnumSet.allOf(SpatialMap.class)) {
+       for (var entry : EnumSet.allOf(ContextMap.class)) {
            selectBox.setItems(entry.getName());
         }
     }

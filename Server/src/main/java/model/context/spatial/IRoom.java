@@ -12,7 +12,7 @@ public interface IRoom extends IArea {
      * Gibt die Karte des Raumes zurück.
      * @return Karte des Raumes.
      */
-    @NotNull SpatialMap getMap();
+    @NotNull ContextMap getMap();
 
     /**
      * Gibt zurück, ob dieser Raum ein privater Raum ist.

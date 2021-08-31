@@ -21,7 +21,7 @@ public abstract class Interactable extends Area implements IInteractable {
     protected final Area parent;
 
     /** Das Menü das beim Benutzer bei einer Interaktion mit diesem Kontext geöffnet werden soll. */
-    private final Menu menu;
+    private final ContextMenu menu;
 
     /**
      * Erzeugt eine Instanz eines Interaktionsobjekts.
@@ -35,7 +35,7 @@ public abstract class Interactable extends Area implements IInteractable {
      */
     protected Interactable(@NotNull final String interactableName, @NotNull final Area parent,
                            @NotNull final CommunicationRegion communicationRegion, @NotNull final Set<CommunicationMedium> communicationMedia,
-                           @NotNull final Expanse expanse, @NotNull final Menu menu) {
+                           @NotNull final Expanse expanse, @NotNull final ContextMenu menu) {
         super(interactableName, parent, parent.getWorld(), communicationRegion, communicationMedia, expanse);
         this.parent = parent;
         this.menu = menu;
@@ -87,7 +87,7 @@ public abstract class Interactable extends Area implements IInteractable {
     }
 
     @Override
-    public @NotNull Menu getMenu() {
+    public @NotNull ContextMenu getMenu() {
         return menu;
     }
 
