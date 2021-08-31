@@ -46,7 +46,7 @@ public class InternUserAvatar extends UserAvatar {
         }
         isTeleporting = false;
         oldPosition = body.getPosition().cpy();
-        Direction currentDirection = getCurrentDirectionalInput();
+        currentDirection = getCurrentDirectionalInput();
         float velocity = DEFAULT_VELOCITY;
         if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isSprintPressed()) {
             isSprinting = true;
@@ -121,11 +121,11 @@ public class InternUserAvatar extends UserAvatar {
         if (!isTeleporting && !oldPosition.epsilonEquals(getPosition())) {
             isTeleporting = false;
             Chati.CHATI.getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
-                    getPosition().x * WorldCamera.PPM, getPosition().y * WorldCamera.PPM, isSprinting);
+                    getPosition().x * WorldCamera.PPM, getPosition().y * WorldCamera.PPM, isSprinting, currentDirection);
         }
     }
 
-    private Direction getCurrentDirectionalInput() {
+    protected Direction getCurrentDirectionalInput() {
         Arrays.stream(Direction.values()).forEach(direction -> {
             if (!currentDirectionalInputs.contains(direction)
                     && Chati.CHATI.getWorldScreen().getWorldInputProcessor().isDirectionPressed(direction)) {

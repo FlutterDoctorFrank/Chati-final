@@ -67,8 +67,6 @@ public class UserAvatar extends Sprite {
 
         initializeSprite();
         this.stateTimer = 0;
-        currentDirection = Direction.DOWN;
-        previousDirection = Direction.DOWN;
     }
 
     @Override
@@ -131,35 +129,35 @@ public class UserAvatar extends Sprite {
     }
 
     private TextureRegion getCurrentFrameRegion(float delta) {
-        currentDirection = getMovingDirection();
+        currentDirection = getCurrentDirection();
         stateTimer = currentDirection == previousDirection ? stateTimer + delta : 0;
-        if (currentDirection == null) {
-            if (previousDirection == Direction.UP) {
-                return avatarStandUp;
+        if (currentDirection == previousDirection && body.getLinearVelocity().isZero()) {
+            switch (previousDirection) {
+                case UP:
+                    return avatarStandUp;
+                case LEFT:
+                    return avatarStandLeft;
+                case DOWN:
+                    return avatarStandDown;
+                default:
+                    return avatarStandRight;
             }
-            if (previousDirection == Direction.LEFT) {
-                return avatarStandLeft;
-            }
-            if (previousDirection == Direction.RIGHT) {
-                return avatarStandRight;
-            }
-            return avatarStandDown;
         } else {
             previousDirection = currentDirection;
-            if (currentDirection == Direction.UP) {
-                return avatarRunUp.getKeyFrame(stateTimer, true);
+            switch (currentDirection) {
+                case UP:
+                    return avatarRunUp.getKeyFrame(stateTimer, true);
+                case LEFT:
+                    return avatarRunLeft.getKeyFrame(stateTimer, true);
+                case DOWN:
+                    return avatarRunDown.getKeyFrame(stateTimer, true);
+                default:
+                    return avatarRunRight.getKeyFrame(stateTimer, true);
             }
-            if (currentDirection == Direction.LEFT) {
-                return avatarRunLeft.getKeyFrame(stateTimer, true);
-            }
-            if (currentDirection == Direction.RIGHT) {
-                return avatarRunRight.getKeyFrame(stateTimer, true);
-            }
-            return avatarRunDown.getKeyFrame(stateTimer, true);
         }
     }
 
-    private Direction getMovingDirection() {
+    protected Direction getCurrentDirection() {
         Vector2 velocity = body.getLinearVelocity();
         if (velocity.y > Math.abs(velocity.x)) {
             return Direction.UP;
@@ -173,7 +171,7 @@ public class UserAvatar extends Sprite {
         if (velocity.x > Math.abs(velocity.y)) {
             return Direction.RIGHT;
         }
-        return null;
+        return previousDirection;
     }
 
     public void teleport() {
@@ -184,6 +182,8 @@ public class UserAvatar extends Sprite {
         Vector2 newPosition = new Vector2(location.getPosX() / WorldCamera.PPM, location.getPosY() / WorldCamera.PPM);
         body.setTransform(newPosition, body.getAngle());
         body.setAwake(true);
+        currentDirection = location.getDirection();
+        previousDirection = currentDirection;
     }
 
     public void update() {

@@ -220,12 +220,14 @@ public interface ServerSender {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
                 if (objects.length == 4) {
-                    if (objects[0] instanceof Float && objects[1] instanceof Float) {
+                    if (objects[0] instanceof Float && objects[1] instanceof Float
+                            && objects[2] instanceof Boolean && objects[3] instanceof Direction) {
                         final float posX = (float) objects[0];
                         final float posY = (float) objects[1];
                         final boolean sprinting = (boolean) objects[2];
+                        final Direction direction = (Direction) objects[3];
 
-                        return new PacketAvatarMove(posX, posY, sprinting, (Direction) objects[3]);
+                        return new PacketAvatarMove(posX, posY, sprinting, direction);
                     } else {
                         throw new IllegalArgumentException("Expected Float, Float, Boolean and Direction, got "
                                 + objects[0].getClass() + ", " + objects[1].getClass() + ", "
