@@ -38,7 +38,7 @@ public class AudioManager {
         IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged() || Chati.CHATI.isRoomChanged()) {
             if (!voiceChat.isRunning() && internUser != null && internUser.isInCurrentWorld()) {
-                setVoiceVolume();
+                //setVoiceVolume();
                 voiceChat.start();
             } else if (voiceChat.isRunning() && internUser != null && !internUser.isInCurrentWorld()) {
                 voiceChat.stop();

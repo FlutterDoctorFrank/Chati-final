@@ -14,6 +14,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class VoiceChat {
 
@@ -21,9 +24,9 @@ public class VoiceChat {
     private static final int SEND_RATE = 30;
     private static final int PACKET_SIZE = SAMPLE_RATE / SEND_RATE;
     private static final int GATE = 1024;
-    private static final long STOP_SEND_DELAY = 250;
+    private static final long STOP_SENDING_DELAY = 250;
 
-    private final Map<IUserView, VoiceDataQueue> mixDataBuffer;
+    private final Map<IUserView, SenderQueue> receivedDataBuffer;
     private final AudioRecorder recorder;
     private final AudioDevice player;
 
@@ -36,7 +39,7 @@ public class VoiceChat {
     public VoiceChat() {
         this.recorder = Gdx.audio.newAudioRecorder(SAMPLE_RATE, true);
         this.player = Gdx.audio.newAudioDevice(SAMPLE_RATE, true);
-        this.mixDataBuffer = new ConcurrentHashMap<>();
+        this.receivedDataBuffer = new ConcurrentHashMap<>();
         this.sendSemaphore = new Semaphore(1);
         this.playSemaphore = new Semaphore(1);
     }
@@ -77,10 +80,10 @@ public class VoiceChat {
         IUserView user = Chati.CHATI.getUserManager().getExternUserView(userId);
         short[] receivedData = toShort(voiceData);
 
-        if (!mixDataBuffer.containsKey(user)) {
-            mixDataBuffer.put(user, new VoiceDataQueue(user, timestamp, receivedData));
+        if (!receivedDataBuffer.containsKey(user)) {
+            receivedDataBuffer.put(user, new SenderQueue(user, timestamp, receivedData));
         } else {
-            mixDataBuffer.get(user).addData(timestamp, receivedData);
+            receivedDataBuffer.get(user).addData(timestamp, receivedData);
         }
 
         playSemaphore.release();
@@ -89,7 +92,7 @@ public class VoiceChat {
     private void recordAndSend() {
         Thread recordAndSendThread = new Thread(() -> {
             long timestamp = System.currentTimeMillis();
-            short[] recordData = new short[PACKET_SIZE];
+            short[] recordedData = new short[PACKET_SIZE];
             while (isRunning) {
                 while (!isSending) {
                     try {
@@ -98,18 +101,18 @@ public class VoiceChat {
                         e.printStackTrace();
                     }
                 }
-                // Überprüfe ob Lautstärke eines Samples gewissen Wert überschreitet und setze Zeitstempel.
-                // Sende ab diesem Zeitpunkt mindestens für eine gewisse Dauer weiter, bevor das Senden gestoppt
-                // wird. Dadurch wird ein Dauersenden verhindert ohne am Ende "abgehackt" zu werden.
-                recorder.read(recordData, 0, recordData.length);
-                for (short sample : recordData) {
+                // Überprüfe ob Lautstärke eines Samples gewissen Wert überschreitet, fange dann an zu senden und setze
+                // Zeitstempel. Sende ab diesem Zeitpunkt mindestens für eine gewisse Dauer weiter, bevor das Senden
+                // gestoppt wird. Dadurch wird ein Dauersenden verhindert ohne am Ende "abgehackt" zu werden.
+                recorder.read(recordedData, 0, recordedData.length);
+                for (short sample : recordedData) {
                     if (Math.abs(sample) >= GATE) {
                         timestamp = System.currentTimeMillis();
                         break;
                     }
                 }
-                if (System.currentTimeMillis() - timestamp < STOP_SEND_DELAY) {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.VOICE, toByte(recordData));
+                if (System.currentTimeMillis() - timestamp < STOP_SENDING_DELAY) {
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.VOICE, toByte(recordedData));
                 }
             }
         });
@@ -121,7 +124,7 @@ public class VoiceChat {
         Thread mixAndPlaybackThread = new Thread(() -> {
             short[] mixedData = new short[PACKET_SIZE];
             while (isRunning) {
-                while (mixDataBuffer.isEmpty()) {
+                while (receivedDataBuffer.isEmpty()) {
                     try {
                         playSemaphore.acquire();
                     } catch (InterruptedException e) {
@@ -130,28 +133,17 @@ public class VoiceChat {
                 }
 
                 int[] temp = new int[PACKET_SIZE];
-                int producerCount = 0;
-                Iterator<VoiceDataQueue> iterator = mixDataBuffer.values().iterator();
-                while (iterator.hasNext()) {
-                    VoiceDataQueue queue = iterator.next();
-                    if (queue.hasData()) {
-                        VoiceDataQueue.VoiceData dataBlock = queue.getData();
-                        for (int i = 0; i < PACKET_SIZE; i++) {
-                            temp[i] += dataBlock.getVoiceData()[i];
-                        }
-                        producerCount++;
-                    } else {
-                        if (queue.getLastTimeReceived().isBefore(LocalDateTime.now().minus(STOP_SEND_DELAY, ChronoUnit.MILLIS))) {
-                            iterator.remove();
-                        }
-                    }
-                }
-                if (producerCount == 0) {
-                    continue;
-                }
+                Set<SenderQueue.VoiceDataBlock> blocks = receivedDataBuffer.values().stream()
+                        .filter(SenderQueue::hasData)
+                        .map(SenderQueue::getBlock)
+                        .collect(Collectors.toSet());
                 for (int i = 0; i < PACKET_SIZE; i++) {
-                    mixedData[i] = (short) (temp[i] / producerCount);
+                    int j = i;
+                    blocks.forEach(block -> temp[j] += block.getVoiceData()[j]);
+                    mixedData[j] = (short) (temp[j] / blocks.size());
                 }
+                receivedDataBuffer.values().removeIf(Predicate.not(SenderQueue::hasData).and(queue -> queue
+                        .getLastTimeReceived().isBefore(LocalDateTime.now().minus(STOP_SENDING_DELAY, ChronoUnit.MILLIS))));
                 player.writeSamples(mixedData, 0, mixedData.length);
             }
         });
@@ -176,20 +168,20 @@ public class VoiceChat {
         return shorts;
     }
 
-    private static class VoiceDataQueue {
+    private static class SenderQueue {
 
         private final IUserView sender;
-        private final Queue<VoiceData> voiceDataQueue;
+        private final Queue<VoiceDataBlock> voiceDataQueue;
         private LocalDateTime lastTimeReceived;
 
-        public VoiceDataQueue(IUserView sender, LocalDateTime timestamp, short[] receivedData) {
+        public SenderQueue(IUserView sender, LocalDateTime timestamp, short[] receivedData) {
             this.sender = sender;
             this.voiceDataQueue = new LinkedBlockingQueue<>();
             addData(timestamp, receivedData);
         }
 
         private void addData(LocalDateTime timestamp, short[] voiceData) {
-            this.voiceDataQueue.add(new VoiceData(voiceData));
+            this.voiceDataQueue.add(new VoiceDataBlock(voiceData));
             this.lastTimeReceived = timestamp;
         }
 
@@ -201,7 +193,7 @@ public class VoiceChat {
             return sender;
         }
 
-        private VoiceData getData() {
+        private VoiceDataBlock getBlock() {
             return voiceDataQueue.poll();
         }
 
@@ -209,11 +201,11 @@ public class VoiceChat {
             return lastTimeReceived;
         }
 
-        private static class VoiceData {
+        private static class VoiceDataBlock {
 
             private final short[] voiceData;
 
-            private VoiceData(short[] voiceData) {
+            private VoiceDataBlock(short[] voiceData) {
                 this.voiceData = voiceData;
             }
 
