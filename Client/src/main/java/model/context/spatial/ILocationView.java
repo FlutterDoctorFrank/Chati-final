@@ -18,6 +18,12 @@ public interface ILocationView {
     float getPosY();
 
     /**
+     * Gibt die Richtung dieser Position zurück.
+     * @return Richtung dieser Position.
+     */
+    Direction getDirection();
+
+    /**
      * Gibt den innersten räumlichen Kontext der Position im aktuellen Raum zurück.
      * @return Innerster räumlicher Kontext der Position.
      * @see SpatialContext

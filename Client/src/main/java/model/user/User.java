@@ -210,8 +210,14 @@ public class User implements IUserController, IUserView {
 
     @Override
     public void setLocation(final float posX, final float posY, final boolean isTeleporting, final boolean isSprinting,
-                            Direction direction) {
-        this.currentLocation = new Location(posX, posY);
+                            final Direction direction) {
+        if (this.currentLocation == null) {
+            this.currentLocation = new Location(posX, posY, direction);
+        } else {
+            this.currentLocation.setCoordinates(posX, posY);
+            this.currentLocation.setDirection(direction);
+        }
+
         this.isTeleporting = isTeleporting;
         this.isSprinting = isSprinting;
     }
