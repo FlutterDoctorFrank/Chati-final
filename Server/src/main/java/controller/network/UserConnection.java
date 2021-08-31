@@ -93,7 +93,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         }
 
         if (object instanceof Packet<?>) {
-            if (!(object instanceof PacketAvatarMove)) {
+            if (!(object instanceof PacketAvatarMove || object instanceof PacketVoiceMessage)) {
                 LOGGER.info(String.format("Received packet from connection %s: %s", connection.getID(), object));
             }
 

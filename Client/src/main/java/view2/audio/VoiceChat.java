@@ -131,17 +131,20 @@ public class VoiceChat {
                 }
 
                 int[] temp = new int[PACKET_SIZE];
+                receivedDataBuffer.values().removeIf(Predicate.not(SenderQueue::hasData).and(queue -> queue
+                        .getLastTimeReceived().isBefore(LocalDateTime.now().minus(STOP_SENDING_DELAY, ChronoUnit.MILLIS))));
                 Set<SenderQueue.VoiceDataBlock> blocks = receivedDataBuffer.values().stream()
                         .filter(SenderQueue::hasData)
                         .map(SenderQueue::getBlock)
                         .collect(Collectors.toSet());
+                if (blocks.size() == 0) {
+                    continue;
+                }
                 for (int i = 0; i < PACKET_SIZE; i++) {
                     int j = i;
                     blocks.forEach(block -> temp[j] += block.getVoiceData()[j]);
                     mixedData[j] = (short) (temp[j] / blocks.size());
                 }
-                receivedDataBuffer.values().removeIf(Predicate.not(SenderQueue::hasData).and(queue -> queue
-                        .getLastTimeReceived().isBefore(LocalDateTime.now().minus(STOP_SENDING_DELAY, ChronoUnit.MILLIS))));
                 player.writeSamples(mixedData, 0, mixedData.length);
             }
         });
