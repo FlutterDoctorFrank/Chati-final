@@ -44,7 +44,7 @@ public class AudioManager {
                 voiceChat.stop();
             }
 
-            if (voiceChat.isRunning() && internUser != null && Settings.isMicrophoneOn()
+            if (voiceChat.isRunning() && internUser != null && internUser.canTalk() && Settings.isMicrophoneOn()
                     && (!Settings.getPushToTalk() || KeyAction.PUSH_TO_TALK.isPressed())) {
                 voiceChat.startSending();
             } else {

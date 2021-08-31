@@ -160,6 +160,7 @@ public class User implements IUserController, IUserView {
     @Override
     public void setCommunicable(boolean canCommunicateWith) {
         this.canCommunicateWith = canCommunicateWith;
+        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
