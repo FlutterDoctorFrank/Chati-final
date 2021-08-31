@@ -10,6 +10,7 @@ import controller.network.protocol.PacketMenuOption;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
+import model.context.spatial.Direction;
 import model.user.AdministrativeAction;
 import model.context.ContextID;
 import model.context.spatial.ContextMap;
@@ -209,27 +210,29 @@ public interface ServerSender {
          * Information, dass sich die Position des Avatars geändert hat.
          * <p>
          *     Erwartet als Objekt Array die Klassen:<br>
-         *     - {@code 0}: {@link Integer}, Die X-Koordinate<br>
-         *     - {@code 1}: {@link Integer}, Die Y-Koordinate<br>
-         *     - {@code 2}: {@link Boolean}, Die Information, ob sich der Benutzer schnell fortbewegt.
+         *     - {@code 0}: {@link Integer}, Die X-Koordinate.<br>
+         *     - {@code 1}: {@link Integer}, Die Y-Koordinate.<br>
+         *     - {@code 2}: {@link Boolean}, Die Information, ob sich der Benutzer schnell fortbewegt.<br>
+         *     - {@code 3}: {@link Direction}, Die Richtung, in die sich bewegt wird.
          * </p>
          */
         AVATAR_MOVE {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                if (objects.length == 3) {
+                if (objects.length == 4) {
                     if (objects[0] instanceof Float && objects[1] instanceof Float) {
                         final float posX = (float) objects[0];
                         final float posY = (float) objects[1];
                         final boolean sprinting = (boolean) objects[2];
 
-                        return new PacketAvatarMove(posX, posY, sprinting);
+                        return new PacketAvatarMove(posX, posY, sprinting, (Direction) objects[3]);
                     } else {
-                        throw new IllegalArgumentException("Expected Float, Float and Boolean, got "
-                                + objects[0].getClass() + ", " + objects[1].getClass() + " and " + objects[2].getClass());
+                        throw new IllegalArgumentException("Expected Float, Float, Boolean and Direction, got "
+                                + objects[0].getClass() + ", " + objects[1].getClass() + ", "
+                                + objects[2].getClass() + " and " + objects[3].getClass());
                     }
                 } else {
-                    throw new IllegalArgumentException("Expected Array size of 3, got " + objects.length);
+                    throw new IllegalArgumentException("Expected Array size of 4, got " + objects.length);
                 }
             }
         },
