@@ -3,6 +3,7 @@ package controller.network.protocol;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import model.context.spatial.Direction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class PacketAvatarMove implements Packet<PacketListener> {
 
     private AvatarAction action;
+    private Direction direction;
     private UUID userId;
     private float posX;
     private float posY;
@@ -39,8 +41,9 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * @param posY Die neue Y-Koordinate.
      * @param sprinting true, wenn ob sich der Benutzer schnell fortbewegt, ansonsten false.
      */
-    public PacketAvatarMove(final float posX, final float posY, final boolean sprinting) {
-        this(AvatarAction.MOVE_AVATAR, null, posX, posY, sprinting);
+    public PacketAvatarMove(final float posX, final float posY, final boolean sprinting,
+                            @NotNull final Direction direction) {
+        this(AvatarAction.MOVE_AVATAR, null, posX, posY, sprinting, direction);
     }
 
     /**
@@ -60,12 +63,15 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * @param posY Die neue Y-Koordinate.
      * @param sprinting true, wenn sich der Benutzer schnell fortbewegt, ansonsten false.
      */
-    public PacketAvatarMove(@NotNull final AvatarAction action, @Nullable final UUID userId, final float posX, final float posY, final boolean sprinting) {
+    public PacketAvatarMove(@NotNull final AvatarAction action, @Nullable final UUID userId,
+                            final float posX, final float posY, final boolean sprinting,
+                            @NotNull final Direction direction) {
         this.action = action;
         this.userId = userId;
         this.posX = posX;
         this.posY = posY;
         this.sprinting = sprinting;
+        this.direction = direction;
     }
 
     @Override
@@ -77,6 +83,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeEnum(output, this.action);
         PacketUtils.writeNullableUniqueId(output, this.userId);
+        PacketUtils.writeNullableEnum(output, this.direction);
         output.writeFloat(this.posX);
         output.writeFloat(this.posY);
         output.writeBoolean(this.sprinting);
@@ -86,6 +93,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.action = PacketUtils.readEnum(input, AvatarAction.class);
         this.userId = PacketUtils.readNullableUniqueId(input);
+        this.direction = PacketUtils.readNullableEnum(input, Direction.class);
         this.posX = input.readFloat();
         this.posY = input.readFloat();
         this.sprinting = input.readBoolean();
@@ -94,12 +102,13 @@ public class PacketAvatarMove implements Packet<PacketListener> {
     @Override
     public @NotNull String toString() {
         return this.getClass().getSimpleName() + "{action=" + this.action + ", userId=" + this.userId
-                + ", posX=" + this.posX + ", posY=" + this.posY + ", sprinting=" + this.sprinting + "}";
+                + ", posX=" + this.posX + ", posY=" + this.posY + ", sprinting=" + this.sprinting
+                + ", direction=" + this.direction + "}";
     }
 
     /**
      * Gibt die Aktion, die auf den Avatar des Benutzers ausgeführt werden soll, zurück.
-     * @return Die Avatar-Aktion.
+     * @return die Avatar-Aktion.
      */
     public @NotNull AvatarAction getAction() {
         return this.action;
@@ -107,15 +116,23 @@ public class PacketAvatarMove implements Packet<PacketListener> {
 
     /**
      * Gibt die Benutzer-ID des zum Avatar gehörenden Benutzers zurück, falls das Paket vom Server versendet wurde.
-     * @return Die Benutzer-ID oder null.
+     * @return die Benutzer-ID oder null.
      */
     public @Nullable UUID getUserId() {
         return this.userId;
     }
 
     /**
+     * Gibt die Richtung, in die der Avatar schaut, an.
+     * @return die Richtung des Avatars.
+     */
+    public @Nullable Direction getDirection() {
+        return this.direction;
+    }
+
+    /**
      * Gibt die neue X-Position des Avatars im Raum zurück.
-     * @return Die neue X-Koordinate.
+     * @return die neue X-Koordinate.
      */
     public float getPosX() {
         return this.posX;
@@ -123,7 +140,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
 
     /**
      * Gibt die neue Y-Position des Avatars im Raum zurück.
-     * @return Die neue Y-Koordinate.
+     * @return die neue Y-Koordinate.
      */
     public float getPosY() {
         return this.posY;

@@ -2,6 +2,7 @@ package controller.network.protocol;
 
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
 import controller.network.protocol.mock.MockPacketListener;
+import model.context.spatial.Direction;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class PacketAvatarMoveTest extends PacketTest<PacketAvatarMove> {
 
     @Test
     public void clientSerializationTest() {
-        this.before = new PacketAvatarMove(randomFloat(), randomFloat(), randomBoolean());
+        this.before = new PacketAvatarMove(randomFloat(), randomFloat(), randomBoolean(), randomEnum(Direction.class));
 
         this.serialize();
         this.equals();
@@ -31,7 +32,8 @@ public class PacketAvatarMoveTest extends PacketTest<PacketAvatarMove> {
 
     @Test
     public void serverSerializationTest() {
-        this.before = new PacketAvatarMove(randomEnum(AvatarAction.class), randomUniqueId(), randomFloat(), randomFloat(), randomBoolean());
+        this.before = new PacketAvatarMove(randomEnum(AvatarAction.class), randomUniqueId(), randomFloat(),
+                randomFloat(), randomBoolean(), randomEnum(Direction.class));
 
         this.serialize();
         this.equals();
@@ -48,6 +50,14 @@ public class PacketAvatarMoveTest extends PacketTest<PacketAvatarMove> {
             Assert.assertEquals(this.before.getUserId(), this.after.getUserId());
         } else {
             Assert.assertNull(this.after.getUserId());
+        }
+
+        // Vergleiche Direction:
+        if (this.before.getDirection() != null) {
+            Assert.assertNotNull(this.after.getDirection());
+            Assert.assertEquals(this.before.getDirection(), this.after.getDirection());
+        } else {
+            Assert.assertNull(this.after.getDirection());
         }
 
         // Vergleiche Position:

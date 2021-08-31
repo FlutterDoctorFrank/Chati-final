@@ -135,7 +135,8 @@ public interface ClientSender {
                             return new PacketOutUserInfo(null, Action.UPDATE_USER, info);
                         }
 
-                        return new PacketOutUserInfo(null, Action.REMOVE_USER, new UserInfo(other.getUserId()));
+                        return new PacketOutUserInfo(null, user.equals(other) ? Action.UPDATE_USER
+                                : Action.REMOVE_USER, new UserInfo(other.getUserId()));
                     }
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
