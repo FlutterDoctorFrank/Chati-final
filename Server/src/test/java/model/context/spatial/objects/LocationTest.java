@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.mock.graphics.MockGL20;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
+import model.context.spatial.Direction;
 import model.context.spatial.Location;
 import model.context.spatial.ContextMap;
 import model.context.spatial.World;
@@ -32,12 +33,12 @@ public class LocationTest {
     @Before
     public void setUp() {
         this.test_world = new World("test_world", ContextMap.PUBLIC_ROOM_MAP);
-        this.test_location = new Location(test_world.getPublicRoom(), 1, 1);
+        this.test_location = new Location(test_world.getPublicRoom(), Direction.UP, 1, 1);
     }
 
     @Test
     public void distanceTest() {
-        Location second_location = new Location(test_world.getPublicRoom(), 4.0f, 5.0f);
+        Location second_location = new Location(test_world.getPublicRoom(), Direction.UP, 4.0f, 5.0f);
 
         Assert.assertEquals(4.0f, second_location.getPosX(), 0.0f);
         Assert.assertEquals(5.0f, second_location.getPosY(), 0.0f);

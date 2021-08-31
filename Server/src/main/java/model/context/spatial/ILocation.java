@@ -21,6 +21,12 @@ public interface ILocation {
     float getPosY();
 
     /**
+     * Gibt die Richtung der Position im räumlichen Kontext zurück.
+     * @return Richtung der Position.
+     */
+    @NotNull Direction getDirection();
+
+    /**
      * Gibt den räumlichen Kontext dieser Position zurück.
      * @return Raum der Position.
      */

@@ -1,10 +1,20 @@
 package model.user;
 
 import model.context.ContextID;
+import model.context.spatial.Direction;
 import model.context.spatial.ILocation;
 import model.context.spatial.IWorld;
 import model.context.spatial.objects.Interactable;
-import model.exception.*;
+import model.exception.ContextNotFoundException;
+import model.exception.IllegalAdministrativeActionException;
+import model.exception.IllegalInteractionException;
+import model.exception.IllegalMenuActionException;
+import model.exception.IllegalNotificationActionException;
+import model.exception.IllegalPositionException;
+import model.exception.IllegalWorldActionException;
+import model.exception.NoPermissionException;
+import model.exception.NotificationNotFoundException;
+import model.exception.UserNotFoundException;
 import model.notification.INotification;
 import model.role.IContextRole;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +46,7 @@ public interface IUser {
 
     /**
      * Verändert die Position eines Benutzers.
+     * @param direction Neue Richtung.
      * @param posX Neue X-Koordinate.
      * @param posY Neue Y-Koordinate.
      * @param isSprinting Information, ob sich der Benutzer gerade schnell fortbewegt.
@@ -43,7 +54,7 @@ public interface IUser {
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      * @see model.context.spatial.Location
      */
-    void move(final float posX, final float posY, final boolean isSprinting) throws IllegalPositionException;
+    void move(@NotNull final Direction direction, final float posX, final float posY, final boolean isSprinting) throws IllegalPositionException;
 
     /**
      * Sendet eine Nachricht im Namen des Benutzers, von dem sie erhalten wurde gemäß des entsprechenden Nachrichtentyps

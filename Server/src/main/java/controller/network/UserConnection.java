@@ -23,6 +23,7 @@ import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketProfileAction.Action;
 import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
+import model.context.spatial.Direction;
 import model.context.spatial.IWorld;
 import model.exception.ContextNotFoundException;
 import model.exception.IllegalAccountActionException;
@@ -152,8 +153,13 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 return;
             }
 
+            if (packet.getDirection() == null) {
+                this.logInvalidPacket(packet, "Missing Direction for avatar move");
+                return;
+            }
+
             try {
-                this.user.move(packet.getPosX(), packet.getPosY(), packet.isSprinting());
+                this.user.move(packet.getDirection(), packet.getPosX(), packet.getPosY(), packet.isSprinting());
             } catch (IllegalPositionException ex) {
                 if (user.getLocation() == null) {
                     LOGGER.warning("User " + this.user.getIgnoredUsers() + " has no valid position.");
@@ -163,10 +169,11 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 // Illegale Position erhalten. Sende vorherige Position.
                 LOGGER.warning("User " + this.user.getUsername() + " tried illegal movement: " + ex.getMessage());
 
-                float posX = this.user.getLocation().getPosX();
-                float posY = this.user.getLocation().getPosY();
+                final Direction direction = this.user.getLocation().getDirection();
+                final float posX = this.user.getLocation().getPosX();
+                final float posY = this.user.getLocation().getPosY();
 
-                this.send(new PacketAvatarMove(AvatarAction.SPAWN_AVATAR, this.user.getUserId(), posX, posY, false));
+                this.send(new PacketAvatarMove(AvatarAction.SPAWN_AVATAR, this.user.getUserId(), posX, posY, false, direction));
             }
         } else {
             this.logUnexpectedPacket(packet, "Can not move while not in a world");

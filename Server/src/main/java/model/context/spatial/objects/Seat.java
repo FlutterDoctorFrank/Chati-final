@@ -69,7 +69,7 @@ public class Seat extends Interactable {
             user.send(SendAction.CLOSE_MENU, this);
             try {
                 user.setMovable(true);
-                user.move(expanse.getBottomLeft().getPosX(), expanse.getBottomLeft().getPosY(), false);
+                user.teleport(expanse.getBottomLeft());
                 user.setMovable(false);
             } catch (Exception e) {
                 e.printStackTrace();

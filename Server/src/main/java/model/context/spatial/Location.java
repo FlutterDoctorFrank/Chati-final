@@ -17,15 +17,23 @@ public class Location implements ILocation {
     /** Y-Koordinate der Position. */
     private float posY;
 
+    /** Richtung der Position */
+    private Direction direction;
+
     /**
      * Erzeugt eine neue Instanz einer Position.
      * @param room Der Raum auf den sich diese Position bezieht.
      * @param posX Die X-Koordinate der Position.
      * @param posY Die Y-Koordinate der Position.
      */
-    public Location(@NotNull final Room room, final float posX, final float posY) {
+    public Location(@NotNull final Room room, @NotNull final Direction direction, final float posX, final float posY) {
         this.room = room;
+        this.direction = direction;
         setPosition(posX, posY);
+    }
+
+    public Location(@NotNull final Location location) {
+        this(location.getRoom(), location.getDirection(), location.getPosX(), location.getPosY());
     }
 
     @Override
@@ -36,6 +44,11 @@ public class Location implements ILocation {
     @Override
     public float getPosY() {
         return posY;
+    }
+
+    @Override
+    public @NotNull Direction getDirection() {
+        return direction;
     }
 
     @Override
@@ -56,6 +69,10 @@ public class Location implements ILocation {
     public void setPosition(final float posX, final float posY) {
         this.posX = posX;
         this.posY = posY;
+    }
+
+    public void setDirection(@NotNull final Direction direction) {
+        this.direction = direction;
     }
 
     /**

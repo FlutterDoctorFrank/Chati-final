@@ -23,6 +23,7 @@ import model.communication.message.IVoiceMessage;
 import model.communication.message.MessageType;
 import model.context.IContext;
 import model.context.global.IGlobalContext;
+import model.context.spatial.Direction;
 import model.context.spatial.IArea;
 import model.context.spatial.IRoom;
 import model.context.spatial.IWorld;
@@ -257,10 +258,11 @@ public interface ClientSender {
                         throw new IllegalStateException("User has no available location");
                     }
 
-                    float posX = other.getLocation().getPosX();
-                    float posY = other.getLocation().getPosY();
+                    final Direction direction = other.getLocation().getDirection();
+                    final float posX = other.getLocation().getPosX();
+                    final float posY = other.getLocation().getPosY();
 
-                    return new PacketAvatarMove(AvatarAction.SPAWN_AVATAR, other.getUserId(), posX, posY, false);
+                    return new PacketAvatarMove(AvatarAction.SPAWN_AVATAR, other.getUserId(), posX, posY, false, direction);
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }
@@ -283,10 +285,11 @@ public interface ClientSender {
                         throw new IllegalStateException("User has no available location");
                     }
 
-                    float posX = other.getLocation().getPosX();
-                    float posY = other.getLocation().getPosY();
+                    final Direction direction = other.getLocation().getDirection();
+                    final float posX = other.getLocation().getPosX();
+                    final float posY = other.getLocation().getPosY();
 
-                    return new PacketAvatarMove(AvatarAction.MOVE_AVATAR, other.getUserId(), posX, posY, other.isSprinting());
+                    return new PacketAvatarMove(AvatarAction.MOVE_AVATAR, other.getUserId(), posX, posY, other.isSprinting(), direction);
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }

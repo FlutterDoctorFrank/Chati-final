@@ -128,7 +128,7 @@ public class MapUtils {
         float width = contextRectangle.getRectangle().getWidth();
         float height = contextRectangle.getRectangle().getHeight();
 
-        Expanse expanse = new Expanse(new Location(room, posX, posY), width, height);
+        Expanse expanse = new Expanse(new Location(room, Direction.UP, posX, posY), width, height);
         // Ermittle den übergeordneten Kontext. Da die Quadrate absteigend ihrer Grö0e sortiert eingefügt werden,
         // befindet sich der übergeordnete Kontext immer bereits in der Kontexthierarchie.
         Area parent = room.getArea(posX + width / 2, posY + height / 2);
@@ -155,7 +155,7 @@ public class MapUtils {
                 break;
             case "portal": // Erzeuge Portal.
                 Room publicRoom = room.getWorld().getPublicRoom();
-                Location destination = new Location(publicRoom, publicRoom.getSpawnLocation().getPosX(), publicRoom.getSpawnLocation().getPosX());
+                Location destination = new Location(publicRoom.getSpawnLocation());
                 Portal portal = new Portal(areaName, parent, communicationRegion, communicationMedia, expanse, destination);
                 parent.addChild(portal);
                 parent.addInteractable(portal);

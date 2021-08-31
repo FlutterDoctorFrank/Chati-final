@@ -162,9 +162,9 @@ public class Room extends Area implements IRoom {
             communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
             communicationRegion.setArea(Room.this);
             communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
-            expanse = new Expanse(new Location(Room.this, 0, 0), MapUtils.getWidth(tiledMap) , MapUtils.getHeight(tiledMap));
+            expanse = new Expanse(new Location(Room.this, Direction.DOWN, 0, 0), MapUtils.getWidth(tiledMap) , MapUtils.getHeight(tiledMap));
             //this.collisionMap = MapUtils.getCollisionMap(tiledMap);
-            spawnLocation = new Location(Room.this, MapUtils.getSpawnPosX(tiledMap), MapUtils.getSpawnPosY(tiledMap));
+            spawnLocation = new Location(Room.this, Direction.UP, MapUtils.getSpawnPosX(tiledMap), MapUtils.getSpawnPosY(tiledMap));
             MapUtils.buildChildTree(Room.this, tiledMap);
         }, null);
         Gdx.app.postRunnable(buildTask);

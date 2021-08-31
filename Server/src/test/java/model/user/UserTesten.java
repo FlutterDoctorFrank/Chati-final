@@ -8,6 +8,7 @@ import controller.network.ClientSender;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
 import model.context.spatial.ContextMap;
+import model.context.spatial.Direction;
 import model.context.spatial.World;
 import model.database.Database;
 import model.database.IContextDatabase;
@@ -190,7 +191,7 @@ public class UserTesten {
             this.user.joinWorld(test_world.getContextId());
             Assert.assertEquals("test_world", this.user.getWorld().getContextName());
 
-            this.user.move(1401, 1000, false);
+            this.user.move(Direction.DOWN, 1401, 1000, false);
             Assert.assertEquals(1401, (int)this.user.getLocation().getPosX());
             Assert.assertEquals(1000, (int)this.user.getLocation().getPosY());
         } catch (Exception e) {

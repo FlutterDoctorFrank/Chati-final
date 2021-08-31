@@ -158,12 +158,22 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                 switch (packet.getAction()) {
                     case SPAWN_AVATAR:
+                        if (packet.getDirection() == null) {
+                            this.logInvalidPacket(packet, "Missing direction for avatar spawn");
+                            return;
+                        }
+
                         user.setInCurrentRoom(true);
-                        user.setLocation(packet.getPosX(), packet.getPosY(), true, false, null); // TODO Richtung übergeben
+                        user.setLocation(packet.getPosX(), packet.getPosY(), true, false, packet.getDirection());
                         break;
 
                     case MOVE_AVATAR:
-                        user.setLocation(packet.getPosX(), packet.getPosY(), false, packet.isSprinting(), null); // TODO Richtung übergeben
+                        if (packet.getDirection() == null) {
+                            this.logInvalidPacket(packet, "Missing direction for avatar move");
+                            return;
+                        }
+
+                        user.setLocation(packet.getPosX(), packet.getPosY(), false, packet.isSprinting(), packet.getDirection());
                         break;
 
                     case REMOVE_AVATAR:

@@ -170,7 +170,7 @@ public class User implements IUser {
     }
 
     @Override
-    public void move(final float posX, final float posY, final boolean isSprinting) throws IllegalPositionException {
+    public void move(@NotNull final Direction direction, final float posX, final float posY, final boolean isSprinting) throws IllegalPositionException {
         throwIfNotOnline();
         throwIfNotInWorld();
         updateLastActivity();
@@ -185,6 +185,7 @@ public class User implements IUser {
 
         Area oldArea = currentLocation.getArea();
         currentLocation.setPosition(posX, posY);
+        currentLocation.setDirection(direction);
         updateArea(oldArea, currentLocation.getArea());
 
         this.isSprinting = isSprinting;
@@ -394,7 +395,7 @@ public class User implements IUser {
      */
     public void teleport(@NotNull final Location newLocation) {
         Area oldArea = currentLocation != null ? currentLocation.getArea() : null;
-        currentLocation = new Location(newLocation.getRoom(), newLocation.getPosX(), newLocation.getPosY());
+        currentLocation = new Location(newLocation);
         updateArea(oldArea, currentLocation.getArea());
         currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_SPAWN, this));
         updateCommunicableUsers();
