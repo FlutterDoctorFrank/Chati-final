@@ -127,6 +127,12 @@ public interface ClientSender {
                         return new PacketOutUserInfo(null, info.getFlags().contains(Flag.FRIEND) ?
                                 Action.UPDATE_USER : Action.REMOVE_USER, info);
                     } else {
+                        if (user.equals(other)) {
+                            final UserInfo info = new UserInfo(user.getUserId(), user.getUsername(), other.getStatus());
+
+                            return new PacketOutUserInfo(null, Action.UPDATE_USER, info);
+                        }
+
                         if (user.getFriends().containsKey(other.getUserId())) {
                             final UserInfo info = new UserInfo(other.getUserId(), other.getUsername());
 
@@ -136,8 +142,7 @@ public interface ClientSender {
                             return new PacketOutUserInfo(null, Action.UPDATE_USER, info);
                         }
 
-                        return new PacketOutUserInfo(null, user.equals(other) ? Action.UPDATE_USER
-                                : Action.REMOVE_USER, new UserInfo(other.getUserId()));
+                        return new PacketOutUserInfo(null, Action.REMOVE_USER, new UserInfo(other.getUserId()));
                     }
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
