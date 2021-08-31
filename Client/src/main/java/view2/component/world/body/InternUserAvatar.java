@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import controller.network.ServerSender;
+import model.context.spatial.Direction;
 import model.context.spatial.ISpatialContextView;
 import model.user.IInternUserView;
 import view2.Chati;
@@ -126,10 +127,12 @@ public class InternUserAvatar extends UserAvatar {
 
     private Direction getCurrentDirectionalInput() {
         Arrays.stream(Direction.values()).forEach(direction -> {
-            if (!currentDirectionalInputs.contains(direction) && direction.isPressed()) {
+            if (!currentDirectionalInputs.contains(direction)
+                    && Chati.CHATI.getWorldScreen().getWorldInputProcessor().isDirectionPressed(direction)) {
                 currentDirectionalInputs.add(direction);
             }
-            if (currentDirectionalInputs.contains(direction) && !direction.isPressed()) {
+            if (currentDirectionalInputs.contains(direction)
+                    && !Chati.CHATI.getWorldScreen().getWorldInputProcessor().isDirectionPressed(direction)) {
                 currentDirectionalInputs.remove(direction);
             }
         });

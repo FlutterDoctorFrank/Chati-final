@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
+import model.context.spatial.Direction;
 import model.context.spatial.ILocationView;
 import model.user.IUserView;
 import view2.Assets;

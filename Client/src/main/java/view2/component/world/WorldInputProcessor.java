@@ -3,6 +3,7 @@ package view2.component.world;
 import com.badlogic.gdx.InputProcessor;
 import view2.Chati;
 import view2.component.KeyAction;
+import model.context.spatial.Direction;
 
 public class WorldInputProcessor implements InputProcessor {
 
@@ -91,6 +92,21 @@ public class WorldInputProcessor implements InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         Chati.CHATI.getWorldScreen().getCamera().zoom(amountY > 0);
         return true;
+    }
+
+    public boolean isDirectionPressed(Direction direction) {
+        switch (direction) {
+            case UP:
+                return isMoveUpPressed();
+            case LEFT:
+                return isMoveLeftPressed();
+            case DOWN:
+                return isMoveDownPressed();
+            case RIGHT:
+                return isMoveRightPressed();
+            default:
+                return false;
+        }
     }
 
     public boolean isMoveUpPressed() {
