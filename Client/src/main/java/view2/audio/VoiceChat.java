@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -23,15 +22,12 @@ public class VoiceChat {
     private static final int SAMPLE_RATE = 32000;
     private static final int SEND_RATE = 30;
     private static final int PACKET_SIZE = SAMPLE_RATE / SEND_RATE;
-    private static final int GATE = 1024;
+    private static final short SEND_GATE = 1024;
     private static final long STOP_SENDING_DELAY = 250;
 
     private final Map<IUserView, SenderQueue> receivedDataBuffer;
     private final AudioRecorder recorder;
     private final AudioDevice player;
-
-    private final Semaphore sendSemaphore;
-    private final Semaphore playSemaphore;
 
     private boolean isRunning;
     private boolean isSending;
@@ -40,8 +36,6 @@ public class VoiceChat {
         this.recorder = Gdx.audio.newAudioRecorder(SAMPLE_RATE, true);
         this.player = Gdx.audio.newAudioDevice(SAMPLE_RATE, true);
         this.receivedDataBuffer = new ConcurrentHashMap<>();
-        this.sendSemaphore = new Semaphore(1);
-        this.playSemaphore = new Semaphore(1);
     }
 
     public void start() {
@@ -54,9 +48,9 @@ public class VoiceChat {
         isRunning = false;
     }
 
-    public void startSending() {
+    public synchronized void startSending() {
         isSending = true;
-        sendSemaphore.release();
+        notifyAll();
     }
 
     public void stopSending() {
@@ -73,7 +67,7 @@ public class VoiceChat {
         }
     }
 
-    public void receiveData(UUID userId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
+    public synchronized void receiveData(UUID userId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
         if (!isRunning) {
             return;
         }
@@ -85,8 +79,7 @@ public class VoiceChat {
         } else {
             receivedDataBuffer.get(user).addData(timestamp, receivedData);
         }
-
-        playSemaphore.release();
+        notifyAll();
     }
 
     private void recordAndSend() {
@@ -94,11 +87,13 @@ public class VoiceChat {
             long timestamp = System.currentTimeMillis();
             short[] recordedData = new short[PACKET_SIZE];
             while (isRunning) {
-                while (!isSending) {
-                    try {
-                        sendSemaphore.acquire();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                synchronized (this) {
+                    while (!isSending) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 // Überprüfe ob Lautstärke eines Samples gewissen Wert überschreitet, fange dann an zu senden und setze
@@ -106,7 +101,7 @@ public class VoiceChat {
                 // gestoppt wird. Dadurch wird ein Dauersenden verhindert ohne am Ende "abgehackt" zu werden.
                 recorder.read(recordedData, 0, recordedData.length);
                 for (short sample : recordedData) {
-                    if (Math.abs(sample) >= GATE) {
+                    if (Math.abs(sample) >= SEND_GATE) {
                         timestamp = System.currentTimeMillis();
                         break;
                     }
@@ -124,11 +119,13 @@ public class VoiceChat {
         Thread mixAndPlaybackThread = new Thread(() -> {
             short[] mixedData = new short[PACKET_SIZE];
             while (isRunning) {
-                while (receivedDataBuffer.isEmpty()) {
-                    try {
-                        playSemaphore.acquire();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                synchronized (this) {
+                    while (receivedDataBuffer.isEmpty()) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 
