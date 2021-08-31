@@ -31,6 +31,7 @@ public class MusicPlayerWindow extends InteractableWindow {
     private TextButton stopButton;
     private TextButton randomButton;
     private TextButton cancelButton;
+    private Label creditsLabel;
     private TextButton closeButton;
 
     public MusicPlayerWindow(ContextID musicPlayerId) {
@@ -103,6 +104,8 @@ public class MusicPlayerWindow extends InteractableWindow {
            }
        });
 
+       creditsLabel = new Label("Music by https://www.bensound.com", Assets.SKIN);
+
        closeButton = new TextButton("X", Assets.SKIN);
        closeButton.addListener(new ClickListener() {
            @Override
@@ -141,7 +144,11 @@ public class MusicPlayerWindow extends InteractableWindow {
         buttonContainer.add(stopButton).padLeft(SPACING / 2).padRight(SPACING / 2);
         buttonContainer.add(randomButton).padLeft(SPACING / 2).padRight(SPACING / 2);
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
-        container.add(buttonContainer);
+        container.add(buttonContainer).spaceBottom(0).row();
+
+        creditsLabel.setFontScale(0.67f);
+        creditsLabel.setAlignment(Align.center, Align.center);
+        container.add(creditsLabel).spaceBottom(0).padBottom(-2 * SPACING);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));

@@ -8,16 +8,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum ContextMusic implements Resource {
 
-    PLACEHOLDER("placeholder");
+    DREAMS("dreams", "bensound-dreams");
 
-    private static final String PATH = "musics/";
+    private static final String MUSIC_PATH = "music/";
 
     private final String name;
     private final String path;
 
-    ContextMusic(@NotNull final String name) {
+    ContextMusic(@NotNull final String name, @NotNull final String path) {
         this.name = name;
-        this.path = PATH + this.name.toLowerCase();
+        this.path = MUSIC_PATH + path + ".mp3";
     }
 
     @Override
