@@ -54,23 +54,23 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         switch (user.getStatus()) {
             case ONLINE:
                 statusImage.setDrawable(Assets.ONLINE_ICON);
-                statusImage.addListener(new InformationToolTip("Online"));
+                statusImage.addListener(new ChatiToolTip("Online"));
                 break;
             case AWAY:
                 statusImage.setDrawable(Assets.AWAY_ICON);
-                statusImage.addListener(new InformationToolTip("Abwesend"));
+                statusImage.addListener(new ChatiToolTip("Abwesend"));
                 break;
             case BUSY:
                 statusImage.setDrawable(Assets.BUSY_ICON);
-                statusImage.addListener(new InformationToolTip("Beschäftigt"));
+                statusImage.addListener(new ChatiToolTip("Beschäftigt"));
                 break;
             case INVISIBLE:
                 statusImage.setDrawable(Assets.INVISIBLE_ICON);
-                statusImage.addListener(new InformationToolTip("Unsichtbar"));
+                statusImage.addListener(new ChatiToolTip("Unsichtbar"));
                 break;
             case OFFLINE:
                 statusImage.setDrawable(Assets.OFFLINE_ICON);
-                statusImage.addListener(new InformationToolTip("Offline"));
+                statusImage.addListener(new ChatiToolTip("Offline"));
                 break;
             default:
                 throw new IllegalArgumentException("Invalid user status");
@@ -79,15 +79,15 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         currentWorldImage = new Image();
         if (user.isOnline() && user.isInCurrentWorld()) {
             currentWorldImage.setDrawable(Assets.CURRENT_WORLD_ICON);
-            currentWorldImage.addListener(new InformationToolTip("In deiner Welt!"));
+            currentWorldImage.addListener(new ChatiToolTip("In deiner Welt!"));
         }
 
         if (!user.isFriend()) {
             friendButton = new ImageButton(Assets.ADD_FRIEND_ICON);
-            friendButton.addListener(new InformationToolTip("Freund hinzufügen"));
+            friendButton.addListener(new ChatiToolTip("Freund hinzufügen"));
         } else {
             friendButton = new ImageButton(Assets.REMOVE_FRIEND_ICON);
-            friendButton.addListener(new InformationToolTip("Freund entfernen"));
+            friendButton.addListener(new ChatiToolTip("Freund entfernen"));
         }
         friendButton.addListener(new ClickListener() {
             @Override
@@ -121,10 +121,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
         if (!user.isIgnored()) {
             ignoreButton = new ImageButton(Assets.IGNORE_ICON);
-            ignoreButton.addListener(new InformationToolTip("Ignorieren"));
+            ignoreButton.addListener(new ChatiToolTip("Ignorieren"));
         } else {
             ignoreButton = new ImageButton(Assets.UNIGNORE_ICON);
-            ignoreButton.addListener(new InformationToolTip("Nicht mehr ignorieren"));
+            ignoreButton.addListener(new ChatiToolTip("Nicht mehr ignorieren"));
         }
         ignoreButton.addListener(new ClickListener() {
             @Override
@@ -159,10 +159,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
         if (user.canBeInvited()) {
             roomButton = new ImageButton(Assets.ROOM_INVITE_ICON);
-            roomButton.addListener(new InformationToolTip("In den Raum einladen"));
+            roomButton.addListener(new ChatiToolTip("In den Raum einladen"));
         } else if (user.canBeKicked()) {
             roomButton = new ImageButton(Assets.ROOM_KICK_ICON);
-            roomButton.addListener(new InformationToolTip("Aus dem Raum entfernen"));
+            roomButton.addListener(new ChatiToolTip("Aus dem Raum entfernen"));
         } else {
             roomButton = new ImageButton(Assets.DISABLED_ROOM_INVITE_ICON);
             roomButton.setDisabled(true);
@@ -200,7 +200,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
         if (user.canTeleportTo()) {
             teleportButton = new ImageButton(Assets.TELEPORT_ICON);
-            teleportButton.addListener(new InformationToolTip("Zu Benutzer teleportieren"));
+            teleportButton.addListener(new ChatiToolTip("Zu Benutzer teleportieren"));
         } else {
             teleportButton = new ImageButton(Assets.DISABLED_TELEPORT_ICON);
             teleportButton.setDisabled(true);
@@ -236,7 +236,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
         if (user.canBeReported()) {
             reportButton = new ImageButton(Assets.REPORT_ICON);
-            reportButton.addListener(new InformationToolTip("Melden"));
+            reportButton.addListener(new ChatiToolTip("Melden"));
         } else {
             reportButton = new ImageButton(Assets.DISABLED_REPORT_ICON);
             reportButton.setDisabled(true);
@@ -272,10 +272,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         if (user.canBeMuted()) {
             if (!user.isMuted()) {
                 muteButton = new ImageButton(Assets.MUTE_ICON);
-                muteButton.addListener(new InformationToolTip("Stummschalten"));
+                muteButton.addListener(new ChatiToolTip("Stummschalten"));
             } else {
                 muteButton = new ImageButton(Assets.UNMUTE_ICON);
-                muteButton.addListener(new InformationToolTip("Stummschalten aufheben"));
+                muteButton.addListener(new ChatiToolTip("Stummschalten aufheben"));
             }
         } else {
             muteButton = new ImageButton(Assets.DISABLED_MUTE_ICON);
@@ -318,10 +318,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         if (user.canBeBanned()) {
             if (!user.isBanned()) {
                 banButton = new ImageButton(Assets.BAN_ICON);
-                banButton.addListener(new InformationToolTip("Sperren"));
+                banButton.addListener(new ChatiToolTip("Sperren"));
             } else {
                 banButton = new ImageButton(Assets.UNBAN_ICON);
-                banButton.addListener(new InformationToolTip("Entperren"));
+                banButton.addListener(new ChatiToolTip("Entperren"));
             }
         } else {
             banButton = new ImageButton(Assets.DISABLED_BAN_ICON);
@@ -362,10 +362,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         if (user.canAssignModerator()) {
             if (!user.hasRole(Role.MODERATOR)) {
                 moderatorButton = new ImageButton(Assets.ASSIGN_MODERATOR_ICON);
-                moderatorButton.addListener(new InformationToolTip("Die Rolle des Moderators vergeben"));
+                moderatorButton.addListener(new ChatiToolTip("Die Rolle des Moderators vergeben"));
             } else {
                 moderatorButton = new ImageButton(Assets.WITHDRAW_MODERATOR_ICON);
-                moderatorButton.addListener(new InformationToolTip("Die Rolle des Moderators entziehen"));
+                moderatorButton.addListener(new ChatiToolTip("Die Rolle des Moderators entziehen"));
             }
         } else {
             moderatorButton = new ImageButton(Assets.DISABLED_ASSIGN_MODERATOR_ICON);

@@ -11,7 +11,7 @@ import model.user.Status;
 import view2.Chati;
 import view2.Assets;
 import view2.component.AbstractTable;
-import view2.component.InformationToolTip;
+import view2.component.ChatiToolTip;
 import view2.component.UserInfoContainer;
 
 public class InternUserDisplay extends AbstractTable {
@@ -95,19 +95,19 @@ public class InternUserDisplay extends AbstractTable {
         switch (internUser.getStatus()) {
             case ONLINE:
                 statusImage.setDrawable(Assets.ONLINE_ICON);
-                statusImage.addListener(new InformationToolTip("Online"));
+                statusImage.addListener(new ChatiToolTip("Online"));
                 break;
             case AWAY:
                 statusImage.setDrawable(Assets.AWAY_ICON);
-                statusImage.addListener(new InformationToolTip("Abwesend"));
+                statusImage.addListener(new ChatiToolTip("Abwesend"));
                 break;
             case BUSY:
                 statusImage.setDrawable(Assets.BUSY_ICON);
-                statusImage.addListener(new InformationToolTip("Beschäftigt"));
+                statusImage.addListener(new ChatiToolTip("Beschäftigt"));
                 break;
             case INVISIBLE:
                 statusImage.setDrawable(Assets.INVISIBLE_ICON);
-                statusImage.addListener(new InformationToolTip("Unsichtbar"));
+                statusImage.addListener(new ChatiToolTip("Unsichtbar"));
                 break;
             case OFFLINE:
                 throw new IllegalArgumentException("Intern user cannot be offline");
@@ -144,7 +144,7 @@ public class InternUserDisplay extends AbstractTable {
             invisibleStatusImage = new Image(Assets.INVISIBLE_ICON);
 
             onlineStatusButton = new TextButton("", Assets.getNewSkin());
-            onlineStatusButton.addListener(new InformationToolTip("Online"));
+            onlineStatusButton.addListener(new ChatiToolTip("Online"));
             if (internUser.getStatus() == Status.ONLINE || internUser.getStatus() == Status.AWAY) {
                 onlineStatusButton.setChecked(true);
                 onlineStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
@@ -164,7 +164,7 @@ public class InternUserDisplay extends AbstractTable {
             });
 
             busyStatusButton = new TextButton("", Assets.getNewSkin());
-            busyStatusButton.addListener(new InformationToolTip("Beschäftigt"));
+            busyStatusButton.addListener(new ChatiToolTip("Beschäftigt"));
             if (internUser.getStatus() == Status.BUSY) {
                 busyStatusButton.setChecked(true);
                 busyStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
@@ -184,7 +184,7 @@ public class InternUserDisplay extends AbstractTable {
             });
 
             invisibleStatusButton = new TextButton("", Assets.getNewSkin());
-            invisibleStatusButton.addListener(new InformationToolTip("Unsichtbar"));
+            invisibleStatusButton.addListener(new ChatiToolTip("Unsichtbar"));
             if (internUser.getStatus() == Status.INVISIBLE) {
                 invisibleStatusButton.setChecked(true);
                 invisibleStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;

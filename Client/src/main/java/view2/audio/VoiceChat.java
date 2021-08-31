@@ -13,7 +13,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.Semaphore;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -67,19 +66,21 @@ public class VoiceChat {
         }
     }
 
-    public synchronized void receiveData(UUID userId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
+    public void receiveData(UUID userId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
         if (!isRunning) {
             return;
         }
         IUserView user = Chati.CHATI.getUserManager().getExternUserView(userId);
         short[] receivedData = toShort(voiceData);
 
-        if (!receivedDataBuffer.containsKey(user)) {
-            receivedDataBuffer.put(user, new SenderQueue(user, timestamp, receivedData));
-        } else {
-            receivedDataBuffer.get(user).addData(timestamp, receivedData);
+        synchronized (this) {
+            if (!receivedDataBuffer.containsKey(user)) {
+                receivedDataBuffer.put(user, new SenderQueue(user, timestamp, receivedData));
+            } else {
+                receivedDataBuffer.get(user).addData(timestamp, receivedData);
+            }
+            notifyAll();
         }
-        notifyAll();
     }
 
     private void recordAndSend() {

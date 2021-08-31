@@ -3,7 +3,7 @@ package view2.audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import model.context.Context;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import model.context.spatial.ContextMusic;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
@@ -20,14 +20,19 @@ public class AudioManager {
     private static final String NOTIFICATION_SOUND_PATH = ""; // TODO
     private static final String ROOM_ENTER_SOUND_PATH = ""; // TODO
 
-    private final VoiceChat voiceChat;
+    private VoiceChat voiceChat;
     private Sound chatMessageSound;
     private Sound notificationSound;
     private Sound roomEnterSound;
     private Music currentMusic;
 
     public AudioManager() {
-        this.voiceChat = new VoiceChat();
+        try {
+            this.voiceChat = new VoiceChat();
+        } catch (GdxRuntimeException e) {
+            e.printStackTrace(); // Line is not available
+        }
+
         //this.chatMessageSound = Gdx.audio.newSound(Gdx.files.internal(CHAT_MESSAGE_SOUND_PATH));
         //this.notificationSound = Gdx.audio.newSound(Gdx.files.internal(NOTIFICATION_SOUND_PATH));
         //this.roomEnterSound = Gdx.audio.newSound(Gdx.files.internal(ROOM_ENTER_SOUND_PATH));
@@ -36,7 +41,7 @@ public class AudioManager {
 
     public void update() {
         IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
-        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged() || Chati.CHATI.isRoomChanged()) {
+        if (voiceChat != null && Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
             if (!voiceChat.isRunning() && internUser != null && internUser.isInCurrentWorld()) {
                 //setVoiceVolume();
                 voiceChat.start();
@@ -58,8 +63,10 @@ public class AudioManager {
     }
 
     public void setVoiceVolume() {
-        float volume = (float) Math.sqrt(Settings.getTotalVolume() * Settings.getVoiceVolume());
-        voiceChat.setVolume(volume);
+        if (voiceChat != null) {
+            float volume = (float) Math.sqrt(Settings.getTotalVolume() * Settings.getVoiceVolume());
+            voiceChat.setVolume(volume);
+        }
     }
 
     public void setMusicVolume() {
@@ -70,7 +77,7 @@ public class AudioManager {
     }
 
     public void playVoiceData(UUID userId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
-        if (voiceChat.isRunning()) {
+        if (voiceChat != null && voiceChat.isRunning()) {
             voiceChat.receiveData(userId, timestamp, voiceData);
         }
     }

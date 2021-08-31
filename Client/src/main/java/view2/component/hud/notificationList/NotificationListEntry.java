@@ -15,7 +15,7 @@ import model.notification.NotificationType;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.Assets;
-import view2.component.InformationToolTip;
+import view2.component.ChatiToolTip;
 import view2.component.AbstractWindow;
 
 import java.time.format.DateTimeFormatter;
@@ -65,7 +65,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
 
         if (notification.getType() != NotificationType.NOTIFICATION) {
             acceptButton = new ImageButton(Assets.ACCEPT_ICON);
-            acceptButton.addListener(new InformationToolTip("Annehmen"));
+            acceptButton.addListener(new ChatiToolTip("Annehmen"));
         } else {
             acceptButton = new ImageButton(Assets.DISABLED_ACCEPT_ICON);
             acceptButton.setDisabled(true);
@@ -98,7 +98,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
 
         if (notification.getType() != NotificationType.NOTIFICATION) {
             declineButton = new ImageButton(Assets.DECLINE_ICON);
-            declineButton.addListener(new InformationToolTip("Ablehnen"));
+            declineButton.addListener(new ChatiToolTip("Ablehnen"));
         } else {
             declineButton = new ImageButton(Assets.DISABLED_DECLINE_ICON);
             declineButton.setDisabled(true);
@@ -130,7 +130,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         });
 
         deleteButton = new ImageButton(Assets.DELETE_ICON);
-        deleteButton.addListener(new InformationToolTip("Löschen"));
+        deleteButton.addListener(new ChatiToolTip("Löschen"));
         deleteButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -230,7 +230,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
 
             if (notification.getType() != NotificationType.NOTIFICATION) {
                 acceptButton = new ImageButton(Assets.ACCEPT_ICON);
-                acceptButton.addListener(new InformationToolTip("Annehmen"));
+                acceptButton.addListener(new ChatiToolTip("Annehmen"));
             } else {
                 acceptButton = new ImageButton(Assets.DISABLED_ACCEPT_ICON);
                 acceptButton.setDisabled(true);
@@ -263,7 +263,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
 
             if (notification.getType() != NotificationType.NOTIFICATION) {
                 declineButton = new ImageButton(Assets.DECLINE_ICON);
-                declineButton.addListener(new InformationToolTip("Ablehnen"));
+                declineButton.addListener(new ChatiToolTip("Ablehnen"));
             } else {
                 declineButton = new ImageButton(Assets.DISABLED_DECLINE_ICON);
                 declineButton.setDisabled(true);
@@ -295,7 +295,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             });
 
             deleteButton = new ImageButton(Assets.DELETE_ICON);
-            deleteButton.addListener(new InformationToolTip("Löschen"));
+            deleteButton.addListener(new ChatiToolTip("Löschen"));
             deleteButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
