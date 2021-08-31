@@ -104,8 +104,7 @@ public class World extends Area implements IWorld {
                 bannedUsers.values().forEach(banned -> user.send(SendAction.USER_INFO, banned));
             }
 
-            publicRoom.addUser(user);
-
+            user.teleport(publicRoom.getSpawnLocation());
             user.getWorldNotifications().values().forEach(notification -> user.send(SendAction.NOTIFICATION, notification));
         }
     }

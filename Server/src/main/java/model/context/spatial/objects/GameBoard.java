@@ -18,7 +18,7 @@ import java.util.Set;
 public class GameBoard extends Interactable {
 
     /**
-     * Erzeugt eines neue Instanz des Gameboard.
+     * Erzeugt eine neue Instanz des Gameboard.
      * @param objectName Name des Objekts.
      * @param parent Übergeordneter Kontext.
      * @param expanse Räumliche Ausdehnung des Kontexts.

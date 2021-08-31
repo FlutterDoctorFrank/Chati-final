@@ -100,8 +100,6 @@ public class Room extends Area implements IRoom {
         if (!contains(user)) {
             user.send(SendAction.CONTEXT_JOIN, this);
             super.addUser(user);
-            user.teleport(spawnLocation);
-
             user.updateUserInfo(true);
             user.getRoomRoles().values().forEach(role -> user.send(SendAction.CONTEXT_ROLE, role));
 
@@ -109,8 +107,8 @@ public class Room extends Area implements IRoom {
             containedUsers.values().stream().filter(other -> !other.equals(user)).forEach(other -> {
                 user.send(SendAction.AVATAR_SPAWN, other);
                 // Versenden der Raumrollen.
-                user.getRoomRoles().values().forEach(role -> other.send(SendAction.CONTEXT_ROLE, role));
                 other.getRoomRoles().values().forEach(role -> user.send(SendAction.CONTEXT_ROLE, role));
+                user.getRoomRoles().values().forEach(role -> other.send(SendAction.CONTEXT_ROLE, role));
             });
 
             if (isPrivate) {
@@ -128,7 +126,6 @@ public class Room extends Area implements IRoom {
             super.removeUser(user);
             user.setMovable(true);
             user.setCurrentInteractable(null);
-            user.teleport(null);
 
             containedUsers.values().forEach(receiver -> receiver.send(SendAction.AVATAR_REMOVE, user));
 

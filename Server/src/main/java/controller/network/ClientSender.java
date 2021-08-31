@@ -102,6 +102,10 @@ public interface ClientSender {
                         if (world.equals(other.getWorld())) {
                             info.setAvatar(other.getAvatar());
 
+                            if (user.getLocation() != null) {
+                                info.setInPrivateRoom(user.getLocation().getRoom().isPrivate());
+                            }
+
                             if (user.getIgnoredUsers().containsKey(other.getUserId())) {
                                 info.addFlag(Flag.IGNORED);
                             }
@@ -117,10 +121,6 @@ public interface ClientSender {
                             info.addFlag(Flag.BANNED);
 
                             return new PacketOutUserInfo(world.getContextId(), Action.UPDATE_USER, info);
-                        }
-
-                        if (user.getLocation() != null) {
-                            info.setInPrivateRoom(user.getLocation().getRoom().isPrivate());
                         }
 
                         return new PacketOutUserInfo(null, info.getFlags().contains(Flag.FRIEND) ?

@@ -23,7 +23,7 @@ public class Portal extends Interactable {
     private final Location destination;
 
     /**
-     * Erzeugt eines neue Instanz des MusicPlayer.
+     * Erzeugt eine neue Instanz des MusicPlayer.
      * @param objectName Name des Objekts.
      * @param parent Übergeordneter Kontext.
      * @param expanse Räumliche Ausdehnung des Kontexts.

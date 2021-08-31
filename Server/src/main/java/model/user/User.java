@@ -183,15 +183,14 @@ public class User implements IUser {
             throw new IllegalPositionException("Position is illegal.", this, posX, posY);
         }
 
-        Location oldLocation = currentLocation;
-        currentLocation = new Location(currentLocation.getRoom(), posX, posY);
-        updateArea(oldLocation, currentLocation);
+        Area oldArea = currentLocation.getArea();
+        currentLocation.setPosition(posX, posY);
+        updateArea(oldArea, currentLocation.getArea());
 
         this.isSprinting = isSprinting;
 
         // Hier erhält der eigene Benutzer eine Bestätigung der Bewegung:
         currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_MOVE, this));
-
         updateCommunicableUsers();
     }
 
@@ -393,14 +392,10 @@ public class User implements IUser {
      * Teleportiert einen Benutzer an die angegebene Position.
      * @param newLocation Position, an die Benutzer teleportiert werden soll.
      */
-    public void teleport(@Nullable final Location newLocation) {
-        if (newLocation == null) {
-            currentLocation = null;
-            return;
-        }
-        Location oldLocation = currentLocation;
+    public void teleport(@NotNull final Location newLocation) {
+        Area oldArea = currentLocation != null ? currentLocation.getArea() : null;
         currentLocation = new Location(newLocation.getRoom(), newLocation.getPosX(), newLocation.getPosY());
-        updateArea(oldLocation, newLocation);
+        updateArea(oldArea, currentLocation.getArea());
         currentLocation.getRoom().getUsers().values().forEach(receiver -> receiver.send(SendAction.AVATAR_SPAWN, this));
         updateCommunicableUsers();
     }
@@ -852,14 +847,12 @@ public class User implements IUser {
 
     /**
      * Aktualisiert die Datenstrukturen der enthaltenen Benutzer in Kontexten nach einer Positionsänderung.
-     * @param oldLocation Alte Position des Benutzers.
-     * @param newLocation Neue Position des Benutzers.
+     * @param oldArea der alte Bereich des Benutzers.
+     * @param newArea der neue Bereich des Benutzers.
      */
-    private void updateArea(@Nullable final Location oldLocation, @Nullable final Location newLocation) {
-        if (newLocation != null) {
-            Area newArea = newLocation.getArea();
-            if (oldLocation != null) {
-                Area oldArea = oldLocation.getArea();
+    public void updateArea(@Nullable final Area oldArea, @Nullable final Area newArea) {
+        if (newArea != null) {
+            if (oldArea != null) {
                 Context lastCommonAncestor = oldArea.lastCommonAncestor(newArea);
                 lastCommonAncestor.getChildren().values().forEach(child -> child.removeUser(this));
             }

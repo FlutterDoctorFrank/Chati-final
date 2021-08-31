@@ -83,7 +83,7 @@ public class UserDatabaseTest {
             System.out.println(e);
         }
 
-        Assert.assertEquals(Avatar.ADAM.getName(), actual_avatar_name);
+        Assert.assertEquals(Avatar.ADAM.toString(), actual_avatar_name);
 
     }
 
