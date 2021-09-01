@@ -26,7 +26,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     private static Database database;
 
     private Database() {
-/*
+
         dropTable("USER_ACCOUNT");
         dropTable("WORLDS");
         dropTable("BAN");
@@ -36,7 +36,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         dropTable("ROLE_WITH_CONTEXT");
         dropTable("NOTIFICATION");
 
- */
+
         initialize();
     }
 
@@ -434,6 +434,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 }
                 user.addIgnoredUsers(ignores);
 
+                /*
                 //Notification
                 ResultSet res_notif = st.executeQuery("SELECT * FROM NOTIFICATION WHERE USER_ID = " + "'" +
                         userID.toString()+ "'");
@@ -464,13 +465,15 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                         //Notification notif = new AreaManagingRequest(user, )
                     }
 
-                     */
+
                     if (count == 0) {
                         MessageBundle notif = new MessageBundle(message_key);
                         String argument_i;
                     }
                 }
                 user.addNotifications(notifications);
+
+                 */
             } else {
                 System.out.println("mehr als 1 or not exist");
             }
@@ -946,8 +949,8 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             Connection con = DriverManager.getConnection(dbURL);
             PreparedStatement ps = con.prepareStatement("INSERT INTO NOTIFICATION" +
                     "(USER_ID, NOTIFICATION_ID, OWING_CONTEXT_ID, " +
-                    "SEND_TIME, MESSAGE_KEY, NOTIFICATION_TYPE, ARGUMENT1, ARGUMENT2, ARGUMENT3, ARGUMENT4) " +
-                    "values(?,?,?,?,?,?,?,?,?,?)");
+                    "SEND_TIME, MESSAGE_KEY, NOTIFICATION_TYPE, ARGUMENT1, ARGUMENT2, ARGUMENT3, ARGUMENT4, IS_READ, " +
+                    "IS_ACCEPTED, IS_DECLINED) " + "values(?,?,?,?,?,?,?,?,?,?,?,?,?)");
             ps.setString(1, user.getUserId().toString());
             ps.setString(2, notification.getNotificationId().toString());
             ps.setString(3, notification.getContext().getContextId().getId());
@@ -960,6 +963,9 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             //Speichern Message_key
             ps.setString(5, messageBundle.getMessageKey());
             ps.setString(6, notification.getNotificationType().name());
+            ps.setString(11, String.valueOf(notification.isRead()));
+            ps.setString(12, String.valueOf(notification.isAccepted()));
+            ps.setString(13, String.valueOf(notification.isDeclined()));
             //Anzahl der Arguments
             int argu_count = messageBundle.getArguments().length;
             if (argu_count > 4) {
@@ -1137,7 +1143,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 String sql = "CREATE TABLE NOTIFICATION(USER_ID VARCHAR(36), NOTIFICATION_ID VARCHAR(36), " +
                         "OWING_CONTEXT_ID VARCHAR(36), SEND_TIME TIMESTAMP, MESSAGE_KEY VARCHAR(36), " +
                         "NOTIFICATION_TYPE VARCHAR(16), ARGUMENT1 VARCHAR(128), ARGUMENT2 VARCHAR(128), ARGUMENT3 VARCHAR(128), " +
-                        "ARGUMENT4 VARCHAR(128))";
+                        "ARGUMENT4 VARCHAR(128), IS_READ VARCHAR(10), IS_ACCEPTED VARCHAR(10), IS_DECLINED VARCHAR(10))";
                 statement.execute(sql);
 
             }

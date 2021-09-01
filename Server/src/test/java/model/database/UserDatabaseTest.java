@@ -347,6 +347,9 @@ public class UserDatabaseTest {
         Timestamp actual_send_time = null;
         String actual_message_key = null;
         String actual_notification_type = null;
+        String actual_is_read = null;
+        String actual_is_accepted = null;
+        String actual_is_declined = null;
 
         try{
             Connection con = DriverManager.getConnection(dbURL);
@@ -365,6 +368,9 @@ public class UserDatabaseTest {
                 actual_send_time = res.getTimestamp("SEND_TIME");
                 actual_message_key = res.getString("MESSAGE_KEY");
                 actual_notification_type = res.getString("NOTIFICATION_TYPE");
+                actual_is_read = res.getString("IS_READ");
+                actual_is_accepted = res.getString("IS_ACCEPTED");
+                actual_is_declined = res.getString("IS_DECLINED");
             } else {
                 System.out.println("wrong");
             }
@@ -379,6 +385,10 @@ public class UserDatabaseTest {
         Assert.assertEquals(new Timestamp(timestamp), actual_send_time);
         Assert.assertEquals(test_notif.getMessageBundle().getMessageKey(), actual_message_key);
         Assert.assertEquals(test_notif.getNotificationType().name(), actual_notification_type);
+        Assert.assertEquals(String.valueOf(test_notif.isRead()), actual_is_read);
+        Assert.assertEquals("false", actual_is_read);
+        Assert.assertEquals(String.valueOf(test_notif.isAccepted()), actual_is_accepted);
+        Assert.assertEquals(String.valueOf(test_notif.isDeclined()), actual_is_declined);
 
 
         //FriendRequest
