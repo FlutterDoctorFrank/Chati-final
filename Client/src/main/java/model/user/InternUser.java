@@ -99,19 +99,37 @@ public class InternUser extends User implements IInternUserController, IInternUs
 
     @Override
     public void addNotification(ContextID contextId, UUID notificationId, MessageBundle messageBundle,
-                    LocalDateTime timestamp, NotificationType type, boolean isRead, boolean isAccepted, boolean isDeclined)
-                    throws ContextNotFoundException {
+                LocalDateTime timestamp, NotificationType type, boolean isRead, boolean isAccepted, boolean isDeclined)
+                throws ContextNotFoundException {
         if (notifications.containsKey(notificationId)) {
             throw new IllegalArgumentException("There is already a notification with this ID.");
         }
-        notifications.put(notificationId, new Notification(notificationId,
-                Context.getGlobal().getContext(contextId), messageBundle, timestamp, type));
+        notifications.put(notificationId, new Notification(notificationId, Context.getGlobal().getContext(contextId),
+                messageBundle, timestamp, type, isRead, isAccepted, isDeclined));
         UserManager.getInstance().getModelObserver().setUserNotificationChanged();
     }
 
     @Override
+    public void updateNotification(UUID notificationId, boolean isRead, boolean isAccepted, boolean isDeclined)
+                throws NotificationNotFoundException {
+        Notification notification = notifications.get(notificationId);
+        if (notification == null) {
+            throw new NotificationNotFoundException("There is no notification with this ID.", notificationId);
+        }
+        if (isRead) {
+            notification.setRead();
+        }
+        if (isAccepted) {
+            notification.setAccepted();
+        }
+        if (isDeclined) {
+            notification.setDeclined();
+        }
+    }
+
+    @Override
     public void removeNotification(UUID notificationId) throws NotificationNotFoundException {
-        if(notifications.remove(notificationId) == null){
+        if (notifications.remove(notificationId) == null) {
             throw new NotificationNotFoundException("There is no notification with this ID.", notificationId);
         }
     }

@@ -2,14 +2,12 @@ package view2.component.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.utils.Align;
 import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.user.IInternUserView;
@@ -321,7 +319,7 @@ public class HeadUpDisplay extends Table {
         return currentMenuWindow;
     }
 
-    private class ChatButton extends ImageButton {
+    private static class ChatButton extends ImageButton {
 
         private static final float BLINKING_FREQUENCY = 2; // Pro Sekunde
 
@@ -360,7 +358,7 @@ public class HeadUpDisplay extends Table {
         }
     }
 
-    private class NotificationButton extends ImageButton {
+    private static class NotificationButton extends ImageButton {
 
         private static final float DURATION = 2; // In Sekunden
         private static final float ANGLE = 15;

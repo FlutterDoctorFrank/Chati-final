@@ -26,13 +26,25 @@ public class Notification implements INotificationView {
     /** Die Information, um welche Art von Benachrichtigung es sich handelt. */
     private final NotificationType type;
 
+    /** Information, ob diese Benachrichtigung vom Empfänger bereits geöffnet wurde. */
+    private boolean isRead;
+
+    /** Information, ob diese Benachrichtigung angenommen wurde. */
+    private boolean isAccepted;
+
+    /** Information, ob diese Benachrichtigung abgelehnt wurde. */
+    private boolean isDeclined;
+
     public Notification(UUID notificationId, Context context, MessageBundle messageBundle, LocalDateTime timestamp,
-                        NotificationType type) {
+                        NotificationType type, boolean isRead, boolean isAccepted, boolean isDeclined) {
         this.notificationId = notificationId;
         this.context = context;
         this.messageBundle = messageBundle;
         this.timestamp = timestamp;
         this.type = type;
+        this.isRead = isRead;
+        this.isAccepted = isAccepted;
+        this.isDeclined = isDeclined;
     }
 
     @Override
@@ -53,6 +65,42 @@ public class Notification implements INotificationView {
     @Override
     public NotificationType getType() {
         return type;
+    }
+
+    @Override
+    public boolean isRead() {
+        return isRead;
+    }
+
+    @Override
+    public boolean isAccepted() {
+        return isAccepted;
+    }
+
+    @Override
+    public boolean isDeclined() {
+        return isDeclined;
+    }
+
+    /**
+     * Lässt die Benachrichtigung als gelesen anzeigen.
+     */
+    public void setRead() {
+        this.isRead = true;
+    }
+
+    /**
+     * Lässt die Benachrichtigung als angenommen anzeigen.
+     */
+    public void setAccepted() {
+        this.isAccepted = true;
+    }
+
+    /**
+     * Lässt die Benachrichtigung als abgelehnt anzeigen.
+     */
+    public void setDeclined() {
+        this.isDeclined = true;
     }
 
     /**

@@ -68,6 +68,16 @@ public interface IInternUserController extends IUserController {
                          NotificationType type, boolean isRead, boolean isAccepted, boolean isDeclined) throws ContextNotFoundException;
 
     /**
+     * Aktualisiert Informationen einer vorhandenen Benachrichtigung.
+     * @param notificationId ID der zu aktualisierenden Benachrichtigung.
+     * @param isRead Die Information, ob diese Benachrichtigung als gelesen markiert werden soll.
+     * @param isAccepted Die Information, ob diese Benachrichtigung als akzeptiert markiert werden soll.
+     * @param isDeclined Die Information, ob diese Benachrichtigung als abgelehnt markiert werden soll.
+     * @throws NotificationNotFoundException wenn bei dem Benutzer keine Benachrichtigung mit der ID hinterlegt ist.
+     */
+    void updateNotification(UUID notificationId, boolean isRead, boolean isAccepted, boolean isDeclined) throws NotificationNotFoundException;
+
+    /**
      * Entfernt eine Benachrichtigung des Benutzers.
      * @param notificationId ID der zu entfernenden Benachrichtigung
      * @throws NotificationNotFoundException wenn bei dem Benutzer keine Benachrichtigung mit der ID hinterlegt ist.
