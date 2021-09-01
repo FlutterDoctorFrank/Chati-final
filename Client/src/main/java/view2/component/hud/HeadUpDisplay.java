@@ -2,6 +2,7 @@ package view2.component.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -45,9 +46,9 @@ public class HeadUpDisplay extends Table {
 
     @Override
     public void act(float delta) {
+        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()
                 || Chati.CHATI.isRoomChanged()) {
-            IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
             if (internUser != null && internUserDisplay == null) {
                 internUserDisplay = new InternUserDisplay();
                 addActor(internUserDisplay);
@@ -62,6 +63,9 @@ public class HeadUpDisplay extends Table {
                 hideChatWindow();
                 chatButton.setVisible(false);
             }
+        }
+        if (Chati.CHATI.isUserNotificationChanged() && internUser != null && internUser.receivedNewNotification()) {
+            notificationListButton.startAnimation();
         }
         super.act(delta);
     }
@@ -362,16 +366,28 @@ public class HeadUpDisplay extends Table {
 
         private static final float DURATION = 2; // In Sekunden
         private static final float ANGLE = 15;
+        private boolean isAnimating;
 
         public NotificationButton(Drawable imageUp) {
             super(imageUp);
         }
 
         public void startAnimation() {
+            if (isAnimating) {
+                return;
+            }
+            isAnimating = true;
             getImage().addAction(Actions.sequence(Actions.scaleBy(BUTTON_SCALE_FACTOR, BUTTON_SCALE_FACTOR, DURATION / 8),
                     Actions.rotateBy(ANGLE, DURATION / 8), Actions.rotateBy(-2 * ANGLE, DURATION / 4),
                     Actions.rotateBy(2 * ANGLE, DURATION / 4), Actions.rotateBy(-ANGLE, DURATION / 8),
-                    Actions.scaleBy(-BUTTON_SCALE_FACTOR, -BUTTON_SCALE_FACTOR, DURATION / 8)));
+                    Actions.scaleBy(-BUTTON_SCALE_FACTOR, -BUTTON_SCALE_FACTOR, DURATION / 8),
+                    new Action() {
+                        @Override
+                        public boolean act(float delta) {
+                            isAnimating = false;
+                            return true;
+                        }
+                    }));
         }
     }
 }
