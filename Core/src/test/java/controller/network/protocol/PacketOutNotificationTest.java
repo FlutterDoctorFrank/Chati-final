@@ -28,6 +28,9 @@ public class PacketOutNotificationTest extends PacketTest<PacketOutNotification>
     public void serializationTest() {
         this.before = new PacketOutNotification(new Notification(randomUniqueId(), randomContextId(), randomBundle(),
                 LocalDateTime.now(), randomEnum(NotificationType.class)));
+        this.before.getNotification().setAccepted(randomBoolean());
+        this.before.getNotification().setDeclined(randomBoolean());
+        this.before.getNotification().setRead(randomBoolean());
 
         this.serialize();
         this.equals();
@@ -56,5 +59,8 @@ public class PacketOutNotificationTest extends PacketTest<PacketOutNotification>
         Assert.assertEquals(this.before.getNotification().getMessage(), this.after.getNotification().getMessage());
         Assert.assertEquals(this.before.getNotification().getTimestamp(), this.after.getNotification().getTimestamp());
         Assert.assertEquals(this.before.getNotification().getType(), this.after.getNotification().getType());
+        Assert.assertEquals(this.before.getNotification().isAccepted(), this.after.getNotification().isAccepted());
+        Assert.assertEquals(this.before.getNotification().isDeclined(), this.after.getNotification().isDeclined());
+        Assert.assertEquals(this.before.getNotification().isRead(), this.after.getNotification().isRead());
     }
 }

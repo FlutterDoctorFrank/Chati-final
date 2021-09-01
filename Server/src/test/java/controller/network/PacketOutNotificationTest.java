@@ -32,6 +32,9 @@ public class PacketOutNotificationTest extends PacketServerTest {
         Mockito.when(notification.getMessageBundle()).thenReturn(randomBundle());
         Mockito.when(notification.getTimestamp()).thenReturn(LocalDateTime.now());
         Mockito.when(notification.getNotificationType()).thenReturn(randomEnum(NotificationType.class));
+        Mockito.when(notification.isAccepted()).thenReturn(randomBoolean());
+        Mockito.when(notification.isDeclined()).thenReturn(randomBoolean());
+        Mockito.when(notification.isRead()).thenReturn(randomBoolean());
 
         final PacketOutNotification packet = this.getPacket(PacketOutNotification.class, notification);
 
@@ -40,5 +43,8 @@ public class PacketOutNotificationTest extends PacketServerTest {
         Assert.assertEquals(notification.getMessageBundle(), packet.getNotification().getMessage());
         Assert.assertEquals(notification.getTimestamp(), packet.getNotification().getTimestamp());
         Assert.assertEquals(notification.getNotificationType(), packet.getNotification().getType());
+        Assert.assertEquals(notification.isAccepted(), packet.getNotification().isAccepted());
+        Assert.assertEquals(notification.isDeclined(), packet.getNotification().isDeclined());
+        Assert.assertEquals(notification.isRead(), packet.getNotification().isRead());
     }
 }

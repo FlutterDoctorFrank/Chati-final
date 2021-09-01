@@ -615,7 +615,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             final Notification notification = packet.getNotification();
 
             this.getIntern().addNotification(notification.getContextId(), notification.getNotificationId(),
-                    notification.getMessage(), notification.getTimestamp(), notification.getType(), false, false, false); // TODO
+                    notification.getMessage(), notification.getTimestamp(), notification.getType(),
+                    notification.isRead(), notification.isAccepted(), notification.isDeclined());
         } catch (ContextNotFoundException ex) {
             // Context wurde nicht gefunden.
             LOGGER.warning("Server tried to send notification for unknown context with id: " + ex.getContextID());

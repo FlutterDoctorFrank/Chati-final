@@ -283,8 +283,7 @@ public class User implements IUser {
                 notification.decline();
                 break;
             case DELETE:
-                notifications.remove(notificationId);
-                database.removeNotification(this, notification);
+                removeNotification(notification);
                 break;
             default:
                 throw new IllegalNotificationActionException("Invalid notification action", this, notification, false);
@@ -552,6 +551,18 @@ public class User implements IUser {
 
         // Sende Benachrichtigung an Benutzer.
         this.send(SendAction.NOTIFICATION, notification);
+    }
+
+    /**
+     * Entfernt dem Benutzer eine Benachrichtigung.
+     * @param notification Zu entfernende Benachrichtigung.
+     */
+    public void removeNotification(@NotNull final Notification notification) {
+        notifications.remove(notification.getNotificationId());
+        database.removeNotification(this, notification);
+
+        // Sende Löschung der Benachrichtigung an Benutzer.
+        this.send(SendAction.NOTIFICATION_DELETE, notification);
     }
 
     /**

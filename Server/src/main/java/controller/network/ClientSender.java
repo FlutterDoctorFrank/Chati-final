@@ -4,10 +4,11 @@ import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
 import controller.network.protocol.PacketChatMessage;
+import controller.network.protocol.PacketNotificationResponse;
 import controller.network.protocol.PacketOutCommunicable;
-import controller.network.protocol.PacketOutContextList;
-import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextInfo;
+import controller.network.protocol.PacketOutContextJoin;
+import controller.network.protocol.PacketOutContextList;
 import controller.network.protocol.PacketOutContextRole;
 import controller.network.protocol.PacketOutMenuAction;
 import controller.network.protocol.PacketOutNotification;
@@ -29,6 +30,7 @@ import model.context.spatial.IRoom;
 import model.context.spatial.IWorld;
 import model.context.spatial.objects.IInteractable;
 import model.notification.INotification;
+import model.notification.NotificationAction;
 import model.role.IContextRole;
 import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
@@ -388,10 +390,34 @@ public interface ClientSender {
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
                 if (object instanceof INotification) {
                     final INotification notification = (INotification) object;
-
-                    return new PacketOutNotification(new Notification(notification.getNotificationId(),
+                    final Notification info = new Notification(notification.getNotificationId(),
                             notification.getContext().getContextId(), notification.getMessageBundle(),
-                            notification.getTimestamp(), notification.getNotificationType()));
+                            notification.getTimestamp(), notification.getNotificationType());
+
+                    info.setAccepted(notification.isAccepted());
+                    info.setDeclined(notification.isDeclined());
+                    info.setRead(notification.isRead());
+
+                    return new PacketOutNotification(info);
+                } else {
+                    throw new IllegalArgumentException("Expected INotification, got " + object.getClass());
+                }
+            }
+        },
+
+        /**
+         * Information, dass eine neue Benachrichtigung gesendet werden soll.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link INotification}
+         * </p>
+         */
+        NOTIFICATION_DELETE {
+            @Override
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
+                if (object instanceof INotification) {
+                    final INotification notification = (INotification) object;
+
+                    return new PacketNotificationResponse(notification.getNotificationId(), NotificationAction.DELETE);
                 } else {
                     throw new IllegalArgumentException("Expected INotification, got " + object.getClass());
                 }

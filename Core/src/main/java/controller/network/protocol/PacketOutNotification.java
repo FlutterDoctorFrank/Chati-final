@@ -55,6 +55,9 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
         PacketUtils.writeBundle(kryo, output, this.notification.getMessage());
         kryo.writeObject(output, this.notification.getTimestamp());
         PacketUtils.writeEnum(output, this.notification.getType());
+        output.writeBoolean(this.notification.accepted);
+        output.writeBoolean(this.notification.declined);
+        output.writeBoolean(this.notification.read);
     }
 
     @Override
@@ -62,6 +65,9 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
         this.notification = new Notification(PacketUtils.readUniqueId(input), PacketUtils.readContextId(input),
                 PacketUtils.readBundle(kryo, input), kryo.readObject(input, LocalDateTime.class),
                 PacketUtils.readEnum(input, NotificationType.class));
+        this.notification.accepted = input.readBoolean();
+        this.notification.declined = input.readBoolean();
+        this.notification.read = input.readBoolean();
     }
 
     @Override
@@ -97,6 +103,10 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
         private final MessageBundle message;
         private final LocalDateTime timestamp;
         private final NotificationType type;
+
+        private boolean accepted;
+        private boolean declined;
+        private boolean read;
 
         /**
          * Gibt die ID der Benachrichtigung zurück.
@@ -136,6 +146,54 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
          */
         public @NotNull NotificationType getType() {
             return this.type;
+        }
+
+        /**
+         * Gibt zurück, ob die Benachrichtigung akzeptiert wurde, falls es sich um eine Anfrage handelt.
+         * @return true, wenn die Anfrage akzeptiert wurde.
+         */
+        public boolean isAccepted() {
+            return this.accepted;
+        }
+
+        /**
+         * Setzt, ob die Benachrichtigung akzeptiert wurde, falls es sich um eine Anfrage handelt.
+         * @param accepted true, wenn die Anfrage akzeptiert wurde, ansonsten false.
+         */
+        public void setAccepted(final boolean accepted) {
+            this.accepted = accepted;
+        }
+
+        /**
+         * Gibt zurück, ob die Benachrichtigung abgelehnt wurde, falls es sich um eine Anfrage handelt.
+         * @return true, wenn die Anfrage abgelehnt wurde.
+         */
+        public boolean isDeclined() {
+            return this.declined;
+        }
+
+        /**
+         * Setzt, ob die Benachrichtigung abgelehnt wurde, falls es sich um eine Anfrage handelt.
+         * @param declined true, wenn die Anfrage abgelehnt wurde, ansonsten false.
+         */
+        public void setDeclined(final boolean declined) {
+            this.declined = declined;
+        }
+
+        /**
+         * Gibt zurück, ob die Benachrichtigung bereits gelesen wurde.
+         * @return true, wenn die Benachrichtigung gelesen wurde.
+         */
+        public boolean isRead() {
+            return this.read;
+        }
+
+        /**
+         * Setzt, ob die Benachrichtigung bereits gelesen wurde.
+         * @param read true, wenn die Benachrichtigung gelesen wurde, ansonsten false.
+         */
+        public void setRead(final boolean read) {
+            this.read = read;
         }
 
         @Override
