@@ -53,13 +53,13 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             stateImage.setDrawable(Assets.NEW_NOTIFICATION_ICON);
             stateImage.addListener(new ChatiToolTip("Neu"));
         } else if (notification.isAccepted()) {
-            stateImage.setDrawable(Assets.NEW_NOTIFICATION_ICON); // TODO
+            stateImage.setDrawable(Assets.ACCEPTED_NOTIFICATION_ICON);
             stateImage.addListener(new ChatiToolTip("Angenommen"));
         } else if (notification.isDeclined()) {
-            stateImage.setDrawable(Assets.NEW_NOTIFICATION_ICON); // TODO
+            stateImage.setDrawable(Assets.DECLINED_NOTIFICATION_ICON);
             stateImage.addListener(new ChatiToolTip("Abgelehnt"));
         } else {
-            stateImage.setDrawable(Assets.NEW_NOTIFICATION_ICON); // TODO
+            stateImage.setDrawable(Assets.PENDING_NOTIFICATION_ICON);
             stateImage.addListener(new ChatiToolTip("Ausstehend"));
         }
 

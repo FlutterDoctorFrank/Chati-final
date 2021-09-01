@@ -224,7 +224,6 @@ public class HeadUpDisplay extends Table {
         if (!isChatOpen()) {
             chatButton.startBlinking();
         }
-        notificationListButton.startAnimation();
         if (messageType == MessageType.INFO) {
             chatWindow.showInfoMessage(timestamp, messageBundle);
         } else {

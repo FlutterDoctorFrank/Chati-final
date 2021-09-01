@@ -58,6 +58,10 @@ public class Assets {
     public static final TextureRegionDrawable WITHDRAW_MODERATOR_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_removeModerator_color.png")));
 
     public static final TextureRegionDrawable NEW_NOTIFICATION_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/newIcon.png")));
+    public static final TextureRegionDrawable ACCEPTED_NOTIFICATION_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/accepted.png")));
+    public static final TextureRegionDrawable DECLINED_NOTIFICATION_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/declined.png")));
+    public static final TextureRegionDrawable PENDING_NOTIFICATION_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/pending.png")));
+
 
     public static final TextureRegionDrawable ACCEPT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_accept_color.png")));
     public static final TextureRegionDrawable DISABLED_ACCEPT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_accept_grey.png")));
