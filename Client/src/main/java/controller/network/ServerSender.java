@@ -342,6 +342,28 @@ public interface ServerSender {
         },
 
         /**
+         * Information, dass eine Benachrichtigung gelesen wurde.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@link UUID}, Die ID der Benachrichtigung, die gelesen wurde.
+         * </p>
+         */
+        NOTIFICATION_READ {
+            @Override
+            protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
+                if (objects.length == 1) {
+                    if (objects[0] instanceof UUID) {
+                        return new PacketNotificationResponse((UUID) objects[0], NotificationAction.READ);
+                    } else {
+                        throw new IllegalArgumentException("Expected UUID, got " + objects[0].getClass());
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 1, got " + objects.length);
+                }
+            }
+        },
+
+        /**
          * Information, dass auf eine Anfrage reagiert wurde.
          * <p>
          *     Erwartet als Objekt Array die Klassen:<br>

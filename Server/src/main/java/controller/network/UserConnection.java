@@ -258,16 +258,11 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
         try {
             switch (packet.getAction()) {
-                case READ:
-                    this.user.manageNotification(packet.getNotificationId(), NotificationAction.READ);
-                    break;
-
                 case ACCEPT:
-                    this.user.manageNotification(packet.getNotificationId(), NotificationAction.ACCEPT);
-                    break;
-
                 case DECLINE:
-                    this.user.manageNotification(packet.getNotificationId(), NotificationAction.DECLINE);
+                case READ:
+                    this.user.manageNotification(packet.getNotificationId(), packet.getAction());
+                    this.send(new PacketNotificationResponse(packet.getNotificationId(), packet.getAction()));
                     break;
 
                 case DELETE:
