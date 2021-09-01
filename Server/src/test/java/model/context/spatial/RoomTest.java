@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 
 public class RoomTest {
 
@@ -183,7 +184,7 @@ public class RoomTest {
             World test_world = this.globalContext.getWorld(test_world_id);
 
             // Erstelle ein Raum
-            Room test_proom = new Room("test_room", test_world, ContextMap.PUBLIC_ROOM_MAP, "11111");
+            Room test_proom = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
             test_world.addPrivateRoom(test_proom);
             privateRoomTester.addRole(test_proom, Role.ROOM_OWNER);
 
@@ -194,5 +195,133 @@ public class RoomTest {
         } catch (Exception e) {
 
         }
+    }
+
+    // Area Testen
+    // playMusic, getMusic, stopMusic bei Area
+    @Test
+    public void musicTest() {
+        try {
+            // Erstelle eine Welt
+            this.userAccountManager.registerUser("pRMuTester", "11111");
+            TestClientSender testClientSender = new TestClientSender();
+            User privateRoomTester = this.userAccountManager.loginUser("pRMuTester", "11111",
+                    testClientSender);
+            privateRoomTester.addRole(this.globalContext, Role.OWNER);
+
+            // Wegen Thread
+            if (this.globalContext.getIWorlds().size() == 0) {
+                this.globalContext.createWorld(privateRoomTester.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
+                Assert.assertEquals(1, this.globalContext.getIWorlds().size());
+            }
+            ContextID test_world_id = this.globalContext.getIWorlds().keySet().iterator().next();
+            World test_world = this.globalContext.getWorld(test_world_id);
+
+            // Erstelle ein Raum
+            Room test_proom = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
+            test_world.addPrivateRoom(test_proom);
+            privateRoomTester.addRole(test_proom, Role.ROOM_OWNER);
+
+            // Musik testen
+            test_proom.playMusic(ContextMusic.DREAMS);
+            Assert.assertEquals(ContextMusic.DREAMS, test_proom.getMusic());
+
+            test_proom.stopMusic();
+            Assert.assertNull(test_proom.getMusic());
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    // auch isReservedBy, At, AtBy bei Area
+    @Test
+    public void addAreaReservationTest() {
+        try {
+            // Erstelle eine Welt
+            this.userAccountManager.registerUser("pRMuTester", "11111");
+            TestClientSender testClientSender = new TestClientSender();
+            User privateRoomTester = this.userAccountManager.loginUser("pRMuTester", "11111",
+                    testClientSender);
+            privateRoomTester.addRole(this.globalContext, Role.OWNER);
+
+            // Wegen Thread
+            if (this.globalContext.getIWorlds().size() == 0) {
+                this.globalContext.createWorld(privateRoomTester.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
+                Assert.assertEquals(1, this.globalContext.getIWorlds().size());
+            }
+            ContextID test_world_id = this.globalContext.getIWorlds().keySet().iterator().next();
+            World test_world = this.globalContext.getWorld(test_world_id);
+
+            // Erstelle ein Raum
+            Room test_proom = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
+            test_world.addPrivateRoom(test_proom);
+            privateRoomTester.addRole(test_proom, Role.ROOM_OWNER);
+
+            // Ein Benutzer macht eine AreaReservation
+            this.userAccountManager.registerUser("ARTester", "11111");
+            User aRTester = this.userAccountManager.loginUser("ARTester", "11111",
+                    testClientSender);
+            LocalDateTime from = LocalDateTime.now();
+            LocalDateTime to = from.plusDays(1);
+            test_proom.addReservation(aRTester, from, to);
+
+            Assert.assertTrue(test_proom.isReservedAt(from, to));
+            Assert.assertTrue(test_proom.isReservedBy(aRTester));
+            Assert.assertTrue(test_proom.isReservedAtBy(aRTester, from, to));
+
+
+        } catch (Exception e) {
+
+        }
+
+
+    }
+
+    // noch nicht fertig
+    @Test
+    public void removeAreaReservationTest() {
+        try {
+            // Erstelle eine Welt
+            this.userAccountManager.registerUser("pRMuTester", "11111");
+            TestClientSender testClientSender = new TestClientSender();
+            User privateRoomTester = this.userAccountManager.loginUser("pRMuTester", "11111",
+                    testClientSender);
+            privateRoomTester.addRole(this.globalContext, Role.OWNER);
+
+            // Wegen Thread
+            if (this.globalContext.getIWorlds().size() == 0) {
+                this.globalContext.createWorld(privateRoomTester.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
+                Assert.assertEquals(1, this.globalContext.getIWorlds().size());
+            }
+            ContextID test_world_id = this.globalContext.getIWorlds().keySet().iterator().next();
+            World test_world = this.globalContext.getWorld(test_world_id);
+
+            // Erstelle ein Raum
+            Room test_proom = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
+            test_world.addPrivateRoom(test_proom);
+            privateRoomTester.addRole(test_proom, Role.ROOM_OWNER);
+
+            // Ein Benutzer macht eine AreaReservation
+            this.userAccountManager.registerUser("ARTester", "11111");
+            User aRTester = this.userAccountManager.loginUser("ARTester", "11111",
+                    testClientSender);
+            LocalDateTime from = LocalDateTime.now();
+            LocalDateTime to = from.plusDays(1);
+            test_proom.addReservation(aRTester, from, to);
+            Assert.assertTrue(test_proom.isReservedBy(aRTester));
+
+            // remove Reservation
+            AreaReservation areaReservation = new AreaReservation(aRTester, test_proom, from, to);
+            //privateRoomTester.executeAdministrativeAction();
+            test_proom.removeReservation(areaReservation);
+
+            //Assert.assertFalse(test_proom.isReservedBy(aRTester));
+
+
+        } catch (Exception e) {
+
+        }
+
     }
 }
