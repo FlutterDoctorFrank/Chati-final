@@ -829,12 +829,14 @@ public class User implements IUser {
         if (currentLocation == null) {
             return;
         }
-        Map<UUID, User> currentCommunicableUsers = new HashMap<>(communicableUsers);
-        Map<UUID, User> newCommunicableUsers = new HashMap<>(currentLocation.getArea().getCommunicableUsers(this));
+        Map<UUID, User> currentCommunicableUsers = getCommunicableUsers();
+        Map<UUID, User> newCommunicableUsers = currentLocation.getArea().getCommunicableUsers(this);
+        CommunicationHandler.filterIgnoredUsers(this, newCommunicableUsers);
+
         if (currentCommunicableUsers.keySet().equals(newCommunicableUsers.keySet())) {
             return;
         }
-        CommunicationHandler.filterIgnoredUsers(this, newCommunicableUsers);
+
         communicableUsers.clear();
         communicableUsers.putAll(newCommunicableUsers);
 

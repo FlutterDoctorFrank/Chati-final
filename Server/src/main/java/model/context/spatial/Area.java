@@ -93,7 +93,7 @@ public class Area extends Context implements IArea {
             throw new IllegalStateException("No communication region available in: " + contextId);
         }
 
-        return communicationRegion.getCommunicableUsers(communicatingUser);
+        return new HashMap<>(communicationRegion.getCommunicableUsers(communicatingUser));
     }
 
     @Override
