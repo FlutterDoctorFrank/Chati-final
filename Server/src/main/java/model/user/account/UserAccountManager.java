@@ -8,6 +8,7 @@ import model.database.IUserAccountManagerDatabase;
 import model.exception.IllegalAccountActionException;
 import model.exception.UserNotFoundException;
 import model.role.Permission;
+import model.role.Role;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
@@ -75,6 +76,13 @@ public class UserAccountManager implements IUserAccountManager {
         if (createdUser == null) {
             throw new IllegalAccountActionException("errorMsg console", "account.register.failed");
         }
+
+        // Der erste registrierte Benutzer eines Server bekommt die Rolle des Besitzers. Sollen mehrere Benutzer diese
+        // Rolle besitzen, ist dies nur über einen Konsolenbefehl im Controller oder Datenbankmanipulation möglich.
+        if (registeredUsers.isEmpty()) {
+            createdUser.addRole(GlobalContext.getInstance(), Role.OWNER);
+        }
+
         //User createdUser = new User(username);
         registeredUsers.put(createdUser.getUserId(), createdUser);
     }

@@ -41,7 +41,6 @@ public class UserListWindow extends HudMenuWindow {
     public void act(float delta) {
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()
                 || Chati.CHATI.isRoomChanged()) {
-            System.out.println("Methode wird aufgerufen");
             IInternUserView user = Chati.CHATI.getUserManager().getInternUserView();
             if (user == null && !friendTabButton.isDisabled()) {
                 disableBannedUsersTab();
