@@ -988,6 +988,11 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     }
 
     @Override
+    public void updateNotification(@NotNull User user, @NotNull Notification notification) {
+
+    }
+
+    @Override
     public void removeNotification(@NotNull final User user, @NotNull final Notification notification) {
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");

@@ -25,5 +25,7 @@ public interface IUserDatabase {
 
     void addNotification(@NotNull final User user, @NotNull final Notification notification);
 
+    void updateNotification(@NotNull final User user, @NotNull final Notification notification);
+
     void removeNotification(@NotNull final User user, @NotNull final Notification notification);
 }
