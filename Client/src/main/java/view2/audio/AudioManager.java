@@ -40,19 +40,25 @@ public class AudioManager {
 
     public void update() {
         IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
-        if (voiceChat != null && (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged())) {
-            if (!voiceChat.isRunning() && internUser != null && internUser.isInCurrentWorld()) {
-                setVoiceVolume();
-                voiceChat.start();
-            } else if (voiceChat.isRunning() && internUser != null && !internUser.isInCurrentWorld()) {
-                voiceChat.stop();
+        if (voiceChat != null) {
+            if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
+                if (!voiceChat.isRunning() && internUser != null && internUser.isInCurrentWorld()) {
+                    setVoiceVolume();
+                    voiceChat.start();
+                } else if (voiceChat.isRunning() && (internUser == null || !internUser.isInCurrentWorld())) {
+                    voiceChat.stop();
+                }
             }
 
-            if (voiceChat.isRunning() && internUser != null && internUser.canTalk() && Settings.isMicrophoneOn()
-                    && (!Settings.getPushToTalk() || KeyAction.PUSH_TO_TALK.isPressed())) {
-                voiceChat.startSending();
-            } else {
-                voiceChat.stopSending();
+            if (voiceChat.isRunning()) {
+                if (Settings.isMicrophoneOn() && (!Settings.getPushToTalk() || KeyAction.PUSH_TO_TALK.isPressed())
+                    && internUser != null && internUser.canTalk()) {
+                    if (!voiceChat.isSending()) {
+                        voiceChat.startSending();
+                    }
+                } else if (voiceChat.isSending()) {
+                    voiceChat.stopSending();
+                }
             }
         }
 

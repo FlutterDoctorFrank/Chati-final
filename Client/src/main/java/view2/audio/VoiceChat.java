@@ -60,6 +60,10 @@ public class VoiceChat {
         return isRunning;
     }
 
+    public boolean isSending() {
+        return isSending;
+    }
+
     public void setVolume(float volume) {
         if (player != null) {
             player.setVolume(volume);
@@ -133,7 +137,7 @@ public class VoiceChat {
                 int[] temp = new int[PACKET_SIZE];
                 receivedDataBuffer.values().removeIf(Predicate.not(SenderQueue::hasData).and(queue -> queue
                         .getLastTimeReceived().isBefore(LocalDateTime.now().minus(STOP_SENDING_DELAY, ChronoUnit.MILLIS))));
-                Set<SenderQueue.VoiceDataBlock> blocks = receivedDataBuffer.values().stream()
+                final Set<SenderQueue.VoiceDataBlock> blocks = receivedDataBuffer.values().stream()
                         .filter(SenderQueue::hasData)
                         .map(SenderQueue::getBlock)
                         .collect(Collectors.toSet());
