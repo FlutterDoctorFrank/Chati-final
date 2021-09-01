@@ -32,6 +32,15 @@ public class Notification implements INotification {
     /** Der Zeitstempel der Benachrichtigung. */
     private final LocalDateTime timestamp;
 
+    /** Information, ob diese Benachrichtigung vom Empfänger bereits geöffnet wurde. */
+    private boolean isRead;
+
+    /** Information, ob diese Benachrichtigung angenommen wurde. */
+    protected boolean isAccepted;
+
+    /** Information, ob diese Benachrichtigung abgelehnt wurde. */
+    protected boolean isDeclined;
+
     /**
      * Erzeugt eine neue Instanz einer Benachrichtigung.
      * @param owner Der Eigentümer dieser Benachrichtigung.
@@ -41,11 +50,14 @@ public class Notification implements INotification {
     public Notification(@NotNull final User owner, @NotNull final Context owningContext,
                         @NotNull final MessageBundle messageBundle) {
         this.notificationId = UUID.randomUUID();
-        this.notificationType = NotificationType.NOTIFICATION;
+        this.notificationType = NotificationType.INFORMATION;
         this.owner = owner;
         this.owningContext = owningContext;
         this.messageBundle = messageBundle;
         this.timestamp = LocalDateTime.now();
+        this.isRead = false;
+        this.isAccepted = false;
+        this.isDeclined = false;
     }
 
     /**
@@ -63,6 +75,9 @@ public class Notification implements INotification {
         this.owningContext = owningContext;
         this.messageBundle = messageBundle;
         this.timestamp = LocalDateTime.now();
+        this.isRead = false;
+        this.isAccepted = false;
+        this.isDeclined = false;
     }
 
     @Override
@@ -90,13 +105,47 @@ public class Notification implements INotification {
         return notificationType;
     }
 
+    @Override
+    public boolean isRead() {
+        return isRead;
+    }
+
+    @Override
+    public boolean isAccepted() {
+        return isAccepted;
+    }
+
+    @Override
+    public boolean isDeclined() {
+        return isDeclined;
+    }
+
+    /**
+     * Wird aufgerufen, wenn der Empfänger diese Benachrichtigung gelesen hat.
+     */
+    public void read() {
+        this.isRead = true;
+    }
+
     /**
      * Akzeptiere die Anfrage dieser Benachrichtigung. Eine Instanz dieser Klasse ist niemals eine Anfrage. Lediglich
      * Instanzen erbender Unterklassen können Anfragen sein.
      * @throws IllegalNotificationActionException wenn diese Benachrichtigung keine Anfrage ist.
      */
     public void accept() throws IllegalNotificationActionException {
-        throw new IllegalNotificationActionException("This notification is not a request.", owner, this, true);
+
+        // Überprüfe, ob diese Benachrichtigung angenommen werden kann.
+        if (notificationType == NotificationType.INFORMATION) {
+            throw new IllegalNotificationActionException("This notification is not a request.", owner, this, true);
+        }
+
+        // Überprüfe, ob diese Benachrichtigung bereits angenommen oder abgelehnt wurde.
+        if (isAccepted || isDeclined) {
+            throw new IllegalNotificationActionException("This notification has already been managed.", owner, this, true);
+        }
+
+        this.isRead = true;
+        this.isAccepted = true;
     }
 
     /**
@@ -105,7 +154,19 @@ public class Notification implements INotification {
      * @throws IllegalNotificationActionException wenn diese Benachrichtigung keine Anfrage ist.
      */
     public void decline() throws IllegalNotificationActionException {
-        throw new IllegalNotificationActionException("This notification is not a request.", owner, this, false);
+
+        // Überprüfe, ob diese Benachrichtigung abgelehnt werden kann.
+        if (notificationType == NotificationType.INFORMATION) {
+            throw new IllegalNotificationActionException("This notification is not a request.", owner, this, true);
+        }
+
+        // Überprüfe, ob diese Benachrichtigung bereits angenommen oder abgelehnt wurde.
+        if (isAccepted || isDeclined) {
+            throw new IllegalNotificationActionException("This notification has already been managed.", owner, this, true);
+        }
+
+        this.isRead = true;
+        this.isDeclined = true;
     }
 
     @Override

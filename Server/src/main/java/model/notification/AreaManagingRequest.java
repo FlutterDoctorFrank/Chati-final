@@ -4,6 +4,7 @@ import controller.network.ClientSender.SendAction;
 import model.MessageBundle;
 import model.communication.message.TextMessage;
 import model.context.spatial.Area;
+import model.exception.IllegalNotificationActionException;
 import model.role.Permission;
 import model.user.User;
 import model.user.account.UserAccountManager;
@@ -49,7 +50,9 @@ public class AreaManagingRequest extends Notification {
     }
 
     @Override
-    public void accept() {
+    public void accept() throws IllegalNotificationActionException {
+        super.accept();
+
         // Überprüfe, ob der Besitzer dieser Benachrichtigung noch die nötige Berechtigung besitzt.
         if (!owner.hasPermission(requestedArea, Permission.ASSIGN_AREA_MANAGER)) {
             TextMessage infoMessage = new TextMessage("request.area-manage.not-permitted", requestedArea.getContextName(),
@@ -89,7 +92,9 @@ public class AreaManagingRequest extends Notification {
     }
 
     @Override
-    public void decline() {
+    public void decline() throws IllegalNotificationActionException {
+        super.decline();
+
         // Überprüfe, ob der Besitzer dieser Benachrichtigung noch die nötige Berechtigung besitzt.
         if (!owner.hasPermission(requestedArea, Permission.ASSIGN_AREA_MANAGER)) {
             TextMessage infoMessage = new TextMessage("request.area-manage.not-permitted", requestedArea.getContextName(),

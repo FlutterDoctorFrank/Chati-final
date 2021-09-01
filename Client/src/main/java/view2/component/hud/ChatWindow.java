@@ -121,6 +121,7 @@ public class ChatWindow extends AbstractWindow {
     @Override
     public void open() {
         setVisible(true);
+
         // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
         // Ende falls die Nachricht aus mehreren Zeilen besteht! Es hängt warscheinlich mit der Art und Weise zusammen
         // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.
@@ -201,6 +202,7 @@ public class ChatWindow extends AbstractWindow {
         showLabel.setColor(messageColor);
         showLabel.setWrap(true);
         messageLabelContainer.add(showLabel).top().left().padLeft(SPACE).padBottom(SPACE).growX().row();
+
         // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
         // Ende falls die Nachricht aus mehreren Zeilen besteht! Es hängt warscheinlich mit der Art und Weise zusammen
         // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.

@@ -63,7 +63,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             }
         });
 
-        if (notification.getType() != NotificationType.NOTIFICATION) {
+        if (notification.getType() != NotificationType.INFORMATION) {
             acceptButton = new ImageButton(Assets.ACCEPT_ICON);
             acceptButton.addListener(new ChatiToolTip("Annehmen"));
         } else {
@@ -96,7 +96,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             }
         });
 
-        if (notification.getType() != NotificationType.NOTIFICATION) {
+        if (notification.getType() != NotificationType.INFORMATION) {
             declineButton = new ImageButton(Assets.DECLINE_ICON);
             declineButton.addListener(new ChatiToolTip("Ablehnen"));
         } else {
@@ -228,7 +228,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 }
             });
 
-            if (notification.getType() != NotificationType.NOTIFICATION) {
+            if (notification.getType() != NotificationType.INFORMATION) {
                 acceptButton = new ImageButton(Assets.ACCEPT_ICON);
                 acceptButton.addListener(new ChatiToolTip("Annehmen"));
             } else {
@@ -261,7 +261,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 }
             });
 
-            if (notification.getType() != NotificationType.NOTIFICATION) {
+            if (notification.getType() != NotificationType.INFORMATION) {
                 declineButton = new ImageButton(Assets.DECLINE_ICON);
                 declineButton.addListener(new ChatiToolTip("Ablehnen"));
             } else {

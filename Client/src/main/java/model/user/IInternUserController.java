@@ -57,12 +57,15 @@ public interface IInternUserController extends IUserController {
      * @param messageBundle Die übersetzbare Nachricht der Benachrichtigung zusammen mit ihren Argumenten.
      * @param timestamp Zeitstempel der Benachrichtigung.
      * @param type Art der Benachrichtigung.
+     * @param isRead Die Information, ob diese Benachrichtigung als gelesen markiert werden soll.
+     * @param isAccepted Die Information, ob diese Benachrichtigung als akzeptiert markiert werden soll.
+     * @param isDeclined Die Information, ob diese Benachrichtigung als abgelehnt markiert werden soll.
      * @throws ContextNotFoundException wenn im Client kein Kontext mit der ID bekannt ist.
      * @throws IllegalStateException falls bei dem Benutzer bereits eine Benachrichtigung mit der ID hinterlegt ist.
      * @see Context
      */
     void addNotification(ContextID contextId, UUID notificationId, MessageBundle messageBundle, LocalDateTime timestamp,
-                         NotificationType type) throws ContextNotFoundException;
+                         NotificationType type, boolean isRead, boolean isAccepted, boolean isDeclined) throws ContextNotFoundException;
 
     /**
      * Entfernt eine Benachrichtigung des Benutzers.

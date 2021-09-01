@@ -16,6 +16,7 @@ import model.exception.NoPermissionException;
 import model.exception.NotificationNotFoundException;
 import model.exception.UserNotFoundException;
 import model.notification.INotification;
+import model.notification.NotificationAction;
 import model.role.IContextRole;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -119,27 +120,19 @@ public interface IUser {
                        @NotNull final String[] args) throws ContextNotFoundException, IllegalInteractionException, IllegalMenuActionException;
 
     /**
-     * Löscht eine Benachrichtigung des Benutzers.
-     * @param notificationId ID der zu löschenden Benachrichtigung.
-     * @throws NotificationNotFoundException wenn der Benutzer keine Benachrichtigung mit der ID besitzt.
-     * @throws IllegalStateException wenn der Benutzer nicht angemeldet ist.
-     * @see model.notification.Notification
-     */
-    void deleteNotification(@NotNull final UUID notificationId) throws NotificationNotFoundException;
-
-    /**
-     * Akzeptiert die in einer Benachrichtigung enthaltenen Anfrage, oder lehnt diese ab.
+     * Behandelt eine Benachrichtigung.
      * @param notificationId ID der Benachrichtigung, dessen Anfrage akzeptiert
      * oder abgelehnt werden soll.
-     * @param accept Falls true, wird die Anfrage akzeptiert, sonst wird sie abgelehnt.
+     * @param action Die Aktion, die auf der Benachrichtigung ausgeführt werden soll.
      * @throws NotificationNotFoundException wenn der Benutzer keine Benachrichtigung
      * mit der ID besitzt.
      * @throws IllegalNotificationActionException wenn die Benachrichtigung keine
      * Anfrage ist.
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet ist.
      * @see model.notification.Notification
+     * @see NotificationAction
      */
-    void manageNotification(@NotNull final UUID notificationId, final boolean accept) throws NotificationNotFoundException,
+    void manageNotification(@NotNull UUID notificationId, NotificationAction action) throws NotificationNotFoundException,
             IllegalNotificationActionException;
 
     /**

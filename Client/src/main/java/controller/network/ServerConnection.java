@@ -29,6 +29,7 @@ import model.context.ContextID;
 import model.exception.ContextNotFoundException;
 import model.exception.NotificationNotFoundException;
 import model.exception.UserNotFoundException;
+import model.notification.NotificationAction;
 import model.user.IInternUserController;
 import model.user.IUserController;
 import model.user.Status;
@@ -292,7 +293,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         try {
-            if (packet.getAction() != PacketNotificationResponse.Action.DELETE) {
+            if (packet.getAction() != NotificationAction.DELETE) {
                 this.logInvalidPacket(packet, "Only Notification-Action DELETE is allowed");
                 return;
             }
@@ -614,7 +615,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             final Notification notification = packet.getNotification();
 
             this.getIntern().addNotification(notification.getContextId(), notification.getNotificationId(),
-                    notification.getMessage(), notification.getTimestamp(), notification.getType());
+                    notification.getMessage(), notification.getTimestamp(), notification.getType(), false, false, false); // TODO
         } catch (ContextNotFoundException ex) {
             // Context wurde nicht gefunden.
             LOGGER.warning("Server tried to send notification for unknown context with id: " + ex.getContextID());

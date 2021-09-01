@@ -9,7 +9,7 @@ import java.util.UUID;
 /**
  * Eine Klasse, welche eine Benachrichtigung repräsentiert.
  */
-public class Notification implements INotificationView{
+public class Notification implements INotificationView {
 
     /** Die eindeutige ID der Benachrichtigung. */
     private final UUID notificationId;

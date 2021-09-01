@@ -1,7 +1,7 @@
 package controller.network.protocol;
 
-import controller.network.protocol.PacketNotificationResponse.Action;
 import controller.network.protocol.mock.MockPacketListenerIn;
+import model.notification.NotificationAction;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ public class PacketNotificationResponseTest extends PacketTest<PacketNotificatio
     public void callListenerTest() {
         final MockPacketListenerIn listener = new MockPacketListenerIn();
 
-        this.before = new PacketNotificationResponse(randomUniqueId(), randomEnum(Action.class));
+        this.before = new PacketNotificationResponse(randomUniqueId(), randomEnum(NotificationAction.class));
         this.before.call(listener);
 
         Assert.assertTrue(listener.handled(PacketNotificationResponse.class));
@@ -23,7 +23,7 @@ public class PacketNotificationResponseTest extends PacketTest<PacketNotificatio
 
     @Test
     public void serializationTest() {
-        this.before = new PacketNotificationResponse(randomUniqueId(), randomEnum(Action.class));
+        this.before = new PacketNotificationResponse(randomUniqueId(), randomEnum(NotificationAction.class));
 
         this.serialize();
         this.equals();

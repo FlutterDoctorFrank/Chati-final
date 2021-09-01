@@ -11,6 +11,7 @@ import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketVoiceMessage;
 import controller.network.protocol.PacketWorldAction;
 import model.context.spatial.Direction;
+import model.notification.NotificationAction;
 import model.user.AdministrativeAction;
 import model.context.ContextID;
 import model.context.spatial.ContextMap;
@@ -330,7 +331,7 @@ public interface ServerSender {
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
                 if (objects.length == 1) {
                     if (objects[0] instanceof UUID) {
-                        return new PacketNotificationResponse((UUID) objects[0], PacketNotificationResponse.Action.DELETE);
+                        return new PacketNotificationResponse((UUID) objects[0], NotificationAction.DELETE);
                     } else {
                         throw new IllegalArgumentException("Expected UUID, got " + objects[0].getClass());
                     }
@@ -354,7 +355,7 @@ public interface ServerSender {
                 if (objects.length == 2) {
                     if (objects[0] instanceof UUID && objects[1] instanceof Boolean) {
                         return new PacketNotificationResponse((UUID) objects[0], (boolean) objects[1] ?
-                                PacketNotificationResponse.Action.ACCEPT : PacketNotificationResponse.Action.DECLINE);
+                                NotificationAction.ACCEPT : NotificationAction.DECLINE);
                     } else {
                         throw new IllegalArgumentException("Expected UUID and Boolean, got " + objects[0].getClass()
                                 + " and " + objects[1].getClass());

@@ -37,6 +37,7 @@ import model.exception.NoPermissionException;
 import model.exception.NotificationNotFoundException;
 import model.exception.UserNotFoundException;
 import model.notification.INotification;
+import model.notification.NotificationAction;
 import model.role.IContextRole;
 import model.user.AdministrativeAction;
 import model.user.IUser;
@@ -257,16 +258,21 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
         try {
             switch (packet.getAction()) {
+                case READ:
+                    this.user.manageNotification(packet.getNotificationId(), NotificationAction.READ);
+                    break;
+
                 case ACCEPT:
-                    this.user.manageNotification(packet.getNotificationId(), true);
+                    this.user.manageNotification(packet.getNotificationId(), NotificationAction.ACCEPT);
                     break;
 
                 case DECLINE:
-                    this.user.manageNotification(packet.getNotificationId(), false);
+                    this.user.manageNotification(packet.getNotificationId(), NotificationAction.DECLINE);
                     break;
 
                 case DELETE:
-                    this.user.deleteNotification(packet.getNotificationId());
+                    this.user.manageNotification(packet.getNotificationId(), NotificationAction.DELETE);
+                    this.send(new PacketNotificationResponse(packet.getNotificationId(), NotificationAction.DELETE));
                     break;
             }
         } catch (IllegalNotificationActionException ex) {
@@ -276,8 +282,6 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             // Unbekannte Benachrichtigung, auf die zugegriffen werden soll.
             LOGGER.warning("User " + this + " tried to access unknown notification");
         }
-
-        this.send(new PacketNotificationResponse(packet.getNotificationId(), PacketNotificationResponse.Action.DELETE));
     }
 
     @Override

@@ -4,6 +4,7 @@ import controller.network.ClientSender.SendAction;
 import model.MessageBundle;
 import model.communication.message.TextMessage;
 import model.context.global.GlobalContext;
+import model.exception.IllegalNotificationActionException;
 import model.user.User;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
@@ -27,13 +28,16 @@ public class FriendRequest extends Notification {
     }
 
     @Override
-    public void accept() {
+    public void accept() throws IllegalNotificationActionException {
+        super.accept();
+
         // Überprüfe, ob der anfragende Benutzer noch existiert.
         if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserId())) {
             TextMessage infoMessage = new TextMessage("request.friend.user-not-found", requestingUser.getUsername());
             owner.send(SendAction.MESSAGE, infoMessage);
             return;
         }
+
         // Überprüfe, ob die Benutzer bereits befreundet sind.
         if (owner.isFriend(requestingUser) && requestingUser.isFriend(owner)) {
             TextMessage infoMessage = new TextMessage("request.friend.already-friends", requestingUser.getUsername());
@@ -60,7 +64,9 @@ public class FriendRequest extends Notification {
     }
 
     @Override
-    public void decline() {
+    public void decline() throws IllegalNotificationActionException {
+        super.decline();
+
         // Überprüfe, ob der anfragende Benutzer noch existiert.
         if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserId())) {
             TextMessage infoMessage = new TextMessage("request.friend.user-not-found", requestingUser.getUsername());

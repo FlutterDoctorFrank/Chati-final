@@ -4,6 +4,7 @@ import controller.network.ClientSender.SendAction;
 import model.MessageBundle;
 import model.communication.message.TextMessage;
 import model.context.spatial.Room;
+import model.exception.IllegalNotificationActionException;
 import model.role.Permission;
 import model.user.User;
 import model.user.account.UserAccountManager;
@@ -38,7 +39,9 @@ public class RoomRequest extends Notification {
     }
 
     @Override
-    public void accept() {
+    public void accept() throws IllegalNotificationActionException {
+        super.accept();
+
         if (owner.getWorld() == null) {
             throw new IllegalStateException("Owners world is not available");
         }
@@ -64,7 +67,9 @@ public class RoomRequest extends Notification {
     }
 
     @Override
-    public void decline() {
+    public void decline() throws IllegalNotificationActionException {
+        super.decline();
+
         if (owner.getWorld() == null) {
             throw new IllegalStateException("Owners world is not available");
         }

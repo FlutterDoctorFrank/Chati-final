@@ -3,6 +3,7 @@ package controller.network.protocol;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import model.notification.NotificationAction;
 import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ import java.util.UUID;
 public class PacketNotificationResponse implements Packet<PacketListener> {
 
     private UUID notificationId;
-    private Action action;
+    private NotificationAction action;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -32,7 +33,7 @@ public class PacketNotificationResponse implements Packet<PacketListener> {
      * @param notificationId die ID der Benachrichtigung auf der eine Aktion ausgeführt werden soll.
      * @param action die Aktion die auf die Benachrichtigung ausgeführt werden soll.
      */
-    public PacketNotificationResponse(@NotNull final UUID notificationId, @NotNull final Action action) {
+    public PacketNotificationResponse(@NotNull final UUID notificationId, @NotNull final NotificationAction action) {
         this.notificationId = notificationId;
         this.action = action;
     }
@@ -51,7 +52,7 @@ public class PacketNotificationResponse implements Packet<PacketListener> {
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.notificationId = PacketUtils.readUniqueId(input);
-        this.action = PacketUtils.readEnum(input, Action.class);
+        this.action = PacketUtils.readEnum(input, NotificationAction.class);
     }
 
     @Override
@@ -71,28 +72,7 @@ public class PacketNotificationResponse implements Packet<PacketListener> {
      * Gibt die Aktion, die auf der Benachrichtigung ausgeführt werden soll, zurück.
      * @return die auszuführende Aktion.
      */
-    public @NotNull Action getAction() {
+    public @NotNull NotificationAction getAction() {
         return this.action;
-    }
-
-    /**
-     * Eine Enumeration für die verschiedenen Verwaltungsmöglichkeiten einer Benachrichtigung.
-     */
-    public enum Action {
-
-        /**
-         * Führt dazu, dass eine Benachrichtigungs-Anfrage akzeptiert wird.
-         */
-        ACCEPT,
-
-        /**
-         * Führt dazu, dass eine Benachrichtigungs-Anfrage abgelehnt wird.
-         */
-        DECLINE,
-
-        /**
-         * Führt dazu, dass eine Benachrichtigung gelöscht wird.
-         */
-        DELETE
     }
 }

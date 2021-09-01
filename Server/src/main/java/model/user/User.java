@@ -14,6 +14,7 @@ import model.database.IUserDatabase;
 import model.exception.*;
 import model.notification.INotification;
 import model.notification.Notification;
+import model.notification.NotificationAction;
 import model.role.ContextRole;
 import model.role.Permission;
 import model.role.Role;
@@ -263,34 +264,31 @@ public class User implements IUser {
     }
 
     @Override
-    public void deleteNotification(@NotNull final UUID notificationId) throws NotificationNotFoundException {
-        throwIfNotOnline();
-        updateLastActivity();
-        Notification notification = notifications.remove(notificationId);
-        if (notification == null) {
-            throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationId);
-        }
-        database.removeNotification(this, notification);
-    }
-
-    @Override
-    public void manageNotification(@NotNull final UUID notificationId, final boolean accept) throws NotificationNotFoundException,
+    public void manageNotification(@NotNull final UUID notificationId, final NotificationAction action) throws NotificationNotFoundException,
             IllegalNotificationActionException {
         throwIfNotOnline();
         updateLastActivity();
         Notification notification = notifications.get(notificationId);
-        // Überprüfe, ob die Benachrichtigung vorhanden ist.
         if (notification == null) {
             throw new NotificationNotFoundException("This user has no notification with this ID.", this, notificationId);
         }
-        // Akzeptiere die Benachrichtigung, oder lehne sie ab.
-        if (accept) {
-            notification.accept();
-        } else {
-            notification.decline();
+        switch (action) {
+            case READ:
+                notification.read();
+                break;
+            case ACCEPT:
+                notification.accept();
+                break;
+            case DECLINE:
+                notification.decline();
+                break;
+            case DELETE:
+                notifications.remove(notificationId);
+                database.removeNotification(this, notification);
+                break;
+            default:
+                throw new IllegalNotificationActionException("Invalid notification action", this, notification, false);
         }
-        // Lösche die entsprechende Benachrichtigung.
-        deleteNotification(notificationId);
     }
 
     @Override

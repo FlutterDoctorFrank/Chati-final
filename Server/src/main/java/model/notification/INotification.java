@@ -41,4 +41,22 @@ public interface INotification {
      * @return Art der Benachrichtigung.
      */
     @NotNull NotificationType getNotificationType();
+
+    /**
+     * Information, ob diese Benachrichtigung vom Empfänger bereits gelesen wurde.
+     * @return true, wenn diese Benachrichtigung bereits gelesen wurde, sonst false.
+     */
+    boolean isRead();
+
+    /**
+     * Information, ob diese Benachrichtigung vom Empfänger angenommen wurde.
+     * @return true, wenn diese Benachrichtigung angenommen wurde.
+     */
+    boolean isAccepted();
+
+    /**
+     * Information, ob diese Benachrichtigung vom Empfänger abgelehnt wurde.
+     * @return true, wenn diese Benachrichtigung abgelehnt wurde.
+     */
+    boolean isDeclined();
 }

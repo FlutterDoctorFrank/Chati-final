@@ -25,7 +25,7 @@ public class NotificationTest {
             UserAccountManager.getInstance().registerUser("notif_owner", "11111");
             this.owner = UserAccountManager.getInstance().getUser("notif_owner");
             MessageBundle test_messageBundle = new MessageBundle("test_notif", "hallo");
-            this.test_notif = new Notification(NotificationType.NOTIFICATION, owner, GlobalContext.getInstance(),
+            this.test_notif = new Notification(NotificationType.INFORMATION, owner, GlobalContext.getInstance(),
                     test_messageBundle);
             owner.addNotification(this.test_notif);
             //System.out.println(owner.getGlobalNotifications().size());

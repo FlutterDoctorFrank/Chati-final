@@ -99,8 +99,8 @@ public class InternUser extends User implements IInternUserController, IInternUs
 
     @Override
     public void addNotification(ContextID contextId, UUID notificationId, MessageBundle messageBundle,
-                                LocalDateTime timestamp, NotificationType type)
-            throws ContextNotFoundException {
+                    LocalDateTime timestamp, NotificationType type, boolean isRead, boolean isAccepted, boolean isDeclined)
+                    throws ContextNotFoundException {
         if (notifications.containsKey(notificationId)) {
             throw new IllegalArgumentException("There is already a notification with this ID.");
         }
