@@ -38,6 +38,9 @@ public class VoiceChat {
     }
 
     public void start() {
+        if (isRunning) {
+            return;
+        }
         isRunning = true;
         recordAndSend();
         mixAndPlayback();
