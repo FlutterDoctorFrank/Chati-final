@@ -138,7 +138,7 @@ public class VoiceChat {
                 }
 
                 int[] temp = new int[PACKET_SIZE];
-                receivedDataBuffer.values().removeIf(Predicate.not(SenderQueue::isReady).and(queue -> queue
+                receivedDataBuffer.values().removeIf(Predicate.not(SenderQueue::hasData).and(queue -> queue
                         .getLastTimeReceived().isBefore(LocalDateTime.now().minus(STOP_SENDING_DELAY, ChronoUnit.MILLIS))));
                 final Set<SenderQueue.VoiceDataBlock> blocks = receivedDataBuffer.values().stream()
                         .filter(SenderQueue::isReady)
@@ -195,13 +195,15 @@ public class VoiceChat {
 
             if (!ready && voiceDataQueue.size() >= 10) {
                 ready = true;
-            } else if (ready && voiceDataQueue.isEmpty()) {
-                ready = false;
             }
         }
 
+        private boolean hasData() {
+            return !voiceDataQueue.isEmpty();
+        }
+
         private boolean isReady() {
-            return !voiceDataQueue.isEmpty() && ready;
+            return hasData() && ready;
         }
 
         private IUserView getSender() {
