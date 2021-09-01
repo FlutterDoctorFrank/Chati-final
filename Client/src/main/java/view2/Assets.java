@@ -69,8 +69,8 @@ public class Assets {
 
     public static final Skin SKIN = new Skin();
     private static final int TITLE_FONT_SIZE = 22;
-    private static final int LABEL_FONT_SIZE = 24;
-    private static final int BUTTON_FONT_SIZE = 20;
+    private static final int LABEL_FONT_SIZE = 23;
+    private static final int BUTTON_FONT_SIZE = 21;
 
     private Assets() {
     }
