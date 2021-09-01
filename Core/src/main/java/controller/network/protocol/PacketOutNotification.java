@@ -199,7 +199,8 @@ public class PacketOutNotification implements Packet<PacketListenerOut> {
         @Override
         public @NotNull String toString() {
             return "{notificationId=" + this.notificationId + ", contextId=" + this.contextId + ", message="
-                    + this.message + ", timestamp=" + this.timestamp + ", type=" + this.type + "}";
+                    + this.message + ", timestamp=" + this.timestamp + ", type=" + this.type + ", read="
+                    + this.read + ", accepted=" + this.accepted + ", declined=" + this.declined + "}";
         }
 
         @Override
