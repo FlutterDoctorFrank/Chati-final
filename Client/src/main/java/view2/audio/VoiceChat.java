@@ -21,6 +21,8 @@ public class VoiceChat {
     private static final int SAMPLE_RATE = 32000;
     private static final int SEND_RATE = 30;
     private static final int PACKET_SIZE = SAMPLE_RATE / SEND_RATE;
+    private static final long PACKET_PLAY_TIME = 1000 / SEND_RATE;
+    private static final int MIN_PACKETS = 6;
     private static final short SEND_GATE = 1024;
     private static final long STOP_SENDING_DELAY = 250;
 
@@ -96,6 +98,7 @@ public class VoiceChat {
             short[] recordedData = new short[PACKET_SIZE];
             while (isRunning) {
                 synchronized (this) {
+                    // Warte solange nicht gesendet werden soll.
                     while (!isSending) {
                         try {
                             wait();
@@ -106,7 +109,7 @@ public class VoiceChat {
                 }
                 // Überprüfe ob Lautstärke eines Samples gewissen Wert überschreitet, fange dann an zu senden und setze
                 // Zeitstempel. Sende ab diesem Zeitpunkt mindestens für eine gewisse Dauer weiter, bevor das Senden
-                // gestoppt wird. Dadurch wird ein Dauersenden verhindert ohne am Ende "abgehackt" zu werden.
+                // gestoppt wird. Dadurch wird ein Dauersenden verhindert, ohne am Ende "abgehackt" zu werden.
                 recorder.read(recordedData, 0, recordedData.length);
                 for (short sample : recordedData) {
                     if (Math.abs(sample) >= SEND_GATE) {
@@ -128,6 +131,7 @@ public class VoiceChat {
             short[] mixedData = new short[PACKET_SIZE];
             while (isRunning) {
                 synchronized (this) {
+                    // Warte, solange keine Daten vorhanden sind.
                     while (receivedDataBuffer.isEmpty()) {
                         try {
                             wait();
@@ -137,9 +141,13 @@ public class VoiceChat {
                     }
                 }
 
+                // Entferne alle Warteschlangen, wenn in dieser für die Abspielzeit eines Pakets kein Paket eingetroffen
+                // ist.
                 int[] temp = new int[PACKET_SIZE];
                 receivedDataBuffer.values().removeIf(Predicate.not(SenderQueue::hasData).and(queue -> queue
-                        .getLastTimeReceived().isBefore(LocalDateTime.now().minus(STOP_SENDING_DELAY, ChronoUnit.MILLIS))));
+                        .getLastTimeReceived().isBefore(LocalDateTime.now().minus(PACKET_PLAY_TIME, ChronoUnit.MILLIS))));
+
+                // Mische das oberste Element aller Warteschlangen pro Benutzer zusammen, die Bereit zum Abspielen sind.
                 final Set<SenderQueue.VoiceDataBlock> blocks = receivedDataBuffer.values().stream()
                         .filter(SenderQueue::isReady)
                         .map(SenderQueue::getBlock)
@@ -193,7 +201,12 @@ public class VoiceChat {
             this.voiceDataQueue.add(new VoiceDataBlock(voiceData));
             this.lastTimeReceived = timestamp;
 
-            if (!ready && voiceDataQueue.size() >= 10) {
+            // Warteschlange ist erst bereit, wenn eine minimale Anzahl an Paketen vorhanden ist. Dies führt zu einer
+            // kleinen Verzögerung, sorgt aber dafür, dass man nicht abgehackt wird wenn ein Paket verspätet ankommt,
+            // da sich sonst evtl. die Warteschlange bis zum Eintreffen des verspäteten Pakets entleert.
+            // Ein Zurücksetzen des Ready-Parameters ist nicht nötig, da die Warteschlange aus der Hashmap entfernt wird,
+            // wenn für eine bestimmte Zeit kein Paket von einem Sender eintrifft.
+            if (!ready && voiceDataQueue.size() >= MIN_PACKETS) {
                 ready = true;
             }
         }

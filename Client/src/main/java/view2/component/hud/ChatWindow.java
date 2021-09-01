@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
+import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.MessageBundle;
 import model.communication.message.MessageType;
@@ -29,8 +30,8 @@ public class ChatWindow extends AbstractWindow {
 
     private static final float DEFAULT_WIDTH = 650;
     private static final float DEFAULT_HEIGHT = 400;
-    private static final float MINIMUM_WIDTH = 300;
-    private static final float MINIMUM_HEIGHT = 150;
+    private static final float MINIMUM_WIDTH = 400;
+    private static final float MINIMUM_HEIGHT = 200;
     private static final float SPACE = 5;
     private static final float SEND_BUTTON_WIDTH = 120;
     private static final float SEND_BUTTON_HEIGHT = 60;
@@ -38,6 +39,7 @@ public class ChatWindow extends AbstractWindow {
     private Table messageLabelContainer;
     private ScrollPane historyScrollPane;
     private ChatiTextArea typeMessageArea;
+    private Label typingUsersLabel;
     private TextButton sendButton;
     private TextButton minimizeButton;
 
@@ -68,6 +70,9 @@ public class ChatWindow extends AbstractWindow {
                 return false;
             }
         });
+
+        typingUsersLabel = new Label("", Assets.SKIN);
+        typingUsersLabel.setFontScale(0.67f);
 
         sendButton = new TextButton("Senden", Assets.SKIN);
         sendButton.addListener(new ClickListener() {
@@ -101,19 +106,20 @@ public class ChatWindow extends AbstractWindow {
         setMovable(true);
         setResizable(true);
         setResizeBorder((int) getPadBottom());
-        defaults().minWidth(MINIMUM_WIDTH).minHeight(MINIMUM_HEIGHT);
         setKeepWithinStage(true);
         setPosition(Gdx.graphics.getWidth(), 0);
         setWidth(DEFAULT_WIDTH);
         setHeight(DEFAULT_HEIGHT);
 
         messageLabelContainer.top();
-        add(historyScrollPane).top().grow().padBottom(SPACE).row();
+        add(historyScrollPane).top().minWidth(MINIMUM_WIDTH).minHeight(MINIMUM_HEIGHT).grow().row();
+        typingUsersLabel.setAlignment(Align.left, Align.left);
+        add(typingUsersLabel).left().padLeft(SPACE).padTop(-1.5f * SPACE).row();
         Table sendContainer = new Table();
         sendContainer.defaults().height(SEND_BUTTON_HEIGHT).padLeft(SPACE).padRight(SPACE);
         sendContainer.add(typeMessageArea).growX();
         sendContainer.add(sendButton).width(SEND_BUTTON_WIDTH);
-        add(sendContainer).height(SEND_BUTTON_HEIGHT).growX();
+        add(sendContainer).growX();
 
         getTitleTable().add(minimizeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }
