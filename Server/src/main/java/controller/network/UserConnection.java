@@ -69,7 +69,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
             this.connection.sendTCP(packet);
 
-            if (!(packet instanceof PacketAvatarMove)) {
+            if (!(packet instanceof PacketAvatarMove || packet instanceof PacketVoiceMessage)) {
                 LOGGER.info(String.format("Sent packet to connection %s: %s", this.connection.getID(), packet));
             }
         }

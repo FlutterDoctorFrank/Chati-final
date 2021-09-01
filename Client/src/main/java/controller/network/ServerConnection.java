@@ -78,7 +78,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
             this.manager.getEndPoint().sendTCP(packet);
 
-            if (!(packet instanceof PacketAvatarMove)) {
+            if (!(packet instanceof PacketAvatarMove || packet instanceof PacketVoiceMessage)) {
                 LOGGER.info(String.format("Sent packet to server: %s", packet));
             }
         }
