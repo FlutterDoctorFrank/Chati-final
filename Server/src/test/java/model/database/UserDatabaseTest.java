@@ -347,9 +347,9 @@ public class UserDatabaseTest {
         Timestamp actual_send_time = null;
         String actual_message_key = null;
         String actual_notification_type = null;
-        String actual_is_read = null;
-        String actual_is_accepted = null;
-        String actual_is_declined = null;
+        Boolean actual_is_read = null;
+        Boolean actual_is_accepted = null;
+        Boolean actual_is_declined = null;
 
         try{
             Connection con = DriverManager.getConnection(dbURL);
@@ -368,9 +368,9 @@ public class UserDatabaseTest {
                 actual_send_time = res.getTimestamp("SEND_TIME");
                 actual_message_key = res.getString("MESSAGE_KEY");
                 actual_notification_type = res.getString("NOTIFICATION_TYPE");
-                actual_is_read = res.getString("IS_READ");
-                actual_is_accepted = res.getString("IS_ACCEPTED");
-                actual_is_declined = res.getString("IS_DECLINED");
+                actual_is_read = res.getBoolean("IS_READ");
+                actual_is_accepted = res.getBoolean("IS_ACCEPTED");
+                actual_is_declined = res.getBoolean("IS_DECLINED");
             } else {
                 System.out.println("wrong");
             }
@@ -385,10 +385,9 @@ public class UserDatabaseTest {
         Assert.assertEquals(new Timestamp(timestamp), actual_send_time);
         Assert.assertEquals(test_notif.getMessageBundle().getMessageKey(), actual_message_key);
         Assert.assertEquals(test_notif.getNotificationType().name(), actual_notification_type);
-        Assert.assertEquals(String.valueOf(test_notif.isRead()), actual_is_read);
-        Assert.assertEquals("false", actual_is_read);
-        Assert.assertEquals(String.valueOf(test_notif.isAccepted()), actual_is_accepted);
-        Assert.assertEquals(String.valueOf(test_notif.isDeclined()), actual_is_declined);
+        Assert.assertFalse(actual_is_read);
+        Assert.assertFalse(actual_is_accepted);
+        Assert.assertFalse(actual_is_declined);
 
 
         //FriendRequest
@@ -485,6 +484,100 @@ public class UserDatabaseTest {
         }
 
         Assert.assertEquals(0, notif_row);
+
+    }
+
+    @Test
+    public void updateNotificationTest() {
+        User test = this.account_database.createAccount("updateNotif", "111");
+        User requester = this.account_database.createAccount("update_requester", "222");
+        Context test_context = GlobalContext.getInstance();
+
+        //verschiedene NotificationType
+        MessageBundle notif_messageBundle = new MessageBundle("notification");
+        //Notification
+        Notification test_notif = new Notification(test, test_context, notif_messageBundle);
+        String expected_notif_id = test_notif.getNotificationId().toString();
+        //FriendRequest
+        FriendRequest test_friendRequest = new FriendRequest(test, "bitte bitte", requester);
+        String expected_friendRequest_id = test_friendRequest.getNotificationId().toString();
+
+
+        //Fuege Notifikationen mit Methode addNotification
+        this.user_database.addNotification(test, test_notif);
+        this.user_database.addNotification(test, test_friendRequest);
+
+        //update Notification
+        test_notif.read();
+        this.user_database.updateNotification(test, test_notif);
+        try {
+            test_friendRequest.accept();
+            this.user_database.updateNotification(test, test_friendRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Suche die Notification direkt in Datenbank
+        Boolean actual_is_read = null;
+        Boolean actual_is_accepted = null;
+        Boolean actual_is_declined = null;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            ResultSet res = st.executeQuery("SELECT * FROM NOTIFICATION WHERE NOTIFICATION_ID = '" +
+                    expected_notif_id + "'");
+            int notif_row = 0;
+            while (res.next()){
+                notif_row ++;
+            }
+            if (notif_row == 1) {
+                res.first();
+                actual_is_read = res.getBoolean("IS_READ");
+
+            } else {
+                System.out.println("wrong");
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+
+        Assert.assertTrue(actual_is_read);
+
+        // Suche FreundesRequest direkt in Datenbank
+        actual_is_read = null;
+        actual_is_accepted = null;
+        actual_is_declined = null;
+        try{
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+
+            ResultSet res = st.executeQuery("SELECT * FROM NOTIFICATION WHERE NOTIFICATION_ID = '" +
+                    expected_friendRequest_id + "'");
+            int notif_row = 0;
+            while (res.next()){
+                notif_row ++;
+            }
+            if (notif_row == 1) {
+                res.first();
+                actual_is_read = res.getBoolean("IS_READ");
+                actual_is_accepted = res.getBoolean("IS_ACCEPTED");
+                actual_is_declined = res.getBoolean("IS_DECLINED");
+
+
+            } else {
+                System.out.println("wrong");
+            }
+            con.close();
+        } catch(SQLException e){
+            System.out.println(e);
+        }
+
+        Assert.assertTrue(actual_is_read);
+        Assert.assertTrue(actual_is_accepted);
+        Assert.assertFalse(actual_is_declined);
+
 
     }
 

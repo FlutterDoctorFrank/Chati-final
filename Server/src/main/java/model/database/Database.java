@@ -26,7 +26,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     private static Database database;
 
     private Database() {
-
+/*
         dropTable("USER_ACCOUNT");
         dropTable("WORLDS");
         dropTable("BAN");
@@ -35,7 +35,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         dropTable("USER_RESERVATION");
         dropTable("ROLE_WITH_CONTEXT");
         dropTable("NOTIFICATION");
-
+*/
 
         initialize();
     }
@@ -963,9 +963,9 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             //Speichern Message_key
             ps.setString(5, messageBundle.getMessageKey());
             ps.setString(6, notification.getNotificationType().name());
-            ps.setString(11, String.valueOf(notification.isRead()));
-            ps.setString(12, String.valueOf(notification.isAccepted()));
-            ps.setString(13, String.valueOf(notification.isDeclined()));
+            ps.setBoolean(11, notification.isRead());
+            ps.setBoolean(12, notification.isAccepted());
+            ps.setBoolean(13, notification.isDeclined());
             //Anzahl der Arguments
             int argu_count = messageBundle.getArguments().length;
             if (argu_count > 4) {
@@ -995,6 +995,18 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
     @Override
     public void updateNotification(@NotNull User user, @NotNull Notification notification) {
+        try {
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+            Connection con = DriverManager.getConnection(dbURL);
+            PreparedStatement ps = con.prepareStatement("UPDATE NOTIFICATION SET IS_READ = '" +
+                    notification.isRead() + "', IS_ACCEPTED = '" + notification.isAccepted()
+                    + "', IS_DECLINED = '" + notification.isDeclined() + "' WHERE NOTIFICATION_ID = '"
+                    + notification.getNotificationId().toString() + "'");
+            ps.executeUpdate();
+            con.close();
+        } catch (Exception e) {
+            System.out.println("Fehler in Datenbank-updateNotification: " + e);
+        }
 
     }
 
@@ -1143,7 +1155,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                 String sql = "CREATE TABLE NOTIFICATION(USER_ID VARCHAR(36), NOTIFICATION_ID VARCHAR(36), " +
                         "OWING_CONTEXT_ID VARCHAR(36), SEND_TIME TIMESTAMP, MESSAGE_KEY VARCHAR(36), " +
                         "NOTIFICATION_TYPE VARCHAR(16), ARGUMENT1 VARCHAR(128), ARGUMENT2 VARCHAR(128), ARGUMENT3 VARCHAR(128), " +
-                        "ARGUMENT4 VARCHAR(128), IS_READ VARCHAR(10), IS_ACCEPTED VARCHAR(10), IS_DECLINED VARCHAR(10))";
+                        "ARGUMENT4 VARCHAR(128), IS_READ BOOLEAN, IS_ACCEPTED BOOLEAN, IS_DECLINED BOOLEAN)";
                 statement.execute(sql);
 
             }
