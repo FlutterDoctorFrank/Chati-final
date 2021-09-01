@@ -7,11 +7,11 @@ import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
 import controller.network.protocol.PacketChatMessage;
 import controller.network.protocol.PacketInContextInteract;
-import controller.network.protocol.PacketNotificationResponse;
 import controller.network.protocol.PacketInUserManage;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerIn;
 import controller.network.protocol.PacketMenuOption;
+import controller.network.protocol.PacketNotificationResponse;
 import controller.network.protocol.PacketOutContextList;
 import controller.network.protocol.PacketOutContextRole;
 import controller.network.protocol.PacketOutNotification;
@@ -388,9 +388,15 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
                         // Informationen über die erhaltenen globalen Benachrichtigungen.
                         for (final INotification notification : this.user.getGlobalNotifications().values()) {
-                            this.send(new PacketOutNotification(new Notification(notification.getNotificationId(),
+                            final Notification info = new Notification(notification.getNotificationId(),
                                     notification.getContext().getContextId(), notification.getMessageBundle(),
-                                    notification.getTimestamp(), notification.getNotificationType())));
+                                    notification.getTimestamp(), notification.getNotificationType());
+
+                            info.setAccepted(notification.isAccepted());
+                            info.setDeclined(notification.isDeclined());
+                            info.setRead(notification.isRead());
+
+                            this.send(new PacketOutNotification(info));
                         }
                         break;
                 }
