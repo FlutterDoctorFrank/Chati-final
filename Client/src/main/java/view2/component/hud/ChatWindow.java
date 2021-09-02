@@ -14,6 +14,7 @@ import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.exception.UserNotFoundException;
 import model.user.IUserManagerView;
+import model.user.IUserView;
 import model.user.UserManager;
 import view2.Assets;
 import view2.Chati;
@@ -23,10 +24,14 @@ import view2.component.KeyAction;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.UUID;
 
 public class ChatWindow extends AbstractWindow {
+
+    private static final long SHOW_TYPING_DURATION = 1000; // in Millisekunden
 
     private static final float DEFAULT_WIDTH = 650;
     private static final float DEFAULT_HEIGHT = 400;
@@ -35,6 +40,9 @@ public class ChatWindow extends AbstractWindow {
     private static final float SPACE = 5;
     private static final float SEND_BUTTON_WIDTH = 120;
     private static final float SEND_BUTTON_HEIGHT = 60;
+
+    private final HashMap<IUserView, Long> typingUsers;
+    private long lastTimeTypingSent;
 
     private Table messageLabelContainer;
     private ScrollPane historyScrollPane;
@@ -45,8 +53,17 @@ public class ChatWindow extends AbstractWindow {
 
     public ChatWindow() {
         super("Chat");
+        this.typingUsers = new HashMap<>();
         create();
         setLayout();
+    }
+
+    @Override
+    public void act(float delta) {
+        long now = System.currentTimeMillis();
+        typingUsers.values().removeIf(lastTypingTime -> now - lastTypingTime >= SHOW_TYPING_DURATION);
+        showTypingUsers();
+        super.act(delta);
     }
 
     @Override
@@ -68,6 +85,15 @@ public class ChatWindow extends AbstractWindow {
                     return true;
                 }
                 return false;
+            }
+            @Override
+            public boolean keyTyped(InputEvent event, char c) {
+                long now = System.currentTimeMillis();
+                if (c != 0 && now - lastTimeTypingSent >= SHOW_TYPING_DURATION) {
+                    // Send typing ...
+                    lastTimeTypingSent = now;
+                }
+                return true;
             }
         });
 
@@ -207,12 +233,45 @@ public class ChatWindow extends AbstractWindow {
         Label showLabel = new Label(showMessage, Assets.SKIN);
         showLabel.setColor(messageColor);
         showLabel.setWrap(true);
+
+        float scrollBefore = historyScrollPane.getScrollY();
+
         messageLabelContainer.add(showLabel).top().left().padLeft(SPACE).padBottom(SPACE).growX().row();
 
-        // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
-        // Ende falls die Nachricht aus mehreren Zeilen besteht! Es hängt warscheinlich mit der Art und Weise zusammen
-        // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.
-        historyScrollPane.scrollTo(0, 0, 0, 0);
-        historyScrollPane.scrollTo(0, 0, 0, 0);
+        // Scrolle beim Erhalten einer neuen Nachricht nur bis nach unten, wenn die Scrollleiste bereits ganz unten war.
+        // Ansonsten wird ein Durchscrollen des Verlaufs durch das Erhalten neuer Nachrichten gestört.
+        if (scrollBefore == 0) {
+            // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
+            // Ende falls die Nachricht aus mehreren Zeilen besteht! Es hängt warscheinlich mit der Art und Weise zusammen
+            // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.
+            historyScrollPane.scrollTo(0, 0, 0, 0);
+            historyScrollPane.scrollTo(0, 0, 0, 0);
+        }
+    }
+
+    public void updateTypingUser(UUID userId) {
+        IUserView user;
+        try {
+            user = Chati.CHATI.getUserManager().getExternUserView(userId);
+        } catch (UserNotFoundException e) {
+            throw new IllegalArgumentException("Received typing information from an unknown user", e);
+        }
+        typingUsers.put(user, System.currentTimeMillis());
+        showTypingUsers();
+    }
+
+    private void showTypingUsers() {
+        if (typingUsers.isEmpty()) {
+            typingUsersLabel.setText("");
+        } else if (typingUsers.size() == 1) {
+            try {
+                typingUsersLabel.setText(typingUsers.keySet().iterator().next().getUsername() + " tippt gerade...");
+            } catch (NoSuchElementException e) {
+                // Sollte niemals eintreffen.
+                e.printStackTrace();
+            }
+        } else {
+            typingUsersLabel.setText(typingUsers.size() + " Benutzer tippen gerade...");
+        }
     }
 }

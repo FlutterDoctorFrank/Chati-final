@@ -123,6 +123,7 @@ public class WorldSettingsWindow extends AbstractWindow {
         showNameContainer.defaults().colspan(16).height(ROW_HEIGHT).space(SPACING).growX();
         showNameContainer.add(showNameLabel).colspan(15);
         showNameContainer.add(showNameCheckBox).colspan(1);
+        showNameCheckBox.getImage().scaleBy(0.25f);
         container.add(showNameContainer).row();
         Table buttonContainer = new Table();
         buttonContainer.defaults().colspan(3).bottom().height(ROW_HEIGHT).growX();

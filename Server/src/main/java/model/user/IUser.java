@@ -57,6 +57,8 @@ public interface IUser {
      */
     void move(@NotNull final Direction direction, final float posX, final float posY, final boolean isSprinting) throws IllegalPositionException;
 
+    void type() throws IllegalStateException;
+
     /**
      * Sendet eine Nachricht im Namen des Benutzers, von dem sie erhalten wurde gemäß des entsprechenden Nachrichtentyps
      * und der geltenden Kommunikationsform an andere Benutzer.

@@ -26,6 +26,31 @@ public class CommunicationHandler {
     }
 
     /**
+     * Ermittelt die Benutzer, die sehen sollen dass ein Benutzer gerade tippt und leitet diese Information weiter.
+     * @param typingUser Tippender Benutzer.
+     */
+    public static void handleTyping(@NotNull final User typingUser) {
+        if (typingUser.getLocation() == null) {
+            throw new IllegalStateException("Communicators location is not available");
+        }
+
+        // Überprüfung, ob in dem Bereich des Benutzers Textnachrichten versendet werden können oder der sendende
+        // Benutzer in dem Kontext stummgeschaltet ist.
+        Area communicationContext = typingUser.getLocation().getArea();
+        if (!communicationContext.canCommunicateWith(CommunicationMedium.VOICE)
+                || communicationContext.isMuted(typingUser)) {
+            return;
+        }
+
+        // Ermittle die empfangsberechtigten Benutzer gemäß der Kommunikationsform, ohne den sendenden Benutzer.
+        Map<UUID, User> receivers = typingUser.getCommunicableUsers();
+        receivers.remove(typingUser.getUserId());
+
+        // Versende die Information.
+        //receivers.values().forEach(user -> user.send(SendAction.TYPING));
+    }
+
+    /**
      * Ermittelt den Nachrichtentyp der Nachricht durch ein am Anfang eingegebenes Muster, sowie die Nutzer, die diese
      * Nachricht empfangen sollen und leitet sie an diese weiter. Existiert kein Nachrichtentyp für das eingegebene
      * Muster, oder hat der Anwender nicht die Berechtigung diesen zu benutzen, wird er mit einer Textnachricht

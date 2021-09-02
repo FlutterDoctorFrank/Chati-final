@@ -96,6 +96,7 @@ public class VoiceChat {
         Thread recordAndSendThread = new Thread(() -> {
             long timestamp = System.currentTimeMillis();
             short[] recordedData = new short[PACKET_SIZE];
+
             while (isRunning) {
                 synchronized (this) {
                     // Warte solange nicht gesendet werden soll.
@@ -129,6 +130,7 @@ public class VoiceChat {
     private void mixAndPlayback() {
         Thread mixAndPlaybackThread = new Thread(() -> {
             short[] mixedData = new short[PACKET_SIZE];
+
             while (isRunning) {
                 synchronized (this) {
                     // Warte, solange keine Daten vorhanden sind.
@@ -147,7 +149,7 @@ public class VoiceChat {
                 receivedDataBuffer.values().removeIf(Predicate.not(SenderQueue::hasData).and(queue -> queue
                         .getLastTimeReceived().isBefore(LocalDateTime.now().minus(PACKET_PLAY_TIME, ChronoUnit.MILLIS))));
 
-                // Mische das oberste Element aller Warteschlangen pro Benutzer zusammen, die Bereit zum Abspielen sind.
+                // Mische das oberste Element aller Warteschlangen pro Benutzer zusammen, die bereit zum Abspielen sind.
                 final Set<SenderQueue.VoiceDataBlock> blocks = receivedDataBuffer.values().stream()
                         .filter(SenderQueue::isReady)
                         .map(SenderQueue::getBlock)
@@ -202,10 +204,10 @@ public class VoiceChat {
             this.lastTimeReceived = timestamp;
 
             // Warteschlange ist erst bereit, wenn eine minimale Anzahl an Paketen vorhanden ist. Dies führt zu einer
-            // kleinen Verzögerung, sorgt aber dafür, dass man nicht abgehackt wird wenn ein Paket verspätet ankommt,
-            // da sich sonst evtl. die Warteschlange bis zum Eintreffen des verspäteten Pakets entleert.
-            // Ein Zurücksetzen des Ready-Parameters ist nicht nötig, da die Warteschlange aus der Hashmap entfernt wird,
-            // wenn für eine bestimmte Zeit kein Paket von einem Sender eintrifft.
+            // kleinen Verzögerung von MIN_PACKETS / SEND_RATE, sorgt aber dafür, dass man nicht abgehackt wird wenn
+            // ein Paket verspätet ankommt, da sich sonst evtl. die Warteschlange bis zum Eintreffen des verspäteten
+            // Pakets entleert. Ein Zurücksetzen des Ready-Parameters ist nicht nötig, da die Warteschlange aus der
+            // Hashmap entfernt wird,wenn für eine bestimmte Zeit kein Paket von einem Sender eintrifft.
             if (!ready && voiceDataQueue.size() >= MIN_PACKETS) {
                 ready = true;
             }

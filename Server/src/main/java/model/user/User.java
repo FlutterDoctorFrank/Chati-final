@@ -197,6 +197,14 @@ public class User implements IUser {
     }
 
     @Override
+    public void type() throws IllegalStateException {
+        throwIfNotOnline();
+        throwIfNotInWorld();
+        updateLastActivity();
+        CommunicationHandler.handleTyping(this);
+    }
+
+    @Override
     public void chat(@NotNull final String message) throws IllegalStateException {
         throwIfNotOnline();
         throwIfNotInWorld();
