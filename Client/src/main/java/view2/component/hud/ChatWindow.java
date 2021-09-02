@@ -71,6 +71,7 @@ public class ChatWindow extends AbstractWindow {
         messageLabelContainer = new Table();
 
         historyScrollPane = new ScrollPane(messageLabelContainer, Assets.SKIN);
+        historyScrollPane.setOverscroll(false, false);
 
         typeMessageArea = new ChatiTextArea("Nachricht", false);
         typeMessageArea.addListener(new InputListener() {
@@ -153,13 +154,8 @@ public class ChatWindow extends AbstractWindow {
     @Override
     public void open() {
         setVisible(true);
-
-        // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
-        // Ende falls die Nachricht aus mehreren Zeilen besteht! Es hängt warscheinlich mit der Art und Weise zusammen
-        // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.
+        historyScrollPane.layout();
         historyScrollPane.scrollTo(0, 0, 0, 0);
-        historyScrollPane.scrollTo(0, 0, 0, 0);
-
         Chati.CHATI.getScreen().getStage().setKeyboardFocus(typeMessageArea);
         Chati.CHATI.getScreen().getStage().setScrollFocus(typeMessageArea);
     }
@@ -231,17 +227,14 @@ public class ChatWindow extends AbstractWindow {
         showLabel.setColor(messageColor);
         showLabel.setWrap(true);
 
-        float scrollBefore = historyScrollPane.getScrollY();
+        boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
 
         messageLabelContainer.add(showLabel).top().left().padLeft(SPACE).padBottom(SPACE).growX().row();
 
         // Scrolle beim Erhalten einer neuen Nachricht nur bis nach unten, wenn die Scrollleiste bereits ganz unten war.
         // Ansonsten wird ein Durchscrollen des Verlaufs durch das Erhalten neuer Nachrichten gestört.
-        if (scrollBefore == 0) {
-            // Das ist mit Absicht 2 mal hier, wenn man die Methode scrollTo nur 1 mal aufruft, scrollt er nicht bis ans
-            // Ende falls die Nachricht aus mehreren Zeilen besteht! Es hängt warscheinlich mit der Art und Weise zusammen
-            // wie in LibGDX Labels gehandhabt werden, bei denen setWrap auf true gesetzt ist.
-            historyScrollPane.scrollTo(0, 0, 0, 0);
+        if (isAtBottomBefore) {
+            historyScrollPane.layout();
             historyScrollPane.scrollTo(0, 0, 0, 0);
         }
     }
