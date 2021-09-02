@@ -9,7 +9,8 @@ import model.context.spatial.ContextMap;
 import model.exception.ContextNotFoundException;
 import model.exception.NotificationNotFoundException;
 import model.notification.NotificationType;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -24,7 +25,7 @@ public interface IInternUserController extends IUserController {
      * @param worldName Name der Welt.
      * @see SpatialContext
      */
-    void joinWorld(String worldName);
+    void joinWorld(@NotNull final String worldName);
 
     /**
      * Verwirft alle initialisierten Kontexte im Modell.
@@ -39,7 +40,7 @@ public interface IInternUserController extends IUserController {
      * @throws IllegalStateException wenn es keine aktuelle Welt gibt.
      * @see SpatialContext
      */
-    void joinRoom(ContextID roomId, String roomName, ContextMap map);
+    void joinRoom(@NotNull final ContextID roomId, @NotNull final String roomName, @NotNull final ContextMap map);
 
     /**
      * Setzt die Musik, die in einem Kontext abgespielt werden soll.
@@ -48,7 +49,7 @@ public interface IInternUserController extends IUserController {
      * @throws ContextNotFoundException falls dem Client kein Kontext mit der ID bekannt ist.
      * @see SpatialContext
      */
-    void setMusic(ContextID spatialId, ContextMusic music) throws ContextNotFoundException;
+    void setMusic(@NotNull final ContextID spatialId, @Nullable final ContextMusic music) throws ContextNotFoundException;
 
     /**
      * Fügt dem Benutzer eine Benachrichtigung in einem Kontext hinzu.
@@ -64,8 +65,10 @@ public interface IInternUserController extends IUserController {
      * @throws IllegalStateException falls bei dem Benutzer bereits eine Benachrichtigung mit der ID hinterlegt ist.
      * @see Context
      */
-    void addNotification(ContextID contextId, UUID notificationId, MessageBundle messageBundle, LocalDateTime timestamp,
-                         NotificationType type, boolean isRead, boolean isAccepted, boolean isDeclined) throws ContextNotFoundException;
+    void addNotification(@NotNull final ContextID contextId, @NotNull final UUID notificationId,
+                         @NotNull final MessageBundle messageBundle, @NotNull final LocalDateTime timestamp,
+                         @NotNull final NotificationType type, final boolean isRead,
+                         final boolean isAccepted, final boolean isDeclined) throws ContextNotFoundException;
 
     /**
      * Aktualisiert Informationen einer vorhandenen Benachrichtigung.
@@ -75,12 +78,13 @@ public interface IInternUserController extends IUserController {
      * @param isDeclined Die Information, ob diese Benachrichtigung als abgelehnt markiert werden soll.
      * @throws NotificationNotFoundException wenn bei dem Benutzer keine Benachrichtigung mit der ID hinterlegt ist.
      */
-    void updateNotification(UUID notificationId, boolean isRead, boolean isAccepted, boolean isDeclined) throws NotificationNotFoundException;
+    void updateNotification(@NotNull final UUID notificationId, final boolean isRead,
+                            final boolean isAccepted, final boolean isDeclined) throws NotificationNotFoundException;
 
     /**
      * Entfernt eine Benachrichtigung des Benutzers.
      * @param notificationId ID der zu entfernenden Benachrichtigung
      * @throws NotificationNotFoundException wenn bei dem Benutzer keine Benachrichtigung mit der ID hinterlegt ist.
      */
-    void removeNotification(UUID notificationId) throws NotificationNotFoundException;
+    void removeNotification(@NotNull final UUID notificationId) throws NotificationNotFoundException;
 }

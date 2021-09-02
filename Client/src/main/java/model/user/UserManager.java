@@ -1,10 +1,14 @@
 package model.user;
 
 import model.exception.UserNotFoundException;
-import model.role.Permission;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import view2.IModelObserver;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,7 +40,8 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     }
 
     @Override
-    public void login(UUID userId, String username, Status status, Avatar avatar) {
+    public void login(@NotNull final UUID userId, @NotNull final String username,
+                      @NotNull final Status status, @NotNull final Avatar avatar) {
         if (internUser != null) {
             throw new IllegalStateException("There is already a user logged in on this client.");
         }
@@ -56,48 +61,49 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     }
 
     @Override
-    public void addExternUser(UUID userId, String username, Status status, Avatar avatar) {
+    public void addExternUser(@NotNull final UUID userId, @NotNull final String username,
+                              @NotNull final Status status, @Nullable final Avatar avatar) {
         this.externUsers.put(userId, new User(userId, username, status, avatar));
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void removeExternUser(UUID userId) throws UserNotFoundException {
+    public void removeExternUser(@NotNull final UUID userId) throws UserNotFoundException {
         throwIfNotExists(userId);
         externUsers.remove(userId);
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public InternUser getInternUserController() {
+    public @NotNull InternUser getInternUserController() {
         throwIfNotLoggedIn();
         return internUser;
     }
 
     @Override
-    public User getExternUserController(UUID userId) throws UserNotFoundException {
+    public @NotNull User getExternUserController(@NotNull final UUID userId) throws UserNotFoundException {
         throwIfNotExists(userId);
         return externUsers.get(userId);
     }
 
     @Override
-    public Map<UUID, IUserController> getExternUsers() {
+    public @NotNull Map<UUID, IUserController> getExternUsers() {
         return externUsers.values().stream().collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
 
     @Override
-    public InternUser getInternUserView() {
+    public @Nullable InternUser getInternUserView() {
         return internUser;
     }
 
     @Override
-    public User getExternUserView(UUID userId) throws UserNotFoundException {
+    public @NotNull User getExternUserView(@NotNull final UUID userId) throws UserNotFoundException {
         throwIfNotExists(userId);
         return externUsers.get(userId);
     }
 
     @Override
-    public IUserView getExternUserView(String username) throws UserNotFoundException {
+    public @NotNull IUserView getExternUserView(@NotNull final String username) throws UserNotFoundException {
         try {
             return externUsers.values().stream().filter(user -> user.getUsername().equals(username)).findFirst().orElseThrow();
         } catch (NoSuchElementException e) {
@@ -106,35 +112,35 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     }
 
     @Override
-    public Map<UUID, IUserView> getActiveUsers() {
+    public @NotNull Map<UUID, IUserView> getActiveUsers() {
         throwIfNotInWorld();
         return externUsers.values().stream().filter(User::isInCurrentWorld)
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
 
     @Override
-    public Map<UUID, IUserView> getFriends() {
+    public @NotNull Map<UUID, IUserView> getFriends() {
         throwIfNotLoggedIn();
         return externUsers.values().stream().filter(User::isFriend)
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
 
     @Override
-    public Map<UUID, IUserView> getBannedUsers() {
+    public @NotNull Map<UUID, IUserView> getBannedUsers() {
         throwIfNotInWorld();
         return externUsers.values().stream().filter(User::isBanned)
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
 
     @Override
-    public Map<UUID, IUserView> getUsersInRoom() {
+    public @NotNull Map<UUID, IUserView> getUsersInRoom() {
         throwIfNotInWorld();
         return externUsers.values().stream().filter(User::isInCurrentRoom)
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
     }
 
     @Override
-    public Map<UUID, IUserView> getCommunicableUsers() {
+    public @NotNull Map<UUID, IUserView> getCommunicableUsers() {
         throwIfNotInWorld();
         return externUsers.values().stream().filter(User::canCommunicateWith)
                 .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
@@ -149,7 +155,7 @@ public class UserManager implements IUserManagerController, IUserManagerView {
      * Gibt die Singleton-Instanz der Klasse zurück.
      * @return Instanz des UserManager.
      */
-    public static UserManager getInstance() {
+    public static @NotNull UserManager getInstance() {
         if (userManager == null) {
             userManager = new UserManager();
         }
@@ -160,7 +166,10 @@ public class UserManager implements IUserManagerController, IUserManagerView {
      * Gibt den an diesem Client angemeldeten Benutzer zurück.
      * @return An diesem Client angemeldeten Benutzer.
      */
-    public InternUser getInternUser() {
+    public @NotNull InternUser getInternUser() {
+        if (this.internUser == null) {
+            throw new IllegalStateException("Intern User has not been set");
+        }
         return internUser;
     }
 
@@ -217,7 +226,7 @@ public class UserManager implements IUserManagerController, IUserManagerView {
      * @param userId ID des gesuchten Benutzers.
      * @throws UserNotFoundException wenn dem Client kein externer Benutzer mit der ID bekannt ist.
      */
-    private void throwIfNotExists(UUID userId) throws UserNotFoundException {
+    private void throwIfNotExists(@NotNull final UUID userId) throws UserNotFoundException {
         if (!externUsers.containsKey(userId)) {
             throw new UserNotFoundException("No user with this ID was found.", userId);
         }
@@ -227,7 +236,7 @@ public class UserManager implements IUserManagerController, IUserManagerView {
      * Setzt den Beobachter des Modells, über den die View über Änderungen benachrichtigt werden kann.
      * @param modelObserver Beobachter des Modells.
      */
-    public void setModelObserver(IModelObserver modelObserver) {
+    public void setModelObserver(@NotNull final IModelObserver modelObserver) {
         this.modelObserver = modelObserver;
     }
 
@@ -235,7 +244,10 @@ public class UserManager implements IUserManagerController, IUserManagerView {
      * Gibt den Beobachter des Modells zurück.
      * @return Beobachter des Modells.
      */
-    public IModelObserver getModelObserver() {
+    public @NotNull IModelObserver getModelObserver() {
+        if (modelObserver == null) {
+            throw new IllegalStateException("Model Observer has not been set");
+        }
         return modelObserver;
     }
 }

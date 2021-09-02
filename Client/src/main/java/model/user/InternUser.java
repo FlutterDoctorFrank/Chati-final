@@ -10,6 +10,8 @@ import model.exception.NotificationNotFoundException;
 import model.notification.INotificationView;
 import model.notification.Notification;
 import model.notification.NotificationType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +46,8 @@ public class InternUser extends User implements IInternUserController, IInternUs
      * @param status Status des Benutzers.
      * @param avatar Avatar des Benutzers.
      */
-    public InternUser(UUID userId, String username, Status status, Avatar avatar) {
+    public InternUser(@NotNull final UUID userId, @NotNull final String username,
+                      @NotNull final Status status, @NotNull final Avatar avatar) {
         super(userId, username, status, avatar);
         this.currentWorld = null;
         this.currentRoom = null;
@@ -54,7 +57,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void joinWorld(String worldName) {
+    public void joinWorld(@NotNull final String worldName) {
         this.currentWorld = new SpatialContext(worldName, Context.getGlobal());
         this.isInCurrentWorld = true;
         UserManager.getInstance().getModelObserver().setWorldChanged();
@@ -75,7 +78,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void joinRoom(ContextID roomId, String roomName, ContextMap map) {
+    public void joinRoom(@NotNull final ContextID roomId, @NotNull final String roomName, @NotNull final ContextMap map) {
         if (currentWorld == null) {
             throw new IllegalStateException("User is not in world.");
         }
@@ -84,12 +87,13 @@ public class InternUser extends User implements IInternUserController, IInternUs
             leaveRoom();
         }
         this.currentRoom = new SpatialContext(roomName, currentWorld);
+        this.currentWorld.addChild(this.currentRoom);
         this.isInCurrentRoom = true;
         this.currentRoom.build(map);
     }
 
     @Override
-    public void setMusic(ContextID spatialId, ContextMusic music) throws ContextNotFoundException {
+    public void setMusic(@NotNull final ContextID spatialId, @Nullable final ContextMusic music) throws ContextNotFoundException {
         Context current = getDeepestContext();
         while (current != null && !current.getContextId().equals(spatialId)) {
             current = current.getParent();
@@ -102,9 +106,10 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void addNotification(ContextID contextId, UUID notificationId, MessageBundle messageBundle,
-                LocalDateTime timestamp, NotificationType type, boolean isRead, boolean isAccepted, boolean isDeclined)
-                throws ContextNotFoundException {
+    public void addNotification(@NotNull final ContextID contextId, @NotNull final UUID notificationId,
+                                @NotNull final MessageBundle messageBundle, @NotNull final LocalDateTime timestamp,
+                                @NotNull final NotificationType type, final boolean isRead,
+                                final boolean isAccepted, final boolean isDeclined) throws ContextNotFoundException {
         if (notifications.containsKey(notificationId)) {
             throw new IllegalArgumentException("There is already a notification with this ID.");
         }
@@ -115,8 +120,8 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void updateNotification(UUID notificationId, boolean isRead, boolean isAccepted, boolean isDeclined)
-                throws NotificationNotFoundException {
+    public void updateNotification(@NotNull final UUID notificationId, final boolean isRead,
+                                   final boolean isAccepted, final boolean isDeclined) throws NotificationNotFoundException {
         Notification notification = notifications.get(notificationId);
         if (notification == null) {
             throw new NotificationNotFoundException("There is no notification with this ID.", notificationId);
@@ -134,7 +139,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void removeNotification(UUID notificationId) throws NotificationNotFoundException {
+    public void removeNotification(@NotNull final UUID notificationId) throws NotificationNotFoundException {
         if (notifications.remove(notificationId) == null) {
             throw new NotificationNotFoundException("There is no notification with this ID.", notificationId);
         }
@@ -142,24 +147,24 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public SpatialContext getCurrentWorld() {
+    public @Nullable SpatialContext getCurrentWorld() {
         return currentWorld;
     }
 
     @Override
-    public SpatialContext getCurrentRoom() {
+    public @Nullable SpatialContext getCurrentRoom() {
         return currentRoom;
     }
 
     @Override
-    public Map<UUID, INotificationView> getGlobalNotifications() {
+    public @NotNull Map<UUID, INotificationView> getGlobalNotifications() {
         return notifications.values().stream()
                 .filter(notification -> notification.getContext().equals(Context.getGlobal()))
                 .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
     }
 
     @Override
-    public Map<UUID, INotificationView> getWorldNotifications() {
+    public @NotNull Map<UUID, INotificationView> getWorldNotifications() {
         return notifications.values().stream()
                 .filter(notification -> notification.getContext().equals(currentWorld))
                 .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
@@ -173,7 +178,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public ContextMusic getMusic() {
+    public @Nullable ContextMusic getMusic() {
         return music;
     }
 
@@ -185,7 +190,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public Map<ContextID, ISpatialContextView> getCurrentInteractables() {
+    public @NotNull Map<ContextID, ISpatialContextView> getCurrentInteractables() {
         float posX = currentLocation.getPosX();
         float posY = currentLocation.getPosY();
         return currentRoom.getDescendants().values().stream()

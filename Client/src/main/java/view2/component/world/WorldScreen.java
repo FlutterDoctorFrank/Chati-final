@@ -9,24 +9,35 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
-import model.context.spatial.ContextMap;
+import model.user.IInternUserView;
 import model.user.IUserView;
 import view2.Chati;
-import view2.audio.VoiceChat;
 import view2.component.AbstractScreen;
 import view2.component.menu.ContextEntry;
 import view2.component.world.body.Border;
 import view2.component.world.body.InteractionObject;
 import view2.component.world.body.InternUserAvatar;
 import view2.component.world.body.UserAvatar;
-import view2.component.world.interactableMenu.*;
-
-import java.util.*;
+import view2.component.world.interactableMenu.AreaPlannerWindow;
+import view2.component.world.interactableMenu.GameBoardWindow;
+import view2.component.world.interactableMenu.InteractableWindow;
+import view2.component.world.interactableMenu.MusicPlayerWindow;
+import view2.component.world.interactableMenu.PortalWindow;
+import view2.component.world.interactableMenu.RoomReceptionWindow;
+import view2.component.world.interactableMenu.SeatWindow;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 public class WorldScreen extends AbstractScreen {
 
@@ -154,8 +165,11 @@ public class WorldScreen extends AbstractScreen {
     }
 
     private void createMap() {
-        ContextMap contextMap = Chati.CHATI.getUserManager().getInternUserView().getCurrentRoom().getMap();
-        TiledMap tiledMap = new TmxMapLoader().load(contextMap.getPath());
+        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
+        if (internUser == null || internUser.getCurrentRoom() == null || internUser.getCurrentRoom().getMap() == null) {
+            return;
+        }
+        TiledMap tiledMap = new TmxMapLoader().load(internUser.getCurrentRoom().getMap().getPath());
         tiledMapRenderer.setMap(tiledMap);
         tiledMapRenderer.getMap().getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class)
                 .forEach(border -> new Border(border.getRectangle()));

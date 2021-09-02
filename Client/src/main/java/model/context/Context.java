@@ -2,7 +2,8 @@ package model.context;
 
 import model.context.spatial.SpatialContext;
 import model.exception.ContextNotFoundException;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -14,10 +15,10 @@ import java.util.Objects;
  */
 public class Context implements IContextView {
 
-    /** Der Name des übergeordnetsten Kontextes. */
+    /** Der Name des global Kontextes. */
     private static final String ROOT_NAME = "Global";
 
-    /** Der übergeordnetste Kontext. */
+    /** Der globale Kontext. */
     private static Context global;
 
     /** Die eindeutige ID dieses Kontextes. */
@@ -37,7 +38,7 @@ public class Context implements IContextView {
      * @param contextName Name des Kontextes.
      * @param parent Übergeordneter Kontext.
      */
-    public Context(String contextName, Context parent) {
+    public Context(@NotNull final String contextName, @Nullable final Context parent) {
         if (parent == null) {
             this.contextId = new ContextID(contextName);
         } else {
@@ -54,7 +55,7 @@ public class Context implements IContextView {
      * @param contextName Name des Kontextes.
      * @param parent Übergeordneter Kontext.
      */
-    public Context(ContextID contextId, String contextName, Context parent) {
+    public Context(@NotNull final ContextID contextId, @NotNull final String contextName, @NotNull final Context parent) {
         this.contextId = contextId;
         this.contextName = contextName;
         this.parent = parent;
@@ -62,12 +63,12 @@ public class Context implements IContextView {
     }
 
     @Override
-    public ContextID getContextId() {
+    public @NotNull ContextID getContextId() {
         return contextId;
     }
 
     @Override
-    public String getContextName() {
+    public @NotNull String getContextName() {
         return contextName;
     }
 
@@ -75,7 +76,7 @@ public class Context implements IContextView {
      * Fügt einen untergeordneten Kontext hinzu.
      * @param context Hinzuzufügender Kontext.
      */
-    public void addChild(SpatialContext context) {
+    public void addChild(@NotNull final SpatialContext context) {
         this.children.put(context.getContextId(), context);
     }
 
@@ -83,7 +84,7 @@ public class Context implements IContextView {
      * Entfernt einen untergeordneten Kontext.
      * @param context Zu entfernender Kontext.
      */
-    public void removeChild(SpatialContext context) {
+    public void removeChild(@NotNull final SpatialContext context) {
         this.children.remove(context.getContextId());
     }
 
@@ -91,7 +92,7 @@ public class Context implements IContextView {
      * Gibt den übergeordneten Kontext zurück.
      * @return Übergeordneter Kontext.
      */
-    public Context getParent() {
+    public @Nullable Context getParent() {
         return parent;
     }
 
@@ -101,31 +102,30 @@ public class Context implements IContextView {
      * @return Kontext mit der übergebenen ID.
      * @throws ContextNotFoundException wenn kein untergeordneter Kontext mit der ID gefunden wurde.
      */
-    public Context getContext(ContextID contextId) throws ContextNotFoundException {
+    public @NotNull Context getContext(@NotNull final ContextID contextId) throws ContextNotFoundException {
         Context found = null;
         if (this.contextId.equals(contextId)) {
             return this;
         } else {
             for (SpatialContext child : children.values()) {
-                //System.out.println(child.getContextId());
-                //System.out.println(child.getChildren().isEmpty());
-                found = child.getContext(contextId);
-                if (found != null) {
-                    return found;
+                try {
+                    found = child.getContext(contextId);
+                    break;
+                } catch (ContextNotFoundException ignored) {
                 }
             }
         }
-        if (parent == null) {
+        if (found == null) {
             throw new ContextNotFoundException("Context with this ID not found.", contextId);
         }
         return found;
     }
 
     /**
-     * Gibt den übergeordnetsten Kontext zurück.
-     * @return Übergeordnetster Kontext.
+     * Gibt den global Kontext zurück.
+     * @return globaler Kontext.
      */
-    public static Context getGlobal() {
+    public static @NotNull Context getGlobal() {
         if (global == null) {
             global = new Context(ROOT_NAME, null);
         }
@@ -134,9 +134,9 @@ public class Context implements IContextView {
 
     /**
      * gibt alle Kinder des Kontexts zurück
-     * @Kinder des Kontexts
+     * @return Kinder des Kontexts
      */
-    public Map<ContextID, SpatialContext> getChildren() {
+    public @NotNull Map<ContextID, SpatialContext> getChildren() {
         return children;
     }
 

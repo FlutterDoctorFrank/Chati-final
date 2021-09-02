@@ -8,7 +8,8 @@ import model.context.ContextID;
 import model.exception.UserNotFoundException;
 import model.role.Permission;
 import model.role.Role;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 /**
@@ -67,7 +68,7 @@ public class User implements IUserController, IUserView {
     /** Die Kontexte, in denen der Benutzer gesperrt ist. */
     protected final Map<ContextID, Context> bannedContexts;
 
-    /** Die Rollen eines Benutzer in den jeweiligen Kontexten. */
+    /** Die Rollen eines Benutzers in den jeweiligen Kontexten. */
     protected final Map<Context, Set<Role>> contextRoles;
 
     /**
@@ -77,7 +78,8 @@ public class User implements IUserController, IUserView {
      * @param status Status des Benutzers.
      * @param avatar Avatar des Benutzers.
      */
-    public User(UUID userId, String username, Status status, Avatar avatar) {
+    public User(@NotNull final UUID userId, @NotNull final String username,
+                @NotNull final Status status, @Nullable final Avatar avatar) {
         this.userId = userId;
         this.username = username;
         this.status = status;
@@ -97,25 +99,25 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void setUsername(String username) {
+    public void setUsername(@NotNull final String username) {
         this.username = username;
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(@NotNull final Status status) {
         this.status = status;
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void setAvatar(Avatar avatar) {
+    public void setAvatar(@NotNull final Avatar avatar) {
         this.avatar = avatar;
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void setInCurrentWorld(boolean isInCurrentWorld) {
+    public void setInCurrentWorld(final boolean isInCurrentWorld) {
         this.isInCurrentWorld = isInCurrentWorld;
         if (!isInCurrentWorld) {
             discardWorldInfo();
@@ -124,7 +126,7 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void setInCurrentRoom(boolean isInCurrentRoom) {
+    public void setInCurrentRoom(final boolean isInCurrentRoom) {
         this.isInCurrentRoom = isInCurrentRoom;
         if (!isInCurrentRoom) {
             discardRoomInfo();
@@ -133,13 +135,13 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void setInPrivateRoom(boolean isInPrivateRoom) {
+    public void setInPrivateRoom(final boolean isInPrivateRoom) {
         this.isInPrivateRoom = isInPrivateRoom;
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void setFriend(boolean isFriend) {
+    public void setFriend(final boolean isFriend) {
         boolean wasFriend = this.isFriend;
         this.isFriend = isFriend;
         if (wasFriend && !isFriend && !isKnown()) {
@@ -153,19 +155,19 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void setIgnored(boolean isIgnored) {
+    public void setIgnored(final boolean isIgnored) {
         this.isIgnored = isIgnored;
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void setCommunicable(boolean canCommunicateWith) {
+    public void setCommunicable(final boolean canCommunicateWith) {
         this.canCommunicateWith = canCommunicateWith;
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void setReport(ContextID contextId, boolean isReported) throws ContextNotFoundException {
+    public void setReport(@NotNull final ContextID contextId, final boolean isReported) throws ContextNotFoundException {
         if (isReported) {
             reportedContexts.put(contextId, Context.getGlobal().getContext(contextId));
         } else {
@@ -175,7 +177,7 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void setMute(ContextID contextId, boolean isMuted) throws ContextNotFoundException {
+    public void setMute(@NotNull final ContextID contextId, final boolean isMuted) throws ContextNotFoundException {
         if (isMuted) {
             mutedContexts.put(contextId, Context.getGlobal().getContext(contextId));
         } else {
@@ -185,7 +187,7 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void setBan(ContextID contextId, boolean isBanned) throws ContextNotFoundException {
+    public void setBan(@NotNull final ContextID contextId, final boolean isBanned) throws ContextNotFoundException {
         if (isBanned) {
             bannedContexts.put(contextId, Context.getGlobal().getContext(contextId));
         } else {
@@ -202,7 +204,7 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void setRoles(ContextID contextId, Set<Role> roles) throws ContextNotFoundException {
+    public void setRoles(@NotNull final ContextID contextId, @NotNull final Set<Role> roles) throws ContextNotFoundException {
         Context context = Context.getGlobal().getContext(contextId);
         contextRoles.put(context, roles);
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
@@ -210,7 +212,7 @@ public class User implements IUserController, IUserView {
 
     @Override
     public void setLocation(final float posX, final float posY, final boolean isTeleporting, final boolean isSprinting,
-                            final Direction direction) {
+                            @NotNull final Direction direction) {
         if (this.currentLocation == null) {
             this.currentLocation = new Location(posX, posY, direction);
         } else {
@@ -223,22 +225,22 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public UUID getUserId() {
+    public @NotNull UUID getUserId() {
         return userId;
     }
 
     @Override
-    public String getUsername() {
+    public @NotNull String getUsername() {
         return username;
     }
 
     @Override
-    public Avatar getAvatar() {
+    public @NotNull Avatar getAvatar() {
         return avatar;
     }
 
     @Override
-    public Status getStatus() {
+    public @NotNull Status getStatus() {
         InternUser internUser = UserManager.getInstance().getInternUser();
         return (this.equals(internUser) || status != Status.INVISIBLE) ? status
                 : (internUser.hasPermission(Permission.SEE_INVISIBLE_USERS) ? Status.INVISIBLE
@@ -365,7 +367,7 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public Location getLocation() {
+    public @Nullable Location getLocation() {
         return currentLocation;
     }
 
@@ -385,17 +387,17 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public boolean hasRole(Role role) {
+    public boolean hasRole(@NotNull final Role role) {
         return hasRole(UserManager.getInstance().getInternUser().getDeepestContext(), role);
     }
 
     @Override
-    public boolean hasPermission(Permission permission) {
+    public boolean hasPermission(@NotNull final Permission permission) {
         return hasPermission(UserManager.getInstance().getInternUser().getDeepestContext(), permission);
     }
 
     @Override
-    public Role getHighestRole() {
+    public @Nullable Role getHighestRole() {
         return hasRole(Role.OWNER) ? Role.OWNER
                 : (hasRole(Role.ADMINISTRATOR) ? Role.ADMINISTRATOR
                 : (hasRole(Role.MODERATOR) ? Role.MODERATOR
@@ -408,12 +410,15 @@ public class User implements IUserController, IUserView {
      * Gibt den untergeordnetsten Kontext zurück, in dem sich der Benutzer befindet.
      * @return Untergeordnetster Kontext, in dem sich der Benutzer befindet.
      */
-    public Context getDeepestContext() {
-        return status == Status.OFFLINE ? null
-                : (UserManager.getInstance().getInternUser().getCurrentWorld() == null || !isInCurrentWorld ? Context.getGlobal()
+    public @NotNull Context getDeepestContext() {
+        if (status == Status.OFFLINE) {
+            throw new IllegalStateException("User is not online");
+        }
+
+        return UserManager.getInstance().getInternUser().getCurrentWorld() == null || !isInCurrentWorld ? Context.getGlobal()
                 : (UserManager.getInstance().getInternUser().getCurrentRoom() == null || !isInCurrentRoom
                     || currentLocation == null ? UserManager.getInstance().getInternUser().getCurrentWorld()
-                : currentLocation.getArea()));
+                : currentLocation.getArea());
     }
 
     /**
@@ -474,7 +479,7 @@ public class User implements IUserController, IUserView {
      * @param role Zu überprüfende Rolle.
      * @return true, wenn der Benutzer die Rolle in dem Kontext besitzt, sonst false.
      */
-    private boolean hasRole(Context context, Role role) {
+    private boolean hasRole(@NotNull final Context context, @NotNull final Role role) {
         return contextRoles.containsKey(context) && contextRoles.get(context).contains(role)
                 || context.getParent() != null && hasRole(context.getParent(), role);
     }
@@ -485,7 +490,7 @@ public class User implements IUserController, IUserView {
      * @param permission Zu überprüfende Berechtigung.
      * @return true, wenn der Benutzer die Berechtigung in dem Kontext besitzt, sonst false.
      */
-    private boolean hasPermission(Context context, Permission permission) {
+    private boolean hasPermission(@NotNull final Context context, @NotNull final Permission permission) {
         return contextRoles.containsKey(context)
                 && contextRoles.get(context).stream().anyMatch(role -> role.hasPermission(permission))
                 || context.getParent() != null && hasPermission(context.getParent(), permission);

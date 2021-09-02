@@ -3,7 +3,8 @@ package model.context.spatial;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.IContextView;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 /**
@@ -17,29 +18,29 @@ public interface ISpatialContextView extends IContextView {
      * @param posY Y-Koordinate.
      * @return Untergeordnetster Kontext, auf dem sich die Koordinaten befinden.
      */
-    ISpatialContextView getArea(float posX, float posY);
+    @NotNull ISpatialContextView getArea(final float posX, final float posY);
 
     /**
      * Gibt die geltende Kommunikationsform innerhalb des Kontexts zurück.
      * @return Die geltende Kommunikationsform.
      */
-    CommunicationRegion getCommunicationRegion();
+    @NotNull CommunicationRegion getCommunicationRegion();
 
     /**
      * Gibt die Kommunikationsmedien zurück, mit denen im Kontext kommuniziert werden kann.
      * @return Die erlaubten Kommunikationsmedien.
      */
-    Set<CommunicationMedium> getCommunicationMedia();
+    @NotNull Set<CommunicationMedium> getCommunicationMedia();
 
     /**
      * Gibt die Karte des Kontextes zurück.
      * @return Die Karte des Kontextes.
      */
-    ContextMap getMap();
+    @Nullable ContextMap getMap();
 
     /**
      * Gibt den Mittelpunkt des Kontextes zurück.
      * @return Mittelpunkt des Kontextes.
      */
-    ILocationView getCenter();
+    @NotNull ILocationView getCenter();
 }

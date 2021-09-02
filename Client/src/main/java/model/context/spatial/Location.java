@@ -1,7 +1,8 @@
 package model.context.spatial;
 
+import model.user.InternUser;
 import model.user.UserManager;
-
+import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
@@ -15,7 +16,7 @@ public class Location implements ILocationView {
     /** Y-Koordinate der Position. */
     private float posY;
 
-    /** Richtung, in die die Position gerichtet ist. */
+    /** Richtung der Position */
     private Direction direction;
 
     /**
@@ -23,10 +24,10 @@ public class Location implements ILocationView {
      * @param posX Die X-Koordinate der Position.
      * @param posY Die Y-Koordinate der Position.
      */
-    public Location(float posX, float posY) {
+    public Location(final float posX, final float posY) {
         this.posX = posX;
         this.posY = posY;
-        this.direction = Direction.DOWN;
+        this.direction = Direction.UP;
     }
 
     /**
@@ -35,7 +36,7 @@ public class Location implements ILocationView {
      * @param posY Die Y-Koordinate der Position.
      * @param direction Richtung, in der die Position gerichtet ist.
      */
-    public Location(float posX, float posY, Direction direction) {
+    public Location(final float posX, final float posY, @NotNull final Direction direction) {
         this.posX = posX;
         this.posY = posY;
         this.direction = direction;
@@ -52,13 +53,17 @@ public class Location implements ILocationView {
     }
 
     @Override
-    public Direction getDirection() {
+    public @NotNull Direction getDirection() {
         return direction;
     }
 
     @Override
-    public SpatialContext getArea() {
-        return UserManager.getInstance().getInternUser().getCurrentRoom().getArea(posX, posY);
+    public @NotNull SpatialContext getArea() {
+        InternUser intern = UserManager.getInstance().getInternUser();
+        if (intern.getCurrentRoom() == null) {
+            throw new IllegalStateException("User is not in a room");
+        }
+        return intern.getCurrentRoom().getArea(posX, posY);
     }
 
     /**
@@ -66,7 +71,7 @@ public class Location implements ILocationView {
      * @param posX Neue X-Koordinate.
      * @param posY Neue Y-Koordinate.
      */
-    public void setCoordinates(float posX, float posY) {
+    public void setCoordinates(final float posX, final float posY) {
         this.posX = posX;
         this.posY = posY;
     }
@@ -75,7 +80,7 @@ public class Location implements ILocationView {
      * Setzt die Richtung dieser Position.
      * @param direction Neue Richtung.
      */
-    public void setDirection(Direction direction) {
+    public void setDirection(@NotNull final Direction direction) {
         this.direction = direction;
     }
 

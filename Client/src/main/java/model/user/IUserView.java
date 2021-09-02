@@ -5,8 +5,8 @@ import model.context.spatial.Location;
 import model.context.spatial.SpatialContext;
 import model.role.Permission;
 import model.role.Role;
-
-import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 /**
@@ -16,27 +16,27 @@ public interface IUserView {
 
     /**
      * Gibt die ID des Benutzers zurück.
-     * @return ID des Benutzer
+     * @return ID des Benutzers
      */
-    UUID getUserId();
+    @NotNull UUID getUserId();
 
     /**
      * Gibt den aktuellen Benutzernamen des Benutzers zurück.
      * @return Benutzername des Benutzers
      */
-    String getUsername();
+    @NotNull String getUsername();
 
     /**
      * Gibt den aktuell ausgewählten Avatar des Benutzers zurück.
      * @return Avatar des Benutzers
      */
-    Avatar getAvatar();
+    @NotNull Avatar getAvatar();
 
     /**
      * Gibt den Status zurück, der für diesen Benutzer angezeigt werden soll.
      * @return Status des Benutzers.
      */
-    Status getStatus();
+    @NotNull Status getStatus();
 
     /**
      * Gibt zurück, ob der Benutzer als angemeldet angezeigt werden soll.
@@ -144,7 +144,7 @@ public interface IUserView {
      * @return Die Position des Benutzers.
      * @see Location
      */
-    ILocationView getLocation();
+    @Nullable ILocationView getLocation();
 
     /**
      * Gibt die Information zurück, ob der Benutzer zu seiner aktuellen Position teleportiert, oder mit einer
@@ -165,7 +165,7 @@ public interface IUserView {
      * @param role Zu überprüfende Rolle.
      * @return true, wenn der Benutzer die Rolle besitzt, sonst false.
      */
-    boolean hasRole(Role role);
+    boolean hasRole(@NotNull final Role role);
 
     /**
      * Gibt zurück, ob der Benutzer eine Berechtigung im innersten Kontext oder einem übergeordneten Kontext besitzt,
@@ -173,8 +173,7 @@ public interface IUserView {
      * @param permission Zu überprüfende Berechtigung.
      * @return true, wenn der Benutzer die Berechtigung besitzt, sonst false.
      */
-    boolean hasPermission(Permission permission);
-
+    boolean hasPermission(@NotNull final Permission permission);
 
     /**
      * Gibt die übergeordnetste Rolle des Benutzers zurück, die er im innersten Kontext oder einem übergeordneten
@@ -185,5 +184,5 @@ public interface IUserView {
      * Rollen enthalten.
      * @return Übergeordnetste Rolle des Benutzers.
      */
-    Role getHighestRole();
+    @Nullable Role getHighestRole();
 }

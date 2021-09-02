@@ -5,7 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
-import model.context.ContextID;
 import model.role.Permission;
 import model.user.IInternUserView;
 import view2.Assets;
@@ -126,9 +125,13 @@ public class SettingsWindow extends HudMenuWindow {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 disableButton(leaveWorldButton);
-                ContextID currentWorldID = Chati.CHATI.getUserManager()
-                        .getInternUserView().getCurrentWorld().getContextId();
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.WORLD_ACTION, currentWorldID, false);
+                IInternUserView intern = Chati.CHATI.getUserManager().getInternUserView();
+
+                if (intern == null || intern.getCurrentWorld() == null) {
+                    return;
+                }
+
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.WORLD_ACTION, intern.getCurrentWorld().getContextId(), false);
                 Chati.CHATI.setScreen(Chati.CHATI.getMenuScreen());
                 Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
             }

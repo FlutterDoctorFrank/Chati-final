@@ -83,6 +83,9 @@ public class InternUserAvatar extends UserAvatar {
     public void interact() {
         if (canInteract) {
             IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
+            if (internUser == null) {
+                return;
+            }
             Set<ISpatialContextView> currentInteractables = new HashSet<>(internUser.getCurrentInteractables().values());
             // Falls sich um den Benutzer mehrere Kontexte befinden, mit denen interagiert werden kann, entscheide
             // anhand der Blickrichtung, mit welchem Kontext interagiert werden soll.
@@ -92,6 +95,10 @@ public class InternUserAvatar extends UserAvatar {
             } else if (currentInteractables.size() == 1) {
                 interactingContext = currentInteractables.iterator().next();
             } else {
+                if (internUser.getLocation() == null) {
+                    return;
+                }
+
                 if (previousDirection == Direction.UP) {
                     interactingContext = currentInteractables.stream()
                             .filter(interactable -> interactable.getCenter().getPosY() > internUser.getLocation().getPosY())

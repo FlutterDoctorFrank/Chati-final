@@ -1,5 +1,7 @@
 package model.context.spatial;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Repräsentiert die räumliche Ausdehnung eines Kontextes.
  */
@@ -20,7 +22,7 @@ public class Expanse {
      * @param width Breite des Kontextes.
      * @param height Höhe des Kontextes.
      */
-    public Expanse(Location bottomLeft, float width, float height) {
+    public Expanse(@NotNull final Location bottomLeft, final float width, final float height) {
         this.bottomLeft = bottomLeft;
         this.width = width;
         this.height = height;
@@ -52,7 +54,7 @@ public class Expanse {
      * Gibt den Mittelpunkt der Ausdehnung zurück.
      * @return Mittelpunkt der Ausdehnung.
      */
-    public Location getCenter() {
+    public @NotNull Location getCenter() {
         return new Location(bottomLeft.getPosX() + width / 2, bottomLeft.getPosY() + height / 2);
     }
 }

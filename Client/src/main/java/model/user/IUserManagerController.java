@@ -1,6 +1,8 @@
 package model.user;
 
 import model.exception.UserNotFoundException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.UUID;
 
@@ -14,7 +16,8 @@ public interface IUserManagerController {
      * Setzt den intern angemeldeten Benutzer dieses Clients.
      * @param userId ID des internen Benutzers.
      */
-    void login(UUID userId, String userName, Status status, Avatar avatar);
+    void login(@NotNull final UUID userId, @NotNull final String userName,
+               @NotNull final Status status, @NotNull final Avatar avatar);
 
     /**
      * Verwirft alle initialisierten Benutzer und Kontexte im Modell.
@@ -26,32 +29,33 @@ public interface IUserManagerController {
      * nicht enthalten ist.
      * @param userId ID des externen Benutzers.
      */
-    void addExternUser(UUID userId, String userName, Status status, Avatar avatar);
+    void addExternUser(@NotNull final UUID userId, @NotNull final String userName,
+                       @NotNull final Status status, @Nullable final Avatar avatar);
 
     /**
      * Entfernt einen externen Benutzer aus der Liste der bekannten externen Benutzer.
      * @param userId ID des externen Benutzers.
      * @throws UserNotFoundException falls dem Client kein externer Benutzer mit der ID bekannt ist.
      */
-    void removeExternUser(UUID userId) throws UserNotFoundException;
+    void removeExternUser(@NotNull final UUID userId) throws UserNotFoundException;
 
     /**
      * Gibt den intern angemeldeten Benutzer zurück.
      * @return Die Instanz des intern angemeldeten Benutzers.
      * @throws IllegalStateException falls kein Benutzer auf diesem Client angemeldet ist.
      */
-    IInternUserController getInternUserController();
+    @NotNull IInternUserController getInternUserController();
 
     /**
      * @param userId ID des externen Benutzers.
      * @return externer Benutzer.
      * @throws UserNotFoundException falls dem Client kein externer Benutzer mit der ID bekannt ist.
      */
-    IUserController getExternUserController(UUID userId) throws UserNotFoundException;
+    @NotNull IUserController getExternUserController(@NotNull final UUID userId) throws UserNotFoundException;
 
     /**
      * Gibt die externen Benutzer zurück.
      * @return die externen Benutzer.
      */
-    Map<UUID, IUserController> getExternUsers();
+    @NotNull Map<UUID, IUserController> getExternUsers();
 }

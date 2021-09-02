@@ -2,6 +2,7 @@ package model.notification;
 
 import model.context.Context;
 import model.MessageBundle;
+import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -35,8 +36,10 @@ public class Notification implements INotificationView {
     /** Information, ob diese Benachrichtigung abgelehnt wurde. */
     private boolean isDeclined;
 
-    public Notification(UUID notificationId, Context context, MessageBundle messageBundle, LocalDateTime timestamp,
-                        NotificationType type, boolean isRead, boolean isAccepted, boolean isDeclined) {
+    public Notification(@NotNull final UUID notificationId, @NotNull final Context context,
+                        @NotNull final MessageBundle messageBundle, @NotNull final LocalDateTime timestamp,
+                        @NotNull final NotificationType type, final boolean isRead,
+                        final boolean isAccepted, final boolean isDeclined) {
         this.notificationId = notificationId;
         this.context = context;
         this.messageBundle = messageBundle;
@@ -48,22 +51,22 @@ public class Notification implements INotificationView {
     }
 
     @Override
-    public UUID getNotificationId() {
+    public @NotNull UUID getNotificationId() {
         return notificationId;
     }
 
     @Override
-    public MessageBundle getMessageBundle() {
+    public @NotNull MessageBundle getMessageBundle() {
         return messageBundle;
     }
 
     @Override
-    public LocalDateTime getTimestamp() {
+    public @NotNull LocalDateTime getTimestamp() {
         return timestamp;
     }
 
     @Override
-    public NotificationType getType() {
+    public @NotNull NotificationType getType() {
         return type;
     }
 
@@ -107,7 +110,7 @@ public class Notification implements INotificationView {
      * Gibt den Kontext zurück, in dem der Benutzer diese Benachrichtigung besitzt.
      * @return Kontext, in dem der Benutzer diese Benachrichtigung besitzt.
      */
-    public Context getContext() {
+    public @NotNull Context getContext() {
         return context;
     }
 

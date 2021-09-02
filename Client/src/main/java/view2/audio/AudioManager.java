@@ -10,7 +10,6 @@ import model.user.IInternUserView;
 import view2.Chati;
 import view2.Settings;
 import view2.component.KeyAction;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -40,6 +39,7 @@ public class AudioManager {
 
     public void update() {
         IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
+
         if (voiceChat != null) {
             if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
                 if (!voiceChat.isRunning() && internUser != null && internUser.isInCurrentWorld()) {
@@ -62,8 +62,8 @@ public class AudioManager {
             }
         }
 
-        if (Chati.CHATI.isMusicChanged()) {
-            playMusic(Chati.CHATI.getUserManager().getInternUserView().getMusic());
+        if (Chati.CHATI.isMusicChanged() && internUser != null) {
+            playMusic(internUser.getMusic());
         }
     }
 

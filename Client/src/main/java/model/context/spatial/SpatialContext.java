@@ -2,13 +2,15 @@ package model.context.spatial;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import model.communication.CommunicationRegion;
 import model.context.Context;
 import model.communication.CommunicationMedium;
 import model.context.ContextID;
 import model.user.UserManager;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -21,8 +23,7 @@ import java.util.concurrent.FutureTask;
  */
 public class SpatialContext extends Context implements ISpatialContextView {
 
-    /** Der Abstand, den der Benutzer maximal von einem interagierbaren Kontext entfernt sein darf, um mit diesem zu
-      * interagieren. */
+    /** Der Abstand, den der Benutzer maximal von einem Objekt entfernt sein darf, um mit diesem zu interagieren. */
     public static final float INTERACTION_DISTANCE = 32;
 
     /** Die räumliche Ausdehnung dieses Kontextes. */
@@ -48,8 +49,10 @@ public class SpatialContext extends Context implements ISpatialContextView {
      * @param communicationMedia Benutzbare Kommunikationsmedien des Kontextes.
      * @param expanse Räumliche Ausdehnung des Kontextes.
      */
-    public SpatialContext(String contextName, Context parent, CommunicationRegion communicationRegion,
-                          Set<CommunicationMedium> communicationMedia, Expanse expanse, boolean interactable) {
+    public SpatialContext(@NotNull final String contextName, @NotNull final Context parent,
+                          @NotNull final CommunicationRegion communicationRegion,
+                          @NotNull final Set<CommunicationMedium> communicationMedia,
+                          @NotNull final Expanse expanse, final boolean interactable) {
         super(contextName, parent);
         this.communicationRegion = communicationRegion;
         this.communicationMedia = communicationMedia;
@@ -64,7 +67,7 @@ public class SpatialContext extends Context implements ISpatialContextView {
      * @param contextName Name des Kontextes.
      * @param parent Übergeordneter Kontext.
      */
-    public SpatialContext(String contextName, Context parent) {
+    public SpatialContext(@NotNull final String contextName, @NotNull final Context parent) {
         super(contextName, parent);
         this.communicationRegion = null;
         this.communicationMedia = null;
@@ -100,7 +103,7 @@ public class SpatialContext extends Context implements ISpatialContextView {
      * Gibt die räumliche Ausdehnung dieses Kontextes zurück.
      * @return Räumliche Ausdehnung dieses Kontextes.
      */
-    public Expanse getExpanse() {
+    public @NotNull Expanse getExpanse() {
         return expanse;
     }
 
@@ -116,14 +119,14 @@ public class SpatialContext extends Context implements ISpatialContextView {
      * Gibt alle untergeordneten Kontexte dieses Kontextes zurück.
      * @return Alle untergeordneten Kontexte.
      */
-    public Map<ContextID, SpatialContext> getDescendants() {
+    public @NotNull Map<ContextID, SpatialContext> getDescendants() {
         Map<ContextID, SpatialContext> descentants = new HashMap<>(children);
         children.values().forEach(child -> descentants.putAll(child.getDescendants()));
         return descentants;
     }
 
     @Override
-    public SpatialContext getArea(float posX, float posY) {
+    public @NotNull SpatialContext getArea(float posX, float posY) {
         try {
             return children.values().stream().filter(child -> child.getExpanse().isIn(posX, posY))
                     .findFirst().orElseThrow().getArea(posX, posY);
@@ -133,22 +136,22 @@ public class SpatialContext extends Context implements ISpatialContextView {
     }
 
     @Override
-    public CommunicationRegion getCommunicationRegion() {
+    public @NotNull CommunicationRegion getCommunicationRegion() {
         return communicationRegion;
     }
 
     @Override
-    public Set<CommunicationMedium> getCommunicationMedia() {
+    public @NotNull Set<CommunicationMedium> getCommunicationMedia() {
         return communicationMedia;
     }
 
     @Override
-    public ContextMap getMap() {
+    public @Nullable ContextMap getMap() {
         return map;
     }
 
     @Override
-    public ILocationView getCenter() {
+    public @NotNull ILocationView getCenter() {
         return expanse.getCenter();
     }
 }

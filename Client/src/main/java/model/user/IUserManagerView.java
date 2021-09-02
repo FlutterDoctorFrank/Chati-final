@@ -1,6 +1,8 @@
 package model.user;
 
 import model.exception.UserNotFoundException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.UUID;
 
@@ -15,7 +17,7 @@ public interface IUserManagerView {
      * @return Die Instanz des intern angemeldeten Benutzers.
      * @throws IllegalStateException falls kein Benutzer auf diesem Client angemeldet ist.
      */
-    IInternUserView getInternUserView();
+    @Nullable IInternUserView getInternUserView();
 
     /**
      * Gibt einen externen Benutzer mit der übergebenen ID zurück.
@@ -23,7 +25,7 @@ public interface IUserManagerView {
      * @return Externer Benutzer.
      * @throws UserNotFoundException falls dem Client kein externer Benutzer mit der ID bekannt ist.
      */
-    IUserView getExternUserView(UUID userId) throws UserNotFoundException;
+    @NotNull IUserView getExternUserView(@NotNull final UUID userId) throws UserNotFoundException;
 
     /**
      * Gibt einen externen Benutzer mit dem übergebenen Namen zurück.
@@ -31,42 +33,42 @@ public interface IUserManagerView {
      * @return Externer Benutzer
      * @throws UserNotFoundException falls dem Client kein externer Benutzer mit dem Namen bekannt ist.
      */
-    IUserView getExternUserView(String username) throws UserNotFoundException;
+    @NotNull IUserView getExternUserView(@NotNull final String username) throws UserNotFoundException;
 
     /**
      * Gibt die externen Benutzer zurück, die in der aktuellen Welt als aktiv hinterlegt sind.
      * @return Aktive Benutzer der aktuellen Welt.
      * @throws IllegalStateException wenn es keine aktuelle Welt gibt.
      */
-    Map<UUID, IUserView> getActiveUsers();
+    @NotNull Map<UUID, IUserView> getActiveUsers();
 
     /**
      * Gibt die externen Benutzer zurück, mit denen der interne Benutzer befreundet ist.
      * @return Externe Benutzer, mit denen der interne Benutzer befreundet ist.
      * @throws IllegalStateException falls kein Benutzer auf diesem Client angemeldet ist.
      */
-    Map<UUID, IUserView> getFriends();
+    @NotNull Map<UUID, IUserView> getFriends();
 
     /**
      * Gibt die externen Benutzer zurück, die in der aktuellen Welt als gesperrt hinterlegt sind.
      * @return Externe Benutzer, die in der aktuellen Welt als gesperrt hinterlegt sind.
      * @throws IllegalStateException wenn es keine aktuelle Welt gibt.
      */
-    Map<UUID, IUserView> getBannedUsers();
+    @NotNull Map<UUID, IUserView> getBannedUsers();
 
     /**
      * Gibt die externen Benutzer zurück, die sich gerade in dem Raum des intern angemeldeten Benutzers befinden.
      * @return Externe Benutzer, die sich im aktuellen Raum befinden.
      * @throws IllegalStateException wenn es keine aktuelle Welt gibt.
      */
-    Map<UUID, IUserView> getUsersInRoom();
+    @NotNull Map<UUID, IUserView> getUsersInRoom();
 
     /**
      * Gibt die externen Benutzer zurück, mit denen der intern angemeldete Benutzer gerade kommunizieren kann.
      * @return Externe Benutzer, mit denen der intern angemeldete Benutzer gerade kommunizieren kann.
      * @throws IllegalStateException wenn es keine aktuelle Welt gibt.
      */
-    Map<UUID, IUserView> getCommunicableUsers();
+    @NotNull Map<UUID, IUserView> getCommunicableUsers();
 
     /**
      * Gibt zurück, ob auf diesem Client gerade ein Benutzer angemeldet ist.
