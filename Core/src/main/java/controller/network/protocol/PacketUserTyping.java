@@ -5,25 +5,32 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.UUID;
 
+/**
+ * Ein Paket, das die Information enthält, ob ein Benutzer gerade tippt.
+ * <p>
+ *     Das Paket wird von einem Client erzeugt und an den Server gesendet.
+ *     Nach der Verarbeitung des Pakets vom Server, wird der Sender gesetzt und das Paket wird an all die Clients
+ *     verteilt, die die Information empfangen dürfen.
+ * </p>
+ */
 public class PacketUserTyping implements Packet<PacketListener> {
 
     private UUID senderId;
 
     /**
-     * Für die Deserialisierung des Netzwerkpakets und Erzeugung des Netzwerkpakets von der Clientanwendung.
+     * Für die Deserialisierung des Netzwerkpakets und Erzeugung des Netzwerkpakets von der Client-Anwendung.
      */
     public PacketUserTyping() {
 
     }
 
     /**
-     * Ausschließlich für die Erzeugung des Netzwerkpakets von der Serveranwendung.
+     * Ausschließlich für die Erzeugung des Netzwerkpakets von der Server-Anwendung.
      * @param senderId die Benutzer-ID des tippenden Benutzers.
      */
-    public PacketUserTyping(UUID senderId) {
+    public PacketUserTyping(@NotNull final UUID senderId) {
         this.senderId = senderId;
     }
 
@@ -33,12 +40,12 @@ public class PacketUserTyping implements Packet<PacketListener> {
     }
 
     @Override
-    public void write(Kryo kryo, Output output) {
+    public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeNullableUniqueId(output, this.senderId);
     }
 
     @Override
-    public void read(Kryo kryo, Input input) {
+    public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.senderId = PacketUtils.readNullableUniqueId(input);
     }
 
@@ -49,7 +56,7 @@ public class PacketUserTyping implements Packet<PacketListener> {
 
     /**
      * Gibt die Benutzer-ID des tippenden Benutzers zurück.
-     * @return die Benutzer-ID des tippenden Benutzers, oder null.
+     * @return die Benutzer-ID des Benutzers, oder null.
      */
     public @Nullable UUID getSenderId() {
         return this.senderId;

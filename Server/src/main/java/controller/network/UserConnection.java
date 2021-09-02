@@ -2,12 +2,28 @@ package controller.network;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import controller.network.protocol.*;
+import controller.network.protocol.Packet;
+import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
+import controller.network.protocol.PacketChatMessage;
+import controller.network.protocol.PacketInContextInteract;
+import controller.network.protocol.PacketInUserManage;
+import controller.network.protocol.PacketListener;
+import controller.network.protocol.PacketListenerIn;
+import controller.network.protocol.PacketMenuOption;
+import controller.network.protocol.PacketNotificationResponse;
+import controller.network.protocol.PacketOutContextList;
+import controller.network.protocol.PacketOutContextRole;
+import controller.network.protocol.PacketOutNotification;
 import controller.network.protocol.PacketOutNotification.Notification;
+import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo.Flag;
+import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketProfileAction.Action;
+import controller.network.protocol.PacketUserTyping;
+import controller.network.protocol.PacketVoiceMessage;
+import controller.network.protocol.PacketWorldAction;
 import model.context.spatial.Direction;
 import model.context.spatial.IWorld;
 import model.exception.ContextNotFoundException;
@@ -162,26 +178,6 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
     }
 
     @Override
-    public void handle(PacketUserTyping packet) {
-        if (this.user == null) {
-            this.logUnexpectedPacket(packet, "Can not type while not logged in");
-            return;
-        }
-
-        if (this.user.getWorld() != null) {
-            // Überprüfung, ob gegebenenfalls eine falsche User-ID versendet wurde.
-            if (packet.getSenderId() != null && !packet.getSenderId().equals(this.user.getUserId())) {
-                this.logInvalidPacket(packet, "User-ID must be the own or null");
-                return;
-            }
-
-            this.user.type();
-        } else {
-            this.logUnexpectedPacket(packet, "Can not type while not in a world");
-        }
-    }
-
-    @Override
     public void handle(@NotNull final PacketChatMessage packet) {
         if (this.user == null) {
             this.logUnexpectedPacket(packet, "Can not chat while not logged in");
@@ -286,58 +282,22 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
     }
 
     @Override
-    public void handle(@NotNull final PacketWorldAction packet) {
+    public void handle(@NotNull final PacketUserTyping packet) {
         if (this.user == null) {
-            this.logUnexpectedPacket(packet, "Can not perform world action while not logged in");
+            this.logUnexpectedPacket(packet, "Can not type while not logged in");
             return;
         }
 
-        try {
-            if (packet.getAction() == PacketWorldAction.Action.CREATE) {
-                if (packet.getMap() == null || packet.getName() == null) {
-                    this.logInvalidPacket(packet, "Missing world-name or world-map for create action");
-                    return;
-                }
-
-                this.manager.getGlobal().createWorld(this.user.getUserId(), packet.getName(), packet.getMap());
-            } else {
-                if (packet.getContextId() == null) {
-                    this.logInvalidPacket(packet, "Missing context-id for world action");
-                    return;
-                }
-
-                switch (packet.getAction()) {
-                    case JOIN:
-                        this.user.joinWorld(packet.getContextId());
-                        return; // #joinWorld() verschickt über den ClientSender die Bestätigung.
-
-                    case LEAVE:
-                        this.user.leaveWorld();
-                        return; // #leaveWorld() verschickt über den ClientSender die Bestätigung.
-
-                    case DELETE:
-                        this.manager.getGlobal().removeWorld(this.user.getUserId(), packet.getContextId());
-                        break;
-                }
+        if (this.user.getWorld() != null) {
+            // Überprüfung, ob gegebenenfalls eine falsche User-ID versendet wurde.
+            if (packet.getSenderId() != null && !packet.getSenderId().equals(this.user.getUserId())) {
+                this.logInvalidPacket(packet, "User-ID must be the own or null");
+                return;
             }
 
-            // Aktion erfolgreich. Sende Bestätigung
-            this.send(new PacketWorldAction(packet, null, true));
-        } catch (IllegalWorldActionException ex) {
-            // Illegale Welt-Aktion erhalten. Sende Fehlermeldung
-            this.send(new PacketWorldAction(packet, ex.getMessageBundle(), false));
-        } catch (NoPermissionException ex) {
-            LOGGER.info("User " + this + " is missing permission " + ex.getPermission()
-                    + " for world action: " + packet.getAction().name());
-
-            // Unzureichende Berechtigung des Benutzers. Sende zugehörige Fehlermeldung.
-            this.send(new PacketWorldAction(packet, ex.getMessageBundle(), false));
-        } catch (ContextNotFoundException ex) {
-            // Unbekannte Welt, auf die zugegriffen werden soll.
-            LOGGER.warning("User " + this + " tried to access unknown world");
-        } catch (UserNotFoundException ex) {
-            // Sollte niemals der Fall sein.
-            throw new IllegalStateException("Failed to provide corresponding user-id", ex);
+            this.user.type();
+        } else {
+            this.logUnexpectedPacket(packet, "Can not type while not in a world");
         }
     }
 
@@ -469,6 +429,62 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 // Sollte niemals der Fall sein.
                 throw new IllegalStateException("Failed to provide corresponding user-id", ex);
             }
+        }
+    }
+
+    @Override
+    public void handle(@NotNull final PacketWorldAction packet) {
+        if (this.user == null) {
+            this.logUnexpectedPacket(packet, "Can not perform world action while not logged in");
+            return;
+        }
+
+        try {
+            if (packet.getAction() == PacketWorldAction.Action.CREATE) {
+                if (packet.getMap() == null || packet.getName() == null) {
+                    this.logInvalidPacket(packet, "Missing world-name or world-map for create action");
+                    return;
+                }
+
+                this.manager.getGlobal().createWorld(this.user.getUserId(), packet.getName(), packet.getMap());
+            } else {
+                if (packet.getContextId() == null) {
+                    this.logInvalidPacket(packet, "Missing context-id for world action");
+                    return;
+                }
+
+                switch (packet.getAction()) {
+                    case JOIN:
+                        this.user.joinWorld(packet.getContextId());
+                        return; // #joinWorld() verschickt über den ClientSender die Bestätigung.
+
+                    case LEAVE:
+                        this.user.leaveWorld();
+                        return; // #leaveWorld() verschickt über den ClientSender die Bestätigung.
+
+                    case DELETE:
+                        this.manager.getGlobal().removeWorld(this.user.getUserId(), packet.getContextId());
+                        break;
+                }
+            }
+
+            // Aktion erfolgreich. Sende Bestätigung
+            this.send(new PacketWorldAction(packet, null, true));
+        } catch (IllegalWorldActionException ex) {
+            // Illegale Welt-Aktion erhalten. Sende Fehlermeldung
+            this.send(new PacketWorldAction(packet, ex.getMessageBundle(), false));
+        } catch (NoPermissionException ex) {
+            LOGGER.info("User " + this + " is missing permission " + ex.getPermission()
+                    + " for world action: " + packet.getAction().name());
+
+            // Unzureichende Berechtigung des Benutzers. Sende zugehörige Fehlermeldung.
+            this.send(new PacketWorldAction(packet, ex.getMessageBundle(), false));
+        } catch (ContextNotFoundException ex) {
+            // Unbekannte Welt, auf die zugegriffen werden soll.
+            LOGGER.warning("User " + this + " tried to access unknown world");
+        } catch (UserNotFoundException ex) {
+            // Sollte niemals der Fall sein.
+            throw new IllegalStateException("Failed to provide corresponding user-id", ex);
         }
     }
 

@@ -1,6 +1,6 @@
 package controller.network.protocol;
 
-import controller.network.protocol.mock.MockPacketListenerIn;
+import controller.network.protocol.mock.MockPacketListener;
 import model.notification.NotificationAction;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +13,7 @@ public class PacketNotificationResponseTest extends PacketTest<PacketNotificatio
 
     @Test
     public void callListenerTest() {
-        final MockPacketListenerIn listener = new MockPacketListenerIn();
+        final MockPacketListener listener = new MockPacketListener();
 
         this.before = new PacketNotificationResponse(randomUniqueId(), randomEnum(NotificationAction.class));
         this.before.call(listener);

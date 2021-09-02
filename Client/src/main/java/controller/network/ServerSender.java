@@ -1,11 +1,21 @@
 package controller.network;
 
-import controller.network.protocol.*;
+import controller.network.protocol.Packet;
+import controller.network.protocol.PacketAvatarMove;
+import controller.network.protocol.PacketChatMessage;
+import controller.network.protocol.PacketInContextInteract;
+import controller.network.protocol.PacketInUserManage;
+import controller.network.protocol.PacketMenuOption;
+import controller.network.protocol.PacketNotificationResponse;
+import controller.network.protocol.PacketProfileAction;
+import controller.network.protocol.PacketUserTyping;
+import controller.network.protocol.PacketVoiceMessage;
+import controller.network.protocol.PacketWorldAction;
+import model.context.ContextID;
+import model.context.spatial.ContextMap;
 import model.context.spatial.Direction;
 import model.notification.NotificationAction;
 import model.user.AdministrativeAction;
-import model.context.ContextID;
-import model.context.spatial.ContextMap;
 import model.user.Avatar;
 import model.user.Status;
 import org.jetbrains.annotations.NotNull;
@@ -381,10 +391,13 @@ public interface ServerSender {
 
         /**
          * Information, dass der Benutzer gerade tippt.
+         * <p>
+         *     Erwartet keine Objekte als Objekt Array.
+         * </p>
          */
         TYPING {
             @Override
-            protected @NotNull Packet<?> getPacket(@NotNull Object... objects) {
+            protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
                 if (objects.length == 0) {
                     return new PacketUserTyping();
                 } else {

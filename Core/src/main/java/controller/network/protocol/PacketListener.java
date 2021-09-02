@@ -15,12 +15,6 @@ public interface PacketListener {
     void handle(@NotNull final PacketAvatarMove packet);
 
     /**
-     * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschlie0end das Paket.
-     * @param packetUserTyping Das zu verarbeitende Paket.
-     */
-    void handle(PacketUserTyping packetUserTyping);
-
-    /**
      * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.
      * @param packet Das zu verarbeitende Paket.
      */
@@ -48,11 +42,17 @@ public interface PacketListener {
      * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.
      * @param packet Das zu verarbeitende Paket.
      */
-    void handle(@NotNull final PacketWorldAction packet);
+    void handle(@NotNull final PacketUserTyping packet);
 
     /**
      * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.
      * @param packet Das zu verarbeitende Paket.
      */
     void handle(@NotNull final PacketProfileAction packet);
+
+    /**
+     * Prüft die Korrektheit der Daten des Pakets und verarbeitet anschließend das Paket.
+     * @param packet Das zu verarbeitende Paket.
+     */
+    void handle(@NotNull final PacketWorldAction packet);
 }

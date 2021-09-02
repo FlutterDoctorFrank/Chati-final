@@ -2,12 +2,30 @@ package controller.network;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import controller.network.protocol.*;
+import controller.network.protocol.Packet;
+import controller.network.protocol.PacketAvatarMove;
+import controller.network.protocol.PacketChatMessage;
+import controller.network.protocol.PacketListener;
+import controller.network.protocol.PacketListenerOut;
+import controller.network.protocol.PacketMenuOption;
+import controller.network.protocol.PacketNotificationResponse;
+import controller.network.protocol.PacketOutCommunicable;
+import controller.network.protocol.PacketOutContextInfo;
+import controller.network.protocol.PacketOutContextJoin;
+import controller.network.protocol.PacketOutContextList;
 import controller.network.protocol.PacketOutContextList.ContextInfo;
+import controller.network.protocol.PacketOutContextRole;
+import controller.network.protocol.PacketOutMenuAction;
+import controller.network.protocol.PacketOutNotification;
 import controller.network.protocol.PacketOutNotification.Notification;
+import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo.Flag;
+import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketProfileAction.Action;
+import controller.network.protocol.PacketUserTyping;
+import controller.network.protocol.PacketVoiceMessage;
+import controller.network.protocol.PacketWorldAction;
 import model.context.ContextID;
 import model.exception.ContextNotFoundException;
 import model.exception.NotificationNotFoundException;
@@ -167,7 +185,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     }
 
     @Override
-    public void handle(PacketUserTyping packet) {
+    public void handle(@NotNull final PacketUserTyping packet) {
         if (this.userId == null) {
             this.logUnexpectedPacket(packet, "Can not receive typing information while user is not logged in");
             return;
@@ -664,6 +682,10 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                                 user.setAvatar(info.getAvatar());
                             }
                         } catch (UserNotFoundException ex) {
+                            if (info.getName() == null) {
+                                this.logInvalidPacket(packet, "Name of unknown user can not be null");
+                            }
+
                             // Externer Benutzer existiert noch nicht. Füge neuen hinzu.
                             this.manager.getUserManager().addExternUser(info.getUserId(), info.getName(),
                                     info.getStatus(), info.getAvatar());
@@ -697,6 +719,10 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             user = this.getUser(info.getUserId());
                             user.setStatus(info.getStatus());
                         } catch (UserNotFoundException ex) {
+                            if (info.getName() == null) {
+                                this.logInvalidPacket(packet, "Name of unknown user can not be null");
+                            }
+
                             // Externer Benutzer existiert noch nicht. Füge neuen hinzu.
                             this.manager.getUserManager().addExternUser(info.getUserId(), info.getName(),
                                     info.getStatus(), info.getAvatar());
