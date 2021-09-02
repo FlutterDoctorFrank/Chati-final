@@ -47,7 +47,7 @@ public class CommunicationHandler {
         receivers.remove(typingUser.getUserId());
 
         // Versende die Information.
-        //receivers.values().forEach(user -> user.send(SendAction.TYPING));
+        receivers.values().forEach(user -> user.send(SendAction.TYPING, typingUser));
     }
 
     /**

@@ -1,15 +1,6 @@
 package controller.network;
 
-import controller.network.protocol.Packet;
-import controller.network.protocol.PacketAvatarMove;
-import controller.network.protocol.PacketChatMessage;
-import controller.network.protocol.PacketInContextInteract;
-import controller.network.protocol.PacketNotificationResponse;
-import controller.network.protocol.PacketInUserManage;
-import controller.network.protocol.PacketMenuOption;
-import controller.network.protocol.PacketProfileAction;
-import controller.network.protocol.PacketVoiceMessage;
-import controller.network.protocol.PacketWorldAction;
+import controller.network.protocol.*;
 import model.context.spatial.Direction;
 import model.notification.NotificationAction;
 import model.user.AdministrativeAction;
@@ -384,6 +375,20 @@ public interface ServerSender {
                     }
                 } else {
                     throw new IllegalArgumentException("Expected Array size of 2, got " + objects.length);
+                }
+            }
+        },
+
+        /**
+         * Information, dass der Benutzer gerade tippt.
+         */
+        TYPING {
+            @Override
+            protected @NotNull Packet<?> getPacket(@NotNull Object... objects) {
+                if (objects.length == 0) {
+                    return new PacketUserTyping();
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 0, got " + objects.length);
                 }
             }
         },

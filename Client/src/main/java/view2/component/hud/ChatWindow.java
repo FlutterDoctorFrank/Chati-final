@@ -90,8 +90,8 @@ public class ChatWindow extends AbstractWindow {
             public boolean keyTyped(InputEvent event, char c) {
                 long now = System.currentTimeMillis();
                 if (c != 0 && now - lastTimeTypingSent >= SHOW_TYPING_DURATION) {
-                    // Send typing ...
                     lastTimeTypingSent = now;
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.TYPING);
                 }
                 return true;
             }
@@ -182,17 +182,14 @@ public class ChatWindow extends AbstractWindow {
         typeMessageArea.setText("");
     }
 
-    public void showUserMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String userMessage) {
+    public void showUserMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String userMessage)
+                throws UserNotFoundException {
         String username;
         IUserManagerView userManager = Chati.CHATI.getUserManager();
         if (userManager.getInternUserView() != null && userManager.getInternUserView().getUserId().equals(userId)) {
             username = userManager.getInternUserView().getUsername();
         } else {
-            try {
-                username = userManager.getExternUserView(userId).getUsername();
-            } catch (UserNotFoundException e) {
-                throw new IllegalArgumentException("Received message from an unknown user.", e);
-            }
+            username = userManager.getExternUserView(userId).getUsername();
         }
         Color messageColor;
         switch (messageType) {

@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import model.MessageBundle;
 import model.communication.message.MessageType;
+import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import view2.Chati;
 import view2.Assets;
@@ -219,8 +220,12 @@ public class HeadUpDisplay extends Table {
         addActor(chatButtonContainer);
     }
 
+    public void showTypingUser(UUID userId) {
+        chatWindow.updateTypingUser(userId);
+    }
+
     public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message,
-                                MessageBundle messageBundle) {
+                                MessageBundle messageBundle) throws UserNotFoundException {
         if (!isChatOpen()) {
             chatButton.startBlinking();
         }

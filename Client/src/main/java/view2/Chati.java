@@ -218,11 +218,24 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
+    public void showTypingUser(UUID userId) {
+        if (this.screen.equals(worldScreen)) {
+            Gdx.app.postRunnable(() -> HeadUpDisplay.getInstance().showTypingUser(userId));
+        }
+    }
+
+    @Override
     public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message,
             MessageBundle messageBundle) {
         if (this.screen.equals(worldScreen)) {
-            Gdx.app.postRunnable(() -> HeadUpDisplay.getInstance()
-                    .showChatMessage(userId, timestamp, messageType, message, messageBundle));
+            Gdx.app.postRunnable(() -> {
+                try {
+                    HeadUpDisplay.getInstance()
+                            .showChatMessage(userId, timestamp, messageType, message, messageBundle);
+                } catch (UserNotFoundException e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 

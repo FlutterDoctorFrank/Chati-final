@@ -2,29 +2,12 @@ package controller.network;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import controller.network.protocol.Packet;
-import controller.network.protocol.PacketAvatarMove;
-import controller.network.protocol.PacketChatMessage;
-import controller.network.protocol.PacketListener;
-import controller.network.protocol.PacketListenerOut;
-import controller.network.protocol.PacketMenuOption;
-import controller.network.protocol.PacketNotificationResponse;
-import controller.network.protocol.PacketOutCommunicable;
-import controller.network.protocol.PacketOutContextInfo;
-import controller.network.protocol.PacketOutContextJoin;
-import controller.network.protocol.PacketOutContextList;
+import controller.network.protocol.*;
 import controller.network.protocol.PacketOutContextList.ContextInfo;
-import controller.network.protocol.PacketOutContextRole;
-import controller.network.protocol.PacketOutMenuAction;
-import controller.network.protocol.PacketOutNotification;
 import controller.network.protocol.PacketOutNotification.Notification;
-import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo.Flag;
-import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketProfileAction.Action;
-import controller.network.protocol.PacketVoiceMessage;
-import controller.network.protocol.PacketWorldAction;
 import model.context.ContextID;
 import model.exception.ContextNotFoundException;
 import model.exception.NotificationNotFoundException;
@@ -180,6 +163,25 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             }
         } else {
             this.logUnexpectedPacket(packet, "Can not move avatar while user is not in a world");
+        }
+    }
+
+    @Override
+    public void handle(PacketUserTyping packet) {
+        if (this.userId == null) {
+            this.logUnexpectedPacket(packet, "Can not receive typing information while user is not logged in");
+            return;
+        }
+
+        if (this.worldId != null) {
+            if (packet.getSenderId() == null) {
+                this.logInvalidPacket(packet, "Typing User-ID can not be null");
+                return;
+            }
+
+            this.manager.getView().showTypingUser(packet.getSenderId());
+        } else {
+            this.logUnexpectedPacket(packet, "Can not receive typing information while user is not in a world");
         }
     }
 

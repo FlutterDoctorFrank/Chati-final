@@ -1,24 +1,11 @@
 package controller.network;
 
-import controller.network.protocol.Packet;
-import controller.network.protocol.PacketAvatarMove;
+import controller.network.protocol.*;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
-import controller.network.protocol.PacketChatMessage;
-import controller.network.protocol.PacketNotificationResponse;
-import controller.network.protocol.PacketOutCommunicable;
-import controller.network.protocol.PacketOutContextInfo;
-import controller.network.protocol.PacketOutContextJoin;
-import controller.network.protocol.PacketOutContextList;
-import controller.network.protocol.PacketOutContextRole;
-import controller.network.protocol.PacketOutMenuAction;
-import controller.network.protocol.PacketOutNotification;
 import controller.network.protocol.PacketOutNotification.Notification;
-import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.Action;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo.Flag;
-import controller.network.protocol.PacketVoiceMessage;
-import controller.network.protocol.PacketWorldAction;
 import model.communication.message.ITextMessage;
 import model.communication.message.IVoiceMessage;
 import model.communication.message.MessageType;
@@ -420,6 +407,25 @@ public interface ClientSender {
                     return new PacketNotificationResponse(notification.getNotificationId(), NotificationAction.DELETE);
                 } else {
                     throw new IllegalArgumentException("Expected INotification, got " + object.getClass());
+                }
+            }
+        },
+
+        /**
+         * Information, dass ein Benutzer gerade tippt.
+         * <p>
+         *     Erwartet als Object die Schnittstelle: {@link IUser}
+         * </p>
+         */
+        TYPING {
+            @Override
+            protected @NotNull Packet<?> getPacket(@NotNull IUser user, @NotNull Object object) {
+                if (object instanceof IUser) {
+                    final IUser typingUser = (IUser) object;
+
+                    return new PacketUserTyping(typingUser.getUserId());
+                } else {
+                    throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }
             }
         },
