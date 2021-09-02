@@ -329,6 +329,11 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
+    public void showTypingUser(UUID userId) {
+
+    }
+
+    @Override
     public void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message, MessageBundle messageBundle) throws UserNotFoundException {
 
     }
