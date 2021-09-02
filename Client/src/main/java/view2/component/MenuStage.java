@@ -22,24 +22,24 @@ public class MenuStage extends Stage {
     @Override
     public boolean keyDown(int keycode) {
         if (!(getKeyboardFocus() instanceof TextField ) && openWindows.isEmpty()) {
-            if (KeyAction.getAction(keycode) == KeyAction.OPEN_CHAT && !HeadUpDisplay.getInstance().isChatOpen()) {
+            if (KeyAction.OPEN_CHAT.matches(keycode) && !HeadUpDisplay.getInstance().isChatOpen()) {
                 HeadUpDisplay.getInstance().showChatWindow();
             }
-            if (KeyAction.getAction(keycode) == KeyAction.OPEN_USER_LIST) {
+            if (KeyAction.OPEN_USER_LIST.matches(keycode)) {
                 if (!HeadUpDisplay.getInstance().isUserMenuOpen()) {
                     HeadUpDisplay.getInstance().openUserMenu();
                 } else {
                     HeadUpDisplay.getInstance().closeCurrentMenu();
                 }
             }
-            if (KeyAction.getAction(keycode) == KeyAction.OPEN_NOTIFICATION) {
+            if (KeyAction.OPEN_NOTIFICATION.matches(keycode)) {
                 if (!HeadUpDisplay.getInstance().isNotificationMenuOpen()) {
                     HeadUpDisplay.getInstance().openNotificationMenu();
                 } else {
                     HeadUpDisplay.getInstance().closeCurrentMenu();
                 }
             }
-            if (KeyAction.getAction(keycode) == KeyAction.OPEN_SETTINGS) {
+            if (KeyAction.OPEN_SETTINGS.matches(keycode)) {
                 if (!HeadUpDisplay.getInstance().isSettingsMenuOpen()) {
                     HeadUpDisplay.getInstance().openSettingsMenu();
                 } else {
@@ -49,7 +49,7 @@ public class MenuStage extends Stage {
 
         }
 
-        if (KeyAction.getAction(keycode) == KeyAction.CLOSE) {
+        if (KeyAction.CLOSE.matches(keycode)) {
             setKeyboardFocus(null);
             if (!openWindows.isEmpty()) {
                 openWindows.peek().close();

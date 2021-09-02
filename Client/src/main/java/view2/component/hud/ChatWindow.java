@@ -24,10 +24,8 @@ import view2.component.KeyAction;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.NoSuchElementException;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+import java.util.List;
 
 public class ChatWindow extends AbstractWindow {
 
@@ -41,7 +39,7 @@ public class ChatWindow extends AbstractWindow {
     private static final float SEND_BUTTON_WIDTH = 120;
     private static final float SEND_BUTTON_HEIGHT = 60;
 
-    private final HashMap<IUserView, Long> typingUsers;
+    private final Map<IUserView, Long> typingUsers;
     private long lastTimeTypingSent;
 
     private Table messageLabelContainer;
@@ -77,11 +75,11 @@ public class ChatWindow extends AbstractWindow {
         typeMessageArea.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                return KeyAction.getAction(keycode) == KeyAction.SEND_CHAT_MESSAGE;
+                return KeyAction.SEND_CHAT_MESSAGE.matches(keycode);
             }
             @Override
             public boolean keyUp(InputEvent event, int keycode) {
-                if (KeyAction.getAction(keycode) == KeyAction.SEND_CHAT_MESSAGE) {
+                if (KeyAction.SEND_CHAT_MESSAGE.matches(keycode)) {
                     sendMessage();
                     return true;
                 }
@@ -90,7 +88,7 @@ public class ChatWindow extends AbstractWindow {
             @Override
             public boolean keyTyped(InputEvent event, char c) {
                 long now = System.currentTimeMillis();
-                if (c != 0 && now - lastTimeTypingSent >= SHOW_TYPING_DURATION) {
+                if (c != 0 && now - lastTimeTypingSent >= SHOW_TYPING_DURATION / 2) {
                     lastTimeTypingSent = now;
                     Chati.CHATI.getServerSender().send(ServerSender.SendAction.TYPING);
                 }

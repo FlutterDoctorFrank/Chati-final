@@ -3,6 +3,8 @@ package view2.component;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
+import java.util.Arrays;
+
 public enum KeyAction {
 
     MOVE_UP(Input.Keys.UP, Input.Keys.W),
@@ -27,15 +29,8 @@ public enum KeyAction {
         this.keycodes = keycodes;
     }
 
-    public static KeyAction getAction(int inputKeycode) {
-        for (KeyAction keyAction : KeyAction.values()) {
-            for (int keycode : keyAction.keycodes) {
-                if (inputKeycode == keycode) {
-                    return keyAction;
-                }
-            }
-        }
-        return null;
+    public boolean matches(int inputKeycode) {
+        return Arrays.stream(keycodes).anyMatch(keycode -> keycode == inputKeycode);
     }
 
     public boolean isPressed() {

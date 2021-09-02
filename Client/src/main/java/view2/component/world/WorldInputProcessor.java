@@ -16,25 +16,25 @@ public class WorldInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (KeyAction.getAction(keycode) == KeyAction.MOVE_UP) {
+        if (KeyAction.MOVE_UP.matches(keycode)) {
             moveUpPressed = true;
         }
-        if (KeyAction.getAction(keycode) == KeyAction.MOVE_LEFT) {
+        if (KeyAction.MOVE_LEFT.matches(keycode)) {
             moveLeftPressed = true;
         }
-        if (KeyAction.getAction(keycode) == KeyAction.MOVE_DOWN) {
+        if (KeyAction.MOVE_DOWN.matches(keycode)) {
             moveDownPressed = true;
         }
-        if (KeyAction.getAction(keycode) == KeyAction.MOVE_RIGHT) {
+        if (KeyAction.MOVE_RIGHT.matches(keycode)) {
             moveRightPressed = true;
         }
-        if (KeyAction.getAction(keycode) == KeyAction.SPRINT) {
+        if (KeyAction.SPRINT.matches(keycode)) {
             sprintPressed = true;
         }
-        if (KeyAction.getAction(keycode) == KeyAction.SHOW_NAMES) {
+        if (KeyAction.SHOW_NAMES.matches(keycode)) {
             showNamesPressed = true;
         }
-        if (KeyAction.getAction(keycode) == KeyAction.INTERACT) {
+        if (KeyAction.INTERACT.matches(keycode)) {
             Chati.CHATI.getWorldScreen().getInternUserAvatar().interact();
         }
         return true;
@@ -42,22 +42,22 @@ public class WorldInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-        if (KeyAction.getAction(keycode) == KeyAction.MOVE_UP) {
+        if (KeyAction.MOVE_UP.matches(keycode)) {
             moveUpPressed = false;
         }
-        if (KeyAction.getAction(keycode) == KeyAction.MOVE_LEFT) {
+        if (KeyAction.MOVE_LEFT.matches(keycode)) {
             moveLeftPressed = false;
         }
-        if (KeyAction.getAction(keycode) == KeyAction.MOVE_DOWN) {
+        if (KeyAction.MOVE_DOWN.matches(keycode)) {
             moveDownPressed = false;
         }
-        if (KeyAction.getAction(keycode) == KeyAction.MOVE_RIGHT) {
+        if (KeyAction.MOVE_RIGHT.matches(keycode)) {
             moveRightPressed = false;
         }
-        if (KeyAction.getAction(keycode) == KeyAction.SPRINT) {
+        if (KeyAction.SPRINT.matches(keycode)) {
             sprintPressed = false;
         }
-        if (KeyAction.getAction(keycode) == KeyAction.SHOW_NAMES) {
+        if (KeyAction.SHOW_NAMES.matches(keycode)) {
             showNamesPressed = false;
         }
         return true;
