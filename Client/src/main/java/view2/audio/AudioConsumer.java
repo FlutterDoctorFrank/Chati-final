@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -64,13 +65,25 @@ public class AudioConsumer {
                     blocks.add(musicStream.getBlock());
                 }
 
+                System.out.println(musicStream.audioDataQueue.size());
+
                 if (blocks.size() == 0) {
                     continue;
                 }
+                AtomicInteger maxValue = new AtomicInteger();
                 for (int i = 0; i < AudioManager.PACKET_SIZE; i++) {
                     int j = i;
-                    blocks.forEach(block -> temp[j] += block.getAudioData()[j]);
-                    mixedData[j] = (short) (temp[j] / blocks.size());
+                    blocks.forEach(block -> {
+                        if (Math.abs(block.getAudioData()[j]) > maxValue.get()) {
+                            maxValue.set(Math.abs(block.getAudioData()[j]));
+                        }
+                        temp[j] += block.getAudioData()[j];
+                    });
+                }
+                for (int i = 0; i < AudioManager.PACKET_SIZE; i++) {
+                    int j = i;
+                    blocks.forEach(block -> temp[j] = (temp[j] / maxValue.get()) * Short.MAX_VALUE);
+                    mixedData[j] = (short) temp[j];
                 }
                 player.writeSamples(mixedData, 0, mixedData.length);
 
