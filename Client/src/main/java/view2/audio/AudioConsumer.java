@@ -70,19 +70,20 @@ public class AudioConsumer {
                 if (blocks.size() == 0) {
                     continue;
                 }
-                AtomicInteger maxValue = new AtomicInteger();
+                int maxValue = 0;
                 for (int i = 0; i < AudioManager.PACKET_SIZE; i++) {
                     int j = i;
                     blocks.forEach(block -> {
-                        if (Math.abs(block.getAudioData()[j]) > maxValue.get()) {
-                            maxValue.set(Math.abs(block.getAudioData()[j]));
-                        }
                         temp[j] += block.getAudioData()[j];
                     });
+                    if (Math.abs(temp[j]) > maxValue) {
+                        maxValue = Math.abs(temp[j]);
+                    }
                 }
                 for (int i = 0; i < AudioManager.PACKET_SIZE; i++) {
                     int j = i;
-                    blocks.forEach(block -> temp[j] = (temp[j] / maxValue.get()) * Short.MAX_VALUE);
+                    int finalMaxValue = maxValue;
+                    blocks.forEach(block -> temp[j] = (temp[j] / finalMaxValue) * Short.MAX_VALUE);
                     mixedData[j] = (short) temp[j];
                 }
                 player.writeSamples(mixedData, 0, mixedData.length);
