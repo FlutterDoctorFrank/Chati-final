@@ -9,7 +9,7 @@ import controller.network.protocol.PacketMenuOption;
 import controller.network.protocol.PacketNotificationResponse;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketUserTyping;
-import controller.network.protocol.PacketVoiceMessage;
+import controller.network.protocol.PacketAudioMessage;
 import controller.network.protocol.PacketWorldAction;
 import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
@@ -38,7 +38,7 @@ public class MockPacketListener implements PacketListener {
     }
 
     @Override
-    public void handle(@NotNull final PacketVoiceMessage packet) {
+    public void handle(@NotNull final PacketAudioMessage packet) {
         this.calls.add(packet.getClass());
     }
 

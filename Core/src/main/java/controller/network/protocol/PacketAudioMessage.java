@@ -17,39 +17,39 @@ import java.util.UUID;
  *     verteilt, die die Sprachnachricht empfangen dürfen.
  * </p>
  */
-public class PacketVoiceMessage implements Packet<PacketListener> {
+public class PacketAudioMessage implements Packet<PacketListener> {
 
     private UUID senderId;
     private LocalDateTime timestamp;
-    private byte[] voiceData;
+    private byte[] audioData;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
      */
     @Deprecated
-    public PacketVoiceMessage() {
+    public PacketAudioMessage() {
 
     }
 
     /**
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Client-Anwendung.
-     * @param voiceData die eingesprochenen Sprachdaten des Benutzers.
+     * @param audioData die eingesprochenen Sprachdaten des Benutzers.
      */
-    public PacketVoiceMessage(final byte[] voiceData) {
-        this.voiceData = voiceData;
+    public PacketAudioMessage(final byte[] audioData) {
+        this.audioData = audioData;
     }
 
     /**
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Server-Anwendung.
      * @param senderId die Benutzer-ID des Senders der Sprachnachricht.
      * @param timestamp der Zeitpunkt, an dem die Sprachnachricht versendet wurde.
-     * @param voiceData die eingesprochenen Sprachdaten des Benutzers.
+     * @param audioData die eingesprochenen Sprachdaten des Benutzers.
      */
-    public PacketVoiceMessage(@NotNull final UUID senderId, @NotNull final LocalDateTime timestamp,
-                              final byte[] voiceData) {
+    public PacketAudioMessage(@Nullable final UUID senderId, @NotNull final LocalDateTime timestamp,
+                              final byte[] audioData) {
         this.senderId = senderId;
         this.timestamp = timestamp;
-        this.voiceData = voiceData;
+        this.audioData = audioData;
     }
 
     @Override
@@ -61,21 +61,21 @@ public class PacketVoiceMessage implements Packet<PacketListener> {
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeNullableUniqueId(output, this.senderId);
         kryo.writeObjectOrNull(output, this.timestamp, LocalDateTime.class);
-        output.writeVarInt(this.voiceData.length, true);
-        output.writeBytes(this.voiceData);
+        output.writeVarInt(this.audioData.length, true);
+        output.writeBytes(this.audioData);
     }
 
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.senderId = PacketUtils.readNullableUniqueId(input);
         this.timestamp = kryo.readObjectOrNull(input, LocalDateTime.class);
-        this.voiceData = input.readBytes(input.readVarInt(true));
+        this.audioData = input.readBytes(input.readVarInt(true));
     }
 
     @Override
     public @NotNull String toString() {
         return this.getClass().getSimpleName() + "{senderId=" + this.senderId + ", timestamp=" + this.timestamp +
-                ", voiceData=" + Arrays.toString(this.voiceData) + "}";
+                ", audioData=" + Arrays.toString(this.audioData) + "}";
     }
 
     /**
@@ -98,7 +98,7 @@ public class PacketVoiceMessage implements Packet<PacketListener> {
      * Gibt die eingesprochenen Sprachdaten des Benutzers zurück.
      * @return die Sprachdaten des Benutzers.
      */
-    public byte[] getVoiceData() {
-        return this.voiceData;
+    public byte[] getAudioData() {
+        return this.audioData;
     }
 }

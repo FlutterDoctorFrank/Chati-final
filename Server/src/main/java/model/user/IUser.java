@@ -1,5 +1,6 @@
 package model.user;
 
+import model.communication.message.AudioMessage;
 import model.context.ContextID;
 import model.context.spatial.Direction;
 import model.context.spatial.ILocation;
@@ -74,7 +75,7 @@ public interface IUser {
      * Kommunikationsform an andere Benutzer.
      * @param voiceData Audiodaten.
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
-     * @see model.communication.message.VoiceMessage
+     * @see AudioMessage
      * @see model.communication.CommunicationRegion
      */
     void talk(final byte[] voiceData);

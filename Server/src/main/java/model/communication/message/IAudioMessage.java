@@ -2,13 +2,13 @@ package model.communication.message;
 
 /**
  * Ein Interface, welche dem Controller Methoden zur Verwaltung von Sprachnachrichten bereitstellt. Wird von
- * {@link VoiceMessage} implementiert.
+ * {@link AudioMessage} implementiert.
  */
-public interface IVoiceMessage extends IMessage {
+public interface IAudioMessage extends IMessage {
 
     /**
      * Gibt die Sprachdaten der Sprachnachricht zurück.
      * @return Enthaltene Sprachdaten.
      */
-    byte[] getVoiceData();
+    byte[] getAudioData();
 }

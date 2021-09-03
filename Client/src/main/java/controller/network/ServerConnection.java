@@ -24,7 +24,7 @@ import controller.network.protocol.PacketOutUserInfo.UserInfo.Flag;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketProfileAction.Action;
 import controller.network.protocol.PacketUserTyping;
-import controller.network.protocol.PacketVoiceMessage;
+import controller.network.protocol.PacketAudioMessage;
 import controller.network.protocol.PacketWorldAction;
 import model.context.ContextID;
 import model.exception.ContextNotFoundException;
@@ -79,7 +79,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
             this.manager.getEndPoint().sendTCP(packet);
 
-            if (!(packet instanceof PacketAvatarMove || packet instanceof PacketVoiceMessage)) {
+            if (!(packet instanceof PacketAvatarMove || packet instanceof PacketAudioMessage)) {
                 LOGGER.info(String.format("Sent packet to server: %s", packet));
             }
         }
@@ -99,7 +99,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         if (object instanceof Packet<?>) {
-            if (!(object instanceof PacketAvatarMove || object instanceof PacketVoiceMessage)) {
+            if (!(object instanceof PacketAvatarMove || object instanceof PacketAudioMessage)) {
                 LOGGER.info(String.format("Received packet from server: %s", object));
             }
 
@@ -261,31 +261,26 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     }
 
     @Override
-    public void handle(@NotNull final PacketVoiceMessage packet) {
+    public void handle(@NotNull final PacketAudioMessage packet) {
         if (this.userId == null) {
-            this.logUnexpectedPacket(packet, "Can not receive voice message while user is not logged in");
+            this.logUnexpectedPacket(packet, "Can not receive audio message while user is not logged in");
             return;
         }
 
         if (this.worldId != null) {
-            if (packet.getSenderId() == null) {
-                this.logInvalidPacket(packet, "Sender User-ID can not be null");
-                return;
-            }
-
             if (packet.getTimestamp() == null) {
                 this.logInvalidPacket(packet, "Timestamp can not be null");
                 return;
             }
 
             try {
-                this.manager.getView().playVoiceData(packet.getSenderId(), packet.getTimestamp(), packet.getVoiceData());
+                this.manager.getView().playAudioData(packet.getSenderId(), packet.getTimestamp(), packet.getAudioData());
             } catch (UserNotFoundException ex) {
                 // Unbekannter Sender.
                 LOGGER.warning("Server tried to send voice message from unknown sender with id: " + ex.getUserID());
             }
         } else {
-            this.logUnexpectedPacket(packet, "Can not receive voice message while user is not in a world");
+            this.logUnexpectedPacket(packet, "Can not receive audio message while user is not in a world");
         }
     }
 

@@ -240,9 +240,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void playVoiceData(UUID userId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
+    public void playAudioData(UUID userId, LocalDateTime timestamp, byte[] audioData) throws UserNotFoundException {
         if (this.screen.equals(worldScreen)) {
-            audioManager.playVoiceData(userId, timestamp, voiceData);
+            audioManager.playAudioData(userId, timestamp, audioData);
         }
     }
 

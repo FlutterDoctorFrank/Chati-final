@@ -3,7 +3,7 @@ package model.communication;
 import controller.network.ClientSender.SendAction;
 import model.communication.message.MessageType;
 import model.communication.message.TextMessage;
-import model.communication.message.VoiceMessage;
+import model.communication.message.AudioMessage;
 import model.context.Context;
 import model.context.spatial.Area;
 import model.context.spatial.Room;
@@ -121,7 +121,7 @@ public class CommunicationHandler {
      * Kommunikationsform empfangen sollen und leitet sie an diese weiter.
      * @param sender Kommunizierender Benutzer.
      * @param voiceData Zu versendende Nachricht.
-     * @see VoiceMessage
+     * @see AudioMessage
      */
     public static void handleVoiceMessage(@NotNull final User sender, final byte[] voiceData) {
         if (sender.getLocation() == null) {
@@ -141,8 +141,8 @@ public class CommunicationHandler {
         receivers.remove(sender.getUserId());
 
         // Versende die Sprachnachricht.
-        VoiceMessage voiceMessage = new VoiceMessage(sender, voiceData);
-        receivers.values().forEach(user -> user.send(SendAction.VOICE, voiceMessage));
+        AudioMessage audioMessage = new AudioMessage(sender, voiceData);
+        receivers.values().forEach(user -> user.send(SendAction.AUDIO, audioMessage));
     }
 
     /**

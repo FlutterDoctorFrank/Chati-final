@@ -3,6 +3,7 @@ package model.context.spatial.objects;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
+import model.communication.message.AudioMessage;
 import model.context.spatial.Area;
 import model.context.spatial.ContextMenu;
 import model.context.spatial.ContextMusic;
@@ -15,8 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.Set;
@@ -61,7 +62,7 @@ public class MusicStreamer extends Interactable {
 
     private ContextMusic currentMusic;
 
-    private boolean isStreaming;
+    private boolean isRunning;
 
     private boolean isPaused;
 
@@ -82,7 +83,7 @@ public class MusicStreamer extends Interactable {
                        @NotNull final Set<CommunicationMedium> communicationMedia, @NotNull final Expanse expanse) {
         super(objectName, parent, communicationRegion, communicationMedia, expanse, ContextMenu.MUSIC_STREAMER_MENU);
         this.musicStreamBuffer = null;
-        this.isStreaming = false;
+        this.isRunning = false;
         this.isPaused = true;
         this.isLooping = false;
         this.isRandom = false;
@@ -120,7 +121,7 @@ public class MusicStreamer extends Interactable {
                 start();
                 break;
             case MENU_OPTION_PAUSE: // Pausiere das Abspielen des Musikstücks oder setze es fort, falls es pausiert ist.
-                if (musicStreamBuffer == null || !isStreaming) {
+                if (musicStreamBuffer == null || !isRunning) {
                     throw new IllegalMenuActionException("", "objects.music-player.pause-not-possible");
                 }
                 if (isPaused) {
@@ -133,7 +134,7 @@ public class MusicStreamer extends Interactable {
                 }
                 break;
             case MENU_OPTION_STOP: // Stoppe das Abspielen des Musikstücks.
-                if (musicStreamBuffer == null || musicStreamBuffer.position() == 0 || !isStreaming) {
+                if (musicStreamBuffer == null || musicStreamBuffer.position() == 0 || !isRunning) {
                     throw new IllegalMenuActionException("", "objects.music-player.stop-not-possible");
                 }
                 isPaused = true;
@@ -141,7 +142,7 @@ public class MusicStreamer extends Interactable {
                 break;
             case MENU_OPTION_PREVIOUS: // Beginne das momentane Musikstück von vorn, oder spiele das letzte ab, falls
                                         // das momentane am Anfang ist.
-                if (musicStreamBuffer == null || !isStreaming || currentMusic == null) {
+                if (musicStreamBuffer == null || !isRunning || currentMusic == null) {
                     throw new IllegalMenuActionException("", "objects.music-player.play-previous-not-possible");
                 }
                 // TODO Nur bei unter 5 Sekunden Abspielzeit des aktuellen Lieds zum vorherigen, sonst neustarten
@@ -150,7 +151,7 @@ public class MusicStreamer extends Interactable {
                 loadBuffer();
                 break;
             case MENU_OPTION_NEXT: // Spiele das nächste Musikstück ab.
-                if (musicStreamBuffer == null || !isStreaming || currentMusic == null) {
+                if (musicStreamBuffer == null || !isRunning || currentMusic == null) {
                     throw new IllegalMenuActionException("", "objects.music-player.play-next-not-possible");
                 }
                 musicStreamBuffer.clear();
@@ -197,7 +198,11 @@ public class MusicStreamer extends Interactable {
 
     private void loadBuffer() throws IllegalMenuActionException {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(currentMusic.getPath()));
+            InputStream file = getClass().getClassLoader().getResourceAsStream(currentMusic.getPath());
+            if (file == null) {
+                throw new IllegalMenuActionException("", "objects.music-player.error.loading.music");
+            }
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
             byte[] inputData = audioInputStream.readAllBytes();
             byte[] musicStreamData = toMono(inputData);
             musicStreamBuffer = ByteBuffer.allocate(musicStreamData.length);
@@ -209,14 +214,14 @@ public class MusicStreamer extends Interactable {
     }
 
     private void start() {
-        if (isStreaming) {
+        if (isRunning) {
             return;
         }
-        this.isStreaming = true;
+        this.isRunning = true;
 
         Thread streamingThread = new Thread(() -> {
             byte[] sendData = new byte[PACKET_SIZE];
-            while (isStreaming && musicStreamBuffer.hasRemaining()) {
+            while (isRunning && musicStreamBuffer.hasRemaining()) {
                 synchronized (this) {
                     while (isPaused) {
                         try {
@@ -226,7 +231,7 @@ public class MusicStreamer extends Interactable {
                         }
                     }
                 }
-                if (musicStreamBuffer.remaining() >= sendData.length) {
+                if (musicStreamBuffer.remaining() > sendData.length) {
                     musicStreamBuffer.get(sendData);
                 } else {
                     musicStreamBuffer.get(sendData, 0, musicStreamBuffer.remaining());
@@ -243,12 +248,14 @@ public class MusicStreamer extends Interactable {
                         }
                     }
                 }
+                AudioMessage message = new AudioMessage(null, sendData);
+                getParent().getUsers().values().forEach(receiver -> receiver.send(ClientSender.SendAction.AUDIO, message));
+
                 try {
                     Thread.sleep(1000 / SEND_RATE);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                getParent().getUsers().values().forEach(receiver -> receiver.send(ClientSender.SendAction.VOICE, null));
             }
         });
         streamingThread.setDaemon(true);

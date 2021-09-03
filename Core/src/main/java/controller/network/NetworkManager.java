@@ -19,7 +19,7 @@ import controller.network.protocol.PacketOutNotification;
 import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketUserTyping;
-import controller.network.protocol.PacketVoiceMessage;
+import controller.network.protocol.PacketAudioMessage;
 import controller.network.protocol.PacketWorldAction;
 import model.role.Permission;
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +66,7 @@ public abstract class NetworkManager<T extends EndPoint> extends Listener {
         kryo.register(PacketNotificationResponse.class);
         kryo.register(PacketProfileAction.class);
         kryo.register(PacketUserTyping.class);
-        kryo.register(PacketVoiceMessage.class);
+        kryo.register(PacketAudioMessage.class);
         kryo.register(PacketWorldAction.class);
         kryo.register(PacketInContextInteract.class);
         kryo.register(PacketInUserManage.class);

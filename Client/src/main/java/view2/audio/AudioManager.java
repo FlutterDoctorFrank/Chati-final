@@ -92,9 +92,13 @@ public class AudioManager {
         }
     }
 
-    public void playVoiceData(UUID userId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
+    public void playAudioData(UUID userId, LocalDateTime timestamp, byte[] audioData) throws UserNotFoundException {
         if (audioConsumer != null && audioConsumer.isRunning()) {
-            audioConsumer.receiveVoiceData(userId, timestamp, voiceData);
+            if (userId == null) {
+                audioConsumer.receiveMusicStream(timestamp, audioData);
+            } else {
+                audioConsumer.receiveVoiceData(userId, timestamp, audioData);
+            }
         }
     }
 

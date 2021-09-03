@@ -90,8 +90,8 @@ public class RoomReception extends Interactable {
                 ContextMap map;
                 try {
                     map = ContextMap.valueOf(args[2].toUpperCase());
-                } catch (IllegalArgumentException ex) {
-                    throw new IllegalMenuActionException("", ex, "object.room-reception.map-not-found", args[2]);
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalMenuActionException("", e, "object.room-reception.map-not-found", args[2]);
                 }
                 // Prüfe, ob bereits ein privater Raum mit diesem Namen existiert.
                 World world = user.getWorld();
@@ -138,8 +138,8 @@ public class RoomReception extends Interactable {
                     privateRoom = user.getWorld().getPrivateRooms().values().stream()
                             .filter(room -> room.getContextName().equals(joinRoomName))
                             .findFirst().orElseThrow();
-                } catch (NoSuchElementException ex) {
-                    throw new IllegalMenuActionException("", ex, "object.room-reception.room-not-found", joinRoomName);
+                } catch (NoSuchElementException e) {
+                    throw new IllegalMenuActionException("", e, "object.room-reception.room-not-found", joinRoomName);
                 }
 
                 // Prüfe, ob sich der Benutzer bereits in diesem Raum befindet.
@@ -177,8 +177,8 @@ public class RoomReception extends Interactable {
                     requestedPrivateRoom = user.getWorld().getPrivateRooms().values().stream()
                             .filter(room -> room.getContextName().equals(requestedRoomName))
                             .findFirst().orElseThrow();
-                } catch (NoSuchElementException ex) {
-                    throw new IllegalMenuActionException("", ex, "object.room-reception.room-not-found", requestedRoomName);
+                } catch (NoSuchElementException e) {
+                    throw new IllegalMenuActionException("", e, "object.room-reception.room-not-found", requestedRoomName);
                 }
 
                 // Prüfe, ob sich der Benutzer bereits in diesem Raum befindet.
@@ -193,8 +193,8 @@ public class RoomReception extends Interactable {
                     roomOwner = users.values().stream()
                             .filter(containedUser -> containedUser.hasPermission(requestedPrivateRoom, Permission.MANAGE_PRIVATE_ROOM))
                             .findFirst().orElseThrow();
-                } catch (NoSuchElementException ex) {
-                    throw new IllegalStateException("This private room does not have a room owner.", ex);
+                } catch (NoSuchElementException e) {
+                    throw new IllegalStateException("This private room does not have a room owner.", e);
                 }
                 // Sende dem Rauminhaber die Beitrittsanfrage.
                 RoomRequest roomRequest = new RoomRequest(roomOwner, args[1], user, requestedPrivateRoom);

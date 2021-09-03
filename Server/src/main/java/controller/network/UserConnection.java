@@ -22,7 +22,7 @@ import controller.network.protocol.PacketOutUserInfo.UserInfo.Flag;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketProfileAction.Action;
 import controller.network.protocol.PacketUserTyping;
-import controller.network.protocol.PacketVoiceMessage;
+import controller.network.protocol.PacketAudioMessage;
 import controller.network.protocol.PacketWorldAction;
 import model.context.spatial.Direction;
 import model.context.spatial.IWorld;
@@ -70,7 +70,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
             this.connection.sendTCP(packet);
 
-            if (!(packet instanceof PacketAvatarMove || packet instanceof PacketVoiceMessage)) {
+            if (!(packet instanceof PacketAvatarMove || packet instanceof PacketAudioMessage)) {
                 LOGGER.info(String.format("Sent packet to connection %s: %s", this.connection.getID(), packet));
             }
         }
@@ -90,7 +90,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         }
 
         if (object instanceof Packet<?>) {
-            if (!(object instanceof PacketAvatarMove || object instanceof PacketVoiceMessage)) {
+            if (!(object instanceof PacketAvatarMove || object instanceof PacketAudioMessage)) {
                 LOGGER.info(String.format("Received packet from connection %s: %s", connection.getID(), object));
             }
 
@@ -203,7 +203,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
     }
 
     @Override
-    public void handle(@NotNull final PacketVoiceMessage packet) {
+    public void handle(@NotNull final PacketAudioMessage packet) {
         if (this.user == null) {
             this.logUnexpectedPacket(packet, "Can not talk while not logged in");
             return;
@@ -216,7 +216,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 return;
             }
 
-            this.user.talk(packet.getVoiceData());
+            this.user.talk(packet.getAudioData());
         } else {
             this.logUnexpectedPacket(packet, "Can not talk while not in a world");
         }

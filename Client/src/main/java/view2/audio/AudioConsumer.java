@@ -20,13 +20,15 @@ public class AudioConsumer {
 
     private static final int MIN_PACKETS = 6;
 
-    private final Map<UUID, ProducerQueue> receivedDataBuffer;
+    private final Map<IUserView, ProducerQueue> voiceDataBuffer;
+    private final ProducerQueue musicStream;
     private final AudioDevice player;
 
     private boolean isRunning;
 
     public AudioConsumer() {
-        this.receivedDataBuffer = new ConcurrentHashMap<>();
+        this.voiceDataBuffer = new ConcurrentHashMap<>();
+        this.musicStream = new ProducerQueue();
         this.player = Gdx.audio.newAudioDevice(AudioManager.SAMPLE_RATE, AudioManager.MONO);
     }
 
@@ -42,7 +44,7 @@ public class AudioConsumer {
             while (isRunning) {
                 synchronized (this) {
                     // Warte, solange keine Daten vorhanden sind.
-                    while (receivedDataBuffer.isEmpty()) {
+                    while (voiceDataBuffer.isEmpty()) {
                         try {
                             wait();
                         } catch (InterruptedException e) {
@@ -54,10 +56,14 @@ public class AudioConsumer {
                 int[] temp = new int[AudioManager.PACKET_SIZE];
 
                 // Mische das oberste Element aller Warteschlangen pro Producer zusammen, die bereit zum Abspielen sind.
-                final Set<ProducerQueue.AudioDataBlock> blocks = receivedDataBuffer.values().stream()
+                final Set<ProducerQueue.AudioDataBlock> blocks = voiceDataBuffer.values().stream()
                         .filter(ProducerQueue::isReady)
                         .map(ProducerQueue::getBlock)
                         .collect(Collectors.toSet());
+                if (musicStream.isReady()) {
+                    blocks.add(musicStream.getBlock());
+                }
+
                 if (blocks.size() == 0) {
                     continue;
                 }
@@ -68,7 +74,7 @@ public class AudioConsumer {
                 }
                 player.writeSamples(mixedData, 0, mixedData.length);
 
-                receivedDataBuffer.values().removeIf(Predicate.not(ProducerQueue::hasData));
+                voiceDataBuffer.values().removeIf(Predicate.not(ProducerQueue::hasData));
             }
         });
         mixAndPlaybackThread.setDaemon(true);
@@ -97,27 +103,23 @@ public class AudioConsumer {
         short[] receivedData = AudioManager.toShort(voiceData, true);
 
         synchronized (this) {
-            if (!receivedDataBuffer.containsKey(user.getUserId())) {
-                receivedDataBuffer.put(userId, new ProducerQueue(userId, timestamp, receivedData));
+            if (!voiceDataBuffer.containsKey(user)) {
+                voiceDataBuffer.put(user, new ProducerQueue(userId, timestamp, receivedData));
             } else {
-                receivedDataBuffer.get(userId).addData(timestamp, receivedData);
+                voiceDataBuffer.get(user).addData(timestamp, receivedData);
             }
             notifyAll();
         }
     }
 
-    public void receiveMusicStream(UUID streamId, LocalDateTime timestamp, byte[] musicData) {
+    public void receiveMusicStream(LocalDateTime timestamp, byte[] musicData) {
         if (!isRunning) {
             return;
         }
         short[] receivedData = AudioManager.toShort(musicData, false);
 
         synchronized (this) {
-            if (!receivedDataBuffer.containsKey(streamId)) {
-                receivedDataBuffer.put(streamId, new ProducerQueue(streamId, timestamp, receivedData));
-            } else {
-                receivedDataBuffer.get(streamId).addData(timestamp, receivedData);
-            }
+            musicStream.addData(timestamp, receivedData);
             notifyAll();
         }
     }
@@ -128,6 +130,11 @@ public class AudioConsumer {
         private final Queue<AudioDataBlock> audioDataQueue;
         private LocalDateTime lastTimeReceived;
         private boolean ready;
+
+        public ProducerQueue() {
+            this.producerId = null;
+            this.audioDataQueue = new LinkedBlockingQueue<>();
+        }
 
         public ProducerQueue(UUID producerId, LocalDateTime timestamp, short[] receivedData) {
             this.producerId = producerId;
@@ -143,7 +150,7 @@ public class AudioConsumer {
             // kleinen Verzögerung von MIN_PACKETS / SEND_RATE, sorgt aber dafür, dass man nicht abgehackt wird wenn
             // ein Paket verspätet ankommt, da sich sonst evtl. die Warteschlange bis zum Eintreffen des verspäteten
             // Pakets entleert. Ein Zurücksetzen des Ready-Parameters ist nicht nötig, da die Warteschlange aus der
-            // Hashmap entfernt wird,wenn für eine bestimmte Zeit kein Paket von einem Sender eintrifft.
+            // Hashmap entfernt wird, wenn in einer Iteration keine Daten vorhanden sind.
             if (!ready && audioDataQueue.size() >= MIN_PACKETS) {
                 ready = true;
             }

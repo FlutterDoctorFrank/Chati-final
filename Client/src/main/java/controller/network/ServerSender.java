@@ -9,7 +9,7 @@ import controller.network.protocol.PacketMenuOption;
 import controller.network.protocol.PacketNotificationResponse;
 import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketUserTyping;
-import controller.network.protocol.PacketVoiceMessage;
+import controller.network.protocol.PacketAudioMessage;
 import controller.network.protocol.PacketWorldAction;
 import model.context.ContextID;
 import model.context.spatial.ContextMap;
@@ -440,7 +440,7 @@ public interface ServerSender {
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
                 if (objects.length == 1) {
                     if (objects[0] instanceof byte[]) {
-                        return new PacketVoiceMessage((byte[]) objects[0]);
+                        return new PacketAudioMessage((byte[]) objects[0]);
                     } else {
                         throw new IllegalArgumentException("Expected byte[], got " + objects[0].getClass());
                     }

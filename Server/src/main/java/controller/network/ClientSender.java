@@ -18,10 +18,10 @@ import controller.network.protocol.PacketOutUserInfo.Action;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo.Flag;
 import controller.network.protocol.PacketUserTyping;
-import controller.network.protocol.PacketVoiceMessage;
+import controller.network.protocol.PacketAudioMessage;
 import controller.network.protocol.PacketWorldAction;
 import model.communication.message.ITextMessage;
-import model.communication.message.IVoiceMessage;
+import model.communication.message.IAudioMessage;
 import model.communication.message.MessageType;
 import model.context.IContext;
 import model.context.global.IGlobalContext;
@@ -475,22 +475,23 @@ public interface ClientSender {
         },
 
         /**
-         * Information, dass eine Sprach-Nachricht gesendet werden soll.
+         * Information, dass eine Audio-Nachricht gesendet werden soll.
          * <p>
-         *     Erwartet als Objekt die Schnittstelle: {@link IVoiceMessage}
+         *     Erwartet als Objekt die Schnittstelle: {@link IAudioMessage}
          * </p>
          */
-        VOICE {
+        AUDIO {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
-                if (object instanceof IVoiceMessage) {
-                    final IVoiceMessage message = (IVoiceMessage) object;
+                if (object instanceof IAudioMessage) {
+                    final IAudioMessage message = (IAudioMessage) object;
 
                     if (message.getSender() == null) {
-                        throw new IllegalArgumentException("Expected Sender from IVoiceMessage, got null");
+                        return new PacketAudioMessage(null, message.getTimestamp(), message.getAudioData());
+                    } else {
+                        return new PacketAudioMessage(message.getSender().getUserId(), message.getTimestamp(), message.getAudioData());
                     }
 
-                    return new PacketVoiceMessage(message.getSender().getUserId(), message.getTimestamp(), message.getVoiceData());
                 } else {
                     throw new IllegalArgumentException("Expected IVoiceMessage, got " + object.getClass());
                 }

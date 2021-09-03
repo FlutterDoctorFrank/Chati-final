@@ -5,25 +5,25 @@ import org.junit.Assert;
 import org.junit.Test;
 import java.time.LocalDateTime;
 
-public class PacketVoiceMessageTest extends PacketTest<PacketVoiceMessage> {
+public class PacketAudioMessageTest extends PacketTest<PacketAudioMessage> {
 
-    public PacketVoiceMessageTest() {
-        super(PacketVoiceMessage.class, LocalDateTime.class);
+    public PacketAudioMessageTest() {
+        super(PacketAudioMessage.class, LocalDateTime.class);
     }
 
     @Test
     public void callListenerTest() {
         final MockPacketListener listener = new MockPacketListener();
 
-        this.before = new PacketVoiceMessage(randomBytes());
+        this.before = new PacketAudioMessage(randomBytes());
         this.before.call(listener);
 
-        Assert.assertTrue(listener.handled(PacketVoiceMessage.class));
+        Assert.assertTrue(listener.handled(PacketAudioMessage.class));
     }
 
     @Test
     public void clientSerializationTest() {
-        this.before = new PacketVoiceMessage(randomBytes());
+        this.before = new PacketAudioMessage(randomBytes());
 
         this.serialize();
         this.equals();
@@ -31,7 +31,7 @@ public class PacketVoiceMessageTest extends PacketTest<PacketVoiceMessage> {
 
     @Test
     public void serverSerializationTest() {
-        this.before = new PacketVoiceMessage(randomUniqueId(), LocalDateTime.now(), randomBytes());
+        this.before = new PacketAudioMessage(randomUniqueId(), LocalDateTime.now(), randomBytes());
 
         this.serialize();
         this.equals();
@@ -56,6 +56,6 @@ public class PacketVoiceMessageTest extends PacketTest<PacketVoiceMessage> {
         }
 
         // Vergleiche Sprachdaten
-        Assert.assertArrayEquals(this.before.getVoiceData(), this.after.getVoiceData());
+        Assert.assertArrayEquals(this.before.getAudioData(), this.after.getAudioData());
     }
 }

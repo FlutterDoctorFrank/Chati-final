@@ -352,7 +352,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
-    public void playVoiceData(UUID userID, LocalDateTime timestamp, byte[] voiceData) {
+    public void playAudioData(UUID userID, LocalDateTime timestamp, byte[] voiceData) {
 
     }
 
