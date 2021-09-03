@@ -31,7 +31,7 @@ public class MusicStreamer extends Interactable {
     private static final int SEND_RATE = 30;
 
     /** Mono oder Stereo. */
-    private static final boolean MONO = false;
+    private static final boolean MONO = true;
 
     /** Größe der gesendeten Pakete. */
     private static final int PACKET_SIZE = 2 * SAMPLE_RATE / SEND_RATE;
