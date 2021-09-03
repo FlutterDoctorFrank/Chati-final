@@ -12,6 +12,11 @@ public enum ContextMenu {
     PORTAL_MENU,
 
     /**
+     * Repräsentiert das Menü, dass durch die Interaktion mit dem Musikstreamer beim Benutzer geöffnet werden soll.
+     */
+    MUSIC_STREAMER_MENU,
+
+    /**
      * Repräsentiert das Menü, dass durch die Interaktion mit dem Musikspieler beim Benutzer geöffnet werden soll.
      */
     MUSIC_PLAYER_MENU,

@@ -72,8 +72,8 @@ public class MusicPlayer extends Interactable {
                 ContextMusic music;
                 try {
                     music = ContextMusic.valueOf(args[0].toUpperCase());
-                } catch (IllegalArgumentException ex) {
-                    throw new IllegalMenuActionException("", ex, "object.music-player.music-not-found", args[0]);
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalMenuActionException("", e, "object.music-player.music-not-found", args[0]);
                 }
                 getParent().playMusic(music);
                 break;
