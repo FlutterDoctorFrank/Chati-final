@@ -79,7 +79,10 @@ public class AudioConsumer {
                     }
                 }
                 for (int i = 0; i < AudioManager.PACKET_SIZE; i++) {
-                    mixedData[i] = (short) (Short.MAX_VALUE * temp[i] / 2 * maxValue);
+                    if (Math.abs(temp[i]) >= Short.MAX_VALUE) {
+                        temp[i] = (Short.MAX_VALUE * temp[i] / maxValue);
+                    }
+                    mixedData[i] = (short) temp[i];
                 }
                 player.writeSamples(mixedData, 0, mixedData.length);
 
