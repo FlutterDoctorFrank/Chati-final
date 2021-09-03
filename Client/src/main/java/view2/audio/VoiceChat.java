@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class VoiceChat {
 
-    private static final int SAMPLE_RATE = 32000;
+    private static final int SAMPLE_RATE = 44100;
     private static final int SEND_RATE = 30;
     private static final int PACKET_SIZE = SAMPLE_RATE / SEND_RATE;
     private static final long PACKET_PLAY_TIME = 1000 / SEND_RATE;
@@ -80,7 +80,7 @@ public class VoiceChat {
             return;
         }
         IUserView user = Chati.CHATI.getUserManager().getExternUserView(userId);
-        short[] receivedData = toShort(voiceData);
+        short[] receivedData = toShort(voiceData, true);
 
         synchronized (this) {
             if (!receivedDataBuffer.containsKey(user)) {
@@ -119,7 +119,7 @@ public class VoiceChat {
                     }
                 }
                 if (System.currentTimeMillis() - timestamp < STOP_SENDING_DELAY) {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.VOICE, toByte(recordedData));
+                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.VOICE, toByte(recordedData, true));
                 }
             }
         });
@@ -169,19 +169,32 @@ public class VoiceChat {
         mixAndPlaybackThread.start();
     }
 
-    private byte[] toByte(short[] shorts) {
+    private byte[] toByte(short[] shorts, boolean bigEndian) {
         byte[] bytes = new byte[shorts.length * 2];
-        for (int i = 0; i < shorts.length; i++) {
-            bytes[2 * i] = (byte) (shorts[i] >> 8);
-            bytes[2 * i + 1] = (byte) shorts[i];
+        if (bigEndian) {
+            for (int i = 0; i < shorts.length; i++) {
+                bytes[2 * i] = (byte) (shorts[i] >> 8);
+                bytes[2 * i + 1] = (byte) shorts[i];
+            }
+        } else {
+            for (int i = 0; i < shorts.length; i++) {
+                bytes[2 * i] = (byte) shorts[i];
+                bytes[2 * i + 1] = (byte) (shorts[i] >> 8);
+            }
         }
         return bytes;
     }
 
-    private short[] toShort(byte[] bytes) {
+    private short[] toShort(byte[] bytes, boolean bigEndian) {
         short[] shorts = new short[bytes.length / 2];
-        for (int i = 0; i < shorts.length; i++) {
-            shorts[i] = (short) ((bytes[2 * i] << 8) | (bytes[2 * i + 1] & 0xff));
+        if (bigEndian) {
+            for (int i = 0; i < shorts.length; i++) {
+                shorts[i] = (short) ((bytes[2 * i] << 8) | (bytes[2 * i + 1] & 0xff));
+            }
+        } else {
+            for (int i = 0; i < shorts.length; i++) {
+                shorts[i] = (short) ((bytes[2 * i] & 0xff) | (bytes[2 * i + 1] << 8));
+            }
         }
         return shorts;
     }

@@ -19,8 +19,20 @@ public class MusicPlayer extends Interactable {
     /** Menü-Option zum Abspielen eines Musikstücks. */
     private static final int MENU_OPTION_PLAY = 1;
 
+    /** Menü-Option zum Pausieren des gerade abgespielten Musikstücks. */
+    private static final int MENU_OPTION_PAUSE = 2;
+
     /** Menü-Option zum Stoppen des gerade abgespielten Musikstücks. */
-    private static final int MENU_OPTION_STOP = 2;
+    private static final int MENU_OPTION_STOP = 3;
+
+    /** Menü-Option zur Wiedergabe des nächsten Musikstücks in der Liste. */
+    private static final int MENU_OPTION_PREVIOUS = 4;
+
+    /** Menü-Option zur Wiedergabe des vorherigen Musikstücks in der Liste. */
+    private static final int MENU_OPTION_NEXT = 5;
+
+    /** Menü-Option zum Ein- und Ausschalten von zufällig abgespielten Musikstücken. */
+    private static final int MENU_OPTION_RANDOM = 7;
 
     /**
      * Erzeugt eine neue Instanz des MusicPlayer.

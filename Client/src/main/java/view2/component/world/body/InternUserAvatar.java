@@ -29,7 +29,7 @@ public class InternUserAvatar extends UserAvatar {
         fixtureDef.filter.categoryBits = WorldScreen.INTERN_USER_BIT;
         fixtureDef.filter.maskBits = WorldScreen.BORDER_BIT;
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox((32 - 1) / WorldCamera.PPM / 2, (32 - 1) / WorldCamera.PPM / 2); // TODO auf 32 ändern
+        shape.setAsBox(32 / WorldCamera.PPM / 2, 32 / WorldCamera.PPM / 2);
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
 
@@ -132,7 +132,7 @@ public class InternUserAvatar extends UserAvatar {
         }
     }
 
-    protected Direction getCurrentDirectionalInput() {
+    private Direction getCurrentDirectionalInput() {
         Arrays.stream(Direction.values()).forEach(direction -> {
             if (!currentDirectionalInputs.contains(direction)
                     && Chati.CHATI.getWorldScreen().getWorldInputProcessor().isDirectionPressed(direction)) {

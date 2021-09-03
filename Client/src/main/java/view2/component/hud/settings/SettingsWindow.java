@@ -114,7 +114,7 @@ public class SettingsWindow extends HudMenuWindow {
         });
 
         leaveWorldButton = new TextButton("Welt verlassen", Assets.getNewSkin());
-        if (internUser == null || !internUser.isInCurrentWorld() || internUser.getCurrentWorld() == null) {
+        if (internUser == null || internUser.getCurrentWorld() == null) {
             disableButton(leaveWorldButton);
         }
         leaveWorldButton.addListener(new ClickListener() {
@@ -125,13 +125,12 @@ public class SettingsWindow extends HudMenuWindow {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 disableButton(leaveWorldButton);
-                IInternUserView intern = Chati.CHATI.getUserManager().getInternUserView();
-
-                if (intern == null || intern.getCurrentWorld() == null) {
+                IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
+                if (internUser == null || internUser.getCurrentWorld() == null) {
                     return;
                 }
-
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.WORLD_ACTION, intern.getCurrentWorld().getContextId(), false);
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.WORLD_ACTION,
+                        internUser.getCurrentWorld().getContextId(), false);
                 Chati.CHATI.setScreen(Chati.CHATI.getMenuScreen());
                 Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
             }

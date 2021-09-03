@@ -1,5 +1,5 @@
 {
-"com.badlogic.gdx.graphics.Color": {
+"Color": {
 	"green": { "g": 1, "a": 1 },
 	"light_grey": { "r": 0.8, "g": 0.8, "b": 0.8, "a": 1 },
 	"white": { "r": 1, "g": 1, "b": 1, "a": 1 },
@@ -8,17 +8,17 @@
 	"Flamingo": { "r": 1, "g": 0.2, "b": 1, "a": 1 },
 	"black": { "a": 1 }
 },
-"com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable": {
+"TintedDrawable": {
 	"dialogDim": {
 		"name": "white",
 		"color": { "a": 1, "b": 0.2, "g": 0.2, "r": 0.2 }
 	}
 },
-"com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle": {
+"ProgressBarStyle": {
 	"default-horizontal": { "background": "loading-bar", "knob": "loading-bar-knob", "knobBefore": "loading-bar-fill" },
 	"default-vertical": { "background": "loading-bar", "knob": "loading-bar-knob", "knobBefore": "loading-bar-fill" }
 },
-"com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
+"TextButtonStyle": {
 	"default": {
 		"font": "font-button",
 		"fontColor": { "a": 1, "b": 1, "g": 1, "r": 1 },
@@ -51,17 +51,17 @@
 		"checked": "radio-button"
 	}
 },
-"com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle": {
+"ImageButtonStyle": {
 	"default": { "up": "button", "down": "button-down" }
 },
-"com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle": {
+"SplitPaneStyle": {
 	"default-vertical": { "handle": "vertical-splitpane" },
 	"default-horizontal": { "handle": "horizontal-splitplane" }
 },
-"com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle": {
+"TouchpadStyle": {
 	"default": { "background": "touchpad", "knob": "touchpad-knob" }
 },
-"com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle": {
+"ButtonStyle": {
 	"default": { "up": "button", "down": "button-down" },
 	"music": { "up": "music-off", "down": "music-down", "checked": "music" },
 	"left": { "up": "left-button", "down": "left-button-down" },
@@ -69,7 +69,7 @@
 	"toggle": { "up": "toggle-button-off", "down": "toggle-button-down", "checked": "toggle-button" },
 	"right": { "up": "right-button", "down": "right-button-down" }
 },
-"com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
+"WindowStyle": {
 	"default": {
 		"background": "window",
 		"titleFont": "font-title",
@@ -82,7 +82,7 @@
 		"stageBackground": "list"
 	}
 },
-"com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle": {
+"TextFieldStyle": {
 	"default": {
 		"font": "font-label",
 		"fontColor": { "a": 1 },
@@ -92,7 +92,7 @@
 		"messageFont": "font-label"
 	}
 },
-"com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle": {
+"ScrollPaneStyle": {
 	"default": {
 		"background": "panel1",
 		"hScroll": "horizontal-scrollbar",
@@ -108,7 +108,7 @@
 		"vScrollKnob": "android-vertical-scrollbar-knob"
 	}
 },
-"com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
+"LabelStyle": {
 	"optional": {
 		"font": "font-label",
 		"fontColor": { "a": 1, "b": 0.8, "g": 0.8, "r": 0.8 }
@@ -136,7 +136,7 @@
 		"background": "panel2"
 	}
 },
-"com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle": {
+"ListStyle": {
 	"default": {
 		"font": "font-label",
 		"fontColorSelected": { "a": 1, "b": 1, "g": 0.2, "r": 1 },
@@ -151,7 +151,7 @@
 		"background": "list"
 	}
 },
-"com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle": {
+"CheckBoxStyle": {
 	"default": {
 		"checkboxOn": "check-on",
 		"checkboxOff": "check-off",
@@ -167,14 +167,14 @@
 		"downFontColor": { "a": 1, "b": 1, "g": 0.2, "r": 1 }
 	}
 },
-"com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle": {
+"TreeStyle": {
 	"default": { "plus": "plus", "minus": "minus", "selection": "list-selection", "background": "list" }
 },
-"com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle": {
+"SliderStyle": {
 	"default-vertical": { "background": "slider-bar", "knob": "slider-bar-knob", "knobBefore": "slider-bar-fill" },
 	"default-horizontal": { "background": "slider-bar", "knob": "slider-bar-knob", "knobBefore": "slider-bar-fill" }
 },
-"com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle": {
+"SelectBoxStyle": {
 	"default": {
 		"font": "font-button",
 		"fontColor": { "a": 1, "b": 1, "g": 1, "r": 1 },
@@ -184,7 +184,7 @@
 		"backgroundOpen": "select-box-down"
 	}
 },
-"com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle": {
+"TextTooltipStyle": {
 		"default": {
 			"label": {
 				"font": "font-button",

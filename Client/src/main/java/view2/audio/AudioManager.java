@@ -15,11 +15,17 @@ import java.util.UUID;
 
 public class AudioManager {
 
+    public static final int SAMPLE_RATE = 44100;
+    public static final int SEND_RATE = 30;
+    public static final int PACKET_SIZE = SAMPLE_RATE / SEND_RATE;
+    public static final boolean MONO = true;
+
     private static final String CHAT_MESSAGE_SOUND_PATH = ""; // TODO
     private static final String NOTIFICATION_SOUND_PATH = ""; // TODO
     private static final String ROOM_ENTER_SOUND_PATH = ""; // TODO
 
-    private VoiceChat voiceChat;
+    private VoiceRecorder voiceRecorder;
+    private AudioConsumer audioConsumer;
     private Sound chatMessageSound;
     private Sound notificationSound;
     private Sound roomEnterSound;
@@ -27,7 +33,8 @@ public class AudioManager {
 
     public AudioManager() {
         try {
-            this.voiceChat = new VoiceChat();
+            this.voiceRecorder = new VoiceRecorder();
+            this.audioConsumer = new AudioConsumer();
         } catch (GdxRuntimeException e) {
             e.printStackTrace(); // Line is not available
         }
@@ -40,24 +47,28 @@ public class AudioManager {
     public void update() {
         IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
 
-        if (voiceChat != null) {
+        if (voiceRecorder != null && audioConsumer != null) {
             if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
-                if (!voiceChat.isRunning() && internUser != null && internUser.isInCurrentWorld()) {
+                if ((!voiceRecorder.isRunning() || !audioConsumer.isRunning())
+                        && internUser != null && internUser.isInCurrentWorld()) {
                     setVoiceVolume();
-                    voiceChat.start();
-                } else if (voiceChat.isRunning() && (internUser == null || !internUser.isInCurrentWorld())) {
-                    voiceChat.stop();
+                    voiceRecorder.start();
+                    audioConsumer.start();
+                } else if ((voiceRecorder.isRunning() || audioConsumer.isRunning())
+                        && (internUser == null || !internUser.isInCurrentWorld())) {
+                    voiceRecorder.stop();
+                    audioConsumer.stop();
                 }
             }
 
-            if (voiceChat.isRunning()) {
+            if (voiceRecorder.isRunning()) {
                 if (Settings.isMicrophoneOn() && (!Settings.getPushToTalk() || KeyAction.PUSH_TO_TALK.isPressed())
                     && internUser != null && internUser.canTalk()) {
-                    if (!voiceChat.isSending()) {
-                        voiceChat.startSending();
+                    if (!voiceRecorder.isRecording()) {
+                        voiceRecorder.startRecording();
                     }
-                } else if (voiceChat.isSending()) {
-                    voiceChat.stopSending();
+                } else if (voiceRecorder.isRecording()) {
+                    voiceRecorder.stopRecording();
                 }
             }
         }
@@ -68,9 +79,9 @@ public class AudioManager {
     }
 
     public void setVoiceVolume() {
-        if (voiceChat != null) {
+        if (audioConsumer != null) {
             float volume = (float) Math.sqrt(Settings.getTotalVolume() * Settings.getVoiceVolume());
-            voiceChat.setVolume(volume);
+            audioConsumer.setVolume(volume);
         }
     }
 
@@ -82,8 +93,8 @@ public class AudioManager {
     }
 
     public void playVoiceData(UUID userId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
-        if (voiceChat != null && voiceChat.isRunning()) {
-            voiceChat.receiveData(userId, timestamp, voiceData);
+        if (audioConsumer != null && audioConsumer.isRunning()) {
+            audioConsumer.receiveVoiceData(userId, timestamp, voiceData);
         }
     }
 
@@ -122,5 +133,35 @@ public class AudioManager {
                 currentMusic = null;
             }
         }
+    }
+
+    public static byte[] toByte(short[] shorts, boolean bigEndian) {
+        byte[] bytes = new byte[shorts.length * 2];
+        if (bigEndian) {
+            for (int i = 0; i < shorts.length; i++) {
+                bytes[2 * i] = (byte) (shorts[i] >> 8);
+                bytes[2 * i + 1] = (byte) shorts[i];
+            }
+        } else {
+            for (int i = 0; i < shorts.length; i++) {
+                bytes[2 * i] = (byte) shorts[i];
+                bytes[2 * i + 1] = (byte) (shorts[i] >> 8);
+            }
+        }
+        return bytes;
+    }
+
+    public static short[] toShort(byte[] bytes, boolean bigEndian) {
+        short[] shorts = new short[bytes.length / 2];
+        if (bigEndian) {
+            for (int i = 0; i < shorts.length; i++) {
+                shorts[i] = (short) ((bytes[2 * i] << 8) | (bytes[2 * i + 1] & 0xff));
+            }
+        } else {
+            for (int i = 0; i < shorts.length; i++) {
+                shorts[i] = (short) ((bytes[2 * i] & 0xff) | (bytes[2 * i + 1] << 8));
+            }
+        }
+        return shorts;
     }
 }
