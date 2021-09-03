@@ -30,6 +30,9 @@ public class MusicStreamer extends Interactable {
     /** Frequenz der gesendeten Pakete. */
     private static final int SEND_RATE = 30;
 
+    /** Mono oder Stereo. */
+    private static final boolean MONO = false;
+
     /** Größe der gesendeten Pakete. */
     private static final int PACKET_SIZE = 2 * SAMPLE_RATE / SEND_RATE;
 
@@ -209,7 +212,12 @@ public class MusicStreamer extends Interactable {
             }
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
             byte[] inputData = audioInputStream.readAllBytes();
-            byte[] musicStreamData = toMono(inputData);
+            byte[] musicStreamData;
+            if (MONO) {
+                musicStreamData = toMono(inputData);
+            } else {
+                musicStreamData = inputData;
+            }
             musicStreamBuffer = ByteBuffer.allocate(musicStreamData.length);
             musicStreamBuffer.put(musicStreamData);
             musicStreamBuffer.position(0);

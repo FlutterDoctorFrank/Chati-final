@@ -18,7 +18,7 @@ public class AudioManager {
     public static final int SAMPLE_RATE = 44100;
     public static final int SEND_RATE = 30;
     public static final int PACKET_SIZE = SAMPLE_RATE / SEND_RATE;
-    public static final boolean MONO = true;
+    public static final boolean MONO = false;
 
     private static final String CHAT_MESSAGE_SOUND_PATH = ""; // TODO
     private static final String NOTIFICATION_SOUND_PATH = ""; // TODO

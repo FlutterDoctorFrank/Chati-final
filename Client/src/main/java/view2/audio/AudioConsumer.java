@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -62,10 +61,12 @@ public class AudioConsumer {
                         .map(ProducerQueue::getBlock)
                         .collect(Collectors.toSet());
                 if (musicStream.isReady()) {
+                    ProducerQueue.AudioDataBlock musicBlock = musicStream.getBlock();
+                    for (int i = 0; i < AudioManager.PACKET_SIZE; i++) {
+                        musicBlock.getAudioData()[i] *= 0.5;
+                    }
                     blocks.add(musicStream.getBlock());
                 }
-
-                System.out.println(musicStream.audioDataQueue.size());
 
                 if (blocks.size() == 0) {
                     continue;
