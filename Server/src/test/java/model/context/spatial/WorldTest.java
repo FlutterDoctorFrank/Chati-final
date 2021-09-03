@@ -56,8 +56,6 @@ public class WorldTest {
         this.globalContext = GlobalContext.getInstance();
         this.userAccountManager = UserAccountManager.getInstance();
 
-
-
     }
 
     private void deleteData(String tableName){
@@ -82,6 +80,9 @@ public class WorldTest {
         deleteData("USER_RESERVATION");
         deleteData("ROLE_WITH_CONTEXT");
         deleteData("NOTIFICATION");
+
+        globalContext.load();
+        userAccountManager.load();
 
     }
 
@@ -126,9 +127,7 @@ public class WorldTest {
 
 
     @Test
-    public void addUserTest() {
-        userAccountManager = UserAccountManager.getInstance();
-        globalContext = GlobalContext.getInstance();
+    public void addAndRemoveUserTest() {
         try {
             userAccountManager.registerUser("performer", "22222");
             User performer = userAccountManager.getUser("performer");
@@ -143,24 +142,92 @@ public class WorldTest {
         UserAccountManager userAccountManager = UserAccountManager.getInstance();
         TestClientSender testClientSender = new TestClientSender();
         try {
-            Thread.sleep(1500);
             userAccountManager.registerUser("addUser", "11111");
             User test_user = userAccountManager.loginUser("addUser", "11111", testClientSender);
             test_user.joinWorld(test_world.getContextId());
             this.test_world.addUser(test_user);
-
             Assert.assertTrue(this.test_world.getUsers().containsKey(test_user.getUserId()));
+
+            this.test_world.removeUser(test_user);
+            Assert.assertFalse(this.test_world.getUsers().containsKey(test_user.getUserId()));
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
-
     }
 
+    // Test fuer add/removeReportedUser bei Context
+    @Test
+    public void reportedUserTest() {
 
+        try {
+            userAccountManager.registerUser("r_performer", "22222");
+            User performer = userAccountManager.getUser("r_performer");
+            performer.addRole(globalContext, Role.OWNER);
+            globalContext.createWorld(performer.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
+            ContextID newworld_id = globalContext.getIWorlds().keySet().iterator().next();
+            test_world = globalContext.getWorld(newworld_id);
 
+            userAccountManager.registerUser("reported", "11111");
+            User reported = userAccountManager.getUser("reported");
+
+            test_world.addReportedUser(reported);
+            Assert.assertTrue(test_world.getReportedUsers().containsValue(reported));
+
+            test_world.removeReportedUser(reported);
+            Assert.assertFalse(test_world.getReportedUsers().containsValue(reported));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Test fuer add/removeMutedUser bei Context
+    @Test
+    public void mutedUserTest() {
+
+        try {
+            userAccountManager.registerUser("m_performer", "22222");
+            User performer = userAccountManager.getUser("m_performer");
+            performer.addRole(globalContext, Role.OWNER);
+            globalContext.createWorld(performer.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
+            ContextID newworld_id = globalContext.getIWorlds().keySet().iterator().next();
+            test_world = globalContext.getWorld(newworld_id);
+
+            userAccountManager.registerUser("muted", "11111");
+            User muted = userAccountManager.getUser("muted");
+
+            test_world.addMutedUser(muted);
+            Assert.assertTrue(test_world.getMutedUsers().containsValue(muted));
+
+            test_world.removeMutedUser(muted);
+            Assert.assertFalse(test_world.getMutedUsers().containsValue(muted));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Test fuer add/removeBannedUser bei Context
+    @Test
+    public void bannedUserTest() {
+        try {
+            userAccountManager.registerUser("b_performer", "22222");
+            User performer = userAccountManager.getUser("b_performer");
+            performer.addRole(globalContext, Role.OWNER);
+            globalContext.createWorld(performer.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
+            ContextID newworld_id = globalContext.getIWorlds().keySet().iterator().next();
+            test_world = globalContext.getWorld(newworld_id);
+
+            userAccountManager.registerUser("banned", "11111");
+            User banned = userAccountManager.getUser("banned");
+
+            test_world.addBannedUser(banned);
+            Assert.assertTrue(test_world.getBannedUsers().containsValue(banned));
+
+            test_world.removeBannedUser(banned);
+            Assert.assertFalse(test_world.getBannedUsers().containsValue(banned));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

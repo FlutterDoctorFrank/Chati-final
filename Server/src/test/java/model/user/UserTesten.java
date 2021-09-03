@@ -90,6 +90,9 @@ public class UserTesten {
         deleteData("USER_RESERVATION");
         deleteData("ROLE_WITH_CONTEXT");
         deleteData("NOTIFICATION");
+
+        userAccountManager.load();
+        globalContext.load();
 /*
         if (userAccountManager.isRegistered(this.user.getUserId())) {
             try {
@@ -320,6 +323,23 @@ public class UserTesten {
 
     @Test
     public void setAvatarTest() {
+        TestClientSender testClientSender = new TestClientSender();
+        try {
+            userAccountManager.registerUser("setAvatar", "11111");
+            User setAvatar = userAccountManager.loginUser("setAvatar", "11111", testClientSender);
+
+            String first_avatar_name = setAvatar.getAvatar().name();
+            if (first_avatar_name != "ADAM") {
+                setAvatar.setAvatar(Avatar.ADAM);
+                Assert.assertEquals("ADAM", setAvatar.getAvatar().name());
+            } else {
+                setAvatar.setAvatar(Avatar.ALEX);
+                Assert.assertEquals("ALEX", setAvatar.getAvatar().name());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
