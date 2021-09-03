@@ -406,7 +406,7 @@
   <object id="233" name="Jukebox" x="927.125" y="191.75" width="65.875" height="51.625">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
-    <property name="contextType" value="musicPlayer"/>
+    <property name="contextType" value="musicStreamer"/>
     <property name="text" type="bool" value="true"/>
     <property name="voice" type="bool" value="true"/>
    </properties>
@@ -691,7 +691,7 @@
   <object id="136" name="Jukebox" x="928.909" y="192" width="63.0909" height="49.0455">
    <properties>
     <property name="communicationRegion" value="radiusCommunication"/>
-    <property name="contextType" value="musicPlayer"/>
+    <property name="contextType" value="musicStreamer"/>
     <property name="text" type="bool" value="true"/>
     <property name="voice" type="bool" value="true"/>
    </properties>

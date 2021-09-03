@@ -87,6 +87,8 @@ public class MusicStreamer extends Interactable {
         this.isPaused = true;
         this.isLooping = false;
         this.isRandom = false;
+
+        start();
     }
 
     @Override
@@ -117,8 +119,11 @@ public class MusicStreamer extends Interactable {
                     throw new IllegalMenuActionException("", e, "object.music-player.music-not-found", args[0]);
                 }
                 currentMusic = music;
+                isPaused = false;
                 loadBuffer();
-                start();
+                synchronized (this) {
+                    notifyAll();
+                }
                 break;
             case MENU_OPTION_PAUSE: // Pausiere das Abspielen des Musikstücks oder setze es fort, falls es pausiert ist.
                 if (musicStreamBuffer == null || !isRunning) {
@@ -221,9 +226,9 @@ public class MusicStreamer extends Interactable {
 
         Thread streamingThread = new Thread(() -> {
             byte[] sendData = new byte[PACKET_SIZE];
-            while (isRunning && musicStreamBuffer.hasRemaining()) {
+            while (isRunning) {
                 synchronized (this) {
-                    while (isPaused) {
+                    while (isPaused || !musicStreamBuffer.hasRemaining()) {
                         try {
                             wait();
                         } catch (InterruptedException e) {

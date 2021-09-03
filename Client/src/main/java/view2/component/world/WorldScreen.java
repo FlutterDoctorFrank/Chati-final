@@ -25,13 +25,8 @@ import view2.component.world.body.Border;
 import view2.component.world.body.InteractionObject;
 import view2.component.world.body.InternUserAvatar;
 import view2.component.world.body.UserAvatar;
-import view2.component.world.interactableMenu.AreaPlannerWindow;
-import view2.component.world.interactableMenu.GameBoardWindow;
-import view2.component.world.interactableMenu.InteractableWindow;
-import view2.component.world.interactableMenu.MusicPlayerWindow;
-import view2.component.world.interactableMenu.PortalWindow;
-import view2.component.world.interactableMenu.RoomReceptionWindow;
-import view2.component.world.interactableMenu.SeatWindow;
+import view2.component.world.interactableMenu.*;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -199,6 +194,9 @@ public class WorldScreen extends AbstractScreen {
         switch (contextMenu) {
             case ROOM_RECEPTION_MENU:
                 currentInteractableWindow = new RoomReceptionWindow(contextId);
+                break;
+            case MUSIC_STREAMER_MENU:
+                currentInteractableWindow = new MusicStreamerWindow(contextId);
                 break;
             case MUSIC_PLAYER_MENU:
                 currentInteractableWindow = new MusicPlayerWindow(contextId);

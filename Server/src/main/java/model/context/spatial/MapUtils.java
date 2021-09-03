@@ -153,6 +153,11 @@ public class MapUtils {
                 parent.addChild(musicPlayer);
                 parent.addInteractable(musicPlayer);
                 break;
+            case "musicStreamer": // Erzeuge MusicStreamer.
+                MusicStreamer musicStreamer = new MusicStreamer(areaName, parent, communicationRegion, communicationMedia, expanse);
+                parent.addChild(musicStreamer);
+                parent.addInteractable(musicStreamer);
+                break;
             case "portal": // Erzeuge Portal.
                 Room publicRoom = room.getWorld().getPublicRoom();
                 Location destination = new Location(publicRoom.getSpawnLocation());

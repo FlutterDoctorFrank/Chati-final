@@ -17,7 +17,7 @@ public enum ContextMusic implements Resource {
 
     ContextMusic(@NotNull final String name, @NotNull final String path) {
         this.name = name;
-        this.path = MUSIC_PATH + path + ".mp3";
+        this.path = MUSIC_PATH + path + ".wav";
     }
 
     @Override
