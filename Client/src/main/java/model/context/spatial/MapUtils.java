@@ -8,100 +8,111 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.utils.Array;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
-
-import java.util.HashSet;
+import org.jetbrains.annotations.NotNull;
+import java.util.EnumSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
- * Eine Hilfsklasse, die Methoden bereitstellt, die mit Hilfe von Informationen einer TiledMap einen Raum initialisiert
+ * Eine Hilfsklasse, die Methoden bereitstellt, die mithilfe von Informationen einer TiledMap einen Raum initialisiert
  * und die Kontexthierarchie aufbaut.
  */
 public class MapUtils {
 
+    private static final Logger LOGGER = Logger.getLogger("chati.map-loader");
+
     private MapUtils() {
+
     }
 
     /**
-     * Ermittelt die Kommunikationsform anhand einer TiledMap
-     * @param properties TiledMap, die die Informationen über die Kommunikationsform enthält.
-     * @return Kommunikationsform, die in der TiledMap enthalten ist.
+     * Ermittelt die räumliche Ausdehnung einer Karte.
+     * @param map Die geladene TiledMap.
+     * @return die räumliche Ausdehnung der Karte.
      */
-    public static CommunicationRegion getCommunicationRegion(MapProperties properties) {
-        String className = properties.get("communicationRegion", String.class);
-        switch (className) {
-            case "areaCommunication":
-                return CommunicationRegion.AREA;
-            case "radiusCommunication":
-                return CommunicationRegion.RADIAL;
-            case "parentCommunication":
-                return CommunicationRegion.PARENT;
-            default:
-                throw new IllegalArgumentException();
-        }
+    public static @NotNull Expanse createMapExpanse(@NotNull final TiledMap map) {
+        final TiledMapTileLayer baseLayer = (TiledMapTileLayer) map.getLayers().get(0);
+        final float width = baseLayer.getWidth() * baseLayer.getTileWidth();
+        final float height = baseLayer.getHeight() * baseLayer.getTileHeight();
+
+        return new Expanse(0, 0, width, height);
     }
 
     /**
-     * Ermittelt die Menge der verfügbaren Kommunikationsmedien anhand einer TiledMap.
-     * @param properties TiledMap, die die Informationen über die Menge der verfügbaren Kommunikationsmedien enthält.
-     * @return Menge der verfügbaren Kommunikationsmedien, die in der TiledMap enthalten sind.
+     * Ermittelt die zu erzeugenden Kontexte anhand von Quadraten des Contexts MapLayers und erzeugt diese.
+     * @param room Übergeordneter Raum der zu erzeugenden Kontexte.
+     * @param layer MapLayer, in dem die Kontexte enthalten sind.
      */
-    public static Set<CommunicationMedium> getCommunicationMedia(MapProperties properties) {
-        Set<CommunicationMedium> communicationMedia = new HashSet<>();
-        if (properties.get("text", Boolean.class)) {
-            communicationMedia.add(CommunicationMedium.TEXT);
-        }
-        if (properties.get("voice", Boolean.class)) {
-            communicationMedia.add(CommunicationMedium.VOICE);
-        }
-        return communicationMedia;
-    }
+    public static void createContexts(@NotNull final SpatialContext room, @NotNull final MapLayer layer) {
+        Array<RectangleMapObject> rectangles = layer.getObjects().getByType(RectangleMapObject.class);
 
-    public static float getWidth(TiledMap tiledMap) {
-        TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        return layer.getWidth() * layer.getTileWidth();
-    }
-
-    public static float getHeight(TiledMap tiledMap) {
-        TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-        return layer.getHeight() * layer.getTileHeight();
-    }
-
-    /**
-     * Methode, mit der alle untergeordneten Kontexte eines Raums erzeugt werden.
-     * @param room Raum, dessen untergeordnete Kontexte erzeugt werden sollen.
-     * @param tiledMap TiledMap, in der die nötigen Daten enthalten sind.
-     */
-    public static void buildChildTree(SpatialContext room, TiledMap tiledMap) {
-        // Hole die Quadrate der Kontexte aus der TiledMap.
-        MapLayer contextLayer = tiledMap.getLayers().get("contextLayer");
-        Array<RectangleMapObject> contextRectangles = contextLayer.getObjects().getByType(RectangleMapObject.class);
         // Sortiere die Quadrate ihrer Größe nach absteigend. Dadurch wird garantiert, dass die Kontexte immer an die
         // richtige Stelle in der Kontexthierarchie eingefügt werden.
-        contextRectangles.sort((o1, o2) -> Float.compare(o2.getRectangle().area(), o1.getRectangle().area()));
-        // Erzeuge alle Kontexte nacheinander.
-        contextRectangles.forEach(contextRectangle -> create(room, contextRectangle));
+        rectangles.sort((prev, next) -> Float.compare(next.getRectangle().area(), prev.getRectangle().area()));
+
+        for (final RectangleMapObject object : rectangles) {
+            String name = object.getName();
+            float posX = object.getRectangle().getX();
+            float posY = object.getRectangle().getY();
+            float width = object.getRectangle().getWidth();
+            float height = object.getRectangle().getHeight();
+
+            // Ermittle den übergeordneten Kontext. Da die Quadrate absteigend ihrer Grö0e sortiert eingefügt werden,
+            // befindet sich der übergeordnete Kontext immer bereits in der Kontexthierarchie.
+            SpatialContext parent = room.getArea(posX + width / 2, posY + height / 2);
+            Expanse expanse = new Expanse(posX, posY, width, height);
+
+            try {
+                if (!object.getProperties().containsKey("type")) {
+                    throw new IllegalArgumentException("Properties does not contain type");
+                }
+
+                Set<CommunicationMedium> media = parseMedia(object.getProperties());
+                CommunicationRegion communication = parseCommunication(object.getProperties());
+                boolean interactable = !object.getProperties().get("type", String.class).equalsIgnoreCase("area");
+
+                parent.addChild(new SpatialContext(name, parent, communication, media, expanse, interactable));
+            } catch (ClassCastException ex) {
+                LOGGER.warning(String.format("Found invalid object %s in map %s: Properties type is not of type String", name, room.getMap()));
+            } catch (IllegalArgumentException ex) {
+                LOGGER.warning(String.format("Found invalid object %s in map %s: %s", name, room.getMap(), ex.getMessage()));
+            }
+        }
     }
 
     /**
-     * Ermittelt die Klasse und die Daten von zu erzeugenden Kontexten anhand von Quadraten einer TiledMap und erzeugt
-     * diese.
-     * @param room Übergeordneter Raum der zu erzeugenden Kontexte.
-     * @param contextRectangle Quadrat der TiledMap, das die Informationen über den Kontext enthält.
+     * Ermittelt die Menge der verfügbaren Kommunikationsmedien anhand einer MapProperties.
+     * @param properties Die Properties eines Tiled Map Objects.
+     * @return Menge der verfügbaren Kommunikationsmedien, die in den Properties enthalten ist.
      */
-    private static void create(SpatialContext room, RectangleMapObject contextRectangle) {
-        // Ermittle alle Parameter zur Erzeugung des Kontextes.
-        String contextName = contextRectangle.getName();
-        CommunicationRegion communicationRegion = getCommunicationRegion(contextRectangle.getProperties());
-        Set<CommunicationMedium> communicationMedia = getCommunicationMedia(contextRectangle.getProperties());
-        float posX = contextRectangle.getRectangle().getX();
-        float posY = contextRectangle.getRectangle().getY();
-        float width = contextRectangle.getRectangle().getWidth();
-        float height = contextRectangle.getRectangle().getHeight();
-        Expanse expanse = new Expanse(new Location(posX, posY), width, height);
-        boolean interactable = !contextRectangle.getProperties().get("contextType", String.class).equals("area");
-        // Ermittle den übergeordneten Kontext. Da die Quadrate absteigend ihrer Grö0e sortiert eingefügt werden,
-        // befindet sich der übergeordnete Kontext immer bereits in der Kontexthierarchie.
-        SpatialContext parent = room.getArea(posX + width / 2, posY + height / 2);
-        new SpatialContext(contextName, parent, communicationRegion, communicationMedia, expanse, interactable);
+    public static @NotNull Set<CommunicationMedium> parseMedia(@NotNull final MapProperties properties) {
+        final Set<CommunicationMedium> media = EnumSet.noneOf(CommunicationMedium.class);
+
+        for (final String medium : properties.get("media", "", String.class).split(";")) {
+            try {
+                media.add(CommunicationMedium.valueOf(medium.toUpperCase()));
+            } catch (IllegalArgumentException ignored) {
+
+            }
+        }
+
+        return media;
+    }
+
+    /**
+     * Ermittelt die Kommunikationsform anhand einer MapProperties.
+     * @param properties Die Properties eines Tiled Map Objects.
+     * @return Kommunikationsform, die in den Properties enthalten ist.
+     */
+    public static @NotNull CommunicationRegion parseCommunication(@NotNull final MapProperties properties) throws IllegalArgumentException {
+        if (!properties.containsKey("communication")) {
+            throw new IllegalArgumentException("Properties does not contain communication region");
+        }
+
+        try {
+            return CommunicationRegion.valueOf(properties.get("communication", String.class).toUpperCase());
+        } catch (ClassCastException ex) {
+            throw new IllegalArgumentException("Properties communication region is not of type String");
+        }
     }
 }

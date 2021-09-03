@@ -11,11 +11,13 @@ import model.user.UserManager;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import view2.IModelObserver;
 
 import java.util.Set;
 
+@Ignore
 public class SpatialContextTest {
 
     SpatialContext world;

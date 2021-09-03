@@ -26,7 +26,6 @@ import view2.component.world.body.InteractionObject;
 import view2.component.world.body.InternUserAvatar;
 import view2.component.world.body.UserAvatar;
 import view2.component.world.interactableMenu.*;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +34,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class WorldScreen extends AbstractScreen {
+
+    private static final int[] LAYERS_RENDER_BEFORE_AVATAR = new int[]{0, 1, 2};
+    private static final int[] LAYERS_RENDER_AFTER_AVATAR = new int[]{3};
 
     public static final short BORDER_BIT = 1;
     public static final short USER_BIT = 2;
@@ -79,7 +81,7 @@ public class WorldScreen extends AbstractScreen {
             initialize();
         }
         if (tiledMapRenderer.getMap() != null) {
-            tiledMapRenderer.render();
+            tiledMapRenderer.render(LAYERS_RENDER_BEFORE_AVATAR);
             debugRenderer.render(world, camera.combined);
 
             if (Chati.CHATI.isUserInfoChanged()) {
@@ -94,6 +96,7 @@ public class WorldScreen extends AbstractScreen {
             internUserAvatar.draw(Chati.SPRITE_BATCH, delta);
             Chati.SPRITE_BATCH.end();
 
+            tiledMapRenderer.render(LAYERS_RENDER_AFTER_AVATAR);
             world.step(1 / WORLD_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 
             internUserAvatar.sendPosition();
@@ -166,9 +169,9 @@ public class WorldScreen extends AbstractScreen {
         }
         TiledMap tiledMap = new TmxMapLoader().load(internUser.getCurrentRoom().getMap().getPath());
         tiledMapRenderer.setMap(tiledMap);
-        tiledMapRenderer.getMap().getLayers().get("Borders").getObjects().getByType(RectangleMapObject.class)
+        tiledMapRenderer.getMap().getLayers().get("Collisions").getObjects().getByType(RectangleMapObject.class)
                 .forEach(border -> new Border(border.getRectangle()));
-        tiledMapRenderer.getMap().getLayers().get("InteractiveObject").getObjects().getByType(RectangleMapObject.class)
+        tiledMapRenderer.getMap().getLayers().get("Interactions").getObjects().getByType(RectangleMapObject.class)
                 .forEach(interactiveObject -> new InteractionObject(interactiveObject.getRectangle()));
     }
 

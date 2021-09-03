@@ -6,12 +6,18 @@ package model.communication;
  */
 public enum CommunicationRegion {
 
-    /** Repräsentiert radius-basierte Kommunikation. */
-    RADIAL,
-
-    /** Repräsentiert bereichs-basierte Kommunikation. */
+    /**
+     * Repräsentiert bereichs-basierte Kommunikation.
+     * */
     AREA,
 
-    /** Repräsentiert das Benutzen der Kommunikationsform des übergeordneten Kontextes. */
-    PARENT
+    /**
+     * Repräsentiert das Benutzen der Kommunikationsform des übergeordneten Kontextes.
+     * */
+    PARENT,
+
+    /**
+     * Repräsentiert radius-basierte Kommunikation.
+     * */
+    RADIUS
 }

@@ -28,6 +28,10 @@ public class Expanse {
         this.height = height;
     }
 
+    public Expanse(final float posX, final float posY, final float width, final float height) {
+        this(new Location(posX, posY), width, height);
+    }
+
     /**
      * Überprüft, ob sich gegebene Koordinaten in der räumlichen Ausdehnung eines Kontextes befinden.
      * @param posX Zu überprüfende X-Koordinate.

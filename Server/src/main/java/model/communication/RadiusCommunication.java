@@ -2,7 +2,6 @@ package model.communication;
 
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -23,8 +22,15 @@ public class RadiusCommunication extends CommunicationRegion {
      * Erzeugt eine neue Instanz der RadiusCommunication.
      */
     public RadiusCommunication() {
+        this(DEFAULT_RADIUS);
+    }
+
+    /**
+     * Erzeugt eine neue Instanz der RadiusCommunication.
+     */
+    public RadiusCommunication(final int radius) {
         super();
-        this.radius = DEFAULT_RADIUS;
+        this.radius = radius;
     }
 
     @Override
@@ -32,16 +38,12 @@ public class RadiusCommunication extends CommunicationRegion {
         if (user.getLocation() == null) {
             throw new IllegalStateException("Users location is not available");
         }
-        // ANMERKUNG: Radiusbasierte Kommunikation kann man bereichsübergreifend machen, wenn man hier die Benutzer des
-        // Raums statt des Kontextes nimmt:
         /*
-            return user.getLocation().getRoom().getUsers().values().stream()
-                .filter(otherUser -> user.getLocation().distance(otherUser.getLocation()) <= radius)
-                .collect(Collectors.toUnmodifiableMap(User::getUserId, Function.identity()));
+         * ANMERKUNG: Die Radiusbasierte Kommunikation kann man bereichsübergreifend machen, wenn man die Benutzer
+         * des Raums anstatt des Kontexts nimmt.
          */
         return area.getUsers().values().stream()
                 .filter(otherUser -> otherUser.getLocation() != null && user.getLocation().distance(otherUser.getLocation()) <= radius)
                 .collect(Collectors.toMap(User::getUserId, Function.identity()));
     }
-
 }

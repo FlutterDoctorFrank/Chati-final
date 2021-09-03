@@ -7,6 +7,7 @@ import model.communication.message.TextMessage;
 import model.context.spatial.Area;
 import model.context.spatial.Expanse;
 import model.context.spatial.ContextMenu;
+import model.context.spatial.Location;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.user.User;
@@ -22,6 +23,8 @@ public class Seat extends Interactable {
     /** Menü-Option, um den Benutzer auf den Platz zu setzen. */
     private static final int MENU_OPTION_SIT = 1;
 
+    private final Location place;
+
     /**
      * Erzeugt eine neue Instanz des Seat.
      * @param objectName Name des Objekts.
@@ -32,8 +35,10 @@ public class Seat extends Interactable {
      */
     public Seat(@NotNull final String objectName, @NotNull final Area parent,
                 @NotNull final CommunicationRegion communicationRegion,
-                @NotNull final Set<CommunicationMedium> communicationMedia, @NotNull final Expanse expanse) {
+                @NotNull final Set<CommunicationMedium> communicationMedia, @NotNull final Expanse expanse,
+                @NotNull final Location place) {
         super(objectName, parent, communicationRegion, communicationMedia, expanse, ContextMenu.SEAT_MENU);
+        this.place = place;
     }
 
     @Override
@@ -69,7 +74,7 @@ public class Seat extends Interactable {
             user.send(SendAction.CLOSE_MENU, this);
             try {
                 user.setMovable(true);
-                user.teleport(expanse.getBottomLeft());
+                user.teleport(place);
                 user.setMovable(false);
             } catch (Exception e) {
                 e.printStackTrace();

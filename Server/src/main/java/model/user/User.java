@@ -728,7 +728,7 @@ public class User implements IUser {
      * @return Menge der Benutzer, mit denen dieser Benutzer gerade kommunizieren kann.
      */
     public @NotNull Map<UUID, User> getCommunicableUsers() {
-        return new HashMap<>(communicableUsers);
+        return Map.copyOf(communicableUsers);
     }
 
     /**

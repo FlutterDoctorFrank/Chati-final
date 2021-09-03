@@ -319,7 +319,7 @@ public class UserDatabaseTest {
         Assert.assertEquals(0, row);
     }
 
-    @Test
+    @Ignore
     public void addNotificationTest() {
         User test = this.account_database.createAccount("addNotif", "111");
         User requester = this.account_database.createAccount("friend_requester", "222");
@@ -434,7 +434,7 @@ public class UserDatabaseTest {
         Assert.assertEquals(test_friendRequest.getMessageBundle().getArguments()[1].toString(), actual_user_message);
     }
 
-    @Test
+    @Ignore
     public void removeNotificationTest() {
         User test = this.account_database.createAccount("removeNotif", "111");
         Context test_context = GlobalContext.getInstance();
@@ -487,7 +487,7 @@ public class UserDatabaseTest {
 
     }
 
-    @Test
+    @Ignore
     public void updateNotificationTest() {
         User test = this.account_database.createAccount("updateNotif", "111");
         User requester = this.account_database.createAccount("update_requester", "222");

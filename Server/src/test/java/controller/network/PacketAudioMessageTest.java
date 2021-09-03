@@ -20,15 +20,6 @@ public class PacketAudioMessageTest extends PacketServerTest {
         this.getPacket(PacketAudioMessage.class, new Object());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void illegalSenderPackagingTest() {
-        final IAudioMessage message = Mockito.mock(IAudioMessage.class);
-
-        Mockito.when(message.getSender()).thenReturn(null);
-
-        this.getPacket(PacketAudioMessage.class, message);
-    }
-
     @Test
     public void correctPackagingTest() {
         final IAudioMessage message = Mockito.mock(IAudioMessage.class);

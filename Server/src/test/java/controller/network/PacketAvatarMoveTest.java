@@ -3,6 +3,7 @@ package controller.network;
 import controller.network.ClientSender.SendAction;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
+import model.context.spatial.Direction;
 import model.context.spatial.ILocation;
 import model.context.spatial.IRoom;
 import model.user.IUser;
@@ -44,6 +45,7 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         Mockito.when(location.getRoom()).thenReturn(Mockito.mock(IRoom.class));
         Mockito.when(location.getPosX()).thenReturn(randomFloat());
         Mockito.when(location.getPosY()).thenReturn(randomFloat());
+        Mockito.when(location.getDirection()).thenReturn(randomEnum(Direction.class));
         Mockito.when(target.getUserId()).thenReturn(randomUniqueId());
         Mockito.when(target.getLocation()).thenReturn(location);
         Mockito.when(self.getRoom()).thenReturn(Mockito.mock(IRoom.class));
@@ -56,6 +58,7 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         Assert.assertEquals(target.getUserId(), packet.getUserId());
         Assert.assertEquals(location.getPosX(), packet.getPosX(), 0.0f);
         Assert.assertEquals(location.getPosY(), packet.getPosY(), 0.0f);
+        Assert.assertEquals(location.getDirection(), packet.getDirection());
         Assert.assertFalse(packet.isSprinting());
     }
 
@@ -68,6 +71,7 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         Mockito.when(location.getRoom()).thenReturn(room);
         Mockito.when(location.getPosX()).thenReturn(randomFloat());
         Mockito.when(location.getPosY()).thenReturn(randomFloat());
+        Mockito.when(location.getDirection()).thenReturn(randomEnum(Direction.class));
         Mockito.when(target.getUserId()).thenReturn(randomUniqueId());
         Mockito.when(target.getLocation()).thenReturn(location);
         Mockito.when(target.isSprinting()).thenReturn(randomBoolean());
@@ -80,6 +84,7 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         Assert.assertEquals(target.getUserId(), packet.getUserId());
         Assert.assertEquals(location.getPosX(), packet.getPosX(), 0.0f);
         Assert.assertEquals(location.getPosY(), packet.getPosY(), 0.0f);
+        Assert.assertEquals(location.getDirection(), packet.getDirection());
         Assert.assertEquals(target.isSprinting(), packet.isSprinting());
     }
 

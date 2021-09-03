@@ -8,6 +8,7 @@ import model.communication.message.TextMessage;
 import model.role.Role;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
+import java.util.BitSet;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -18,7 +19,7 @@ public class Room extends Area implements IRoom {
     private final ContextMap map;
 
     /** Enthält Information über erlaubte Positionen auf der Karte. */
-    private boolean[][] collisionMap;
+    private BitSet collisionsMap;
 
     /** Anfangsposition auf der Karte. */
     private Location spawnLocation;
@@ -84,7 +85,7 @@ public class Room extends Area implements IRoom {
      * @return true, wenn die Position erlaubt ist, sonst false.
      */
     public boolean isLegal(final float posX, final float posY) {
-        return true; // !collisionMap[posX][posY];
+        return !this.collisionsMap.get(Math.round(posY) * this.expanse.getWidth() + Math.round(posX));
     }
 
     /**
@@ -157,15 +158,17 @@ public class Room extends Area implements IRoom {
         if (Gdx.app == null) {
             throw new IllegalStateException("LibGDX environment is not available");
         }
+
         FutureTask<?> buildTask = new FutureTask<>(() -> {
             TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
-            communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
+
+            expanse = MapUtils.createMapExpanse(Room.this, tiledMap);
+            spawnLocation = MapUtils.parseLocation(Room.this, tiledMap.getProperties());
+            communicationRegion = MapUtils.parseCommunication(tiledMap.getProperties());
             communicationRegion.setArea(Room.this);
-            communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
-            expanse = new Expanse(new Location(Room.this, Direction.DOWN, 0, 0), MapUtils.getWidth(tiledMap) , MapUtils.getHeight(tiledMap));
-            //this.collisionMap = MapUtils.getCollisionMap(tiledMap);
-            spawnLocation = new Location(Room.this, Direction.UP, MapUtils.getSpawnPosX(tiledMap), MapUtils.getSpawnPosY(tiledMap));
-            MapUtils.buildChildTree(Room.this, tiledMap);
+            communicationMedia = MapUtils.parseMedia(tiledMap.getProperties());
+            collisionsMap = MapUtils.createCollisionMap(Room.this, tiledMap.getLayers().get("Collisions"));
+            MapUtils.createContexts(Room.this, tiledMap.getLayers().get("Contexts"));
         }, null);
         Gdx.app.postRunnable(buildTask);
         try {

@@ -2,11 +2,10 @@ package model.context.spatial;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.Context;
-import model.communication.CommunicationMedium;
 import model.context.ContextID;
 import model.user.UserManager;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +58,6 @@ public class SpatialContext extends Context implements ISpatialContextView {
         this.expanse = expanse;
         this.map = null;
         this.interactable = interactable;
-        parent.addChild(this);
     }
 
     /**
@@ -74,21 +72,25 @@ public class SpatialContext extends Context implements ISpatialContextView {
         this.expanse = null;
         this.map = null;
         this.interactable = false;
-        parent.addChild(this);
     }
 
-    public void build(ContextMap map) {
+    public void build(@NotNull final ContextMap map) {
+        if (Gdx.app == null) {
+            throw new IllegalStateException("LibGDX environment is not available");
+        }
+
+        if (this.map != null) {
+            return; // Der Raum wurde bereits mit einer Karte initialisiert.
+        }
+
         FutureTask<?> buildTask = new FutureTask<>(() -> {
-            // Raum wurde bereits initialisiert.
-            if (this.map != null) {
-                return;
-            }
-            this.map = map;
             TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
-            this.communicationRegion = MapUtils.getCommunicationRegion(tiledMap.getProperties());
-            this.communicationMedia = MapUtils.getCommunicationMedia(tiledMap.getProperties());
-            this.expanse = new Expanse(new Location(0, 0), MapUtils.getWidth(tiledMap), MapUtils.getHeight(tiledMap));
-            MapUtils.buildChildTree(this, tiledMap);
+
+            this.map = map;
+            this.expanse = MapUtils.createMapExpanse(tiledMap);
+            this.communicationRegion = MapUtils.parseCommunication(tiledMap.getProperties());
+            this.communicationMedia = MapUtils.parseMedia(tiledMap.getProperties());
+            MapUtils.createContexts(this, tiledMap.getLayers().get("Contexts"));
             UserManager.getInstance().getModelObserver().setRoomChanged();
         }, null);
         Gdx.app.postRunnable(buildTask);
@@ -128,7 +130,8 @@ public class SpatialContext extends Context implements ISpatialContextView {
     @Override
     public @NotNull SpatialContext getArea(float posX, float posY) {
         try {
-            return children.values().stream().filter(child -> child.getExpanse().isIn(posX, posY))
+            return children.values().stream()
+                    .filter(child -> child.expanse.isIn(posX, posY))
                     .findFirst().orElseThrow().getArea(posX, posY);
         } catch (NoSuchElementException e) {
             return this;

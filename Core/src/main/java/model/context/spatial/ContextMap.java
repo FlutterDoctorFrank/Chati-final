@@ -8,9 +8,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum ContextMap implements Resource {
 
-    //DEFAULT_WORLD("Standardwelt", "worlds/default-world"),
-    PUBLIC_ROOM_MAP("Public Room", "publicRoomMap/publicRoom", true),
-    PRIVATE_ROOM_MAP("Private Room", "privateRoomMap/privateRoom", false);
+    PUBLIC_ROOM_MAP("Public Room", "public_room", true),
+    PRIVATE_ROOM_MAP("Private Room", "private_room", false);
 
     private static final String MAPS_PATH = "maps/";
 
@@ -34,7 +33,11 @@ public enum ContextMap implements Resource {
         return this.path;
     }
 
+    /**
+     * Gibt zurück, ob es sich um eine Karte für einen öffentlichen Raum handelt.
+     * @return true, wenn es eine Karte für den öffentlichen Raum ist, ansonsten false.
+     */
     public boolean isPublicRoomMap() {
-        return publicRoomMap;
+        return this.publicRoomMap;
     }
 }

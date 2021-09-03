@@ -29,6 +29,20 @@ public class Expanse {
     }
 
     /**
+     * Erzeugt eine neue Instanz der räumlichen Ausdehnung eines Kontextes.
+     * @param room Der Raum des Kontextes.
+     * @param posX Die X Position der unteren linken Ecke des Kontexts.
+     * @param posY Die Y Position der unteren linken Ecke des Kontexts.
+     * @param width Breite des Kontextes.
+     * @param height Höhe des Kontextes.
+     */
+    public Expanse(@NotNull final Room room, final float posX, final float posY, final float width, final float height) {
+        this.bottomLeft = new Location(room, Direction.UP, posX, posY);
+        this.width = width;
+        this.height = height;
+    }
+
+    /**
      * Überprüft, ob sich gegebene Koordinaten in der räumlichen Ausdehnung eines Kontextes befinden.
      * @param posX Zu überprüfende X-Koordinate.
      * @param posY Zu überprüfende Y-Koordinate.
@@ -56,5 +70,13 @@ public class Expanse {
      */
     public @NotNull Location getBottomLeft() {
         return bottomLeft;
+    }
+
+    public int getWidth() {
+        return Math.round(this.width);
+    }
+
+    public int getHeight() {
+        return Math.round(this.height);
     }
 }
