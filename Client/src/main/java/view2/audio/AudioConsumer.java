@@ -63,9 +63,9 @@ public class AudioConsumer {
                 if (musicStream.isReady()) {
                     ProducerQueue.AudioDataBlock musicBlock = musicStream.getBlock();
                     for (int i = 0; i < AudioManager.PACKET_SIZE; i++) {
-                        musicBlock.getAudioData()[i] *= 0.5;
+                        musicBlock.getAudioData()[i] = (short) (0.05 * musicBlock.getAudioData()[i]);
                     }
-                    blocks.add(musicStream.getBlock());
+                    blocks.add(musicBlock);
                 }
 
                 if (blocks.size() == 0) {
