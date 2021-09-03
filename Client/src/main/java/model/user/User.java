@@ -50,6 +50,9 @@ public class User implements IUserController, IUserView {
     /** Eine Information darüber, ob sich dieser Benutzer schnell fortbewegt. */
     private boolean isSprinting;
 
+    /** Eine Information darüber, ob sich dieser Benutzer bewegen darf. */
+    private boolean isMovable;
+
     /** Die Information, ob der Benutzer mit dem intern angemeldeten Benutzer dieses Clients befreundet ist. */
     private boolean isFriend;
 
@@ -164,6 +167,11 @@ public class User implements IUserController, IUserView {
     public void setCommunicable(final boolean canCommunicateWith) {
         this.canCommunicateWith = canCommunicateWith;
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
+    }
+
+    @Override
+    public void setMovable(final boolean isMovable) {
+        this.isMovable = isMovable;
     }
 
     @Override
@@ -384,6 +392,11 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean isSprinting() {
         return isSprinting;
+    }
+
+    @Override
+    public boolean isMovable() {
+        return isMovable;
     }
 
     @Override

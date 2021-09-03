@@ -28,6 +28,21 @@ public class NetworkManagerTest extends RandomTest {
                 this.active = false;
             }
         };
+
+        Assert.assertEquals(point, this.network.getEndPoint());
+    }
+
+    @Test
+    public void startStopTest() {
+        Assert.assertFalse(this.network.isActive());
+
+        this.network.start();
+
+        Assert.assertTrue(this.network.isActive());
+
+        this.network.stop();
+
+        Assert.assertFalse(this.network.isActive());
     }
 
     @Test

@@ -10,11 +10,12 @@ import java.util.Arrays;
 import java.util.UUID;
 
 /**
- * Ein Paket, das die Sprachdaten eines Benutzers enthält.
+ * Ein Paket, das die Sprachdaten eines Benutzers oder die Audiodaten eines Musikstückes enthält.
  * <p>
  *     Das Paket wird von einem Client mit den Sprachdaten erzeugt und an den Server gesendet.
  *     Nach der Verarbeitung des Pakets vom Server, wird der Sender gesetzt und das Paket wird an all die Clients
  *     verteilt, die die Sprachnachricht empfangen dürfen.
+ *     Zusätzlich wird das Paket vom Server erzeugt um die Audiodaten von Musikstücken an die Clients zu verteilen.
  * </p>
  */
 public class PacketAudioMessage implements Packet<PacketListener> {
@@ -36,6 +37,16 @@ public class PacketAudioMessage implements Packet<PacketListener> {
      * @param audioData die eingesprochenen Sprachdaten des Benutzers.
      */
     public PacketAudioMessage(final byte[] audioData) {
+        this.audioData = audioData;
+    }
+
+    /**
+     * Ausschließlich für die Erzeugung des Netzwerkpakets von der Server-Anwendung.
+     * @param timestamp der Zeitpunkt, an dem die Audiodaten versendet wurden.
+     * @param audioData die Audiodaten des Musikstückes.
+     */
+    public PacketAudioMessage(@NotNull final LocalDateTime timestamp, final byte[] audioData) {
+        this.timestamp = timestamp;
         this.audioData = audioData;
     }
 

@@ -170,10 +170,31 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 final float posX = this.user.getLocation().getPosX();
                 final float posY = this.user.getLocation().getPosY();
 
-                this.send(new PacketAvatarMove(AvatarAction.SPAWN_AVATAR, this.user.getUserId(), posX, posY, false, direction));
+                this.send(new PacketAvatarMove(AvatarAction.SPAWN_AVATAR, this.user.getUserId(), direction,
+                        posX, posY, false, this.user.isMovable()));
             }
         } else {
             this.logUnexpectedPacket(packet, "Can not move while not in a world");
+        }
+    }
+
+    @Override
+    public void handle(@NotNull final PacketAudioMessage packet) {
+        if (this.user == null) {
+            this.logUnexpectedPacket(packet, "Can not talk while not logged in");
+            return;
+        }
+
+        if (this.user.getWorld() != null) {
+            // Überprüfung, ob gegebenenfalls eine falsche User-ID versendet wurde.
+            if (packet.getSenderId() != null && !packet.getSenderId().equals(this.user.getUserId())) {
+                this.logInvalidPacket(packet, "User-ID must be the own or null");
+                return;
+            }
+
+            this.user.talk(packet.getAudioData());
+        } else {
+            this.logUnexpectedPacket(packet, "Can not talk while not in a world");
         }
     }
 
@@ -199,26 +220,6 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             this.user.chat(packet.getMessage());
         } else {
             this.logUnexpectedPacket(packet, "Can not chat while not in a world");
-        }
-    }
-
-    @Override
-    public void handle(@NotNull final PacketAudioMessage packet) {
-        if (this.user == null) {
-            this.logUnexpectedPacket(packet, "Can not talk while not logged in");
-            return;
-        }
-
-        if (this.user.getWorld() != null) {
-            // Überprüfung, ob gegebenenfalls eine falsche User-ID versendet wurde.
-            if (packet.getSenderId() != null && !packet.getSenderId().equals(this.user.getUserId())) {
-                this.logInvalidPacket(packet, "User-ID must be the own or null");
-                return;
-            }
-
-            this.user.talk(packet.getAudioData());
-        } else {
-            this.logUnexpectedPacket(packet, "Can not talk while not in a world");
         }
     }
 

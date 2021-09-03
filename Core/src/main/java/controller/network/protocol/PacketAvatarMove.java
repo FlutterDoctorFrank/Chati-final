@@ -26,6 +26,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
     private float posX;
     private float posY;
     private boolean sprinting;
+    private boolean movable;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -41,9 +42,13 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * @param posY Die neue Y-Koordinate.
      * @param sprinting true, wenn ob sich der Benutzer schnell fortbewegt, ansonsten false.
      */
-    public PacketAvatarMove(final float posX, final float posY, final boolean sprinting,
-                            @NotNull final Direction direction) {
-        this(AvatarAction.MOVE_AVATAR, null, posX, posY, sprinting, direction);
+    public PacketAvatarMove(@NotNull final Direction direction, final float posX, final float posY,
+                            final boolean sprinting) {
+        this.action = AvatarAction.MOVE_AVATAR;
+        this.direction = direction;
+        this.posX = posX;
+        this.posY = posY;
+        this.sprinting = sprinting;
     }
 
     /**
@@ -64,14 +69,15 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      * @param sprinting true, wenn sich der Benutzer schnell fortbewegt, ansonsten false.
      */
     public PacketAvatarMove(@NotNull final AvatarAction action, @Nullable final UUID userId,
-                            final float posX, final float posY, final boolean sprinting,
-                            @NotNull final Direction direction) {
+                            @NotNull final Direction direction, final float posX, final float posY,
+                            final boolean sprinting, final boolean movable) {
         this.action = action;
         this.userId = userId;
+        this.direction = direction;
         this.posX = posX;
         this.posY = posY;
         this.sprinting = sprinting;
-        this.direction = direction;
+        this.movable = movable;
     }
 
     @Override
@@ -87,6 +93,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
         output.writeFloat(this.posX);
         output.writeFloat(this.posY);
         output.writeBoolean(this.sprinting);
+        output.writeBoolean(this.movable);
     }
 
     @Override
@@ -97,13 +104,14 @@ public class PacketAvatarMove implements Packet<PacketListener> {
         this.posX = input.readFloat();
         this.posY = input.readFloat();
         this.sprinting = input.readBoolean();
+        this.movable = input.readBoolean();
     }
 
     @Override
     public @NotNull String toString() {
         return this.getClass().getSimpleName() + "{action=" + this.action + ", userId=" + this.userId
-                + ", posX=" + this.posX + ", posY=" + this.posY + ", sprinting=" + this.sprinting
-                + ", direction=" + this.direction + "}";
+                + ", direction=" + this.direction + ", posX=" + this.posX + ", posY=" + this.posY
+                + ", sprinting=" + this.sprinting + ", movable=" + this.movable + "}";
     }
 
     /**
@@ -152,6 +160,14 @@ public class PacketAvatarMove implements Packet<PacketListener> {
      */
     public boolean isSprinting() {
         return this.sprinting;
+    }
+
+    /**
+     * Gibt zurück, ob sich der Benutzer bewegen kann.
+     * @return true, wenn sich der Benutzer bewegen kann, ansonsten false.
+     */
+    public boolean isMovable() {
+        return this.movable;
     }
 
     /**

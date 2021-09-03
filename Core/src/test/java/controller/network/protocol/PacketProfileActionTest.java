@@ -2,6 +2,7 @@ package controller.network.protocol;
 
 import controller.network.protocol.mock.MockPacketListener;
 import model.user.Avatar;
+import model.user.Status;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -53,6 +54,14 @@ public class PacketProfileActionTest extends PacketTest<PacketProfileAction> {
     @Test
     public void changeAvatarSerializationTest() {
         this.before = new PacketProfileAction(randomEnum(Avatar.class));
+
+        this.serialize();
+        this.equals();
+    }
+
+    @Test
+    public void changeStatusSerializationTest() {
+        this.before = new PacketProfileAction(randomEnum(Status.class));
 
         this.serialize();
         this.equals();
@@ -146,6 +155,14 @@ public class PacketProfileActionTest extends PacketTest<PacketProfileAction> {
             Assert.assertEquals(this.before.getAvatar(), this.after.getAvatar());
         } else {
             Assert.assertNull(this.after.getAvatar());
+        }
+
+        // Vergleiche Status
+        if (this.before.getStatus() != null) {
+            Assert.assertNotNull(this.after.getStatus());
+            Assert.assertEquals(this.before.getStatus(), this.after.getStatus());
+        } else {
+            Assert.assertNull(this.after.getStatus());
         }
     }
 }

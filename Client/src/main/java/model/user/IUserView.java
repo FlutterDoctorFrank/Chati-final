@@ -160,6 +160,12 @@ public interface IUserView {
     boolean isSprinting();
 
     /**
+     * Gibt die Information zurück, ob sich dieser Benutzer bewegen darf.
+     * @return true, wenn der Benutzer bewegen darf, sonst false.
+     */
+    boolean isMovable();
+
+    /**
      * Gibt zurück, ob der Benutzer eine Rolle im innersten Kontext oder einem übergeordneten Kontext besitzt,
      * in dem sich der intern angemeldete Benutzer befindet.
      * @param role Zu überprüfende Rolle.

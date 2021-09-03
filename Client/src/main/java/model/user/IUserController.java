@@ -74,6 +74,12 @@ public interface IUserController {
     void setCommunicable(final boolean canCommunicateWith);
 
     /**
+     * Setzt die Information, der sich der Benutzer aktuell bewegen darf.
+     * @param isMovable true, wenn der Benutzer sich bewegen darf, sonst false.
+     */
+    void setMovable(final boolean isMovable);
+
+    /**
      * Setzt die Information, ob ein Benutzer in einem bestimmten Kontext gemeldet ist.
      * @param contextId ID des Kontextes, in dem der Benutzer gemeldet ist.
      * @param isReported true, wenn der Benutzer in dem Kontext gemeldet ist, sonst false.

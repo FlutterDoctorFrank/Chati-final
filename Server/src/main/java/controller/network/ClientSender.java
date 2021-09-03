@@ -106,8 +106,8 @@ public interface ClientSender {
                         if (world.equals(other.getWorld())) {
                             info.setAvatar(other.getAvatar());
 
-                            if (user.getLocation() != null) {
-                                info.setInPrivateRoom(user.getLocation().getRoom().isPrivate());
+                            if (other.getLocation() != null) {
+                                info.setInPrivateRoom(other.getLocation().getRoom().isPrivate());
                             }
 
                             if (user.getIgnoredUsers().containsKey(other.getUserId())) {
@@ -270,7 +270,8 @@ public interface ClientSender {
                     final float posX = other.getLocation().getPosX();
                     final float posY = other.getLocation().getPosY();
 
-                    return new PacketAvatarMove(AvatarAction.SPAWN_AVATAR, other.getUserId(), posX, posY, false, direction);
+                    return new PacketAvatarMove(AvatarAction.SPAWN_AVATAR, other.getUserId(), direction,
+                            posX, posY, false, other.isMovable());
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }
@@ -297,7 +298,8 @@ public interface ClientSender {
                     final float posX = other.getLocation().getPosX();
                     final float posY = other.getLocation().getPosY();
 
-                    return new PacketAvatarMove(AvatarAction.MOVE_AVATAR, other.getUserId(), posX, posY, other.isSprinting(), direction);
+                    return new PacketAvatarMove(AvatarAction.MOVE_AVATAR, other.getUserId(), direction,
+                            posX, posY, other.isSprinting(), other.isMovable());
                 } else {
                     throw new IllegalArgumentException("Expected IUser, got " + object.getClass());
                 }
@@ -486,14 +488,14 @@ public interface ClientSender {
                 if (object instanceof IAudioMessage) {
                     final IAudioMessage message = (IAudioMessage) object;
 
-                    if (message.getSender() == null) {
-                        return new PacketAudioMessage(null, message.getTimestamp(), message.getAudioData());
-                    } else {
-                        return new PacketAudioMessage(message.getSender().getUserId(), message.getTimestamp(), message.getAudioData());
+                    if (message.getSender() != null) {
+                        return new PacketAudioMessage(message.getSender().getUserId(), message.getTimestamp(),
+                                message.getAudioData());
                     }
 
+                    return new PacketAudioMessage(message.getTimestamp(), message.getAudioData());
                 } else {
-                    throw new IllegalArgumentException("Expected IVoiceMessage, got " + object.getClass());
+                    throw new IllegalArgumentException("Expected IAudioMessage, got " + object.getClass());
                 }
             }
         };

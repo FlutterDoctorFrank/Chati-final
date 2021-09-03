@@ -33,12 +33,12 @@ public class MockPacketListener implements PacketListener {
     }
 
     @Override
-    public void handle(@NotNull final PacketChatMessage packet) {
+    public void handle(@NotNull final PacketAudioMessage packet) {
         this.calls.add(packet.getClass());
     }
 
     @Override
-    public void handle(@NotNull final PacketAudioMessage packet) {
+    public void handle(@NotNull final PacketChatMessage packet) {
         this.calls.add(packet.getClass());
     }
 

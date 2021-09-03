@@ -47,7 +47,7 @@ import java.util.logging.Logger;
  */
 public class ServerConnection extends Listener implements PacketListenerOut, ServerSender {
 
-    private static final Logger LOGGER = Logger.getLogger("Chati-Network");
+    private static final Logger LOGGER = Logger.getLogger("chati.network");
 
     private final ClientNetworkManager manager;
 
@@ -161,6 +161,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                         user.setInCurrentRoom(true);
                         user.setLocation(packet.getPosX(), packet.getPosY(), true, false, packet.getDirection());
+                        user.setMovable(packet.isMovable());
                         break;
 
                     case MOVE_AVATAR:
@@ -170,6 +171,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         }
 
                         user.setLocation(packet.getPosX(), packet.getPosY(), false, packet.isSprinting(), packet.getDirection());
+                        user.setMovable(packet.isMovable());
                         break;
 
                     case REMOVE_AVATAR:
@@ -185,21 +187,26 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     }
 
     @Override
-    public void handle(@NotNull final PacketUserTyping packet) {
+    public void handle(@NotNull final PacketAudioMessage packet) {
         if (this.userId == null) {
-            this.logUnexpectedPacket(packet, "Can not receive typing information while user is not logged in");
+            this.logUnexpectedPacket(packet, "Can not receive audio message while user is not logged in");
             return;
         }
 
         if (this.worldId != null) {
-            if (packet.getSenderId() == null) {
-                this.logInvalidPacket(packet, "Typing User-ID can not be null");
+            if (packet.getTimestamp() == null) {
+                this.logInvalidPacket(packet, "Timestamp can not be null");
                 return;
             }
 
-            this.manager.getView().showTypingUser(packet.getSenderId());
+            try {
+                this.manager.getView().playAudioData(packet.getSenderId(), packet.getTimestamp(), packet.getAudioData());
+            } catch (UserNotFoundException ex) {
+                // Unbekannter Sender.
+                LOGGER.warning("Server tried to send voice message from unknown sender with id: " + ex.getUserID());
+            }
         } else {
-            this.logUnexpectedPacket(packet, "Can not receive typing information while user is not in a world");
+            this.logUnexpectedPacket(packet, "Can not receive audio message while user is not in a world");
         }
     }
 
@@ -261,30 +268,6 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     }
 
     @Override
-    public void handle(@NotNull final PacketAudioMessage packet) {
-        if (this.userId == null) {
-            this.logUnexpectedPacket(packet, "Can not receive audio message while user is not logged in");
-            return;
-        }
-
-        if (this.worldId != null) {
-            if (packet.getTimestamp() == null) {
-                this.logInvalidPacket(packet, "Timestamp can not be null");
-                return;
-            }
-
-            try {
-                this.manager.getView().playAudioData(packet.getSenderId(), packet.getTimestamp(), packet.getAudioData());
-            } catch (UserNotFoundException ex) {
-                // Unbekannter Sender.
-                LOGGER.warning("Server tried to send voice message from unknown sender with id: " + ex.getUserID());
-            }
-        } else {
-            this.logUnexpectedPacket(packet, "Can not receive audio message while user is not in a world");
-        }
-    }
-
-    @Override
     public void handle(@NotNull final PacketMenuOption packet) {
         if (this.userId == null) {
             this.logUnexpectedPacket(packet, "Can not receive menu option while user is not logged in");
@@ -331,67 +314,21 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     }
 
     @Override
-    public void handle(@NotNull final PacketWorldAction packet) {
+    public void handle(@NotNull final PacketUserTyping packet) {
         if (this.userId == null) {
-            this.logUnexpectedPacket(packet, "Can not receive world action while user is not logged in");
+            this.logUnexpectedPacket(packet, "Can not receive typing information while user is not logged in");
             return;
         }
 
-        if (packet.getAction() == PacketWorldAction.Action.LEAVE) {
-            if (this.worldId == null) {
-                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction().name() + " while user is not in a world");
+        if (this.worldId != null) {
+            if (packet.getSenderId() == null) {
+                this.logInvalidPacket(packet, "Typing User-ID can not be null");
                 return;
             }
 
-            if (packet.getContextId() == null) {
-                this.logInvalidPacket(packet, "Context-ID of the leaving world can not be null");
-                return;
-            }
-
-            if (packet.getContextId().equals(this.worldId)) {
-                this.getIntern().leaveWorld();
-                this.manager.getView().leaveWorld();
-                this.worldId = null;
-            } else {
-                this.logUnexpectedPacket(packet, "Can not leave a world that has not been entered");
-            }
+            this.manager.getView().showTypingUser(packet.getSenderId());
         } else {
-            if (this.worldId != null) {
-                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction().name() + " while user is already in a world");
-                return;
-            }
-
-            switch (packet.getAction()) {
-                case JOIN:
-                    if (packet.getContextId() == null) {
-                        this.logInvalidPacket(packet, "Context-ID of the joining world can not be null");
-                        return;
-                    }
-
-                    if (packet.isSuccess()) {
-                        if (packet.getName() == null) {
-                            this.logInvalidPacket(packet, "Name of the joining world can not be null");
-                            return;
-                        }
-
-                        this.getIntern().joinWorld(packet.getName());
-                        this.worldId = packet.getContextId();
-                    }
-
-                    this.manager.getView().joinWorldResponse(packet.isSuccess(),
-                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
-                    break;
-
-                case CREATE:
-                    this.manager.getView().createWorldResponse(packet.isSuccess(),
-                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
-                    break;
-
-                case DELETE:
-                    this.manager.getView().deleteWorldResponse(packet.isSuccess(),
-                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
-                    break;
-            }
+            this.logUnexpectedPacket(packet, "Can not receive typing information while user is not in a world");
         }
     }
 
@@ -472,6 +409,71 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                     this.worldId = null;
                     this.userId = null;
                     this.manager.getView().deleteAccountResponse(packet.isSuccess(),
+                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void handle(@NotNull final PacketWorldAction packet) {
+        if (this.userId == null) {
+            this.logUnexpectedPacket(packet, "Can not receive world action while user is not logged in");
+            return;
+        }
+
+        if (packet.getAction() == PacketWorldAction.Action.LEAVE) {
+            if (this.worldId == null) {
+                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction().name() + " while user is not in a world");
+                return;
+            }
+
+            if (packet.getContextId() == null) {
+                this.logInvalidPacket(packet, "Context-ID of the leaving world can not be null");
+                return;
+            }
+
+            if (packet.getContextId().equals(this.worldId)) {
+                this.getIntern().leaveWorld();
+                this.manager.getView().leaveWorld();
+                this.worldId = null;
+            } else {
+                this.logUnexpectedPacket(packet, "Can not leave a world that has not been entered");
+            }
+        } else {
+            if (this.worldId != null) {
+                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction().name() + " while user is already in a world");
+                return;
+            }
+
+            switch (packet.getAction()) {
+                case JOIN:
+                    if (packet.getContextId() == null) {
+                        this.logInvalidPacket(packet, "Context-ID of the joining world can not be null");
+                        return;
+                    }
+
+                    if (packet.isSuccess()) {
+                        if (packet.getName() == null) {
+                            this.logInvalidPacket(packet, "Name of the joining world can not be null");
+                            return;
+                        }
+
+                        this.getIntern().joinWorld(packet.getName());
+                        this.worldId = packet.getContextId();
+                    }
+
+                    this.manager.getView().joinWorldResponse(packet.isSuccess(),
+                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
+                    break;
+
+                case CREATE:
+                    this.manager.getView().createWorldResponse(packet.isSuccess(),
+                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
+                    break;
+
+                case DELETE:
+                    this.manager.getView().deleteWorldResponse(packet.isSuccess(),
                             packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
                     break;
             }
@@ -620,9 +622,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
         if (this.worldId != null) {
             if (packet.isOpen()) {
+                this.getIntern().setMovable(false);
                 this.manager.getView().openMenu(packet.getContextId(), packet.getMenu());
             } else {
                 this.manager.getView().closeMenu(packet.getContextId(), packet.getMenu());
+                this.getIntern().setMovable(true);
             }
         } else {
             this.logUnexpectedPacket(packet, "Can not receive menu action while user is not in a world");

@@ -21,7 +21,23 @@ public class PacketAudioMessageTest extends PacketServerTest {
     }
 
     @Test
-    public void correctPackagingTest() {
+    public void correctAudioPackagingTest() {
+        final IAudioMessage message = Mockito.mock(IAudioMessage.class);
+
+        Mockito.when(message.getSender()).thenReturn(null);
+        Mockito.when(message.getTimestamp()).thenReturn(LocalDateTime.now());
+        Mockito.when(message.getAudioData()).thenReturn(randomBytes());
+
+        final PacketAudioMessage packet = this.getPacket(PacketAudioMessage.class, message);
+
+        Assert.assertNull(packet.getSenderId());
+        Assert.assertNotNull(packet.getTimestamp());
+        Assert.assertEquals(message.getTimestamp(), packet.getTimestamp());
+        Assert.assertArrayEquals(message.getAudioData(), packet.getAudioData());
+    }
+
+    @Test
+    public void correctVoicePackagingTest() {
         final IAudioMessage message = Mockito.mock(IAudioMessage.class);
         final IUser sender = Mockito.mock(IUser.class);
 

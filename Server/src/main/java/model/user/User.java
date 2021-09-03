@@ -362,6 +362,11 @@ public class User implements IUser {
     }
 
     @Override
+    public boolean isMovable() {
+        return movable;
+    }
+
+    @Override
     public @NotNull Map<UUID, IUser> getFriends() {
         return Collections.unmodifiableMap(friends);
     }

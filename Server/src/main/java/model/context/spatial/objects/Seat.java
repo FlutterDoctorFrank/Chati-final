@@ -59,8 +59,8 @@ public class Seat extends Interactable {
             }
         } else {
             // Öffne das Menü beim Benutzer.
-            user.setCurrentInteractable(this);
             user.setMovable(false);
+            user.setCurrentInteractable(this);
             user.send(SendAction.OPEN_MENU, this);
         }
     }
@@ -73,9 +73,8 @@ public class Seat extends Interactable {
         if (menuOption == MENU_OPTION_SIT) { // Bewege den Benutzer auf den Platz.
             user.send(SendAction.CLOSE_MENU, this);
             try {
-                user.setMovable(true);
-                user.teleport(place);
                 user.setMovable(false);
+                user.teleport(place);
             } catch (Exception e) {
                 e.printStackTrace();
             }

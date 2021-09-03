@@ -193,6 +193,12 @@ public interface IUser {
     boolean isSprinting();
 
     /**
+     * Gibt die Information zurück, ob sich der Benutzer bewegen kann.
+     * @return true, wenn sich der Benutzer bewegen kann, sonst false.
+     */
+    boolean isMovable();
+
+    /**
      * Gibt die Freunde des Benutzers zurück.
      * @return Menge der Freunde des Benutzers.
      */

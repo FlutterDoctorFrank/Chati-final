@@ -229,7 +229,7 @@ public interface ServerSender {
                         final boolean sprinting = (boolean) objects[2];
                         final Direction direction = (Direction) objects[3];
 
-                        return new PacketAvatarMove(posX, posY, sprinting, direction);
+                        return new PacketAvatarMove(direction, posX, posY, sprinting);
                     } else {
                         throw new IllegalArgumentException("Expected Float, Float, Boolean and Direction, got "
                                 + objects[0].getClass() + ", " + objects[1].getClass() + ", "
