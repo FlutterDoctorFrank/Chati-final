@@ -1,15 +1,16 @@
 package view2.component.world.interactableMenu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 import model.context.spatial.ContextMusic;
-import org.lwjgl.system.CallbackI;
 import view2.Assets;
 import view2.Chati;
 
@@ -17,8 +18,26 @@ import java.util.EnumSet;
 
 public class MusicStreamerWindow extends InteractableWindow {
 
+    /** Menü-Option zum Auswählen eines abzuspielenden Musikstücks. */
     private static final int MENU_OPTION_PLAY = 1;
-    private static final int MENU_OPTION_STOP = 2;
+
+    /** Menü-Option zum Pausieren oder Fortsetzen des gerade ausgewählten Musikstücks. */
+    private static final int MENU_OPTION_PAUSE = 2;
+
+    /** Menü-Option zum Stoppen des gerade ausgewählten Musikstücks. */
+    private static final int MENU_OPTION_STOP = 3;
+
+    /** Menü-Option zur Wiedergabe des nächsten Musikstücks in der Liste. */
+    private static final int MENU_OPTION_PREVIOUS = 4;
+
+    /** Menü-Option zur Wiedergabe des vorherigen Musikstücks in der Liste. */
+    private static final int MENU_OPTION_NEXT = 5;
+
+    /** Menü-Option zum Ein- und Ausschalten der wiederholten Wiedergabe eines ausgewählten Musikstücks. */
+    private static final int MENU_OPTION_LOOPING = 6;
+
+    /** Menü-Option zum Ein- und Ausschalten von zufällig abzuspielenden Musikstücken. */
+    private static final int MENU_OPTION_RANDOM = 7;
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 600;
@@ -26,27 +45,25 @@ public class MusicStreamerWindow extends InteractableWindow {
     private static final float SPACING = 15;
     private static final float BUTTON_SPACING = 5;
     private static final float BUTTON_SIZE = 100;
+    private static final float BUTTON_SCALE_FACTOR = 0.1f;
 
     private Label infoLabel;
     private Label musicSelectLabel;
     private List<MusicListItems> musicList;
     private ScrollPane musicListScrollPane;
-    private ImageButton playButton2;
-    private ImageButton stopButton2;
-    private ImageButton backButton2;
-    private ImageButton skipButton2;
-    private ImageButton loopingButton2;
-    private ImageButton randomButton2;
-    private ImageButton volumeButton2;
+    private ImageButton playButton;
+    private ImageButton stopButton;
+    private ImageButton backButton;
+    private ImageButton skipButton;
+    private ImageButton loopingButton;
+    private ImageButton randomButton;
+    private ImageButton volumeButton;
+    private Table volumeSliderContainer;
+    private Slider volumeSlider;
+    private ProgressBar musicProgressBar;
+    private Label musicProgressLabel;
     private Label creditsLabel;
     private TextButton closeButton;
-
-    private SelectBox<ContextMusic> musicSelectBox;
-    private TextButton playButton;
-    private TextButton stopButton;
-    private TextButton randomButton;
-    private TextButton cancelButton;
-
 
     public MusicStreamerWindow(ContextID musicPlayerId) {
         super("Jukebox", musicPlayerId, ContextMenu.MUSIC_STREAMER_MENU);
@@ -64,50 +81,28 @@ public class MusicStreamerWindow extends InteractableWindow {
         MusicListItems[] musicListItems = EnumSet.allOf(ContextMusic.class).stream()
                 .map(MusicListItems::new).toArray(MusicListItems[]::new);
         musicList.setItems(musicListItems);
+        musicList.getStyle().over = Assets.SKIN.getDrawable("list-selection");
+        musicList.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                if (musicList.getSelected() == null) {
+                    return;
+                }
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
+                        new String[] {musicList.getSelected().getMusic().getName()}, MENU_OPTION_PLAY);
+            }
+        });
         musicListScrollPane = new ScrollPane(musicList);
 
         ImageButton.ImageButtonStyle playButtonStyle = new ImageButton.ImageButtonStyle();
         playButtonStyle.imageUp = Assets.PLAY_BUTTON_IMAGE;
         playButtonStyle.imageChecked = Assets.PAUSE_BUTTON_IMAGE;
         playButtonStyle.imageDisabled = Assets.DISABLED_PLAY_BUTTON_IMAGE;
-        playButton2 = new ImageButton(playButtonStyle);
-
-        ImageButton.ImageButtonStyle stopButtonStyle = new ImageButton.ImageButtonStyle();
-        stopButtonStyle.imageUp = Assets.STOP_BUTTON_IMAGE;
-        stopButtonStyle.imageDisabled = Assets.DISABLED_STOP_BUTTON_IMAGE;
-        stopButton2 = new ImageButton(stopButtonStyle);
-
-        ImageButton.ImageButtonStyle backButtonStyle = new ImageButton.ImageButtonStyle();
-        backButtonStyle.imageUp = Assets.PREVIOUS_BUTTON_IMAGE;
-        backButtonStyle.imageDisabled = Assets.DISABLED_PREVIOUS_BUTTON_IMAGE;
-        backButton2 = new ImageButton(backButtonStyle);
-
-        ImageButton.ImageButtonStyle skipButtonStyle = new ImageButton.ImageButtonStyle();
-        skipButtonStyle.imageUp = Assets.NEXT_BUTTON_IMAGE;
-        skipButtonStyle.imageDisabled = Assets.DISABLED_NEXT_BUTTON_IMAGE;
-        skipButton2 = new ImageButton(skipButtonStyle);
-
-        ImageButton.ImageButtonStyle loopingButtonStyle = new ImageButton.ImageButtonStyle();
-        loopingButtonStyle.imageUp = Assets.LOOPING_BUTTON_IMAGE;
-        loopingButtonStyle.imageDisabled = Assets.DISABLED_LOOPING_BUTTON_IMAGE;
-        loopingButton2 = new ImageButton(loopingButtonStyle);
-
-        ImageButton.ImageButtonStyle randomButtonStyle = new ImageButton.ImageButtonStyle();
-        randomButtonStyle.imageUp = Assets.RANDOM_BUTTON_IMAGE;
-        randomButtonStyle.imageDisabled = Assets.DISABLED_RANDOM_BUTTON_IMAGE;
-        randomButton2 = new ImageButton(randomButtonStyle);
-
-        ImageButton.ImageButtonStyle volumeButtonStyle = new ImageButton.ImageButtonStyle();
-        volumeButtonStyle.imageUp = Assets.VOLUME_BUTTON_IMAGE;
-        volumeButtonStyle.imageDisabled = Assets.DISABLED_VOLUME_BUTTON_IMAGE;
-        volumeButton2 = new ImageButton(volumeButtonStyle);
-
-
-
-        musicSelectBox = new SelectBox<>(Assets.SKIN);
-        musicSelectBox.setItems(EnumSet.allOf(ContextMusic.class).toArray(new ContextMusic[0]));
-
-        playButton = new TextButton("Abspielen", Assets.SKIN);
+        playButton = new ImageButton(playButtonStyle);
         playButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -115,16 +110,15 @@ public class MusicStreamerWindow extends InteractableWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (musicSelectBox.getSelected() == null) {
-                    infoLabel.setText("Bitte wähle ein Lied aus!");
-                    return;
-                }
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
-                        new String[] {musicSelectBox.getSelected().getName()}, MENU_OPTION_PLAY);
+                        new String[0], MENU_OPTION_PAUSE);
             }
         });
 
-        stopButton = new TextButton("Stoppen", Assets.SKIN);
+        ImageButton.ImageButtonStyle stopButtonStyle = new ImageButton.ImageButtonStyle();
+        stopButtonStyle.imageUp = Assets.STOP_BUTTON_IMAGE;
+        stopButtonStyle.imageDisabled = Assets.DISABLED_STOP_BUTTON_IMAGE;
+        stopButton = new ImageButton(stopButtonStyle);
         stopButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -137,7 +131,58 @@ public class MusicStreamerWindow extends InteractableWindow {
             }
         });
 
-        randomButton = new TextButton("Zufall", Assets.SKIN);
+        ImageButton.ImageButtonStyle backButtonStyle = new ImageButton.ImageButtonStyle();
+        backButtonStyle.imageUp = Assets.PREVIOUS_BUTTON_IMAGE;
+        backButtonStyle.imageDisabled = Assets.DISABLED_PREVIOUS_BUTTON_IMAGE;
+        backButton = new ImageButton(backButtonStyle);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
+                        new String[0], MENU_OPTION_PREVIOUS);
+            }
+        });
+
+        ImageButton.ImageButtonStyle skipButtonStyle = new ImageButton.ImageButtonStyle();
+        skipButtonStyle.imageUp = Assets.NEXT_BUTTON_IMAGE;
+        skipButtonStyle.imageDisabled = Assets.DISABLED_NEXT_BUTTON_IMAGE;
+        skipButton = new ImageButton(skipButtonStyle);
+        skipButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
+                        new String[0], MENU_OPTION_NEXT);
+            }
+        });
+
+        ImageButton.ImageButtonStyle loopingButtonStyle = new ImageButton.ImageButtonStyle();
+        loopingButtonStyle.imageUp = Assets.LOOPING_BUTTON_IMAGE;
+        loopingButtonStyle.imageDisabled = Assets.DISABLED_LOOPING_BUTTON_IMAGE;
+        loopingButton = new ImageButton(loopingButtonStyle);
+        loopingButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
+                        new String[0], MENU_OPTION_LOOPING);
+            }
+        });
+
+        ImageButton.ImageButtonStyle randomButtonStyle = new ImageButton.ImageButtonStyle();
+        randomButtonStyle.imageUp = Assets.RANDOM_BUTTON_IMAGE;
+        randomButtonStyle.imageDisabled = Assets.DISABLED_RANDOM_BUTTON_IMAGE;
+        randomButton = new ImageButton(randomButtonStyle);
         randomButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -145,23 +190,36 @@ public class MusicStreamerWindow extends InteractableWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                musicSelectBox.setSelected(musicSelectBox.getItems().random());
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
-                        new String[]{musicSelectBox.getSelected().getName()}, MENU_OPTION_PLAY);
+                        new String[0], MENU_OPTION_RANDOM);
             }
         });
 
-        cancelButton = new TextButton("Abbrechen", Assets.SKIN);
-        cancelButton.addListener(new ClickListener() {
+        ImageButton.ImageButtonStyle volumeButtonStyle = new ImageButton.ImageButtonStyle();
+        volumeButtonStyle.imageUp = Assets.VOLUME_BUTTON_IMAGE;
+        volumeButtonStyle.imageDisabled = Assets.DISABLED_VOLUME_BUTTON_IMAGE;
+        volumeButton = new ImageButton(volumeButtonStyle);
+        volumeButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                close();
+                if (!volumeSliderContainer.hasParent()) {
+                    add(volumeSliderContainer);
+                } else {
+                    volumeSliderContainer.remove();
+                }
             }
         });
+
+        volumeSliderContainer = new Table();
+        volumeSlider = new Slider(0, 1, 0.01f, true, Assets.SKIN);
+        // TODO
+
+        musicProgressLabel = new Label("0:00", Assets.SKIN);
+        musicProgressBar = new ProgressBar(0, 1, 0.01f, false, Assets.SKIN);
 
         creditsLabel = new Label("Music by https://www.bensound.com", Assets.SKIN);
 
@@ -191,18 +249,29 @@ public class MusicStreamerWindow extends InteractableWindow {
         infoLabel.setAlignment(Align.center, Align.center);
         container.add(infoLabel).row();
 
-        container.add(musicListScrollPane).top().growY().row();
+        container.add(musicListScrollPane).top().height(2 / 5f * WINDOW_HEIGHT).growY().row();
+
+        Table musicProgressContainer = new Table();
+        musicProgressContainer.add(musicProgressLabel).width(WINDOW_WIDTH / 16).padRight(SPACING);
+        musicProgressContainer.add(musicProgressBar).growX();
+        container.add(musicProgressContainer).growX().row();
 
         Table buttonContainer = new Table();
         buttonContainer.defaults();
-        buttonContainer.add(loopingButton2).size(1 / 2f * BUTTON_SIZE).padRight(BUTTON_SPACING);
-        buttonContainer.add(stopButton2).size(1 / 2f * BUTTON_SIZE);
-        buttonContainer.add(backButton2).width(BUTTON_SIZE).height(1 / 2f * BUTTON_SIZE);
-        buttonContainer.add(playButton2).size(BUTTON_SIZE).padLeft(-BUTTON_SPACING).padRight(-BUTTON_SPACING);
-        buttonContainer.add(skipButton2).width(BUTTON_SIZE).height(1 / 2f * BUTTON_SIZE);
-        buttonContainer.add(randomButton2).size(1 / 2f * BUTTON_SIZE);
-        buttonContainer.add(volumeButton2).size(1 / 2f * BUTTON_SIZE).padLeft(BUTTON_SPACING);
+        buttonContainer.add(loopingButton).size(1 / 2f * BUTTON_SIZE).padRight(BUTTON_SPACING);
+        buttonContainer.add(stopButton).size(1 / 2f * BUTTON_SIZE);
+        buttonContainer.add(backButton).width(BUTTON_SIZE).height(1 / 2f * BUTTON_SIZE);
+        buttonContainer.add(playButton).size(BUTTON_SIZE).padLeft(-BUTTON_SPACING).padRight(-BUTTON_SPACING);
+        buttonContainer.add(skipButton).width(BUTTON_SIZE).height(1 / 2f * BUTTON_SIZE);
+        buttonContainer.add(randomButton).size(1 / 2f * BUTTON_SIZE);
+        buttonContainer.add(volumeButton).size(1 / 2f * BUTTON_SIZE).padLeft(BUTTON_SPACING);
         container.add(buttonContainer).row();
+
+        NinePatchDrawable controlsBackground =
+                new NinePatchDrawable(new NinePatch(Assets.SKIN.getRegion("panel1"), 10, 10, 10, 10));
+        volumeSliderContainer.setBackground(controlsBackground);
+        volumeSliderContainer.add(volumeSlider).pad(SPACING);
+        volumeSliderContainer.toFront();
 
         creditsLabel.setFontScale(0.67f);
         creditsLabel.setAlignment(Align.center, Align.center);

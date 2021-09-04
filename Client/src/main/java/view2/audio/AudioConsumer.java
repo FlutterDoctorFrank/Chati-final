@@ -53,10 +53,7 @@ public class AudioConsumer {
                     }
                 }
 
-                System.out.println(musicStream.audioDataQueue.size());
-
                 int[] temp = new int[AudioManager.PACKET_SIZE];
-
                 // Mische das oberste Element aller Warteschlangen pro Producer zusammen, die bereit zum Abspielen sind.
                 final Set<ProducerQueue.AudioDataBlock> blocks = voiceDataBuffer.values().stream()
                         .filter(ProducerQueue::isReady)

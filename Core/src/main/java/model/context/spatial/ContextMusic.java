@@ -8,7 +8,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum ContextMusic implements Resource {
 
-    DREAMS("dreams", "bensound-dreams");
+    COUNTRYBODY("Countrybody", "bensound-countryboy"),
+    DREAMS("Dreams", "bensound-dreams"),
+    FUNNYSONG("Funnysong", "bensound-funnysong"),
+    HIPJAZZ("Hipjazz", "bensound-hipjazz"),
+    PUNKY("Punky", "bensound-punky"),
+    RETROSOUL("Retrosoul", "bensound-retrosoul");
 
     private static final String MUSIC_PATH = "music/";
 

@@ -58,9 +58,6 @@ public class MusicStreamer extends Interactable {
     /** Menü-Option zum Ein- und Ausschalten von zufällig abzuspielenden Musikstücken. */
     private static final int MENU_OPTION_RANDOM = 7;
 
-    /** Menü-Option, um die abzuspielende Stelle eines Musikstücks auszuwählen. */
-    private static final int MENU_OPTION_SET_POSITION = 8;
-
     private ByteBuffer musicStreamBuffer;
 
     private ContextMusic currentMusic;
@@ -186,9 +183,6 @@ public class MusicStreamer extends Interactable {
                     throw new IllegalMenuActionException("", "objects.music-player.illegal.random.argument");
                 }
                 this.isRandom = isRandom;
-                break;
-            case MENU_OPTION_SET_POSITION: // Setze die momentane Position im abgespielten Musikstück.
-                // TODO
                 break;
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
