@@ -1,12 +1,11 @@
 package view2.component.world.interactableMenu;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.context.ContextID;
@@ -16,7 +15,9 @@ import model.user.IInternUserView;
 import view2.Assets;
 import view2.Chati;
 
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.NoSuchElementException;
 
 public class MusicStreamerWindow extends InteractableWindow {
 
@@ -47,12 +48,11 @@ public class MusicStreamerWindow extends InteractableWindow {
     private static final float SPACING = 15;
     private static final float BUTTON_SPACING = 5;
     private static final float BUTTON_SIZE = 100;
-    private static final float BUTTON_SCALE_FACTOR = 0.1f;
-
-    private int pendingRespone;
+    private static final float BUTTON_SCALE_FACTOR = 0.05f;
 
     private Label infoLabel;
-    private List<MusicListItems> musicList;
+    private MusicListItem[] musicListItems;
+    private List<MusicListItem> musicList;
     private ScrollPane musicListScrollPane;
     private ImageButton playButton;
     private ImageButton stopButton;
@@ -74,6 +74,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
     @Override
     public void act(float delta) {
+        setSelectedMusic();
         setButtonImages();
         super.act(delta);
     }
@@ -83,9 +84,9 @@ public class MusicStreamerWindow extends InteractableWindow {
         infoLabel = new Label("Wähle einen Titel.", Assets.SKIN);
 
         musicList = new List<>(Assets.SKIN, "dimmed");
-        MusicListItems[] musicListItems = EnumSet.allOf(ContextMusic.class).stream()
-                .map(MusicListItems::new).toArray(MusicListItems[]::new);
+        musicListItems = EnumSet.allOf(ContextMusic.class).stream().map(MusicListItem::new).toArray(MusicListItem[]::new);
         musicList.setItems(musicListItems);
+        setSelectedMusic();
         musicList.getStyle().over = Assets.SKIN.getDrawable("list-selection");
         musicList.addListener(new ClickListener() {
             @Override
@@ -97,7 +98,6 @@ public class MusicStreamerWindow extends InteractableWindow {
                 if (musicList.getSelected() == null) {
                     return;
                 }
-                pendingRespone = MENU_OPTION_PLAY;
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
                         new String[] {musicList.getSelected().getMusic().getName()}, MENU_OPTION_PLAY);
             }
@@ -111,12 +111,26 @@ public class MusicStreamerWindow extends InteractableWindow {
         playButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                playButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                playButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
                         new String[0], MENU_OPTION_PAUSE);
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    playButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    playButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
             }
         });
 
@@ -127,12 +141,26 @@ public class MusicStreamerWindow extends InteractableWindow {
         stopButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                stopButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                stopButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
                         new String[0], MENU_OPTION_STOP);
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    stopButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    stopButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
             }
         });
 
@@ -143,12 +171,26 @@ public class MusicStreamerWindow extends InteractableWindow {
         backButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                backButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                backButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
                         new String[0], MENU_OPTION_PREVIOUS);
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    backButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    backButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
             }
         });
 
@@ -159,12 +201,26 @@ public class MusicStreamerWindow extends InteractableWindow {
         skipButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                skipButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                skipButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
                         new String[0], MENU_OPTION_NEXT);
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    skipButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    skipButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
             }
         });
 
@@ -175,12 +231,26 @@ public class MusicStreamerWindow extends InteractableWindow {
         loopingButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                loopingButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                loopingButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
                         new String[0], MENU_OPTION_LOOPING);
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    loopingButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    loopingButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
             }
         });
 
@@ -191,12 +261,26 @@ public class MusicStreamerWindow extends InteractableWindow {
         randomButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                randomButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                randomButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
                         new String[0], MENU_OPTION_RANDOM);
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    randomButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    randomButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
             }
         });
 
@@ -207,15 +291,29 @@ public class MusicStreamerWindow extends InteractableWindow {
         volumeButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                volumeButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                volumeButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
 
+            }
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    volumeButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
+                }
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (pointer == -1) {
+                    volumeButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+                }
             }
         });
 
-        musicProgressLabel = new Label("0:00", Assets.SKIN);
+        musicProgressLabel = new Label("0:00", Assets.SKIN); // TODO
         musicProgressBar = new ProgressBar(0, 1, 0.01f, false, Assets.SKIN);
 
         creditsLabel = new Label("Music by https://www.bensound.com", Assets.SKIN);
@@ -232,6 +330,7 @@ public class MusicStreamerWindow extends InteractableWindow {
             }
         });
 
+        setSelectedMusic();
         setButtonImages();
     }
 
@@ -258,12 +357,19 @@ public class MusicStreamerWindow extends InteractableWindow {
         Table buttonContainer = new Table();
         buttonContainer.defaults();
         buttonContainer.add(loopingButton).size(1 / 2f * BUTTON_SIZE).padRight(BUTTON_SPACING);
+        loopingButton.getImage().setOrigin(1 / 4f * BUTTON_SIZE, 1 / 4f * BUTTON_SIZE);
         buttonContainer.add(stopButton).size(1 / 2f * BUTTON_SIZE);
+        stopButton.getImage().setOrigin(1 / 4f * BUTTON_SIZE, 1 / 4f * BUTTON_SIZE);
         buttonContainer.add(backButton).width(BUTTON_SIZE).height(1 / 2f * BUTTON_SIZE);
+        backButton.getImage().setOrigin(1 / 2f * BUTTON_SIZE, 1 / 4f * BUTTON_SIZE);
         buttonContainer.add(playButton).size(BUTTON_SIZE).padLeft(-BUTTON_SPACING).padRight(-BUTTON_SPACING);
+        playButton.getImage().setOrigin(1 / 2f * BUTTON_SIZE, 1 / 2f * BUTTON_SIZE);
         buttonContainer.add(skipButton).width(BUTTON_SIZE).height(1 / 2f * BUTTON_SIZE);
+        skipButton.getImage().setOrigin(1 / 2f * BUTTON_SIZE, 1 / 4f * BUTTON_SIZE);
         buttonContainer.add(randomButton).size(1 / 2f * BUTTON_SIZE);
+        randomButton.getImage().setOrigin(1 / 4f * BUTTON_SIZE, 1 / 4f * BUTTON_SIZE);
         buttonContainer.add(volumeButton).size(1 / 2f * BUTTON_SIZE).padLeft(BUTTON_SPACING);
+        volumeButton.getImage().setOrigin(1 / 4f * BUTTON_SIZE, 1 / 4f * BUTTON_SIZE);
         container.add(buttonContainer).row();
 
         creditsLabel.setFontScale(0.67f);
@@ -281,6 +387,21 @@ public class MusicStreamerWindow extends InteractableWindow {
         }
     }
 
+    private void setSelectedMusic() {
+        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
+
+        if (Chati.CHATI.isMusicChanged() && internUser != null) {
+            MusicListItem item;
+            try {
+               item = Arrays.stream(musicListItems)
+                       .filter(selectItem -> selectItem.getMusic() == internUser.getMusic()).findFirst().orElseThrow();
+            } catch (NoSuchElementException e) {
+                item = null;
+            }
+            musicList.setSelected(item);
+        }
+    }
+
     private void setButtonImages() {
         IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
 
@@ -290,9 +411,9 @@ public class MusicStreamerWindow extends InteractableWindow {
             enableButton(backButton);
             enableButton(skipButton);
             if (Chati.CHATI.getAudioManager().isPlayingMusic()) {
-                playButton.getStyle().up = Assets.PAUSE_BUTTON_IMAGE;
+                playButton.getStyle().imageUp = Assets.PAUSE_BUTTON_IMAGE;
             } else {
-                playButton.getStyle().up = Assets.PLAY_BUTTON_IMAGE;
+                playButton.getStyle().imageUp = Assets.PLAY_BUTTON_IMAGE;
             }
         } else {
             disableButton(playButton);
@@ -312,11 +433,11 @@ public class MusicStreamerWindow extends InteractableWindow {
         button.setTouchable(Touchable.disabled);
     }
 
-    private static class MusicListItems {
+    private static class MusicListItem {
 
         private final ContextMusic music;
 
-        public MusicListItems(ContextMusic music) {
+        public MusicListItem(ContextMusic music) {
             this.music = music;
         }
 
