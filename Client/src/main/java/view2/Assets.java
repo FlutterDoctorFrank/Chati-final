@@ -62,7 +62,6 @@ public class Assets {
     public static final TextureRegionDrawable DECLINED_NOTIFICATION_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/declined.png")));
     public static final TextureRegionDrawable PENDING_NOTIFICATION_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/pending.png")));
 
-
     public static final TextureRegionDrawable ACCEPT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_accept_color.png")));
     public static final TextureRegionDrawable DISABLED_ACCEPT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_accept_grey.png")));
     public static final TextureRegionDrawable DECLINE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_decline_color.png")));
@@ -70,6 +69,25 @@ public class Assets {
     public static final TextureRegionDrawable DELETE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/new_delete_color.png")));
 
     public static final TextureRegionDrawable COMMUNICABLE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/communicable.png")));
+
+    public static final TextureRegionDrawable PLAY_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/play.png")));
+    public static final TextureRegionDrawable PAUSE_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/pause.png")));
+    public static final TextureRegionDrawable PREVIOUS_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/back.png")));
+    public static final TextureRegionDrawable NEXT_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/skip.png")));
+    public static final TextureRegionDrawable STOP_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/stop.png")));
+    public static final TextureRegionDrawable LOOPING_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/loop.png")));
+    public static final TextureRegionDrawable RANDOM_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/random.png")));
+    public static final TextureRegionDrawable VOLUME_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/volume.png")));
+
+    public static final TextureRegionDrawable DISABLED_PLAY_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/play.grey.png")));
+    public static final TextureRegionDrawable DISABLED_PAUSE_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/pause.grey.png")));
+    public static final TextureRegionDrawable DISABLED_PREVIOUS_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/back.grey.png")));
+    public static final TextureRegionDrawable DISABLED_NEXT_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/skip.grey.png")));
+    public static final TextureRegionDrawable DISABLED_STOP_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/stop.grey.png")));
+    public static final TextureRegionDrawable DISABLED_LOOPING_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/loop.grey.png")));
+    public static final TextureRegionDrawable DISABLED_RANDOM_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/random.grey.png")));
+    public static final TextureRegionDrawable DISABLED_VOLUME_BUTTON_IMAGE = new TextureRegionDrawable(new TextureRegion(new Texture("icons/volume.grey.png")));
+
 
     public static final Skin SKIN = new Skin();
     private static final int TITLE_FONT_SIZE = 22;

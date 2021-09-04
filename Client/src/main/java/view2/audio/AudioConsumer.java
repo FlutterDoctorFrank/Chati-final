@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class AudioConsumer {
 
     private static final int MIN_PACKETS = 6;
+    private static final int MAX_PACKETS = 30;
 
     private final Map<IUserView, ProducerQueue> voiceDataBuffer;
     private final ProducerQueue musicStream;
@@ -40,7 +41,6 @@ public class AudioConsumer {
 
         Thread mixAndPlaybackThread = new Thread(() -> {
             short[] mixedData = new short[AudioManager.PACKET_SIZE];
-
             while (isRunning) {
                 synchronized (this) {
                     // Warte, solange keine Daten vorhanden sind.
@@ -52,6 +52,8 @@ public class AudioConsumer {
                         }
                     }
                 }
+
+                System.out.println(musicStream.audioDataQueue.size());
 
                 int[] temp = new int[AudioManager.PACKET_SIZE];
 
@@ -67,7 +69,6 @@ public class AudioConsumer {
                     }
                     blocks.add(musicBlock);
                 }
-
                 if (blocks.size() == 0) {
                     continue;
                 }
@@ -86,7 +87,6 @@ public class AudioConsumer {
                     mixedData[i] = (short) temp[i];
                 }
                 player.writeSamples(mixedData, 0, mixedData.length);
-
                 voiceDataBuffer.values().removeIf(Predicate.not(ProducerQueue::hasData));
             }
         });
