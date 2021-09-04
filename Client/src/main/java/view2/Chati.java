@@ -11,7 +11,9 @@ import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 import model.exception.UserNotFoundException;
+import model.user.IInternUserView;
 import model.user.IUserManagerView;
+import model.user.IUserView;
 import org.jetbrains.annotations.Nullable;
 import view2.audio.AudioManager;
 import view2.component.AbstractScreen;
@@ -35,6 +37,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private AudioManager audioManager;
     private MenuScreen menuScreen;
     private WorldScreen worldScreen;
+    private SpriteBatch spriteBatch;
+    private ChatiPreferences preferences;
+    private ChatiAssetManager assetManager;
 
     private boolean loggedIn;
 
@@ -76,8 +81,21 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public void create() {
         Settings.initialize();
         Assets.initialize();
+
+        new ChatiAssetManager();
+
         SPRITE_BATCH = new SpriteBatch();
         this.audioManager = new AudioManager();
+        this.menuScreen = new MenuScreen();
+        this.worldScreen = new WorldScreen();
+        setScreen(menuScreen);
+    }
+
+    public void newCreate() {
+        this.assetManager = new ChatiAssetManager();
+        this.preferences = new ChatiPreferences();
+        this.audioManager = new AudioManager();
+        this.spriteBatch = new SpriteBatch();
         this.menuScreen = new MenuScreen();
         this.worldScreen = new WorldScreen();
         setScreen(menuScreen);
@@ -102,16 +120,37 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return null;
     }
 
-    public AudioManager getAudioManager() {
-        return audioManager;
-    }
-
     public ServerSender getServerSender() {
         return serverSender;
     }
 
+
+    public SpriteBatch getSpriteBatch() {
+        return spriteBatch;
+    }
+
+    public ChatiAssetManager getAssetManager() {
+        return assetManager;
+    }
+
+    public ChatiPreferences getPreferences() {
+        return null;
+    }
+
+    public AudioManager getAudioManager() {
+        return audioManager;
+    }
+
     public IUserManagerView getUserManager() {
         return userManager;
+    }
+
+    public IInternUserView getInternUser() {
+        return userManager.getInternUserView();
+    }
+
+    public void send(ServerSender.SendAction action, Object... objects) {
+        serverSender.send(action, objects);
     }
 
     @Override

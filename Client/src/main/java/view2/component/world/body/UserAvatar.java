@@ -233,7 +233,7 @@ public class UserAvatar extends Sprite {
         public InteractButtonAnimation() {
             buttonStateTimer = 0;
             Array<TextureRegion> frames = new Array<>();
-            TextureAtlas buttonAtlas = new TextureAtlas("icons/interact_button/rotating_button.pack");
+            TextureAtlas buttonAtlas = new TextureAtlas("interact_button/rotating_button.pack");
             for (int i = 0; i < 4; i++) {
                 frames.add(new TextureRegion(buttonAtlas.findRegion("button"), i * 16, 0, 16, 16));
             }

@@ -1,13 +1,9 @@
 package view.Sprites;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import view.Chati;
-import view.Screens.ApplicationScreen;
 
 import java.util.UUID;
 
@@ -190,7 +186,7 @@ public class Avatar extends Sprite {
         public InteractButtonAnimation() {
             buttonStateTimer = 0;
             Array<TextureRegion> frames = new Array<TextureRegion>();
-            TextureAtlas buttonAtlas = new TextureAtlas("icons/interact_button/rotating_button.pack");
+            TextureAtlas buttonAtlas = new TextureAtlas("interact_button/rotating_button.pack");
             for (int i = 0; i < 4; i++) {
                 frames.add(new TextureRegion(buttonAtlas.findRegion("button"), i * 16, 0, 16, 16));
             }

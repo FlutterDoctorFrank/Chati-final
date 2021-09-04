@@ -1,0 +1,598 @@
+
+image_atlas.png
+size: 1024, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+music_back_disabled
+  rotate: false
+  xy: 339, 271
+  size: 365, 200
+  orig: 365, 200
+  offset: 0, 0
+  index: -1
+music_pause
+  rotate: false
+  xy: 2, 676
+  size: 335, 335
+  orig: 335, 335
+  offset: 0, 0
+  index: -1
+music_pause_disabled
+  rotate: false
+  xy: 2, 339
+  size: 335, 335
+  orig: 335, 335
+  offset: 0, 0
+  index: -1
+music_play
+  rotate: false
+  xy: 339, 676
+  size: 335, 335
+  orig: 335, 335
+  offset: 0, 0
+  index: -1
+music_play_disabled
+  rotate: false
+  xy: 2, 2
+  size: 335, 335
+  orig: 335, 335
+  offset: 0, 0
+  index: -1
+music_skip
+  rotate: false
+  xy: 339, 473
+  size: 365, 201
+  orig: 365, 201
+  offset: 0, 0
+  index: -1
+music_skip_disabled
+  rotate: false
+  xy: 339, 69
+  size: 365, 200
+  orig: 365, 200
+  offset: 0, 0
+  index: -1
+notification_accepted
+  rotate: false
+  xy: 918, 144
+  size: 104, 93
+  orig: 104, 93
+  offset: 0, 0
+  index: -1
+notification_declined
+  rotate: false
+  xy: 918, 37
+  size: 97, 105
+  orig: 97, 105
+  offset: 0, 0
+  index: -1
+notification_pending
+  rotate: false
+  xy: 934, 918
+  size: 41, 93
+  orig: 41, 93
+  offset: 0, 0
+  index: -1
+status_away
+  rotate: false
+  xy: 676, 755
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+status_busy
+  rotate: false
+  xy: 706, 497
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+status_invisible
+  rotate: false
+  xy: 706, 239
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+uncommunicable_avatar
+  rotate: false
+  xy: 706, 58
+  size: 210, 179
+  orig: 210, 179
+  offset: 0, 0
+  index: -1
+
+image_atlas2.png
+size: 1024, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+chat_closed
+  rotate: false
+  xy: 254, 346
+  size: 208, 168
+  orig: 208, 168
+  offset: 0, 0
+  index: -1
+chat_open
+  rotate: false
+  xy: 512, 373
+  size: 209, 167
+  orig: 209, 167
+  offset: 0, 0
+  index: -1
+communicable_avatar
+  rotate: false
+  xy: 834, 3
+  size: 158, 166
+  orig: 158, 166
+  offset: 0, 0
+  index: -1
+communicable_list_closed
+  rotate: false
+  xy: 673, 2
+  size: 159, 167
+  orig: 159, 167
+  offset: 0, 0
+  index: -1
+current_room
+  rotate: false
+  xy: 260, 516
+  size: 250, 248
+  orig: 250, 248
+  offset: 0, 0
+  index: -1
+current_world
+  rotate: false
+  xy: 2, 316
+  size: 250, 247
+  orig: 250, 247
+  offset: 0, 0
+  index: -1
+microphone_off
+  rotate: false
+  xy: 512, 542
+  size: 207, 222
+  orig: 207, 222
+  offset: 0, 0
+  index: -1
+microphone_on
+  rotate: false
+  xy: 627, 800
+  size: 203, 222
+  orig: 203, 222
+  offset: 0, 0
+  index: -1
+music_back
+  rotate: false
+  xy: 2, 823
+  size: 365, 199
+  orig: 365, 199
+  offset: 0, 0
+  index: -1
+music_loop
+  rotate: false
+  xy: 2, 114
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+music_loop_disabled
+  rotate: false
+  xy: 673, 171
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+music_random
+  rotate: false
+  xy: 254, 141
+  size: 202, 203
+  orig: 202, 203
+  offset: 0, 0
+  index: -1
+notification_new
+  rotate: false
+  xy: 458, 9
+  size: 160, 152
+  orig: 160, 152
+  offset: 0, 0
+  index: -1
+role_administrator
+  rotate: false
+  xy: 832, 894
+  size: 190, 128
+  orig: 190, 128
+  offset: 0, 0
+  index: -1
+role_area_manager
+  rotate: false
+  xy: 204, 11
+  size: 190, 128
+  orig: 190, 128
+  offset: 0, 0
+  index: -1
+sound_off
+  rotate: false
+  xy: 721, 583
+  size: 202, 215
+  orig: 202, 215
+  offset: 0, 0
+  index: -1
+sound_on
+  rotate: false
+  xy: 464, 163
+  size: 207, 208
+  orig: 207, 208
+  offset: 0, 0
+  index: -1
+status_offline
+  rotate: false
+  xy: 369, 766
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+status_online
+  rotate: false
+  xy: 2, 565
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+user_menu_closed
+  rotate: false
+  xy: 723, 376
+  size: 199, 205
+  orig: 199, 205
+  offset: 0, 0
+  index: -1
+
+image_atlas3.png
+size: 1024, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+action_add_friend
+  rotate: false
+  xy: 2, 2
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_add_friend_disabled
+  rotate: false
+  xy: 193, 2
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_assign_moderator
+  rotate: false
+  xy: 384, 7
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_assign_moderator_disabled
+  rotate: false
+  xy: 402, 416
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_ban_user
+  rotate: false
+  xy: 403, 623
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_ban_user_disabled
+  rotate: false
+  xy: 404, 825
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_ignore_user
+  rotate: false
+  xy: 406, 225
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_ignore_user_disabled
+  rotate: false
+  xy: 593, 432
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_invite_user
+  rotate: false
+  xy: 594, 634
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_invite_user_disabled
+  rotate: false
+  xy: 595, 825
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_kick_user
+  rotate: false
+  xy: 575, 34
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_kick_user_disabled
+  rotate: false
+  xy: 597, 241
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_mute_user
+  rotate: false
+  xy: 784, 443
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_mute_user_disabled
+  rotate: false
+  xy: 785, 634
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_remove_friend
+  rotate: false
+  xy: 786, 825
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+music_random_disabled
+  rotate: false
+  xy: 2, 193
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+music_stop
+  rotate: false
+  xy: 200, 400
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+music_stop_disabled
+  rotate: false
+  xy: 201, 607
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+music_volume
+  rotate: false
+  xy: 202, 814
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+music_volume_disabled
+  rotate: false
+  xy: 204, 198
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+notification_menu_closed
+  rotate: false
+  xy: 2, 395
+  size: 196, 205
+  orig: 196, 205
+  offset: 0, 0
+  index: -1
+notification_menu_open
+  rotate: false
+  xy: 2, 602
+  size: 197, 205
+  orig: 197, 205
+  offset: 0, 0
+  index: -1
+role_moderator
+  rotate: false
+  xy: 788, 313
+  size: 190, 128
+  orig: 190, 128
+  offset: 0, 0
+  index: -1
+role_owner
+  rotate: false
+  xy: 788, 183
+  size: 190, 128
+  orig: 190, 128
+  offset: 0, 0
+  index: -1
+settings_menu_closed
+  rotate: false
+  xy: 766, 8
+  size: 172, 173
+  orig: 172, 173
+  offset: 0, 0
+  index: -1
+user_menu_open
+  rotate: false
+  xy: 2, 809
+  size: 198, 205
+  orig: 198, 205
+  offset: 0, 0
+  index: -1
+
+image_atlas4.png
+size: 1024, 1024
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+action_remove_friend_disabled
+  rotate: false
+  xy: 2, 766
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_report_user
+  rotate: false
+  xy: 2, 575
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_report_user_disabled
+  rotate: false
+  xy: 193, 766
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_teleport_to_user
+  rotate: false
+  xy: 2, 384
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_teleport_to_user_disabled
+  rotate: false
+  xy: 193, 575
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_unban_user
+  rotate: false
+  xy: 384, 766
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_unban_user_disabled
+  rotate: false
+  xy: 2, 193
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_unignore_user
+  rotate: false
+  xy: 193, 384
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_unignore_user_disabled
+  rotate: false
+  xy: 384, 575
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_unmute_user
+  rotate: false
+  xy: 575, 766
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_unmute_user_disabled
+  rotate: false
+  xy: 2, 2
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_withdraw_moderator
+  rotate: false
+  xy: 193, 193
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+action_withdraw_moderator_disabled
+  rotate: false
+  xy: 384, 384
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+communicable_list_open
+  rotate: false
+  xy: 575, 216
+  size: 158, 166
+  orig: 158, 166
+  offset: 0, 0
+  index: -1
+notification_action_accept
+  rotate: false
+  xy: 575, 575
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+notification_action_accept_disabled
+  rotate: false
+  xy: 766, 766
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+notification_action_decline
+  rotate: false
+  xy: 193, 2
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+notification_action_decline_disabled
+  rotate: false
+  xy: 384, 193
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+notification_action_delete
+  rotate: false
+  xy: 575, 384
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+notification_action_delete_disabled
+  rotate: false
+  xy: 766, 575
+  size: 189, 189
+  orig: 189, 189
+  offset: 0, 0
+  index: -1
+role_room_owner
+  rotate: false
+  xy: 766, 445
+  size: 190, 128
+  orig: 190, 128
+  offset: 0, 0
+  index: -1
+settings_menu_open
+  rotate: false
+  xy: 384, 18
+  size: 172, 173
+  orig: 172, 173
+  offset: 0, 0
+  index: -1
