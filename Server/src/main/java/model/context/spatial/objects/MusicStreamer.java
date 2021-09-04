@@ -124,6 +124,7 @@ public class MusicStreamer extends Interactable {
                 synchronized (this) {
                     notifyAll();
                 }
+                getParent().playMusic(music);
                 break;
             case MENU_OPTION_PAUSE: // Pausiere das Abspielen des Musikstücks oder setze es fort, falls es pausiert ist.
                 if (musicStreamBuffer == null || !isRunning) {
@@ -144,6 +145,7 @@ public class MusicStreamer extends Interactable {
                 }
                 isPaused = true;
                 musicStreamBuffer.position(0);
+                getParent().stopMusic();
                 break;
             case MENU_OPTION_PREVIOUS: // Beginne das momentane Musikstück von vorn, oder spiele das letzte ab, falls
                                         // das momentane am Anfang ist.

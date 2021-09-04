@@ -235,9 +235,7 @@ public class WorldScreen extends AbstractScreen {
         if (currentInteractableWindow == null) {
             return;
         }
-        if (!success) {
-            currentInteractableWindow.showMessage(messageKey);
-        }
+        currentInteractableWindow.receiveResponse(success, messageKey);
     }
 
     public void updatePrivateRooms(Map<ContextID, String> privateRooms) {

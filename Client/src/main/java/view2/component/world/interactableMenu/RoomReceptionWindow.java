@@ -68,15 +68,17 @@ public class RoomReceptionWindow extends InteractableWindow {
         setCurrentTable(new RoomSelectTable());
     }
 
-    @Override
-    public void showMessage(String messageKey) {
-        currentTable.showMessage(messageKey);
-    }
-
     public void setCurrentTable(MenuTable table) {
         removeActor(currentTable);
         currentTable = table;
         addActor(currentTable);
+    }
+
+    @Override
+    public void receiveResponse(boolean success, String messageKey) {
+        if (!success) {
+            currentTable.showMessage(messageKey);
+        }
     }
 
     private class RoomSelectTable extends MenuTable {

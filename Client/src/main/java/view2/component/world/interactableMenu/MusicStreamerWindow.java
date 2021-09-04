@@ -3,6 +3,7 @@ package view2.component.world.interactableMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -11,6 +12,7 @@ import controller.network.ServerSender;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 import model.context.spatial.ContextMusic;
+import model.user.IInternUserView;
 import view2.Assets;
 import view2.Chati;
 
@@ -47,8 +49,9 @@ public class MusicStreamerWindow extends InteractableWindow {
     private static final float BUTTON_SIZE = 100;
     private static final float BUTTON_SCALE_FACTOR = 0.1f;
 
+    private int pendingRespone;
+
     private Label infoLabel;
-    private Label musicSelectLabel;
     private List<MusicListItems> musicList;
     private ScrollPane musicListScrollPane;
     private ImageButton playButton;
@@ -58,8 +61,6 @@ public class MusicStreamerWindow extends InteractableWindow {
     private ImageButton loopingButton;
     private ImageButton randomButton;
     private ImageButton volumeButton;
-    private Table volumeSliderContainer;
-    private Slider volumeSlider;
     private ProgressBar musicProgressBar;
     private Label musicProgressLabel;
     private Label creditsLabel;
@@ -72,10 +73,14 @@ public class MusicStreamerWindow extends InteractableWindow {
     }
 
     @Override
-    protected void create() {
-        infoLabel = new Label("Spiele Musik ab!", Assets.SKIN);
+    public void act(float delta) {
+        setButtonImages();
+        super.act(delta);
+    }
 
-        musicSelectLabel = new Label("Musik: ", Assets.SKIN);
+    @Override
+    protected void create() {
+        infoLabel = new Label("Wähle einen Titel.", Assets.SKIN);
 
         musicList = new List<>(Assets.SKIN, "dimmed");
         MusicListItems[] musicListItems = EnumSet.allOf(ContextMusic.class).stream()
@@ -92,6 +97,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 if (musicList.getSelected() == null) {
                     return;
                 }
+                pendingRespone = MENU_OPTION_PLAY;
                 Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
                         new String[] {musicList.getSelected().getMusic().getName()}, MENU_OPTION_PLAY);
             }
@@ -100,7 +106,6 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         ImageButton.ImageButtonStyle playButtonStyle = new ImageButton.ImageButtonStyle();
         playButtonStyle.imageUp = Assets.PLAY_BUTTON_IMAGE;
-        playButtonStyle.imageChecked = Assets.PAUSE_BUTTON_IMAGE;
         playButtonStyle.imageDisabled = Assets.DISABLED_PLAY_BUTTON_IMAGE;
         playButton = new ImageButton(playButtonStyle);
         playButton.addListener(new ClickListener() {
@@ -206,17 +211,9 @@ public class MusicStreamerWindow extends InteractableWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (!volumeSliderContainer.hasParent()) {
-                    add(volumeSliderContainer);
-                } else {
-                    volumeSliderContainer.remove();
-                }
+
             }
         });
-
-        volumeSliderContainer = new Table();
-        volumeSlider = new Slider(0, 1, 0.01f, true, Assets.SKIN);
-        // TODO
 
         musicProgressLabel = new Label("0:00", Assets.SKIN);
         musicProgressBar = new ProgressBar(0, 1, 0.01f, false, Assets.SKIN);
@@ -234,6 +231,8 @@ public class MusicStreamerWindow extends InteractableWindow {
                 close();
             }
         });
+
+        setButtonImages();
     }
 
     @Override
@@ -267,12 +266,6 @@ public class MusicStreamerWindow extends InteractableWindow {
         buttonContainer.add(volumeButton).size(1 / 2f * BUTTON_SIZE).padLeft(BUTTON_SPACING);
         container.add(buttonContainer).row();
 
-        NinePatchDrawable controlsBackground =
-                new NinePatchDrawable(new NinePatch(Assets.SKIN.getRegion("panel1"), 10, 10, 10, 10));
-        volumeSliderContainer.setBackground(controlsBackground);
-        volumeSliderContainer.add(volumeSlider).pad(SPACING);
-        volumeSliderContainer.toFront();
-
         creditsLabel.setFontScale(0.67f);
         creditsLabel.setAlignment(Align.center, Align.center);
         container.add(creditsLabel);
@@ -282,8 +275,41 @@ public class MusicStreamerWindow extends InteractableWindow {
     }
 
     @Override
-    public void showMessage(String messageKey) {
-        infoLabel.setText(messageKey);
+    public void receiveResponse(boolean success, String messageKey) {
+        if (!success) {
+            infoLabel.setText(messageKey);
+        }
+    }
+
+    private void setButtonImages() {
+        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
+
+        if (internUser != null && internUser.getMusic() != null) {
+            enableButton(playButton);
+            enableButton(stopButton);
+            enableButton(backButton);
+            enableButton(skipButton);
+            if (Chati.CHATI.getAudioManager().isPlayingMusic()) {
+                playButton.getStyle().up = Assets.PAUSE_BUTTON_IMAGE;
+            } else {
+                playButton.getStyle().up = Assets.PLAY_BUTTON_IMAGE;
+            }
+        } else {
+            disableButton(playButton);
+            disableButton(stopButton);
+            disableButton(backButton);
+            disableButton(skipButton);
+        }
+    }
+
+    private void enableButton(Button button) {
+        button.setDisabled(false);
+        button.setTouchable(Touchable.enabled);
+    }
+
+    private void disableButton(Button button) {
+        button.setDisabled(true);
+        button.setTouchable(Touchable.disabled);
     }
 
     private static class MusicListItems {

@@ -155,7 +155,9 @@ public class MusicPlayerWindow extends InteractableWindow {
     }
 
     @Override
-    public void showMessage(String messageKey) {
-        infoLabel.setText(messageKey);
+    public void receiveResponse(boolean success, String messageKey) {
+        if (!success) {
+            infoLabel.setText(messageKey);
+        }
     }
 }

@@ -105,6 +105,10 @@ public class AudioConsumer {
         }
     }
 
+    public boolean isPlayingMusic() {
+        return musicStream.hasData();
+    }
+
     public void receiveVoiceData(UUID userId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
         if (!isRunning) {
             return;

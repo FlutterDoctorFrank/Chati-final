@@ -123,7 +123,12 @@ public class AudioManager {
         }
     }
 
+    public boolean isPlayingMusic() {
+        return audioConsumer.isPlayingMusic();
+    }
+
     private void playMusic(ContextMusic contextMusic) {
+        /*
         if (contextMusic != null) {
             currentMusic = Gdx.audio.newMusic(Gdx.files.internal(contextMusic.getPath()));
             currentMusic.setLooping(false);
@@ -137,6 +142,7 @@ public class AudioManager {
                 currentMusic = null;
             }
         }
+         */
     }
 
     public static byte[] toByte(short[] shorts, boolean bigEndian) {

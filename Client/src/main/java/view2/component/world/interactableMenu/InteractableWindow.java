@@ -28,7 +28,7 @@ public abstract class InteractableWindow extends AbstractWindow {
         return interactableMenu;
     }
 
-    public abstract void showMessage(String messageKey);
+    public abstract void receiveResponse(boolean success, String messageKey);
 
     @Override
     public void close() {

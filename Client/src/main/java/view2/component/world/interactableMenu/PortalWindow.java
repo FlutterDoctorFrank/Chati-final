@@ -95,7 +95,7 @@ public class PortalWindow extends InteractableWindow {
     }
 
     @Override
-    public void showMessage(String messageKey) {
+    public void receiveResponse(boolean success, String messageKey) {
 
     }
 }
