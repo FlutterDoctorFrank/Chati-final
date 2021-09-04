@@ -82,8 +82,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         Settings.initialize();
         Assets.initialize();
 
-        new ChatiAssetManager();
-
         SPRITE_BATCH = new SpriteBatch();
         this.audioManager = new AudioManager();
         this.menuScreen = new MenuScreen();
