@@ -21,6 +21,12 @@ public class Assets {
     public static final TextureRegionDrawable CHECKED_SETTINGS_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/settingsIconChecked.png")));
     public static final TextureRegionDrawable CHAT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/chatIcon.png")));
     public static final TextureRegionDrawable CHECKED_CHAT_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/chatIcon_checked.png")));
+    public static final TextureRegionDrawable COMMUNICABLE_LIST_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/communicable_grey.png")));
+    public static final TextureRegionDrawable CHECKED_COMMUNICABLE_LIST_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/communicable_grey.checked.png")));
+    public static final TextureRegionDrawable MIC_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/mic_on.png")));
+    public static final TextureRegionDrawable CHECKED_MIC_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/mic_off.png")));
+    public static final TextureRegionDrawable SPEAKER_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/sound_on.png")));
+    public static final TextureRegionDrawable CHECKED_SPEAKER_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/sound_off.png")));
 
     public static final TextureRegionDrawable ONLINE_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/online.png")));
     public static final TextureRegionDrawable AWAY_ICON = new TextureRegionDrawable(new TextureRegion(new Texture("icons/away.png")));

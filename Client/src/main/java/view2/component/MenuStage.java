@@ -55,6 +55,8 @@ public class MenuStage extends Stage {
                 openWindows.peek().close();
             } else if (HeadUpDisplay.getInstance().isChatOpen()) {
                 HeadUpDisplay.getInstance().hideChatWindow();
+            } else if (HeadUpDisplay.getInstance().isCommunicationWindowOpen()) {
+                HeadUpDisplay.getInstance().closeCommunicableUserWindow();
             } else if (HeadUpDisplay.getInstance().isMenuOpen()) {
                 HeadUpDisplay.getInstance().closeCurrentMenu();
             } else {

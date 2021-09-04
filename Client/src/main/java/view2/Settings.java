@@ -10,6 +10,7 @@ public class Settings {
     public static final String DEFAULT_LANGUAGE = "German";
     public static final boolean DEFAULT_SHOW_NAMES_IN_WORLD = true;
     public static final boolean DEFAULT_MICROPHONE_ON = true;
+    public static final boolean DEFAULT_SOUND_ON = true;
     public static final boolean DEFAULT_PUSH_TO_TALK = false;
     public static final float DEFAULT_TOTAL_VOLUME = 0.5f;
     public static final float DEFAULT_VOICE_VOLUME = 0.5f;
@@ -19,6 +20,7 @@ public class Settings {
     private static String LANGUAGE;
     private static boolean SHOW_NAMES_IN_WORLD;
     private static boolean MICROPHONE_ON;
+    private static boolean SOUND_ON;
     private static boolean PUSH_TO_TALK;
     private static float TOTAL_VOLUME;
     private static float VOICE_VOLUME;
@@ -36,6 +38,7 @@ public class Settings {
         LANGUAGE = PREFERENCES.getString("language", DEFAULT_LANGUAGE);
         SHOW_NAMES_IN_WORLD = PREFERENCES.getBoolean("show_names", DEFAULT_SHOW_NAMES_IN_WORLD);
         MICROPHONE_ON = PREFERENCES.getBoolean("microphone_on", DEFAULT_MICROPHONE_ON);
+        SOUND_ON = PREFERENCES.getBoolean("sound_on", DEFAULT_SOUND_ON);
         PUSH_TO_TALK = PREFERENCES.getBoolean("push_to_talk", DEFAULT_PUSH_TO_TALK);
         TOTAL_VOLUME = PREFERENCES.getFloat("total_volume", DEFAULT_TOTAL_VOLUME);
         VOICE_VOLUME = PREFERENCES.getFloat("voice_volume", DEFAULT_VOICE_VOLUME);
@@ -52,6 +55,12 @@ public class Settings {
     public static void setShowNamesInWorld(boolean showNamesInWorld) {
         SHOW_NAMES_IN_WORLD = showNamesInWorld;
         PREFERENCES.putBoolean("show_names", SHOW_NAMES_IN_WORLD);
+        PREFERENCES.flush();
+    }
+
+    public static void setSoundOn(boolean soundOn) {
+        SOUND_ON = soundOn;
+        PREFERENCES.putBoolean("sound_on", SOUND_ON);
         PREFERENCES.flush();
     }
 
@@ -101,6 +110,10 @@ public class Settings {
 
     public static boolean getShowNamesInWorld() {
         return SHOW_NAMES_IN_WORLD;
+    }
+
+    public static boolean isSoundOn() {
+        return SOUND_ON;
     }
 
     public static boolean isMicrophoneOn() {

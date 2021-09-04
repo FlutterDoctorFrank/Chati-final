@@ -41,7 +41,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
     private final IUserView user;
 
-    protected UserListEntry(IUserView user) {
+    public UserListEntry(IUserView user) {
         this.user = user;
         create();
         setLayout();

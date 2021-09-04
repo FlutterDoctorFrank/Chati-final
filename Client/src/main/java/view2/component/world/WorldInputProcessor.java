@@ -97,32 +97,16 @@ public class WorldInputProcessor implements InputProcessor {
     public boolean isDirectionPressed(Direction direction) {
         switch (direction) {
             case UP:
-                return isMoveUpPressed();
+                return moveUpPressed && KeyAction.MOVE_UP.isPressed();
             case LEFT:
-                return isMoveLeftPressed();
+                return moveLeftPressed && KeyAction.MOVE_LEFT.isPressed();
             case DOWN:
-                return isMoveDownPressed();
+                return moveDownPressed && KeyAction.MOVE_DOWN.isPressed();
             case RIGHT:
-                return isMoveRightPressed();
+                return moveRightPressed && KeyAction.MOVE_RIGHT.isPressed();
             default:
                 return false;
         }
-    }
-
-    public boolean isMoveUpPressed() {
-        return moveUpPressed && KeyAction.MOVE_UP.isPressed();
-    }
-
-    public boolean isMoveLeftPressed() {
-        return moveLeftPressed && KeyAction.MOVE_LEFT.isPressed();
-    }
-
-    public boolean isMoveDownPressed() {
-        return moveDownPressed && KeyAction.MOVE_DOWN.isPressed();
-    }
-
-    public boolean isMoveRightPressed() {
-        return moveRightPressed && KeyAction.MOVE_RIGHT.isPressed();
     }
 
     public boolean isSprintPressed() {
