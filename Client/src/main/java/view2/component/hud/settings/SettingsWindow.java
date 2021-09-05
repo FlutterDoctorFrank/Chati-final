@@ -1,14 +1,15 @@
 package view2.component.hud.settings;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import model.role.Permission;
 import model.user.IInternUserView;
-import view2.Assets;
 import view2.Chati;
+import view2.component.ChatiTextButton;
 import view2.component.hud.HudMenuWindow;
 import view2.component.menu.table.LoginTable;
 import view2.component.menu.table.StartTable;
@@ -19,18 +20,129 @@ public class SettingsWindow extends HudMenuWindow {
     private static final float HORIZONTAL_SPACING = 20;
     private static final float BOTTOM_SPACING  = 7.5f;
 
-    private TextButton languageSelectMenuButton;
-    private TextButton volumeChangeMenuButton;
-    private TextButton worldSettingsButton;
-    private TextButton administratorManageMenuButton;
-    private TextButton leaveWorldButton;
-    private TextButton logoutButton;
-    private TextButton closeApplicationButton;
+    private final ChatiTextButton administratorManageMenuButton;
+    private final ChatiTextButton leaveWorldButton;
+    private final ChatiTextButton logoutButton;
 
     public SettingsWindow() {
         super("Einstellungen");
-        create();
-        setLayout();
+
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+
+        ChatiTextButton languageSelectMenuButton = new ChatiTextButton("Sprache wählen", false);
+        languageSelectMenuButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                new LanguageSelectWindow().open();
+            }
+        });
+
+        ChatiTextButton volumeChangeMenuButton = new ChatiTextButton("Lautstärke anpassen", false);
+        volumeChangeMenuButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                new VolumeChangeWindow().open();
+            }
+        });
+
+        ChatiTextButton worldSettingsButton = new ChatiTextButton("Welteinstellungen", false);
+        worldSettingsButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                new WorldSettingsWindow().open();
+            }
+        });
+
+        administratorManageMenuButton = new ChatiTextButton("Administratoren verwalten", false);
+        if (internUser == null || !internUser.hasPermission(Permission.ASSIGN_ADMINISTRATOR)) {
+            disableButton(administratorManageMenuButton);
+        }
+        administratorManageMenuButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                new AdministratorManageWindow().open();
+            }
+        });
+
+        leaveWorldButton = new ChatiTextButton("Welt verlassen", false);
+        if (internUser == null || internUser.getCurrentWorld() == null) {
+            disableButton(leaveWorldButton);
+        }
+        leaveWorldButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                disableButton(leaveWorldButton);
+                IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
+                if (internUser == null || internUser.getCurrentWorld() == null) {
+                    return;
+                }
+                Chati.CHATI.send(ServerSender.SendAction.WORLD_ACTION, internUser.getCurrentWorld().getContextId(), false);
+                Chati.CHATI.setScreen(Chati.CHATI.getMenuScreen());
+                Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
+            }
+        });
+
+        logoutButton = new ChatiTextButton("Abmelden", false);
+        if (internUser == null) {
+            disableButton(logoutButton);
+        }
+        logoutButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                disableButton(logoutButton);
+                Chati.CHATI.send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
+                if (!Chati.CHATI.getScreen().equals(Chati.CHATI.getMenuScreen())) {
+                    Chati.CHATI.setScreen(Chati.CHATI.getMenuScreen());
+                }
+                Chati.CHATI.getMenuScreen().setMenuTable(new LoginTable());
+            }
+        });
+
+        ChatiTextButton quitButton = new ChatiTextButton("Beenden", false);
+        quitButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.app.exit();
+            }
+        });
+
+        // Layout
+        defaults().pad(TOP_SPACING, HORIZONTAL_SPACING, BOTTOM_SPACING, HORIZONTAL_SPACING).grow();
+        add(languageSelectMenuButton).row();
+        add(volumeChangeMenuButton).row();
+        add(worldSettingsButton).row();
+        add(administratorManageMenuButton).row();
+        add(leaveWorldButton).row();
+        add(logoutButton).row();
+        add(quitButton);
     }
 
     @Override
@@ -59,126 +171,14 @@ public class SettingsWindow extends HudMenuWindow {
     }
 
     @Override
-    protected void create() {
-        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
-
-        languageSelectMenuButton = new TextButton("Sprache wählen", Assets.SKIN);
-        languageSelectMenuButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                new LanguageSelectWindow().open();
-            }
-        });
-
-        volumeChangeMenuButton = new TextButton("Lautstärke anpassen", Assets.SKIN);
-        volumeChangeMenuButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                new VolumeChangeWindow().open();
-            }
-        });
-
-        worldSettingsButton = new TextButton("Welteinstellungen", Assets.SKIN);
-        worldSettingsButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                new WorldSettingsWindow().open();
-            }
-        });
-
-        administratorManageMenuButton = new TextButton("Administratoren verwalten", Assets.getNewSkin());
-        if (internUser == null || !internUser.hasPermission(Permission.ASSIGN_ADMINISTRATOR)) {
-            disableButton(administratorManageMenuButton);
-        }
-        administratorManageMenuButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                new AdministratorManageWindow().open();
-            }
-        });
-
-        leaveWorldButton = new TextButton("Welt verlassen", Assets.getNewSkin());
-        if (internUser == null || internUser.getCurrentWorld() == null) {
-            disableButton(leaveWorldButton);
-        }
-        leaveWorldButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                disableButton(leaveWorldButton);
-                IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
-                if (internUser == null || internUser.getCurrentWorld() == null) {
-                    return;
-                }
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.WORLD_ACTION,
-                        internUser.getCurrentWorld().getContextId(), false);
-                Chati.CHATI.setScreen(Chati.CHATI.getMenuScreen());
-                Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
-            }
-        });
-
-        logoutButton = new TextButton("Abmelden", Assets.getNewSkin());
-        if (internUser == null) {
-            disableButton(logoutButton);
-        }
-        logoutButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                disableButton(logoutButton);
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
-                if (!Chati.CHATI.getScreen().equals(Chati.CHATI.getMenuScreen())) {
-                    Chati.CHATI.setScreen(Chati.CHATI.getMenuScreen());
-                }
-                Chati.CHATI.getMenuScreen().setMenuTable(new LoginTable());
-            }
-        });
-
-        closeApplicationButton = new TextButton("Beenden", Assets.SKIN);
-        closeApplicationButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.exit();
-                System.exit(0);
-            }
-        });
+    protected void enableButton(ChatiTextButton button) {
+        button.setTouchable(Touchable.enabled);
+        button.getLabel().setColor(Color.WHITE);
     }
 
     @Override
-    protected void setLayout() {
-        defaults().pad(TOP_SPACING, HORIZONTAL_SPACING, BOTTOM_SPACING, HORIZONTAL_SPACING).grow();
-        add(languageSelectMenuButton).row();
-        add(volumeChangeMenuButton).row();
-        add(worldSettingsButton).row();
-        add(administratorManageMenuButton).row();
-        add(leaveWorldButton).row();
-        add(logoutButton).row();
-        add(closeApplicationButton);
+    protected void disableButton(ChatiTextButton button) {
+        button.setTouchable(Touchable.disabled);
+        button.getLabel().setColor(Color.DARK_GRAY);
     }
 }

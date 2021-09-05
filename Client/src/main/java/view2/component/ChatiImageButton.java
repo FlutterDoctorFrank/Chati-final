@@ -10,6 +10,15 @@ public class ChatiImageButton extends ImageButton {
 
     private static final float IMAGE_SCALE_FACTOR = 0.1f;
 
+    public ChatiImageButton(Drawable imageUnchecked) {
+        this(imageUnchecked, imageUnchecked);
+    }
+
+    public ChatiImageButton(Drawable imageUnchecked, Drawable imageChecked, Drawable imageDisabled) {
+        this(imageUnchecked, imageChecked);
+        getStyle().imageDisabled = imageDisabled;
+    }
+
     public ChatiImageButton(Drawable imageUnchecked, Drawable imageChecked) {
         super(imageUnchecked, imageUnchecked, imageChecked);
         getImage().scaleBy(-IMAGE_SCALE_FACTOR);

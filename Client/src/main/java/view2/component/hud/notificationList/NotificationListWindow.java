@@ -8,8 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.user.IInternUserView;
 import model.user.IUserManagerView;
-import view2.Assets;
 import view2.Chati;
+import view2.component.ChatiTextButton;
 import view2.component.hud.HudMenuWindow;
 
 import java.util.Set;
@@ -20,17 +20,78 @@ public class NotificationListWindow extends HudMenuWindow {
     private final Set<NotificationListEntry> globalNotificationEntries;
     private final Set<NotificationListEntry> worldNotificationEntries;
 
-    private TextButton globalNotificationTabButton;
-    private TextButton worldNotificationTabButton;
-    private ScrollPane notificationListScrollPane;
-    private Table notificationListContainer;
+    private final ChatiTextButton globalNotificationTabButton;
+    private final ChatiTextButton worldNotificationTabButton;
+    private final Table notificationListContainer;
 
     public NotificationListWindow() {
         super("Benachrichtigungen");
         this.globalNotificationEntries = new TreeSet<>();
         this.worldNotificationEntries = new TreeSet<>();
-        create();
-        setLayout();
+
+        notificationListContainer = new Table();
+        ScrollPane notificationListScrollPane = new ScrollPane(notificationListContainer, Chati.CHATI.getSkin());
+
+        globalNotificationTabButton = new ChatiTextButton("Global", false);
+        globalNotificationTabButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return !globalNotificationTabButton.isChecked();
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                showGlobalNotifications();
+                globalNotificationTabButton.setChecked(true);
+                if (!worldNotificationTabButton.isDisabled()) {
+                    worldNotificationTabButton.setChecked(false);
+                }
+            }
+        });
+
+        worldNotificationTabButton = new ChatiTextButton("Welt", false);
+        worldNotificationTabButton.addListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return !worldNotificationTabButton.isChecked();
+            }
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                showWorldNotifications();
+                worldNotificationTabButton.setChecked(true);
+                if (!globalNotificationTabButton.isDisabled()) {
+                    globalNotificationTabButton.setChecked(false);
+                }
+            }
+        });
+
+        ButtonGroup<TextButton> tabButtonGroup = new ButtonGroup<>();
+        tabButtonGroup.setMinCheckCount(1);
+        tabButtonGroup.setMaxCheckCount(1);
+        tabButtonGroup.setUncheckLast(true);
+        tabButtonGroup.add(globalNotificationTabButton);
+        tabButtonGroup.add(worldNotificationTabButton);
+
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+        if (internUser == null) {
+            disableGlobalNotificationTab();
+            disableWorldNotificationTab();
+        } else {
+            globalNotificationTabButton.setChecked(true);
+            if (!internUser.isInCurrentWorld()) {
+                disableWorldNotificationTab();
+            }
+
+            showGlobalNotifications();
+        }
+
+        // Layout
+        notificationListContainer.top();
+        Table buttonContainer = new Table();
+        buttonContainer.defaults().growX();
+        buttonContainer.add(globalNotificationTabButton, worldNotificationTabButton);
+        add(buttonContainer).growX().row();
+        add(notificationListScrollPane).grow();
+        Chati.CHATI.getScreen().getStage().setScrollFocus(notificationListScrollPane);
     }
 
     @Override
@@ -46,9 +107,9 @@ public class NotificationListWindow extends HudMenuWindow {
 
             if (user != null && globalNotificationTabButton.isDisabled()) {
                 enableButton(globalNotificationTabButton);
-                selectButton(globalNotificationTabButton);
+                globalNotificationTabButton.setChecked(true);
             } else if (user != null && user.isInCurrentWorld() && worldNotificationTabButton.isDisabled()) {
-                enableButton(worldNotificationTabButton);
+                worldNotificationTabButton.setChecked(true);
             }
 
             if (!globalNotificationTabButton.isDisabled() && globalNotificationTabButton.isChecked()) {
@@ -59,75 +120,6 @@ public class NotificationListWindow extends HudMenuWindow {
         }
 
         super.act(delta);
-    }
-
-    @Override
-    protected void create() {
-        notificationListContainer = new Table();
-        notificationListScrollPane = new ScrollPane(notificationListContainer, Assets.SKIN);
-
-        globalNotificationTabButton = new TextButton("Global", Assets.getNewSkin());
-        globalNotificationTabButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return !globalNotificationTabButton.isChecked();
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                showGlobalNotifications();
-                selectButton(globalNotificationTabButton);
-                if (!worldNotificationTabButton.isDisabled()) {
-                    unselectButton(worldNotificationTabButton);
-                }
-            }
-        });
-
-        worldNotificationTabButton = new TextButton("Welt", Assets.getNewSkin());
-        worldNotificationTabButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return !worldNotificationTabButton.isChecked();
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                showWorldNotifications();
-                selectButton(worldNotificationTabButton);
-                if (!globalNotificationTabButton.isDisabled()) {
-                    unselectButton(globalNotificationTabButton);
-                }
-            }
-        });
-
-        IInternUserView user = Chati.CHATI.getUserManager().getInternUserView();
-        if (user == null) {
-            disableGlobalNotificationTab();
-            disableWorldNotificationTab();
-        } else {
-            selectButton(globalNotificationTabButton);
-            if (!user.isInCurrentWorld()) {
-                disableWorldNotificationTab();
-            }
-
-            showGlobalNotifications();
-        }
-
-        ButtonGroup<TextButton> tabButtonGroup = new ButtonGroup<>();
-        tabButtonGroup.setMinCheckCount(1);
-        tabButtonGroup.setMaxCheckCount(1);
-        tabButtonGroup.setUncheckLast(true);
-        tabButtonGroup.add(globalNotificationTabButton);
-        tabButtonGroup.add(worldNotificationTabButton);
-    }
-
-    @Override
-    protected void setLayout() {
-        notificationListContainer.top();
-        Table buttonContainer = new Table();
-        buttonContainer.defaults().growX();
-        buttonContainer.add(globalNotificationTabButton, worldNotificationTabButton);
-        add(buttonContainer).growX().row();
-        add(notificationListScrollPane).grow();
-        Chati.CHATI.getScreen().getStage().setScrollFocus(notificationListScrollPane);
     }
 
     private void showGlobalNotifications() {

@@ -25,318 +25,228 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
     private static final float ICON_SIZE = 22.5f;
     private static final float VERTICAL_SPACING = 5;
     private static final float HORIZONTAL_SPACING = 10;
-    private static final float BUTTON_SCALE_FACTOR = 0.1f;
-
-    private UserInfoContainer userInfoContainer;
-    private Image statusImage;
-    private Image currentWorldImage;
-    private ImageButton friendButton;
-    private ImageButton ignoreButton;
-    private ImageButton roomButton;
-    private ImageButton teleportButton;
-    private ImageButton reportButton;
-    private ImageButton muteButton;
-    private ImageButton banButton;
-    private ImageButton moderatorButton;
 
     private final IUserView user;
 
     public UserListEntry(IUserView user) {
         this.user = user;
-        create();
-        setLayout();
-    }
 
-    protected void create() {
-        userInfoContainer = new UserInfoContainer(user);
+        UserInfoContainer userInfoContainer = new UserInfoContainer(user);
 
-        statusImage = new Image();
+        Image statusImage = new Image();
         switch (user.getStatus()) {
             case ONLINE:
-                statusImage.setDrawable(Assets.ONLINE_ICON);
+                statusImage.setDrawable(Chati.CHATI.getDrawable("status_online"));
                 statusImage.addListener(new ChatiToolTip("Online"));
                 break;
             case AWAY:
-                statusImage.setDrawable(Assets.AWAY_ICON);
+                statusImage.setDrawable(Chati.CHATI.getDrawable("status_away"));
                 statusImage.addListener(new ChatiToolTip("Abwesend"));
                 break;
             case BUSY:
-                statusImage.setDrawable(Assets.BUSY_ICON);
+                statusImage.setDrawable(Chati.CHATI.getDrawable("status_busy"));
                 statusImage.addListener(new ChatiToolTip("Beschäftigt"));
                 break;
             case INVISIBLE:
-                statusImage.setDrawable(Assets.INVISIBLE_ICON);
+                statusImage.setDrawable(Chati.CHATI.getDrawable("status_invisible"));
                 statusImage.addListener(new ChatiToolTip("Unsichtbar"));
                 break;
             case OFFLINE:
-                statusImage.setDrawable(Assets.OFFLINE_ICON);
+                statusImage.setDrawable(Chati.CHATI.getDrawable("status_offline"));
                 statusImage.addListener(new ChatiToolTip("Offline"));
                 break;
             default:
                 throw new IllegalArgumentException("Invalid user status");
         }
 
-        currentWorldImage = new Image();
-        if (user.isOnline() && user.isInCurrentWorld()) {
-            currentWorldImage.setDrawable(Assets.CURRENT_WORLD_ICON);
-            currentWorldImage.addListener(new ChatiToolTip("In deiner Welt!"));
+        Image currentRoomImage = new Image();
+        if (user.isOnline() && user.isInCurrentRoom()) {
+            currentRoomImage.setDrawable(Chati.CHATI.getDrawable("current_room"));
+            currentRoomImage.addListener(new ChatiToolTip("Der Benutzer ist in deinem Raum."));
         }
 
+        Image currentWorldImage = new Image();
+        if (user.isOnline() && user.isInCurrentWorld()) {
+            currentWorldImage.setDrawable(Chati.CHATI.getDrawable("current_world"));
+            currentWorldImage.addListener(new ChatiToolTip("Der Benutzer ist in deiner Welt."));
+        }
+
+        ChatiImageButton friendButton;
         if (!user.isFriend()) {
-            friendButton = new ImageButton(Assets.ADD_FRIEND_ICON);
+            friendButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_add_friend"));
             friendButton.addListener(new ChatiToolTip("Freund hinzufügen"));
         } else {
-            friendButton = new ImageButton(Assets.REMOVE_FRIEND_ICON);
+            friendButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_remove_friend"));
             friendButton.addListener(new ChatiToolTip("Freund entfernen"));
         }
         friendButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                friendButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                friendButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (!user.isFriend()) {
                     new MessageWindow(AdministrativeAction.INVITE_FRIEND).open();
                 } else {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.REMOVE_FRIEND, "");
-                }
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    friendButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    friendButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 }
             }
         });
 
+        ChatiImageButton ignoreButton;
         if (!user.isIgnored()) {
-            ignoreButton = new ImageButton(Assets.IGNORE_ICON);
+            ignoreButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_ignore_user"));
             ignoreButton.addListener(new ChatiToolTip("Ignorieren"));
         } else {
-            ignoreButton = new ImageButton(Assets.UNIGNORE_ICON);
+            ignoreButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_unignore_user"));
             ignoreButton.addListener(new ChatiToolTip("Nicht mehr ignorieren"));
         }
         ignoreButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                ignoreButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                ignoreButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (!user.isIgnored()) {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.IGNORE_USER, "");
                 } else {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.UNIGNORE_USER, "");
-                }
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    ignoreButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    ignoreButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 }
             }
         });
 
+        ChatiImageButton roomButton;
         if (user.canBeInvited()) {
-            roomButton = new ImageButton(Assets.ROOM_INVITE_ICON);
+            roomButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_invite_user"));
             roomButton.addListener(new ChatiToolTip("In den Raum einladen"));
         } else if (user.canBeKicked()) {
-            roomButton = new ImageButton(Assets.ROOM_KICK_ICON);
+            roomButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_kick_user"));
             roomButton.addListener(new ChatiToolTip("Aus dem Raum entfernen"));
         } else {
-            roomButton = new ImageButton(Assets.DISABLED_ROOM_INVITE_ICON);
+            roomButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_invite_user_disabled"));
             roomButton.setDisabled(true);
             roomButton.setTouchable(Touchable.disabled);
         }
         roomButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                roomButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                roomButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (user.canBeInvited()) {
                     new MessageWindow(AdministrativeAction.ROOM_INVITE).open();
                 } else if (user.canBeKicked()) {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.ROOM_KICK, "");
-                }
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    roomButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    roomButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 }
             }
         });
 
+        ChatiImageButton teleportButton;
         if (user.canTeleportTo()) {
-            teleportButton = new ImageButton(Assets.TELEPORT_ICON);
+            teleportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_teleport_to_user"));
             teleportButton.addListener(new ChatiToolTip("Zu Benutzer teleportieren"));
         } else {
-            teleportButton = new ImageButton(Assets.DISABLED_TELEPORT_ICON);
+            teleportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_teleport_tp_user_disabled"));
             teleportButton.setDisabled(true);
             teleportButton.setTouchable(Touchable.disabled);
         }
         teleportButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                teleportButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                teleportButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (user.canTeleportTo()) {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                    Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.TELEPORT_TO_USER, "");
-                }
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    teleportButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    teleportButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 }
             }
         });
 
+        ChatiImageButton reportButton;
         if (user.canBeReported()) {
-            reportButton = new ImageButton(Assets.REPORT_ICON);
+            reportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_report_user"));
             reportButton.addListener(new ChatiToolTip("Melden"));
         } else {
-            reportButton = new ImageButton(Assets.DISABLED_REPORT_ICON);
+            reportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_report_user_disabled"));
             reportButton.setDisabled(true);
             reportButton.setTouchable(Touchable.disabled);
         }
         reportButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                reportButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                reportButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (user.canBeReported()) {
                     new MessageWindow(AdministrativeAction.REPORT_USER).open();
                 }
             }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    reportButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    reportButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
-            }
         });
 
+        ChatiImageButton muteButton;
         if (user.canBeMuted()) {
             if (!user.isMuted()) {
-                muteButton = new ImageButton(Assets.MUTE_ICON);
+                muteButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_mute_user"));
                 muteButton.addListener(new ChatiToolTip("Stummschalten"));
             } else {
-                muteButton = new ImageButton(Assets.UNMUTE_ICON);
+                muteButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_unmute_user"));
                 muteButton.addListener(new ChatiToolTip("Stummschalten aufheben"));
             }
         } else {
-            muteButton = new ImageButton(Assets.DISABLED_MUTE_ICON);
+            muteButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_mute_user_disabled"));
             muteButton.setDisabled(true);
             muteButton.setTouchable(Touchable.disabled);
         }
         muteButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                muteButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                muteButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (user.canBeMuted()) {
                     if (!user.isMuted()) {
-                        Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                        Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                                 AdministrativeAction.MUTE_USER, "");
                     } else {
-                        Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                        Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                                 AdministrativeAction.UNMUTE_USER, "");
                     }
                 }
             }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    muteButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    muteButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
-            }
         });
 
+        ChatiImageButton banButton;
         if (user.canBeBanned()) {
             if (!user.isBanned()) {
-                banButton = new ImageButton(Assets.BAN_ICON);
+                banButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_ban_user"));
                 banButton.addListener(new ChatiToolTip("Sperren"));
             } else {
-                banButton = new ImageButton(Assets.UNBAN_ICON);
+                banButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_unban_user"));
                 banButton.addListener(new ChatiToolTip("Entperren"));
             }
         } else {
-            banButton = new ImageButton(Assets.DISABLED_BAN_ICON);
+            banButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_ban_user_disabled"));
             banButton.setDisabled(true);
             banButton.setTouchable(Touchable.disabled);
         }
         banButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                banButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                banButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (user.canBeBanned()) {
                     if (!user.isBanned()) {
                         new MessageWindow(AdministrativeAction.BAN_USER).open();
@@ -345,68 +255,42 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                     }
                 }
             }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    banButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    banButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
-            }
         });
 
+        ChatiImageButton moderatorButton;
         if (user.canAssignModerator()) {
             if (!user.hasRole(Role.MODERATOR)) {
-                moderatorButton = new ImageButton(Assets.ASSIGN_MODERATOR_ICON);
+                moderatorButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_assign_moderator"));
                 moderatorButton.addListener(new ChatiToolTip("Die Rolle des Moderators vergeben"));
             } else {
-                moderatorButton = new ImageButton(Assets.WITHDRAW_MODERATOR_ICON);
+                moderatorButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_withdraw_moderator"));
                 moderatorButton.addListener(new ChatiToolTip("Die Rolle des Moderators entziehen"));
             }
         } else {
-            moderatorButton = new ImageButton(Assets.DISABLED_ASSIGN_MODERATOR_ICON);
+            moderatorButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_assign_moderator_disabled"));
             moderatorButton.setDisabled(true);
             moderatorButton.setTouchable(Touchable.disabled);
         }
         moderatorButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                moderatorButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                moderatorButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (user.canAssignModerator()) {
                     if (!user.hasRole(Role.MODERATOR)) {
-                        Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                        Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                                 AdministrativeAction.ASSIGN_MODERATOR, "");
                     } else {
-                        Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
+                        Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                                 AdministrativeAction.WITHDRAW_MODERATOR, "");
                     }
                 }
             }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    moderatorButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    moderatorButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
-            }
         });
-    }
 
-    protected void setLayout() {
+        // Layout
         NinePatchDrawable controlsBackground =
                 new NinePatchDrawable(new NinePatch(Assets.SKIN.getRegion("panel1"), 10, 10, 10, 10));
         setBackground(controlsBackground);
@@ -447,24 +331,12 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         private static final float ROW_HEIGHT = 60;
         private static final float SPACING = 15;
 
-        private Label infoLabel;
-        private ChatiTextArea userMessageArea;
-        private TextButton confirmButton;
-        private TextButton cancelButton;
-        private TextButton closeButton;
-
-        private final AdministrativeAction action;
+        private final ChatiTextArea userMessageArea;
 
         protected MessageWindow(AdministrativeAction action) {
             super("");
-            this.action = action;
-            create();
-            setLayout();
-        }
 
-        @Override
-        protected void create() {
-            this.infoLabel = new Label("", Assets.SKIN);
+            Label infoLabel = new Label("", Chati.CHATI.getSkin());
 
             switch(action) {
                 case INVITE_FRIEND:
@@ -490,7 +362,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
             userMessageArea = new ChatiTextArea("Nachricht", true);
 
-            confirmButton = new TextButton("Bestätigen", Assets.SKIN);
+            ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
             confirmButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -499,19 +371,17 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     String message;
-                    if (userMessageArea.getText().isBlank() || userMessageArea.getStyle().fontColor == Color.GRAY) {
+                    if (userMessageArea.getText().isBlank()) {
                         message = "";
                     } else {
                         message = userMessageArea.getText();
                     }
-
-                    Chati.CHATI.getServerSender()
-                            .send(ServerSender.SendAction.USER_MANAGE, user.getUserId(), action, message);
+                    Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(), action, message);
                     close();
                 }
             });
 
-            cancelButton = new TextButton("Abbrechen", Assets.SKIN);
+            ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
             cancelButton.addListener(new ClickListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -523,21 +393,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 }
             });
 
-            closeButton = new TextButton("X", Assets.SKIN);
-            closeButton.addListener(new ClickListener() {
-                @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    close();
-                }
-            });
-        }
-
-        @Override
-        protected void setLayout() {
+            // Layout
             setModal(true);
             setMovable(false);
             setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
@@ -556,8 +412,6 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             buttonContainer.add(cancelButton).padLeft(SPACING / 2);
             container.add(buttonContainer);
             add(container).padLeft(SPACING).padRight(SPACING).grow();
-
-            getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
         }
 
         public void resetTextFields() {

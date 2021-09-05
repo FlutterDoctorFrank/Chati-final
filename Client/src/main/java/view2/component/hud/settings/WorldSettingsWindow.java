@@ -8,14 +8,13 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import view2.Assets;
-import view2.Settings;
+import view2.Chati;
+import view2.ChatiPreferences;
 import view2.component.AbstractWindow;
-import view2.component.hud.HudMenuWindow;
+import view2.component.ChatiTextButton;
 
 public class WorldSettingsWindow extends AbstractWindow {
 
@@ -24,27 +23,16 @@ public class WorldSettingsWindow extends AbstractWindow {
     private static final float ROW_HEIGHT = 60;
     private static final float SPACING = 15;
 
-    private Label infoLabel;
-    private Label showNameLabel;
-    private CheckBox showNameCheckBox;
-    private TextButton confirmButton;
-    private TextButton defaultButton;
-    private TextButton cancelButton;
-    private TextButton closeButton;
+    private final ChatiTextButton confirmButton;
 
     public WorldSettingsWindow() {
         super("Welteinstellungen");
-        create();
-        setLayout();
-    }
 
-    @Override
-    protected void create() {
-        infoLabel = new Label("Führe Welteinstellungen durch.", Assets.SKIN);
+        Label infoLabel = new Label("Führe Welteinstellungen durch.", Chati.CHATI.getSkin());
 
-        showNameLabel = new Label("Benutzernamen dauerhaft anzeigen.", Assets.SKIN);
-        showNameCheckBox = new CheckBox("", Assets.SKIN);
-        showNameCheckBox.setChecked(Settings.getShowNamesInWorld());
+        Label showNameLabel = new Label("Benutzernamen dauerhaft anzeigen.", Chati.CHATI.getSkin());
+        CheckBox showNameCheckBox = new CheckBox("", Chati.CHATI.getSkin());
+        showNameCheckBox.setChecked(Chati.CHATI.getPreferences().getShowNamesInWorld());
         showNameCheckBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -53,7 +41,7 @@ public class WorldSettingsWindow extends AbstractWindow {
             }
         });
 
-        confirmButton = new TextButton("Übernehmen", Assets.getNewSkin());
+        confirmButton = new ChatiTextButton("Übernehmen", false);
         disableButton();
         confirmButton.addListener(new ClickListener() {
             @Override
@@ -63,12 +51,12 @@ public class WorldSettingsWindow extends AbstractWindow {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 disableButton();
-                Settings.setShowNamesInWorld(showNameCheckBox.isChecked());
+                Chati.CHATI.getPreferences().setShowNamesInWorld(showNameCheckBox.isChecked());
                 infoLabel.setText("Deine Änderungen wurden gespeichert!");
             }
         });
 
-        defaultButton = new TextButton("Standardeinstellung", Assets.SKIN);
+        ChatiTextButton defaultButton = new ChatiTextButton("Standardeinstellung", true);
         defaultButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -77,12 +65,12 @@ public class WorldSettingsWindow extends AbstractWindow {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 enableButton();
-                showNameCheckBox.setChecked(Settings.DEFAULT_SHOW_NAMES_IN_WORLD);
+                showNameCheckBox.setChecked(ChatiPreferences.DEFAULT_SHOW_NAMES_IN_WORLD);
                 infoLabel.setText("Führe Welteinstellungen durch.");
             }
         });
 
-        cancelButton = new TextButton("Abbrechen", Assets.SKIN);
+        ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -94,21 +82,6 @@ public class WorldSettingsWindow extends AbstractWindow {
             }
         });
 
-        closeButton = new TextButton("X", Assets.SKIN);
-        closeButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                close();
-            }
-        });
-    }
-
-    @Override
-    protected void setLayout() {
         setModal(true);
         setMovable(false);
         setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
@@ -132,21 +105,15 @@ public class WorldSettingsWindow extends AbstractWindow {
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
-
-        getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }
 
     private void enableButton() {
-        confirmButton.setDisabled(false);
         confirmButton.setTouchable(Touchable.enabled);
         confirmButton.getLabel().setColor(Color.WHITE);
-        confirmButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
     }
 
     private void disableButton() {
-        confirmButton.setDisabled(true);
         confirmButton.setTouchable(Touchable.disabled);
         confirmButton.getLabel().setColor(Color.DARK_GRAY);
-        confirmButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
     }
 }

@@ -1,22 +1,19 @@
 package view2.component.hud.settings;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.exception.UserNotFoundException;
 import model.role.Role;
 import model.user.AdministrativeAction;
 import model.user.IUserView;
-import view2.Assets;
 import view2.Chati;
 import view2.component.AbstractWindow;
 import view2.component.ChatiTextArea;
+import view2.component.ChatiTextButton;
 import view2.component.ChatiTextField;
 
 public class AdministratorManageWindow extends AbstractWindow {
@@ -26,28 +23,18 @@ public class AdministratorManageWindow extends AbstractWindow {
     private static final float ROW_HEIGHT = 60;
     private static final float SPACING = 15;
 
-    private Label infoLabel;
-    private ChatiTextField usernameField;
-    private ChatiTextArea messageArea;
-    private TextButton assignButton;
-    private TextButton withdrawButton;
-    private TextButton cancelButton;
-    private TextButton closeButton;
+    private final ChatiTextField usernameField;
+    private final ChatiTextArea messageArea;
 
     public AdministratorManageWindow() {
         super("Administratoren verwalten");
-        create();
-        setLayout();
-    }
 
-    @Override
-    protected void create() {
-        infoLabel = new Label("Erteile oder entziehe die Rolle des Administrators!", Assets.SKIN);
+        Label infoLabel = new Label("Erteile oder entziehe die Rolle des Administrators!", Chati.CHATI.getSkin());
 
         usernameField = new ChatiTextField("Benutzername", false);
         messageArea = new ChatiTextArea("Füge eine Nachricht hinzu!", true);
 
-        assignButton = new TextButton("Rolle erteilen", Assets.SKIN);
+        ChatiTextButton assignButton = new ChatiTextButton("Rolle erteilen", true);
         assignButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -55,18 +42,18 @@ public class AdministratorManageWindow extends AbstractWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (usernameField.getText().isBlank() || usernameField.getStyle().fontColor == Color.GRAY) {
+                if (usernameField.getText().isBlank()) {
                     infoLabel.setText("Bitte gib einen Benutzernamen ein!");
                     return;
                 }
-                if (usernameField.getText().equals(Chati.CHATI.getUserManager().getInternUserView().getUsername())) {
+                if (usernameField.getText().equals(Chati.CHATI.getInternUser().getUsername())) {
                     infoLabel.setText("Du kannst dir nicht selbst eine Rolle erteilen!");
                     resetTextFields();
                     return;
                 }
                 IUserView externUser;
                 try {
-                     externUser = Chati.CHATI.getUserManager().getExternUserView(usernameField.getText());
+                    externUser = Chati.CHATI.getUserManager().getExternUserView(usernameField.getText());
                 } catch (UserNotFoundException e) {
                     infoLabel.setText("Es existiert kein Benutzer mit diesem Namen.");
                     resetTextFields();
@@ -78,17 +65,17 @@ public class AdministratorManageWindow extends AbstractWindow {
                     return;
                 }
                 String message = "";
-                if (!messageArea.getText().isBlank() && messageArea.getStyle().fontColor != Color.GRAY) {
+                if (!messageArea.getText().isBlank()) {
                     message = messageArea.getText();
                 }
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),
+                Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),
                         AdministrativeAction.ASSIGN_ADMINISTRATOR, message);
                 infoLabel.setText("Die Aktion war erfolgreich!");
                 resetTextFields();
             }
         });
 
-        withdrawButton = new TextButton("Rolle entziehen", Assets.SKIN);
+        ChatiTextButton withdrawButton = new ChatiTextButton("Rolle entziehen", true);
         withdrawButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -96,11 +83,11 @@ public class AdministratorManageWindow extends AbstractWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (usernameField.getText().isBlank() || usernameField.getStyle().fontColor == Color.GRAY) {
+                if (usernameField.getText().isBlank()) {
                     infoLabel.setText("Bitte gib einen Benutzernamen ein!");
                     return;
                 }
-                if (usernameField.getText().equals(Chati.CHATI.getUserManager().getInternUserView().getUsername())) {
+                if (usernameField.getText().equals(Chati.CHATI.getInternUser().getUsername())) {
                     infoLabel.setText("Du kannst dir nicht selbst eine Rolle entziehen!");
                     resetTextFields();
                     return;
@@ -124,17 +111,17 @@ public class AdministratorManageWindow extends AbstractWindow {
                     return;
                 }
                 String message = "";
-                if (!messageArea.getText().isBlank() && messageArea.getStyle().fontColor != Color.GRAY) {
+                if (!messageArea.getText().isBlank()) {
                     message = messageArea.getText();
                 }
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),
+                Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),
                         AdministrativeAction.WITHDRAW_ADMINISTRATOR, message);
                 infoLabel.setText("Die Aktion war erfolgreich!");
                 resetTextFields();
             }
         });
 
-        cancelButton = new TextButton("Abbrechen", Assets.SKIN);
+        ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -146,21 +133,7 @@ public class AdministratorManageWindow extends AbstractWindow {
             }
         });
 
-        closeButton = new TextButton("X", Assets.SKIN);
-        closeButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                close();
-            }
-        });
-    }
-
-    @Override
-    protected void setLayout() {
+        // Layout
         setModal(true);
         setMovable(false);
         setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
@@ -180,12 +153,10 @@ public class AdministratorManageWindow extends AbstractWindow {
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
-
-        getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }
 
     private void resetTextFields() {
-        //usernameField.reset();
-        //messageArea.reset();
+        usernameField.reset();
+        messageArea.reset();
     }
 }

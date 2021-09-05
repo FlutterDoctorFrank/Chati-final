@@ -5,12 +5,11 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import view2.Assets;
 import view2.Chati;
 import view2.component.AbstractWindow;
+import view2.component.ChatiTextButton;
 
 public class LanguageSelectWindow extends AbstractWindow {
 
@@ -19,26 +18,15 @@ public class LanguageSelectWindow extends AbstractWindow {
     private static final float ROW_HEIGHT = 60;
     private static final float SPACING = 15;
 
-    private Label infoLabel;
-    private SelectBox<String> languageSelectBox;
-    private TextButton confirmButton;
-    private TextButton cancelButton;
-    private TextButton closeButton;
-
     public LanguageSelectWindow() {
         super("Sprache auswählen");
-        create();
-        setLayout();
-    }
 
-    @Override
-    protected void create() {
-        this.infoLabel = new Label("Wähle eine Sprache aus!", Assets.SKIN);
+        Label infoLabel = new Label("Wähle eine Sprache aus!", Chati.CHATI.getSkin());
 
-        languageSelectBox = new SelectBox<>(Assets.SKIN);
+        SelectBox<String> languageSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
         // TODO
 
-        confirmButton = new TextButton("Bestätigen", Assets.SKIN);
+        ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -51,7 +39,7 @@ public class LanguageSelectWindow extends AbstractWindow {
             }
         });
 
-        cancelButton = new TextButton("Abbrechen", Assets.SKIN);
+        ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -63,21 +51,7 @@ public class LanguageSelectWindow extends AbstractWindow {
             }
         });
 
-        closeButton = new TextButton("X", Assets.SKIN);
-        closeButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                close();
-            }
-        });
-    }
-
-    @Override
-    protected void setLayout() {
+        // Layout
         setModal(true);
         setMovable(false);
         setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
@@ -97,7 +71,5 @@ public class LanguageSelectWindow extends AbstractWindow {
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
-
-        getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }
 }
