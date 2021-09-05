@@ -160,8 +160,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         }
 
                         user.setInCurrentRoom(true);
-                        user.setLocation(packet.getPosX(), packet.getPosY(), true, false, packet.getDirection());
                         user.setMovable(packet.isMovable());
+                        user.setLocation(packet.getPosX(), packet.getPosY(), true, false, packet.getDirection());
                         break;
 
                     case MOVE_AVATAR:
@@ -170,8 +170,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             return;
                         }
 
-                        user.setLocation(packet.getPosX(), packet.getPosY(), false, packet.isSprinting(), packet.getDirection());
                         user.setMovable(packet.isMovable());
+                        user.setLocation(packet.getPosX(), packet.getPosY(), false, packet.isSprinting(), packet.getDirection());
                         break;
 
                     case REMOVE_AVATAR:
