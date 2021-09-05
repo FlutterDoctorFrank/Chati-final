@@ -26,6 +26,6 @@ public class ParentCommunication extends CommunicationRegion {
         if (parent == null) {
             return new HashMap<>();
         }
-        return parent.getCommunicableUsers(user);
+        return parent.getUsers();
     }
 }

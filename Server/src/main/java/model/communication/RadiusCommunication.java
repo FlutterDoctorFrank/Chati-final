@@ -42,7 +42,7 @@ public class RadiusCommunication extends CommunicationRegion {
          * ANMERKUNG: Die Radiusbasierte Kommunikation kann man bereichsübergreifend machen, wenn man die Benutzer
          * des Raums anstatt des Kontexts nimmt.
          */
-        return area.getUsers().values().stream()
+        return area.getExclusiveUsers().values().stream()
                 .filter(otherUser -> otherUser.getLocation() != null && user.getLocation().distance(otherUser.getLocation()) <= radius)
                 .collect(Collectors.toMap(User::getUserId, Function.identity()));
     }

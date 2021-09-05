@@ -99,6 +99,25 @@ public abstract class Context implements IContext {
     }
 
     /**
+     * Gibt die Benutzer zurück, die sich gerade innerhalb dieses Kontexts befinden und sich nicht in den
+     * Kind-Kontexten befinden.
+     * @return Menge aller exklusiven Benutzer im Kontext.
+     */
+    public @NotNull Map<UUID, User> getExclusiveUsers() {
+        final Map<UUID, User> users = new HashMap<>(containedUsers);
+        this.getChildren().values().forEach(child -> users.keySet().removeAll(child.containedUsers.keySet()));
+        return users;
+    }
+
+    /**
+     * Gibt die Benutzer zurück, die sich gerade innerhalb dieses Kontexts befinden.
+     * @return Menge aller Benutzer im Kontext.
+     */
+    public @NotNull Map<UUID, User> getUsers() {
+        return new HashMap<>(containedUsers);
+    }
+
+    /**
      * Fügt einen untergeordneten räumlichen Kontext hinzu.
      * @param child Hinzuzufügender Kontext.
      */
@@ -387,14 +406,6 @@ public abstract class Context implements IContext {
             throw new ContextNotFoundException("There is no context with this ID.", contextId);
         }
         return found;
-    }
-
-    /**
-     * Gibt die Benutzer zurück, die sich gerade innerhalb dieses Kontexts befinden.
-     * @return Menge aller Benutzer im Kontext.
-     */
-    public @NotNull Map<UUID, User> getUsers() {
-        return new HashMap<>(containedUsers);
     }
 
     @Override

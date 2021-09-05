@@ -26,8 +26,7 @@ public class AreaCommunication extends CommunicationRegion {
         if (area.contains(user)) {
             // Füge alle Benutzer in diesem Kontext hinzu, die sich nicht in untergeordneten Kontexten befinden.
             communicableUsers.putAll(area.getUsers());
-            area.getChildren()
-                    .values().forEach(child -> communicableUsers.keySet().removeAll(child.getUsers().keySet()));
+            area.getChildren().values().forEach(child -> communicableUsers.keySet().removeAll(child.getUsers().keySet()));
         }
         return communicableUsers;
     }
