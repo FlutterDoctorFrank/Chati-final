@@ -7,7 +7,7 @@ import model.context.spatial.ContextMusic;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import view2.Chati;
-import view2.component.KeyAction;
+import view2.userInterface.KeyAction;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

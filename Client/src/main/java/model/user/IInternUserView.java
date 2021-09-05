@@ -58,8 +58,8 @@ public interface IInternUserView extends IUserView {
     boolean canTalk();
 
     /**
-     * Gibt die Kontexte zurück, mit denen der Benutzer gerade interagieren kann.
-     * @return Kontexte, mit denen der Benutzer gerade interagieren kann.
+     * Gibt den Kontexte zurück, mit dem der Benutzer gerade interagieren kann, falls vorhanden.
+     * @return Kontext, mit dem der Benutzer gerade interagieren kann oder null.
      */
-    @NotNull Map<ContextID, ISpatialContextView> getCurrentInteractables();
+    @Nullable ISpatialContextView getCurrentInteractable();
 }

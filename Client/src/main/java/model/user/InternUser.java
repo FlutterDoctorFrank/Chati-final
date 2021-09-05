@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -177,13 +178,24 @@ public class InternUser extends User implements IInternUserController, IInternUs
                 && !isMuted() && !UserManager.getInstance().getCommunicableUsers().isEmpty();
     }
 
-    @Override
-    public @NotNull Map<ContextID, ISpatialContextView> getCurrentInteractables() {
+    public @Nullable ISpatialContextView getCurrentInteractable() {
         float posX = currentLocation.getPosX();
         float posY = currentLocation.getPosY();
-        return currentRoom.getDescendants().values().stream()
+        List<SpatialContext> interactables = currentRoom.getDescendants().values().stream()
                 .filter(context -> context.getExpanse().isAround(posX, posY, SpatialContext.INTERACTION_DISTANCE)
-                && context.isInteractable()).collect(Collectors.toUnmodifiableMap(SpatialContext::getContextId, Function.identity()));
+                && context.isInteractable()).collect(Collectors.toList());
+        if (interactables.isEmpty()) {
+            return null;
+        }
+        if (interactables.size() == 1) {
+            return interactables.get(0);
+        }
+        for (SpatialContext interactable : interactables) {
+            if (isInDirection(interactable)) {
+                return interactable;
+            }
+        }
+        return null;
     }
 
     /**
@@ -195,5 +207,25 @@ public class InternUser extends User implements IInternUserController, IInternUs
         music = null;
         currentLocation = null;
         currentRoom = null;
+    }
+
+    /**
+     * Gibt zurück, ob sich ein Kontext in der Blickrichtung des Benutzers befindet.
+     * @param interactable Zu überprüfender Kontext.
+     * @return true, wenn sich der Kontext in der Blickrichtung befindet, sonst false.
+     */
+    private boolean isInDirection(SpatialContext interactable) {
+        switch (currentLocation.getDirection()) {
+            case UP:
+                return currentLocation.getPosY() <= interactable.getExpanse().getCenter().getPosY();
+            case LEFT:
+                return currentLocation.getPosX() >= interactable.getExpanse().getCenter().getPosX();
+            case DOWN:
+                return currentLocation.getPosY() >= interactable.getExpanse().getCenter().getPosY();
+            case RIGHT:
+                return currentLocation.getPosX() <= interactable.getExpanse().getCenter().getPosX();
+            default:
+                return false;
+        }
     }
 }
