@@ -36,7 +36,6 @@ public class UserAvatar extends Sprite {
     private Animation<TextureRegion> avatarRunLeft;
     private Animation<TextureRegion> avatarRunDown;
     private Animation<TextureRegion> avatarRunRight;
-    // private Animation<TextureRegion> avatarDance;
 
     protected Direction currentDirection;
     protected Direction previousDirection;
@@ -58,7 +57,7 @@ public class UserAvatar extends Sprite {
         fixtureDef.filter.categoryBits = WorldScreen.USER_BIT;
         fixtureDef.filter.maskBits = 0;
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(AVATAR_SIZE / WorldCamera.PPM / 2, AVATAR_SIZE / WorldCamera.PPM / 2);
+        shape.setAsBox((AVATAR_SIZE - 1) / WorldCamera.PPM / 2, (AVATAR_SIZE - 1) / WorldCamera.PPM / 2);
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
         body.setUserData(ContactType.USER);
@@ -69,10 +68,14 @@ public class UserAvatar extends Sprite {
 
     @Override
     public void draw(Batch batch, float delta) {
-        //InteractButtonAnimation animation = new InteractButtonAnimation();
-        //animation.draw(batch);
+        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
+        setRegion(getCurrentFrameRegion(delta));
+        super.draw(batch);
+    }
+
+    public void drawHead(Batch batch, float delta) {
         if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isShowNamesPressed()
-            || Chati.CHATI.getPreferences().getShowNamesInWorld()) {
+                || Chati.CHATI.getPreferences().getShowNamesInWorld()) {
             userInfoContainer.setPosition(body.getPosition().x, body.getPosition().y + getHeight());
             userInfoContainer.setScale(1 / WorldCamera.PPM * Chati.CHATI.getWorldScreen().getCamera().zoom);
             userInfoContainer.act(delta);
@@ -89,9 +92,6 @@ public class UserAvatar extends Sprite {
                 communicableIconContainer.draw(batch, 1);
             }
         }
-        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
-        setRegion(getCurrentFrameRegion(delta));
-        super.draw(batch);
     }
 
     private void initializeSprite() {

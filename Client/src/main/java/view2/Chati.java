@@ -65,8 +65,8 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     public Chati(IUserManagerView userManager) {
         CHATI = this;
-        this.worlds = new HashSet<>();
-        this.privateRooms = new HashSet<>();
+        this.worlds = new TreeSet<>();
+        this.privateRooms = new TreeSet<>();
         this.userManager = userManager;
     }
 

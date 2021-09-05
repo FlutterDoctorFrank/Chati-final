@@ -87,6 +87,8 @@ public class WorldScreen extends ChatiScreen {
             Chati.CHATI.getSpriteBatch().begin();
             externUserAvatars.values().forEach(avatar -> avatar.draw(Chati.CHATI.getSpriteBatch(), delta));
             internUserAvatar.draw(Chati.CHATI.getSpriteBatch(), delta);
+            externUserAvatars.values().forEach(avatar -> avatar.drawHead(Chati.CHATI.getSpriteBatch(), delta));
+            internUserAvatar.drawHead(Chati.CHATI.getSpriteBatch(), delta);
             Chati.CHATI.getSpriteBatch().end();
             tiledMapRenderer.render(LAYERS_RENDER_AFTER_AVATAR);
             // debugRenderer.render(world, camera.combined);
