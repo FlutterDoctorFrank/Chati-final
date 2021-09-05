@@ -97,7 +97,7 @@ public class InternUserAvatar extends UserAvatar {
     }
 
     public void sendPosition() {
-        if (!isTeleporting && !oldPosition.epsilonEquals(getPosition())) {
+        if (!isTeleporting && !oldPosition.epsilonEquals(getPosition()) && user.isMovable()) {
             isTeleporting = false;
             Chati.CHATI.send(ServerSender.SendAction.AVATAR_MOVE,
                     getPosition().x * WorldCamera.PPM, getPosition().y * WorldCamera.PPM, isSprinting, currentDirection);
