@@ -45,6 +45,7 @@ public class MenuScreen extends ChatiScreen {
         if (success) {
             setMenuTable(new StartTable());
         } else {
+            currentMenuTable.showMessage(messageKey);
             currentMenuTable.resetTextFields();
         }
     }
@@ -132,7 +133,8 @@ public class MenuScreen extends ChatiScreen {
         if (currentMenuTable != null) {
             currentMenuTable.remove();
         }
-        stage.addActor(currentMenuTable = table);
+        currentMenuTable = table;
+        stage.addActor(currentMenuTable);
     }
 
     @Override
