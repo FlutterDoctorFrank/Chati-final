@@ -53,7 +53,7 @@ public class PacketOutContextList implements Packet<PacketListenerOut> {
 
         for (final ContextInfo info : this.infos) {
             PacketUtils.writeContextId(output, info.getContextId());
-            output.writeAscii(info.getName());
+            output.writeString(info.getName());
         }
     }
 
