@@ -5,13 +5,13 @@ import com.badlogic.gdx.ScreenAdapter;
 import view2.Chati;
 import view2.component.hud.HeadUpDisplay;
 
-public abstract class AbstractScreen extends ScreenAdapter {
+public abstract class ChatiScreen extends ScreenAdapter {
 
     protected final ChatiStage stage;
 
     protected Response pendingResponse;
 
-    protected AbstractScreen() {
+    protected ChatiScreen() {
         this.stage = new ChatiStage();
         this.pendingResponse = Response.NONE;
     }

@@ -9,7 +9,6 @@ import controller.network.ServerSender;
 import model.user.IInternUserView;
 import model.user.Status;
 import view2.Chati;
-import view2.Assets;
 import view2.component.ChatiTextButton;
 import view2.component.ChatiToolTip;
 import view2.component.UserInfoContainer;
@@ -53,7 +52,7 @@ public class InternUserDisplay extends Table {
         Table container = new Table();
 
         NinePatchDrawable controlsBackground =
-                new NinePatchDrawable(new NinePatch(Assets.SKIN.getRegion("panel1"), 10, 10, 10, 10));
+                new NinePatchDrawable(new NinePatch(Chati.CHATI.getSkin().getRegion("panel1"), 10, 10, 10, 10));
         container.setBackground(controlsBackground);
         container.left().defaults().top().padTop(VERTICAL_SPACING);
 
@@ -176,7 +175,7 @@ public class InternUserDisplay extends Table {
             Table container = new Table();
 
             NinePatchDrawable controlsBackground =
-                    new NinePatchDrawable(new NinePatch(Assets.SKIN.getRegion("panel1"), 10, 10, 10, 10));
+                    new NinePatchDrawable(new NinePatch(Chati.CHATI.getSkin().getRegion("panel1"), 10, 10, 10, 10));
             container.setBackground(controlsBackground);
 
             onlineStatusButton.add(onlineStatusImage).size(USER_INFO_ICON_SIZE).pad(USER_INFO_ICON_SIZE);

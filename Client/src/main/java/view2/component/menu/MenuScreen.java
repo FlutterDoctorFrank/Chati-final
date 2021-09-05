@@ -3,17 +3,14 @@ package view2.component.menu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
-import model.context.ContextID;
 import view2.Chati;
-import view2.component.AbstractScreen;
+import view2.component.ChatiScreen;
 import view2.component.Response;
 import view2.component.menu.table.LoginTable;
 import view2.component.menu.table.MenuTable;
 import view2.component.menu.table.StartTable;
 
-import java.util.*;
-
-public class MenuScreen extends AbstractScreen {
+public class MenuScreen extends ChatiScreen {
 
     private MenuTable currentMenuTable;
 

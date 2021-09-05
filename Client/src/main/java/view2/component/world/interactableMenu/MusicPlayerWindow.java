@@ -9,11 +9,11 @@ import controller.network.ServerSender;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 import model.context.spatial.ContextMusic;
-import view2.Assets;
 import view2.Chati;
 
 import java.util.EnumSet;
 
+@Deprecated
 public class MusicPlayerWindow extends InteractableWindow {
 
     private static final int MENU_OPTION_PLAY = 1;
@@ -40,15 +40,14 @@ public class MusicPlayerWindow extends InteractableWindow {
         setLayout();
     }
 
-    @Override
     protected void create() {
-        infoLabel = new Label("Spiele Musik ab!", Assets.SKIN);
+        infoLabel = new Label("Spiele Musik ab!", Chati.CHATI.getSkin());
 
-        musicSelectLabel = new Label("Musik: ", Assets.SKIN);
-        musicSelectBox = new SelectBox<>(Assets.SKIN);
+        musicSelectLabel = new Label("Musik: ", Chati.CHATI.getSkin());
+        musicSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
         musicSelectBox.setItems(EnumSet.allOf(ContextMusic.class).toArray(new ContextMusic[0]));
 
-       playButton = new TextButton("Abspielen", Assets.SKIN);
+       playButton = new TextButton("Abspielen", Chati.CHATI.getSkin());
        playButton.addListener(new ClickListener() {
            @Override
            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -65,7 +64,7 @@ public class MusicPlayerWindow extends InteractableWindow {
            }
        });
 
-       stopButton = new TextButton("Stoppen", Assets.SKIN);
+       stopButton = new TextButton("Stoppen", Chati.CHATI.getSkin());
        stopButton.addListener(new ClickListener() {
            @Override
            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -78,7 +77,7 @@ public class MusicPlayerWindow extends InteractableWindow {
            }
        });
 
-       randomButton = new TextButton("Zufall", Assets.SKIN);
+       randomButton = new TextButton("Zufall", Chati.CHATI.getSkin());
        randomButton.addListener(new ClickListener() {
            @Override
            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -92,7 +91,7 @@ public class MusicPlayerWindow extends InteractableWindow {
            }
        });
 
-       cancelButton = new TextButton("Abbrechen", Assets.SKIN);
+       cancelButton = new TextButton("Abbrechen", Chati.CHATI.getSkin());
        cancelButton.addListener(new ClickListener() {
            @Override
            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -104,9 +103,9 @@ public class MusicPlayerWindow extends InteractableWindow {
            }
        });
 
-       creditsLabel = new Label("Music by https://www.bensound.com", Assets.SKIN);
+       creditsLabel = new Label("Music by https://www.bensound.com", Chati.CHATI.getSkin());
 
-       closeButton = new TextButton("X", Assets.SKIN);
+       closeButton = new TextButton("X", Chati.CHATI.getSkin());
        closeButton.addListener(new ClickListener() {
            @Override
            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -119,7 +118,6 @@ public class MusicPlayerWindow extends InteractableWindow {
        });
     }
 
-    @Override
     protected void setLayout() {
         setModal(true);
         setMovable(false);

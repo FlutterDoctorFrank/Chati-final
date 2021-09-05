@@ -4,14 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
-import view2.Assets;
 import view2.Chati;
+import view2.component.ChatiTextButton;
 
 public class PortalWindow extends InteractableWindow {
 
@@ -20,22 +19,12 @@ public class PortalWindow extends InteractableWindow {
     private static final float ROW_HEIGHT = 60;
     private static final float SPACING = 15;
 
-    private Label infoLabel;
-    private TextButton confirmButton;
-    private TextButton cancelButton;
-    private TextButton closeButton;
-
     public PortalWindow(ContextID portalId) {
         super("Raum verlassen", portalId, ContextMenu.PORTAL_MENU);
-        create();
-        setLayout();
-    }
 
-    @Override
-    protected void create() {
-        infoLabel = new Label("Möchtest du den Raum wirklich verlassen?", Assets.SKIN);
+        Label infoLabel = new Label("Möchtest du den Raum wirklich verlassen?", Chati.CHATI.getSkin());
 
-        confirmButton = new TextButton("Ja", Assets.SKIN);
+        ChatiTextButton confirmButton = new ChatiTextButton("Ja", true);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -43,11 +32,11 @@ public class PortalWindow extends InteractableWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], 1);
+                Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], 1);
             }
         });
 
-        cancelButton = new TextButton("Nein", Assets.SKIN);
+        ChatiTextButton cancelButton = new ChatiTextButton("Nein", true);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -59,21 +48,7 @@ public class PortalWindow extends InteractableWindow {
             }
         });
 
-        closeButton = new TextButton("X", Assets.SKIN);
-        closeButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                close();
-            }
-        });
-    }
-
-    @Override
-    protected void setLayout() {
+        // Layout
         setModal(true);
         setMovable(false);
         setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
@@ -90,12 +65,9 @@ public class PortalWindow extends InteractableWindow {
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
-
-        getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }
 
     @Override
     public void receiveResponse(boolean success, String messageKey) {
-
     }
 }

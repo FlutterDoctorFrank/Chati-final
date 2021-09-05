@@ -19,7 +19,7 @@ import model.context.spatial.ContextMenu;
 import model.user.IInternUserView;
 import model.user.IUserView;
 import view2.Chati;
-import view2.component.AbstractScreen;
+import view2.component.ChatiScreen;
 import view2.component.menu.ContextEntry;
 import view2.component.world.body.Border;
 import view2.component.world.body.InteractionObject;
@@ -33,7 +33,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-public class WorldScreen extends AbstractScreen {
+public class WorldScreen extends ChatiScreen {
 
     private static final int[] LAYERS_RENDER_BEFORE_AVATAR = new int[]{0, 1, 2};
     private static final int[] LAYERS_RENDER_AFTER_AVATAR = new int[]{3};
@@ -57,12 +57,9 @@ public class WorldScreen extends AbstractScreen {
     private InternUserAvatar internUserAvatar;
     private InteractableWindow currentInteractableWindow;
 
-    private final Set<ContextEntry> privateRooms;
-
     public WorldScreen() {
         this.worldInputProcessor = new WorldInputProcessor();
         this.externUserAvatars = new HashMap<>();
-        this.privateRooms = new HashSet<>();
         this.camera = new WorldCamera();
         this.viewport = new FitViewport(Gdx.graphics.getWidth() / WorldCamera.PPM, Gdx.graphics.getHeight() / WorldCamera.PPM, camera);
         this.tiledMapRenderer = new OrthogonalTiledMapRenderer(null, 1 / WorldCamera.PPM);
@@ -236,14 +233,5 @@ public class WorldScreen extends AbstractScreen {
             return;
         }
         currentInteractableWindow.receiveResponse(success, messageKey);
-    }
-
-    public void updatePrivateRooms(Map<ContextID, String> privateRooms) {
-        this.privateRooms.clear();
-        privateRooms.forEach((key, value) -> this.privateRooms.add(new ContextEntry(key, value)));
-    }
-
-    public Set<ContextEntry> getPrivateRooms() {
-        return Collections.unmodifiableSet(privateRooms);
     }
 }

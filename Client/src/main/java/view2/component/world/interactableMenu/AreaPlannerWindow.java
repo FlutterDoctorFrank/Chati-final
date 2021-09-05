@@ -10,17 +10,6 @@ public class AreaPlannerWindow extends InteractableWindow {
     }
 
     @Override
-    protected void create() {
-
-    }
-
-    @Override
-    protected void setLayout() {
-
-    }
-
-    @Override
     public void receiveResponse(boolean success, String messageKey) {
-
     }
 }

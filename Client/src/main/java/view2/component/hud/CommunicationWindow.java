@@ -3,7 +3,7 @@ package view2.component.hud;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import model.user.IInternUserView;
 import view2.Chati;
-import view2.component.AbstractWindow;
+import view2.component.ChatiWindow;
 import view2.component.hud.userList.UserListEntry;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class CommunicationWindow extends AbstractWindow {
+public class CommunicationWindow extends ChatiWindow {
 
     private static final float HUD_WINDOW_WIDTH = 400;
     private static final float HUD_WINDOW_HEIGHT = 500;

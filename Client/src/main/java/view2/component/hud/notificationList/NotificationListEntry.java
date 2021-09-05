@@ -14,11 +14,10 @@ import model.notification.NotificationAction;
 import model.notification.NotificationType;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.Assets;
 import view2.component.ChatiImageButton;
 import view2.component.ChatiTextButton;
 import view2.component.ChatiToolTip;
-import view2.component.AbstractWindow;
+import view2.component.ChatiWindow;
 
 import java.time.format.DateTimeFormatter;
 
@@ -130,7 +129,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
 
         // Layout
         NinePatchDrawable controlsBackground =
-                new NinePatchDrawable(new NinePatch(Assets.SKIN.getRegion("panel1"), 10, 10, 10, 10));
+                new NinePatchDrawable(new NinePatch(Chati.CHATI.getSkin().getRegion("panel1"), 10, 10, 10, 10));
         setBackground(controlsBackground);
         left().defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).padTop(VERTICAL_SPACING);
 
@@ -158,7 +157,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         }
     }
 
-    private class NotificationWindow extends AbstractWindow {
+    private class NotificationWindow extends ChatiWindow {
 
         private static final float WINDOW_WIDTH = 750;
         private static final float WINDOW_HEIGHT = 350;
@@ -265,7 +264,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         }
     }
 
-    private class ConfirmWindow extends AbstractWindow {
+    private class ConfirmWindow extends ChatiWindow {
         private static final float WINDOW_WIDTH = 550;
         private static final float WINDOW_HEIGHT = 275;
         private static final float ROW_HEIGHT = 60;

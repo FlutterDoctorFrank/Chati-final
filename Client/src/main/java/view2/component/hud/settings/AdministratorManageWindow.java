@@ -11,12 +11,12 @@ import model.role.Role;
 import model.user.AdministrativeAction;
 import model.user.IUserView;
 import view2.Chati;
-import view2.component.AbstractWindow;
+import view2.component.ChatiWindow;
 import view2.component.ChatiTextArea;
 import view2.component.ChatiTextButton;
 import view2.component.ChatiTextField;
 
-public class AdministratorManageWindow extends AbstractWindow {
+public class AdministratorManageWindow extends ChatiWindow {
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 450;

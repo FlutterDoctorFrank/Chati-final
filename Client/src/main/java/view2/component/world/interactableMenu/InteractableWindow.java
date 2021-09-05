@@ -4,10 +4,10 @@ import controller.network.ServerSender;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 import view2.Chati;
-import view2.component.AbstractWindow;
+import view2.component.ChatiWindow;
 import view2.component.Response;
 
-public abstract class InteractableWindow extends AbstractWindow {
+public abstract class InteractableWindow extends ChatiWindow {
 
     protected static final int MENU_OPTION_CLOSE = 0;
 
@@ -33,7 +33,6 @@ public abstract class InteractableWindow extends AbstractWindow {
     @Override
     public void close() {
         Chati.CHATI.getWorldScreen().setPendingResponse(Response.CLOSE_MENU);
-        Chati.CHATI.getServerSender()
-                .send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_CLOSE);
+        Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_CLOSE);
     }
 }

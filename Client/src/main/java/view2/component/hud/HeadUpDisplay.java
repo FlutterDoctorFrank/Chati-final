@@ -13,7 +13,6 @@ import model.communication.message.MessageType;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import view2.Chati;
-import view2.Settings;
 import view2.component.ChatiImageButton;
 import view2.component.hud.notificationList.NotificationListWindow;
 import view2.component.hud.settings.SettingsWindow;
@@ -154,7 +153,7 @@ public class HeadUpDisplay extends Table {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Settings.setSoundOn(!speakerButton.isChecked());
+                Chati.CHATI.getPreferences().setSoundOn(!speakerButton.isChecked());
             }
         });
 

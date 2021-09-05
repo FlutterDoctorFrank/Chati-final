@@ -12,7 +12,7 @@ import java.util.Stack;
 
 public class ChatiStage extends Stage {
 
-    private final Stack<AbstractWindow> openWindows;
+    private final Stack<ChatiWindow> openWindows;
 
     public ChatiStage() {
         super(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()), Chati.CHATI.getSpriteBatch());
@@ -76,12 +76,12 @@ public class ChatiStage extends Stage {
         return super.touchDown(screenX, screenY, pointer, button);
     }
 
-    public void openWindow(AbstractWindow window) {
+    public void openWindow(ChatiWindow window) {
         openWindows.push(window);
         addActor(window);
     }
 
-    public void closeWindow(AbstractWindow window) {
+    public void closeWindow(ChatiWindow window) {
         if (openWindows.remove(window)) {
             window.remove();
         }

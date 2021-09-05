@@ -1,9 +1,7 @@
 package view2.component.hud.userList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -16,7 +14,6 @@ import model.user.AdministrativeAction;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.Assets;
 import view2.component.*;
 
 public class UserListEntry extends Table implements Comparable<UserListEntry> {
@@ -292,7 +289,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
         // Layout
         NinePatchDrawable controlsBackground =
-                new NinePatchDrawable(new NinePatch(Assets.SKIN.getRegion("panel1"), 10, 10, 10, 10));
+                new NinePatchDrawable(new NinePatch(Chati.CHATI.getSkin().getRegion("panel1"), 10, 10, 10, 10));
         setBackground(controlsBackground);
         left().defaults().padTop(VERTICAL_SPACING);
 
@@ -324,7 +321,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 : (this.user.getUsername().compareTo(other.user.getUsername())));
     }
 
-    private class MessageWindow extends AbstractWindow {
+    private class MessageWindow extends ChatiWindow {
 
         private static final float WINDOW_WIDTH = 750;
         private static final float WINDOW_HEIGHT = 350;

@@ -9,9 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import model.context.spatial.Direction;
 import model.context.spatial.ILocationView;
 import model.user.IUserView;
-import view2.Assets;
 import view2.Chati;
-import view2.Settings;
 import view2.component.UserInfoContainer;
 import view2.component.world.WorldCamera;
 import view2.component.world.WorldScreen;
@@ -74,14 +72,14 @@ public class UserAvatar extends Sprite {
         //InteractButtonAnimation animation = new InteractButtonAnimation();
         //animation.draw(batch);
         if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isShowNamesPressed()
-            || Settings.getShowNamesInWorld()) {
+            || Chati.CHATI.getPreferences().getShowNamesInWorld()) {
             userInfoContainer.setPosition(body.getPosition().x, body.getPosition().y + getHeight());
             userInfoContainer.setScale(1 / WorldCamera.PPM * Chati.CHATI.getWorldScreen().getCamera().zoom);
             userInfoContainer.act(delta);
             userInfoContainer.draw(batch, 1);
             if (!user.equals(Chati.CHATI.getUserManager().getInternUserView())) {
                 if (user.canCommunicateWith()) {
-                    communicableIcon.setDrawable(Assets.COMMUNICABLE_ICON);
+                    communicableIcon.setDrawable(Chati.CHATI.getDrawable("communicable_avatar"));
                 } else {
                     communicableIcon.setDrawable(null);
                 }

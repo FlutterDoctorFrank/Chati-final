@@ -1,6 +1,5 @@
 package view2.audio;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -8,7 +7,6 @@ import model.context.spatial.ContextMusic;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import view2.Chati;
-import view2.Settings;
 import view2.component.KeyAction;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -62,8 +60,8 @@ public class AudioManager {
             }
 
             if (voiceRecorder.isRunning()) {
-                if (Settings.isMicrophoneOn() && (!Settings.getPushToTalk() || KeyAction.PUSH_TO_TALK.isPressed())
-                    && internUser != null && internUser.canTalk()) {
+                if (Chati.CHATI.getPreferences().isMicrophoneOn() && (!Chati.CHATI.getPreferences().getPushToTalk()
+                        || KeyAction.PUSH_TO_TALK.isPressed()) && internUser != null && internUser.canTalk()) {
                     if (!voiceRecorder.isRecording()) {
                         voiceRecorder.startRecording();
                     }
@@ -79,17 +77,23 @@ public class AudioManager {
     }
 
     public void setVoiceVolume() {
+        // TODO
+        /*
         if (audioConsumer != null) {
             float volume = (float) Math.sqrt(Settings.getTotalVolume() * Settings.getVoiceVolume());
             audioConsumer.setVolume(volume);
         }
+         */
     }
 
     public void setMusicVolume() {
+        // TODO
+        /*
         if (currentMusic != null) {
             float volume = (float) Math.sqrt(Settings.getTotalVolume() * Settings.getMusicVolume());
             currentMusic.setVolume(volume);
         }
+         */
     }
 
     public void playAudioData(UUID userId, LocalDateTime timestamp, byte[] audioData) throws UserNotFoundException {
@@ -103,24 +107,33 @@ public class AudioManager {
     }
 
     public void playChatMessageSound() {
+        // TODO
+        /*
         if (chatMessageSound != null) {
             float volume = (float) Math.sqrt(Settings.getTotalVolume() * Settings.getSoundVolume());
             chatMessageSound.play(volume);
         }
+         */
     }
 
     public void playNotificationSound() {
+        // TODO
+        /*
         if (notificationSound != null) {
             float volume = (float) Math.sqrt(Settings.getTotalVolume() * Settings.getSoundVolume());
             notificationSound.play(volume);
         }
+         */
     }
 
     public void playRoomEnterSound() {
+        // TODO
+        /*
         if (roomEnterSound != null) {
             float volume = (float) Math.sqrt(Settings.getTotalVolume() * Settings.getSoundVolume());
             roomEnterSound.play(volume);
         }
+         */
     }
 
     public boolean isPlayingMusic() {

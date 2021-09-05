@@ -13,10 +13,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import view2.Chati;
 import view2.ChatiPreferences;
-import view2.component.AbstractWindow;
+import view2.component.ChatiWindow;
 import view2.component.ChatiTextButton;
 
-public class WorldSettingsWindow extends AbstractWindow {
+public class WorldSettingsWindow extends ChatiWindow {
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 350;

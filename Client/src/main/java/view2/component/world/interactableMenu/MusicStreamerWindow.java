@@ -1,7 +1,6 @@
 package view2.component.world.interactableMenu;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -12,8 +11,8 @@ import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 import model.context.spatial.ContextMusic;
 import model.user.IInternUserView;
-import view2.Assets;
 import view2.Chati;
+import view2.component.ChatiImageButton;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -50,44 +49,24 @@ public class MusicStreamerWindow extends InteractableWindow {
     private static final float BUTTON_SIZE = 100;
     private static final float BUTTON_SCALE_FACTOR = 0.05f;
 
-    private Label infoLabel;
-    private MusicListItem[] musicListItems;
-    private List<MusicListItem> musicList;
-    private ScrollPane musicListScrollPane;
-    private ImageButton playButton;
-    private ImageButton stopButton;
-    private ImageButton backButton;
-    private ImageButton skipButton;
-    private ImageButton loopingButton;
-    private ImageButton randomButton;
-    private ImageButton volumeButton;
-    private ProgressBar musicProgressBar;
-    private Label musicProgressLabel;
-    private Label creditsLabel;
-    private TextButton closeButton;
+    private final Label infoLabel;
+    private final MusicListItem[] musicListItems;
+    private final List<MusicListItem> musicList;
+    private final ChatiImageButton playButton;
+    private final ChatiImageButton stopButton;
+    private final ChatiImageButton backButton;
+    private final ChatiImageButton skipButton;
 
     public MusicStreamerWindow(ContextID musicPlayerId) {
         super("Jukebox", musicPlayerId, ContextMenu.MUSIC_STREAMER_MENU);
-        create();
-        setLayout();
-    }
 
-    @Override
-    public void act(float delta) {
-        setSelectedMusic();
-        setButtonImages();
-        super.act(delta);
-    }
+        infoLabel = new Label("Wähle einen Titel.", Chati.CHATI.getSkin());
 
-    @Override
-    protected void create() {
-        infoLabel = new Label("Wähle einen Titel.", Assets.SKIN);
-
-        musicList = new List<>(Assets.SKIN, "dimmed");
+        musicList = new List<>(Chati.CHATI.getSkin(), "dimmed");
         musicListItems = EnumSet.allOf(ContextMusic.class).stream().map(MusicListItem::new).toArray(MusicListItem[]::new);
         musicList.setItems(musicListItems);
         setSelectedMusic();
-        musicList.getStyle().over = Assets.SKIN.getDrawable("list-selection");
+        musicList.getStyle().over = Chati.CHATI.getSkin().getDrawable("list-selection");
         musicList.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -98,244 +77,112 @@ public class MusicStreamerWindow extends InteractableWindow {
                 if (musicList.getSelected() == null) {
                     return;
                 }
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
+                Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId,
                         new String[] {musicList.getSelected().getMusic().getName()}, MENU_OPTION_PLAY);
             }
         });
-        musicListScrollPane = new ScrollPane(musicList);
+        ScrollPane musicListScrollPane = new ScrollPane(musicList);
 
-        ImageButton.ImageButtonStyle playButtonStyle = new ImageButton.ImageButtonStyle();
-        playButtonStyle.imageUp = Assets.PLAY_BUTTON_IMAGE;
-        playButtonStyle.imageDisabled = Assets.DISABLED_PLAY_BUTTON_IMAGE;
-        playButton = new ImageButton(playButtonStyle);
+        playButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_play"), Chati.CHATI.getDrawable("music_pause"),
+                Chati.CHATI.getDrawable("music_play_disabled"), BUTTON_SCALE_FACTOR);
         playButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                playButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                playButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
-                        new String[0], MENU_OPTION_PAUSE);
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    playButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    playButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
+                Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_PAUSE);
             }
         });
 
-        ImageButton.ImageButtonStyle stopButtonStyle = new ImageButton.ImageButtonStyle();
-        stopButtonStyle.imageUp = Assets.STOP_BUTTON_IMAGE;
-        stopButtonStyle.imageDisabled = Assets.DISABLED_STOP_BUTTON_IMAGE;
-        stopButton = new ImageButton(stopButtonStyle);
+        stopButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_stop"), Chati.CHATI.getDrawable("music_stop"),
+                Chati.CHATI.getDrawable("music_stop_disabled"), BUTTON_SCALE_FACTOR);
         stopButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                stopButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                stopButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
-                        new String[0], MENU_OPTION_STOP);
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    stopButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    stopButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
+                Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_STOP);
             }
         });
 
-        ImageButton.ImageButtonStyle backButtonStyle = new ImageButton.ImageButtonStyle();
-        backButtonStyle.imageUp = Assets.PREVIOUS_BUTTON_IMAGE;
-        backButtonStyle.imageDisabled = Assets.DISABLED_PREVIOUS_BUTTON_IMAGE;
-        backButton = new ImageButton(backButtonStyle);
+        backButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_back"), Chati.CHATI.getDrawable("music_back"),
+                Chati.CHATI.getDrawable("music_back_disabled"), BUTTON_SCALE_FACTOR);
         backButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                backButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                backButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
-                        new String[0], MENU_OPTION_PREVIOUS);
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    backButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    backButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
+                Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_PREVIOUS);
             }
         });
 
-        ImageButton.ImageButtonStyle skipButtonStyle = new ImageButton.ImageButtonStyle();
-        skipButtonStyle.imageUp = Assets.NEXT_BUTTON_IMAGE;
-        skipButtonStyle.imageDisabled = Assets.DISABLED_NEXT_BUTTON_IMAGE;
-        skipButton = new ImageButton(skipButtonStyle);
+        skipButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_skip"), Chati.CHATI.getDrawable("music_skip"),
+                Chati.CHATI.getDrawable("music_skip_disabled"), BUTTON_SCALE_FACTOR);
         skipButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                skipButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                skipButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
-                        new String[0], MENU_OPTION_NEXT);
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    skipButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    skipButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
+                Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_NEXT);
             }
         });
 
-        ImageButton.ImageButtonStyle loopingButtonStyle = new ImageButton.ImageButtonStyle();
-        loopingButtonStyle.imageUp = Assets.LOOPING_BUTTON_IMAGE;
-        loopingButtonStyle.imageDisabled = Assets.DISABLED_LOOPING_BUTTON_IMAGE;
-        loopingButton = new ImageButton(loopingButtonStyle);
+        ChatiImageButton loopingButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_loop"),
+                Chati.CHATI.getDrawable("music_loop"), Chati.CHATI.getDrawable("music_loop_disabled"), BUTTON_SCALE_FACTOR);
         loopingButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                loopingButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                loopingButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
-                        new String[0], MENU_OPTION_LOOPING);
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    loopingButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    loopingButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
+                Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_LOOPING);
             }
         });
 
-        ImageButton.ImageButtonStyle randomButtonStyle = new ImageButton.ImageButtonStyle();
-        randomButtonStyle.imageUp = Assets.RANDOM_BUTTON_IMAGE;
-        randomButtonStyle.imageDisabled = Assets.DISABLED_RANDOM_BUTTON_IMAGE;
-        randomButton = new ImageButton(randomButtonStyle);
+        ChatiImageButton randomButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_random"),
+                Chati.CHATI.getDrawable("music_random"), Chati.CHATI.getDrawable("music_random_disabled"), BUTTON_SCALE_FACTOR);
         randomButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                randomButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                randomButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
-                        new String[0], MENU_OPTION_RANDOM);
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    randomButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    randomButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
+                Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_RANDOM);
             }
         });
 
-        ImageButton.ImageButtonStyle volumeButtonStyle = new ImageButton.ImageButtonStyle();
-        volumeButtonStyle.imageUp = Assets.VOLUME_BUTTON_IMAGE;
-        volumeButtonStyle.imageDisabled = Assets.DISABLED_VOLUME_BUTTON_IMAGE;
-        volumeButton = new ImageButton(volumeButtonStyle);
+        ChatiImageButton volumeButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_volume"),
+                Chati.CHATI.getDrawable("music_volume"), Chati.CHATI.getDrawable("music_volume_disabled"), BUTTON_SCALE_FACTOR);
         volumeButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                volumeButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                volumeButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    volumeButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    volumeButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
+                // TODO
             }
         });
 
-        musicProgressLabel = new Label("0:00", Assets.SKIN); // TODO
-        musicProgressBar = new ProgressBar(0, 1, 0.01f, false, Assets.SKIN);
+        Label musicProgressLabel = new Label("0:00", Chati.CHATI.getSkin()); // TODO
+        ProgressBar musicProgressBar = new ProgressBar(0, 1, 0.01f, false, Chati.CHATI.getSkin());
 
-        creditsLabel = new Label("Music by https://www.bensound.com", Assets.SKIN);
-
-        closeButton = new TextButton("X", Assets.SKIN);
-        closeButton.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                close();
-            }
-        });
+        Label creditsLabel = new Label("Music by https://www.bensound.com", Chati.CHATI.getSkin());
 
         setSelectedMusic();
         setButtonImages();
-    }
 
-    @Override
-    protected void setLayout() {
+        // Layout
         setModal(true);
         setMovable(false);
         setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
@@ -376,8 +223,13 @@ public class MusicStreamerWindow extends InteractableWindow {
         creditsLabel.setAlignment(Align.center, Align.center);
         container.add(creditsLabel);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
+    }
 
-        getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
+    @Override
+    public void act(float delta) {
+        setSelectedMusic();
+        setButtonImages();
+        super.act(delta);
     }
 
     @Override
@@ -388,8 +240,9 @@ public class MusicStreamerWindow extends InteractableWindow {
     }
 
     private void setSelectedMusic() {
-        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
+        IInternUserView internUser = Chati.CHATI.getInternUser();
 
+        // TODO Das funktioniert noch nicht richtig.
         if (Chati.CHATI.isMusicChanged() && internUser != null) {
             MusicListItem item;
             try {
@@ -403,18 +256,14 @@ public class MusicStreamerWindow extends InteractableWindow {
     }
 
     private void setButtonImages() {
-        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
+        IInternUserView internUser = Chati.CHATI.getInternUser();
 
         if (internUser != null && internUser.getMusic() != null) {
             enableButton(playButton);
             enableButton(stopButton);
             enableButton(backButton);
             enableButton(skipButton);
-            if (Chati.CHATI.getAudioManager().isPlayingMusic()) {
-                playButton.getStyle().imageUp = Assets.PAUSE_BUTTON_IMAGE;
-            } else {
-                playButton.getStyle().imageUp = Assets.PLAY_BUTTON_IMAGE;
-            }
+            playButton.setChecked(Chati.CHATI.getAudioManager().isPlayingMusic());
         } else {
             disableButton(playButton);
             disableButton(stopButton);

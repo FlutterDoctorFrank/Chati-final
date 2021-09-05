@@ -3,10 +3,10 @@ package view2.component.hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import view2.component.AbstractWindow;
+import view2.component.ChatiWindow;
 import view2.component.ChatiTextButton;
 
-public abstract class HudMenuWindow extends AbstractWindow {
+public abstract class HudMenuWindow extends ChatiWindow {
 
     protected static final float HUD_WINDOW_WIDTH = 500;
     protected static final float HUD_WINDOW_HEIGHT = 600;

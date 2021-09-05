@@ -18,7 +18,7 @@ import model.user.IInternUserView;
 import model.user.IUserManagerView;
 import org.jetbrains.annotations.Nullable;
 import view2.audio.AudioManager;
-import view2.component.AbstractScreen;
+import view2.component.ChatiScreen;
 import view2.component.hud.HeadUpDisplay;
 import view2.component.menu.ContextEntry;
 import view2.component.menu.table.LoginTable;
@@ -34,6 +34,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public static Chati CHATI;
 
     private final Set<ContextEntry> worlds;
+    private final Set<ContextEntry> privateRooms;
     private final IUserManagerView userManager;
 
     private ServerSender serverSender;
@@ -67,6 +68,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public Chati(IUserManagerView userManager) {
         CHATI = this;
         this.worlds = new HashSet<>();
+        this.privateRooms = new HashSet<>();
         this.userManager = userManager;
     }
 
@@ -83,10 +85,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         this.assetManager = new ChatiAssetManager();
         this.preferences = new ChatiPreferences();
         this.audioManager = new AudioManager();
-
-        Settings.initialize();
-        Assets.initialize();
-
         this.spriteBatch = new SpriteBatch();
         this.menuScreen = new MenuScreen();
         this.worldScreen = new WorldScreen();
@@ -103,13 +101,13 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         resetModelChangedFlags();
     }
 
-    public void setScreen(AbstractScreen screen) {
+    public void setScreen(ChatiScreen screen) {
         Gdx.input.setInputProcessor(screen.getInputProcessor());
         super.setScreen(screen);
     }
 
     @Override
-    public AbstractScreen getScreen() {
+    public ChatiScreen getScreen() {
         if (screen.equals(menuScreen)) {
             return menuScreen;
         }
@@ -117,16 +115,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
             return worldScreen;
         }
         return null;
-    }
-
-    public void newCreate() {
-        this.assetManager = new ChatiAssetManager();
-        this.preferences = new ChatiPreferences();
-        this.audioManager = new AudioManager();
-        this.spriteBatch = new SpriteBatch();
-        this.menuScreen = new MenuScreen();
-        this.worldScreen = new WorldScreen();
-        setScreen(menuScreen);
     }
 
     public ServerSender getServerSender() {
@@ -213,9 +201,8 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void updateRooms(ContextID worldId, Map<ContextID, String> privateRooms) {
-        if (this.screen.equals(worldScreen)) {
-            worldScreen.updatePrivateRooms(privateRooms);
-        }
+        this.privateRooms.clear();
+        privateRooms.forEach((key, value) -> this.privateRooms.add(new ContextEntry(key, value)));
         roomListUpdateReceived = true;
     }
 
@@ -423,5 +410,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     public Set<ContextEntry> getWorlds() {
         return Set.copyOf(worlds);
+    }
+
+    public Set<ContextEntry> getPrivateRooms() {
+        return Set.copyOf(privateRooms);
     }
 }

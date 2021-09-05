@@ -13,11 +13,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import view2.Chati;
 import view2.ChatiPreferences;
-import view2.Settings;
-import view2.component.AbstractWindow;
+import view2.component.ChatiWindow;
 import view2.component.ChatiTextButton;
 
-public class VolumeChangeWindow extends AbstractWindow {
+public class VolumeChangeWindow extends ChatiWindow {
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 500;
@@ -45,7 +44,7 @@ public class VolumeChangeWindow extends AbstractWindow {
         Slider totalVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Chati.CHATI.getSkin());
         totalVolumeSlider.setSnapToValues(new float[]{0, SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                 3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
-        totalVolumeSlider.setValue(Settings.getTotalVolume());
+        totalVolumeSlider.setValue(Chati.CHATI.getPreferences().getTotalVolume());
         totalVolumeSlider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -57,7 +56,7 @@ public class VolumeChangeWindow extends AbstractWindow {
         Slider voiceVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Chati.CHATI.getSkin());
         voiceVolumeSlider.setSnapToValues(new float[]{0, SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                 3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
-        voiceVolumeSlider.setValue(Settings.getVoiceVolume());
+        voiceVolumeSlider.setValue(Chati.CHATI.getPreferences().getVoiceVolume());
         voiceVolumeSlider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -69,7 +68,7 @@ public class VolumeChangeWindow extends AbstractWindow {
         Slider musicVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Chati.CHATI.getSkin());
         musicVolumeSlider.setSnapToValues(new float[]{0, SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                 3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
-        musicVolumeSlider.setValue(Settings.getMusicVolume());
+        musicVolumeSlider.setValue(Chati.CHATI.getPreferences().getMusicVolume());
         musicVolumeSlider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -81,7 +80,7 @@ public class VolumeChangeWindow extends AbstractWindow {
         Slider soundVolumeSlider = new Slider(MIN_VOLUME, MAX_VOLUME, VOLUME_STEP_SIZE, false, Chati.CHATI.getSkin());
         soundVolumeSlider.setSnapToValues(new float[]{0, SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                 3 * SNAP_VALUE_STEP_SIZE}, SNAP_VALUE_THRESHOLD);
-        soundVolumeSlider.setValue(Settings.getSoundVolume());
+        soundVolumeSlider.setValue(Chati.CHATI.getPreferences().getSoundVolume());
         soundVolumeSlider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

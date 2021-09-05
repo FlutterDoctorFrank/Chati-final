@@ -2,24 +2,18 @@ package view2.component.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
 import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
-import model.user.IUserManagerView;
 import model.user.IUserView;
-import model.user.UserManager;
-import view2.Assets;
 import view2.Chati;
-import view2.component.AbstractWindow;
 import view2.component.ChatiTextArea;
 import view2.component.ChatiTextButton;
 import view2.component.KeyAction;
@@ -27,7 +21,6 @@ import view2.component.KeyAction;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.List;
 
 public class ChatWindow extends Window {
 
