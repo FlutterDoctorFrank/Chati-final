@@ -148,6 +148,11 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     }
 
+    @Override
+    public void setNewNotificationReceived() {
+
+    }
+
 
     public void setInternUserPositionChanged() {
 

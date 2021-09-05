@@ -6,9 +6,9 @@ import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.utils.ObjectMap;
 
@@ -42,11 +42,18 @@ public class ChatiAssetManager {
 
         // Generiere Fonts.
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Roboto/Roboto-Regular.ttf"));
-        BitmapFont fontTitle = fontGenerator.generateFont(getFontParameter(TITLE_FONT_SIZE));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.shadowColor = Color.DARK_GRAY;
+        parameter.shadowOffsetX = 1;
+        parameter.shadowOffsetY = 1;
+        parameter.size = TITLE_FONT_SIZE;
+        BitmapFont fontTitle = fontGenerator.generateFont(parameter);
         fontTitle.setUseIntegerPositions(false);
-        BitmapFont fontLabel = fontGenerator.generateFont(getFontParameter(LABEL_FONT_SIZE));
+        parameter.size = LABEL_FONT_SIZE;
+        BitmapFont fontLabel = fontGenerator.generateFont(parameter);
         fontLabel.setUseIntegerPositions(false);
-        BitmapFont fontButton = fontGenerator.generateFont(getFontParameter(BUTTON_FONT_SIZE));
+        parameter.size = BUTTON_FONT_SIZE;
+        BitmapFont fontButton = fontGenerator.generateFont(parameter);
         fontButton.setUseIntegerPositions(false);
 
         ObjectMap<String, Object> fontMap = new ObjectMap<>();
@@ -62,18 +69,9 @@ public class ChatiAssetManager {
         assetManager.finishLoading();
     }
 
-    private FreeTypeFontGenerator.FreeTypeFontParameter getFontParameter(int size) {
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = size;
-        parameter.shadowColor = Color.DARK_GRAY;
-        parameter.shadowOffsetX = 1;
-        parameter.shadowOffsetY = 1;
-        return parameter;
-    }
-
-    public TextureAtlas getImageAtlas() {
+    public TextureRegion getTextureRegion(String name) {
         return assetManager.get(Gdx.files.internal("Client/src/main/resources/atlas/image_atlas.atlas").path(),
-                TextureAtlas.class);
+                TextureAtlas.class).findRegion(name);
     }
 
     public Skin getSkin() {

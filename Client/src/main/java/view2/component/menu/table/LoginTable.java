@@ -21,7 +21,7 @@ public class LoginTable extends MenuTable {
         usernameField = new ChatiTextField("Benutzername", false);
         passwordField = new ChatiTextField("Passwort", true);
 
-        TextButton loginButton = new ChatiTextButton("Anmelden", true);
+        ChatiTextButton loginButton = new ChatiTextButton("Anmelden", true);
         loginButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -38,7 +38,7 @@ public class LoginTable extends MenuTable {
             }
         });
 
-        TextButton registerButton = new ChatiTextButton("Registrieren", true);
+        ChatiTextButton registerButton = new ChatiTextButton("Registrieren", true);
         registerButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -55,7 +55,7 @@ public class LoginTable extends MenuTable {
             }
         });
 
-        TextButton exitButton = new ChatiTextButton("Beenden", true);
+        ChatiTextButton exitButton = new ChatiTextButton("Beenden", true);
         exitButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

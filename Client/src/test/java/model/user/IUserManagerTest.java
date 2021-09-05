@@ -37,6 +37,11 @@ public class IUserManagerTest {
             }
 
             @Override
+            public void setNewNotificationReceived() {
+
+            }
+
+            @Override
             public void setWorldChanged() {
             }
 

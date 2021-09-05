@@ -19,14 +19,14 @@ public class WorldCreateTable extends MenuTable {
     public WorldCreateTable() {
         infoLabel.setText("Bitte wähle einen Namen und eine Karte!");
 
-        Label mapSelectLabel = new Label("Karte: ", Chati.CHATI.getAssetManager().getSkin());
-        SelectBox<ContextMap> mapSelectBox = new SelectBox<>(Chati.CHATI.getAssetManager().getSkin());
+        Label mapSelectLabel = new Label("Karte: ", Chati.CHATI.getSkin());
+        SelectBox<ContextMap> mapSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
         mapSelectBox.setItems(EnumSet.allOf(ContextMap.class)
                 .stream().filter(ContextMap::isPublicRoomMap).toArray(ContextMap[]::new));
 
         worldNameField = new ChatiTextField("Name der Welt", false);
 
-        TextButton confirmButton = new ChatiTextButton("Bestätigen", true);
+        ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -47,7 +47,7 @@ public class WorldCreateTable extends MenuTable {
             }
         });
 
-        TextButton cancelButton = new ChatiTextButton("Zurück", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

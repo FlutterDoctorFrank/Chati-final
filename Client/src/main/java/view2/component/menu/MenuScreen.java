@@ -15,14 +15,9 @@ import java.util.*;
 
 public class MenuScreen extends AbstractScreen {
 
-    private static int loginFailCounter = 0;
-
     private MenuTable currentMenuTable;
 
-    private final Set<ContextEntry> worlds;
-
     public MenuScreen() {
-        this.worlds = new HashSet<>();
         setMenuTable(new LoginTable());
     }
 
@@ -30,11 +25,6 @@ public class MenuScreen extends AbstractScreen {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         super.render(delta);
-    }
-
-    @Override
-    public InputProcessor getInputProcessor() {
-        return stage;
     }
 
     public void registrationResponse(boolean success, String messageKey) {
@@ -57,15 +47,8 @@ public class MenuScreen extends AbstractScreen {
         setPendingResponse(Response.NONE);
         if (success) {
             setMenuTable(new StartTable());
-            loginFailCounter = 0;
         } else {
-            if (loginFailCounter == 1) {
-                currentMenuTable.showMessage("Mann Frank, merk dir doch mal deine Kontodaten.");
-            } else {
-                currentMenuTable.showMessage(messageKey);
-            }
             currentMenuTable.resetTextFields();
-            loginFailCounter++;
         }
     }
 
@@ -148,11 +131,6 @@ public class MenuScreen extends AbstractScreen {
         }
     }
 
-    public void updateWorlds(Map<ContextID, String> worlds) {
-        this.worlds.clear();
-        worlds.forEach((key, value) -> this.worlds.add(new ContextEntry(key, value)));
-    }
-
     public void setMenuTable(MenuTable table) {
         if (currentMenuTable != null) {
             currentMenuTable.remove();
@@ -160,7 +138,8 @@ public class MenuScreen extends AbstractScreen {
         stage.addActor(currentMenuTable = table);
     }
 
-    public Set<ContextEntry> getWorlds() {
-        return Collections.unmodifiableSet(worlds);
+    @Override
+    public InputProcessor getInputProcessor() {
+        return stage;
     }
 }

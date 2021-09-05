@@ -12,7 +12,7 @@ public class ProfileSettingsTable extends MenuTable {
     public ProfileSettingsTable() {
         infoLabel.setText("Bitte wähle eine Aktion aus!");
 
-        TextButton changePasswordButton = new ChatiTextButton("Passwort ändern", true);
+        ChatiTextButton changePasswordButton = new ChatiTextButton("Passwort ändern", true);
         changePasswordButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -24,7 +24,7 @@ public class ProfileSettingsTable extends MenuTable {
             }
         });
 
-        TextButton deleteAccountButton = new ChatiTextButton("Konto löschen", true);
+        ChatiTextButton deleteAccountButton = new ChatiTextButton("Konto löschen", true);
         deleteAccountButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -36,7 +36,7 @@ public class ProfileSettingsTable extends MenuTable {
             }
         });
 
-        TextButton cancelButton = new ChatiTextButton("Zurück", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

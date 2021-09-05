@@ -3,7 +3,6 @@ package view2.component.hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -13,10 +12,9 @@ import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
-import org.lwjgl.system.CallbackI;
 import view2.Chati;
-import view2.Assets;
 import view2.Settings;
+import view2.component.ChatiImageButton;
 import view2.component.hud.notificationList.NotificationListWindow;
 import view2.component.hud.settings.SettingsWindow;
 import view2.component.hud.userList.UserListWindow;
@@ -32,318 +30,143 @@ public class HeadUpDisplay extends Table {
 
     private static HeadUpDisplay headUpDisplay;
 
-    private HudMenuWindow currentMenuWindow;
-    private ChatWindow chatWindow;
-    private CommunicationWindow communicationWindow;
+    private final ChatWindow chatWindow;
+    private final ImageButton userListButton;
+    private final NotificationButton notificationListButton;
+    private final ImageButton settingsButton;
+    private final ChatButton chatButton;
+    private final ImageButton communicableUserListButton;
+    private final ImageButton microphoneButton;
+    private final ImageButton speakerButton;
 
+    private HudMenuWindow currentMenuWindow;
+    private CommunicationWindow communicationWindow;
     private Table internUserDisplay;
 
-    private ImageButton userListButton;
-    private NotificationButton notificationListButton;
-    private ImageButton settingsButton;
-    private ChatButton chatButton;
-    private ImageButton communicableUserListButton;
-    private ImageButton microphoneButton;
-    private ImageButton speakerButton;
-
     private HeadUpDisplay() {
-        create();
-        setLayout();
-    }
-
-    @Override
-    public void act(float delta) {
-        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
-        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()
-                || Chati.CHATI.isRoomChanged()) {
-            if (internUser != null && internUserDisplay == null) {
-                internUserDisplay = new InternUserDisplay();
-                addActor(internUserDisplay);
-            } else if (internUser == null && internUserDisplay != null) {
-                internUserDisplay.remove();
-                internUserDisplay = null;
-            }
-            if (internUser != null && internUser.isInCurrentWorld()) {
-                if (!chatButton.isVisible()) {
-                    chatButton.setVisible(true);
-                }
-                if (!communicableUserListButton.isVisible()) {
-                    communicableUserListButton.setVisible(true);
-                }
-                if (!microphoneButton.isVisible()) {
-                    microphoneButton.setVisible(true);
-                }
-                if (!speakerButton.isVisible()) {
-                    speakerButton.setVisible(true);
-                }
-            } else if ((internUser == null || !internUser.isInCurrentWorld())) {
-                if (chatButton.isVisible()) {
-                    chatWindow.clearChat();
-                    hideChatWindow();
-                    chatButton.setVisible(false);
-                }
-                if (communicableUserListButton.isVisible()) {
-                    // TODO
-                    communicableUserListButton.setVisible(false);
-                }
-                if (microphoneButton.isVisible()) {
-                    microphoneButton.setVisible(false);
-                }
-                if (speakerButton.isVisible()) {
-                    speakerButton.setVisible(false);
-                }
-            }
-        }
-        if (Chati.CHATI.isUserNotificationChanged() && internUser != null && internUser.receivedNewNotification()) {
-            notificationListButton.startAnimation();
-        }
-        super.act(delta);
-    }
-
-    protected void create() {
         this.chatWindow = new ChatWindow();
 
-        userListButton = new ImageButton(Assets.USER_ICON);
-        userListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+        userListButton = new ChatiImageButton(Chati.CHATI.getDrawable("user_menu_closed"), Chati.CHATI.getDrawable("user_menu_open"));
         userListButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                userListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                userListButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (userListButton.isChecked()) {
                     openUserMenu();
                 } else {
                     closeCurrentMenu();
                 }
             }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    userListButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    userListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
-            }
         });
 
-        notificationListButton = new NotificationButton(Assets.NOTIFICATION_ICON);
-        notificationListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+        notificationListButton = new NotificationButton(Chati.CHATI.getDrawable("notification_menu_closed"),
+                Chati.CHATI.getDrawable("notification_menu_open"));
         notificationListButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                notificationListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                notificationListButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (notificationListButton.isChecked()) {
                     openNotificationMenu();
                 } else {
                     closeCurrentMenu();
                 }
             }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    notificationListButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    notificationListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
-            }
         });
 
-        settingsButton = new ImageButton(Assets.SETTINGS_ICON);
-        settingsButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+        settingsButton = new ChatiImageButton(Chati.CHATI.getDrawable("settings_menu_closed"),
+                Chati.CHATI.getDrawable("settings_menu_open"));
         settingsButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                settingsButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                settingsButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (settingsButton.isChecked()) {
                     openSettingsMenu();
                 } else {
                     closeCurrentMenu();
                 }
             }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    settingsButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    settingsButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
-            }
         });
 
-        chatButton = new ChatButton(Assets.CHAT_ICON);
-        chatButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+        chatButton = new ChatButton(Chati.CHATI.getDrawable("chat_closed"), Chati.CHATI.getDrawable("chat_open"));
         chatButton.setVisible(false);
         chatButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                chatButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                chatButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (chatButton.isChecked()) {
                     showChatWindow();
                 } else {
                     hideChatWindow();
                 }
             }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    chatButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    chatButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
-            }
         });
 
-        communicableUserListButton = new ImageButton(Assets.COMMUNICABLE_LIST_ICON);
-        communicableUserListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+        communicableUserListButton = new ChatiImageButton(Chati.CHATI.getDrawable("communicable_list_closed"),
+                Chati.CHATI.getDrawable("communicable_list_open"));
         communicableUserListButton.setVisible(false);
         communicableUserListButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                communicableUserListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                communicableUserListButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
                 if (communicableUserListButton.isChecked()) {
                     openCommunicableUserWindow();
                 } else {
                     closeCommunicableUserWindow();
                 }
             }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    communicableUserListButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    communicableUserListButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
-            }
         });
 
-        if (Settings.isMicrophoneOn()) {
-            microphoneButton = new ImageButton(Assets.CHECKED_MIC_ICON);
-        } else {
-            microphoneButton = new ImageButton(Assets.MIC_ICON);
-        }
-        microphoneButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+        microphoneButton = new ChatiImageButton(Chati.CHATI.getDrawable("microphone_off"),
+                Chati.CHATI.getDrawable("microphone_on"));
         microphoneButton.setVisible(false);
         microphoneButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                microphoneButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                microphoneButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (microphoneButton.isChecked()) {
-                    Settings.setMicrophoneOn(false);
-                } else {
-                    Settings.setMicrophoneOn(true);
-                }
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    microphoneButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    microphoneButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
+                Chati.CHATI.getPreferences().setMicrophoneOn(microphoneButton.isChecked());
             }
         });
 
-        if (Settings.isSoundOn()) {
-            speakerButton = new ImageButton(Assets.CHECKED_SPEAKER_ICON);
-            speakerButton.setChecked(true);
-        } else {
-            speakerButton = new ImageButton(Assets.SPEAKER_ICON);
-        }
-        speakerButton = new ImageButton(Assets.SPEAKER_ICON);
-        speakerButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
+        speakerButton = new ChatiImageButton(Chati.CHATI.getDrawable("sound_off"), Chati.CHATI.getDrawable("sound_on"));
         speakerButton.setVisible(false);
         speakerButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                speakerButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                speakerButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                if (speakerButton.isChecked()) {
-                    Settings.setSoundOn(false);
-                } else {
-                    Settings.setSoundOn(true);
-                }
-            }
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    speakerButton.getImage().scaleBy(BUTTON_SCALE_FACTOR);
-                }
-            }
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    speakerButton.getImage().scaleBy(-BUTTON_SCALE_FACTOR);
-                }
+                Settings.setSoundOn(!speakerButton.isChecked());
             }
         });
 
-        ButtonGroup<ImageButton> hudButtons = new ButtonGroup<>();
-        hudButtons.setMinCheckCount(0);
-        hudButtons.setMaxCheckCount(1);
-        hudButtons.setUncheckLast(true);
-        hudButtons.add(userListButton);
-        hudButtons.add(notificationListButton);
-        hudButtons.add(settingsButton);
-    }
+        ButtonGroup<ImageButton> hudMenuButtonGroup = new ButtonGroup<>();
+        hudMenuButtonGroup.setMinCheckCount(0);
+        hudMenuButtonGroup.setMaxCheckCount(1);
+        hudMenuButtonGroup.setUncheckLast(true);
+        hudMenuButtonGroup.add(userListButton);
+        hudMenuButtonGroup.add(notificationListButton);
+        hudMenuButtonGroup.add(settingsButton);
 
-    private void setLayout() {
+        // Layout
         setFillParent(true);
 
         Table topRightButtonContainer = new Table();
@@ -372,6 +195,112 @@ public class HeadUpDisplay extends Table {
         addActor(chatButtonContainer);
     }
 
+    @Override
+    public void act(float delta) {
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+
+        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged() || Chati.CHATI.isRoomChanged()) {
+            if (internUser != null && internUserDisplay == null) {
+                internUserDisplay = new InternUserDisplay();
+                addActor(internUserDisplay);
+            } else if (internUser == null && internUserDisplay != null) {
+                internUserDisplay.remove();
+                internUserDisplay = null;
+            }
+
+            if (internUser != null && internUser.isInCurrentWorld()) {
+                if (!chatButton.isVisible() || !communicableUserListButton.isVisible() || !microphoneButton.isVisible()
+                    || !speakerButton.isVisible()) {
+                    chatButton.setVisible(true);
+                    communicableUserListButton.setVisible(true);
+                    microphoneButton.setVisible(true);
+                    speakerButton.setVisible(true);
+                }
+            } else if ((internUser == null || !internUser.isInCurrentWorld())) {
+                if (chatButton.isVisible() || communicableUserListButton.isVisible() || microphoneButton.isVisible()
+                    || speakerButton.isVisible()) {
+                    chatWindow.clearChat();
+                    hideChatWindow();
+                    chatButton.setVisible(false);
+                    communicableUserListButton.setVisible(false);
+                    microphoneButton.setVisible(false);
+                    speakerButton.setVisible(false);
+                }
+            }
+        }
+
+        if (Chati.CHATI.isNewNotificationReceived()) {
+            notificationListButton.startAnimation();
+        }
+        super.act(delta);
+    }
+
+    public void openUserMenu() {
+        closeCurrentMenu();
+        userListButton.setChecked(true);
+        currentMenuWindow = new UserListWindow();
+        currentMenuWindow.open();
+    }
+
+    public void openNotificationMenu() {
+        closeCurrentMenu();
+        notificationListButton.setChecked(true);
+        currentMenuWindow = new NotificationListWindow();
+        currentMenuWindow.open();
+    }
+
+    public void openSettingsMenu() {
+        closeCurrentMenu();
+        settingsButton.setChecked(true);
+        currentMenuWindow = new SettingsWindow();
+        currentMenuWindow.open();
+    }
+
+    public void closeCurrentMenu() {
+        if (currentMenuWindow != null) {
+            currentMenuWindow.close();
+            removeCurrentMenu();
+        }
+    }
+
+    public void removeCurrentMenu() {
+        userListButton.setChecked(false);
+        notificationListButton.setChecked(false);
+        settingsButton.setChecked(false);
+        currentMenuWindow = null;
+    }
+
+    public void openCommunicableUserWindow() {
+        communicableUserListButton.setChecked(true);
+        (communicationWindow = new CommunicationWindow()).open();
+    }
+
+    public void closeCommunicableUserWindow() {
+        if (communicationWindow != null) {
+            communicationWindow.close();
+            removeCommunicableUserWindow();
+        }
+    }
+
+    public void removeCommunicableUserWindow() {
+        communicableUserListButton.setChecked(false);
+        communicationWindow = null;
+    }
+
+    public void showChatWindow() {
+        if (isChatOpen()) {
+            return;
+        }
+        chatButton.stopBlinking();
+        chatButton.setChecked(true);
+        chatWindow.show();
+    }
+
+    public void hideChatWindow() {
+        chatButton.setChecked(false);
+        chatWindow.hide();
+    }
+
     public void showTypingUser(UUID userId) {
         chatWindow.updateTypingUser(userId);
     }
@@ -388,32 +317,36 @@ public class HeadUpDisplay extends Table {
         }
     }
 
-    public void showChatWindow() {
-        if (!chatButton.isVisible()) {
-            return;
-        }
-        chatButton.stopBlinking();
-        chatButton.setChecked(true);
-        chatButton.getStyle().imageUp = Assets.CHECKED_CHAT_ICON;
-        chatWindow.open();
+    public boolean isMenuOpen() {
+        return currentMenuWindow != null;
     }
 
-    public void hideChatWindow() {
-        chatButton.setChecked(false);
-        chatButton.getStyle().imageUp = Assets.CHAT_ICON;
-        chatWindow.close();
+    public boolean isUserMenuOpen() {
+        return isMenuOpen() && userListButton.isChecked();
+    }
+
+    public boolean isNotificationMenuOpen() {
+        return isMenuOpen() && notificationListButton.isChecked();
+    }
+
+    public boolean isSettingsMenuOpen() {
+        return isMenuOpen() && settingsButton.isChecked();
+    }
+
+    public boolean isCommunicationWindowOpen() {
+        return communicationWindow != null && communicableUserListButton.isChecked();
     }
 
     public boolean isChatOpen() {
         return chatButton.isVisible() && chatWindow.isVisible();
     }
 
-    public boolean isMenuOpen() {
-        return currentMenuWindow != null;
+    public HudMenuWindow getCurrentMenuWindow() {
+        return currentMenuWindow;
     }
 
-    public boolean isCommunicationWindowOpen() {
-        return communicationWindow != null;
+    public ChatWindow getChatWindow() {
+        return chatWindow;
     }
 
     public static HeadUpDisplay getInstance() {
@@ -423,84 +356,7 @@ public class HeadUpDisplay extends Table {
         return headUpDisplay;
     }
 
-    public boolean isUserMenuOpen() {
-        return userListButton.isChecked();
-    }
-
-    public boolean isNotificationMenuOpen() {
-        return notificationListButton.isChecked();
-    }
-
-    public boolean isSettingsMenuOpen() {
-        return settingsButton.isChecked();
-    }
-
-    public void openUserMenu() {
-        closeCurrentMenu();
-        userListButton.setChecked(true);
-        userListButton.getStyle().imageUp = Assets.CHECKED_USER_ICON;
-        notificationListButton.getStyle().imageUp = Assets.NOTIFICATION_ICON;
-        settingsButton.getStyle().imageUp = Assets.SETTINGS_ICON;
-        (currentMenuWindow = new UserListWindow()).open();
-    }
-
-    public void openNotificationMenu() {
-        closeCurrentMenu();
-        notificationListButton.setChecked(true);
-        notificationListButton.getStyle().imageUp = Assets.CHECKED_NOTIFICATION_ICON;
-        userListButton.getStyle().imageUp = Assets.USER_ICON;
-        settingsButton.getStyle().imageUp = Assets.SETTINGS_ICON;
-        (currentMenuWindow = new NotificationListWindow()).open();
-    }
-
-    public void openSettingsMenu() {
-        closeCurrentMenu();
-        settingsButton.setChecked(true);
-        settingsButton.getStyle().imageUp = Assets.CHECKED_SETTINGS_ICON;
-        userListButton.getStyle().imageUp = Assets.USER_ICON;
-        notificationListButton.getStyle().imageUp = Assets.NOTIFICATION_ICON;
-        (currentMenuWindow = new SettingsWindow()).open();
-    }
-
-    public void closeCurrentMenu() {
-        if (currentMenuWindow == null) {
-            return;
-        }
-        userListButton.setChecked(false);
-        notificationListButton.setChecked(false);
-        settingsButton.setChecked(false);
-        userListButton.getStyle().imageUp = Assets.USER_ICON;
-        notificationListButton.getStyle().imageUp = Assets.NOTIFICATION_ICON;
-        settingsButton.getStyle().imageUp = Assets.SETTINGS_ICON;
-        currentMenuWindow.close();
-        currentMenuWindow = null;
-    }
-
-    public void openCommunicableUserWindow() {
-        communicableUserListButton.setChecked(true);
-        communicableUserListButton.getStyle().imageUp = Assets.CHECKED_COMMUNICABLE_LIST_ICON;
-        (communicationWindow = new CommunicationWindow()).open();
-    }
-
-    public void closeCommunicableUserWindow() {
-        if (communicationWindow == null) {
-            return;
-        }
-        communicableUserListButton.setChecked(false);
-        communicableUserListButton.getStyle().imageUp = Assets.COMMUNICABLE_LIST_ICON;
-        communicationWindow.close();
-        communicationWindow = null;
-    }
-
-    public ChatWindow getChatWindow() {
-        return chatWindow;
-    }
-
-    public HudMenuWindow getCurrentMenuWindow() {
-        return currentMenuWindow;
-    }
-
-    private static class ChatButton extends ImageButton {
+    private static class ChatButton extends ChatiImageButton {
 
         private static final float BLINKING_FREQUENCY = 2; // Pro Sekunde
 
@@ -508,8 +364,8 @@ public class HeadUpDisplay extends Table {
         private boolean visible;
         private float delta;
 
-        public ChatButton(Drawable imageUp) {
-            super(imageUp);
+        public ChatButton(Drawable imageUnchecked, Drawable imageChecked) {
+            super(imageUnchecked, imageChecked);
         }
 
         @Override
@@ -539,14 +395,14 @@ public class HeadUpDisplay extends Table {
         }
     }
 
-    private static class NotificationButton extends ImageButton {
+    private static class NotificationButton extends ChatiImageButton {
 
         private static final float DURATION = 2; // In Sekunden
         private static final float ANGLE = 15;
         private boolean isAnimating;
 
-        public NotificationButton(Drawable imageUp) {
-            super(imageUp);
+        public NotificationButton(Drawable imageUnchecked, Drawable imageChecked) {
+            super(imageUnchecked, imageChecked);
         }
 
         public void startAnimation() {

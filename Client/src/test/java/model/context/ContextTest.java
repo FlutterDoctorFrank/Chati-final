@@ -34,6 +34,11 @@ public class ContextTest {
             }
 
             @Override
+            public void setNewNotificationReceived() {
+
+            }
+
+            @Override
             public void setWorldChanged() {
             }
 

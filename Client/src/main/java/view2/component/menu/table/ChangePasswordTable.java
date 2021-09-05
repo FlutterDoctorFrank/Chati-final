@@ -23,7 +23,7 @@ public class ChangePasswordTable extends MenuTable {
         newPasswordField = new ChatiTextField("Neues Passwort", true);
         confirmNewPasswordField = new ChatiTextField("Neues Passwort bestätigen", true);
 
-        TextButton confirmButton = new ChatiTextButton("Bestätigen", true);
+        ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -53,7 +53,7 @@ public class ChangePasswordTable extends MenuTable {
             }
         });
 
-        TextButton cancelButton = new ChatiTextButton("Zurück", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

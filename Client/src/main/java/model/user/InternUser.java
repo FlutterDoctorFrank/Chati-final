@@ -33,9 +33,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
     /** Die Benachrichtigungen des internen Benutzers. */
     private final Map<UUID, Notification> notifications;
 
-    /** Information, ob eine neue Benachrichtigung erhalten wurde. */
-    private boolean receivedNewNotification;
-
     /** Die Musik, die gerade abgespielt werden soll. */
     private ContextMusic music;
 
@@ -52,7 +49,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
         this.currentWorld = null;
         this.currentRoom = null;
         this.notifications = new HashMap<>();
-        this.receivedNewNotification = false;
         this.music = null;
     }
 
@@ -115,8 +111,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
         }
         notifications.put(notificationId, new Notification(notificationId, Context.getGlobal().getContext(contextId),
                 messageBundle, timestamp, type, isRead, isAccepted, isDeclined));
-        receivedNewNotification = true;
-        UserManager.getInstance().getModelObserver().setUserNotificationChanged();
+        UserManager.getInstance().getModelObserver().setNewNotificationReceived();
     }
 
     @Override
@@ -168,13 +163,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
         return notifications.values().stream()
                 .filter(notification -> notification.getContext().equals(currentWorld))
                 .collect(Collectors.toUnmodifiableMap(Notification::getNotificationId, Function.identity()));
-    }
-
-    @Override
-    public boolean receivedNewNotification() {
-        boolean temp = receivedNewNotification;
-        receivedNewNotification = false;
-        return temp;
     }
 
     @Override

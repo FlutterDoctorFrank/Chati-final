@@ -5,6 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import controller.network.ServerSender;
 import model.MessageBundle;
 import model.communication.message.MessageType;
@@ -13,37 +16,39 @@ import model.context.spatial.ContextMenu;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import model.user.IUserManagerView;
-import model.user.IUserView;
 import org.jetbrains.annotations.Nullable;
 import view2.audio.AudioManager;
 import view2.component.AbstractScreen;
 import view2.component.hud.HeadUpDisplay;
+import view2.component.menu.ContextEntry;
 import view2.component.menu.table.LoginTable;
 import view2.component.menu.MenuScreen;
 import view2.component.menu.table.StartTable;
 import view2.component.world.WorldScreen;
 
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Chati extends Game implements ViewControllerInterface, IModelObserver {
 
     public static Chati CHATI;
 
+    private final Set<ContextEntry> worlds;
     private final IUserManagerView userManager;
+
     private ServerSender serverSender;
+    private ChatiAssetManager assetManager;
+    private ChatiPreferences preferences;
     private AudioManager audioManager;
+    private SpriteBatch spriteBatch;
     private MenuScreen menuScreen;
     private WorldScreen worldScreen;
-    private SpriteBatch spriteBatch;
-    private ChatiPreferences preferences;
-    private ChatiAssetManager assetManager;
 
     private boolean loggedIn;
 
     private boolean userInfoChangeReceived;
     private boolean userNotificationChangeReceived;
+    private boolean newNotificationInfoReceived;
     private boolean roomChangeReceived;
     private boolean worldChangeReceived;
     private boolean musicChangeReceived;
@@ -52,6 +57,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     private boolean changeUserInfo;
     private boolean changeNotificationInfo;
+    private boolean receivedNewNotification;
     private boolean changeRoom;
     private boolean changeWorld;
     private boolean changeMusic;
@@ -60,6 +66,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     public Chati(IUserManagerView userManager) {
         CHATI = this;
+        this.worlds = new HashSet<>();
         this.userManager = userManager;
     }
 
@@ -69,11 +76,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         config.setForegroundFPS(60);
         config.setTitle("Chati");
         new Lwjgl3Application(this, config);
-    }
-
-    public void setScreen(AbstractScreen screen) {
-        Gdx.input.setInputProcessor(screen.getInputProcessor());
-        super.setScreen(screen);
     }
 
     @Override
@@ -91,22 +93,19 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         setScreen(menuScreen);
     }
 
-    public void newCreate() {
-        this.assetManager = new ChatiAssetManager();
-        this.preferences = new ChatiPreferences();
-        this.audioManager = new AudioManager();
-        this.spriteBatch = new SpriteBatch();
-        this.menuScreen = new MenuScreen();
-        this.worldScreen = new WorldScreen();
-        setScreen(menuScreen);
-    }
-
     @Override
     public void render() {
+        /* Übertrage alle Flags auf eine andere Menge von Flags, welche im nächsten Render-Aufruf abgefragt wird.
+           So werden keine eingehenden Informationen verpasst, wenn diese am Ende eines Render-Aufrufs eintreffen. */
         transferFlags();
         resetModelChangeReceivedFlags();
         super.render();
         resetModelChangedFlags();
+    }
+
+    public void setScreen(AbstractScreen screen) {
+        Gdx.input.setInputProcessor(screen.getInputProcessor());
+        super.setScreen(screen);
     }
 
     @Override
@@ -120,6 +119,16 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return null;
     }
 
+    public void newCreate() {
+        this.assetManager = new ChatiAssetManager();
+        this.preferences = new ChatiPreferences();
+        this.audioManager = new AudioManager();
+        this.spriteBatch = new SpriteBatch();
+        this.menuScreen = new MenuScreen();
+        this.worldScreen = new WorldScreen();
+        setScreen(menuScreen);
+    }
+
     public ServerSender getServerSender() {
         return serverSender;
     }
@@ -128,8 +137,16 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return spriteBatch;
     }
 
-    public ChatiAssetManager getAssetManager() {
-        return assetManager;
+    public Skin getSkin() {
+        return assetManager.getSkin();
+    }
+
+    public TextureRegion getTextureRegion(String name) {
+        return assetManager.getTextureRegion(name);
+    }
+
+    public TextureRegionDrawable getDrawable(String name) {
+        return new TextureRegionDrawable(getTextureRegion(name));
     }
 
     public ChatiPreferences getPreferences() {
@@ -163,6 +180,11 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
+    public void setNewNotificationReceived() {
+
+    }
+
+    @Override
     public void setWorldChanged() {
         this.worldChangeReceived = true;
     }
@@ -184,9 +206,8 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void updateWorlds(Map<ContextID, String> worlds) {
-        if (this.screen.equals(menuScreen)) {
-            menuScreen.updateWorlds(worlds);
-        }
+        this.worlds.clear();
+        worlds.forEach((key, value) -> this.worlds.add(new ContextEntry(key, value)));
         worldListUpdateReceived = true;
     }
 
@@ -335,12 +356,8 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return changeNotificationInfo;
     }
 
-    public boolean isWorldListChanged() {
-        return changeWorldList;
-    }
-
-    public boolean isRoomListChanged() {
-        return changeRoomList;
+    public boolean isNewNotificationReceived() {
+        return receivedNewNotification;
     }
 
     public boolean isWorldChanged() {
@@ -351,6 +368,18 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return changeRoom;
     }
 
+    public boolean isMusicChanged() {
+        return changeMusic;
+    }
+
+    public boolean isWorldListChanged() {
+        return changeWorldList;
+    }
+
+    public boolean isRoomListChanged() {
+        return changeRoomList;
+    }
+
     public MenuScreen getMenuScreen() {
         return menuScreen;
     }
@@ -359,13 +388,10 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return worldScreen;
     }
 
-    public boolean isMusicChanged() {
-        return changeMusic;
-    }
-
     private void resetModelChangeReceivedFlags() {
         userInfoChangeReceived = false;
         userNotificationChangeReceived = false;
+        newNotificationInfoReceived = false;
         roomChangeReceived = false;
         worldChangeReceived = false;
         musicChangeReceived = false;
@@ -376,6 +402,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private void transferFlags() {
         changeUserInfo = userInfoChangeReceived;
         changeNotificationInfo = userNotificationChangeReceived;
+        receivedNewNotification = newNotificationInfoReceived;
         changeRoom = roomChangeReceived;
         changeWorld = worldChangeReceived;
         changeMusic = musicChangeReceived;
@@ -386,10 +413,15 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private void resetModelChangedFlags() {
         changeUserInfo = false;
         changeNotificationInfo = false;
+        receivedNewNotification = false;
         changeRoom = false;
         changeWorld = false;
         changeMusic = false;
         changeWorldList = false;
         changeRoomList = false;
+    }
+
+    public Set<ContextEntry> getWorlds() {
+        return Set.copyOf(worlds);
     }
 }

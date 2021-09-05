@@ -9,7 +9,7 @@ public class ChatiTextField extends TextField {
     private static final int PASSWORD_FIELD_MAX_LENGTH = 48;
 
     public ChatiTextField(String messageText, boolean passwordField) {
-        super("", Chati.CHATI.getAssetManager().getSkin());
+        super("", Chati.CHATI.getSkin());
         setMessageText(messageText);
 
         if (passwordField) {
@@ -25,7 +25,7 @@ public class ChatiTextField extends TextField {
 
     public void reset() {
         setText("");
-        if (hasKeyboardFocus()) {
+        if (hasKeyboardFocus() && getStage() != null) {
             getStage().unfocus(this);
         }
     }

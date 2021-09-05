@@ -14,7 +14,7 @@ public abstract class MenuTable extends Table {
     protected final Label infoLabel;
 
     public MenuTable() {
-        this.infoLabel = new Label("", Chati.CHATI.getAssetManager().getSkin());
+        this.infoLabel = new Label("", Chati.CHATI.getSkin());
         infoLabel.setAlignment(Align.center, Align.center);
         infoLabel.setWrap(true);
 

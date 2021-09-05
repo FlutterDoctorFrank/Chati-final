@@ -72,7 +72,7 @@ public class DeleteAccountTable extends MenuTable {
         public ConfirmDeletionTable() {
             infoLabel.setText("Bist du sicher, dass du dein Konto löschen möchtest?");
 
-            TextButton confirmButton = new ChatiTextButton("Bestätigen", true);
+            ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
             confirmButton.addListener(new InputListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -85,7 +85,7 @@ public class DeleteAccountTable extends MenuTable {
                 }
             });
 
-            TextButton cancelButton = new ChatiTextButton("Zurück", true);
+            ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
             cancelButton.addListener(new InputListener() {
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

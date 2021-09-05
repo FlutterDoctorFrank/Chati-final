@@ -36,6 +36,11 @@ public class SpatialContextTest {
             }
 
             @Override
+            public void setNewNotificationReceived() {
+
+            }
+
+            @Override
             public void setWorldChanged() {
             }
 

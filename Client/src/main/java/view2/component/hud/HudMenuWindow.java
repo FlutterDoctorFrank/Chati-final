@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import view2.Assets;
-import view2.Chati;
 import view2.component.AbstractWindow;
 
 public abstract class HudMenuWindow extends AbstractWindow {
@@ -52,12 +51,8 @@ public abstract class HudMenuWindow extends AbstractWindow {
     }
 
     @Override
-    public void open() {
-        Chati.CHATI.getScreen().getStage().addActor(this);
-    }
-
-    @Override
     public void close() {
-        remove();
+        HeadUpDisplay.getInstance().removeCurrentMenu();
+        super.close();
     }
 }

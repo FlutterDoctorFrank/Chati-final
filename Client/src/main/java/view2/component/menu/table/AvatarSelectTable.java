@@ -30,14 +30,14 @@ public class AvatarSelectTable extends MenuTable {
         this.avatarEntries = new TreeSet<>();
 
         Table avatarListContainer = new Table();
-        ScrollPane avatarScrollPane = new ScrollPane(avatarListContainer, Chati.CHATI.getAssetManager().getSkin());
+        ScrollPane avatarScrollPane = new ScrollPane(avatarListContainer, Chati.CHATI.getSkin());
 
         ButtonGroup<AvatarListEntry> avatarButtonGroup = new ButtonGroup<>();
         avatarButtonGroup.setMinCheckCount(1);
         avatarButtonGroup.setMaxCheckCount(1);
         avatarButtonGroup.setUncheckLast(true);
 
-        TextButton confirmButton = new ChatiTextButton("Bestätigen", true);
+        ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -50,7 +50,7 @@ public class AvatarSelectTable extends MenuTable {
             }
         });
 
-        TextButton cancelButton = new ChatiTextButton("Zurück", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

@@ -46,12 +46,6 @@ public interface IInternUserView extends IUserView {
     @NotNull Map<UUID, INotificationView> getWorldNotifications();
 
     /**
-     * Gibt die Information zurück, ob eine neue Benachrichtigung erhalten wurde und setzt diese Information zurück.
-     * @return true, wenn eine neue Benachrichtigung erhalten wurde, sonst false.
-     */
-    boolean receivedNewNotification();
-
-    /**
      * Gibt die abzuspielende Musik zurück.
      * @return Abzuspielende Musik.
      */

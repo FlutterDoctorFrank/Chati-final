@@ -7,12 +7,12 @@ import view2.component.hud.HeadUpDisplay;
 
 public abstract class AbstractScreen extends ScreenAdapter {
 
-    protected final MenuStage stage;
+    protected final ChatiStage stage;
 
     protected Response pendingResponse;
 
     protected AbstractScreen() {
-        this.stage = new MenuStage();
+        this.stage = new ChatiStage();
         this.pendingResponse = Response.NONE;
     }
 
@@ -37,7 +37,7 @@ public abstract class AbstractScreen extends ScreenAdapter {
         stage.clear();
     }
 
-    public MenuStage getStage() {
+    public ChatiStage getStage() {
         return stage;
     }
 

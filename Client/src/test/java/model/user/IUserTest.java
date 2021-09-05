@@ -45,6 +45,11 @@ public class IUserTest {
             }
 
             @Override
+            public void setNewNotificationReceived() {
+
+            }
+
+            @Override
             public void setWorldChanged() {
             }
 

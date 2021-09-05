@@ -17,11 +17,11 @@ public class StartTable extends MenuTable {
     public StartTable() {
         infoLabel.setText("Bitte wähle eine Aktion aus!");
 
-        Label worldSelectLabel = new Label("Welt: ", Chati.CHATI.getAssetManager().getSkin());
-        worldSelectBox = new SelectBox<>(Chati.CHATI.getAssetManager().getSkin());
+        Label worldSelectLabel = new Label("Welt: ", Chati.CHATI.getSkin());
+        worldSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
         updateWorldList();
 
-        TextButton joinWorldButton = new ChatiTextButton("Welt Beitreten", true);
+        ChatiTextButton joinWorldButton = new ChatiTextButton("Welt Beitreten", true);
         joinWorldButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -38,7 +38,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        TextButton createWorldButton = new ChatiTextButton("Welt erstellen", true);
+        ChatiTextButton createWorldButton = new ChatiTextButton("Welt erstellen", true);
         createWorldButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -50,7 +50,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        TextButton deleteWorldButton = new ChatiTextButton("Welt löschen", true);
+        ChatiTextButton deleteWorldButton = new ChatiTextButton("Welt löschen", true);
         deleteWorldButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -67,7 +67,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        TextButton changeAvatarButton = new ChatiTextButton("Avatar ändern", true);
+        ChatiTextButton changeAvatarButton = new ChatiTextButton("Avatar ändern", true);
         changeAvatarButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -79,7 +79,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        TextButton profileSettingsButton = new ChatiTextButton("Konto verwalten", true);
+        ChatiTextButton profileSettingsButton = new ChatiTextButton("Konto verwalten", true);
         profileSettingsButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -91,7 +91,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        TextButton logoutButton = new ChatiTextButton("Abmelden", true);
+        ChatiTextButton logoutButton = new ChatiTextButton("Abmelden", true);
         logoutButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -140,6 +140,6 @@ public class StartTable extends MenuTable {
     }
 
     private void updateWorldList() {
-        worldSelectBox.setItems(Chati.CHATI.getMenuScreen().getWorlds().toArray(new ContextEntry[0]));
+        worldSelectBox.setItems(Chati.CHATI.getWorlds().toArray(new ContextEntry[0]));
     }
 }

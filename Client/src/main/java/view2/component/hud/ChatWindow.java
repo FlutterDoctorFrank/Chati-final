@@ -13,6 +13,7 @@ import controller.network.ServerSender;
 import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.exception.UserNotFoundException;
+import model.user.IInternUserView;
 import model.user.IUserManagerView;
 import model.user.IUserView;
 import model.user.UserManager;
@@ -20,6 +21,7 @@ import view2.Assets;
 import view2.Chati;
 import view2.component.AbstractWindow;
 import view2.component.ChatiTextArea;
+import view2.component.ChatiTextButton;
 import view2.component.KeyAction;
 
 import java.time.LocalDateTime;
@@ -27,7 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
-public class ChatWindow extends AbstractWindow {
+public class ChatWindow extends Window {
 
     private static final long SHOW_TYPING_DURATION = 1000; // in Millisekunden
 
@@ -42,33 +44,17 @@ public class ChatWindow extends AbstractWindow {
     private final Map<IUserView, Long> typingUsers;
     private long lastTimeTypingSent;
 
-    private Table messageLabelContainer;
-    private ScrollPane historyScrollPane;
-    private ChatiTextArea typeMessageArea;
-    private Label typingUsersLabel;
-    private TextButton sendButton;
-    private TextButton minimizeButton;
+    private final Table messageLabelContainer;
+    private final ScrollPane historyScrollPane;
+    private final ChatiTextArea typeMessageArea;
+    private final Label typingUsersLabel;
 
     public ChatWindow() {
-        super("Chat");
+        super("Chat", Chati.CHATI.getSkin());
         this.typingUsers = new HashMap<>();
-        create();
-        setLayout();
-    }
 
-    @Override
-    public void act(float delta) {
-        long now = System.currentTimeMillis();
-        typingUsers.values().removeIf(lastTypingTime -> now - lastTypingTime >= SHOW_TYPING_DURATION);
-        showTypingUsers();
-        super.act(delta);
-    }
-
-    @Override
-    protected void create() {
         messageLabelContainer = new Table();
-
-        historyScrollPane = new ScrollPane(messageLabelContainer, Assets.SKIN);
+        historyScrollPane = new ScrollPane(messageLabelContainer, Chati.CHATI.getSkin());
         historyScrollPane.setOverscroll(false, false);
 
         typeMessageArea = new ChatiTextArea("Nachricht", false);
@@ -90,16 +76,16 @@ public class ChatWindow extends AbstractWindow {
                 long now = System.currentTimeMillis();
                 if (c != 0 && now - lastTimeTypingSent >= SHOW_TYPING_DURATION / 2) {
                     lastTimeTypingSent = now;
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.TYPING);
+                    Chati.CHATI.send(ServerSender.SendAction.TYPING);
                 }
                 return true;
             }
         });
 
-        typingUsersLabel = new Label("", Assets.SKIN);
+        typingUsersLabel = new Label("", Chati.CHATI.getSkin());
         typingUsersLabel.setFontScale(0.67f);
 
-        sendButton = new TextButton("Senden", Assets.SKIN);
+        ChatiTextButton sendButton = new ChatiTextButton("Senden", true);
         sendButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -111,7 +97,7 @@ public class ChatWindow extends AbstractWindow {
             }
         });
 
-        minimizeButton = new TextButton("X", Assets.SKIN);
+        ChatiTextButton minimizeButton = new ChatiTextButton("X", true);
         minimizeButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -122,10 +108,8 @@ public class ChatWindow extends AbstractWindow {
                 HeadUpDisplay.getInstance().hideChatWindow();
             }
         });
-    }
 
-    @Override
-    protected void setLayout() {
+        // Layout
         setVisible(false);
         setModal(false);
         setMovable(true);
@@ -150,40 +134,32 @@ public class ChatWindow extends AbstractWindow {
     }
 
     @Override
-    public void open() {
-        setVisible(true);
-        historyScrollPane.layout();
-        historyScrollPane.scrollTo(0, 0, 0, 0);
-        Chati.CHATI.getScreen().getStage().setKeyboardFocus(typeMessageArea);
-        Chati.CHATI.getScreen().getStage().setScrollFocus(typeMessageArea);
+    public void act(float delta) {
+        long now = System.currentTimeMillis();
+        typingUsers.values().removeIf(lastTypingTime -> now - lastTypingTime >= SHOW_TYPING_DURATION);
+        showTypingUsers();
+        super.act(delta);
     }
 
-    @Override
-    public void close() {
-        setVisible(false);
-        Chati.CHATI.getScreen().getStage().unfocus(this);
-    }
-
-    private void resetMessageArea() {
-        typeMessageArea.reset();
-    }
-
-    private void sendMessage() {
-        if (typeMessageArea.getStyle().fontColor == Color.GRAY || typeMessageArea.getText().isBlank()) {
-            return;
+    public void updateTypingUser(UUID userId) {
+        IUserView user;
+        try {
+            user = Chati.CHATI.getUserManager().getExternUserView(userId);
+        } catch (UserNotFoundException e) {
+            throw new IllegalArgumentException("Received typing information from an unknown user", e);
         }
-        Chati.CHATI.getServerSender().send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());
-        typeMessageArea.setText("");
+        typingUsers.put(user, System.currentTimeMillis());
+        showTypingUsers();
     }
 
     public void showUserMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String userMessage)
-                throws UserNotFoundException {
+            throws UserNotFoundException {
         String username;
-        IUserManagerView userManager = Chati.CHATI.getUserManager();
-        if (userManager.getInternUserView() != null && userManager.getInternUserView().getUserId().equals(userId)) {
-            username = userManager.getInternUserView().getUsername();
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+        if (internUser != null && internUser.getUserId().equals(userId)) {
+            username = internUser.getUsername();
         } else {
-            username = userManager.getExternUserView(userId).getUsername();
+            username = Chati.CHATI.getUserManager().getExternUserView(userId).getUsername();
         }
         Color messageColor;
         switch (messageType) {
@@ -213,20 +189,27 @@ public class ChatWindow extends AbstractWindow {
     }
 
     public void clearChat() {
-        resetMessageArea();
+        typeMessageArea.reset();
         messageLabelContainer.clearChildren();
+    }
+
+    private void sendMessage() {
+        if (typeMessageArea.getText().isBlank()) {
+            return;
+        }
+        Chati.CHATI.send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());
+        typeMessageArea.setText("");
     }
 
     private void showMessage(LocalDateTime timestamp, String message, Color messageColor) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         String timeString = timestamp.format(formatter);
         String showMessage = "[" + timeString + "] " + message;
-        Label showLabel = new Label(showMessage, Assets.SKIN);
+        Label showLabel = new Label(showMessage, Chati.CHATI.getSkin());
         showLabel.setColor(messageColor);
         showLabel.setWrap(true);
 
         boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
-
         messageLabelContainer.add(showLabel).top().left().padLeft(SPACE).padBottom(SPACE).growX().row();
 
         // Scrolle beim Erhalten einer neuen Nachricht nur bis nach unten, wenn die Scrollleiste bereits ganz unten war.
@@ -235,17 +218,6 @@ public class ChatWindow extends AbstractWindow {
             historyScrollPane.layout();
             historyScrollPane.scrollTo(0, 0, 0, 0);
         }
-    }
-
-    public void updateTypingUser(UUID userId) {
-        IUserView user;
-        try {
-            user = Chati.CHATI.getUserManager().getExternUserView(userId);
-        } catch (UserNotFoundException e) {
-            throw new IllegalArgumentException("Received typing information from an unknown user", e);
-        }
-        typingUsers.put(user, System.currentTimeMillis());
-        showTypingUsers();
     }
 
     private void showTypingUsers() {
@@ -260,6 +232,21 @@ public class ChatWindow extends AbstractWindow {
             }
         } else {
             typingUsersLabel.setText(typingUsers.size() + " Benutzer tippen gerade...");
+        }
+    }
+
+    public void show() {
+        setVisible(true);
+        historyScrollPane.layout();
+        historyScrollPane.scrollTo(0, 0, 0, 0);
+        Chati.CHATI.getScreen().getStage().setKeyboardFocus(typeMessageArea);
+        Chati.CHATI.getScreen().getStage().setScrollFocus(typeMessageArea);
+    }
+
+    public void hide() {
+        setVisible(false);
+        if (getStage() != null) {
+            getStage().unfocus(this);
         }
     }
 }

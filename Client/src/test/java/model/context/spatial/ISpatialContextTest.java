@@ -38,6 +38,11 @@ public class ISpatialContextTest {
             }
 
             @Override
+            public void setNewNotificationReceived() {
+
+            }
+
+            @Override
             public void setWorldChanged() {
             }
 

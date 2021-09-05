@@ -10,43 +10,23 @@ import model.user.IInternUserView;
 import model.user.Status;
 import view2.Chati;
 import view2.Assets;
-import view2.component.AbstractTable;
+import view2.component.ChatiTextButton;
 import view2.component.ChatiToolTip;
 import view2.component.UserInfoContainer;
 
-public class InternUserDisplay extends AbstractTable {
+public class InternUserDisplay extends Table {
 
     private static final float USER_INFO_ICON_SIZE = 22.5f;
     private static final float VERTICAL_SPACING = 5;
     private static final float HORIZONTAL_SPACING = 10;
 
     private StatusSelectTable statusSelectTable;
-    private UserInfoContainer userInfoContainer;
-    private Image statusImage;
-    private TextButton statusButton;
+    private final Image statusImage;
 
     public InternUserDisplay() {
-        create();
-        setLayout();
-    }
+        UserInfoContainer userInfoContainer = new UserInfoContainer(Chati.CHATI.getUserManager().getInternUserView());
 
-    @Override
-    public void act(float delta) {
-        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()
-                || Chati.CHATI.isRoomChanged()) {
-            IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
-            if (internUser != null) {
-                setStatusImage();
-            }
-        }
-        super.act(delta);
-    }
-
-    @Override
-    protected void create() {
-        this.userInfoContainer = new UserInfoContainer(Chati.CHATI.getUserManager().getInternUserView());
-
-        statusButton = new TextButton("", Assets.getNewSkin());
+        ChatiTextButton statusButton = new ChatiTextButton("", false);
         statusButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -57,21 +37,18 @@ public class InternUserDisplay extends AbstractTable {
                 if (statusSelectTable == null) {
                     statusSelectTable = new StatusSelectTable();
                     add(statusSelectTable).top().left().row();
-                    statusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
                 } else {
                     statusSelectTable.remove();
                     statusSelectTable = null;
-                    statusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
                 }
             }
         });
 
         statusImage = new Image();
         setStatusImage();
-    }
 
-    @Override
-    protected void setLayout() {
+        // Layout
+        setFillParent(true);
         top().left();
         Table container = new Table();
 
@@ -89,24 +66,37 @@ public class InternUserDisplay extends AbstractTable {
                 .height(HeadUpDisplay.BUTTON_SIZE).grow().row();
     }
 
+    @Override
+    public void act(float delta) {
+        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()
+                || Chati.CHATI.isRoomChanged()) {
+            IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
+            if (internUser != null) {
+                setStatusImage();
+            }
+        }
+        super.act(delta);
+    }
+
     private void setStatusImage() {
-        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+
         statusImage.getListeners().forEach(statusImage::removeListener);
         switch (internUser.getStatus()) {
             case ONLINE:
-                statusImage.setDrawable(Assets.ONLINE_ICON);
+                statusImage.setDrawable(Chati.CHATI.getDrawable("status_online"));
                 statusImage.addListener(new ChatiToolTip("Online"));
                 break;
             case AWAY:
-                statusImage.setDrawable(Assets.AWAY_ICON);
+                statusImage.setDrawable(Chati.CHATI.getDrawable("status_away"));
                 statusImage.addListener(new ChatiToolTip("Abwesend"));
                 break;
             case BUSY:
-                statusImage.setDrawable(Assets.BUSY_ICON);
+                statusImage.setDrawable(Chati.CHATI.getDrawable("status_busy"));
                 statusImage.addListener(new ChatiToolTip("Beschäftigt"));
                 break;
             case INVISIBLE:
-                statusImage.setDrawable(Assets.INVISIBLE_ICON);
+                statusImage.setDrawable(Chati.CHATI.getDrawable("status_invisible"));
                 statusImage.addListener(new ChatiToolTip("Unsichtbar"));
                 break;
             case OFFLINE:
@@ -116,38 +106,19 @@ public class InternUserDisplay extends AbstractTable {
         }
     }
 
-    private static class StatusSelectTable extends AbstractTable {
-
-        ButtonGroup<TextButton> statusButtonGroup;
-        private Image onlineStatusImage;
-        private Image busyStatusImage;
-        private Image invisibleStatusImage;
-        private TextButton onlineStatusButton;
-        private TextButton busyStatusButton;
-        private TextButton invisibleStatusButton;
+    private static class StatusSelectTable extends Table {
 
         public StatusSelectTable() {
-            create();
-            setLayout();
-        }
+            IInternUserView internUser = Chati.CHATI.getInternUser();
 
-        @Override
-        protected void create() {
-            IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
-            statusButtonGroup = new ButtonGroup<>();
-            statusButtonGroup.setMinCheckCount(1);
-            statusButtonGroup.setMaxCheckCount(1);
-            statusButtonGroup.setUncheckLast(true);
+            Image onlineStatusImage = new Image(Chati.CHATI.getDrawable("status_online"));
+            Image busyStatusImage = new Image(Chati.CHATI.getDrawable("status_busy"));
+            Image invisibleStatusImage = new Image(Chati.CHATI.getDrawable("status_invisible"));
 
-            onlineStatusImage = new Image(Assets.ONLINE_ICON);
-            busyStatusImage = new Image(Assets.BUSY_ICON);
-            invisibleStatusImage = new Image(Assets.INVISIBLE_ICON);
-
-            onlineStatusButton = new TextButton("", Assets.getNewSkin());
+            ChatiTextButton onlineStatusButton = new ChatiTextButton("", false);
             onlineStatusButton.addListener(new ChatiToolTip("Online"));
             if (internUser.getStatus() == Status.ONLINE || internUser.getStatus() == Status.AWAY) {
                 onlineStatusButton.setChecked(true);
-                onlineStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
             }
             onlineStatusButton.addListener(new ClickListener() {
                 @Override
@@ -156,18 +127,14 @@ public class InternUserDisplay extends AbstractTable {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    onlineStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
-                    busyStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
-                    invisibleStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE, Status.ONLINE);
+                    Chati.CHATI.send(ServerSender.SendAction.PROFILE_CHANGE, Status.ONLINE);
                 }
             });
 
-            busyStatusButton = new TextButton("", Assets.getNewSkin());
+            ChatiTextButton busyStatusButton = new ChatiTextButton("", false);
             busyStatusButton.addListener(new ChatiToolTip("Beschäftigt"));
             if (internUser.getStatus() == Status.BUSY) {
                 busyStatusButton.setChecked(true);
-                busyStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
             }
             busyStatusButton.addListener(new ClickListener() {
                 @Override
@@ -176,18 +143,14 @@ public class InternUserDisplay extends AbstractTable {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    onlineStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
-                    busyStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
-                    invisibleStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE, Status.BUSY);
+                    Chati.CHATI.send(ServerSender.SendAction.PROFILE_CHANGE, Status.BUSY);
                 }
             });
 
-            invisibleStatusButton = new TextButton("", Assets.getNewSkin());
+            ChatiTextButton invisibleStatusButton = new ChatiTextButton("", false);
             invisibleStatusButton.addListener(new ChatiToolTip("Unsichtbar"));
             if (internUser.getStatus() == Status.INVISIBLE) {
                 invisibleStatusButton.setChecked(true);
-                invisibleStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
             }
             invisibleStatusButton.addListener(new ClickListener() {
                 @Override
@@ -196,20 +159,20 @@ public class InternUserDisplay extends AbstractTable {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    onlineStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
-                    busyStatusButton.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
-                    invisibleStatusButton.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE, Status.INVISIBLE);
+                    Chati.CHATI.send(ServerSender.SendAction.PROFILE_CHANGE, Status.INVISIBLE);
                 }
             });
 
+            ButtonGroup<ChatiTextButton> statusButtonGroup = new ButtonGroup<>();
+            statusButtonGroup.setMinCheckCount(1);
+            statusButtonGroup.setMaxCheckCount(1);
+            statusButtonGroup.setUncheckLast(true);
             statusButtonGroup.add(onlineStatusButton);
             statusButtonGroup.add(busyStatusButton);
             statusButtonGroup.add(invisibleStatusButton);
-        }
 
-        @Override
-        protected void setLayout() {
+            // Layout
+            setFillParent(true);
             Table container = new Table();
 
             NinePatchDrawable controlsBackground =
@@ -221,7 +184,7 @@ public class InternUserDisplay extends AbstractTable {
             invisibleStatusButton.add(invisibleStatusImage).size(USER_INFO_ICON_SIZE).pad(USER_INFO_ICON_SIZE);
 
             container.add(onlineStatusButton).size(2 * USER_INFO_ICON_SIZE)
-                   .spaceBottom(VERTICAL_SPACING).padTop(VERTICAL_SPACING).row();
+                    .spaceBottom(VERTICAL_SPACING).padTop(VERTICAL_SPACING).row();
             container.add(busyStatusButton).size(2 * USER_INFO_ICON_SIZE)
                     .spaceBottom(VERTICAL_SPACING).row();
             container.add(invisibleStatusButton).size(2 * USER_INFO_ICON_SIZE)
