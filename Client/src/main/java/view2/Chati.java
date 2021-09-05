@@ -94,7 +94,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void render() {
         /* Übertrage alle Flags auf eine andere Menge von Flags, welche im nächsten Render-Aufruf abgefragt wird.
-           So werden keine eingehenden Informationen verpasst, wenn diese am Ende eines Render-Aufrufs eintreffen. */
+           So werden keine eingehenden Informationen verpasst, wenn diese am Ende der Render-Methode eintreffen. */
         transferFlags();
         resetModelChangeReceivedFlags();
         super.render();

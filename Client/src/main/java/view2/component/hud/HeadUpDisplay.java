@@ -34,9 +34,9 @@ public class HeadUpDisplay extends Table {
     private final NotificationButton notificationListButton;
     private final ImageButton settingsButton;
     private final ChatButton chatButton;
-    private final ImageButton communicableUserListButton;
+    private final ImageButton communicationButton;
     private final ImageButton microphoneButton;
-    private final ImageButton speakerButton;
+    private final ImageButton soundButton;
 
     private HudMenuWindow currentMenuWindow;
     private CommunicationWindow communicationWindow;
@@ -112,20 +112,20 @@ public class HeadUpDisplay extends Table {
             }
         });
 
-        communicableUserListButton = new ChatiImageButton(Chati.CHATI.getDrawable("communicable_list_closed"),
+        communicationButton = new ChatiImageButton(Chati.CHATI.getDrawable("communicable_list_closed"),
                 Chati.CHATI.getDrawable("communicable_list_open"));
-        communicableUserListButton.setVisible(false);
-        communicableUserListButton.addListener(new ClickListener() {
+        communicationButton.setVisible(false);
+        communicationButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (communicableUserListButton.isChecked()) {
-                    openCommunicableUserWindow();
+                if (communicationButton.isChecked()) {
+                    openCommunicationWindow();
                 } else {
-                    closeCommunicableUserWindow();
+                    closeCommunicationWindow();
                 }
             }
         });
@@ -144,16 +144,16 @@ public class HeadUpDisplay extends Table {
             }
         });
 
-        speakerButton = new ChatiImageButton(Chati.CHATI.getDrawable("sound_off"), Chati.CHATI.getDrawable("sound_on"));
-        speakerButton.setVisible(false);
-        speakerButton.addListener(new ClickListener() {
+        soundButton = new ChatiImageButton(Chati.CHATI.getDrawable("sound_off"), Chati.CHATI.getDrawable("sound_on"));
+        soundButton.setVisible(false);
+        soundButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getPreferences().setSoundOn(!speakerButton.isChecked());
+                Chati.CHATI.getPreferences().setSoundOn(soundButton.isChecked());
             }
         });
 
@@ -180,10 +180,10 @@ public class HeadUpDisplay extends Table {
         Table bottomLeftButtonContainer = new Table();
         bottomLeftButtonContainer.setFillParent(true);
         bottomLeftButtonContainer.bottom().left().defaults().size(BUTTON_SIZE).spaceBottom(BUTTON_SPACING);
-        communicableUserListButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
+        communicationButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
         microphoneButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
-        speakerButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
-        bottomLeftButtonContainer.add(communicableUserListButton, microphoneButton, speakerButton);
+        soundButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
+        bottomLeftButtonContainer.add(communicationButton, microphoneButton, soundButton);
         addActor(bottomLeftButtonContainer);
 
         Table chatButtonContainer = new Table();
@@ -208,22 +208,22 @@ public class HeadUpDisplay extends Table {
             }
 
             if (internUser != null && internUser.isInCurrentWorld()) {
-                if (!chatButton.isVisible() || !communicableUserListButton.isVisible() || !microphoneButton.isVisible()
-                    || !speakerButton.isVisible()) {
+                if (!chatButton.isVisible() || !communicationButton.isVisible() || !microphoneButton.isVisible()
+                    || !soundButton.isVisible()) {
                     chatButton.setVisible(true);
-                    communicableUserListButton.setVisible(true);
+                    communicationButton.setVisible(true);
                     microphoneButton.setVisible(true);
-                    speakerButton.setVisible(true);
+                    soundButton.setVisible(true);
                 }
             } else if ((internUser == null || !internUser.isInCurrentWorld())) {
-                if (chatButton.isVisible() || communicableUserListButton.isVisible() || microphoneButton.isVisible()
-                    || speakerButton.isVisible()) {
+                if (chatButton.isVisible() || communicationButton.isVisible() || microphoneButton.isVisible()
+                    || soundButton.isVisible()) {
                     chatWindow.clearChat();
                     hideChatWindow();
                     chatButton.setVisible(false);
-                    communicableUserListButton.setVisible(false);
+                    communicationButton.setVisible(false);
                     microphoneButton.setVisible(false);
-                    speakerButton.setVisible(false);
+                    soundButton.setVisible(false);
                 }
             }
         }
@@ -269,21 +269,31 @@ public class HeadUpDisplay extends Table {
         currentMenuWindow = null;
     }
 
-    public void openCommunicableUserWindow() {
-        communicableUserListButton.setChecked(true);
+    public void openCommunicationWindow() {
+        communicationButton.setChecked(true);
         (communicationWindow = new CommunicationWindow()).open();
     }
 
-    public void closeCommunicableUserWindow() {
+    public void closeCommunicationWindow() {
         if (communicationWindow != null) {
             communicationWindow.close();
-            removeCommunicableUserWindow();
+            removeCommunicationWindow();
         }
     }
 
-    public void removeCommunicableUserWindow() {
-        communicableUserListButton.setChecked(false);
+    public void removeCommunicationWindow() {
+        communicationButton.setChecked(false);
         communicationWindow = null;
+    }
+
+    public void toggleMicrophone() {
+        microphoneButton.setChecked(!microphoneButton.isChecked());
+        Chati.CHATI.getPreferences().setMicrophoneOn(microphoneButton.isChecked());
+    }
+
+    public void toggleSound() {
+        soundButton.setChecked(!soundButton.isChecked());
+        Chati.CHATI.getPreferences().setSoundOn(soundButton.isChecked());
     }
 
     public void showChatWindow() {
@@ -333,7 +343,7 @@ public class HeadUpDisplay extends Table {
     }
 
     public boolean isCommunicationWindowOpen() {
-        return communicationWindow != null && communicableUserListButton.isChecked();
+        return communicationWindow != null && communicationButton.isChecked();
     }
 
     public boolean isChatOpen() {

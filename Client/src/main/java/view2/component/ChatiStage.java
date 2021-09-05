@@ -25,6 +25,19 @@ public class ChatiStage extends Stage {
             if (KeyAction.OPEN_CHAT.matches(keycode)) {
                 HeadUpDisplay.getInstance().showChatWindow();
             }
+            if (KeyAction.OPEN_COMMUNICATION_MENU.matches(keycode)) {
+                if (HeadUpDisplay.getInstance().isCommunicationWindowOpen()) {
+                    HeadUpDisplay.getInstance().closeCommunicationWindow();
+                } else {
+                    HeadUpDisplay.getInstance().openCommunicationWindow();
+                }
+            }
+            if (KeyAction.TOGGLE_MICROPHONE.matches(keycode)) {
+                HeadUpDisplay.getInstance().toggleMicrophone();
+            }
+            if (KeyAction.TOGGLE_SOUND.matches(keycode)) {
+                HeadUpDisplay.getInstance().toggleSound();
+            }
             if (KeyAction.OPEN_USER_LIST.matches(keycode)) {
                 if (HeadUpDisplay.getInstance().isUserMenuOpen()) {
                     HeadUpDisplay.getInstance().closeCurrentMenu();

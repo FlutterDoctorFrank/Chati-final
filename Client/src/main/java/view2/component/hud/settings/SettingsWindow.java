@@ -29,7 +29,7 @@ public class SettingsWindow extends HudMenuWindow {
 
         IInternUserView internUser = Chati.CHATI.getInternUser();
 
-        ChatiTextButton languageSelectMenuButton = new ChatiTextButton("Sprache wählen", false);
+        ChatiTextButton languageSelectMenuButton = new ChatiTextButton("Sprache wählen", true);
         languageSelectMenuButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -41,7 +41,7 @@ public class SettingsWindow extends HudMenuWindow {
             }
         });
 
-        ChatiTextButton volumeChangeMenuButton = new ChatiTextButton("Lautstärke anpassen", false);
+        ChatiTextButton volumeChangeMenuButton = new ChatiTextButton("Lautstärke anpassen", true);
         volumeChangeMenuButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -53,7 +53,7 @@ public class SettingsWindow extends HudMenuWindow {
             }
         });
 
-        ChatiTextButton worldSettingsButton = new ChatiTextButton("Welteinstellungen", false);
+        ChatiTextButton worldSettingsButton = new ChatiTextButton("Welteinstellungen", true);
         worldSettingsButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -65,7 +65,7 @@ public class SettingsWindow extends HudMenuWindow {
             }
         });
 
-        administratorManageMenuButton = new ChatiTextButton("Administratoren verwalten", false);
+        administratorManageMenuButton = new ChatiTextButton("Administratoren verwalten", true);
         if (internUser == null || !internUser.hasPermission(Permission.ASSIGN_ADMINISTRATOR)) {
             disableButton(administratorManageMenuButton);
         }
@@ -80,7 +80,7 @@ public class SettingsWindow extends HudMenuWindow {
             }
         });
 
-        leaveWorldButton = new ChatiTextButton("Welt verlassen", false);
+        leaveWorldButton = new ChatiTextButton("Welt verlassen", true);
         if (internUser == null || internUser.getCurrentWorld() == null) {
             disableButton(leaveWorldButton);
         }
@@ -102,7 +102,7 @@ public class SettingsWindow extends HudMenuWindow {
             }
         });
 
-        logoutButton = new ChatiTextButton("Abmelden", false);
+        logoutButton = new ChatiTextButton("Abmelden", true);
         if (internUser == null) {
             disableButton(logoutButton);
         }
@@ -122,7 +122,7 @@ public class SettingsWindow extends HudMenuWindow {
             }
         });
 
-        ChatiTextButton quitButton = new ChatiTextButton("Beenden", false);
+        ChatiTextButton quitButton = new ChatiTextButton("Beenden", true);
         quitButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

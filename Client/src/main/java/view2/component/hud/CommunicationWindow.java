@@ -51,7 +51,7 @@ public class CommunicationWindow extends ChatiWindow {
 
     @Override
     public void close() {
-        HeadUpDisplay.getInstance().removeCommunicableUserWindow();
+        HeadUpDisplay.getInstance().removeCommunicationWindow();
         super.close();
     }
 
