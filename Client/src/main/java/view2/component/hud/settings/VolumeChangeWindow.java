@@ -20,8 +20,6 @@ public class VolumeChangeWindow extends ChatiWindow {
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 500;
-    private static final float ROW_HEIGHT = 60;
-    private static final float SPACING = 15;
 
     private static final float MIN_VOLUME = 0;
     private static final float MAX_VOLUME = 1;

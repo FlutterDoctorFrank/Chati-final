@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import controller.network.ServerSender;
@@ -117,32 +116,12 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return null;
     }
 
-    public ServerSender getServerSender() {
-        return serverSender;
+    public MenuScreen getMenuScreen() {
+        return menuScreen;
     }
 
-    public SpriteBatch getSpriteBatch() {
-        return spriteBatch;
-    }
-
-    public Skin getSkin() {
-        return assetManager.getSkin();
-    }
-
-    public TextureRegion getTextureRegion(String name) {
-        return assetManager.getTextureRegion(name);
-    }
-
-    public TextureRegionDrawable getDrawable(String name) {
-        return new TextureRegionDrawable(getTextureRegion(name));
-    }
-
-    public ChatiPreferences getPreferences() {
-        return preferences;
-    }
-
-    public AudioManager getAudioManager() {
-        return audioManager;
+    public WorldScreen getWorldScreen() {
+        return worldScreen;
     }
 
     public IUserManagerView getUserManager() {
@@ -157,6 +136,31 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         serverSender.send(action, objects);
     }
 
+    public Skin getSkin() {
+        return assetManager.getSkin();
+    }
+
+    public TextureRegionDrawable getDrawable(String name) {
+        return assetManager.getDrawable(name);
+    }
+
+    public ChatiPreferences getPreferences() {
+        return preferences;
+    }
+
+    public AudioManager getAudioManager() {
+        return audioManager;
+    }
+
+    public SpriteBatch getSpriteBatch() {
+        return spriteBatch;
+    }
+
+    @Override
+    public void setSender(@Nullable ServerSender sender) {
+        this.serverSender = sender;
+    }
+
     @Override
     public void setUserInfoChanged() {
         this.userInfoChangeReceived = true;
@@ -169,7 +173,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void setNewNotificationReceived() {
-
+        this.newNotificationInfoReceived = true;
     }
 
     @Override
@@ -185,11 +189,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void setMusicChanged() {
         this.musicChangeReceived = true;
-    }
-
-    @Override
-    public void setSender(@Nullable ServerSender sender) {
-        this.serverSender = sender;
     }
 
     @Override
@@ -367,12 +366,12 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return changeRoomList;
     }
 
-    public MenuScreen getMenuScreen() {
-        return menuScreen;
+    public Set<ContextEntry> getWorlds() {
+        return Set.copyOf(worlds);
     }
 
-    public WorldScreen getWorldScreen() {
-        return worldScreen;
+    public Set<ContextEntry> getPrivateRooms() {
+        return Set.copyOf(privateRooms);
     }
 
     private void resetModelChangeReceivedFlags() {
@@ -406,13 +405,5 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         changeMusic = false;
         changeWorldList = false;
         changeRoomList = false;
-    }
-
-    public Set<ContextEntry> getWorlds() {
-        return Set.copyOf(worlds);
-    }
-
-    public Set<ContextEntry> getPrivateRooms() {
-        return Set.copyOf(privateRooms);
     }
 }

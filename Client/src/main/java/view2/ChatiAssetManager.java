@@ -6,9 +6,9 @@ import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.utils.ObjectMap;
 
@@ -69,9 +69,9 @@ public class ChatiAssetManager {
         assetManager.finishLoading();
     }
 
-    public TextureRegion getTextureRegion(String name) {
-        return assetManager.get(Gdx.files.internal("Client/src/main/resources/atlas/image_atlas.atlas").path(),
-                TextureAtlas.class).findRegion(name);
+    public TextureRegionDrawable getDrawable(String name) {
+        return new TextureRegionDrawable(assetManager.get(Gdx.files.internal("Client/src/main/resources/atlas/image_atlas.atlas").path(),
+                TextureAtlas.class).findRegion(name));
     }
 
     public Skin getSkin() {

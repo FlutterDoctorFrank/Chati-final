@@ -26,6 +26,10 @@ public class ChatiTextArea extends TextArea {
         setTextFieldFilter((textField, c) -> !getText().isBlank() || !Character.toString(c).matches("\\s"));
     }
 
+    public boolean isBlank() {
+        return getText().isBlank();
+    }
+
     public void reset() {
         setText("");
         if (hasKeyboardFocus() && getStage() != null) {

@@ -31,8 +31,8 @@ public class ChangePasswordTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (passwordField.getText().isBlank() || newPasswordField.getText().isBlank()
-                        || confirmNewPasswordField.getText().isBlank()) {
+                if (passwordField.isBlank() || newPasswordField.isBlank()
+                        || confirmNewPasswordField.isBlank()) {
                     infoLabel.setText("Bitte fülle alle Felder aus.");
                     return;
                 }

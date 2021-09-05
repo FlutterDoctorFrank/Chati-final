@@ -51,7 +51,7 @@ public class VoiceRecorder {
                     }
                 }
                 if (System.currentTimeMillis() - timestamp < STOP_SENDING_DELAY) {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.VOICE, AudioManager.toByte(recordedData, true));
+                    Chati.CHATI.send(ServerSender.SendAction.VOICE, AudioManager.toByte(recordedData, true));
                 }
             }
         });

@@ -16,6 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class VoiceChat {
 
     private static final int SAMPLE_RATE = 44100;
@@ -119,7 +120,7 @@ public class VoiceChat {
                     }
                 }
                 if (System.currentTimeMillis() - timestamp < STOP_SENDING_DELAY) {
-                    Chati.CHATI.getServerSender().send(ServerSender.SendAction.VOICE, toByte(recordedData, true));
+                    Chati.CHATI.send(ServerSender.SendAction.VOICE, toByte(recordedData, true));
                 }
             }
         });

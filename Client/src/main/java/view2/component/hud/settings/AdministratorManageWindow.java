@@ -42,7 +42,7 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (usernameField.getText().isBlank()) {
+                if (usernameField.isBlank()) {
                     infoLabel.setText("Bitte gib einen Benutzernamen ein!");
                     return;
                 }
@@ -65,7 +65,7 @@ public class AdministratorManageWindow extends ChatiWindow {
                     return;
                 }
                 String message = "";
-                if (!messageArea.getText().isBlank()) {
+                if (!messageArea.isBlank()) {
                     message = messageArea.getText();
                 }
                 Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),
@@ -83,7 +83,7 @@ public class AdministratorManageWindow extends ChatiWindow {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (usernameField.getText().isBlank()) {
+                if (usernameField.isBlank()) {
                     infoLabel.setText("Bitte gib einen Benutzernamen ein!");
                     return;
                 }
@@ -111,7 +111,7 @@ public class AdministratorManageWindow extends ChatiWindow {
                     return;
                 }
                 String message = "";
-                if (!messageArea.getText().isBlank()) {
+                if (!messageArea.isBlank()) {
                     message = messageArea.getText();
                 }
                 Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),

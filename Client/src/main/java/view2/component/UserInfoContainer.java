@@ -54,17 +54,17 @@ public class UserInfoContainer extends Table {
 
         if (user.hasRole(Role.OWNER)) {
             usernameLabel.setColor(Color.GOLD);
-            Image ownerImage = new Image(Chati.CHATI.getTextureRegion("role_owner"));
+            Image ownerImage = new Image(Chati.CHATI.getDrawable("role_owner"));
             ownerImage.addListener(new ChatiToolTip("Besitzer"));
             roleIcons.add(ownerImage);
         } else if (user.hasRole(Role.ADMINISTRATOR)) {
             usernameLabel.setColor(Color.SKY);
-            Image administratorImage = new Image(Chati.CHATI.getTextureRegion("role_administrator"));
+            Image administratorImage = new Image(Chati.CHATI.getDrawable("role_administrator"));
             administratorImage.addListener(new ChatiToolTip("Administrator"));
             roleIcons.add(administratorImage);
         } else if (user.hasRole(Role.MODERATOR)) {
             usernameLabel.setColor(Color.ORANGE);
-            Image moderatorImage = new Image(Chati.CHATI.getTextureRegion("role_moderator"));
+            Image moderatorImage = new Image(Chati.CHATI.getDrawable("role_moderator"));
             moderatorImage.addListener(new ChatiToolTip("Moderator"));
             roleIcons.add(moderatorImage);
         } else {
@@ -72,12 +72,12 @@ public class UserInfoContainer extends Table {
         }
 
         if (user.hasRole(Role.ROOM_OWNER)) {
-            Image roomOwnerImage = new Image(Chati.CHATI.getTextureRegion("role_room_owner"));
+            Image roomOwnerImage = new Image(Chati.CHATI.getDrawable("role_room_owner"));
             roomOwnerImage.addListener(new ChatiToolTip("Raumbesitzer"));
             roleIcons.add(roomOwnerImage);
         }
         if (user.hasRole(Role.AREA_MANAGER)) {
-            Image areaManagerImage = new Image(Chati.CHATI.getTextureRegion("role_area_manager"));
+            Image areaManagerImage = new Image(Chati.CHATI.getDrawable("role_area_manager"));
             areaManagerImage.addListener(new ChatiToolTip("Bereichsberechtigter"));
             roleIcons.add(areaManagerImage);
         }

@@ -325,8 +325,6 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
         private static final float WINDOW_WIDTH = 750;
         private static final float WINDOW_HEIGHT = 350;
-        private static final float ROW_HEIGHT = 60;
-        private static final float SPACING = 15;
 
         private final ChatiTextArea userMessageArea;
 
@@ -368,7 +366,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     String message;
-                    if (userMessageArea.getText().isBlank()) {
+                    if (userMessageArea.isBlank()) {
                         message = "";
                     } else {
                         message = userMessageArea.getText();

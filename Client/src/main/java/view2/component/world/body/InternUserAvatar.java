@@ -120,14 +120,14 @@ public class InternUserAvatar extends UserAvatar {
             if (interactingContext == null) {
                 return;
             }
-            Chati.CHATI.getServerSender().send(ServerSender.SendAction.CONTEXT_INTERACT, interactingContext.getContextId());
+            Chati.CHATI.send(ServerSender.SendAction.CONTEXT_INTERACT, interactingContext.getContextId());
         }
     }
 
     public void sendPosition() {
         if (!isTeleporting && !oldPosition.epsilonEquals(getPosition())) {
             isTeleporting = false;
-            Chati.CHATI.getServerSender().send(ServerSender.SendAction.AVATAR_MOVE,
+            Chati.CHATI.send(ServerSender.SendAction.AVATAR_MOVE,
                     getPosition().x * WorldCamera.PPM, getPosition().y * WorldCamera.PPM, isSprinting, currentDirection);
         }
     }

@@ -59,7 +59,7 @@ public class MusicPlayerWindow extends InteractableWindow {
                    infoLabel.setText("Bitte wähle ein Lied aus!");
                    return;
                }
-               Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
+               Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId,
                        new String[]{musicSelectBox.getSelected().getName()}, MENU_OPTION_PLAY);
            }
        });
@@ -72,7 +72,7 @@ public class MusicPlayerWindow extends InteractableWindow {
            }
            @Override
            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-               Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
+               Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId,
                        new String[0], MENU_OPTION_STOP);
            }
        });
@@ -86,7 +86,7 @@ public class MusicPlayerWindow extends InteractableWindow {
            @Override
            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                musicSelectBox.setSelected(musicSelectBox.getItems().random());
-               Chati.CHATI.getServerSender().send(ServerSender.SendAction.MENU_OPTION, interactableId,
+               Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId,
                        new String[]{musicSelectBox.getSelected().getName()}, MENU_OPTION_PLAY);
            }
        });

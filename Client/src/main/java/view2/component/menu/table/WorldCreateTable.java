@@ -34,7 +34,7 @@ public class WorldCreateTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (worldNameField.getText().isBlank()) {
+                if (worldNameField.isBlank()) {
                     infoLabel.setText("Bitte gib den Namen der zu erstellenden Welt ein!");
                     return;
                 }

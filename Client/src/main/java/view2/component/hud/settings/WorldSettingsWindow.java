@@ -20,8 +20,6 @@ public class WorldSettingsWindow extends ChatiWindow {
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 350;
-    private static final float ROW_HEIGHT = 60;
-    private static final float SPACING = 15;
 
     private final ChatiTextButton confirmButton;
 

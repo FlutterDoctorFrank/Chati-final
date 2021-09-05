@@ -43,8 +43,6 @@ public class MusicStreamerWindow extends InteractableWindow {
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 600;
-    private static final float ROW_HEIGHT = 60;
-    private static final float SPACING = 15;
     private static final float BUTTON_SPACING = 5;
     private static final float BUTTON_SIZE = 100;
     private static final float BUTTON_SCALE_FACTOR = 0.05f;

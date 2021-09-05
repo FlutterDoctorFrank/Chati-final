@@ -26,7 +26,7 @@ public class DeleteAccountTable extends MenuTable {
         confirmButton.addListener(new ClickListener() {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (passwordField.getText().isBlank() || confirmPasswordField.getText().isBlank()) {
+                if (passwordField.isBlank() || confirmPasswordField.isBlank()) {
                     infoLabel.setText("Bitte fülle alle Felder aus.");
                     return;
                 }

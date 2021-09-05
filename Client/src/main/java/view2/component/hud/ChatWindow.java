@@ -187,7 +187,7 @@ public class ChatWindow extends Window {
     }
 
     private void sendMessage() {
-        if (typeMessageArea.getText().isBlank()) {
+        if (typeMessageArea.isBlank()) {
             return;
         }
         Chati.CHATI.send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());

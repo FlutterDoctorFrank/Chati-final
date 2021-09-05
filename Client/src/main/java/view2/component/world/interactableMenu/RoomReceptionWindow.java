@@ -187,7 +187,7 @@ public class RoomReceptionWindow extends InteractableWindow {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    if (roomnameField.getText().isBlank() || passwordField.getText().isBlank()) {
+                    if (roomnameField.isBlank() || passwordField.isBlank()) {
                         infoLabel.setText("Bitte fülle alle Felder aus.");
                         return;
                     }
@@ -255,7 +255,7 @@ public class RoomReceptionWindow extends InteractableWindow {
                 }
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    if (passwordField.getText().isBlank()) {
+                    if (passwordField.isBlank()) {
                         infoLabel.setText("Bitte gib das Passwort ein!");
                         return;
                     }
@@ -314,7 +314,7 @@ public class RoomReceptionWindow extends InteractableWindow {
                 @Override
                 public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                     String message;
-                    if (messageArea.getText().isBlank()) {
+                    if (messageArea.isBlank()) {
                         message = "";
                     } else {
                         message = messageArea.getText().trim();

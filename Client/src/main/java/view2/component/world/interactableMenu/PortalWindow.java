@@ -16,8 +16,6 @@ public class PortalWindow extends InteractableWindow {
 
     private static final float WINDOW_WIDTH = 550;
     private static final float WINDOW_HEIGHT = 275;
-    private static final float ROW_HEIGHT = 60;
-    private static final float SPACING = 15;
 
     public PortalWindow(ContextID portalId) {
         super("Raum verlassen", portalId, ContextMenu.PORTAL_MENU);

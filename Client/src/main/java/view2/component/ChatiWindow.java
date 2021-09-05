@@ -7,6 +7,9 @@ import view2.Chati;
 
 public abstract class ChatiWindow extends Window {
 
+    protected static final float ROW_HEIGHT = 60;
+    protected static final float SPACING = 15;
+
     protected ChatiWindow(String title) {
         super(title, Chati.CHATI.getSkin());
 
