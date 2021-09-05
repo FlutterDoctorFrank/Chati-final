@@ -65,6 +65,9 @@ public class UserAvatar extends Sprite {
 
         initializeSprite();
         this.stateTimer = 0;
+
+        previousDirection = Direction.DOWN;
+        currentDirection = Direction.DOWN;
     }
 
     @Override
@@ -180,8 +183,8 @@ public class UserAvatar extends Sprite {
         Vector2 newPosition = new Vector2(location.getPosX() / WorldCamera.PPM, location.getPosY() / WorldCamera.PPM);
         body.setTransform(newPosition, body.getAngle());
         body.setAwake(true);
-        currentDirection = location.getDirection();
         previousDirection = currentDirection;
+        currentDirection = location.getDirection();
     }
 
     public void update() {

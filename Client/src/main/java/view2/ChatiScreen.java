@@ -2,7 +2,6 @@ package view2;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
-import view2.Chati;
 import view2.userInterface.ChatiStage;
 import view2.userInterface.Response;
 import view2.userInterface.hud.HeadUpDisplay;
@@ -29,13 +28,13 @@ public abstract class ChatiScreen extends ScreenAdapter {
     public void show() {
         stage.addActor(HeadUpDisplay.getInstance());
         stage.addActor(HeadUpDisplay.getInstance().getChatWindow());
-        if (HeadUpDisplay.getInstance().isMenuOpen()) {
-            stage.addActor(HeadUpDisplay.getInstance().getCurrentMenuWindow());
-        }
     }
 
     @Override
     public void hide() {
+        HeadUpDisplay.getInstance().hideChatWindow();
+        HeadUpDisplay.getInstance().closeCurrentMenu();
+        HeadUpDisplay.getInstance().closeCommunicationWindow();
         stage.clear();
     }
 
@@ -43,9 +42,9 @@ public abstract class ChatiScreen extends ScreenAdapter {
         return stage;
     }
 
-    public abstract InputProcessor getInputProcessor();
-
     public void setPendingResponse(Response pendingResponse) {
         this.pendingResponse = pendingResponse;
     }
+
+    public abstract InputProcessor getInputProcessor();
 }

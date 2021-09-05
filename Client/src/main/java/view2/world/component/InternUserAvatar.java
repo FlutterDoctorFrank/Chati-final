@@ -2,8 +2,6 @@ package view2.world.component;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import controller.network.ServerSender;
 import model.context.spatial.Direction;
 import model.context.spatial.ISpatialContextView;
@@ -21,7 +19,6 @@ public class InternUserAvatar extends UserAvatar {
     private boolean isTeleporting;
     private boolean isSprinting;
     private boolean canInteract;
-    private boolean isColliding;
 
     public InternUserAvatar() {
         super(Chati.CHATI.getUserManager().getInternUserView());
@@ -33,9 +30,9 @@ public class InternUserAvatar extends UserAvatar {
 
     @Override
     public void update() {
-        if (!user.isMovable() && isColliding) {
+        if (!user.isMovable()) {
             turnOffCollision();
-        } else if (user.isMovable() && !isColliding) {
+        } else if (user.isMovable()) {
             turnOnCollision();
         }
 
@@ -126,17 +123,14 @@ public class InternUserAvatar extends UserAvatar {
         if (fixture != null) {
             fixture.getFilterData().categoryBits = WorldScreen.INTERN_USER_BIT;
             fixture.getFilterData().maskBits = WorldScreen.COLLISION_AREA_BIT;
-            this.isColliding = true;
         }
     }
 
     private void turnOffCollision() {
-        System.out.println(body.getFixtureList().size);
         Fixture fixture = body.getFixtureList().get(0);
         if (fixture != null) {
             fixture.getFilterData().categoryBits = WorldScreen.INTERN_USER_BIT;
             fixture.getFilterData().maskBits = 0;
-            this.isColliding = false;
         }
     }
 }
