@@ -150,9 +150,6 @@ public class WorldScreen extends ChatiScreen {
             case MUSIC_STREAMER_MENU:
                 currentInteractableWindow = new MusicStreamerWindow(contextId);
                 break;
-            case MUSIC_PLAYER_MENU:
-                currentInteractableWindow = new MusicPlayerWindow(contextId);
-                break;
             case AREA_PLANNER_MENU:
                 currentInteractableWindow = new AreaPlannerWindow(contextId);
                 break;

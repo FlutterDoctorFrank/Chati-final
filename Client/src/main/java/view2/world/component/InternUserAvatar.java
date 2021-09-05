@@ -33,6 +33,12 @@ public class InternUserAvatar extends UserAvatar {
 
     @Override
     public void update() {
+        if (!user.isMovable() && isColliding) {
+            turnOffCollision();
+        } else if (user.isMovable() && !isColliding) {
+            turnOnCollision();
+        }
+
         if (user.isTeleporting()) {
             isTeleporting = true;
             teleport();
@@ -41,12 +47,7 @@ public class InternUserAvatar extends UserAvatar {
         isTeleporting = false;
 
         if (!user.isMovable()) {
-            if (isColliding) {
-                turnOffCollision();
-            }
             return;
-        } else if (!isColliding) {
-            turnOnCollision();
         }
 
         float velocity = DEFAULT_VELOCITY;
@@ -130,6 +131,7 @@ public class InternUserAvatar extends UserAvatar {
     }
 
     private void turnOffCollision() {
+        System.out.println(body.getFixtureList().size);
         Fixture fixture = body.getFixtureList().get(0);
         if (fixture != null) {
             fixture.getFilterData().categoryBits = WorldScreen.INTERN_USER_BIT;
