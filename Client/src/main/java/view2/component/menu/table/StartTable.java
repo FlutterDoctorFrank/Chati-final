@@ -5,44 +5,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
-import view2.Assets;
 import view2.Chati;
+import view2.component.ChatiTextButton;
 import view2.component.menu.ContextEntry;
 import view2.component.Response;
 
 public class StartTable extends MenuTable {
 
-    private Label worldSelectLabel;
-    private SelectBox<ContextEntry> worldSelectBox;
-    private TextButton joinWorldButton;
-    private TextButton createWorldButton;
-    private TextButton deleteWorldButton;
-    private TextButton changeAvatarButton;
-    private TextButton profileSettingsButton;
-    private TextButton logoutButton;
+    private final SelectBox<ContextEntry> worldSelectBox;
 
     public StartTable() {
-        create();
-        setLayout();
-    }
-
-    @Override
-    public void act(float delta) {
-        if (Chati.CHATI.isWorldListChanged()) {
-            updateWorldList();
-        }
-        super.act(delta);
-    }
-
-    @Override
-    protected void create() {
         infoLabel.setText("Bitte wähle eine Aktion aus!");
 
-        worldSelectLabel = new Label("Welt: ", Assets.SKIN);
-        worldSelectBox = new SelectBox<>(Assets.SKIN);
+        Label worldSelectLabel = new Label("Welt: ", Chati.CHATI.getAssetManager().getSkin());
+        worldSelectBox = new SelectBox<>(Chati.CHATI.getAssetManager().getSkin());
         updateWorldList();
 
-        joinWorldButton = new TextButton("Welt Beitreten", Assets.SKIN);
+        TextButton joinWorldButton = new ChatiTextButton("Welt Beitreten", true);
         joinWorldButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -55,12 +34,11 @@ public class StartTable extends MenuTable {
                     return;
                 }
                 Chati.CHATI.getMenuScreen().setPendingResponse(Response.JOIN_WORLD);
-                Chati.CHATI.getServerSender()
-                    .send(ServerSender.SendAction.WORLD_ACTION, worldSelectBox.getSelected().getContextId(), true);
+                Chati.CHATI.send(ServerSender.SendAction.WORLD_ACTION, worldSelectBox.getSelected().getContextId(), true);
             }
         });
 
-        createWorldButton = new TextButton("Welt erstellen", Assets.SKIN);
+        TextButton createWorldButton = new ChatiTextButton("Welt erstellen", true);
         createWorldButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -72,7 +50,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        deleteWorldButton = new TextButton("Welt löschen", Assets.SKIN);
+        TextButton deleteWorldButton = new ChatiTextButton("Welt löschen", true);
         deleteWorldButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -85,12 +63,11 @@ public class StartTable extends MenuTable {
                     return;
                 }
                 Chati.CHATI.getMenuScreen().setPendingResponse(Response.DELETE_WORLD);
-                Chati.CHATI.getServerSender()
-                        .send(ServerSender.SendAction.WORLD_DELETE, worldSelectBox.getSelected().getContextId());
+                Chati.CHATI.send(ServerSender.SendAction.WORLD_DELETE, worldSelectBox.getSelected().getContextId());
             }
         });
 
-        changeAvatarButton = new TextButton("Avatar ändern", Assets.SKIN);
+        TextButton changeAvatarButton = new ChatiTextButton("Avatar ändern", true);
         changeAvatarButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -102,7 +79,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        profileSettingsButton = new TextButton("Konto verwalten", Assets.SKIN);
+        TextButton profileSettingsButton = new ChatiTextButton("Konto verwalten", true);
         profileSettingsButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -114,7 +91,7 @@ public class StartTable extends MenuTable {
             }
         });
 
-        logoutButton = new TextButton("Abmelden", Assets.SKIN);
+        TextButton logoutButton = new ChatiTextButton("Abmelden", true);
         logoutButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -122,14 +99,12 @@ public class StartTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
+                Chati.CHATI.send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
                 Chati.CHATI.getMenuScreen().setMenuTable(new LoginTable());
             }
         });
-    }
 
-    @Override
-    protected void setLayout() {
+        // Layout
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
         container.add(infoLabel).row();
@@ -150,6 +125,14 @@ public class StartTable extends MenuTable {
         container.add(settingsButtonContainer).row();
         container.add(logoutButton);
         add(container).width(ROW_WIDTH);
+    }
+
+    @Override
+    public void act(float delta) {
+        if (Chati.CHATI.isWorldListChanged()) {
+            updateWorldList();
+        }
+        super.act(delta);
     }
 
     @Override

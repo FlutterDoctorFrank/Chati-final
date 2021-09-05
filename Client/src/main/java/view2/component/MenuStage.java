@@ -15,7 +15,7 @@ public class MenuStage extends Stage {
     private final Stack<AbstractWindow> openWindows;
 
     public MenuStage() {
-        super(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()), Chati.SPRITE_BATCH);
+        super(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()), Chati.CHATI.getSpriteBatch());
         this.openWindows = new Stack<>();
     }
 

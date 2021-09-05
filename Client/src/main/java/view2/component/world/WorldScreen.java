@@ -90,11 +90,11 @@ public class WorldScreen extends AbstractScreen {
             externUserAvatars.values().forEach(UserAvatar::update);
             internUserAvatar.update();
 
-            Chati.SPRITE_BATCH.setProjectionMatrix(camera.combined);
-            Chati.SPRITE_BATCH.begin();
-            externUserAvatars.values().forEach(avatar -> avatar.draw(Chati.SPRITE_BATCH, delta));
-            internUserAvatar.draw(Chati.SPRITE_BATCH, delta);
-            Chati.SPRITE_BATCH.end();
+            Chati.CHATI.getSpriteBatch().setProjectionMatrix(camera.combined);
+            Chati.CHATI.getSpriteBatch().begin();
+            externUserAvatars.values().forEach(avatar -> avatar.draw(Chati.CHATI.getSpriteBatch(), delta));
+            internUserAvatar.draw(Chati.CHATI.getSpriteBatch(), delta);
+            Chati.CHATI.getSpriteBatch().end();
 
             tiledMapRenderer.render(LAYERS_RENDER_AFTER_AVATAR);
             world.step(1 / WORLD_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);

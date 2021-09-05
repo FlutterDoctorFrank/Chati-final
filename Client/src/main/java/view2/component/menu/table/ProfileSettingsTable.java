@@ -4,25 +4,15 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import view2.Assets;
 import view2.Chati;
+import view2.component.ChatiTextButton;
 
 public class ProfileSettingsTable extends MenuTable {
 
-    private TextButton changePasswordButton;
-    private TextButton deleteAccountButton;
-    private TextButton cancelButton;
-
     public ProfileSettingsTable() {
-        create();
-        setLayout();
-    }
-
-    @Override
-    protected void create() {
         infoLabel.setText("Bitte wähle eine Aktion aus!");
 
-        changePasswordButton = new TextButton("Passwort ändern", Assets.SKIN);
+        TextButton changePasswordButton = new ChatiTextButton("Passwort ändern", true);
         changePasswordButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -34,7 +24,7 @@ public class ProfileSettingsTable extends MenuTable {
             }
         });
 
-        deleteAccountButton = new TextButton("Konto löschen", Assets.SKIN);
+        TextButton deleteAccountButton = new ChatiTextButton("Konto löschen", true);
         deleteAccountButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -46,7 +36,7 @@ public class ProfileSettingsTable extends MenuTable {
             }
         });
 
-        cancelButton = new TextButton("Zurück", Assets.SKIN);
+        TextButton cancelButton = new ChatiTextButton("Zurück", true);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -57,10 +47,8 @@ public class ProfileSettingsTable extends MenuTable {
                 Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
             }
         });
-    }
 
-    @Override
-    protected void setLayout() {
+        // Layout
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
         container.add(infoLabel).row();
@@ -75,6 +63,5 @@ public class ProfileSettingsTable extends MenuTable {
 
     @Override
     public void resetTextFields() {
-
     }
 }

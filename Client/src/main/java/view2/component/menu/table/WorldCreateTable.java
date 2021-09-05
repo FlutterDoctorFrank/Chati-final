@@ -1,13 +1,12 @@
 package view2.component.menu.table;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import model.context.spatial.ContextMap;
-import view2.Assets;
 import view2.Chati;
+import view2.component.ChatiTextButton;
 import view2.component.ChatiTextField;
 import view2.component.Response;
 
@@ -15,29 +14,19 @@ import java.util.EnumSet;
 
 public class WorldCreateTable extends MenuTable {
 
-    private ChatiTextField worldNameField;
-    private Label mapSelectLabel;
-    private SelectBox<ContextMap> mapSelectBox;
-    private TextButton confirmButton;
-    private TextButton cancelButton;
+    private final ChatiTextField worldNameField;
 
     public WorldCreateTable() {
-        create();
-        setLayout();
-    }
-
-    @Override
-    protected void create() {
         infoLabel.setText("Bitte wähle einen Namen und eine Karte!");
 
-        mapSelectLabel = new Label("Karte: ", Assets.SKIN);
-        mapSelectBox = new SelectBox<>(Assets.SKIN);
+        Label mapSelectLabel = new Label("Karte: ", Chati.CHATI.getAssetManager().getSkin());
+        SelectBox<ContextMap> mapSelectBox = new SelectBox<>(Chati.CHATI.getAssetManager().getSkin());
         mapSelectBox.setItems(EnumSet.allOf(ContextMap.class)
                 .stream().filter(ContextMap::isPublicRoomMap).toArray(ContextMap[]::new));
 
         worldNameField = new ChatiTextField("Name der Welt", false);
 
-        confirmButton = new TextButton("Bestätigen", Assets.SKIN);
+        TextButton confirmButton = new ChatiTextButton("Bestätigen", true);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -45,8 +34,7 @@ public class WorldCreateTable extends MenuTable {
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (worldNameField.getText().isBlank()
-                        || worldNameField.getStyle().fontColor == Color.GRAY) {
+                if (worldNameField.getText().isBlank()) {
                     infoLabel.setText("Bitte gib den Namen der zu erstellenden Welt ein!");
                     return;
                 }
@@ -55,12 +43,11 @@ public class WorldCreateTable extends MenuTable {
                     return;
                 }
                 Chati.CHATI.getMenuScreen().setPendingResponse(Response.CREATE_WORLD);
-                Chati.CHATI.getServerSender()
-                        .send(ServerSender.SendAction.WORLD_CREATE, mapSelectBox.getSelected(), worldNameField.getText());
+                Chati.CHATI.send(ServerSender.SendAction.WORLD_CREATE, mapSelectBox.getSelected(), worldNameField.getText());
             }
         });
 
-        cancelButton = new TextButton("Zurück", Assets.SKIN);
+        TextButton cancelButton = new ChatiTextButton("Zurück", true);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -71,10 +58,8 @@ public class WorldCreateTable extends MenuTable {
                 Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
             }
         });
-    }
 
-    @Override
-    protected void setLayout() {
+        // Layout
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
         container.add(infoLabel).row();

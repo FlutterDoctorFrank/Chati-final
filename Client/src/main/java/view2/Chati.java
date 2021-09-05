@@ -29,7 +29,6 @@ import java.util.UUID;
 
 public class Chati extends Game implements ViewControllerInterface, IModelObserver {
 
-    public static SpriteBatch SPRITE_BATCH;
     public static Chati CHATI;
 
     private final IUserManagerView userManager;
@@ -79,11 +78,14 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void create() {
+        this.assetManager = new ChatiAssetManager();
+        this.preferences = new ChatiPreferences();
+        this.audioManager = new AudioManager();
+
         Settings.initialize();
         Assets.initialize();
 
-        SPRITE_BATCH = new SpriteBatch();
-        this.audioManager = new AudioManager();
+        this.spriteBatch = new SpriteBatch();
         this.menuScreen = new MenuScreen();
         this.worldScreen = new WorldScreen();
         setScreen(menuScreen);
@@ -122,7 +124,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return serverSender;
     }
 
-
     public SpriteBatch getSpriteBatch() {
         return spriteBatch;
     }
@@ -132,7 +133,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     public ChatiPreferences getPreferences() {
-        return null;
+        return preferences;
     }
 
     public AudioManager getAudioManager() {

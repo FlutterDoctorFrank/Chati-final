@@ -1,6 +1,5 @@
 package view2.component.menu.table;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -9,10 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import model.user.Avatar;
 import org.jetbrains.annotations.NotNull;
-import view2.Assets;
 import view2.Chati;
+import view2.component.ChatiTextButton;
 import view2.component.Response;
-import view2.component.hud.HudMenuWindow;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -26,30 +24,20 @@ public class AvatarSelectTable extends MenuTable {
 
     private final Set<AvatarListEntry> avatarEntries;
 
-    private ScrollPane avatarScrollPane;
-    private Table avatarListContainer;
-    private TextButton confirmButton;
-    private TextButton cancelButton;
-
     public AvatarSelectTable() {
-        this.avatarEntries = new TreeSet<>();
-        create();
-        setLayout();
-    }
+        infoLabel.setText("Bitte wähle einen Avatar!");
 
-    @Override
-    protected void create() {
+        this.avatarEntries = new TreeSet<>();
+
+        Table avatarListContainer = new Table();
+        ScrollPane avatarScrollPane = new ScrollPane(avatarListContainer, Chati.CHATI.getAssetManager().getSkin());
+
         ButtonGroup<AvatarListEntry> avatarButtonGroup = new ButtonGroup<>();
         avatarButtonGroup.setMinCheckCount(1);
         avatarButtonGroup.setMaxCheckCount(1);
         avatarButtonGroup.setUncheckLast(true);
 
-        infoLabel.setText("Bitte wähle einen Avatar!");
-
-        avatarListContainer = new Table();
-        avatarScrollPane = new ScrollPane(avatarListContainer, Assets.SKIN);
-
-        confirmButton = new TextButton("Bestätigen", Assets.SKIN);
+        TextButton confirmButton = new ChatiTextButton("Bestätigen", true);
         confirmButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -58,12 +46,11 @@ public class AvatarSelectTable extends MenuTable {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 Chati.CHATI.getScreen().setPendingResponse(Response.AVATAR_CHANGE);
-                Chati.CHATI.getServerSender().send(ServerSender.SendAction.PROFILE_CHANGE,
-                        avatarButtonGroup.getChecked().getAvatar());
+                Chati.CHATI.send(ServerSender.SendAction.PROFILE_CHANGE, avatarButtonGroup.getChecked().getAvatar());
             }
         });
 
-        cancelButton = new TextButton("Zurück", Assets.SKIN);
+        TextButton cancelButton = new ChatiTextButton("Zurück", true);
         cancelButton.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -78,29 +65,14 @@ public class AvatarSelectTable extends MenuTable {
         EnumSet.allOf(Avatar.class).forEach(avatar -> {
             AvatarListEntry avatarListEntry = new AvatarListEntry(avatar);
             avatarEntries.add(avatarListEntry);
-            avatarListEntry.addListener(new ClickListener() {
-                @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    if (!avatarListEntry.isChecked()) {
-                        unselectButton(avatarButtonGroup.getChecked());
-                        return true;
-                    }
-                    return false;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    selectButton(avatarListEntry);
-                }
-            });
             avatarButtonGroup.add(avatarListEntry);
-            if (avatar == Chati.CHATI.getUserManager().getInternUserView().getAvatar()) {
-                selectButton(avatarListEntry);
+
+            if (avatar == Chati.CHATI.getInternUser().getAvatar()) {
+                avatarListEntry.setChecked(true);
             }
         });
-    }
 
-    @Override
-    protected void setLayout() {
+        // Layout
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
         container.add(infoLabel).row();
@@ -132,38 +104,19 @@ public class AvatarSelectTable extends MenuTable {
     public void resetTextFields() {
     }
 
-    private void selectButton(TextButton button) {
-        button.setChecked(true);
-        button.getLabel().setColor(Color.MAGENTA);
-        button.getStyle().up = HudMenuWindow.PRESSED_BUTTON_IMAGE;
-    }
-
-    private void unselectButton(TextButton button) {
-        button.setChecked(false);
-        button.getLabel().setColor(Color.WHITE);
-        button.getStyle().up = HudMenuWindow.UNPRESSED_BUTTON_IMAGE;
-    }
-
-    private static class AvatarListEntry extends TextButton implements Comparable<AvatarListEntry> {
+    private static class AvatarListEntry extends ChatiTextButton implements Comparable<AvatarListEntry> {
 
         private final Avatar avatar;
-        private Image avatarImage;
 
         public AvatarListEntry(Avatar avatar) {
-            super(avatar.getName(), Assets.getNewSkin());
+            super(avatar.getName(), false);
             this.avatar = avatar;
-            create();
-            setLayout();
-        }
 
-        private void create() {
-            TextureAtlas atlas = new TextureAtlas(avatar.getPath());
+            TextureAtlas atlas = new TextureAtlas(avatar.getPath()); // TODO Avatare im Assetmanager laden
             TextureAtlas.AtlasRegion stand = atlas.findRegion(avatar.getIdleRegionName());
             TextureRegion avatarStandDown = new TextureRegion(stand, 96, 0, 32, 48);
-            avatarImage = new Image(avatarStandDown);
-        }
+            Image avatarImage = new Image(avatarStandDown);
 
-        private void setLayout() {
             getLabelCell().padTop(-2 * SPACING).row();
             add(avatarImage).center().size(AVATAR_IMAGE_SIZE).padBottom(2 * SPACING);
         }
@@ -174,7 +127,7 @@ public class AvatarSelectTable extends MenuTable {
 
         @Override
         public int compareTo(@NotNull AvatarSelectTable.AvatarListEntry other) {
-            return this.avatar == Chati.CHATI.getUserManager().getInternUserView().getAvatar() ? -1
+            return this.avatar == Chati.CHATI.getInternUser().getAvatar() ? -1
                     : this.avatar.getName().compareTo(other.avatar.getName());
         }
     }

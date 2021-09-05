@@ -185,7 +185,7 @@ public class AdministratorManageWindow extends AbstractWindow {
     }
 
     private void resetTextFields() {
-        usernameField.reset();
-        messageArea.reset();
+        //usernameField.reset();
+        //messageArea.reset();
     }
 }

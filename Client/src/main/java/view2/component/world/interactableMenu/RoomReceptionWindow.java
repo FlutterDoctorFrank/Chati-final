@@ -103,7 +103,6 @@ public class RoomReceptionWindow extends InteractableWindow {
             super.act(delta);
         }
 
-        @Override
         protected void create() {
             infoLabel.setText("Wähle eine Aktion aus!");
 
@@ -173,7 +172,6 @@ public class RoomReceptionWindow extends InteractableWindow {
             });
         }
 
-        @Override
         protected void setLayout() {
             Table container = new Table();
             container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
@@ -215,7 +213,6 @@ public class RoomReceptionWindow extends InteractableWindow {
             setLayout();
         }
 
-        @Override
         protected void create() {
             infoLabel.setText("Erstelle einen privaten Raum!");
 
@@ -264,7 +261,6 @@ public class RoomReceptionWindow extends InteractableWindow {
             });
         }
 
-        @Override
         protected void setLayout() {
             Table container = new Table();
             container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
@@ -304,7 +300,6 @@ public class RoomReceptionWindow extends InteractableWindow {
             setLayout();
         }
 
-        @Override
         protected void create() {
             infoLabel.setText("Bitte gib das Passwort ein!");
 
@@ -340,7 +335,6 @@ public class RoomReceptionWindow extends InteractableWindow {
             });
         }
 
-        @Override
         protected void setLayout() {
             Table container = new Table();
             container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
@@ -374,7 +368,6 @@ public class RoomReceptionWindow extends InteractableWindow {
             setLayout();
         }
 
-        @Override
         protected void create() {
             infoLabel.setText("Füge deiner Anfrage eine Nachricht hinzu!");
 
@@ -416,7 +409,6 @@ public class RoomReceptionWindow extends InteractableWindow {
             });
         }
 
-        @Override
         protected void setLayout() {
             Table container = new Table();
             container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();

@@ -24,8 +24,10 @@
 		"fontColor": { "a": 1, "b": 1, "g": 1, "r": 1 },
 		"downFontColor": { "a": 1, "b": 1, "g": 0.2, "r": 1 },
 		"disabledFontColor": { "a": 1, "b": 0.8, "g": 0.8, "r": 0.8 },
+		"checkedFontColor": { "a": 1, "b": 1, "g": 0.2, "r": 1 },
 		"up": "button",
-		"down": "button-down"
+		"down": "button-down",
+		"checked": "button-down"
 	},
 	"round": {
 		"font": "font-title",
@@ -89,7 +91,8 @@
 		"background": "textfield",
 		"cursor": "cursor",
 		"selection": "text-selection",
-		"messageFont": "font-label"
+		"messageFont": "font-label",
+		"messageFontColor": grey
 	}
 },
 "ScrollPaneStyle": {
