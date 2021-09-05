@@ -153,7 +153,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             teleportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_teleport_to_user"));
             teleportButton.addListener(new ChatiToolTip("Zu Benutzer teleportieren"));
         } else {
-            teleportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_teleport_tp_user_disabled"));
+            teleportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_teleport_to_user_disabled"));
             teleportButton.setDisabled(true);
             teleportButton.setTouchable(Touchable.disabled);
         }
