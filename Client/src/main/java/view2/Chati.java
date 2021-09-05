@@ -21,13 +21,15 @@ import org.jetbrains.annotations.Nullable;
 import view2.audio.AudioManager;
 import view2.userInterface.hud.HeadUpDisplay;
 import view2.userInterface.menu.ContextEntry;
-import view2.userInterface.menu.table.LoginTable;
 import view2.userInterface.menu.MenuScreen;
+import view2.userInterface.menu.table.LoginTable;
 import view2.userInterface.menu.table.StartTable;
 import view2.world.WorldScreen;
-
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.UUID;
 
 public class Chati extends Game implements ViewControllerInterface, IModelObserver {
 
@@ -262,9 +264,11 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void joinWorldResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            Gdx.app.postRunnable(() -> menuScreen.joinWorldResponse(success, messageKey));
-        }
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(menuScreen)) {
+                menuScreen.joinWorldResponse(success, messageKey);
+            }
+        });
     }
 
     @Override

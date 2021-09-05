@@ -689,6 +689,10 @@ public class User implements IUser {
         }
     }
 
+    public void setWorld(@Nullable final World world) {
+        currentWorld = world;
+    }
+
     /**
      * Setzt die Information, ob der Benutzer sich momentan bewegen darf.
      * @param movable true, wenn der Benutzer sich bewegen darf, sonst false.

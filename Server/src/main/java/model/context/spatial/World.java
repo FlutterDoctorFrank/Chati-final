@@ -84,6 +84,7 @@ public class World extends Area implements IWorld {
         }
 
         if (!contains(user)) {
+            user.setWorld(this);
             user.send(SendAction.WORLD_ACTION, this);
 
             super.addUser(user);
@@ -112,8 +113,9 @@ public class World extends Area implements IWorld {
     @Override
     public void removeUser(@NotNull final User user) {
         if (this.contains(user)) {
-            user.send(SendAction.WORLD_ACTION, this);
             super.removeUser(user);
+            user.setWorld(null);
+            user.send(SendAction.WORLD_ACTION, this);
             containedUsers.values().forEach(receiver -> receiver.send(SendAction.USER_INFO, user));
         }
     }

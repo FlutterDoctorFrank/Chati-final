@@ -141,11 +141,12 @@ public abstract class Context implements IContext {
     public void addUser(@NotNull final User user) {
         if (!this.contains(user)) {
             this.containedUsers.put(user.getUserId(), user);
-            System.out.println("User '" + user.getUsername() + "' added to context: " + this.contextId);
 
             if (this.parent != null && !this.parent.contains(user)) {
                 this.parent.addUser(user);
             }
+
+            System.out.println("User '" + user.getUsername() + "' added to context: " + this.contextId);
         }
     }
 

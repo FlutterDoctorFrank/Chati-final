@@ -45,6 +45,7 @@ public class GlobalContext extends Context implements IGlobalContext {
     public void load() {
         this.worlds.clear();
         this.worlds.putAll(this.database.getWorlds());
+        this.worlds.values().forEach(this::addChild);
     }
 
     @Override

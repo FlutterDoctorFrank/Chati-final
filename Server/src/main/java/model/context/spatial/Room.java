@@ -99,6 +99,8 @@ public class Room extends Area implements IRoom {
     @Override
     public void addUser(@NotNull final User user) {
         if (!contains(user)) {
+            world.addUser(user);
+
             user.send(SendAction.CONTEXT_JOIN, this);
             super.addUser(user);
             user.updateUserInfo(true);
