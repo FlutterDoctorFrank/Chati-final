@@ -1,7 +1,6 @@
 package view2.world.component;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -128,12 +127,7 @@ public class InternUserAvatar extends UserAvatar {
     }
 
     private void switchCollision(boolean collision) {
-        Vector2 oldPosition = this.body.getPosition();
-        float oldAngle = this.body.getAngle();
-        Chati.CHATI.getWorldScreen().getWorld().destroyBody(this.body);
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        this.body = Chati.CHATI.getWorldScreen().getWorld().createBody(bodyDef);
+        body.getFixtureList().forEach(fixture -> body.destroyFixture(fixture));
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.filter.categoryBits = WorldScreen.INTERN_USER_BIT;
         if (collision) {
@@ -147,7 +141,5 @@ public class InternUserAvatar extends UserAvatar {
         shape.setAsBox((AVATAR_SIZE - 1) / WorldCamera.PPM / 2, (AVATAR_SIZE - 1) / WorldCamera.PPM / 2);
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
-        body.setUserData(ContactType.INTERN_USER);
-        this.body.setTransform(oldPosition, oldAngle);
     }
 }
