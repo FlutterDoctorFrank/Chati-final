@@ -69,18 +69,9 @@ public class AudioConsumer {
                 if (blocks.size() == 0) {
                     continue;
                 }
-                int maxValue = 0;
                 for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
                     int j = i;
                     blocks.forEach(block -> temp[j] += block.getAudioData()[j]);
-                    if (Math.abs(temp[j]) > maxValue) {
-                        maxValue = Math.abs(temp[j]);
-                    }
-                }
-                for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
-                    if (Math.abs(temp[i]) >= Short.MAX_VALUE) {
-                        temp[i] = (Short.MAX_VALUE * temp[i] / maxValue);
-                    }
                     mixedData[i] = (short) temp[i];
                 }
                 player.writeSamples(mixedData, 0, mixedData.length);
