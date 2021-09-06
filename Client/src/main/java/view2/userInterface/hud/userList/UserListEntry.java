@@ -34,23 +34,23 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         switch (user.getStatus()) {
             case ONLINE:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_online"));
-                statusImage.addListener(new ChatiToolTip("Online"));
+                statusImage.addListener(new ChatiTooltip("Online"));
                 break;
             case AWAY:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_away"));
-                statusImage.addListener(new ChatiToolTip("Abwesend"));
+                statusImage.addListener(new ChatiTooltip("Abwesend"));
                 break;
             case BUSY:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_busy"));
-                statusImage.addListener(new ChatiToolTip("Beschäftigt"));
+                statusImage.addListener(new ChatiTooltip("Beschäftigt"));
                 break;
             case INVISIBLE:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_invisible"));
-                statusImage.addListener(new ChatiToolTip("Unsichtbar"));
+                statusImage.addListener(new ChatiTooltip("Unsichtbar"));
                 break;
             case OFFLINE:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_offline"));
-                statusImage.addListener(new ChatiToolTip("Offline"));
+                statusImage.addListener(new ChatiTooltip("Offline"));
                 break;
             default:
                 throw new IllegalArgumentException("Invalid user status");
@@ -59,22 +59,22 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         Image currentRoomImage = new Image();
         if (user.isOnline() && user.isInCurrentRoom()) {
             currentRoomImage.setDrawable(Chati.CHATI.getDrawable("current_room"));
-            currentRoomImage.addListener(new ChatiToolTip("Der Benutzer ist in deinem Raum."));
+            currentRoomImage.addListener(new ChatiTooltip("Der Benutzer ist in deinem Raum."));
         }
 
         Image currentWorldImage = new Image();
         if (user.isOnline() && user.isInCurrentWorld()) {
             currentWorldImage.setDrawable(Chati.CHATI.getDrawable("current_world"));
-            currentWorldImage.addListener(new ChatiToolTip("Der Benutzer ist in deiner Welt."));
+            currentWorldImage.addListener(new ChatiTooltip("Der Benutzer ist in deiner Welt."));
         }
 
         ChatiImageButton friendButton;
         if (!user.isFriend()) {
             friendButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_add_friend"));
-            friendButton.addListener(new ChatiToolTip("Freund hinzufügen"));
+            friendButton.addListener(new ChatiTooltip("Freund hinzufügen"));
         } else {
             friendButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_remove_friend"));
-            friendButton.addListener(new ChatiToolTip("Freund entfernen"));
+            friendButton.addListener(new ChatiTooltip("Freund entfernen"));
         }
         friendButton.addListener(new ClickListener() {
             @Override
@@ -91,10 +91,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         ChatiImageButton ignoreButton;
         if (!user.isIgnored()) {
             ignoreButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_ignore_user"));
-            ignoreButton.addListener(new ChatiToolTip("Ignorieren"));
+            ignoreButton.addListener(new ChatiTooltip("Ignorieren"));
         } else {
             ignoreButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_unignore_user"));
-            ignoreButton.addListener(new ChatiToolTip("Nicht mehr ignorieren"));
+            ignoreButton.addListener(new ChatiTooltip("Nicht mehr ignorieren"));
         }
         ignoreButton.addListener(new ClickListener() {
             @Override
@@ -112,10 +112,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         ChatiImageButton roomButton;
         if (user.canBeInvited()) {
             roomButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_invite_user"));
-            roomButton.addListener(new ChatiToolTip("In den Raum einladen"));
+            roomButton.addListener(new ChatiTooltip("In den Raum einladen"));
         } else if (user.canBeKicked()) {
             roomButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_kick_user"));
-            roomButton.addListener(new ChatiToolTip("Aus dem Raum entfernen"));
+            roomButton.addListener(new ChatiTooltip("Aus dem Raum entfernen"));
         } else {
             roomButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_invite_user_disabled"));
             roomButton.setDisabled(true);
@@ -136,7 +136,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         ChatiImageButton teleportButton;
         if (user.canTeleportTo()) {
             teleportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_teleport_to_user"));
-            teleportButton.addListener(new ChatiToolTip("Zu Benutzer teleportieren"));
+            teleportButton.addListener(new ChatiTooltip("Zu Benutzer teleportieren"));
         } else {
             teleportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_teleport_to_user_disabled"));
             teleportButton.setDisabled(true);
@@ -155,7 +155,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         ChatiImageButton reportButton;
         if (user.canBeReported()) {
             reportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_report_user"));
-            reportButton.addListener(new ChatiToolTip("Melden"));
+            reportButton.addListener(new ChatiTooltip("Melden"));
         } else {
             reportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_report_user_disabled"));
             reportButton.setDisabled(true);
@@ -174,10 +174,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         if (user.canBeMuted()) {
             if (!user.isMuted()) {
                 muteButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_mute_user"));
-                muteButton.addListener(new ChatiToolTip("Stummschalten"));
+                muteButton.addListener(new ChatiTooltip("Stummschalten"));
             } else {
                 muteButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_unmute_user"));
-                muteButton.addListener(new ChatiToolTip("Stummschalten aufheben"));
+                muteButton.addListener(new ChatiTooltip("Stummschalten aufheben"));
             }
         } else {
             muteButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_mute_user_disabled"));
@@ -203,10 +203,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         if (user.canBeBanned()) {
             if (!user.isBanned()) {
                 banButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_ban_user"));
-                banButton.addListener(new ChatiToolTip("Sperren"));
+                banButton.addListener(new ChatiTooltip("Sperren"));
             } else {
                 banButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_unban_user"));
-                banButton.addListener(new ChatiToolTip("Entperren"));
+                banButton.addListener(new ChatiTooltip("Entperren"));
             }
         } else {
             banButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_ban_user_disabled"));
@@ -230,10 +230,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         if (user.canAssignModerator()) {
             if (!user.hasRole(Role.MODERATOR)) {
                 moderatorButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_assign_moderator"));
-                moderatorButton.addListener(new ChatiToolTip("Die Rolle des Moderators vergeben"));
+                moderatorButton.addListener(new ChatiTooltip("Die Rolle des Moderators vergeben"));
             } else {
                 moderatorButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_withdraw_moderator"));
-                moderatorButton.addListener(new ChatiToolTip("Die Rolle des Moderators entziehen"));
+                moderatorButton.addListener(new ChatiTooltip("Die Rolle des Moderators entziehen"));
             }
         } else {
             moderatorButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_assign_moderator_disabled"));

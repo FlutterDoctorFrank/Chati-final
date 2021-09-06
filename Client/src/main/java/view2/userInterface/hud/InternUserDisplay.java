@@ -10,7 +10,7 @@ import model.user.IInternUserView;
 import model.user.Status;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
-import view2.userInterface.ChatiToolTip;
+import view2.userInterface.ChatiTooltip;
 import view2.userInterface.UserInfoContainer;
 
 public class InternUserDisplay extends Table {
@@ -80,19 +80,19 @@ public class InternUserDisplay extends Table {
         switch (internUser.getStatus()) {
             case ONLINE:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_online"));
-                statusImage.addListener(new ChatiToolTip("Online"));
+                statusImage.addListener(new ChatiTooltip("Online"));
                 break;
             case AWAY:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_away"));
-                statusImage.addListener(new ChatiToolTip("Abwesend"));
+                statusImage.addListener(new ChatiTooltip("Abwesend"));
                 break;
             case BUSY:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_busy"));
-                statusImage.addListener(new ChatiToolTip("Beschäftigt"));
+                statusImage.addListener(new ChatiTooltip("Beschäftigt"));
                 break;
             case INVISIBLE:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_invisible"));
-                statusImage.addListener(new ChatiToolTip("Unsichtbar"));
+                statusImage.addListener(new ChatiTooltip("Unsichtbar"));
                 break;
             case OFFLINE:
                 throw new IllegalArgumentException("Intern user cannot be offline");
@@ -111,7 +111,7 @@ public class InternUserDisplay extends Table {
             Image invisibleStatusImage = new Image(Chati.CHATI.getDrawable("status_invisible"));
 
             ChatiTextButton onlineStatusButton = new ChatiTextButton("", false);
-            onlineStatusButton.addListener(new ChatiToolTip("Online"));
+            onlineStatusButton.addListener(new ChatiTooltip("Online"));
             if (internUser.getStatus() == Status.ONLINE || internUser.getStatus() == Status.AWAY) {
                 onlineStatusButton.setChecked(true);
             }
@@ -127,7 +127,7 @@ public class InternUserDisplay extends Table {
             });
 
             ChatiTextButton busyStatusButton = new ChatiTextButton("", false);
-            busyStatusButton.addListener(new ChatiToolTip("Beschäftigt"));
+            busyStatusButton.addListener(new ChatiTooltip("Beschäftigt"));
             if (internUser.getStatus() == Status.BUSY) {
                 busyStatusButton.setChecked(true);
             }
@@ -143,7 +143,7 @@ public class InternUserDisplay extends Table {
             });
 
             ChatiTextButton invisibleStatusButton = new ChatiTextButton("", false);
-            invisibleStatusButton.addListener(new ChatiToolTip("Unsichtbar"));
+            invisibleStatusButton.addListener(new ChatiTooltip("Unsichtbar"));
             if (internUser.getStatus() == Status.INVISIBLE) {
                 invisibleStatusButton.setChecked(true);
             }

@@ -40,7 +40,7 @@ public class AudioConsumer {
         isRunning = true;
 
         Thread mixAndPlaybackThread = new Thread(() -> {
-            short[] mixedData = new short[AudioManager.PACKET_SIZE];
+            short[] mixedData = new short[AudioManager.BLOCK_SIZE];
             while (isRunning) {
                 synchronized (this) {
                     // Warte, solange keine Daten vorhanden sind.
@@ -53,7 +53,7 @@ public class AudioConsumer {
                     }
                 }
 
-                int[] temp = new int[AudioManager.PACKET_SIZE];
+                int[] temp = new int[AudioManager.BLOCK_SIZE];
                 // Mische das oberste Element aller Warteschlangen pro Producer zusammen, die bereit zum Abspielen sind.
                 final Set<ProducerQueue.AudioDataBlock> blocks = voiceDataBuffer.values().stream()
                         .filter(ProducerQueue::isReady)
@@ -61,7 +61,7 @@ public class AudioConsumer {
                         .collect(Collectors.toSet());
                 if (musicStream.isReady()) {
                     ProducerQueue.AudioDataBlock musicBlock = musicStream.getBlock();
-                    for (int i = 0; i < AudioManager.PACKET_SIZE; i++) {
+                    for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
                         musicBlock.getAudioData()[i] = (short) (0.05 * musicBlock.getAudioData()[i]);
                     }
                     blocks.add(musicBlock);
@@ -70,14 +70,14 @@ public class AudioConsumer {
                     continue;
                 }
                 int maxValue = 0;
-                for (int i = 0; i < AudioManager.PACKET_SIZE; i++) {
+                for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
                     int j = i;
                     blocks.forEach(block -> temp[j] += block.getAudioData()[j]);
                     if (Math.abs(temp[j]) > maxValue) {
                         maxValue = Math.abs(temp[j]);
                     }
                 }
-                for (int i = 0; i < AudioManager.PACKET_SIZE; i++) {
+                for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
                     if (Math.abs(temp[i]) >= Short.MAX_VALUE) {
                         temp[i] = (Short.MAX_VALUE * temp[i] / maxValue);
                     }

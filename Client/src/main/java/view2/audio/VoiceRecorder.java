@@ -27,7 +27,7 @@ public class VoiceRecorder {
 
         Thread recordAndSendThread = new Thread(() -> {
             long timestamp = System.currentTimeMillis();
-            short[] recordedData = new short[AudioManager.PACKET_SIZE];
+            short[] recordedData = new short[AudioManager.BLOCK_SIZE];
 
             while (isRunning) {
                 synchronized (this) {

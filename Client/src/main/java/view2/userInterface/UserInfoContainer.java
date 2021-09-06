@@ -55,17 +55,17 @@ public class UserInfoContainer extends Table {
         if (user.hasRole(Role.OWNER)) {
             usernameLabel.setColor(Color.GOLD);
             Image ownerImage = new Image(Chati.CHATI.getDrawable("role_owner"));
-            ownerImage.addListener(new ChatiToolTip("Besitzer"));
+            ownerImage.addListener(new ChatiTooltip("Besitzer"));
             roleIcons.add(ownerImage);
         } else if (user.hasRole(Role.ADMINISTRATOR)) {
             usernameLabel.setColor(Color.SKY);
             Image administratorImage = new Image(Chati.CHATI.getDrawable("role_administrator"));
-            administratorImage.addListener(new ChatiToolTip("Administrator"));
+            administratorImage.addListener(new ChatiTooltip("Administrator"));
             roleIcons.add(administratorImage);
         } else if (user.hasRole(Role.MODERATOR)) {
             usernameLabel.setColor(Color.ORANGE);
             Image moderatorImage = new Image(Chati.CHATI.getDrawable("role_moderator"));
-            moderatorImage.addListener(new ChatiToolTip("Moderator"));
+            moderatorImage.addListener(new ChatiTooltip("Moderator"));
             roleIcons.add(moderatorImage);
         } else {
             usernameLabel.setColor(Color.WHITE);
@@ -73,12 +73,12 @@ public class UserInfoContainer extends Table {
 
         if (user.hasRole(Role.ROOM_OWNER)) {
             Image roomOwnerImage = new Image(Chati.CHATI.getDrawable("role_room_owner"));
-            roomOwnerImage.addListener(new ChatiToolTip("Raumbesitzer"));
+            roomOwnerImage.addListener(new ChatiTooltip("Raumbesitzer"));
             roleIcons.add(roomOwnerImage);
         }
         if (user.hasRole(Role.AREA_MANAGER)) {
             Image areaManagerImage = new Image(Chati.CHATI.getDrawable("role_area_manager"));
-            areaManagerImage.addListener(new ChatiToolTip("Bereichsberechtigter"));
+            areaManagerImage.addListener(new ChatiTooltip("Bereichsberechtigter"));
             roleIcons.add(areaManagerImage);
         }
 
