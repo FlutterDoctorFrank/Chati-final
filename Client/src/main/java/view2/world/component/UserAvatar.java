@@ -19,10 +19,10 @@ public class UserAvatar extends Sprite {
     public static final float DEFAULT_VELOCITY = 10f;
     public static final float SPRINT_VELOCITY_FACTOR = 1.67f;
     public static final float COMMUNICABLE_USER_ICON_SIZE = 35;
-    private static final float AVATAR_SIZE = 32;
+    protected static final float AVATAR_SIZE = 32;
 
     protected final IUserView user;
-    protected final Body body;
+    protected Body body;
 
     private final UserInfoContainer userInfoContainer;
     private final Table communicableIconContainer;

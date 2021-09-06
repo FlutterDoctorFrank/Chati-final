@@ -1,7 +1,10 @@
 package view2.world.component;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import controller.network.ServerSender;
 import model.context.spatial.Direction;
 import model.context.spatial.ISpatialContextView;
@@ -19,21 +22,27 @@ public class InternUserAvatar extends UserAvatar {
     private boolean isTeleporting;
     private boolean isSprinting;
     private boolean canInteract;
+    private boolean isColliding;
 
     public InternUserAvatar() {
         super(Chati.CHATI.getUserManager().getInternUserView());
         this.body.setUserData(ContactType.INTERN_USER);
-        turnOnCollision();
+        Fixture fixture = body.getFixtureList().get(0);
+        if (fixture != null) {
+            fixture.getFilterData().categoryBits = WorldScreen.INTERN_USER_BIT;
+            fixture.getFilterData().maskBits = WorldScreen.COLLISION_AREA_BIT;
+        }
+        this.isColliding = true;
         this.currentDirectionalInputs = new LinkedList<>();
         this.oldPosition = body.getPosition().cpy();
     }
 
     @Override
     public void update() {
-        if (!user.isMovable()) {
-            turnOffCollision();
-        } else if (user.isMovable()) {
-            turnOnCollision();
+        if (!user.isMovable() && isColliding) {
+            switchCollision(false);
+        } else if (user.isMovable() && !isColliding) {
+            switchCollision(true);
         }
 
         if (user.isTeleporting()) {
@@ -118,19 +127,27 @@ public class InternUserAvatar extends UserAvatar {
         return currentDirectionalInputs.peekLast();
     }
 
-    private void turnOnCollision() {
-        Fixture fixture = body.getFixtureList().get(0);
-        if (fixture != null) {
-            fixture.getFilterData().categoryBits = WorldScreen.INTERN_USER_BIT;
-            fixture.getFilterData().maskBits = WorldScreen.COLLISION_AREA_BIT;
+    private void switchCollision(boolean collision) {
+        Vector2 oldPosition = this.body.getPosition();
+        float oldAngle = this.body.getAngle();
+        Chati.CHATI.getWorldScreen().getWorld().destroyBody(this.body);
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        this.body = Chati.CHATI.getWorldScreen().getWorld().createBody(bodyDef);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.filter.categoryBits = WorldScreen.INTERN_USER_BIT;
+        if (collision) {
+            fixtureDef.filter.maskBits = WorldScreen.COLLISION_AREA_BIT;
+            this.isColliding = true;
+        } else {
+            fixtureDef.filter.maskBits = 0;
+            this.isColliding = false;
         }
-    }
-
-    private void turnOffCollision() {
-        Fixture fixture = body.getFixtureList().get(0);
-        if (fixture != null) {
-            fixture.getFilterData().categoryBits = WorldScreen.INTERN_USER_BIT;
-            fixture.getFilterData().maskBits = 0;
-        }
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox((AVATAR_SIZE - 1) / WorldCamera.PPM / 2, (AVATAR_SIZE - 1) / WorldCamera.PPM / 2);
+        fixtureDef.shape = shape;
+        body.createFixture(fixtureDef);
+        body.setUserData(ContactType.INTERN_USER);
+        this.body.setTransform(oldPosition, oldAngle);
     }
 }
