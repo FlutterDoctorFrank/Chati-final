@@ -4,12 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 
 public class ChatiAssetManager {
@@ -22,15 +26,18 @@ public class ChatiAssetManager {
 
     public ChatiAssetManager() {
         // Definiere Parameter für TexturePacker.
-        String texturePackerInput = Gdx.files.internal("Client/src/main/resources/images").path();
+        String texturePackerInput = Gdx.files.internal("Client/src/main/resources/textures").path();
         String texturePackerOutput = Gdx.files.internal("Client/src/main/resources/atlas").path();
         String texturePackerFileName = "image_atlas";
         TexturePacker.Settings texturePackerSettings = new TexturePacker.Settings();
+        texturePackerSettings.filterMin = Texture.TextureFilter.Linear;
+        texturePackerSettings.filterMag = Texture.TextureFilter.Linear;
+        texturePackerSettings.useIndexes = true;
         texturePackerSettings.edgePadding = true;
-        texturePackerSettings.paddingX = 2;
-        texturePackerSettings.paddingY = 2;
+        texturePackerSettings.paddingX = 1;
+        texturePackerSettings.paddingY = 1;
 
-        // Erzeuge neuen TextureAtlas, falls Ressourcen modifiziert wurden.
+        // Erzeuge neuen TextureAtlas, falls Ressourcen nicht vorhanden sind oder modifiziert wurden.
         if (TexturePacker.isModified(texturePackerInput, texturePackerOutput, texturePackerFileName, texturePackerSettings)) {
             TexturePacker.process(texturePackerSettings, texturePackerInput, texturePackerOutput, texturePackerFileName);
         }
@@ -72,6 +79,11 @@ public class ChatiAssetManager {
     public TextureRegionDrawable getDrawable(String name) {
         return new TextureRegionDrawable(assetManager.get(Gdx.files.internal("Client/src/main/resources/atlas/image_atlas.atlas").path(),
                 TextureAtlas.class).findRegion(name));
+    }
+
+    public Array<TextureAtlas.AtlasRegion> getRegions(String name) {
+        return assetManager.get(Gdx.files.internal("Client/src/main/resources/atlas/image_atlas.atlas").path(),
+                TextureAtlas.class).findRegions(name);
     }
 
     public Skin getSkin() {

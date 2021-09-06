@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import controller.network.ServerSender;
 import model.user.Avatar;
 import org.jetbrains.annotations.NotNull;
@@ -103,14 +104,9 @@ public class AvatarSelectTable extends MenuTable {
         public AvatarListEntry(Avatar avatar) {
             super(avatar.getName(), false);
             this.avatar = avatar;
-
-            TextureAtlas atlas = new TextureAtlas(avatar.getPath()); // TODO Avatare im Assetmanager laden
-            TextureAtlas.AtlasRegion stand = atlas.findRegion(avatar.getIdleRegionName());
-            TextureRegion avatarStandDown = new TextureRegion(stand, 96, 0, 32, 48);
-            Image avatarImage = new Image(avatarStandDown);
-
             getLabelCell().padTop(-2 * SPACING).row();
-            add(avatarImage).center().size(AVATAR_IMAGE_SIZE).padBottom(2 * SPACING);
+            TextureRegion avatarDrawable = Chati.CHATI.getDrawable(avatar.getPath() + "_stand_down").getRegion();
+            add(new Image(avatarDrawable)).center().size(AVATAR_IMAGE_SIZE).padBottom(2 * SPACING);
         }
 
         public Avatar getAvatar() {

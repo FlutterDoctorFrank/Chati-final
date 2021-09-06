@@ -8,47 +8,31 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum Avatar implements Resource {
 
-    ADAM("Adam", "Adam/Adam", "Adam_idle", "Adam_run"),
-    ALEX("Alex", "Alex/Alex", "Alex_idle", "Alex_run"),
-    AMELIA("Amelia", "Amelia/Amelia", "Amelia_idle", "Amelia_run"),
-    ASH("Ash", "Ash/Ash", "Ash_idle", "Ash_run"),
-    BOB("Bob", "Bob/Bob", "Bob_idle", "Bob_run"),
-    BRUCE("Bruce", "Bruce/Bruce", "Bruce_idle", "Bruce_run"),
-    DAN("Dan", "Dan/Dan", "Dan_idle", "Dan_run"),
-    EDWARD("Edward", "Edward/Edward", "Edward_idle", "Edward_run"),
-    LUCY("Lucy", "Lucy/Lucy", "Lucy_idle", "Lucy_run"),
-    RICK("Rick", "Rick/Rick", "Rick_idle", "Rick_run");
 
-    private static final String AVATARS_PATH = "avatars/";
+    BAT("bat") /*,
+    ALEX("Alex"),
+    AMELIA("Amelia"),
+    ASH("Ash"),
+    BOB("Bob"),
+    BRUCE("Bruce"),
+    DAN("Dan"),
+    EDWARD("Edward"),
+    LUCY("Lucy"),
+    RICK("Rick");
+    */;
 
     private final String name;
-    private final String path;
-    private final String idleRegionName;
-    private final String runRegionName;
 
-    Avatar(@NotNull final String name, @NotNull final String path,
-           @NotNull final String idleRegionName, @NotNull final String runRegionName) {
+    Avatar(@NotNull final String name) {
         this.name = name;
-        this.path = AVATARS_PATH + path + ".pack";
-        this.idleRegionName = idleRegionName;
-        this.runRegionName = runRegionName;
     }
 
-    @Override
     public @NotNull String getName() {
         return this.name;
     }
 
     @Override
     public @NotNull String getPath() {
-        return this.path;
-    }
-
-    public @NotNull String getIdleRegionName() {
-        return this.idleRegionName;
-    }
-
-    public @NotNull String getRunRegionName() {
-        return this.runRegionName;
+        return "avatar/" + this.name.toLowerCase();
     }
 }

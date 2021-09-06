@@ -5,8 +5,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
 import controller.network.ServerSender;
 import model.MessageBundle;
 import model.communication.message.MessageType;
@@ -141,6 +143,10 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     public TextureRegionDrawable getDrawable(String name) {
         return assetManager.getDrawable(name);
+    }
+
+    public Array<TextureAtlas.AtlasRegion> getRegions(String name) {
+        return assetManager.getRegions(name);
     }
 
     public ChatiPreferences getPreferences() {

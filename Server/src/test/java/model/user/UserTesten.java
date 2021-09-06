@@ -329,12 +329,12 @@ public class UserTesten {
             User setAvatar = userAccountManager.loginUser("setAvatar", "11111", testClientSender);
 
             String first_avatar_name = setAvatar.getAvatar().name();
-            if (first_avatar_name != "ADAM") {
-                setAvatar.setAvatar(Avatar.ADAM);
-                Assert.assertEquals("ADAM", setAvatar.getAvatar().name());
+            if (first_avatar_name != "BAT") {
+                setAvatar.setAvatar(Avatar.BAT);
+                Assert.assertEquals("BAT", setAvatar.getAvatar().name());
             } else {
-                setAvatar.setAvatar(Avatar.ALEX);
-                Assert.assertEquals("ALEX", setAvatar.getAvatar().name());
+                setAvatar.setAvatar(Avatar.BAT);
+                Assert.assertEquals("BAT", setAvatar.getAvatar().name());
             }
 
         } catch (Exception e) {

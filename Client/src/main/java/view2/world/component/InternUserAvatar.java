@@ -127,7 +127,7 @@ public class InternUserAvatar extends UserAvatar {
     }
 
     private void switchCollision(boolean collision) {
-        body.getFixtureList().forEach(fixture -> body.destroyFixture(fixture));
+        body.getFixtureList().forEach(body::destroyFixture);
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.filter.categoryBits = WorldScreen.INTERN_USER_BIT;
         if (collision) {

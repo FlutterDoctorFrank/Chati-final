@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Array;
 import model.context.spatial.Direction;
 import model.context.spatial.ILocationView;
 import model.user.IUserView;
@@ -20,9 +19,10 @@ public class UserAvatar extends Sprite {
     public static final float SPRINT_VELOCITY_FACTOR = 1.67f;
     public static final float COMMUNICABLE_USER_ICON_SIZE = 35;
     protected static final float AVATAR_SIZE = 32;
+    private static final float FRAME_DURATION = 0.1f;
 
     protected final IUserView user;
-    protected Body body;
+    protected final Body body;
 
     private final UserInfoContainer userInfoContainer;
     private final Table communicableIconContainer;
@@ -95,35 +95,15 @@ public class UserAvatar extends Sprite {
     }
 
     private void initializeSprite() {
-        TextureAtlas atlas = new TextureAtlas(user.getAvatar().getPath());
-
-        TextureAtlas.AtlasRegion stand = atlas.findRegion(user.getAvatar().getIdleRegionName());
-        avatarStandRight = new TextureRegion(stand, 0, 0, 32, 48);
-        avatarStandUp = new TextureRegion(stand, 32, 0, 32, 48);
-        avatarStandLeft = new TextureRegion(stand, 64, 0, 32, 48);
-        avatarStandDown = new TextureRegion(stand, 96, 0, 32, 48);
-
-        TextureAtlas.AtlasRegion run = atlas.findRegion(user.getAvatar().getRunRegionName());
-        Array<TextureRegion> frames = new Array<>();
-        //running right animation
-
-        for (int i = 0; i < 6; i++) frames.add(new TextureRegion(run, i * 32, 0, 32, 48));
-        avatarRunRight = new Animation<>(0.1f, frames);
-        frames.clear();
-
-        //running up animation
-        for (int i = 6; i < 12; i++) frames.add(new TextureRegion(run, i * 32, 0, 32, 48));
-        avatarRunUp = new Animation<>(0.1f, frames);
-        frames.clear();
-        //running left animation
-        for (int i = 12; i < 18; i++) frames.add(new TextureRegion(run, i * 32, 0, 32, 48));
-        avatarRunLeft = new Animation<>(0.1f, frames);
-        frames.clear();
-        //running down animation
-        for (int i = 18; i < 24; i++) frames.add(new TextureRegion(run, i * 32, 0, 32, 48));
-        avatarRunDown = new Animation<>(0.1f, frames);
-        frames.clear();
-
+        String avatarPath = user.getAvatar().getPath();
+        avatarStandUp = Chati.CHATI.getDrawable(avatarPath + "_stand_up").getRegion();
+        avatarStandLeft = Chati.CHATI.getDrawable(avatarPath + "_stand_left").getRegion();
+        avatarStandDown = Chati.CHATI.getDrawable(avatarPath + "_stand_down").getRegion();
+        avatarStandRight = Chati.CHATI.getDrawable(avatarPath + "_stand_right").getRegion();
+        avatarRunUp = new Animation<>(FRAME_DURATION, Chati.CHATI.getRegions(avatarPath + "_move_up"));
+        avatarRunLeft = new Animation<>(FRAME_DURATION, Chati.CHATI.getRegions(avatarPath + "_move_left"));
+        avatarRunDown = new Animation<>(FRAME_DURATION, Chati.CHATI.getRegions(avatarPath + "_move_down"));
+        avatarRunRight = new Animation<>(FRAME_DURATION, Chati.CHATI.getRegions(avatarPath + "_move_right"));
         setBounds(0, 0, AVATAR_SIZE / WorldCamera.PPM, AVATAR_SIZE / WorldCamera.PPM);
         setRegion(avatarStandDown);
     }
@@ -225,33 +205,5 @@ public class UserAvatar extends Sprite {
         return body;
     }
 
-    private class InteractButtonAnimation extends Sprite {
 
-        private final Animation<TextureRegion> interactionButton;
-        private float buttonStateTimer;
-
-        public InteractButtonAnimation() {
-            buttonStateTimer = 0;
-            Array<TextureRegion> frames = new Array<>();
-            TextureAtlas buttonAtlas = new TextureAtlas("interact_button/rotating_button.pack");
-            for (int i = 0; i < 4; i++) {
-                frames.add(new TextureRegion(buttonAtlas.findRegion("button"), i * 16, 0, 16, 16));
-            }
-            interactionButton = new Animation<>(0.1f, frames);
-            setBounds(0, 0, 16 / WorldCamera.PPM, 16 / WorldCamera.PPM);
-            setRegion(buttonAtlas.findRegion("button"), 0, 0, 16, 16);
-        }
-
-        @Override
-        public void draw(Batch batch, float delta) {
-            this.setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y + getHeight());
-            this.setRegion(getButtonFrame(delta));
-        }
-
-        private TextureRegion getButtonFrame(float delta) {
-            TextureRegion region = interactionButton.getKeyFrame(buttonStateTimer, true);
-            buttonStateTimer += delta;
-            return region;
-        }
-    }
 }
