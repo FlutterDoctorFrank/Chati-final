@@ -25,11 +25,7 @@ public class ChangePasswordTable extends MenuTable {
         ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
         confirmButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (passwordField.isBlank() || newPasswordField.isBlank()
                         || confirmNewPasswordField.isBlank()) {
                     infoLabel.setText("Bitte fülle alle Felder aus.");
@@ -55,11 +51,7 @@ public class ChangePasswordTable extends MenuTable {
         ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new ProfileSettingsTable());
             }
         });

@@ -24,11 +24,7 @@ public class StartTable extends MenuTable {
         ChatiTextButton joinWorldButton = new ChatiTextButton("Welt Beitreten", true);
         joinWorldButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (worldSelectBox.getSelected() == null) {
                     infoLabel.setText("Bitte wähle eine Welt aus!");
                     return;
@@ -41,11 +37,7 @@ public class StartTable extends MenuTable {
         ChatiTextButton createWorldButton = new ChatiTextButton("Welt erstellen", true);
         createWorldButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new WorldCreateTable());
             }
         });
@@ -53,11 +45,7 @@ public class StartTable extends MenuTable {
         ChatiTextButton deleteWorldButton = new ChatiTextButton("Welt löschen", true);
         deleteWorldButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (worldSelectBox.getSelected() == null) {
                     infoLabel.setText("Bitte wähle eine Welt aus!");
                     return;
@@ -70,11 +58,7 @@ public class StartTable extends MenuTable {
         ChatiTextButton changeAvatarButton = new ChatiTextButton("Avatar ändern", true);
         changeAvatarButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new AvatarSelectTable());
             }
         });
@@ -82,11 +66,7 @@ public class StartTable extends MenuTable {
         ChatiTextButton profileSettingsButton = new ChatiTextButton("Konto verwalten", true);
         profileSettingsButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new ProfileSettingsTable());
             }
         });
@@ -94,11 +74,7 @@ public class StartTable extends MenuTable {
         ChatiTextButton logoutButton = new ChatiTextButton("Abmelden", true);
         logoutButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
                 Chati.CHATI.getMenuScreen().setMenuTable(new LoginTable());
             }

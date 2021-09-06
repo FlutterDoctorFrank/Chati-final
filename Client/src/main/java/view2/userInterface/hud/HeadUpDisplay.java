@@ -48,11 +48,7 @@ public class HeadUpDisplay extends Table {
         userListButton = new ChatiImageButton(Chati.CHATI.getDrawable("user_menu_closed"), Chati.CHATI.getDrawable("user_menu_open"));
         userListButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (userListButton.isChecked()) {
                     openUserMenu();
                 } else {
@@ -65,11 +61,7 @@ public class HeadUpDisplay extends Table {
                 Chati.CHATI.getDrawable("notification_menu_open"));
         notificationListButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (notificationListButton.isChecked()) {
                     openNotificationMenu();
                 } else {
@@ -82,11 +74,7 @@ public class HeadUpDisplay extends Table {
                 Chati.CHATI.getDrawable("settings_menu_open"));
         settingsButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (settingsButton.isChecked()) {
                     openSettingsMenu();
                 } else {
@@ -99,11 +87,7 @@ public class HeadUpDisplay extends Table {
         chatButton.setVisible(false);
         chatButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (chatButton.isChecked()) {
                     showChatWindow();
                 } else {
@@ -117,11 +101,7 @@ public class HeadUpDisplay extends Table {
         communicationButton.setVisible(false);
         communicationButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (communicationButton.isChecked()) {
                     openCommunicationWindow();
                 } else {
@@ -135,11 +115,7 @@ public class HeadUpDisplay extends Table {
         microphoneButton.setVisible(false);
         microphoneButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.getPreferences().setMicrophoneOn(microphoneButton.isChecked());
             }
         });
@@ -148,11 +124,7 @@ public class HeadUpDisplay extends Table {
         soundButton.setVisible(false);
         soundButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.getPreferences().setSoundOn(soundButton.isChecked());
             }
         });
@@ -348,10 +320,6 @@ public class HeadUpDisplay extends Table {
 
     public boolean isChatOpen() {
         return chatButton.isVisible() && chatWindow.isVisible();
-    }
-
-    public HudMenuWindow getCurrentMenuWindow() {
-        return currentMenuWindow;
     }
 
     public ChatWindow getChatWindow() {

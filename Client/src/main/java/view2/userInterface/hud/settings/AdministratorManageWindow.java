@@ -37,11 +37,7 @@ public class AdministratorManageWindow extends ChatiWindow {
         ChatiTextButton assignButton = new ChatiTextButton("Rolle erteilen", true);
         assignButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (usernameField.isBlank()) {
                     infoLabel.setText("Bitte gib einen Benutzernamen ein!");
                     return;
@@ -78,11 +74,7 @@ public class AdministratorManageWindow extends ChatiWindow {
         ChatiTextButton withdrawButton = new ChatiTextButton("Rolle entziehen", true);
         withdrawButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (usernameField.isBlank()) {
                     infoLabel.setText("Bitte gib einen Benutzernamen ein!");
                     return;
@@ -124,11 +116,7 @@ public class AdministratorManageWindow extends ChatiWindow {
         ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 close();
             }
         });

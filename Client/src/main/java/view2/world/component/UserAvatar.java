@@ -73,7 +73,7 @@ public class UserAvatar extends Sprite {
         super.draw(batch);
     }
 
-    public void drawHead(Batch batch, float delta) {
+    public void drawHeader(Batch batch, float delta) {
         if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isShowNamesPressed()
                 || Chati.CHATI.getPreferences().getShowNamesInWorld()) {
             userInfoContainer.setPosition(body.getPosition().x, body.getPosition().y + getHeight());
@@ -106,9 +106,11 @@ public class UserAvatar extends Sprite {
         TextureAtlas.AtlasRegion run = atlas.findRegion(user.getAvatar().getRunRegionName());
         Array<TextureRegion> frames = new Array<>();
         //running right animation
+
         for (int i = 0; i < 6; i++) frames.add(new TextureRegion(run, i * 32, 0, 32, 48));
         avatarRunRight = new Animation<>(0.1f, frames);
         frames.clear();
+
         //running up animation
         for (int i = 6; i < 12; i++) frames.add(new TextureRegion(run, i * 32, 0, 32, 48));
         avatarRunUp = new Animation<>(0.1f, frames);

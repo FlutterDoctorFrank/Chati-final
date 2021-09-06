@@ -78,11 +78,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         }
         friendButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (!user.isFriend()) {
                     new MessageWindow(AdministrativeAction.INVITE_FRIEND).open();
                 } else {
@@ -102,11 +98,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         }
         ignoreButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (!user.isIgnored()) {
                     Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.IGNORE_USER, "");
@@ -131,11 +123,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         }
         roomButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (user.canBeInvited()) {
                     new MessageWindow(AdministrativeAction.ROOM_INVITE).open();
                 } else if (user.canBeKicked()) {
@@ -156,11 +144,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         }
         teleportButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (user.canTeleportTo()) {
                     Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.TELEPORT_TO_USER, "");
@@ -179,11 +163,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         }
         reportButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (user.canBeReported()) {
                     new MessageWindow(AdministrativeAction.REPORT_USER).open();
                 }
@@ -206,11 +186,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         }
         muteButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (user.canBeMuted()) {
                     if (!user.isMuted()) {
                         Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
@@ -239,11 +215,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         }
         banButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (user.canBeBanned()) {
                     if (!user.isBanned()) {
                         new MessageWindow(AdministrativeAction.BAN_USER).open();
@@ -270,11 +242,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         }
         moderatorButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (user.canAssignModerator()) {
                     if (!user.hasRole(Role.MODERATOR)) {
                         Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
@@ -360,11 +328,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
             confirmButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     String message;
                     if (userMessageArea.isBlank()) {
                         message = "";
@@ -379,11 +343,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
             cancelButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     close();
                 }
             });

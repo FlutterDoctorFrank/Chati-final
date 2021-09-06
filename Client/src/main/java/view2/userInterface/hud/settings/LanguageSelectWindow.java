@@ -22,16 +22,12 @@ public class LanguageSelectWindow extends ChatiWindow {
         Label infoLabel = new Label("Wähle eine Sprache aus!", Chati.CHATI.getSkin());
 
         SelectBox<String> languageSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
-        // TODO
+        // TODO Brauchen wir ein Enum mit allen Sprachen oder wie läuft das ?
 
         ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
         confirmButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 // TODO
                 close();
             }
@@ -40,11 +36,7 @@ public class LanguageSelectWindow extends ChatiWindow {
         ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 close();
             }
         });

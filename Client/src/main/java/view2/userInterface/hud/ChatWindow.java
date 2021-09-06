@@ -81,11 +81,7 @@ public class ChatWindow extends Window {
         ChatiTextButton sendButton = new ChatiTextButton("Senden", true);
         sendButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 sendMessage();
             }
         });
@@ -93,11 +89,7 @@ public class ChatWindow extends Window {
         ChatiTextButton minimizeButton = new ChatiTextButton("X", true);
         minimizeButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 HeadUpDisplay.getInstance().hideChatWindow();
             }
         });

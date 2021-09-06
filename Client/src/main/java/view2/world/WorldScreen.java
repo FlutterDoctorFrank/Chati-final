@@ -10,7 +10,6 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -87,8 +86,8 @@ public class WorldScreen extends ChatiScreen {
             Chati.CHATI.getSpriteBatch().begin();
             externUserAvatars.values().forEach(avatar -> avatar.draw(Chati.CHATI.getSpriteBatch(), delta));
             internUserAvatar.draw(Chati.CHATI.getSpriteBatch(), delta);
-            externUserAvatars.values().forEach(avatar -> avatar.drawHead(Chati.CHATI.getSpriteBatch(), delta));
-            internUserAvatar.drawHead(Chati.CHATI.getSpriteBatch(), delta);
+            externUserAvatars.values().forEach(avatar -> avatar.drawHeader(Chati.CHATI.getSpriteBatch(), delta));
+            internUserAvatar.drawHeader(Chati.CHATI.getSpriteBatch(), delta);
             Chati.CHATI.getSpriteBatch().end();
             tiledMapRenderer.render(LAYERS_RENDER_AFTER_AVATAR);
             // debugRenderer.render(world, camera.combined);

@@ -25,11 +25,7 @@ public class PortalWindow extends InteractableWindow {
         ChatiTextButton confirmButton = new ChatiTextButton("Ja", true);
         confirmButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], 1);
             }
         });
@@ -37,11 +33,7 @@ public class PortalWindow extends InteractableWindow {
         ChatiTextButton cancelButton = new ChatiTextButton("Nein", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 close();
             }
         });

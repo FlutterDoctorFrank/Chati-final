@@ -25,7 +25,7 @@ public class DeleteAccountTable extends MenuTable {
         TextButton confirmButton = new ChatiTextButton("Bestätigen", true);
         confirmButton.addListener(new ClickListener() {
             @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (passwordField.isBlank() || confirmPasswordField.isBlank()) {
                     infoLabel.setText("Bitte fülle alle Felder aus.");
                     return;
@@ -42,7 +42,7 @@ public class DeleteAccountTable extends MenuTable {
         TextButton cancelButton = new ChatiTextButton("Abbrechen", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new ProfileSettingsTable());
             }
         });
@@ -73,26 +73,18 @@ public class DeleteAccountTable extends MenuTable {
             infoLabel.setText("Bist du sicher, dass du dein Konto löschen möchtest?");
 
             ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
-            confirmButton.addListener(new InputListener() {
+            confirmButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     Chati.CHATI.getMenuScreen().setPendingResponse(Response.DELETE_ACCOUNT);
                     Chati.CHATI.send(ServerSender.SendAction.PROFILE_LOGOUT, passwordField.getText(), true);
                 }
             });
 
             ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
-            cancelButton.addListener(new InputListener() {
+            cancelButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     Chati.CHATI.getMenuScreen().setMenuTable(new ChangePasswordTable());
                 }
             });

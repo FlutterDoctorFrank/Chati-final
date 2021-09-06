@@ -70,11 +70,7 @@ public class RoomReceptionWindow extends InteractableWindow {
             ChatiTextButton createButton = new ChatiTextButton("Raum erstellen", true);
             createButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     setCurrentTable(new RoomCreateTable());
                 }
             });
@@ -82,11 +78,7 @@ public class RoomReceptionWindow extends InteractableWindow {
             ChatiTextButton joinButton = new ChatiTextButton("Beitreten", true);
             joinButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     if (roomSelectBox.getSelected() == null) {
                         infoLabel.setText("Bitte wähle einen Raum aus.");
                         return;
@@ -103,11 +95,7 @@ public class RoomReceptionWindow extends InteractableWindow {
             ChatiTextButton requestButton = new ChatiTextButton("Beitritt anfragen", true);
             requestButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     if (roomSelectBox.getSelected() == null) {
                         infoLabel.setText("Bitte wähle einen Raum aus.");
                         return;
@@ -119,11 +107,7 @@ public class RoomReceptionWindow extends InteractableWindow {
             ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
             cancelButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     close();
                 }
             });
@@ -182,11 +166,7 @@ public class RoomReceptionWindow extends InteractableWindow {
             ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
             confirmButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     if (roomnameField.isBlank() || passwordField.isBlank()) {
                         infoLabel.setText("Bitte fülle alle Felder aus.");
                         return;
@@ -204,11 +184,7 @@ public class RoomReceptionWindow extends InteractableWindow {
             ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
             cancelButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     setCurrentTable(new RoomSelectTable());
                 }
             });
@@ -250,11 +226,7 @@ public class RoomReceptionWindow extends InteractableWindow {
             ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
             confirmButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     if (passwordField.isBlank()) {
                         infoLabel.setText("Bitte gib das Passwort ein!");
                         return;
@@ -267,11 +239,7 @@ public class RoomReceptionWindow extends InteractableWindow {
             ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
             cancelButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     setCurrentTable(new RoomSelectTable());
                 }
             });
@@ -308,11 +276,7 @@ public class RoomReceptionWindow extends InteractableWindow {
             ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
             confirmButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     String message;
                     if (messageArea.isBlank()) {
                         message = "";
@@ -331,11 +295,7 @@ public class RoomReceptionWindow extends InteractableWindow {
             ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
             cancelButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     setCurrentTable(new RoomSelectTable());
                 }
             });

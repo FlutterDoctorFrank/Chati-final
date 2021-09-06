@@ -59,11 +59,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         ChatiTextButton showButton = new ChatiTextButton("Anzeigen", true);
         showButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (!notification.isRead()) {
                     Chati.CHATI.send(ServerSender.SendAction.NOTIFICATION_READ, notification.getNotificationId());
                 }
@@ -84,11 +80,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         }
         acceptButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 new ConfirmWindow(NotificationAction.ACCEPT).open();
             }
         });
@@ -105,11 +97,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         }
         declineButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 new ConfirmWindow(NotificationAction.DECLINE).open();
             }
         });
@@ -118,11 +106,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         deleteButton.addListener(new ChatiToolTip("Löschen"));
         deleteButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 new ConfirmWindow(NotificationAction.DELETE).open();
             }
         });
@@ -174,11 +158,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             TextButton okButton = new ChatiTextButton("Ok", true);
             okButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     notificationWindow = null;
                     close();
                 }
@@ -196,11 +176,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             }
             acceptButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     new ConfirmWindow(NotificationAction.ACCEPT).open();
                 }
             });
@@ -217,11 +193,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             }
             declineButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     new ConfirmWindow(NotificationAction.DECLINE).open();
                 }
             });
@@ -230,11 +202,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             deleteButton.addListener(new ChatiToolTip("Löschen"));
             deleteButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     new ConfirmWindow(NotificationAction.DELETE).open();
                 }
             });
@@ -289,11 +257,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             ChatiTextButton confirmButton = new ChatiTextButton("Ja", true);
             confirmButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     switch (action) {
                         case ACCEPT:
                             Chati.CHATI.send(ServerSender.SendAction.NOTIFICATION_RESPONSE,
@@ -320,11 +284,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             ChatiTextButton cancelButton = new ChatiTextButton("Nein", true);
             cancelButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    return true;
-                }
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void clicked(InputEvent event, float x, float y) {
                     close();
                 }
             });

@@ -24,11 +24,7 @@ public class LoginTable extends MenuTable {
         ChatiTextButton loginButton = new ChatiTextButton("Anmelden", true);
         loginButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (usernameField.isBlank() || passwordField.isBlank()) {
                     infoLabel.setText("Bitte fülle alle Felder aus.");
                     return;
@@ -41,11 +37,7 @@ public class LoginTable extends MenuTable {
         ChatiTextButton registerButton = new ChatiTextButton("Registrieren", true);
         registerButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (usernameField.isBlank() || passwordField.isBlank()) {
                     infoLabel.setText("Bitte fülle alle Felder aus.");
                     return;
@@ -58,11 +50,7 @@ public class LoginTable extends MenuTable {
         ChatiTextButton exitButton = new ChatiTextButton("Beenden", true);
         exitButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.exit();
             }
         });

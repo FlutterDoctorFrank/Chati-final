@@ -43,11 +43,7 @@ public class WorldSettingsWindow extends ChatiWindow {
         disableButton();
         confirmButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 disableButton();
                 Chati.CHATI.getPreferences().setShowNamesInWorld(showNameCheckBox.isChecked());
                 infoLabel.setText("Deine Änderungen wurden gespeichert!");
@@ -57,25 +53,15 @@ public class WorldSettingsWindow extends ChatiWindow {
         ChatiTextButton defaultButton = new ChatiTextButton("Standardeinstellung", true);
         defaultButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                enableButton();
+            public void clicked(InputEvent event, float x, float y) {
                 showNameCheckBox.setChecked(ChatiPreferences.DEFAULT_SHOW_NAMES_IN_WORLD);
-                infoLabel.setText("Führe Welteinstellungen durch.");
             }
         });
 
         ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 close();
             }
         });

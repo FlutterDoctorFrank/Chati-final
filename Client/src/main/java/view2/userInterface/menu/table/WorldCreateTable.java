@@ -29,11 +29,7 @@ public class WorldCreateTable extends MenuTable {
         ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
         confirmButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (worldNameField.isBlank()) {
                     infoLabel.setText("Bitte gib den Namen der zu erstellenden Welt ein!");
                     return;
@@ -50,11 +46,7 @@ public class WorldCreateTable extends MenuTable {
         ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
             }
         });

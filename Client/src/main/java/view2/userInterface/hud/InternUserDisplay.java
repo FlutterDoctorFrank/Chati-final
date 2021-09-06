@@ -28,11 +28,7 @@ public class InternUserDisplay extends Table {
         ChatiTextButton statusButton = new ChatiTextButton("", false);
         statusButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (statusSelectTable == null) {
                     statusSelectTable = new StatusSelectTable();
                     add(statusSelectTable).top().left().row();

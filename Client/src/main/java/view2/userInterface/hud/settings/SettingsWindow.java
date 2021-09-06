@@ -32,11 +32,7 @@ public class SettingsWindow extends HudMenuWindow {
         ChatiTextButton languageSelectMenuButton = new ChatiTextButton("Sprache wählen", true);
         languageSelectMenuButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 new LanguageSelectWindow().open();
             }
         });
@@ -44,11 +40,7 @@ public class SettingsWindow extends HudMenuWindow {
         ChatiTextButton volumeChangeMenuButton = new ChatiTextButton("Lautstärke anpassen", true);
         volumeChangeMenuButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 new VolumeChangeWindow().open();
             }
         });
@@ -56,11 +48,7 @@ public class SettingsWindow extends HudMenuWindow {
         ChatiTextButton worldSettingsButton = new ChatiTextButton("Welteinstellungen", true);
         worldSettingsButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 new WorldSettingsWindow().open();
             }
         });
@@ -71,11 +59,7 @@ public class SettingsWindow extends HudMenuWindow {
         }
         administratorManageMenuButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 new AdministratorManageWindow().open();
             }
         });
@@ -86,12 +70,7 @@ public class SettingsWindow extends HudMenuWindow {
         }
         leaveWorldButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                disableButton(leaveWorldButton);
+            public void clicked(InputEvent event, float x, float y) {
                 IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
                 if (internUser == null || internUser.getCurrentWorld() == null) {
                     return;
@@ -108,12 +87,7 @@ public class SettingsWindow extends HudMenuWindow {
         }
         logoutButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                disableButton(logoutButton);
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
                 if (!Chati.CHATI.getScreen().equals(Chati.CHATI.getMenuScreen())) {
                     Chati.CHATI.setScreen(Chati.CHATI.getMenuScreen());
@@ -125,11 +99,7 @@ public class SettingsWindow extends HudMenuWindow {
         ChatiTextButton quitButton = new ChatiTextButton("Beenden", true);
         quitButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.exit();
             }
         });

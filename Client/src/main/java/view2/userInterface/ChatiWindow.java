@@ -16,11 +16,7 @@ public abstract class ChatiWindow extends Window {
         ChatiTextButton closeButton = new ChatiTextButton("X", true);
         closeButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 close();
             }
         });

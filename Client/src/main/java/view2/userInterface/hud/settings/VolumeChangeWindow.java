@@ -91,11 +91,7 @@ public class VolumeChangeWindow extends ChatiWindow {
         disableButton();
         confirmButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 disableButton();
                 Chati.CHATI.getPreferences().setTotalVolume(totalVolumeSlider.getValue());
                 Chati.CHATI.getPreferences().setVoiceVolume(voiceVolumeSlider.getValue());
@@ -108,28 +104,18 @@ public class VolumeChangeWindow extends ChatiWindow {
         ChatiTextButton defaultButton = new ChatiTextButton("Standardeinstellung", true);
         defaultButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                enableButton();
+            public void clicked(InputEvent event, float x, float y) {
                 totalVolumeSlider.setValue(ChatiPreferences.DEFAULT_TOTAL_VOLUME);
                 voiceVolumeSlider.setValue(ChatiPreferences.DEFAULT_VOICE_VOLUME);
                 musicVolumeSlider.setValue(ChatiPreferences.DEFAULT_MUSIC_VOLUME);
                 soundVolumeSlider.setValue(ChatiPreferences.DEFAULT_SOUND_VOLUME);
-                infoLabel.setText("Ändere die Lautstärke!");
             }
         });
 
         ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 close();
             }
         });

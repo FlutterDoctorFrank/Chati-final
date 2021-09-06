@@ -67,11 +67,7 @@ public class MusicStreamerWindow extends InteractableWindow {
         musicList.getStyle().over = Chati.CHATI.getSkin().getDrawable("list-selection");
         musicList.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 if (musicList.getSelected() == null) {
                     return;
                 }
@@ -85,11 +81,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_play_disabled"), BUTTON_SCALE_FACTOR);
         playButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_PAUSE);
             }
         });
@@ -98,11 +90,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_stop_disabled"), BUTTON_SCALE_FACTOR);
         stopButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_STOP);
             }
         });
@@ -111,11 +99,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_back_disabled"), BUTTON_SCALE_FACTOR);
         backButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_PREVIOUS);
             }
         });
@@ -124,11 +108,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_skip_disabled"), BUTTON_SCALE_FACTOR);
         skipButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_NEXT);
             }
         });
@@ -137,11 +117,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_loop"), Chati.CHATI.getDrawable("music_loop_disabled"), BUTTON_SCALE_FACTOR);
         loopingButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_LOOPING);
             }
         });
@@ -150,11 +126,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_random"), Chati.CHATI.getDrawable("music_random_disabled"), BUTTON_SCALE_FACTOR);
         randomButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_RANDOM);
             }
         });
@@ -163,11 +135,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_volume"), Chati.CHATI.getDrawable("music_volume_disabled"), BUTTON_SCALE_FACTOR);
         volumeButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void clicked(InputEvent event, float x, float y) {
                 // TODO
             }
         });
