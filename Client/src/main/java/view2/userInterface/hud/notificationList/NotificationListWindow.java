@@ -96,7 +96,8 @@ public class NotificationListWindow extends HudMenuWindow {
 
     @Override
     public void act(float delta) {
-        if (Chati.CHATI.isUserNotificationChanged() || Chati.CHATI.isWorldChanged()) {
+        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isUserNotificationChanged() ||
+                Chati.CHATI.isNewNotificationReceived() || Chati.CHATI.isWorldChanged()) {
             IInternUserView user = Chati.CHATI.getUserManager().getInternUserView();
             if (user == null && !globalNotificationTabButton.isDisabled()) {
                 disableWorldNotificationTab();
