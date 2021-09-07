@@ -12,7 +12,8 @@ public class VoiceRecorder {
 
     private final AudioRecorder recorder;
 
-    private boolean isRunning;
+    private volatile boolean isRunning;
+
     private boolean isRecording;
 
     public VoiceRecorder() {

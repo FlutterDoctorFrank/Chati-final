@@ -25,7 +25,7 @@ public class AudioConsumer {
     private final ProducerQueue musicStream;
     private final AudioDevice player;
 
-    private boolean isRunning;
+    private volatile boolean isRunning;
 
     public AudioConsumer() {
         this.voiceDataBuffer = new ConcurrentHashMap<>();
@@ -44,7 +44,7 @@ public class AudioConsumer {
             while (isRunning) {
                 synchronized (this) {
                     // Warte, solange keine Daten vorhanden sind.
-                    while (voiceDataBuffer.isEmpty() && !musicStream.hasData()) {
+                    while (voiceDataBuffer.isEmpty() && !musicStream.isReady()) {
                         try {
                             wait();
                         } catch (InterruptedException e) {
