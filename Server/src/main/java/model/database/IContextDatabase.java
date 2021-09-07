@@ -19,9 +19,13 @@ public interface IContextDatabase {
 
     @NotNull Map<ContextID, World> getWorlds();
 
+    void getBannedUsers(@NotNull final World world);
+
     void addBannedUser(@NotNull final User user, @NotNull final Context world);
 
     void removeBannedUser(@NotNull final User user, @NotNull final Context world);
+
+    void getAreaReservations(@NotNull final World world);
 
     void addAreaReservation(@NotNull final AreaReservation areaReservation);
 

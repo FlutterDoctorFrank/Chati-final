@@ -79,6 +79,7 @@ public class Launcher implements Runnable {
 
         this.global.load();
         this.manager.load();
+        this.global.loadWorldInfos();
 
         new Thread(this, "Console-Handler").start();
     }

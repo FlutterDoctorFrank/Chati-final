@@ -292,10 +292,12 @@ public class User implements IUser {
                 break;
             case DELETE:
                 removeNotification(notification);
-                break;
+                return;
             default:
                 throw new IllegalNotificationActionException("Invalid notification action", this, notification, false);
         }
+
+        database.updateNotification(this, notification);
     }
 
     @Override

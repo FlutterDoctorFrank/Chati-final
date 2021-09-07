@@ -5,19 +5,21 @@ import model.context.Context;
 import model.context.global.GlobalContext;
 import model.role.Permission;
 import model.role.Role;
-import model.user.Status;
 import model.user.User;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-
-import java.sql.*;
-import java.util.HashMap;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
+@Ignore
 public class UserAccountManagerTest {
 
     private UserAccountManager userAccountManager;

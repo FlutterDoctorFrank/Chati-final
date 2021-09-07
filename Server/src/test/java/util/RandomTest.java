@@ -1,4 +1,4 @@
-package controller.network;
+package util;
 
 import model.MessageBundle;
 import model.context.ContextID;
@@ -55,6 +55,18 @@ public abstract class RandomTest {
         return UUID.randomUUID();
     }
 
+    public static @NotNull String randomString(@NotNull final String except) {
+        String random = randomString();
+
+        if (random.equals(except)) {
+            while (random.equals(except)) {
+                random = randomString();
+            }
+        }
+
+        return random;
+    }
+
     public static @NotNull String randomString() {
         return RandomString.make(randomInt(16) + 1);
     }
@@ -75,6 +87,10 @@ public abstract class RandomTest {
 
     public static float randomFloat() {
         return RANDOM.nextFloat();
+    }
+
+    public static int randomInt(final int minimum, final int maximum) {
+        return randomInt(maximum - minimum) + minimum;
     }
 
     public static int randomInt(final int bound) {

@@ -6,6 +6,7 @@ import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.mockito.Mockito;
+import util.RandomTest;
 
 public abstract class PacketServerTest extends RandomTest {
 

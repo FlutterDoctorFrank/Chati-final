@@ -250,6 +250,15 @@ public abstract class Context implements IContext {
     }
 
     /**
+     * Wird von der Datenbank verwendet, um die initiale Menge von gesperrten Benutzern hinzuzufügen.
+     * @param bannedUsers Hinzuzufügende Benutzer.
+     */
+    public void addBannedUsers(@NotNull final Map<UUID, User> bannedUsers) {
+        this.bannedUsers.putAll(bannedUsers);
+        children.values().forEach(child -> child.addBannedUsers(bannedUsers));
+    }
+
+    /**
      * Fügt einen Benutzer zu den gesperrten Benutzern in diesem Kontext hinzu. Stellt sicher, dass der Benutzer in
      * allen untergeordneten Kontexten als gesperrter Benutzer hinzugefügt wird.
      * @param user Hinzuzufügender Benutzer.

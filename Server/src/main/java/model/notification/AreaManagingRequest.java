@@ -3,6 +3,7 @@ package model.notification;
 import controller.network.ClientSender.SendAction;
 import model.MessageBundle;
 import model.communication.message.TextMessage;
+import model.context.Context;
 import model.context.spatial.Area;
 import model.exception.IllegalNotificationActionException;
 import model.role.Permission;
@@ -11,6 +12,7 @@ import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Eine Klasse, welche Anfragen zum Erhalt der Rolle des Bereichsberechtigten repräsentiert.
@@ -47,6 +49,36 @@ public class AreaManagingRequest extends Notification {
         this.requestedArea = requestedArea;
         this.from = from;
         this.to = to;
+    }
+
+    public AreaManagingRequest(@NotNull final UUID notificationId, @NotNull final LocalDateTime timestamp,
+                               @NotNull final Context context, @NotNull final User owner,
+                               @NotNull final User requester, @NotNull final Area area,
+                               @NotNull final LocalDateTime from, @NotNull final LocalDateTime to,
+                               final boolean read, final boolean accepted, final boolean declined) {
+        super(notificationId, NotificationType.AREA_MANAGING_REQUEST, context, owner, timestamp,
+                new MessageBundle("request.area-manage.notification", requester.getUsername(), area.getContextName(), from ,to),
+                read, accepted, declined);
+        this.requestingUser = requester;
+        this.requestedArea = area;
+        this.from = from;
+        this.to = to;
+    }
+
+    public @NotNull User getRequestingUser() {
+        return this.requestingUser;
+    }
+
+    public @NotNull Area getRequestedArea() {
+        return this.requestedArea;
+    }
+
+    public @NotNull LocalDateTime getFrom() {
+        return this.from;
+    }
+
+    public @NotNull LocalDateTime getTo() {
+        return this.to;
     }
 
     @Override

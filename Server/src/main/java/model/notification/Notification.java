@@ -69,15 +69,22 @@ public class Notification implements INotification {
      */
     protected Notification(@NotNull final NotificationType type, @NotNull final User owner,
                            @NotNull final Context owningContext, @NotNull final MessageBundle messageBundle) {
-        this.notificationId = UUID.randomUUID();
+        this(UUID.randomUUID(), type, owningContext, owner, LocalDateTime.now(), messageBundle, false, false, false);
+    }
+
+    public Notification(@NotNull final UUID notificationId, @NotNull final NotificationType type,
+                        @NotNull final Context context, @NotNull final User owner,
+                        @NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle,
+                        final boolean read, final boolean accepted, final boolean declined) {
+        this.notificationId = notificationId;
         this.notificationType = type;
         this.owner = owner;
-        this.owningContext = owningContext;
+        this.owningContext = context;
+        this.timestamp = timestamp;
         this.messageBundle = messageBundle;
-        this.timestamp = LocalDateTime.now();
-        this.isRead = false;
-        this.isAccepted = false;
-        this.isDeclined = false;
+        this.isRead = read;
+        this.isAccepted = accepted;
+        this.isDeclined = declined;
     }
 
     @Override

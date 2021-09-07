@@ -4,8 +4,8 @@ import controller.network.ClientSender.SendAction;
 import model.communication.CommunicationMedium;
 import model.context.Context;
 import model.context.ContextID;
-import model.context.spatial.IWorld;
 import model.context.spatial.ContextMap;
+import model.context.spatial.IWorld;
 import model.context.spatial.World;
 import model.exception.ContextNotFoundException;
 import model.exception.IllegalWorldActionException;
@@ -46,6 +46,13 @@ public class GlobalContext extends Context implements IGlobalContext {
         this.worlds.clear();
         this.worlds.putAll(this.database.getWorlds());
         this.worlds.values().forEach(this::addChild);
+    }
+
+    public void loadWorldInfos() {
+        this.worlds.values().forEach(world -> {
+            database.getBannedUsers(world);
+            database.getAreaReservations(world);
+        });
     }
 
     @Override

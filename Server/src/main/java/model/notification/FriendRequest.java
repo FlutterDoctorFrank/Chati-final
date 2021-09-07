@@ -8,12 +8,15 @@ import model.exception.IllegalNotificationActionException;
 import model.user.User;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 /** Eine Klasse, welche Freundschaftsanfragen repräsentiert. */
 public class FriendRequest extends Notification {
 
     /** Benutzer, der die Freundschaftsanfrage stellt. */
     private final User requestingUser;
+    private final String userMessage;
 
     /**
      * Erzeugt eine neue Instanz der Freundschaftsanfrage.
@@ -25,6 +28,26 @@ public class FriendRequest extends Notification {
         super(NotificationType.FRIEND_REQUEST, owner, GlobalContext.getInstance(),
                 new MessageBundle("request.friend.notification", requestingUser.getUsername(), userMessage));
         this.requestingUser = requestingUser;
+        this.userMessage = userMessage;
+    }
+
+    public FriendRequest(@NotNull final UUID notificationId, @NotNull final LocalDateTime timestamp,
+                         @NotNull final User owner, @NotNull final User requester, @NotNull final String message,
+                         final boolean read, final boolean accepted, final boolean declined) {
+        super(notificationId, NotificationType.FRIEND_REQUEST, GlobalContext.getInstance(), owner, timestamp,
+                new MessageBundle("request.friend.notification", requester.getUsername(), message),
+                read, accepted, declined);
+
+        this.requestingUser = requester;
+        this.userMessage = message;
+    }
+
+    public @NotNull User getRequestingUser() {
+        return this.requestingUser;
+    }
+
+    public @NotNull String getUserMessage() {
+        return this.userMessage;
     }
 
     @Override

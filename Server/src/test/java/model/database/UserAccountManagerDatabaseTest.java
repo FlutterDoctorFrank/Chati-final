@@ -5,14 +5,21 @@ import model.context.global.GlobalContext;
 import model.role.ContextRole;
 import model.role.Role;
 import model.user.User;
-import org.junit.*;
-import org.mockito.internal.verification.Times;
-
-import java.sql.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
+@Ignore
 public class UserAccountManagerDatabaseTest {
 
     private IUserAccountManagerDatabase database;
