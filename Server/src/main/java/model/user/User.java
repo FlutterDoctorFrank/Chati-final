@@ -235,7 +235,7 @@ public class User implements IUser {
         throwIfNotInWorld();
         updateLastActivity();
         // Überprüfe, ob der Benutzer bereits mit einem Objekt interagiert.
-        if (currentInteractable != null) {
+        if (currentInteractable != null && !currentInteractable.getContextId().equals(spatialId)) {
             throw new IllegalInteractionException("User is already interacting with a context.", this);
         }
         Area currentArea = currentLocation.getArea();
