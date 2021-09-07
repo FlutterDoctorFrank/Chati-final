@@ -10,45 +10,41 @@ public class ChatiImageButton extends ImageButton {
 
     private static final float DEFAULT_IMAGE_SCALE_FACTOR = 0.1f;
 
-    private float buttonScaleFactor;
-
-    public ChatiImageButton(Drawable imageUnchecked) {
-        this(imageUnchecked, imageUnchecked);
-    }
-
-    public ChatiImageButton(Drawable imageUnchecked, Drawable imageChecked, Drawable imageDisabled, float buttonScaleFactor) {
-        this(imageUnchecked, imageChecked);
-        getStyle().imageDisabled = imageDisabled;
-        this.buttonScaleFactor = buttonScaleFactor;
-    }
-
-    public ChatiImageButton(Drawable imageUnchecked, Drawable imageChecked) {
+    public ChatiImageButton(Drawable imageUnchecked, Drawable imageChecked, Drawable imageDisabled, float imageScaleFactor) {
         super(imageUnchecked, imageUnchecked, imageChecked);
-        this.buttonScaleFactor = DEFAULT_IMAGE_SCALE_FACTOR;
-        getImage().scaleBy(-buttonScaleFactor);
+        getStyle().imageDisabled = imageDisabled;
+        getImage().scaleBy(-imageScaleFactor);
 
         addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                getImage().scaleBy(-buttonScaleFactor);
+                getImage().scaleBy(-imageScaleFactor);
                 return true;
             }
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                getImage().scaleBy(buttonScaleFactor);
+                getImage().scaleBy(imageScaleFactor);
             }
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 if (pointer == -1) {
-                    getImage().scaleBy(buttonScaleFactor);
+                    getImage().scaleBy(imageScaleFactor);
                 }
             }
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 if (pointer == -1) {
-                    getImage().scaleBy(-buttonScaleFactor);
+                    getImage().scaleBy(-imageScaleFactor);
                 }
             }
         });
+    }
+
+    public ChatiImageButton(Drawable imageUnchecked, Drawable imageChecked) {
+        this(imageUnchecked, imageChecked, imageUnchecked, DEFAULT_IMAGE_SCALE_FACTOR);
+    }
+
+    public ChatiImageButton(Drawable imageUnchecked) {
+        this(imageUnchecked, imageUnchecked, imageUnchecked, DEFAULT_IMAGE_SCALE_FACTOR);
     }
 }

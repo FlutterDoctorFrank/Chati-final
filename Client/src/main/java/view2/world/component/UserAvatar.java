@@ -17,7 +17,6 @@ public class UserAvatar extends Sprite {
 
     public static final float DEFAULT_VELOCITY = 10f;
     public static final float SPRINT_VELOCITY_FACTOR = 1.67f;
-    public static final float COMMUNICABLE_USER_ICON_SIZE = 35;
     protected static final float AVATAR_SIZE = 32;
     private static final float FRAME_DURATION = 0.1f;
 
@@ -179,6 +178,7 @@ public class UserAvatar extends Sprite {
 
     private class Head extends Table {
 
+        private static final float COMMUNICABLE_USER_ICON_SIZE = 35;
         private static final float SPACING = 10;
 
         private final Image communicableIcon;

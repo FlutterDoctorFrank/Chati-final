@@ -20,7 +20,7 @@ public class ChatiTextField extends TextField {
             setMaxLength(TEXT_FIELD_MAX_LENGTH);
         }
 
-        setTextFieldFilter((textField, c) -> !getText().isBlank() || !Character.toString(c).matches("\\s"));
+        setTextFieldFilter((textField, c) -> !isBlank() || !Character.toString(c).matches("\\s"));
     }
 
     public boolean isBlank() {

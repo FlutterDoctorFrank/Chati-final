@@ -23,7 +23,7 @@ public class ChatiTextArea extends TextArea {
             }
         });
 
-        setTextFieldFilter((textField, c) -> !getText().isBlank() || !Character.toString(c).matches("\\s"));
+        setTextFieldFilter((textField, c) -> !isBlank() || !Character.toString(c).matches("\\s"));
     }
 
     public boolean isBlank() {
