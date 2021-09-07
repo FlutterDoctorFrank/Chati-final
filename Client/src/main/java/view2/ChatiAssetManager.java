@@ -32,10 +32,8 @@ public class ChatiAssetManager {
         TexturePacker.Settings texturePackerSettings = new TexturePacker.Settings();
         texturePackerSettings.filterMin = Texture.TextureFilter.Linear;
         texturePackerSettings.filterMag = Texture.TextureFilter.Linear;
-        texturePackerSettings.useIndexes = true;
-        texturePackerSettings.edgePadding = true;
-        texturePackerSettings.paddingX = 1;
-        texturePackerSettings.paddingY = 1;
+        texturePackerSettings.combineSubdirectories = true;
+        texturePackerSettings.flattenPaths = true;
 
         // Erzeuge neuen TextureAtlas, falls Ressourcen nicht vorhanden sind oder modifiziert wurden.
         if (TexturePacker.isModified(texturePackerInput, texturePackerOutput, texturePackerFileName, texturePackerSettings)) {
