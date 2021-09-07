@@ -57,6 +57,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
     public void joinWorld(@NotNull final String worldName) {
         this.currentWorld = new SpatialContext(worldName, Context.getGlobal());
         this.isInCurrentWorld = true;
+        Context.getGlobal().addChild(currentWorld);
         UserManager.getInstance().getModelObserver().setWorldChanged();
     }
 
