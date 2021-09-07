@@ -103,15 +103,15 @@ public interface ClientSender {
                             info.addFlag(Flag.FRIEND);
                         }
 
+                        if (user.getIgnoredUsers().containsKey(other.getUserId())) {
+                            info.addFlag(Flag.IGNORED);
+                        }
+
                         if (world.equals(other.getWorld())) {
                             info.setAvatar(other.getAvatar());
 
                             if (other.getLocation() != null) {
                                 info.setInPrivateRoom(other.getLocation().getRoom().isPrivate());
-                            }
-
-                            if (user.getIgnoredUsers().containsKey(other.getUserId())) {
-                                info.addFlag(Flag.IGNORED);
                             }
 
                             if (world.getReportedUsers().containsKey(other.getUserId())) {
