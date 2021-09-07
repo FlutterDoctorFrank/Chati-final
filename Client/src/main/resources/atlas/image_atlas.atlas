@@ -598,510 +598,818 @@ settings_menu_open
   index: -1
 
 image_atlas5.png
-size: 1024, 256
+size: 1024, 512
 format: RGBA8888
 filter: Linear, Linear
 repeat: none
 avatar/bat_move_down
   rotate: false
-  xy: 1, 143
-  size: 47, 70
-  orig: 47, 70
+  xy: 381, 240
+  size: 32, 48
+  orig: 32, 48
   offset: 0, 0
   index: 1
 avatar/bat_move_down
   rotate: false
-  xy: 1, 72
-  size: 47, 70
-  orig: 47, 70
+  xy: 381, 191
+  size: 32, 48
+  orig: 32, 48
   offset: 0, 0
   index: 2
 avatar/bat_stand_down
   rotate: false
-  xy: 1, 72
-  size: 47, 70
-  orig: 47, 70
+  xy: 381, 191
+  size: 32, 48
+  orig: 32, 48
   offset: 0, 0
   index: -1
 avatar/bat_move_down
   rotate: false
-  xy: 49, 143
-  size: 47, 70
-  orig: 47, 70
+  xy: 381, 142
+  size: 32, 48
+  orig: 32, 48
   offset: 0, 0
   index: 3
 avatar/bat_move_left
   rotate: false
-  xy: 1, 1
-  size: 47, 70
-  orig: 47, 70
+  xy: 522, 335
+  size: 32, 48
+  orig: 32, 48
   offset: 0, 0
   index: 1
 avatar/bat_move_left
   rotate: false
-  xy: 49, 72
-  size: 47, 70
-  orig: 47, 70
+  xy: 522, 286
+  size: 32, 48
+  orig: 32, 48
   offset: 0, 0
   index: 2
-avatar/bat_move_left
-  rotate: false
-  xy: 97, 143
-  size: 47, 70
-  orig: 47, 70
-  offset: 0, 0
-  index: 3
-avatar/bat_move_right
-  rotate: false
-  xy: 49, 1
-  size: 47, 70
-  orig: 47, 70
-  offset: 0, 0
-  index: 1
-avatar/bat_move_right
-  rotate: false
-  xy: 97, 72
-  size: 47, 70
-  orig: 47, 70
-  offset: 0, 0
-  index: 2
-avatar/bat_move_right
-  rotate: false
-  xy: 145, 143
-  size: 47, 70
-  orig: 47, 70
-  offset: 0, 0
-  index: 3
-avatar/bat_move_up
-  rotate: false
-  xy: 97, 1
-  size: 47, 70
-  orig: 47, 70
-  offset: 0, 0
-  index: 1
-avatar/bat_move_up
-  rotate: false
-  xy: 145, 72
-  size: 47, 70
-  orig: 47, 70
-  offset: 0, 0
-  index: 2
-avatar/bat_move_up
-  rotate: false
-  xy: 193, 143
-  size: 47, 70
-  orig: 47, 70
-  offset: 0, 0
-  index: 3
 avatar/bat_stand_left
   rotate: false
-  xy: 145, 1
-  size: 47, 70
-  orig: 47, 70
+  xy: 522, 286
+  size: 32, 48
+  orig: 32, 48
   offset: 0, 0
   index: -1
+avatar/bat_move_left
+  rotate: false
+  xy: 512, 237
+  size: 32, 48
+  orig: 32, 48
+  offset: 0, 0
+  index: 3
+avatar/bat_move_right
+  rotate: false
+  xy: 512, 188
+  size: 32, 48
+  orig: 32, 48
+  offset: 0, 0
+  index: 1
+avatar/bat_move_right
+  rotate: false
+  xy: 790, 234
+  size: 32, 48
+  orig: 32, 48
+  offset: 0, 0
+  index: 2
 avatar/bat_stand_right
   rotate: false
-  xy: 193, 72
-  size: 47, 70
-  orig: 47, 70
+  xy: 790, 234
+  size: 32, 48
+  orig: 32, 48
   offset: 0, 0
   index: -1
+avatar/bat_move_right
+  rotate: false
+  xy: 512, 139
+  size: 32, 48
+  orig: 32, 48
+  offset: 0, 0
+  index: 3
+avatar/bat_move_up
+  rotate: false
+  xy: 545, 185
+  size: 32, 48
+  orig: 32, 48
+  offset: 0, 0
+  index: 1
+avatar/bat_move_up
+  rotate: false
+  xy: 823, 234
+  size: 32, 48
+  orig: 32, 48
+  offset: 0, 0
+  index: 2
 avatar/bat_stand_up
   rotate: false
-  xy: 241, 143
-  size: 47, 70
-  orig: 47, 70
+  xy: 823, 234
+  size: 32, 48
+  orig: 32, 48
   offset: 0, 0
   index: -1
+avatar/bat_move_up
+  rotate: false
+  xy: 578, 185
+  size: 32, 48
+  orig: 32, 48
+  offset: 0, 0
+  index: 3
+avatar/blackghost_move_down
+  rotate: false
+  xy: 283, 240
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 1
+avatar/blackghost_stand_down
+  rotate: false
+  xy: 283, 240
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+avatar/blackghost_move_down
+  rotate: false
+  xy: 424, 335
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 2
+avatar/blackghost_move_down
+  rotate: false
+  xy: 565, 430
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 3
+avatar/blackghost_move_down
+  rotate: false
+  xy: 142, 50
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 4
+avatar/blackghost_move_down
+  rotate: false
+  xy: 283, 191
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 5
+avatar/blackghost_move_down
+  rotate: false
+  xy: 332, 240
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 6
+avatar/blackghost_move_left
+  rotate: false
+  xy: 473, 335
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 1
+avatar/blackghost_stand_left
+  rotate: false
+  xy: 473, 335
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+avatar/blackghost_move_left
+  rotate: false
+  xy: 614, 430
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 2
+avatar/blackghost_move_left
+  rotate: false
+  xy: 191, 50
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 3
+avatar/blackghost_move_left
+  rotate: false
+  xy: 283, 142
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 4
+avatar/blackghost_move_left
+  rotate: false
+  xy: 332, 191
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 5
+avatar/blackghost_move_left
+  rotate: false
+  xy: 663, 430
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 6
+avatar/blackghost_move_right
+  rotate: false
+  xy: 332, 142
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 1
+avatar/blackghost_stand_right
+  rotate: false
+  xy: 332, 142
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+avatar/blackghost_move_right
+  rotate: false
+  xy: 712, 430
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 2
+avatar/blackghost_move_right
+  rotate: false
+  xy: 761, 430
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 3
+avatar/blackghost_move_right
+  rotate: false
+  xy: 810, 430
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 4
+avatar/blackghost_move_right
+  rotate: false
+  xy: 859, 430
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 5
+avatar/blackghost_move_right
+  rotate: false
+  xy: 908, 430
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 6
+avatar/blackghost_move_up
+  rotate: false
+  xy: 957, 430
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 1
+avatar/blackghost_move_up
+  rotate: false
+  xy: 957, 430
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 4
+avatar/blackghost_stand_up
+  rotate: false
+  xy: 957, 430
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+avatar/blackghost_move_up
+  rotate: false
+  xy: 424, 286
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 2
+avatar/blackghost_move_up
+  rotate: false
+  xy: 424, 286
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 5
+avatar/blackghost_move_up
+  rotate: false
+  xy: 473, 286
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 3
+avatar/blackghost_move_up
+  rotate: false
+  xy: 473, 286
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: 6
 avatar/blueghost_move_down
   rotate: false
-  xy: 289, 165
+  xy: 565, 381
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 1
 avatar/blueghost_stand_down
   rotate: false
-  xy: 289, 165
+  xy: 565, 381
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 avatar/blueghost_move_down
   rotate: false
-  xy: 338, 165
+  xy: 614, 381
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 2
 avatar/blueghost_move_down
   rotate: false
-  xy: 387, 165
+  xy: 663, 381
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 3
 avatar/blueghost_move_down
   rotate: false
-  xy: 436, 165
+  xy: 712, 381
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 4
 avatar/blueghost_move_down
   rotate: false
-  xy: 485, 165
+  xy: 761, 381
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 5
 avatar/blueghost_move_down
   rotate: false
-  xy: 534, 165
+  xy: 810, 381
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 6
 avatar/blueghost_move_left
   rotate: false
-  xy: 583, 165
+  xy: 859, 381
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 1
 avatar/blueghost_stand_left
   rotate: false
-  xy: 583, 165
+  xy: 859, 381
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 avatar/blueghost_move_left
   rotate: false
-  xy: 632, 165
+  xy: 908, 381
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 2
 avatar/blueghost_move_left
   rotate: false
-  xy: 681, 165
+  xy: 957, 381
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 3
 avatar/blueghost_move_left
   rotate: false
-  xy: 730, 165
+  xy: 142, 1
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 4
 avatar/blueghost_move_left
   rotate: false
-  xy: 779, 165
+  xy: 191, 1
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 5
 avatar/blueghost_move_left
   rotate: false
-  xy: 828, 165
+  xy: 240, 50
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 6
 avatar/blueghost_move_right
   rotate: false
-  xy: 877, 165
+  xy: 240, 1
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 1
 avatar/blueghost_stand_right
   rotate: false
-  xy: 877, 165
+  xy: 240, 1
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 avatar/blueghost_move_right
   rotate: false
-  xy: 926, 165
+  xy: 414, 237
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 2
 avatar/blueghost_move_right
   rotate: false
-  xy: 975, 165
+  xy: 463, 237
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 3
 avatar/blueghost_move_right
   rotate: false
-  xy: 193, 23
+  xy: 414, 188
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 4
 avatar/blueghost_move_right
   rotate: false
-  xy: 241, 94
+  xy: 463, 188
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 5
 avatar/blueghost_move_right
   rotate: false
-  xy: 290, 116
+  xy: 414, 139
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 6
 avatar/blueghost_move_up
   rotate: false
-  xy: 339, 116
+  xy: 463, 139
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 1
 avatar/blueghost_move_up
   rotate: false
-  xy: 339, 116
+  xy: 463, 139
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 4
 avatar/blueghost_stand_up
   rotate: false
-  xy: 339, 116
+  xy: 463, 139
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 avatar/blueghost_move_up
   rotate: false
-  xy: 388, 116
+  xy: 555, 332
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 2
 avatar/blueghost_move_up
   rotate: false
-  xy: 388, 116
+  xy: 555, 332
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 5
 avatar/blueghost_move_up
   rotate: false
-  xy: 437, 116
+  xy: 604, 332
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 3
 avatar/blueghost_move_up
   rotate: false
-  xy: 437, 116
+  xy: 604, 332
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 6
+avatar/dragon_move_down
+  rotate: false
+  xy: 1, 384
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: 1
+avatar/dragon_move_down
+  rotate: false
+  xy: 1, 289
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: 2
+avatar/dragon_stand_down
+  rotate: false
+  xy: 1, 289
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: -1
+avatar/dragon_move_down
+  rotate: false
+  xy: 142, 384
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: 3
+avatar/dragon_move_left
+  rotate: false
+  xy: 1, 194
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: 1
+avatar/dragon_move_left
+  rotate: false
+  xy: 142, 289
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: 2
+avatar/dragon_stand_left
+  rotate: false
+  xy: 142, 289
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: -1
+avatar/dragon_move_left
+  rotate: false
+  xy: 283, 384
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: 3
+avatar/dragon_move_right
+  rotate: false
+  xy: 1, 99
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: 1
+avatar/dragon_move_right
+  rotate: false
+  xy: 142, 194
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: 2
+avatar/dragon_stand_right
+  rotate: false
+  xy: 142, 194
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: -1
+avatar/dragon_move_right
+  rotate: false
+  xy: 283, 289
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: 3
+avatar/dragon_move_up
+  rotate: false
+  xy: 424, 384
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: 1
+avatar/dragon_move_up
+  rotate: false
+  xy: 1, 4
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: 2
+avatar/dragon_stand_up
+  rotate: false
+  xy: 1, 4
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: -1
+avatar/dragon_move_up
+  rotate: false
+  xy: 142, 99
+  size: 140, 94
+  orig: 140, 94
+  offset: 0, 0
+  index: 3
 avatar/whiteghost_move_down
   rotate: false
-  xy: 486, 116
+  xy: 653, 332
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 1
 avatar/whiteghost_stand_down
   rotate: false
-  xy: 486, 116
+  xy: 653, 332
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 avatar/whiteghost_move_down
   rotate: false
-  xy: 535, 116
+  xy: 702, 332
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 2
 avatar/whiteghost_move_down
   rotate: false
-  xy: 584, 116
+  xy: 751, 332
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 3
 avatar/whiteghost_move_down
   rotate: false
-  xy: 633, 116
+  xy: 800, 332
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 4
 avatar/whiteghost_move_down
   rotate: false
-  xy: 682, 116
+  xy: 849, 332
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 5
 avatar/whiteghost_move_down
   rotate: false
-  xy: 731, 116
+  xy: 898, 332
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 6
 avatar/whiteghost_move_left
   rotate: false
-  xy: 780, 116
+  xy: 947, 332
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 1
 avatar/whiteghost_stand_left
   rotate: false
-  xy: 780, 116
+  xy: 947, 332
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 avatar/whiteghost_move_left
   rotate: false
-  xy: 829, 116
+  xy: 555, 283
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 2
 avatar/whiteghost_move_left
   rotate: false
-  xy: 878, 116
+  xy: 604, 283
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 3
 avatar/whiteghost_move_left
   rotate: false
-  xy: 927, 116
+  xy: 653, 283
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 4
 avatar/whiteghost_move_left
   rotate: false
-  xy: 242, 45
+  xy: 702, 283
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 5
 avatar/whiteghost_move_left
   rotate: false
-  xy: 291, 67
+  xy: 751, 283
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 6
 avatar/whiteghost_move_right
   rotate: false
-  xy: 340, 67
+  xy: 800, 283
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 1
 avatar/whiteghost_stand_right
   rotate: false
-  xy: 340, 67
+  xy: 800, 283
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 avatar/whiteghost_move_right
   rotate: false
-  xy: 389, 67
+  xy: 849, 283
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 2
 avatar/whiteghost_move_right
   rotate: false
-  xy: 438, 67
+  xy: 898, 283
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 3
 avatar/whiteghost_move_right
   rotate: false
-  xy: 487, 67
+  xy: 947, 283
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 4
 avatar/whiteghost_move_right
   rotate: false
-  xy: 536, 67
+  xy: 545, 234
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 5
 avatar/whiteghost_move_right
   rotate: false
-  xy: 585, 67
+  xy: 594, 234
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 6
 avatar/whiteghost_move_up
   rotate: false
-  xy: 634, 67
+  xy: 643, 234
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 1
 avatar/whiteghost_move_up
   rotate: false
-  xy: 634, 67
+  xy: 643, 234
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 4
 avatar/whiteghost_stand_up
   rotate: false
-  xy: 634, 67
+  xy: 643, 234
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 avatar/whiteghost_move_up
   rotate: false
-  xy: 683, 67
+  xy: 692, 234
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 2
 avatar/whiteghost_move_up
   rotate: false
-  xy: 683, 67
+  xy: 692, 234
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 5
 avatar/whiteghost_move_up
   rotate: false
-  xy: 732, 67
+  xy: 741, 234
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: 3
 avatar/whiteghost_move_up
   rotate: false
-  xy: 732, 67
+  xy: 741, 234
   size: 48, 48
   orig: 48, 48
   offset: 0, 0

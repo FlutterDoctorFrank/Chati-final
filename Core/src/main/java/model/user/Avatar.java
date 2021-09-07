@@ -10,17 +10,14 @@ public enum Avatar implements Resource {
 
     WHITEGHOST("Henry", "whiteghost"),
     BLUEGHOST("Frederik", "blueghost"),
-    BAT("Gustav", "bat") /*,
-    ALEX("Alex"),
-    AMELIA("Amelia"),
-    ASH("Ash"),
-    BOB("Bob"),
-    BRUCE("Bruce"),
-    DAN("Dan"),
-    EDWARD("Edward"),
-    LUCY("Lucy"),
-    RICK("Rick");
-    */;
+    BLACKGHOST("Martin", "blackghost"),
+    BAT("Gustav", "bat"),
+    SLIME("Herbert", "slime"),
+    PIG("Ursula", "pig"),
+    MINOTAUR("Olaf", "minotaur"),
+    SKELETON("Detlef", "skeleton"),
+    DEMON("Brunhilde", "demon"),
+    DRAGON("Dirk", "dragon");
 
     private final String name;
     private final String path;
