@@ -234,12 +234,13 @@ public class User implements IUser {
         throwIfNotOnline();
         throwIfNotInWorld();
         updateLastActivity();
-        // Überprüfe, ob der Benutzer bereits mit einem Objekt interagiert.
-        if (currentInteractable != null && !currentInteractable.getContextId().equals(spatialId)) {
-            throw new IllegalInteractionException("User is already interacting with a context.", this);
-        }
+
         Area currentArea = currentLocation.getArea();
         Interactable interactable = currentArea.getInteractable(spatialId);
+        // Überprüfe, ob der Benutzer bereits mit einem Objekt interagiert.
+        if (currentInteractable != null && !currentInteractable.equals(interactable)) {
+            throw new IllegalInteractionException("User is already interacting with a context.", this);
+        }
         // Überprüfe, ob ein Objekt in der Nähe des Benutzers mit dieser ID vorhanden ist und ob der Benutzer mit diesem
         // interagieren kann.
         if (!interactable.canInteract(this)) {
@@ -658,6 +659,14 @@ public class User implements IUser {
      */
     public boolean isInWorld() {
         return currentWorld != null;
+    }
+
+    /**
+     * Gibt das Objekt zurück, mit dem der Benutzer momentan interagiert.
+     * @return Objekt, mit dem der Benutzer interagiert oder null, wenn er mit keinem interagiert.
+     */
+    public @Nullable Interactable getCurrentInteractable() {
+        return currentInteractable;
     }
 
     /**

@@ -86,6 +86,12 @@ public abstract class Interactable extends Area implements IInteractable {
         }
     }
 
+    protected void throwIfInteractNotAllowed(@NotNull final User user) throws IllegalInteractionException {
+        if (this.equals(user.getCurrentInteractable())) {
+            throw new IllegalInteractionException("User is already interacting with a context.", user);
+        }
+    }
+
     @Override
     public @NotNull ContextMenu getMenu() {
         return menu;

@@ -94,7 +94,7 @@ public class MusicStreamer extends Interactable {
     @Override
     public void interact(@NotNull User user) throws IllegalInteractionException {
         throwIfUserNotAvailable(user);
-
+        throwIfInteractNotAllowed(user);
         // Öffne das Menü beim Benutzer.
         user.setCurrentInteractable(this);
         user.setMovable(false);

@@ -43,8 +43,9 @@ public class AreaPlanner extends Interactable {
     }
 
     @Override
-    public void interact(@NotNull final User user) {
+    public void interact(@NotNull final User user) throws IllegalInteractionException {
         throwIfUserNotAvailable(user);
+        throwIfInteractNotAllowed(user);
         // Öffne das Menü beim Benutzer.
         user.setCurrentInteractable(this);
         user.setMovable(false);
