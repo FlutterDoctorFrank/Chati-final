@@ -44,7 +44,7 @@ public class AudioConsumer {
             while (isRunning) {
                 synchronized (this) {
                     // Warte, solange keine Daten vorhanden sind.
-                    while (voiceDataBuffer.isEmpty() && !musicStream.isReady()) {
+                    while (voiceDataBuffer.isEmpty() && !musicStream.hasData()) {
                         try {
                             wait();
                         } catch (InterruptedException e) {
