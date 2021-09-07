@@ -692,6 +692,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         }
 
                         user.setFriend(info.getFlags().contains(Flag.FRIEND));
+                        user.setIgnored(info.getFlags().contains(Flag.IGNORED));
 
                         if (info.getFlags().contains(Flag.BANNED)) {
                             user.setInCurrentWorld(false);
@@ -699,7 +700,6 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             return;
                         }
 
-                        user.setIgnored(info.getFlags().contains(Flag.IGNORED));
                         user.setReport(packet.getContextId(), info.getFlags().contains(Flag.REPORTED));
                         user.setInPrivateRoom(info.getInPrivateRoom());
                         user.setInCurrentWorld(true);
