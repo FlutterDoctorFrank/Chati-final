@@ -8,19 +8,19 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum Avatar implements Resource {
 
-    ADAM("Adam", "adam/adam"),
-    ALEX("Alex", "alex/alex"),
-    AMELIA("Amelia", "amelia/amelia"),
-    ASH("Ash", "ash/ash"),
-    BOB("Bob", "bob/bob"),
-    BRUCE("Bruce", "bruce/bruce"),
-    DAN("Dan", "dan/dan"),
-    EDWARD("Edward", "edward/edward"),
-    LUCY("Lucy", "lucy/lucy"),
-    RICK("Rick", "rick/rick"),
-    WHITEGHOST("Henry", "whiteghost/whiteghost"),
-    BLUEGHOST("Frederik", "blueghost/blueghost"),
-    BLACKGHOST("Martin", "blackghost/blackghost");
+    ADAM("Adam", "adam"),
+    ALEX("Alex", "alex"),
+    AMELIA("Amelia", "amelia"),
+    ASH("Ash", "ash"),
+    BOB("Bob", "bob"),
+    BRUCE("Bruce", "bruce"),
+    DAN("Dan", "dan"),
+    EDWARD("Edward", "edward"),
+    LUCY("Lucy", "lucy"),
+    RICK("Rick", "rick"),
+    WHITEGHOST("Henry", "whiteghost"),
+    BLUEGHOST("Frederik", "blueghost"),
+    BLACKGHOST("Martin", "blackghost");
 
     private final String name;
     private final String path;
@@ -36,6 +36,6 @@ public enum Avatar implements Resource {
 
     @Override
     public @NotNull String getPath() {
-        return "avatar/" + this.path.toLowerCase();
+        return this.path.toLowerCase();
     }
 }
