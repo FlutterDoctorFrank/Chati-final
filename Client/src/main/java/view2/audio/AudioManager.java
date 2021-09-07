@@ -54,8 +54,7 @@ public class AudioManager {
                     audioConsumer.start();
                 } else if ((voiceRecorder.isRunning() || audioConsumer.isRunning())
                         && (internUser == null || !internUser.isInCurrentWorld())) {
-                    voiceRecorder.stop();
-                    audioConsumer.stop();
+                    voiceRecorder.stopRecording();
                 }
             }
 

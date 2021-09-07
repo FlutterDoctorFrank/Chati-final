@@ -25,7 +25,7 @@ public class AudioConsumer {
     private final ProducerQueue musicStream;
     private final AudioDevice player;
 
-    private volatile boolean isRunning;
+    private boolean isRunning;
 
     public AudioConsumer() {
         this.voiceDataBuffer = new ConcurrentHashMap<>();
