@@ -8,16 +8,19 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum Avatar implements Resource {
 
-    WHITEGHOST("Henry", "whiteghost"),
-    BLUEGHOST("Frederik", "blueghost"),
-    BLACKGHOST("Martin", "blackghost"),
-    BAT("Gustav", "bat"),
-    SLIME("Herbert", "slime"),
-    PIG("Ursula", "pig"),
-    MINOTAUR("Olaf", "minotaur"),
-    SKELETON("Detlef", "skeleton"),
-    DEMON("Brunhilde", "demon"),
-    DRAGON("Dirk", "dragon");
+    ADAM("Adam", "adam/adam"),
+    ALEX("Alex", "alex/alex"),
+    AMELIA("Amelia", "amelia/amelia"),
+    ASH("Ash", "ash/ash"),
+    BOB("Bob", "bob/bob"),
+    BRUCE("Bruce", "bruce/bruce"),
+    DAN("Dan", "dan/dan"),
+    EDWARD("Edward", "edward/edward"),
+    LUCY("Lucy", "lucy/lucy"),
+    RICK("Rick", "rick/rick"),
+    WHITEGHOST("Henry", "whiteghost/whiteghost"),
+    BLUEGHOST("Frederik", "blueghost/blueghost"),
+    BLACKGHOST("Martin", "blackghost/blackghost");
 
     private final String name;
     private final String path;

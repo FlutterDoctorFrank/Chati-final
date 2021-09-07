@@ -63,7 +63,7 @@ public class IUserTest {
         });
         world = new SpatialContext("World", Context.getGlobal());
         room = new SpatialContext("Room", world);
-        UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.BAT);
+        UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.ADAM);
 
         map = ContextMap.PUBLIC_ROOM_MAP;
         Game game = new Game() {
@@ -77,7 +77,7 @@ public class IUserTest {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         new Lwjgl3Application(game, config);
         userId = UUID.randomUUID();
-        testUser = new User(userId, "initialName", Status.ONLINE, Avatar.BAT);
+        testUser = new User(userId, "initialName", Status.ONLINE, Avatar.ADAM);
         testUserController = testUser;
         testUserView = testUser;
     }
@@ -116,7 +116,7 @@ public class IUserTest {
 
     @Test
     public void setGetAvatar() {
-        Avatar avatar = Avatar.BAT;
+        Avatar avatar = Avatar.ADAM;
         testUserController.setAvatar(avatar);
         Assert.assertEquals(avatar, testUserView.getAvatar());
     }
