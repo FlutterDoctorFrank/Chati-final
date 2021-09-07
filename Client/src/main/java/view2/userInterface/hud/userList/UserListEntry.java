@@ -265,7 +265,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         container.add(statusImage).left().size(ICON_SIZE).padRight(HORIZONTAL_SPACING);
         container.add(userInfoContainer).left();
         container.add(currentRoomImage).right().size(ICON_SIZE).padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).growX();
-        container.add(currentWorldImage).right().size(ICON_SIZE).padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).growX();
+        container.add(currentWorldImage).right().size(ICON_SIZE).padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING);
         add(container).left().padLeft(HORIZONTAL_SPACING).spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).growX().row();
 
         Table buttonContainer = new Table();

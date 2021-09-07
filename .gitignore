@@ -4,3 +4,4 @@
 **/out/
 *.iml
 *.log
+/Client/src/main/resources/atlas/

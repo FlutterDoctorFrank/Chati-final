@@ -24,31 +24,24 @@ public class UserAvatar extends Sprite {
     protected final IUserView user;
     protected final Body body;
 
-    private final UserInfoContainer userInfoContainer;
-    private final Table communicableIconContainer;
-    private final Image communicableIcon;
+    private final Head head;
 
-    private TextureRegion avatarStandUp;
-    private TextureRegion avatarStandLeft;
-    private TextureRegion avatarStandDown;
-    private TextureRegion avatarStandRight;
-    private Animation<TextureRegion> avatarRunUp;
-    private Animation<TextureRegion> avatarRunLeft;
-    private Animation<TextureRegion> avatarRunDown;
-    private Animation<TextureRegion> avatarRunRight;
+    private final TextureRegion avatarStandUp;
+    private final TextureRegion avatarStandLeft;
+    private final TextureRegion avatarStandDown;
+    private final TextureRegion avatarStandRight;
+    private final Animation<TextureRegion> avatarRunUp;
+    private final Animation<TextureRegion> avatarRunLeft;
+    private final Animation<TextureRegion> avatarRunDown;
+    private final Animation<TextureRegion> avatarRunRight;
 
     protected Direction currentDirection;
     protected Direction previousDirection;
-    private float stateTimer;
+    private float stateTime;
 
     public UserAvatar(IUserView user) {
         this.user = user;
-        this.userInfoContainer = new UserInfoContainer(user);
-        this.userInfoContainer.setTransform(true);
-        this.communicableIconContainer = new Table();
-        this.communicableIconContainer.setTransform(true);
-        this.communicableIcon = new Image();
-        this.communicableIconContainer.add(communicableIcon).size(COMMUNICABLE_USER_ICON_SIZE);
+        this.head = new Head();
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -62,39 +55,6 @@ public class UserAvatar extends Sprite {
         body.createFixture(fixtureDef);
         body.setUserData(ContactType.USER);
 
-        initializeSprite();
-        this.stateTimer = 0;
-    }
-
-    @Override
-    public void draw(Batch batch, float delta) {
-        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
-        setRegion(getCurrentFrameRegion(delta));
-        super.draw(batch);
-    }
-
-    public void drawHeader(Batch batch, float delta) {
-        if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isShowNamesPressed()
-                || Chati.CHATI.getPreferences().getShowNamesInWorld()) {
-            userInfoContainer.setPosition(body.getPosition().x, body.getPosition().y + getHeight());
-            userInfoContainer.setScale(1 / WorldCamera.PPM * Chati.CHATI.getWorldScreen().getCamera().zoom);
-            userInfoContainer.act(delta);
-            userInfoContainer.draw(batch, 1);
-            if (!user.equals(Chati.CHATI.getUserManager().getInternUserView())) {
-                if (user.canCommunicateWith()) {
-                    communicableIcon.setDrawable(Chati.CHATI.getDrawable("communicable_avatar"));
-                } else {
-                    communicableIcon.setDrawable(null);
-                }
-                communicableIconContainer.setPosition(body.getPosition().x, body.getPosition().y + 1.5f * getHeight());
-                communicableIconContainer.setScale(1 / WorldCamera.PPM * Chati.CHATI.getWorldScreen().getCamera().zoom);
-                communicableIconContainer.act(delta);
-                communicableIconContainer.draw(batch, 1);
-            }
-        }
-    }
-
-    private void initializeSprite() {
         String avatarPath = user.getAvatar().getPath();
         avatarStandUp = Chati.CHATI.getDrawable(avatarPath + "_stand_up").getRegion();
         avatarStandLeft = Chati.CHATI.getDrawable(avatarPath + "_stand_left").getRegion();
@@ -106,11 +66,23 @@ public class UserAvatar extends Sprite {
         avatarRunRight = new Animation<>(FRAME_DURATION, Chati.CHATI.getRegions(avatarPath + "_move_right"));
         setBounds(0, 0, AVATAR_SIZE / WorldCamera.PPM, AVATAR_SIZE / WorldCamera.PPM);
         setRegion(avatarStandDown);
+        this.stateTime = 0;
     }
 
-    private TextureRegion getCurrentFrameRegion(float delta) {
+    @Override
+    public void draw(Batch batch, float delta) {
+        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
+        setRegion(getKeyFrame(delta));
+        super.draw(batch);
+    }
+
+    public void drawHead(Batch batch, float delta) {
+        head.draw(batch, delta);
+    }
+
+    private TextureRegion getKeyFrame(float delta) {
         currentDirection = getCurrentDirection();
-        stateTimer = currentDirection == previousDirection ? stateTimer + delta : 0;
+        stateTime = currentDirection == previousDirection ? stateTime + delta : 0;
         if (currentDirection == previousDirection && body.getLinearVelocity().isZero()) {
             switch (previousDirection) {
                 case UP:
@@ -126,13 +98,13 @@ public class UserAvatar extends Sprite {
             previousDirection = currentDirection;
             switch (currentDirection) {
                 case UP:
-                    return avatarRunUp.getKeyFrame(stateTimer, true);
+                    return avatarRunUp.getKeyFrame(stateTime, true);
                 case LEFT:
-                    return avatarRunLeft.getKeyFrame(stateTimer, true);
+                    return avatarRunLeft.getKeyFrame(stateTime, true);
                 case DOWN:
-                    return avatarRunDown.getKeyFrame(stateTimer, true);
+                    return avatarRunDown.getKeyFrame(stateTime, true);
                 default:
-                    return avatarRunRight.getKeyFrame(stateTimer, true);
+                    return avatarRunRight.getKeyFrame(stateTime, true);
             }
         }
     }
@@ -152,18 +124,6 @@ public class UserAvatar extends Sprite {
             return Direction.RIGHT;
         }
         return previousDirection;
-    }
-
-    public void teleport() {
-        ILocationView location = user.getLocation();
-        if (location == null) {
-            return;
-        }
-        Vector2 newPosition = new Vector2(location.getPosX() / WorldCamera.PPM, location.getPosY() / WorldCamera.PPM);
-        body.setTransform(newPosition, body.getAngle());
-        body.setAwake(true);
-        currentDirection = location.getDirection();
-        previousDirection = currentDirection;
     }
 
     public void update() {
@@ -193,17 +153,59 @@ public class UserAvatar extends Sprite {
         }
     }
 
-    public IUserView getUser() {
-        return user;
+    public void teleport() {
+        ILocationView location = user.getLocation();
+        if (location == null) {
+            return;
+        }
+        Vector2 newPosition = new Vector2(location.getPosX() / WorldCamera.PPM, location.getPosY() / WorldCamera.PPM);
+        body.setTransform(newPosition, body.getAngle());
+        body.setAwake(true);
+        currentDirection = location.getDirection();
+        previousDirection = currentDirection;
     }
 
-    public Vector2 getPosition() {
-        return body.getPosition();
+    public IUserView getUser() {
+        return user;
     }
 
     public Body getBody() {
         return body;
     }
 
+    public Vector2 getPosition() {
+        return body.getPosition();
+    }
 
+    private class Head extends Table {
+
+        private static final float SPACING = 10;
+
+        private final Image communicableIcon;
+
+        public Head() {
+            setTransform(true);
+            this.communicableIcon = new Image();
+            add(this.communicableIcon).size(COMMUNICABLE_USER_ICON_SIZE).row();
+            UserInfoContainer userInfoContainer = new UserInfoContainer(user);
+            add(userInfoContainer);
+        }
+
+        @Override
+        public void draw(Batch batch, float delta) {
+            if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isShowNamesPressed()
+                    || Chati.CHATI.getPreferences().getShowNamesInWorld()) {
+                setPosition(body.getPosition().x, body.getPosition().y + UserAvatar.this.getHeight() +
+                        SPACING / WorldCamera.PPM);
+                setScale(Chati.CHATI.getWorldScreen().getCamera().zoom / WorldCamera.PPM);
+                if (user.canCommunicateWith()) {
+                    communicableIcon.setDrawable(Chati.CHATI.getDrawable("communicable_avatar"));
+                } else {
+                    communicableIcon.setDrawable(null);
+                }
+                act(delta);
+                super.draw(batch, 1);
+            }
+        }
+    }
 }

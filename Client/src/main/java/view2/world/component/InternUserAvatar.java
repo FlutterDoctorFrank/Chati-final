@@ -86,10 +86,6 @@ public class InternUserAvatar extends UserAvatar {
         }
     }
 
-    public void canInteract(boolean canInteract) {
-        this.canInteract = canInteract;
-    }
-
     public void interact() {
         if (canInteract) {
             IInternUserView internUser = Chati.CHATI.getInternUser();
@@ -106,10 +102,13 @@ public class InternUserAvatar extends UserAvatar {
 
     public void sendPosition() {
         if (!isTeleporting && !oldPosition.epsilonEquals(getPosition()) && user.isMovable()) {
-            isTeleporting = false;
             Chati.CHATI.send(ServerSender.SendAction.AVATAR_MOVE,
                     getPosition().x * WorldCamera.PPM, getPosition().y * WorldCamera.PPM, isSprinting, currentDirection);
         }
+    }
+
+    public void canInteract(boolean canInteract) {
+        this.canInteract = canInteract;
     }
 
     private Direction getCurrentDirectionalInput() {
