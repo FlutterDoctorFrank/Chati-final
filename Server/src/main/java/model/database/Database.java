@@ -279,7 +279,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             Connection con = this.getConnection();
             PreparedStatement ps = con.prepareStatement(SQL_UPDATE_AVATAR);
 
-            ps.setString(1, user.getAvatar().name());
+            ps.setString(1, avatar.name());
             ps.setString(2, user.getUserId().toString());
             ps.executeUpdate();
             ps.close();

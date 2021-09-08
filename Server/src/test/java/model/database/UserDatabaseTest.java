@@ -54,7 +54,7 @@ public class UserDatabaseTest {
 
     }
 
-    @Ignore
+    @Test
     public void changeAvatarTest() {
         User test = this.account_database.createAccount("changeAvatar", "111");
         String test_id = test.getUserId().toString();
