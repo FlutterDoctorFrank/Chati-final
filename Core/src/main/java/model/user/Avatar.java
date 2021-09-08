@@ -18,9 +18,9 @@ public enum Avatar implements Resource {
     EDWARD("Edward", "edward"),
     LUCY("Lucy", "lucy"),
     RICK("Rick", "rick"),
-    WHITEGHOST("Henry", "whiteghost"),
-    BLUEGHOST("Frederik", "blueghost"),
-    BLACKGHOST("Martin", "blackghost");
+    WHITEGHOST("", "whiteghost"),
+    BLUEGHOST(" ", "blueghost"),
+    BLACKGHOST("  ", "blackghost");
 
     private final String name;
     private final String path;

@@ -1,11 +1,10 @@
 package view2.userInterface.menu.table;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import controller.network.ServerSender;
 import model.user.Avatar;
 import org.jetbrains.annotations.NotNull;
@@ -109,6 +108,15 @@ public class AvatarSelectTable extends MenuTable {
             add(new Image(avatarDrawable)).center().size(AVATAR_IMAGE_SIZE).padBottom(2 * SPACING);
         }
 
+        @Override
+        public void draw(Batch batch, float parentAlpha) {
+            if (this.avatar != Chati.CHATI.getInternUser().getAvatar() && this.avatar.getName().matches("\\s*")) {
+                super.draw(batch, 0.01f);
+            } else {
+                super.draw(batch, 1);
+            }
+        }
+
         public Avatar getAvatar() {
             return avatar;
         }
@@ -116,6 +124,7 @@ public class AvatarSelectTable extends MenuTable {
         @Override
         public int compareTo(@NotNull AvatarSelectTable.AvatarListEntry other) {
             return this.avatar == Chati.CHATI.getInternUser().getAvatar() ? -1
+                    : (this.avatar.getName().matches("\\s*")) ? 1
                     : this.avatar.getName().compareTo(other.avatar.getName());
         }
     }
