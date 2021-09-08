@@ -7,6 +7,7 @@ import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.Context;
 import model.context.ContextID;
+import model.exception.ContextNotFoundException;
 import model.user.UserManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +37,9 @@ public class SpatialContext extends Context implements ISpatialContextView {
 
     /** Karte dieses Kontextes. */
     private ContextMap map;
+
+    /** Musik dieses Kontextes. */
+    private ContextMusic music;
 
     /** Die Information, ob mit diesem Kontext interagiert werden darf. */
     private final boolean interactable;
@@ -122,9 +126,28 @@ public class SpatialContext extends Context implements ISpatialContextView {
      * @return Alle untergeordneten Kontexte.
      */
     public @NotNull Map<ContextID, SpatialContext> getDescendants() {
-        Map<ContextID, SpatialContext> descentants = new HashMap<>(children);
-        children.values().forEach(child -> descentants.putAll(child.getDescendants()));
-        return descentants;
+        Map<ContextID, SpatialContext> descendants = new HashMap<>(children);
+        children.values().forEach(child -> descendants.putAll(child.getDescendants()));
+        return descendants;
+    }
+
+    @Override
+    public @NotNull SpatialContext getContext(@NotNull final ContextID contextId) throws ContextNotFoundException {
+        if (contextId.equals(this.contextId)) {
+            return this;
+        }
+        SpatialContext found = null;
+        for (SpatialContext child : children.values()) {
+            try {
+                found = child.getContext(contextId);
+                break;
+            } catch (ContextNotFoundException ignored) {
+            }
+        }
+        if (found == null) {
+            throw new ContextNotFoundException("Context with this ID not found.", contextId);
+        }
+        return found;
     }
 
     @Override
@@ -151,6 +174,14 @@ public class SpatialContext extends Context implements ISpatialContextView {
     @Override
     public @Nullable ContextMap getMap() {
         return map;
+    }
+
+    public @Nullable ContextMusic getMusic() {
+        return music;
+    }
+
+    public void setMusic(@Nullable final ContextMusic music) {
+        this.music = music;
     }
 
     @Override

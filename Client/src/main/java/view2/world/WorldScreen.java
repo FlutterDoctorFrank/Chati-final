@@ -143,6 +143,10 @@ public class WorldScreen extends ChatiScreen {
         return internUserAvatar;
     }
 
+    public InteractableWindow getCurrentInteractableWindow() {
+        return currentInteractableWindow;
+    }
+
     public void openMenu(ContextID contextId, ContextMenu contextMenu) {
         switch (contextMenu) {
             case ROOM_RECEPTION_MENU:

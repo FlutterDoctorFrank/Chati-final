@@ -26,6 +26,9 @@ public class WorldContactListener implements ContactListener {
                 || fixtureB.getBody().getUserData() == ContactType.INTERN_USER)
                 && (fixtureA.getBody().getUserData() == ContactType.INTERACTION_AREA
                 || fixtureB.getBody().getUserData() == ContactType.INTERACTION_AREA)) {
+            if (Chati.CHATI.getWorldScreen().getCurrentInteractableWindow() != null) {
+                return;
+            }
             Chati.CHATI.getWorldScreen().getInternUserAvatar().canInteract(false);
         }
     }

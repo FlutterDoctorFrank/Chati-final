@@ -109,6 +109,7 @@ public class InternUserAvatar extends UserAvatar {
 
     public void canInteract(boolean canInteract) {
         this.canInteract = canInteract;
+        System.out.println("CanInteract: " + canInteract);
     }
 
     private Direction getCurrentDirectionalInput() {

@@ -35,6 +35,7 @@ public class WorldInputProcessor implements InputProcessor {
             showNamesPressed = true;
         }
         if (KeyAction.INTERACT.matches(keycode)) {
+            System.out.println("Pressed " + KeyAction.INTERACT);
             Chati.CHATI.getWorldScreen().getInternUserAvatar().interact();
         }
         return true;

@@ -25,17 +25,14 @@ import java.util.stream.Collectors;
  */
 public class InternUser extends User implements IInternUserController, IInternUserView {
 
+    /** Die Benachrichtigungen des internen Benutzers. */
+    private final Map<UUID, Notification> notifications;
+
     /** Die Welt, in der sich der interne Benutzer befindet. */
     private SpatialContext currentWorld;
 
     /** Der Raum, in dem sich der interne Benutzer befindet. */
     private SpatialContext currentRoom;
-
-    /** Die Benachrichtigungen des internen Benutzers. */
-    private final Map<UUID, Notification> notifications;
-
-    /** Die Musik, die gerade abgespielt werden soll. */
-    private ContextMusic music;
 
     /**
      * Erzeugt eine neue Instanz des intern angemeldeten Benutzers.
@@ -50,7 +47,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
         this.currentWorld = null;
         this.currentRoom = null;
         this.notifications = new HashMap<>();
-        this.music = null;
     }
 
     @Override
@@ -67,11 +63,10 @@ public class InternUser extends User implements IInternUserController, IInternUs
             throw new IllegalStateException("User is not in a world.");
         }
         UserManager.getInstance().discardWorldInfo();
-        notifications.values().removeIf(notification -> !notification.getContext().equals(Context.getGlobal()));
         Context.getGlobal().removeChild(currentWorld);
+        notifications.values().removeIf(notification -> !notification.getContext().equals(Context.getGlobal()));
         currentRoom = null;
         currentWorld = null;
-        music = null;
         UserManager.getInstance().getModelObserver().setWorldChanged();
     }
 
@@ -92,14 +87,10 @@ public class InternUser extends User implements IInternUserController, IInternUs
 
     @Override
     public void setMusic(@NotNull final ContextID spatialId, @Nullable final ContextMusic music) throws ContextNotFoundException {
-        Context current = getDeepestContext();
-        while (current != null && !current.getContextId().equals(spatialId)) {
-            current = current.getParent();
+        if (this.currentWorld == null) {
+            throw new IllegalStateException("User is not in world.");
         }
-        if (current == null) {
-            throw new ContextNotFoundException("User is not in a context with this ID.", spatialId);
-        }
-        this.music = music;
+        currentWorld.getContext(spatialId).setMusic(music);
         UserManager.getInstance().getModelObserver().setMusicChanged();
     }
 
@@ -169,7 +160,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
 
     @Override
     public @Nullable ContextMusic getMusic() {
-        return music;
+        return currentLocation != null ? currentLocation.getArea().getMusic() : null;
     }
 
     @Override
@@ -192,7 +183,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
             return interactables.get(0);
         }
         for (SpatialContext interactable : interactables) {
-            if (isInDirection(interactable)) {
+            if (isIn(interactable) || isInDirection(interactable)) {
                 return interactable;
             }
         }
@@ -205,7 +196,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
     public void leaveRoom() {
         // Entferne alle Referenzen auf den Raum und allen untergeordneten Kontexten.
         UserManager.getInstance().discardRoomInfo();
-        music = null;
         currentLocation = null;
         currentRoom = null;
     }
@@ -215,7 +205,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
      * @param interactable Zu überprüfender Kontext.
      * @return true, wenn sich der Kontext in der Blickrichtung befindet, sonst false.
      */
-    private boolean isInDirection(SpatialContext interactable) {
+    private boolean isInDirection(@NotNull final SpatialContext interactable) {
         switch (currentLocation.getDirection()) {
             case UP:
                 return currentLocation.getPosY() <= interactable.getExpanse().getCenter().getPosY();
@@ -228,5 +218,9 @@ public class InternUser extends User implements IInternUserController, IInternUs
             default:
                 return false;
         }
+    }
+
+    private boolean isIn(@NotNull final SpatialContext interactable) {
+        return interactable.getExpanse().isIn(currentLocation.getPosX(), currentLocation.getPosY());
     }
 }
