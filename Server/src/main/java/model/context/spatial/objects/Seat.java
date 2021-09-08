@@ -5,9 +5,11 @@ import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.communication.message.TextMessage;
 import model.context.spatial.Area;
+import model.context.spatial.Direction;
 import model.context.spatial.Expanse;
 import model.context.spatial.ContextMenu;
 import model.context.spatial.Location;
+import model.context.spatial.Room;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.user.User;
@@ -52,6 +54,7 @@ public class Seat extends Interactable {
                 // Erlaube dem Benutzer, sich von dem Platz wegzubewegen.
                 user.setCurrentInteractable(null);
                 user.setMovable(true);
+                user.teleport(getSpace(user));
             } else {
                 // Teile dem Benutzer mit, dass der Platz bereits von einem anderen Benutzer belegt ist.
                 TextMessage infoMessage = new TextMessage("object.seat.already-occupied");
@@ -81,5 +84,59 @@ public class Seat extends Interactable {
         } else {
             throw new IllegalInteractionException("No valid menu option", user);
         }
+    }
+
+    private @NotNull Location getSpace(@NotNull final User user) {
+        if (user.getLocation() == null) {
+            throw new IllegalStateException("Users location is not available");
+        }
+        int searchedDirections = 0;
+        int ordinal = user.getLocation().getDirection().ordinal();
+        float posX = user.getLocation().getPosX();
+        float posY = user.getLocation().getPosY();
+        Room room = user.getLocation().getRoom();
+
+        while (searchedDirections < Direction.values().length) {
+            Direction direction = Direction.values()[ordinal];
+
+            switch (direction) {
+                case UP:
+                    for (int range = 0; range < INTERACTION_DISTANCE; range++) {
+                        if (room.isLegal(posX, posY + range)) {
+                            return new Location(room, direction, posX, posY + range);
+                        }
+                    }
+                    break;
+
+                case RIGHT:
+                    for (int range = 0; range < INTERACTION_DISTANCE; range++) {
+                        if (room.isLegal(posX + range, posY)) {
+                            return new Location(room, direction, posX + range, posY);
+                        }
+                    }
+                    break;
+
+                case DOWN:
+                    for (int range = 0; range < INTERACTION_DISTANCE; range++) {
+                        if (room.isLegal(posX, posY - range)) {
+                            return new Location(room, direction, posX, posY - range);
+                        }
+                    }
+                    break;
+
+                case LEFT:
+                    for (int range = 0; range < INTERACTION_DISTANCE; range++) {
+                        if (room.isLegal(posX - range, posY)) {
+                            return new Location(room, direction, posX - range, posY);
+                        }
+                    }
+                    break;
+            }
+
+            ordinal = (ordinal + 1) % Direction.values().length;
+            searchedDirections++;
+        }
+
+        throw new IllegalStateException("No space in all directions available");
     }
 }

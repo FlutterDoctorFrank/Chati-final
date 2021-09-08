@@ -3,7 +3,12 @@ package model.context.spatial.objects;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
-import model.context.spatial.*;
+import model.context.ContextID;
+import model.context.spatial.Area;
+import model.context.spatial.ContextMenu;
+import model.context.spatial.Expanse;
+import model.context.spatial.Location;
+import model.exception.ContextNotFoundException;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.user.User;
@@ -67,6 +72,14 @@ public abstract class Interactable extends Area implements IInteractable {
             user.setMovable(true);
             user.send(ClientSender.SendAction.CLOSE_MENU, this);
         }
+    }
+
+    @Override
+    public @NotNull Interactable getInteractable(@NotNull final ContextID interactableId) throws ContextNotFoundException {
+        if (interactableId.equals(this.contextId)) {
+            return this;
+        }
+        return super.getInteractable(interactableId);
     }
 
     /**
