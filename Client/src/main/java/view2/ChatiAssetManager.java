@@ -30,6 +30,7 @@ public class ChatiAssetManager {
         String texturePackerOutput = Gdx.files.internal("Client/src/main/resources/atlas").path();
         String texturePackerFileName = "image_atlas";
         TexturePacker.Settings texturePackerSettings = new TexturePacker.Settings();
+        texturePackerSettings.maxWidth = 2048;
         texturePackerSettings.filterMin = Texture.TextureFilter.Linear;
         texturePackerSettings.filterMag = Texture.TextureFilter.Linear;
         texturePackerSettings.combineSubdirectories = true;
