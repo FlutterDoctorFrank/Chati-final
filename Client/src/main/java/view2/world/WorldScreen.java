@@ -19,12 +19,17 @@ import model.user.IInternUserView;
 import model.user.IUserView;
 import view2.Chati;
 import view2.ChatiScreen;
+import view2.userInterface.interactableMenu.AreaPlannerWindow;
+import view2.userInterface.interactableMenu.GameBoardWindow;
+import view2.userInterface.interactableMenu.InteractableWindow;
+import view2.userInterface.interactableMenu.MusicStreamerWindow;
+import view2.userInterface.interactableMenu.PortalWindow;
+import view2.userInterface.interactableMenu.RoomReceptionWindow;
+import view2.userInterface.interactableMenu.SeatWindow;
 import view2.world.component.CollisionArea;
 import view2.world.component.InteractionObject;
 import view2.world.component.InternUserAvatar;
 import view2.world.component.UserAvatar;
-import view2.userInterface.interactableMenu.*;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -45,7 +50,7 @@ public class WorldScreen extends ChatiScreen {
     private final WorldCamera camera;
     private final FitViewport viewport;
     private final OrthogonalTiledMapRenderer tiledMapRenderer;
-    // private final Box2DDebugRenderer debugRenderer;
+    //private final Box2DDebugRenderer debugRenderer;
     private final World world;
 
     private final Map<IUserView, UserAvatar> externUserAvatars;
@@ -57,7 +62,7 @@ public class WorldScreen extends ChatiScreen {
         this.camera = new WorldCamera();
         this.viewport = new FitViewport(Gdx.graphics.getWidth() / WorldCamera.PPM, Gdx.graphics.getHeight() / WorldCamera.PPM, camera);
         this.tiledMapRenderer = new OrthogonalTiledMapRenderer(null, 1 / WorldCamera.PPM);
-        // this.debugRenderer = new Box2DDebugRenderer();
+        //this.debugRenderer = new Box2DDebugRenderer();
         this.world = new World(new Vector2(0, 0), true);
         this.world.setContactListener(new WorldContactListener());
         this.externUserAvatars = new HashMap<>();
@@ -92,7 +97,7 @@ public class WorldScreen extends ChatiScreen {
             externUserAvatars.values().forEach(avatar -> avatar.drawHead(Chati.CHATI.getSpriteBatch(), delta));
             internUserAvatar.drawHead(Chati.CHATI.getSpriteBatch(), delta);
             Chati.CHATI.getSpriteBatch().end();
-            // debugRenderer.render(world, camera.combined);
+            //debugRenderer.render(world, camera.combined);
 
             world.step(1 / WORLD_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 
@@ -143,10 +148,6 @@ public class WorldScreen extends ChatiScreen {
 
     public InternUserAvatar getInternUserAvatar() {
         return internUserAvatar;
-    }
-
-    public InteractableWindow getCurrentInteractableWindow() {
-        return currentInteractableWindow;
     }
 
     public void openMenu(ContextID contextId, ContextMenu contextMenu) {

@@ -43,15 +43,57 @@ public class Expanse {
     }
 
     /**
-     * Überprüft, ob gegebene Koordinate eine maximale Distanz zur räumlichen Ausdehnung eines Kontextes haben.
+     * Überprüft, ob die gegebene Koordinate eine maximale Distanz zur räumlichen Ausdehnung eines Kontextes hat.
      * @param posX Zu überprüfende X-Koordinate.
      * @param posY Zu überprüfende Y-Koordinate.
      * @param distance Maximale Distanz.
      * @return true, wenn die Koordinaten die maximale Distanz zur Ausdehnung haben, sonst false.
      */
     public boolean isAround(final float posX, final float posY, final float distance) {
-        return bottomLeft.getPosX() - distance <= posX && posX <= bottomLeft.getPosX() + distance + width
-                && bottomLeft.getPosY() - distance <= posY && posY <= bottomLeft.getPosY() + distance + height;
+        return isPosXInRange(posX, distance) && isPosYInRange(posY, distance);
+    }
+
+    /**
+     * Überprüft, ob die gegebene Koordinate in der gegebenen Richtung eine maximale Distanz zur räumlichen
+     * Ausdehnung eines Kontextes hat.
+     * @param direction Zu überprüfende Richtung
+     * @param posX Zu überprüfende X-Koordinate.
+     * @param posY Zu überprüfende Y-Koordinate.
+     * @param distance Maximale Distanz.
+     * @return true, wenn die Koordinaten die maximale Distanz zur Ausdehnung haben, sonst false.
+     */
+    public boolean isAround(@NotNull final Direction direction, final float posX, final float posY, final float distance) {
+        if (isIn(posX, posY)) {
+            return true;
+        }
+
+        switch (direction) {
+            case UP:
+                return bottomLeft.getPosY() - distance <= posY && posY <= bottomLeft.getPosY()
+                        && isPosXInRange(posX, distance);
+
+            case RIGHT:
+                return bottomLeft.getPosX() - distance <= posX && posX <= bottomLeft.getPosX()
+                        && isPosYInRange(posY, distance);
+
+            case DOWN:
+                return bottomLeft.getPosY() + height + distance >= posY && posY >= bottomLeft.getPosY() + height
+                        && isPosXInRange(posX, distance);
+
+            case LEFT:
+                return bottomLeft.getPosX() + width + distance >= posX && posX >= bottomLeft.getPosX() + width
+                        && isPosYInRange(posY, distance);
+        }
+
+        return false;
+    }
+
+    private boolean isPosXInRange(final float posX, final float distance) {
+        return bottomLeft.getPosX() - distance <= posX && posX <= bottomLeft.getPosX() + width + distance;
+    }
+
+    private boolean isPosYInRange(final float posY, final float distance) {
+        return bottomLeft.getPosY() - distance <= posY && posY <= bottomLeft.getPosY() + height + distance;
     }
 
     /**
