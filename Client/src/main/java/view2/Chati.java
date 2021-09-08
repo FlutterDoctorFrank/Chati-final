@@ -77,6 +77,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public void start() {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+        config.setWindowIcon("logos/logo_big.bmp", "logos/logo_medium.bmp", "logos/logo_small.bmp", "logos/logo_tiny.bmp");
         config.setForegroundFPS(60);
         config.setTitle("Chati");
         new Lwjgl3Application(this, config);
