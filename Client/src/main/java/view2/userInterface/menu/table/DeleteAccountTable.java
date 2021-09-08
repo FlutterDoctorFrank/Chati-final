@@ -1,7 +1,6 @@
 package view2.userInterface.menu.table;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -9,7 +8,7 @@ import controller.network.ServerSender;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
-import view2.userInterface.Response;
+import view2.Response;
 
 public class DeleteAccountTable extends MenuTable {
 

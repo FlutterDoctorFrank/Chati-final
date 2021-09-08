@@ -16,7 +16,7 @@ import model.user.IUserView;
 import view2.Chati;
 import view2.userInterface.ChatiTextArea;
 import view2.userInterface.ChatiTextButton;
-import view2.userInterface.KeyAction;
+import view2.KeyCommand;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -54,11 +54,11 @@ public class ChatWindow extends Window {
         typeMessageArea.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                return KeyAction.SEND_CHAT_MESSAGE.matches(keycode);
+                return KeyCommand.SEND_CHAT_MESSAGE.matches(keycode);
             }
             @Override
             public boolean keyUp(InputEvent event, int keycode) {
-                if (KeyAction.SEND_CHAT_MESSAGE.matches(keycode)) {
+                if (KeyCommand.SEND_CHAT_MESSAGE.matches(keycode)) {
                     sendMessage();
                     return true;
                 }

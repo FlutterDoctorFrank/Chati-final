@@ -8,7 +8,7 @@ import controller.network.ServerSender;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 import view2.ContextEntry;
-import view2.userInterface.Response;
+import view2.Response;
 
 public class StartTable extends MenuTable {
 

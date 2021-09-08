@@ -8,7 +8,7 @@ import model.context.spatial.ContextMap;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
-import view2.userInterface.Response;
+import view2.Response;
 
 import java.util.EnumSet;
 

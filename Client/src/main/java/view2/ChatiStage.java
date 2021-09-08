@@ -1,10 +1,10 @@
-package view2.userInterface;
+package view2;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import view2.Chati;
+import view2.userInterface.ChatiWindow;
 import view2.userInterface.hud.ChatWindow;
 import view2.userInterface.hud.HeadUpDisplay;
 
@@ -22,37 +22,37 @@ public class ChatiStage extends Stage {
     @Override
     public boolean keyDown(int keycode) {
         if (!(getKeyboardFocus() instanceof TextField)) {
-            if (KeyAction.OPEN_CHAT.matches(keycode)) {
+            if (KeyCommand.OPEN_CHAT.matches(keycode)) {
                 HeadUpDisplay.getInstance().showChatWindow();
             }
-            if (KeyAction.OPEN_COMMUNICATION_MENU.matches(keycode)) {
+            if (KeyCommand.OPEN_COMMUNICATION_MENU.matches(keycode)) {
                 if (HeadUpDisplay.getInstance().isCommunicationWindowOpen()) {
                     HeadUpDisplay.getInstance().closeCommunicationWindow();
                 } else {
                     HeadUpDisplay.getInstance().openCommunicationWindow();
                 }
             }
-            if (KeyAction.TOGGLE_MICROPHONE.matches(keycode)) {
+            if (KeyCommand.TOGGLE_MICROPHONE.matches(keycode)) {
                 HeadUpDisplay.getInstance().toggleMicrophone();
             }
-            if (KeyAction.TOGGLE_SOUND.matches(keycode)) {
+            if (KeyCommand.TOGGLE_SOUND.matches(keycode)) {
                 HeadUpDisplay.getInstance().toggleSound();
             }
-            if (KeyAction.OPEN_USER_LIST.matches(keycode)) {
+            if (KeyCommand.OPEN_USER_MENU.matches(keycode)) {
                 if (HeadUpDisplay.getInstance().isUserMenuOpen()) {
                     HeadUpDisplay.getInstance().closeCurrentMenu();
                 } else {
                     HeadUpDisplay.getInstance().openUserMenu();
                 }
             }
-            if (KeyAction.OPEN_NOTIFICATION.matches(keycode)) {
+            if (KeyCommand.OPEN_NOTIFICATION_MENU.matches(keycode)) {
                 if (HeadUpDisplay.getInstance().isNotificationMenuOpen()) {
                     HeadUpDisplay.getInstance().closeCurrentMenu();
                 } else {
                     HeadUpDisplay.getInstance().openNotificationMenu();
                 }
             }
-            if (KeyAction.OPEN_SETTINGS.matches(keycode)) {
+            if (KeyCommand.OPEN_SETTINGS_MENU.matches(keycode)) {
                 if (HeadUpDisplay.getInstance().isSettingsMenuOpen()) {
                     HeadUpDisplay.getInstance().closeCurrentMenu();
                 } else {
@@ -61,7 +61,7 @@ public class ChatiStage extends Stage {
             }
         }
 
-        if (KeyAction.CLOSE.matches(keycode)) {
+        if (KeyCommand.CLOSE.matches(keycode)) {
             setKeyboardFocus(null);
             if (!openWindows.isEmpty()) {
                 openWindows.peek().close();

@@ -7,7 +7,7 @@ import model.context.spatial.ContextMusic;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import view2.Chati;
-import view2.userInterface.KeyAction;
+import view2.KeyCommand;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -60,7 +60,7 @@ public class AudioManager {
 
             if (voiceRecorder.isRunning()) {
                 if (Chati.CHATI.getPreferences().isMicrophoneOn() && (!Chati.CHATI.getPreferences().getPushToTalk()
-                        || KeyAction.PUSH_TO_TALK.isPressed()) && internUser != null && internUser.canTalk()) {
+                        || KeyCommand.PUSH_TO_TALK.isPressed()) && internUser != null && internUser.canTalk()) {
                     if (!voiceRecorder.isRecording()) {
                         voiceRecorder.startRecording();
                     }

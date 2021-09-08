@@ -2,7 +2,7 @@ package view2.world;
 
 import com.badlogic.gdx.InputProcessor;
 import view2.Chati;
-import view2.userInterface.KeyAction;
+import view2.KeyCommand;
 import model.context.spatial.Direction;
 
 public class WorldInputProcessor implements InputProcessor {
@@ -16,26 +16,26 @@ public class WorldInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (KeyAction.MOVE_UP.matches(keycode)) {
+        if (KeyCommand.MOVE_UP.matches(keycode)) {
             moveUpPressed = true;
         }
-        if (KeyAction.MOVE_LEFT.matches(keycode)) {
+        if (KeyCommand.MOVE_LEFT.matches(keycode)) {
             moveLeftPressed = true;
         }
-        if (KeyAction.MOVE_DOWN.matches(keycode)) {
+        if (KeyCommand.MOVE_DOWN.matches(keycode)) {
             moveDownPressed = true;
         }
-        if (KeyAction.MOVE_RIGHT.matches(keycode)) {
+        if (KeyCommand.MOVE_RIGHT.matches(keycode)) {
             moveRightPressed = true;
         }
-        if (KeyAction.SPRINT.matches(keycode)) {
+        if (KeyCommand.SPRINT.matches(keycode)) {
             sprintPressed = true;
         }
-        if (KeyAction.SHOW_NAMES.matches(keycode)) {
+        if (KeyCommand.SHOW_NAMES.matches(keycode)) {
             showNamesPressed = true;
         }
-        if (KeyAction.INTERACT.matches(keycode)) {
-            System.out.println("Pressed " + KeyAction.INTERACT);
+        if (KeyCommand.INTERACT.matches(keycode)) {
+            System.out.println("Pressed " + KeyCommand.INTERACT);
             Chati.CHATI.getWorldScreen().getInternUserAvatar().interact();
         }
         return true;
@@ -43,22 +43,22 @@ public class WorldInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-        if (KeyAction.MOVE_UP.matches(keycode)) {
+        if (KeyCommand.MOVE_UP.matches(keycode)) {
             moveUpPressed = false;
         }
-        if (KeyAction.MOVE_LEFT.matches(keycode)) {
+        if (KeyCommand.MOVE_LEFT.matches(keycode)) {
             moveLeftPressed = false;
         }
-        if (KeyAction.MOVE_DOWN.matches(keycode)) {
+        if (KeyCommand.MOVE_DOWN.matches(keycode)) {
             moveDownPressed = false;
         }
-        if (KeyAction.MOVE_RIGHT.matches(keycode)) {
+        if (KeyCommand.MOVE_RIGHT.matches(keycode)) {
             moveRightPressed = false;
         }
-        if (KeyAction.SPRINT.matches(keycode)) {
+        if (KeyCommand.SPRINT.matches(keycode)) {
             sprintPressed = false;
         }
-        if (KeyAction.SHOW_NAMES.matches(keycode)) {
+        if (KeyCommand.SHOW_NAMES.matches(keycode)) {
             showNamesPressed = false;
         }
         return true;
@@ -98,23 +98,23 @@ public class WorldInputProcessor implements InputProcessor {
     public boolean isDirectionPressed(Direction direction) {
         switch (direction) {
             case UP:
-                return moveUpPressed && KeyAction.MOVE_UP.isPressed();
+                return moveUpPressed && KeyCommand.MOVE_UP.isPressed();
             case LEFT:
-                return moveLeftPressed && KeyAction.MOVE_LEFT.isPressed();
+                return moveLeftPressed && KeyCommand.MOVE_LEFT.isPressed();
             case DOWN:
-                return moveDownPressed && KeyAction.MOVE_DOWN.isPressed();
+                return moveDownPressed && KeyCommand.MOVE_DOWN.isPressed();
             case RIGHT:
-                return moveRightPressed && KeyAction.MOVE_RIGHT.isPressed();
+                return moveRightPressed && KeyCommand.MOVE_RIGHT.isPressed();
             default:
                 return false;
         }
     }
 
     public boolean isSprintPressed() {
-        return sprintPressed && KeyAction.SPRINT.isPressed();
+        return sprintPressed && KeyCommand.SPRINT.isPressed();
     }
 
     public boolean isShowNamesPressed() {
-        return showNamesPressed && KeyAction.SHOW_NAMES.isPressed();
+        return showNamesPressed && KeyCommand.SHOW_NAMES.isPressed();
     }
 }

@@ -1,4 +1,4 @@
-package view2.userInterface;
+package view2;
 
 public enum Response {
     NONE,

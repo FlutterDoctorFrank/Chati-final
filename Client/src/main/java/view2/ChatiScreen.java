@@ -2,8 +2,6 @@ package view2;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
-import view2.userInterface.ChatiStage;
-import view2.userInterface.Response;
 import view2.userInterface.hud.HeadUpDisplay;
 
 public abstract class ChatiScreen extends ScreenAdapter {

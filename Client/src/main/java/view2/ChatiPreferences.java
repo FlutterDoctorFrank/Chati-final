@@ -1,7 +1,10 @@
 package view2;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
+
+import java.util.List;
 
 public class ChatiPreferences {
 
@@ -19,6 +22,7 @@ public class ChatiPreferences {
 
     public ChatiPreferences() {
         this.preferences = Gdx.app.getPreferences("/chati/preferences");
+        addKeyBindings();
     }
 
     public void setLanguage(String language) {
@@ -100,5 +104,28 @@ public class ChatiPreferences {
 
     public float getSoundVolume() {
         return preferences.getFloat("sound_volume", DEFAULT_SOUND_VOLUME);
+    }
+
+    public void addKeyBindings() {
+        /*  Anmerkung: Die Tastenbelegung ist hier festgelegt, kann aber in den Präferenzen gespeichert
+            und abgerufen werden. Somit besteht prinzipiell die Möglichkeit, die Tastenbelegung zu ändern. */
+
+        KeyCommand.MOVE_UP.addKeyBindings(List.of(Input.Keys.UP, Input.Keys.W));
+        KeyCommand.MOVE_LEFT.addKeyBindings(List.of(Input.Keys.LEFT, Input.Keys.A));
+        KeyCommand.MOVE_DOWN.addKeyBindings(List.of(Input.Keys.DOWN, Input.Keys.S));
+        KeyCommand.MOVE_RIGHT.addKeyBindings(List.of(Input.Keys.RIGHT, Input.Keys.D));
+        KeyCommand.SPRINT.addKeyBindings(List.of(Input.Keys.SHIFT_LEFT, Input.Keys.SHIFT_RIGHT));
+        KeyCommand.SHOW_NAMES.addKeyBindings(List.of(Input.Keys.TAB));
+        KeyCommand.INTERACT.addKeyBindings(List.of(Input.Keys.E));
+        KeyCommand.OPEN_CHAT.addKeyBindings(List.of(Input.Keys.SPACE));
+        KeyCommand.SEND_CHAT_MESSAGE.addKeyBindings(List.of(Input.Keys.ENTER));
+        KeyCommand.PUSH_TO_TALK.addKeyBindings(List.of(Input.Keys.P));
+        KeyCommand.OPEN_USER_MENU.addKeyBindings(List.of(Input.Keys.NUM_1, Input.Keys.NUMPAD_1));
+        KeyCommand.OPEN_NOTIFICATION_MENU.addKeyBindings(List.of(Input.Keys.NUM_2, Input.Keys.NUMPAD_2));
+        KeyCommand.OPEN_SETTINGS_MENU.addKeyBindings(List.of(Input.Keys.NUM_3, Input.Keys.NUMPAD_3));
+        KeyCommand.OPEN_COMMUNICATION_MENU.addKeyBindings(List.of(Input.Keys.NUM_4, Input.Keys.NUMPAD_4));
+        KeyCommand.TOGGLE_MICROPHONE.addKeyBindings(List.of(Input.Keys.NUM_5, Input.Keys.NUMPAD_5));
+        KeyCommand.TOGGLE_SOUND.addKeyBindings(List.of(Input.Keys.NUM_6, Input.Keys.NUMPAD_6));
+        KeyCommand.CLOSE.addKeyBindings(List.of(Input.Keys.ESCAPE));
     }
 }

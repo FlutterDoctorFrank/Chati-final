@@ -14,6 +14,7 @@ import model.user.AdministrativeAction;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.Response;
 import view2.userInterface.*;
 
 public class UserListEntry extends Table implements Comparable<UserListEntry> {

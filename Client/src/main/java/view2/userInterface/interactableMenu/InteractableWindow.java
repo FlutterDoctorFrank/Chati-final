@@ -5,7 +5,7 @@ import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 import view2.Chati;
 import view2.userInterface.ChatiWindow;
-import view2.userInterface.Response;
+import view2.Response;
 
 public abstract class InteractableWindow extends ChatiWindow {
 
