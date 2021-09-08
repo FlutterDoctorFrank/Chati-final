@@ -185,7 +185,7 @@ public class SpatialContext extends Context implements ISpatialContextView {
     }
 
     @Override
-    public @NotNull ILocationView getCenter() {
+    public @NotNull Location getCenter() {
         return expanse.getCenter();
     }
 }

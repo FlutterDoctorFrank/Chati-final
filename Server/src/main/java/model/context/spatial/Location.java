@@ -80,7 +80,6 @@ public class Location implements ILocation {
      * @param location Zu überprüfende andere Position.
      * @return Distanz zur anderen Position.
      */
-
     public int distance(@NotNull final Location location) {
         // Sollte niemals eintreffen.
         if (!room.equals(location.getRoom())) {

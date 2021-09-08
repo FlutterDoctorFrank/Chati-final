@@ -84,6 +84,15 @@ public class Location implements ILocationView {
         this.direction = direction;
     }
 
+    /**
+     * Ermittelt die Distanz zu einer anderen Position.
+     * @param location Zu überprüfende andere Position.
+     * @return Distanz zur anderen Position.
+     */
+    public int distance(@NotNull final Location location) {
+        return (int) Math.sqrt(Math.pow((posX - location.posX), 2) + Math.pow((posY - location.posY), 2));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

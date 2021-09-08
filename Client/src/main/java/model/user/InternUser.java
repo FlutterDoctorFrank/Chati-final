@@ -13,6 +13,7 @@ import model.notification.NotificationType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -176,16 +177,14 @@ public class InternUser extends User implements IInternUserController, IInternUs
         List<SpatialContext> interactables = currentRoom.getDescendants().values().stream()
                 .filter(context -> context.getExpanse().isAround(posX, posY, SpatialContext.INTERACTION_DISTANCE)
                 && context.isInteractable()).collect(Collectors.toList());
-        if (interactables.isEmpty()) {
-            return null;
-        }
-        if (interactables.size() == 1) {
-            return interactables.get(0);
-        }
-        for (SpatialContext interactable : interactables) {
-            if (isIn(interactable) || isInDirection(interactable)) {
-                return interactable;
+        if (!interactables.isEmpty()) {
+            if (interactables.size() == 1) {
+                return interactables.get(0);
             }
+
+            return interactables.stream().filter(interactable -> isIn(interactable) || isInDirection(interactable))
+                    .min(Comparator.comparingInt(interactable -> interactable.getCenter().distance(currentLocation)))
+                    .orElse(null);
         }
         return null;
     }
