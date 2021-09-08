@@ -24,7 +24,7 @@ public class InternUserAvatar extends UserAvatar {
     private boolean isColliding;
 
     public InternUserAvatar() {
-        super(Chati.CHATI.getUserManager().getInternUserView());
+        super(Chati.CHATI.getInternUser());
         this.body.setUserData(ContactType.INTERN_USER);
         Fixture fixture = body.getFixtureList().get(0);
         if (fixture != null) {
