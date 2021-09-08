@@ -146,6 +146,9 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (user.canTeleportTo()) {
+                    if (!user.isInCurrentWorld()) {
+                        Chati.CHATI.getMenuScreen().setPendingResponse(Response.JOIN_WORLD);
+                    }
                     Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, user.getUserId(),
                             AdministrativeAction.TELEPORT_TO_USER, "");
                 }

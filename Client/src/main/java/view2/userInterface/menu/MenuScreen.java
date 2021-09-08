@@ -118,11 +118,9 @@ public class MenuScreen extends ChatiScreen {
     }
 
     public void joinWorldResponse(boolean success, String messageKey) {
-        /*
         if (pendingResponse != Response.JOIN_WORLD) {
             return;
         }
-         */
         setPendingResponse(Response.NONE);
         if (success) {
             Chati.CHATI.setScreen(Chati.CHATI.getWorldScreen());

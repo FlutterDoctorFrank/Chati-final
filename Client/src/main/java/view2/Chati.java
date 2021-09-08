@@ -20,7 +20,6 @@ import model.user.IUserManagerView;
 import org.jetbrains.annotations.Nullable;
 import view2.audio.AudioManager;
 import view2.userInterface.hud.HeadUpDisplay;
-import view2.userInterface.menu.ContextEntry;
 import view2.userInterface.menu.MenuScreen;
 import view2.userInterface.menu.table.LoginTable;
 import view2.userInterface.menu.table.StartTable;
@@ -97,7 +96,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void render() {
         /* Übertrage alle Flags auf eine andere Menge von Flags, welche im nächsten Render-Aufruf abgefragt wird.
-           So werden keine eingehenden Informationen verpasst, wenn diese am Ende der Render-Methode eintreffen. */
+           So werden keine eingehenden Informationen verpasst, wenn diese am Ende eines Render-Durchlaufs eintreffen. */
         transferFlags();
         resetModelChangeReceivedFlags();
         super.render();
@@ -215,52 +214,66 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void registrationResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            Gdx.app.postRunnable(() -> menuScreen.registrationResponse(success, messageKey));
-        }
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(menuScreen)) {
+                menuScreen.registrationResponse(success, messageKey);
+            }
+        });
     }
 
     @Override
     public void loginResponse(boolean success, String messageKey) {
         loggedIn = success;
-        if (this.screen.equals(menuScreen)) {
-            Gdx.app.postRunnable(() -> menuScreen.loginResponse(success, messageKey));
-        }
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(menuScreen)) {
+                menuScreen.loginResponse(success, messageKey);
+            }
+        });
     }
 
     @Override
     public void passwordChangeResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            Gdx.app.postRunnable(() -> menuScreen.passwordChangeResponse(success, messageKey));
-        }
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(menuScreen)) {
+                menuScreen.passwordChangeResponse(success, messageKey);
+            }
+        });
     }
 
     @Override
     public void deleteAccountResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            Gdx.app.postRunnable(() -> menuScreen.deleteAccountResponse(success, messageKey));
-        }
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(menuScreen)) {
+                menuScreen.deleteAccountResponse(success, messageKey);
+            }
+        });
     }
 
     @Override
     public void avatarChangeResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            Gdx.app.postRunnable(() -> menuScreen.avatarChangeResponse(success, messageKey));
-        }
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(menuScreen)) {
+                menuScreen.avatarChangeResponse(success, messageKey);
+            }
+        });
     }
 
     @Override
     public void createWorldResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            Gdx.app.postRunnable(() -> menuScreen.createWorldResponse(success, messageKey));
-        }
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(menuScreen)) {
+                menuScreen.createWorldResponse(success, messageKey);
+            }
+        });
     }
 
     @Override
     public void deleteWorldResponse(boolean success, String messageKey) {
-        if (this.screen.equals(menuScreen)) {
-            Gdx.app.postRunnable(() -> menuScreen.deleteWorldResponse(success, messageKey));
-        }
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(menuScreen)) {
+                menuScreen.deleteWorldResponse(success, messageKey);
+            }
+        });
     }
 
     @Override
@@ -274,24 +287,26 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void showTypingUser(UUID userId) {
-        if (this.screen.equals(worldScreen)) {
-            Gdx.app.postRunnable(() -> HeadUpDisplay.getInstance().showTypingUser(userId));
-        }
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(worldScreen)) {
+                HeadUpDisplay.getInstance().showTypingUser(userId);
+            }
+        });
     }
 
     @Override
     public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message,
             MessageBundle messageBundle) {
-        if (this.screen.equals(worldScreen)) {
-            Gdx.app.postRunnable(() -> {
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(worldScreen)) {
                 try {
                     HeadUpDisplay.getInstance()
                             .showChatMessage(userId, timestamp, messageType, message, messageBundle);
                 } catch (UserNotFoundException e) {
                     e.printStackTrace();
                 }
-            });
-        }
+            }
+        });
     }
 
     @Override
@@ -303,23 +318,29 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void openMenu(ContextID contextId, ContextMenu contextMenu) {
-        if (this.screen.equals(worldScreen)) {
-            Gdx.app.postRunnable(() -> worldScreen.openMenu(contextId, contextMenu));
-        }
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(worldScreen)) {
+                worldScreen.openMenu(contextId, contextMenu);
+            }
+        });
     }
 
     @Override
     public void closeMenu(ContextID contextId, ContextMenu contextMenu) {
-        if (this.screen.equals(worldScreen)) {
-            Gdx.app.postRunnable(() -> worldScreen.closeMenu(contextId, contextMenu));
-        }
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(worldScreen)) {
+                worldScreen.closeMenu(contextId, contextMenu);
+            }
+        });
     }
 
     @Override
     public void menuActionResponse(boolean success, String messageKey) {
-        if (this.screen.equals(worldScreen)) {
-            Gdx.app.postRunnable(() -> worldScreen.menuActionResponse(success, messageKey));
-        }
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(worldScreen)) {
+                worldScreen.menuActionResponse(success, messageKey);
+            }
+        });
     }
 
     @Override
@@ -336,12 +357,12 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void leaveWorld() {
-        if (screen.equals(worldScreen)) {
-            Gdx.app.postRunnable(() -> {
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(worldScreen)) {
                 menuScreen.setMenuTable(new StartTable());
                 setScreen(menuScreen);
-            });
-        }
+            }
+        });
     }
 
     public boolean isUserInfoChanged() {
@@ -384,17 +405,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return Set.copyOf(privateRooms);
     }
 
-    private void resetModelChangeReceivedFlags() {
-        userInfoChangeReceived = false;
-        userNotificationChangeReceived = false;
-        newNotificationInfoReceived = false;
-        roomChangeReceived = false;
-        worldChangeReceived = false;
-        musicChangeReceived = false;
-        worldListUpdateReceived = false;
-        roomListUpdateReceived = false;
-    }
-
     private void transferFlags() {
         changeUserInfo = userInfoChangeReceived;
         changeNotificationInfo = userNotificationChangeReceived;
@@ -404,6 +414,17 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         changeMusic = musicChangeReceived;
         changeWorldList = worldListUpdateReceived;
         changeRoomList = roomListUpdateReceived;
+    }
+
+    private void resetModelChangeReceivedFlags() {
+        userInfoChangeReceived = false;
+        userNotificationChangeReceived = false;
+        newNotificationInfoReceived = false;
+        roomChangeReceived = false;
+        worldChangeReceived = false;
+        musicChangeReceived = false;
+        worldListUpdateReceived = false;
+        roomListUpdateReceived = false;
     }
 
     private void resetModelChangedFlags() {

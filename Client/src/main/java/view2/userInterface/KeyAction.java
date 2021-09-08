@@ -36,11 +36,6 @@ public enum KeyAction {
     }
 
     public boolean isPressed() {
-        for (int keycode : keycodes) {
-            if (Gdx.input.isKeyPressed(keycode)) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(keycodes).anyMatch(keycode -> Gdx.input.isKeyPressed(keycode));
     }
 }

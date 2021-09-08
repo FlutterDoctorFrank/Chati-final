@@ -39,8 +39,7 @@ public class UserInfoContainer extends Table {
 
     @Override
     public void act(float delta) {
-        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()
-                || Chati.CHATI.isRoomChanged()) {
+        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged() || Chati.CHATI.isRoomChanged()) {
             updateInfo();
         }
         super.act(delta);
