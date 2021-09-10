@@ -319,7 +319,7 @@ public class UserDatabaseTest {
         Assert.assertEquals(0, row);
     }
 
-    @Ignore
+    @Test
     public void addNotificationTest() {
         User test = this.account_database.createAccount("addNotif", "111");
         User requester = this.account_database.createAccount("friend_requester", "222");
@@ -345,7 +345,6 @@ public class UserDatabaseTest {
         String actual_user_id = null;
         String actual_owing_context_id = null;
         Timestamp actual_send_time = null;
-        String actual_message_key = null;
         String actual_notification_type = null;
         Boolean actual_is_read = null;
         Boolean actual_is_accepted = null;
@@ -364,9 +363,8 @@ public class UserDatabaseTest {
             if (notif_row == 1) {
                 res.first();
                 actual_user_id = res.getString("USER_ID");
-                actual_owing_context_id = res.getString("OWING_CONTEXT_ID");
-                actual_send_time = res.getTimestamp("SEND_TIME");
-                actual_message_key = res.getString("MESSAGE_KEY");
+                actual_owing_context_id = res.getString("CONTEXT_ID");
+                actual_send_time = res.getTimestamp("TIMESTAMP");
                 actual_notification_type = res.getString("NOTIFICATION_TYPE");
                 actual_is_read = res.getBoolean("IS_READ");
                 actual_is_accepted = res.getBoolean("IS_ACCEPTED");
@@ -381,9 +379,7 @@ public class UserDatabaseTest {
 
         Assert.assertEquals(test.getUserId().toString(), actual_user_id);
         Assert.assertEquals(test_notif.getContext().getContextId().getId(), actual_owing_context_id);
-        long timestamp = test_notif.getTimestamp().toInstant(ZoneOffset.of("+8")).toEpochMilli();
-        Assert.assertEquals(new Timestamp(timestamp), actual_send_time);
-        Assert.assertEquals(test_notif.getMessageBundle().getMessageKey(), actual_message_key);
+        Assert.assertEquals(test_notif.getTimestamp(), actual_send_time.toLocalDateTime());
         Assert.assertEquals(test_notif.getNotificationType().name(), actual_notification_type);
         Assert.assertFalse(actual_is_read);
         Assert.assertFalse(actual_is_accepted);
@@ -394,8 +390,7 @@ public class UserDatabaseTest {
         actual_user_id = null;
         actual_owing_context_id = null;
         actual_send_time = null;
-        actual_message_key = null;
-        timestamp = 0;
+
 
         String actual_requester_id = null;
         String actual_user_message = null;
@@ -412,11 +407,10 @@ public class UserDatabaseTest {
             if (request_row == 1) {
                 res.first();
                 actual_user_id = res.getString("USER_ID");
-                actual_owing_context_id = res.getString("OWING_CONTEXT_ID");
-                actual_send_time = res.getTimestamp("SEND_TIME");
-                actual_message_key = res.getString("MESSAGE_KEY");
-                actual_requester_id = res.getString("ARGUMENT1");
-                actual_user_message = res.getString("ARGUMENT2");
+                actual_owing_context_id = res.getString("CONTEXT_ID");
+                actual_send_time = res.getTimestamp("TIMESTAMP");
+                actual_requester_id = res.getString("ARGUMENT_1");
+                actual_user_message = res.getString("ARGUMENT_2");
             } else {
                 System.out.println("wrong");
             }
@@ -427,14 +421,12 @@ public class UserDatabaseTest {
 
         Assert.assertEquals(test.getUserId().toString(), actual_user_id);
         Assert.assertEquals(test_friendRequest.getContext().getContextId().getId(), actual_owing_context_id);
-        timestamp = test_friendRequest.getTimestamp().toInstant(ZoneOffset.of("+8")).toEpochMilli();
-        Assert.assertEquals(new Timestamp(timestamp), actual_send_time);
-        Assert.assertEquals(test_friendRequest.getMessageBundle().getMessageKey(), actual_message_key);
-        Assert.assertEquals(test_friendRequest.getMessageBundle().getArguments()[0].toString(), actual_requester_id);
+        Assert.assertEquals(test_friendRequest.getTimestamp(), actual_send_time.toLocalDateTime());
+        Assert.assertEquals(test_friendRequest.getMessageBundle().getArguments()[0].toString(), "friend_requester");
         Assert.assertEquals(test_friendRequest.getMessageBundle().getArguments()[1].toString(), actual_user_message);
     }
 
-    @Ignore
+    @Test
     public void removeNotificationTest() {
         User test = this.account_database.createAccount("removeNotif", "111");
         Context test_context = GlobalContext.getInstance();
@@ -487,7 +479,7 @@ public class UserDatabaseTest {
 
     }
 
-    @Ignore
+    @Test
     public void updateNotificationTest() {
         User test = this.account_database.createAccount("updateNotif", "111");
         User requester = this.account_database.createAccount("update_requester", "222");

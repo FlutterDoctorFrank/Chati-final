@@ -1,21 +1,35 @@
 package model.database;
 
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.headless.HeadlessApplication;
+import com.badlogic.gdx.backends.headless.mock.graphics.MockGL20;
+import controller.network.ClientSender;
+import model.MessageBundle;
 import model.context.Context;
+import model.context.ContextID;
 import model.context.global.GlobalContext;
+import model.context.spatial.AreaReservation;
+import model.context.spatial.ContextMap;
+import model.context.spatial.Room;
+import model.context.spatial.World;
+import model.notification.AreaManagingRequest;
+import model.notification.FriendRequest;
+import model.notification.Notification;
 import model.role.ContextRole;
 import model.role.Role;
 import model.user.User;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import model.user.account.UserAccountManager;
+import org.jetbrains.annotations.NotNull;
+import org.junit.*;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,6 +39,21 @@ public class UserAccountManagerDatabaseTest {
     private IUserAccountManagerDatabase database;
     private IUserDatabase user_database;
     private static final String dbURL = "jdbc:derby:ChatiDB;create=true";
+
+    @BeforeClass
+    public static void openGdx() {
+        new HeadlessApplication(new ApplicationAdapter() {
+            @Override
+            public void create() {
+                Gdx.gl = new MockGL20();
+            }
+        });
+    }
+
+    @AfterClass
+    public static void closeGdx() {
+        Gdx.app.exit();
+    }
 
     @Before
     public void setUp(){
@@ -381,12 +410,21 @@ public class UserAccountManagerDatabaseTest {
         //addIgnore
         this.user_database.addIgnoredUser(test1, test3);
 
+        //addNotification
+        //verschiedene NotificationType
+        MessageBundle notif_messageBundle = new MessageBundle("notification");
+        //Notification
+        Notification test_notif = new Notification(test1, test_context, notif_messageBundle);
+        this.user_database.addNotification(test1, test_notif);
+        //FriendRequest
+        FriendRequest test_friendRequest = new FriendRequest(test1, "bitte bitte", test2);
+        this.user_database.addNotification(test1, test_friendRequest);
+
         Map<UUID, User> real_users = this.database.getUsers();
         Assert.assertEquals(3, real_users.size());
         User real1 = real_users.get(test1.getUserId());
         User real2 = real_users.get(test2.getUserId());
         User real3 = real_users.get(test3.getUserId());
-
 
         Assert.assertEquals(test1.getUserId(), real1.getUserId() );
         Assert.assertEquals(test2.getUserId(), real2.getUserId() );
@@ -406,11 +444,88 @@ public class UserAccountManagerDatabaseTest {
         //Ignore
         Assert.assertEquals(1, real1.getIgnoredUsers().size());
         Assert.assertEquals("ignore", real1.getIgnoredUsers().get(test3.getUserId()).getUsername());
-        //System.out.println(real1.getUserId());
-
-        //System.out.println(real1.getGlobalRoles().getRoles().size());
+        //Notification
+        Assert.assertEquals(2, real1.getGlobalNotifications().size());
 
     }
+
+    class TestClientSender implements ClientSender {
+        public void send(SendAction sendAction, Object object) {
+
+        }
+    }
+
+    private World setTestWorld() {
+
+        try {
+            UserAccountManager.getInstance().registerUser("performer", "22222");
+            User performer = UserAccountManager.getInstance().getUser("performer");
+            performer.addRole(GlobalContext.getInstance(), Role.OWNER);
+            if (GlobalContext.getInstance().getIWorlds().size() == 0) {
+                GlobalContext.getInstance().createWorld(performer.getUserId(), "test_world",
+                        ContextMap.PUBLIC_ROOM_MAP);
+            }
+            ContextID newworld_id = GlobalContext.getInstance().getIWorlds().keySet().iterator().next();
+            World result = GlobalContext.getInstance().getWorld(newworld_id);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Test
+    public void getUsersWithAreaManRequestTest() {
+        User test_reserver = null;
+        User area_owner = null;
+        Room test_area = null;
+        LocalDateTime test_to = null;
+        LocalDateTime test_from = null;
+        World test_world = null;
+        TestClientSender clientSender = new TestClientSender();
+        try {
+            UserAccountManager.getInstance().registerUser("test_reserver", "11111");
+            test_reserver = UserAccountManager.getInstance().loginUser("test_reserver", "11111",
+                    clientSender);
+
+            UserAccountManager.getInstance().registerUser("area_owner", "22222");
+            area_owner = UserAccountManager.getInstance().getUser("area_owner");
+            test_world = setTestWorld();
+            test_reserver.joinWorld(test_world.getContextId());
+            test_area = new Room("test_room", test_world, ContextMap.PUBLIC_ROOM_MAP, "11111");
+            test_world.addPrivateRoom(test_area);
+            test_from = LocalDateTime.now();
+            test_to = test_from.plusDays(1);
+            area_owner.addRole(test_area, Role.ROOM_OWNER);
+            AreaManagingRequest test_aremanage = new AreaManagingRequest(area_owner, test_reserver,
+                    test_area, test_from, test_to);
+            this.user_database.addNotification(area_owner, test_aremanage);
+
+            Map<UUID, User> real_users = this.database.getUsers();
+            User real = real_users.get(area_owner.getUserId());
+            real = UserAccountManager.getInstance().loginUser("area_owner", "22222",
+                    clientSender);
+            real.joinWorld(test_world.getContextId());
+            Assert.assertEquals(0, real.getGlobalNotifications().size());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void dropTable(@NotNull final String tableName){
+        try {
+            Connection con = DriverManager.getConnection(dbURL);
+            Statement st = con.createStatement();
+            st.executeUpdate("DROP TABLE " + tableName);
+            st.close();
+            con.close();
+        } catch (SQLException e) {
+            System.out.print("Fehler in dropTable: " + e);
+        }
+    }
+
 
 
 

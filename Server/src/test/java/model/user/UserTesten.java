@@ -149,7 +149,6 @@ public class UserTesten {
             this.userAccountManager.loginUser("join", "11111", testClientSender);
             this.user = userAccountManager.getUser("join");
             Assert.assertEquals(Status.ONLINE, this.user.getStatus());
-            Thread.sleep(1500);
             this.user.joinWorld(test_world.getContextId());
 
             Assert.assertEquals("test_world", this.user.getWorld().getContextName());

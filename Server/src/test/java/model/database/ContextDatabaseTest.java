@@ -6,12 +6,10 @@ import com.badlogic.gdx.backends.headless.mock.graphics.MockGL20;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
-import model.context.spatial.Area;
-import model.context.spatial.AreaReservation;
-import model.context.spatial.ContextMap;
-import model.context.spatial.World;
+import model.context.spatial.*;
 import model.role.Role;
 import model.user.User;
+import model.user.account.UserAccountManager;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -233,8 +231,15 @@ public class ContextDatabaseTest {
     @Test
     public void addBannedUserTest() {
         World test_world = new World("test_world", ContextMap.PUBLIC_ROOM_MAP);
-        User test = this.account_database.createAccount("addBanned", "111");
-        this.context_database.addBannedUser(test, test_world);
+        User test = null;
+        try {
+            UserAccountManager.getInstance().registerUser("addBanned", "11111");
+            test = UserAccountManager.getInstance().getUser("addBanned");
+            this.context_database.addBannedUser(test, test_world);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         try {
             Connection con = DriverManager.getConnection(dbURL);
@@ -249,11 +254,13 @@ public class ContextDatabaseTest {
             res.first();
             String real_user_id = res.getString("USER_ID");
             Assert.assertEquals(test.getUserId().toString(), real_user_id);
+            this.context_database.getBannedUsers(test_world);
+            Assert.assertEquals(1, test_world.getBannedUsers().size());
 
             st.close();
             con.close();
-        } catch (SQLException e) {
-            System.out.print(e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
 
@@ -311,12 +318,25 @@ public class ContextDatabaseTest {
 
     @Test
     public void addAreaReservationTest() {
-        User test_reserver = this.account_database.createAccount("test_reserver", "111");
-        Area test_area = new World("test_world", ContextMap.PUBLIC_ROOM_MAP);
-        LocalDateTime test_from = LocalDateTime.now();
-        LocalDateTime test_to = test_from.plusDays(1);
-        AreaReservation test_reservation = new AreaReservation(test_reserver, test_area, test_from, test_to);
-        this.context_database.addAreaReservation(test_reservation);
+        User test_reserver = null;
+        Room test_area = null;
+        LocalDateTime test_to = null;
+        LocalDateTime test_from = null;
+        World test_world = null;
+        try {
+            UserAccountManager.getInstance().registerUser("test_reserver", "11111");
+            test_reserver = UserAccountManager.getInstance().getUser("test_reserver");
+            test_world = new World("test_world", ContextMap.PUBLIC_ROOM_MAP);
+            test_area = new Room("test_room", test_world, ContextMap.PUBLIC_ROOM_MAP, "11111");
+            test_world.addPrivateRoom(test_area);
+            test_from = LocalDateTime.now();
+            test_to = test_from.plusDays(1);
+            AreaReservation test_reservation = new AreaReservation(test_reserver, test_area, test_from, test_to);
+            this.context_database.addAreaReservation(test_reservation);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         //Suche direkt in Datenbank
         try {
@@ -337,6 +357,7 @@ public class ContextDatabaseTest {
             Assert.assertEquals(test_area.getContextId().getId(), real_context_id);
             Assert.assertEquals(test_from, real_from);
             Assert.assertEquals(test_to, real_to);
+            this.context_database.getAreaReservations(test_world);
 
             st.close();
             con.close();

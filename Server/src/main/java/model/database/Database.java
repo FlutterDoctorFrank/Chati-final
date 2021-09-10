@@ -1087,7 +1087,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             if (!set.contains("NOTIFICATION")) {
                 String sql = "CREATE TABLE NOTIFICATION("
                         + "NOTIFICATION_ID CHAR(36) not null unique,"
-                        + "NOTIFICATION_TYPE VARCHAR(16) not null,"
+                        + "NOTIFICATION_TYPE VARCHAR(36) not null,"
                         + "CONTEXT_ID VARCHAR(128) not null,"
                         + "USER_ID CHAR(36) not null,"
                         + "TIMESTAMP TIMESTAMP not null,"
