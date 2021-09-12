@@ -56,7 +56,7 @@ public class Expanse {
     /**
      * Überprüft, ob die gegebene Koordinate in der gegebenen Richtung eine maximale Distanz zur räumlichen
      * Ausdehnung eines Kontextes hat.
-     * @param direction Zu überprüfende Richtung
+     * @param direction Zu überprüfende Richtung.
      * @param posX Zu überprüfende X-Koordinate.
      * @param posY Zu überprüfende Y-Koordinate.
      * @param distance Maximale Distanz.

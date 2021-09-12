@@ -76,7 +76,6 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
     public void send(@NotNull final Packet<?> packet) {
         if (this.manager.getEndPoint().isConnected()) {
-
             this.manager.getEndPoint().sendTCP(packet);
 
             if (!(packet instanceof PacketAvatarMove || packet instanceof PacketAudioMessage)) {
@@ -342,8 +341,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
             switch (packet.getAction()) {
                 case REGISTER:
-                    this.manager.getView().registrationResponse(packet.isSuccess(),
-                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
+                    this.manager.getView().registrationResponse(packet.isSuccess(), packet.getMessage());
                     break;
 
                 case LOGIN:
@@ -367,8 +365,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                                 Status.ONLINE, packet.getAvatar());
                     }
 
-                    this.manager.getView().loginResponse(packet.isSuccess(),
-                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
+                    this.manager.getView().loginResponse(packet.isSuccess(), packet.getMessage());
                     break;
             }
         } else {
@@ -388,13 +385,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         this.getIntern().setAvatar(packet.getAvatar());
                     }
 
-                    this.manager.getView().avatarChangeResponse(packet.isSuccess(),
-                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
+                    this.manager.getView().avatarChangeResponse(packet.isSuccess(), packet.getMessage());
                     break;
 
                 case CHANGE_PASSWORD:
-                    this.manager.getView().passwordChangeResponse(packet.isSuccess(),
-                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
+                    this.manager.getView().passwordChangeResponse(packet.isSuccess(), packet.getMessage());
                     break;
 
                 case LOGOUT:
@@ -408,8 +403,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                     this.manager.getUserManager().logout();
                     this.worldId = null;
                     this.userId = null;
-                    this.manager.getView().deleteAccountResponse(packet.isSuccess(),
-                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
+                    this.manager.getView().deleteAccountResponse(packet.isSuccess(), packet.getMessage());
                     break;
             }
         }
@@ -463,18 +457,15 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         this.worldId = packet.getContextId();
                     }
 
-                    this.manager.getView().joinWorldResponse(packet.isSuccess(),
-                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
+                    this.manager.getView().joinWorldResponse(packet.isSuccess(), packet.getMessage());
                     break;
 
                 case CREATE:
-                    this.manager.getView().createWorldResponse(packet.isSuccess(),
-                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
+                    this.manager.getView().createWorldResponse(packet.isSuccess(), packet.getMessage());
                     break;
 
                 case DELETE:
-                    this.manager.getView().deleteWorldResponse(packet.isSuccess(),
-                            packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
+                    this.manager.getView().deleteWorldResponse(packet.isSuccess(), packet.getMessage());
                     break;
             }
         }

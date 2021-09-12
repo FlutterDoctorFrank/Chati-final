@@ -221,8 +221,8 @@ public class PacketProfileAction implements Packet<PacketListener> {
     }
 
     /**
-     * Gibt den Nachrichten-Schlüssel einer Fehlermeldung zurück.
-     * @return den Schlüssel der Fehlernachricht, oder null.
+     * Gibt die Nachrichten einer Fehlermeldung zurück.
+     * @return die Fehlernachricht, oder null.
      */
     public @Nullable MessageBundle getMessage() {
         return this.message;

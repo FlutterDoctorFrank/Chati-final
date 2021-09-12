@@ -15,6 +15,9 @@ import model.user.User;
 import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
+/**
+ * Eine Abstrakte Klasse, welche von den Objekten erweitert wird.
+ */
 public abstract class Interactable extends Area implements IInteractable {
 
     /** Die maximale Distanz, über die eine Interaktion erfolgen darf. */

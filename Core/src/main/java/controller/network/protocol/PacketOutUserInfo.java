@@ -193,6 +193,10 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
             return this.avatar;
         }
 
+        /**
+         * Setzt den Avatar des Benutzers.
+         * @param avatar der Avatar des Benutzers.
+         */
         public void setAvatar(@NotNull final Avatar avatar) {
             this.avatar = avatar;
         }
@@ -205,6 +209,10 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
             return this.status != null ? this.status : Status.OFFLINE;
         }
 
+        /**
+         * Setzt den Online-Status des Benutzers.
+         * @param status der aktuelle Status des Benutzers.
+         */
         public void setStatus(@NotNull final Status status) {
             this.status = status;
         }
@@ -217,6 +225,10 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
             return this.flags;
         }
 
+        /**
+         * Fügt eine zusätzliche Flag zum Benutzer hinzu.
+         * @param flag die hinzuzufügende Flag.
+         */
         public void addFlag(@NotNull final Flag flag) {
             this.flags.add(flag);
         }
@@ -229,6 +241,10 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
             return this.inPrivateRoom;
         }
 
+        /**
+         * Setzt, ob sich der Benutzer in einem privaten Raum befindet.
+         * @param inPrivateRoom true, wenn der Benutzer in einem privaten Raum ist, ansonsten false.
+         */
         public void setInPrivateRoom(final boolean inPrivateRoom) {
             this.inPrivateRoom = inPrivateRoom;
         }

@@ -12,7 +12,7 @@ import java.util.UUID;
  * <p>
  *     Das Paket wird von einem Client erzeugt und an den Server gesendet.
  *     Das Paket teilt dem Server mit, dass der Benutzer eine Benachrichtigung gelöscht hat oder auf eine Anfrage
- *     reagiert hat.
+ *     reagiert hat. Nach der Verarbeitung des Pakets vom Server erhält der Client das Paket als Bestätigung.
  * </p>
  */
 public class PacketNotificationResponse implements Packet<PacketListener> {

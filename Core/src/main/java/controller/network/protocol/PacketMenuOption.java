@@ -126,8 +126,8 @@ public class PacketMenuOption implements Packet<PacketListener> {
     }
 
     /**
-     * Gibt den Nachrichten-Schlüssel einer Fehlermeldung zurück, falls ein Fehler aufgetreten ist.
-     * @return den Nachrichten-Schlüssel der Meldung.
+     * Gibt die Nachrichten einer Fehlermeldung zurück, falls ein Fehler aufgetreten ist.
+     * @return die Nachrichten der Meldung oder null.
      */
     public @Nullable MessageBundle getMessage() {
         return this.message;
@@ -135,7 +135,7 @@ public class PacketMenuOption implements Packet<PacketListener> {
 
     /**
      * Gibt zurück, ob die Menü-Option erfolgreich war.
-     * @return true, wenn die Menü-Option erfolgreich war, ansonsten false
+     * @return true, wenn die Menü-Option erfolgreich war, ansonsten false.
      */
     public boolean isSuccess() {
         return this.success;

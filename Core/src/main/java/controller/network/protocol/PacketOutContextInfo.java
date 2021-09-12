@@ -22,8 +22,8 @@ import java.util.UUID;
 public class PacketOutContextInfo implements Packet<PacketListenerOut> {
 
     private ContextID contextId;
-    private UUID[] mutes;
     private ContextMusic music;
+    private UUID[] mutes;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -88,18 +88,18 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
     }
 
     /**
-     * Gibt die Benutzer zurück, die in diesem Kontext stumm geschaltet sind.
-     * @return die stumm geschalteten Benutzer.
-     */
-    public @NotNull UUID[] getMutes() {
-        return mutes;
-    }
-
-    /**
      * Gibt die Musik, die innerhalb des Kontexts abgespielt werden soll, zurück.
      * @return die neue Musik im Kontext.
      */
     public @Nullable ContextMusic getMusic() {
         return this.music;
+    }
+
+    /**
+     * Gibt die Benutzer zurück, die in diesem Kontext stumm geschaltet sind.
+     * @return die stumm geschalteten Benutzer.
+     */
+    public @NotNull UUID[] getMutes() {
+        return mutes;
     }
 }

@@ -221,6 +221,7 @@ public class MapUtils {
 
     /**
      * Ermittelt eine Location anhand einer MapProperties.
+     * @param room Übergeordneter Raum der zu erzeugenden Location.
      * @param properties Die Properties eines Tiled Map Objects.
      * @return Location, die in den Properties enthalten ist.
      */

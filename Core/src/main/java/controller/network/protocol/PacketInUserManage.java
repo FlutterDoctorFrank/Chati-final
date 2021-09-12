@@ -96,7 +96,7 @@ public class PacketInUserManage implements Packet<PacketListenerIn> {
      * <p><i>
      *     Wird nur bei den Aktionen {@link Action#BAN_USER} und {@link Action#REPORT_USER} genutzt.
      * </i></p>
-     * @return die zur Aktion gehörigen Argumente, oder null.
+     * @return die zur Aktion gehörigen Argumente.
      */
     public @NotNull String[] getArguments() {
         return this.arguments;

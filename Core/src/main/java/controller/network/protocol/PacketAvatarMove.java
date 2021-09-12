@@ -131,7 +131,7 @@ public class PacketAvatarMove implements Packet<PacketListener> {
     }
 
     /**
-     * Gibt die Richtung, in die der Avatar schaut, an.
+     * Gibt die Richtung, in die der Avatar schaut, zurück.
      * @return die Richtung des Avatars.
      */
     public @Nullable Direction getDirection() {

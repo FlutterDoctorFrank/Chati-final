@@ -176,8 +176,8 @@ public class PacketWorldAction implements Packet<PacketListener> {
     }
 
     /**
-     * Gibt den Nachrichten-Schlüssel einer Fehlermeldung zurück, falls ein Fehler aufgetreten ist.
-     * @return den Nachrichten-Schlüssel der Meldung.
+     * Gibt die Nachrichten einer Fehlermeldung zurück, falls ein Fehler aufgetreten ist.
+     * @return die Nachrichten der Meldung.
      */
     public @Nullable MessageBundle getMessage() {
         return this.message;

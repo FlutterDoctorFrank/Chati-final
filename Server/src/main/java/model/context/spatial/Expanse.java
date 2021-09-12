@@ -72,10 +72,18 @@ public class Expanse {
         return bottomLeft;
     }
 
+    /**
+     * Gibt die gerundete Breite der räumlichen Ausdehnung zurück.
+     * @return die Breite der Ausdehnung.
+     */
     public int getWidth() {
         return Math.round(this.width);
     }
 
+    /**
+     * Gibt die gerundete Höhe der räumlichen Ausdehnung zurück.
+     * @return die Höhe der Ausdehnung.
+     */
     public int getHeight() {
         return Math.round(this.height);
     }

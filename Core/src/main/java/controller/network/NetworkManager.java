@@ -90,7 +90,7 @@ public abstract class NetworkManager<T extends EndPoint> extends Listener {
 
     /**
      * Setzt den Hostnamen bzw. die IP-Adresse, die von dem Netzwerkmanager genutzt wird.
-     * @param host die Hostname oder die IP-Adresse.
+     * @param host der Hostname oder die IP-Adresse.
      */
     public void setHost(@NotNull final String host) {
         this.host = host;

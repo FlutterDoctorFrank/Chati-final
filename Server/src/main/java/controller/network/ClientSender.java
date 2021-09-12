@@ -409,7 +409,7 @@ public interface ClientSender {
         },
 
         /**
-         * Information, dass eine neue Benachrichtigung gesendet werden soll.
+         * Information, dass eine Benachrichtigung gelöscht werden soll.
          * <p>
          *     Erwartet als Objekt die Schnittstelle: {@link INotification}
          * </p>

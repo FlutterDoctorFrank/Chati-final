@@ -106,8 +106,8 @@ public class PacketAudioMessage implements Packet<PacketListener> {
     }
 
     /**
-     * Gibt die eingesprochenen Sprachdaten des Benutzers zurück.
-     * @return die Sprachdaten des Benutzers.
+     * Gibt die eingesprochenen Sprachdaten des Benutzers oder die Audiodaten eines Musikstückes zurück.
+     * @return die Sprachdaten des Benutzers oder die Audiodaten.
      */
     public byte[] getAudioData() {
         return this.audioData;

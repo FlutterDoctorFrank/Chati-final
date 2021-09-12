@@ -77,7 +77,7 @@ public class PacketOutContextRole implements Packet<PacketListenerOut> {
 
     /**
      * Gibt die Kontext-ID des geltenden Kontexts der Rollen zurück.
-     * @return die ID des Kontexts
+     * @return die ID des Kontexts.
      */
     public @NotNull ContextID getContextId() {
         return this.contextId;
