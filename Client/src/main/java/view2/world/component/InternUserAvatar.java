@@ -33,7 +33,7 @@ public class InternUserAvatar extends UserAvatar {
     }
 
     @Override
-    public void update() {
+    protected void update() {
         if (user.isTeleporting()) {
             isTeleporting = true;
             teleport();

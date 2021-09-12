@@ -83,20 +83,22 @@ public class WorldScreen extends ChatiScreen {
             if (Chati.CHATI.isUserInfoChanged()) {
                 loadExternUserAvatars();
             }
-            externUserAvatars.values().forEach(UserAvatar::update);
-            internUserAvatar.update();
 
             tiledMapRenderer.render(LAYERS_RENDER_BEFORE_AVATAR);
+
             Chati.CHATI.getSpriteBatch().setProjectionMatrix(camera.combined);
             Chati.CHATI.getSpriteBatch().begin();
             externUserAvatars.values().forEach(avatar -> avatar.draw(Chati.CHATI.getSpriteBatch(), delta));
             internUserAvatar.draw(Chati.CHATI.getSpriteBatch(), delta);
             Chati.CHATI.getSpriteBatch().end();
+
             tiledMapRenderer.render(LAYERS_RENDER_AFTER_AVATAR);
+
             Chati.CHATI.getSpriteBatch().begin();
             externUserAvatars.values().forEach(avatar -> avatar.drawHead(Chati.CHATI.getSpriteBatch(), delta));
             internUserAvatar.drawHead(Chati.CHATI.getSpriteBatch(), delta);
             Chati.CHATI.getSpriteBatch().end();
+
             //debugRenderer.render(world, camera.combined);
 
             world.step(1 / WORLD_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);

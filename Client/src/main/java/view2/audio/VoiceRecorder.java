@@ -11,9 +11,7 @@ public class VoiceRecorder {
     private static final long STOP_SENDING_DELAY = 250;
 
     private final AudioRecorder recorder;
-
     private boolean isRunning;
-
     private boolean isRecording;
 
     public VoiceRecorder() {
@@ -35,6 +33,9 @@ public class VoiceRecorder {
                     // Warte solange nicht gesendet werden soll.
                     while (!isRecording) {
                         try {
+                            if (!isRunning) {
+                                return;
+                            }
                             wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -60,8 +61,9 @@ public class VoiceRecorder {
         recordAndSendThread.start();
     }
 
-    public void stop() {
+    public synchronized void stop() {
         isRunning = false;
+        notifyAll();
     }
 
     public synchronized void startRecording() {

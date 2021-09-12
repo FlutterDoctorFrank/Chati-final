@@ -54,7 +54,8 @@ public class AudioManager {
                     audioConsumer.start();
                 } else if ((voiceRecorder.isRunning() || audioConsumer.isRunning())
                         && (internUser == null || !internUser.isInCurrentWorld())) {
-                    voiceRecorder.stopRecording();
+                    voiceRecorder.stop();
+                    audioConsumer.stop();
                 }
             }
 
@@ -140,21 +141,6 @@ public class AudioManager {
     }
 
     private void playMusic(ContextMusic contextMusic) {
-        /*
-        if (contextMusic != null) {
-            currentMusic = Gdx.audio.newMusic(Gdx.files.internal(contextMusic.getPath()));
-            currentMusic.setLooping(false);
-            currentMusic.setOnCompletionListener(music ->
-                    playMusic(ContextMusic.values()[((contextMusic.ordinal() + 1) % ContextMusic.values().length)]));
-            setMusicVolume();
-            currentMusic.play();
-        } else {
-            if (currentMusic != null) {
-                currentMusic.dispose();
-                currentMusic = null;
-            }
-        }
-         */
     }
 
     public static byte[] toByte(short[] shorts, boolean bigEndian) {

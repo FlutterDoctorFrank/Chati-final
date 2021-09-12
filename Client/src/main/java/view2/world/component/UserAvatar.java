@@ -70,6 +70,7 @@ public class UserAvatar extends Sprite {
 
     @Override
     public void draw(Batch batch, float delta) {
+        update();
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getKeyFrame(delta));
         super.draw(batch);
@@ -125,7 +126,7 @@ public class UserAvatar extends Sprite {
         return previousDirection;
     }
 
-    public void update() {
+    protected void update() {
         ILocationView location = user.getLocation();
         if (location == null) {
             return;

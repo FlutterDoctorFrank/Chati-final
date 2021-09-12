@@ -21,16 +21,16 @@ public class AudioConsumer {
     private static final int MIN_PACKETS = 6;
     private static final int MAX_PACKETS = 30;
 
+    private final AudioDevice player;
     private final Map<IUserView, ProducerQueue> voiceDataBuffer;
     private final ProducerQueue musicStream;
-    private final AudioDevice player;
 
     private boolean isRunning;
 
     public AudioConsumer() {
+        this.player = Gdx.audio.newAudioDevice(AudioManager.SAMPLE_RATE, AudioManager.MONO);
         this.voiceDataBuffer = new ConcurrentHashMap<>();
         this.musicStream = new ProducerQueue();
-        this.player = Gdx.audio.newAudioDevice(AudioManager.SAMPLE_RATE, AudioManager.MONO);
     }
 
     public void start() {
@@ -46,6 +46,9 @@ public class AudioConsumer {
                     // Warte, solange keine Daten vorhanden sind.
                     while (voiceDataBuffer.isEmpty() && !musicStream.isReady()) {
                         try {
+                            if (!isRunning) {
+                                return;
+                            }
                             wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -77,13 +80,16 @@ public class AudioConsumer {
                 player.writeSamples(mixedData, 0, mixedData.length);
                 voiceDataBuffer.values().removeIf(Predicate.not(ProducerQueue::hasData));
             }
+            this.voiceDataBuffer.clear();
+            this.musicStream.audioDataQueue.clear();
         });
         mixAndPlaybackThread.setDaemon(true);
         mixAndPlaybackThread.start();
     }
 
-    public void stop() {
+    public synchronized void stop() {
         isRunning = false;
+        notifyAll();
     }
 
     public boolean isRunning() {
