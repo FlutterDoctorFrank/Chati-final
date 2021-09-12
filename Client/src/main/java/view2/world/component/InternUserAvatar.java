@@ -96,8 +96,8 @@ public class InternUserAvatar extends UserAvatar {
         }
         if (!isTeleporting && user.isMovable() && (!oldPosition.epsilonEquals(getPosition())
                 || currentDirection != user.getLocation().getDirection())) {
-            Chati.CHATI.send(ServerSender.SendAction.AVATAR_MOVE,
-                    getPosition().x * WorldCamera.PPM, getPosition().y * WorldCamera.PPM, isSprinting, currentDirection);
+            Chati.CHATI.send(ServerSender.SendAction.AVATAR_MOVE, WorldCamera.scaleFromUnit(getPosition().x),
+                    WorldCamera.scaleFromUnit(getPosition().y), isSprinting, currentDirection);
         }
     }
 

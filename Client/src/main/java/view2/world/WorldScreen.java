@@ -60,8 +60,9 @@ public class WorldScreen extends ChatiScreen {
     public WorldScreen() {
         this.worldInputProcessor = new WorldInputProcessor();
         this.camera = new WorldCamera();
-        this.viewport = new FitViewport(Gdx.graphics.getWidth() / WorldCamera.PPM, Gdx.graphics.getHeight() / WorldCamera.PPM, camera);
-        this.tiledMapRenderer = new OrthogonalTiledMapRenderer(null, 1 / WorldCamera.PPM);
+        this.viewport = new FitViewport(WorldCamera.scaleToUnit(Gdx.graphics.getWidth()),
+                WorldCamera.scaleToUnit(Gdx.graphics.getHeight()), camera);
+        this.tiledMapRenderer = new OrthogonalTiledMapRenderer(null, WorldCamera.scaleToUnit(1));
         //this.debugRenderer = new Box2DDebugRenderer();
         this.world = new World(new Vector2(0, 0), true);
         this.world.setContactListener(new WorldContactListener());

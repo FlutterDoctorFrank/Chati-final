@@ -49,7 +49,8 @@ public class UserAvatar extends Sprite {
         fixtureDef.filter.categoryBits = WorldScreen.USER_BIT;
         fixtureDef.filter.maskBits = 0;
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox((AVATAR_SIZE - 1) / WorldCamera.PPM / 2, (AVATAR_SIZE - 1) / WorldCamera.PPM / 2);
+        shape.setAsBox(WorldCamera.scaleToUnit(AVATAR_SIZE - 1) / 2,
+                WorldCamera.scaleToUnit(AVATAR_SIZE - 1) / 2);
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
         body.setUserData(ContactType.USER);
@@ -63,7 +64,7 @@ public class UserAvatar extends Sprite {
         avatarRunLeft = new Animation<>(FRAME_DURATION, Chati.CHATI.getRegions(avatarPath + "_move_left"));
         avatarRunDown = new Animation<>(FRAME_DURATION, Chati.CHATI.getRegions(avatarPath + "_move_down"));
         avatarRunRight = new Animation<>(FRAME_DURATION, Chati.CHATI.getRegions(avatarPath + "_move_right"));
-        setBounds(0, 0, AVATAR_SIZE / WorldCamera.PPM, AVATAR_SIZE / WorldCamera.PPM);
+        setBounds(0, 0, WorldCamera.scaleToUnit(AVATAR_SIZE), WorldCamera.scaleToUnit(AVATAR_SIZE));
         setRegion(avatarStandDown);
         this.stateTime = 0;
     }
@@ -138,7 +139,8 @@ public class UserAvatar extends Sprite {
             if (user.isSprinting()) {
                 velocity *= SPRINT_VELOCITY_FACTOR;
             }
-            Vector2 destination = new Vector2(location.getPosX() / WorldCamera.PPM, location.getPosY() / WorldCamera.PPM);
+            Vector2 destination = new Vector2(WorldCamera.scaleToUnit(location.getPosX()),
+                    WorldCamera.scaleToUnit(location.getPosY()));
             if (body.getPosition().epsilonEquals(destination)) {
                 body.setLinearVelocity(0, 0);
             } else {
@@ -158,7 +160,8 @@ public class UserAvatar extends Sprite {
         if (location == null) {
             return;
         }
-        Vector2 newPosition = new Vector2(location.getPosX() / WorldCamera.PPM, location.getPosY() / WorldCamera.PPM);
+        Vector2 newPosition = new Vector2(WorldCamera.scaleToUnit(location.getPosX()),
+                WorldCamera.scaleToUnit(location.getPosY()));
         body.setTransform(newPosition, body.getAngle());
         body.setAwake(true);
         currentDirection = location.getDirection();
@@ -197,8 +200,8 @@ public class UserAvatar extends Sprite {
             if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isShowNamesPressed()
                     || Chati.CHATI.getPreferences().getShowNamesInWorld()) {
                 setPosition(body.getPosition().x, body.getPosition().y + UserAvatar.this.getHeight() +
-                        SPACING / WorldCamera.PPM);
-                setScale(Chati.CHATI.getWorldScreen().getCamera().zoom / WorldCamera.PPM);
+                        WorldCamera.scaleToUnit(SPACING));
+                setScale(WorldCamera.scaleToUnit(Chati.CHATI.getWorldScreen().getCamera().zoom));
                 if (user.canCommunicateWith()) {
                     communicableIcon.setDrawable(Chati.CHATI.getDrawable("communicable_avatar"));
                 } else {

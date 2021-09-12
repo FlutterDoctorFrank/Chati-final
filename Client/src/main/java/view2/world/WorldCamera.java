@@ -8,12 +8,20 @@ import view2.Chati;
 
 public class WorldCamera extends OrthographicCamera {
 
-    public static final float PPM = 10;
+    private static final float PPM = 10;
 
     private static final float DEFAULT_ZOOM = 0.6f;
     private static final float MIN_ZOOM = 0.4f;
     private static final float MAX_ZOOM = 0.8f;
     private static final float ZOOM_STEP = 0.01f;
+
+    public static float scaleToUnit(float value) {
+        return value / PPM;
+    }
+
+    public static float scaleFromUnit(float value) {
+        return value * PPM;
+    }
 
     public WorldCamera() {
         this.zoom = DEFAULT_ZOOM;
