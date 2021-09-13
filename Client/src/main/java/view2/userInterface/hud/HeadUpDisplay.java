@@ -45,7 +45,8 @@ public class HeadUpDisplay extends Table {
     private HeadUpDisplay() {
         this.chatWindow = new ChatWindow();
 
-        userListButton = new ChatiImageButton(Chati.CHATI.getDrawable("user_menu_closed"), Chati.CHATI.getDrawable("user_menu_open"));
+        userListButton = new ChatiImageButton(Chati.CHATI.getDrawable("user_menu_closed"),
+                Chati.CHATI.getDrawable("user_menu_open"));
         userListButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -112,6 +113,7 @@ public class HeadUpDisplay extends Table {
 
         microphoneButton = new ChatiImageButton(Chati.CHATI.getDrawable("microphone_off"),
                 Chati.CHATI.getDrawable("microphone_on"));
+        microphoneButton.setChecked(Chati.CHATI.getPreferences().isMicrophoneOn());
         microphoneButton.setVisible(false);
         microphoneButton.addListener(new ClickListener() {
             @Override
@@ -121,6 +123,7 @@ public class HeadUpDisplay extends Table {
         });
 
         soundButton = new ChatiImageButton(Chati.CHATI.getDrawable("sound_off"), Chati.CHATI.getDrawable("sound_on"));
+        soundButton.setChecked(Chati.CHATI.getPreferences().isSoundOn());
         soundButton.setVisible(false);
         soundButton.addListener(new ClickListener() {
             @Override

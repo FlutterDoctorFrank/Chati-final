@@ -25,6 +25,8 @@ public class AudioConsumer {
     private final Map<IUserView, ProducerQueue> voiceDataBuffer;
     private final ProducerQueue musicStream;
 
+    private float musicVolume;
+    private float voiceVolume;
     private boolean isRunning;
 
     public AudioConsumer() {
@@ -56,12 +58,31 @@ public class AudioConsumer {
                     }
                 }
 
+                setVoiceVolume();
+                setMusicVolume();
+
                 int[] temp = new int[AudioManager.BLOCK_SIZE];
                 // Mische das oberste Element aller Warteschlangen pro Producer zusammen, die bereit zum Abspielen sind.
                 final Set<ProducerQueue.AudioDataBlock> blocks = voiceDataBuffer.values().stream()
                         .filter(ProducerQueue::isReady)
                         .map(ProducerQueue::getBlock)
                         .collect(Collectors.toSet());
+                for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
+                    int j = i;
+                    blocks.forEach(block -> temp[j] += block.getAudioData()[j]);
+                    temp[j] *= voiceVolume;
+                }
+                if (musicStream.isReady()) {
+                    ProducerQueue.AudioDataBlock musicBlock = musicStream.getBlock();
+                    for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
+                        musicBlock.getAudioData()[i] *= musicVolume;
+                        temp[i] += musicBlock.getAudioData()[i];
+                    }
+                }
+                for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
+                    mixedData[i] = (short) temp[i];
+                }
+                /*
                 if (musicStream.isReady()) {
                     ProducerQueue.AudioDataBlock musicBlock = musicStream.getBlock();
                     for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
@@ -77,6 +98,7 @@ public class AudioConsumer {
                     blocks.forEach(block -> temp[j] += block.getAudioData()[j]);
                     mixedData[i] = (short) temp[i];
                 }
+                 */
                 player.writeSamples(mixedData, 0, mixedData.length);
                 voiceDataBuffer.values().removeIf(Predicate.not(ProducerQueue::hasData));
             }
@@ -94,12 +116,6 @@ public class AudioConsumer {
 
     public boolean isRunning() {
         return isRunning;
-    }
-
-    public void setVolume(float volume) {
-        if (player != null) {
-            player.setVolume(volume);
-        }
     }
 
     public boolean isPlayingMusic() {
@@ -133,6 +149,16 @@ public class AudioConsumer {
             musicStream.addData(timestamp, receivedData);
             notifyAll();
         }
+    }
+
+    private void setVoiceVolume() {
+        voiceVolume = (float) Math.sqrt(Chati.CHATI.getPreferences().getTotalVolume() *
+                Chati.CHATI.getPreferences().getVoiceVolume());
+    }
+
+    private void setMusicVolume() {
+        musicVolume = (float) (0.25 * Math.sqrt(Chati.CHATI.getPreferences().getTotalVolume() *
+                Chati.CHATI.getPreferences().getMusicVolume()));
     }
 
     private static class ProducerQueue {

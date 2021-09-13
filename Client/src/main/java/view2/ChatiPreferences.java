@@ -10,7 +10,7 @@ public class ChatiPreferences {
 
     public static final String DEFAULT_LANGUAGE = "german";
     public static final boolean DEFAULT_SHOW_NAMES_IN_WORLD = true;
-    public static final boolean DEFAULT_MICROPHONE_ON = true;
+    public static final boolean DEFAULT_MICROPHONE_ON = false;
     public static final boolean DEFAULT_SOUND_ON = true;
     public static final boolean DEFAULT_PUSH_TO_TALK = false;
     public static final float DEFAULT_TOTAL_VOLUME = 0.5f;

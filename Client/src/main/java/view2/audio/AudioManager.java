@@ -27,7 +27,6 @@ public class AudioManager {
     private Sound chatMessageSound;
     private Sound notificationSound;
     private Sound roomEnterSound;
-    private Music currentMusic;
 
     public AudioManager() {
         try {
@@ -39,11 +38,10 @@ public class AudioManager {
         //this.chatMessageSound = Gdx.audio.newSound(Gdx.files.internal(CHAT_MESSAGE_SOUND_PATH));
         //this.notificationSound = Gdx.audio.newSound(Gdx.files.internal(NOTIFICATION_SOUND_PATH));
         //this.roomEnterSound = Gdx.audio.newSound(Gdx.files.internal(ROOM_ENTER_SOUND_PATH));
-        this.currentMusic = null;
     }
 
     public void update() {
-        IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
+        IInternUserView internUser = Chati.CHATI.getInternUser();
 
         if (voiceRecorder != null && audioConsumer != null) {
             if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
@@ -69,10 +67,6 @@ public class AudioManager {
                     voiceRecorder.stopRecording();
                 }
             }
-        }
-
-        if (Chati.CHATI.isMusicChanged() && internUser != null) {
-            playMusic(internUser.getMusic());
         }
     }
 
@@ -138,9 +132,6 @@ public class AudioManager {
 
     public boolean isPlayingMusic() {
         return audioConsumer.isPlayingMusic();
-    }
-
-    private void playMusic(ContextMusic contextMusic) {
     }
 
     public static byte[] toByte(short[] shorts, boolean bigEndian) {
