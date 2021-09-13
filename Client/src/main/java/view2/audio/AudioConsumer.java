@@ -80,25 +80,9 @@ public class AudioConsumer {
                     }
                 }
                 for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
-                    mixedData[i] = (short) temp[i];
+                    mixedData[i] = (short) (temp[i] > Short.MAX_VALUE ? Short.MAX_VALUE :
+                            (temp[i] < Short.MIN_VALUE ? Short.MIN_VALUE : temp[i]));
                 }
-                /*
-                if (musicStream.isReady()) {
-                    ProducerQueue.AudioDataBlock musicBlock = musicStream.getBlock();
-                    for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
-                        musicBlock.getAudioData()[i] = (short) (0.05 * musicBlock.getAudioData()[i]);
-                    }
-                    blocks.add(musicBlock);
-                }
-                if (blocks.size() == 0) {
-                    continue;
-                }
-                for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
-                    int j = i;
-                    blocks.forEach(block -> temp[j] += block.getAudioData()[j]);
-                    mixedData[i] = (short) temp[i];
-                }
-                 */
                 player.writeSamples(mixedData, 0, mixedData.length);
                 voiceDataBuffer.values().removeIf(Predicate.not(ProducerQueue::hasData));
             }
@@ -152,13 +136,15 @@ public class AudioConsumer {
     }
 
     private void setVoiceVolume() {
-        voiceVolume = (float) Math.sqrt(Chati.CHATI.getPreferences().getTotalVolume() *
-                Chati.CHATI.getPreferences().getVoiceVolume());
+        voiceVolume = Chati.CHATI.getPreferences().isSoundOn() ?
+                (float) Math.sqrt(Chati.CHATI.getPreferences().getTotalVolume() *
+                Chati.CHATI.getPreferences().getVoiceVolume()) : 0;
     }
 
     private void setMusicVolume() {
-        musicVolume = (float) (0.25 * Math.sqrt(Chati.CHATI.getPreferences().getTotalVolume() *
-                Chati.CHATI.getPreferences().getMusicVolume()));
+        musicVolume = Chati.CHATI.getPreferences().isSoundOn() ?
+                (float) (0.25 * Math.sqrt(Chati.CHATI.getPreferences().getTotalVolume() *
+                Chati.CHATI.getPreferences().getMusicVolume())) : 0;
     }
 
     private static class ProducerQueue {

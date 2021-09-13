@@ -47,7 +47,6 @@ public class AudioManager {
             if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
                 if ((!voiceRecorder.isRunning() || !audioConsumer.isRunning())
                         && internUser != null && internUser.isInCurrentWorld()) {
-                    setVoiceVolume();
                     voiceRecorder.start();
                     audioConsumer.start();
                 } else if ((voiceRecorder.isRunning() || audioConsumer.isRunning())
@@ -68,26 +67,6 @@ public class AudioManager {
                 }
             }
         }
-    }
-
-    public void setVoiceVolume() {
-        // TODO
-        /*
-        if (audioConsumer != null) {
-            float volume = (float) Math.sqrt(Settings.getTotalVolume() * Settings.getVoiceVolume());
-            audioConsumer.setVolume(volume);
-        }
-         */
-    }
-
-    public void setMusicVolume() {
-        // TODO
-        /*
-        if (currentMusic != null) {
-            float volume = (float) Math.sqrt(Settings.getTotalVolume() * Settings.getMusicVolume());
-            currentMusic.setVolume(volume);
-        }
-         */
     }
 
     public void playAudioData(UUID userId, LocalDateTime timestamp, byte[] audioData) throws UserNotFoundException {
