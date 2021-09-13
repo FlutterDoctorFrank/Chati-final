@@ -44,7 +44,6 @@ public class VoiceRecorder {
                 }
 
                 setSendGate();
-                System.out.println(sendGate);
 
                 // Überprüfe ob Lautstärke eines Samples gewissen Wert überschreitet, fange dann an zu senden und setze
                 // Zeitstempel. Sende ab diesem Zeitpunkt mindestens für eine gewisse Dauer weiter, bevor das Senden
