@@ -1,4 +1,4 @@
-package view2.userInterface.hud.settings;
+package view2.userInterface.hud.configurations;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;

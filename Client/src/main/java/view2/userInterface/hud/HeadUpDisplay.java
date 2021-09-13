@@ -15,7 +15,7 @@ import model.user.IInternUserView;
 import view2.Chati;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.hud.notificationList.NotificationListWindow;
-import view2.userInterface.hud.settings.SettingsWindow;
+import view2.userInterface.hud.configurations.ConfigurationWindow;
 import view2.userInterface.hud.userList.UserListWindow;
 
 import java.time.LocalDateTime;
@@ -226,7 +226,7 @@ public class HeadUpDisplay extends Table {
     public void openSettingsMenu() {
         closeCurrentMenu();
         settingsButton.setChecked(true);
-        currentMenuWindow = new SettingsWindow();
+        currentMenuWindow = new ConfigurationWindow();
         currentMenuWindow.open();
     }
 

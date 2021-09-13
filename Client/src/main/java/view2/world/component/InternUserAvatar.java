@@ -46,7 +46,8 @@ public class InternUserAvatar extends UserAvatar {
         }
 
         float velocity = DEFAULT_VELOCITY;
-        if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isSprintPressed()) {
+        if (Chati.CHATI.getPreferences().isAlwaysSprinting()
+                || Chati.CHATI.getWorldScreen().getWorldInputProcessor().isSprintPressed()) {
             isSprinting = true;
             velocity *= SPRINT_VELOCITY_FACTOR;
         } else {

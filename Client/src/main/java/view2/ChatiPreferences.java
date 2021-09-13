@@ -9,10 +9,12 @@ import java.util.List;
 public class ChatiPreferences {
 
     public static final String DEFAULT_LANGUAGE = "german";
+    public static final boolean DEFAULT_ALWAYS_SPRINTING = false;
     public static final boolean DEFAULT_SHOW_NAMES_IN_WORLD = true;
     public static final boolean DEFAULT_MICROPHONE_ON = false;
     public static final boolean DEFAULT_SOUND_ON = true;
     public static final boolean DEFAULT_PUSH_TO_TALK = false;
+    public static final float DEFAULT_MICROPHONE_SENSITIVITY = 0.5f;
     public static final float DEFAULT_TOTAL_VOLUME = 0.5f;
     public static final float DEFAULT_VOICE_VOLUME = 0.5f;
     public static final float DEFAULT_MUSIC_VOLUME = 0.5f;
@@ -27,6 +29,11 @@ public class ChatiPreferences {
 
     public void setLanguage(String language) {
         preferences.putString("language", language);
+        preferences.flush();
+    }
+
+    public void setAlwaysSprinting(boolean alwaysSprinting) {
+        preferences.putBoolean("always_sprinting", alwaysSprinting);
         preferences.flush();
     }
 
@@ -47,6 +54,11 @@ public class ChatiPreferences {
 
     public void setPushToTalk(boolean pushToTalk) {
         preferences.putBoolean("push_to_talk", pushToTalk);
+        preferences.flush();
+    }
+
+    public void setMicrophoneSensitivity(float microphoneSensitivity) {
+        preferences.putFloat("microphone_sensitivity", microphoneSensitivity);
         preferences.flush();
     }
 
@@ -74,6 +86,10 @@ public class ChatiPreferences {
         return preferences.getString("language", DEFAULT_LANGUAGE);
     }
 
+    public boolean isAlwaysSprinting() {
+        return preferences.getBoolean("always_sprinting", DEFAULT_ALWAYS_SPRINTING);
+    }
+
     public boolean getShowNamesInWorld() {
         return preferences.getBoolean("show_names", DEFAULT_SHOW_NAMES_IN_WORLD);
     }
@@ -88,6 +104,10 @@ public class ChatiPreferences {
 
     public boolean getPushToTalk() {
         return preferences.getBoolean("push_to_talk", DEFAULT_PUSH_TO_TALK);
+    }
+
+    public float getMicrophoneSensitivity() {
+        return preferences.getFloat("microphone_sensitivity", DEFAULT_MICROPHONE_SENSITIVITY);
     }
 
     public float getTotalVolume() {

@@ -1,4 +1,4 @@
-package view2.userInterface.hud.settings;
+package view2.userInterface.hud.configurations;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -14,7 +14,7 @@ import view2.userInterface.hud.HudMenuWindow;
 import view2.userInterface.menu.table.LoginTable;
 import view2.userInterface.menu.table.StartTable;
 
-public class SettingsWindow extends HudMenuWindow {
+public class ConfigurationWindow extends HudMenuWindow {
 
     private static final float TOP_SPACING = 7.5f;
     private static final float HORIZONTAL_SPACING = 20;
@@ -24,7 +24,7 @@ public class SettingsWindow extends HudMenuWindow {
     private final ChatiTextButton leaveWorldButton;
     private final ChatiTextButton logoutButton;
 
-    public SettingsWindow() {
+    public ConfigurationWindow() {
         super("Einstellungen");
 
         IInternUserView internUser = Chati.CHATI.getInternUser();
@@ -37,11 +37,11 @@ public class SettingsWindow extends HudMenuWindow {
             }
         });
 
-        ChatiTextButton volumeChangeMenuButton = new ChatiTextButton("Lautstärke anpassen", true);
+        ChatiTextButton volumeChangeMenuButton = new ChatiTextButton("Audioeinstellungen", true);
         volumeChangeMenuButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                new VolumeChangeWindow().open();
+                new SoundConfigurationWindow().open();
             }
         });
 
@@ -49,7 +49,7 @@ public class SettingsWindow extends HudMenuWindow {
         worldSettingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                new WorldSettingsWindow().open();
+                new WorldConfigurationWindow().open();
             }
         });
 

@@ -7,10 +7,10 @@ import view2.Chati;
 
 public class VoiceRecorder {
 
-    private static final short SEND_GATE = 1024;
     private static final long STOP_SENDING_DELAY = 250;
 
     private final AudioRecorder recorder;
+    private float sendGate;
     private boolean isRunning;
     private boolean isRecording;
 
@@ -42,12 +42,16 @@ public class VoiceRecorder {
                         }
                     }
                 }
+
+                setSendGate();
+                System.out.println(sendGate);
+
                 // Überprüfe ob Lautstärke eines Samples gewissen Wert überschreitet, fange dann an zu senden und setze
                 // Zeitstempel. Sende ab diesem Zeitpunkt mindestens für eine gewisse Dauer weiter, bevor das Senden
                 // gestoppt wird. Dadurch wird ein Dauersenden verhindert, ohne am Ende "abgehackt" zu werden.
                 recorder.read(recordedData, 0, recordedData.length);
                 for (short sample : recordedData) {
-                    if (Math.abs(sample) >= SEND_GATE) {
+                    if (Math.abs(sample) >= sendGate) {
                         timestamp = System.currentTimeMillis();
                         break;
                     }
@@ -81,5 +85,10 @@ public class VoiceRecorder {
 
     public boolean isRecording() {
         return isRecording;
+    }
+
+    private void setSendGate() {
+        float microphoneSensitivity = Chati.CHATI.getPreferences().getMicrophoneSensitivity();
+        sendGate = 4608 * microphoneSensitivity * microphoneSensitivity - 8448 * microphoneSensitivity + 4096;
     }
 }

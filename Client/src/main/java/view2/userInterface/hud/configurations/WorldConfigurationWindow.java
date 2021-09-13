@@ -1,4 +1,4 @@
-package view2.userInterface.hud.settings;
+package view2.userInterface.hud.configurations;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -16,22 +16,22 @@ import view2.ChatiPreferences;
 import view2.userInterface.ChatiWindow;
 import view2.userInterface.ChatiTextButton;
 
-public class WorldSettingsWindow extends ChatiWindow {
+public class WorldConfigurationWindow extends ChatiWindow {
 
     private static final float WINDOW_WIDTH = 750;
-    private static final float WINDOW_HEIGHT = 350;
+    private static final float WINDOW_HEIGHT = 400;
 
     private final ChatiTextButton confirmButton;
 
-    public WorldSettingsWindow() {
+    public WorldConfigurationWindow() {
         super("Welteinstellungen");
 
         Label infoLabel = new Label("Führe Welteinstellungen durch.", Chati.CHATI.getSkin());
 
-        Label showNameLabel = new Label("Benutzernamen dauerhaft anzeigen.", Chati.CHATI.getSkin());
-        CheckBox showNameCheckBox = new CheckBox("", Chati.CHATI.getSkin());
-        showNameCheckBox.setChecked(Chati.CHATI.getPreferences().getShowNamesInWorld());
-        showNameCheckBox.addListener(new ChangeListener() {
+        Label alwaysSprintLabel = new Label("Dauerhaft schnell laufen.", Chati.CHATI.getSkin());
+        CheckBox alwaysSprintCheckBox = new CheckBox("", Chati.CHATI.getSkin());
+        alwaysSprintCheckBox.setChecked(Chati.CHATI.getPreferences().isAlwaysSprinting());
+        alwaysSprintCheckBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 enableButton();
@@ -39,10 +39,10 @@ public class WorldSettingsWindow extends ChatiWindow {
             }
         });
 
-        Label pushToTalkLabel = new Label("Taste zum Sprechen drücken.", Chati.CHATI.getSkin());
-        CheckBox pushToTalkCheckBox = new CheckBox("", Chati.CHATI.getSkin());
-        pushToTalkCheckBox.setChecked(Chati.CHATI.getPreferences().getPushToTalk());
-        pushToTalkCheckBox.addListener(new ChangeListener() {
+        Label showNameLabel = new Label("Benutzernamen dauerhaft anzeigen.", Chati.CHATI.getSkin());
+        CheckBox showNameCheckBox = new CheckBox("", Chati.CHATI.getSkin());
+        showNameCheckBox.setChecked(Chati.CHATI.getPreferences().getShowNamesInWorld());
+        showNameCheckBox.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 enableButton();
@@ -56,8 +56,8 @@ public class WorldSettingsWindow extends ChatiWindow {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 disableButton();
+                Chati.CHATI.getPreferences().setAlwaysSprinting(alwaysSprintCheckBox.isChecked());
                 Chati.CHATI.getPreferences().setShowNamesInWorld(showNameCheckBox.isChecked());
-                Chati.CHATI.getPreferences().setPushToTalk(pushToTalkCheckBox.isChecked());
                 infoLabel.setText("Deine Änderungen wurden gespeichert!");
             }
         });
@@ -66,6 +66,7 @@ public class WorldSettingsWindow extends ChatiWindow {
         defaultButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                alwaysSprintCheckBox.setChecked(ChatiPreferences.DEFAULT_ALWAYS_SPRINTING);
                 showNameCheckBox.setChecked(ChatiPreferences.DEFAULT_SHOW_NAMES_IN_WORLD);
             }
         });
@@ -85,27 +86,27 @@ public class WorldSettingsWindow extends ChatiWindow {
         setHeight(WINDOW_HEIGHT);
 
         Table container = new Table();
-        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING / 2).center().growX();
         infoLabel.setAlignment(Align.center, Align.center);
         container.add(infoLabel).row();
+        Table alwaysSprintTable = new Table();
+        alwaysSprintTable.defaults().colspan(16).height(ROW_HEIGHT).space(SPACING).growX();
+        alwaysSprintTable.add(alwaysSprintLabel).colspan(15);
+        alwaysSprintTable.add(alwaysSprintCheckBox).colspan(1);
+        alwaysSprintCheckBox.getImage().scaleBy(0.25f);
+        container.add(alwaysSprintTable).row();
         Table showNameContainer = new Table();
         showNameContainer.defaults().colspan(16).height(ROW_HEIGHT).space(SPACING).growX();
         showNameContainer.add(showNameLabel).colspan(15);
         showNameContainer.add(showNameCheckBox).colspan(1);
         showNameCheckBox.getImage().scaleBy(0.25f);
         container.add(showNameContainer).row();
-        Table pushToTalkContainer = new Table();
-        pushToTalkContainer.defaults().colspan(16).height(ROW_HEIGHT).space(SPACING).growX();
-        pushToTalkContainer.add(pushToTalkLabel).colspan(15);
-        pushToTalkContainer.add(pushToTalkCheckBox).colspan(1);
-        pushToTalkCheckBox.getImage().scaleBy(0.25f);
-        container.add(pushToTalkContainer).row();
         Table buttonContainer = new Table();
         buttonContainer.defaults().colspan(3).bottom().height(ROW_HEIGHT).growX();
         buttonContainer.add(confirmButton).padRight(SPACING / 2);
         buttonContainer.add(defaultButton).padLeft(SPACING / 2).padRight(SPACING / 2);
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
-        container.add(buttonContainer);
+        container.add(buttonContainer).padTop(SPACING);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
     }
 
