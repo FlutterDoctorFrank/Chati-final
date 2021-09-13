@@ -14,6 +14,10 @@ import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 
+/**
+ * Eine Klasse, in welcher sämtliche verwendete Ressourcen geladen werden und die der Anwendung den Zugriff auf diese
+ * Ressourcen bereitstellt.
+ */
 public class ChatiAssetManager {
 
     private static final int TITLE_FONT_SIZE = 22;
@@ -22,8 +26,11 @@ public class ChatiAssetManager {
 
     private final AssetManager assetManager;
 
+    /**
+     * Erzeugt eine neue Instanz des ChatiAssetManager. Lädt alle in der Anwendung benötigten Ressourcen.
+     */
     public ChatiAssetManager() {
-        // Definiere Parameter für TexturePacker.
+        // Definiere Parameter für den TexturePacker.
         String texturePackerInput = Gdx.files.internal("Client/src/main/resources/textures").path();
         String texturePackerOutput = Gdx.files.internal("Client/src/main/resources/atlas").path();
         String texturePackerFileName = "image_atlas";
@@ -39,12 +46,13 @@ public class ChatiAssetManager {
             TexturePacker.process(texturePackerSettings, texturePackerInput, texturePackerOutput, texturePackerFileName);
         }
 
+        // Erzeuge neuen AssetManager zum Laden von allen benötigten Ressourcen.
         this.assetManager = new AssetManager();
 
         // TextureAtlas in die Warteschlange des AssetManager.
         assetManager.load(Gdx.files.internal("Client/src/main/resources/atlas/image_atlas.atlas").path(), TextureAtlas.class);
 
-        // Generiere Fonts.
+        // Generiere Fonts mit Hilfe eines FreeTypeFontGenerators.
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Roboto/Roboto-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.shadowColor = Color.DARK_GRAY;
@@ -65,7 +73,7 @@ public class ChatiAssetManager {
         fontMap.put("font-label", fontLabel);
         fontMap.put("font-button", fontButton);
 
-        // Skin in die Warteschlange des AssetManager mit generierten Fonts als Parameter.
+        // Skin in die Warteschlange des AssetManager mit ObjectMap der generierten Fonts als Parameter.
         assetManager.load(Gdx.files.internal("Client/src/main/resources/shadeui/uiskin.json").path(), Skin.class,
                 new SkinLoader.SkinParameter(fontMap));
 
@@ -73,16 +81,30 @@ public class ChatiAssetManager {
         assetManager.finishLoading();
     }
 
+    /**
+     * Gibt eine Textur zurück.
+     * @param name Name der Textur.
+     * @return Die angeforderte Textur.
+     */
     public TextureRegionDrawable getDrawable(String name) {
         return new TextureRegionDrawable(assetManager.get(Gdx.files.internal("Client/src/main/resources/atlas/image_atlas.atlas").path(),
                 TextureAtlas.class).findRegion(name));
     }
 
+    /**
+     * Gibt eine Menge von zusammengehöriger Texturen zurück.
+     * @param name Name der Menge der zusammengehörigen Texturen.
+     * @return Die angeforderte Menge von Texturen.
+     */
     public Array<TextureAtlas.AtlasRegion> getRegions(String name) {
         return assetManager.get(Gdx.files.internal("Client/src/main/resources/atlas/image_atlas.atlas").path(),
                 TextureAtlas.class).findRegions(name);
     }
 
+    /**
+     * Gibt den in der View verwendeten Skin zurück.
+     * @return Der verwendete Skin.
+     */
     public Skin getSkin() {
         return assetManager.get(Gdx.files.internal("Client/src/main/resources/shadeui/uiskin.json").path(), Skin.class);
     }

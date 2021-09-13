@@ -30,6 +30,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
+/**
+ * Eine Klasse, welche die für die gesamte View relevanten Komponenten beinhaltet und deren Zusammenspiel koordiniert.
+ */
 public class Chati extends Game implements ViewControllerInterface, IModelObserver {
 
     public static Chati CHATI;
@@ -49,8 +52,8 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private boolean loggedIn;
 
     private boolean userInfoChangeReceived;
-    private boolean userNotificationChangeReceived;
     private boolean newNotificationInfoReceived;
+    private boolean userNotificationChangeReceived;
     private boolean roomChangeReceived;
     private boolean worldChangeReceived;
     private boolean musicChangeReceived;
@@ -58,14 +61,19 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private boolean roomListUpdateReceived;
 
     private boolean changeUserInfo;
-    private boolean changeNotificationInfo;
     private boolean receivedNewNotification;
+    private boolean changeNotificationInfo;
     private boolean changeRoom;
     private boolean changeWorld;
     private boolean changeMusic;
     private boolean changeWorldList;
     private boolean changeRoomList;
 
+    /**
+     * Erzeugt eine neue Instanz der View.
+     * @param userManager Interface, über welches auf das Model zur Abfrage benötigter Informationen zugegriffen werden
+     * kann.
+     */
     public Chati(IUserManagerView userManager) {
         CHATI = this;
         this.worlds = new TreeSet<>();
@@ -73,6 +81,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         this.userManager = userManager;
     }
 
+    /**
+     * Startet die View.
+     */
     public void start() {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
@@ -82,6 +93,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         new Lwjgl3Application(this, config);
     }
 
+    /**
+     * Initialisiert alle Benötigten Komponenten und startet den Menübildschirm.
+     */
     @Override
     public void create() {
         this.assetManager = new ChatiAssetManager();
@@ -93,6 +107,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         setScreen(menuScreen);
     }
 
+    /**
+     * Wird periodisch aufgerufen um die View zu aktualisieren und neu zu zeichnen.
+     */
     @Override
     public void render() {
         /* Übertrage alle Flags auf eine andere Menge von Flags, welche im nächsten Render-Aufruf abgefragt wird.
@@ -103,11 +120,19 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         resetModelChangedFlags();
     }
 
+    /**
+     * Setzt den momentan anzuzeigenden Bildschirm.
+     * @param screen Anzuzeigender Bildschirm.
+     */
     public void setScreen(ChatiScreen screen) {
         Gdx.input.setInputProcessor(screen.getInputProcessor());
         super.setScreen(screen);
     }
 
+    /**
+     * Gibt den momentan angezeigten Bildschirm zurück.
+     * @return Angezeigter Bildschirm.
+     */
     @Override
     public ChatiScreen getScreen() {
         if (screen.equals(menuScreen)) {
@@ -119,46 +144,93 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         return null;
     }
 
+    /**
+     * Gibt den Menübildschirm zurück.
+     * @return Menübildschirm
+     */
     public MenuScreen getMenuScreen() {
         return menuScreen;
     }
 
+    /**
+     * Gibt den Weltbildschirm zurück.
+     * @return Weltbildschirm
+     */
     public WorldScreen getWorldScreen() {
         return worldScreen;
     }
 
+    /**
+     * Gibt den UserManager zurück.
+     * @return UserManager
+     */
     public IUserManagerView getUserManager() {
         return userManager;
     }
 
+    /**
+     * Gibt den intern angemeldeten Benutzer zurück.
+     * @return Interner Benutzer.
+     */
     public IInternUserView getInternUser() {
         return userManager.getInternUserView();
     }
 
+    /**
+     * Veranlasst das Senden eines Pakets an den Server.
+     * @param action Information darüber, welches Paket an den Server gesendet werden soll.
+     * @param objects Zu sendende Informationen.
+     */
     public void send(ServerSender.SendAction action, Object... objects) {
         serverSender.send(action, objects);
     }
 
+    /**
+     * Gibt den Skin der Anwendung zurück.
+     * @return Verwendeter Skin.
+     */
     public Skin getSkin() {
         return assetManager.getSkin();
     }
 
+    /**
+     * Gibt eine Textur zurück.
+     * @param name Name der Textur.
+     * @return Angeforderte Textur.
+     */
     public TextureRegionDrawable getDrawable(String name) {
         return assetManager.getDrawable(name);
     }
 
+    /**
+     * Gibt eine Menge von zusammengehöriger Texturen zurück.
+     * @param name Name der Menge der Texturen.
+     * @return Angeforderte Menge an Texturen.
+     */
     public Array<TextureAtlas.AtlasRegion> getRegions(String name) {
         return assetManager.getRegions(name);
     }
 
+    /**
+     * Gibt die Instanz der Präferenzen zurück.
+     * @return Präferenzen
+     */
     public ChatiPreferences getPreferences() {
         return preferences;
     }
 
+    /**
+     * Gibt die Instanz des AudioManager zurück.
+     * @return AudioManager
+     */
     public AudioManager getAudioManager() {
         return audioManager;
     }
 
+    /**
+     * Gibt die Instanz des SpriteBatch zurück.
+     * @return SpriteBatch
+     */
     public SpriteBatch getSpriteBatch() {
         return spriteBatch;
     }
@@ -174,13 +246,13 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void setUserNotificationChanged() {
-        this.userNotificationChangeReceived = true;
+    public void setNewNotificationReceived() {
+        this.newNotificationInfoReceived = true;
     }
 
     @Override
-    public void setNewNotificationReceived() {
-        this.newNotificationInfoReceived = true;
+    public void setUserNotificationChanged() {
+        this.userNotificationChangeReceived = true;
     }
 
     @Override
@@ -365,50 +437,93 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         });
     }
 
+    /**
+     * Gibt die Information zurück, ob sich Benutzerinformationen seit dem letzten Rendern geändert haben.
+     * @return true, wenn sich Benutzerinformationen geändert haben, sonst false.
+     */
     public boolean isUserInfoChanged() {
         return changeUserInfo;
     }
 
-    public boolean isUserNotificationChanged() {
-        return changeNotificationInfo;
-    }
-
+    /**
+     * Gibt die Information zurück, ob eine neue Benachrichtigung seit dem letzten Rendern erhalten wurde.
+     * @return true, wenn eine neue Benachrichtigung erhalten wurde, sonst false.
+     */
     public boolean isNewNotificationReceived() {
         return receivedNewNotification;
     }
 
+    /**
+     * Gibt die Information zurück, ob sich vorhandene Benachrichtigungen seit dem letzten Rendern geändert haben.
+     * @return true, wenn sich Benachrichtigungen geändert haben, sonst false.
+     */
+    public boolean isUserNotificationChanged() {
+        return changeNotificationInfo;
+    }
+
+    /**
+     * Gibt die Information zurück, ob sich die Welt seit dem letzten Rendern geändert hat.
+     * @return true, wenn sich die Welt geändert hat, sonst false.
+     */
     public boolean isWorldChanged() {
         return changeWorld;
     }
 
+    /**
+     * Gibt die Information zurück, ob sich der Raum seit dem letzten Rendern geändert hat.
+     * @return true, wenn sich der Raum geändert hat, sonst false.
+     */
     public boolean isRoomChanged() {
         return changeRoom;
     }
 
+    /**
+     * Gibt die Information zurück, ob sich die abgespielte Musik seit dem letzten Rendern geändert hat.
+     * @return true, wenn sich die Musik geändert hat, sonst false.
+     */
     public boolean isMusicChanged() {
         return changeMusic;
     }
 
+    /**
+     * Gibt die Information zurück, ob sich die Liste aller verfügbaren Welten seit dem letzten Rendern geändert hat.
+     * @return true, wenn sich die Liste der Welten geändert hat, sonst false.
+     */
     public boolean isWorldListChanged() {
         return changeWorldList;
     }
 
+    /**
+     * Gibt die Information zurück, ob sich die Liste aller verfügbaren Räume seit dem letzten Rendern geändert hat.
+     * @return true, wenn sich die Liste der Räume geändert hat, sonst false.
+     */
     public boolean isRoomListChanged() {
         return changeRoomList;
     }
 
+    /**
+     * Gibt die Menge aller verfügbaren Welten zurück.
+     * @return Menge aller verfügbaren Welten.
+     */
     public Set<ContextEntry> getWorlds() {
         return Set.copyOf(worlds);
     }
 
+    /**
+     * Gibt die Menge aller verfügbaren privaten Räume zurück.
+     * @return Menge aller verfügbaren privaten Räume.
+     */
     public Set<ContextEntry> getPrivateRooms() {
         return Set.copyOf(privateRooms);
     }
 
+    /**
+     * Transferiert die Informationen der Flags.
+     */
     private void transferFlags() {
         changeUserInfo = userInfoChangeReceived;
-        changeNotificationInfo = userNotificationChangeReceived;
         receivedNewNotification = newNotificationInfoReceived;
+        changeNotificationInfo = userNotificationChangeReceived;
         changeRoom = roomChangeReceived;
         changeWorld = worldChangeReceived;
         changeMusic = musicChangeReceived;
@@ -416,10 +531,13 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         changeRoomList = roomListUpdateReceived;
     }
 
+    /**
+     * Setzt die Flags über neu erhaltene Änderungen zurück.
+     */
     private void resetModelChangeReceivedFlags() {
         userInfoChangeReceived = false;
-        userNotificationChangeReceived = false;
         newNotificationInfoReceived = false;
+        userNotificationChangeReceived = false;
         roomChangeReceived = false;
         worldChangeReceived = false;
         musicChangeReceived = false;
@@ -427,10 +545,13 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         roomListUpdateReceived = false;
     }
 
+    /**
+     * Setzt die Flags zurück, ob die Änderungen abgefragt werden können.
+     */
     private void resetModelChangedFlags() {
         changeUserInfo = false;
-        changeNotificationInfo = false;
         receivedNewNotification = false;
+        changeNotificationInfo = false;
         changeRoom = false;
         changeWorld = false;
         changeMusic = false;

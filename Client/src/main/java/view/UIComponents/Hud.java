@@ -198,8 +198,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
-    public void updateRooms(ContextID worldId, Map<ContextID, String> privateRooms) throws
-            ContextNotFoundException {
+    public void updateRooms(ContextID worldId, Map<ContextID, String> privateRooms) {
     }
 
     @Override
