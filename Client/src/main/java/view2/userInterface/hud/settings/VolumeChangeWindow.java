@@ -87,7 +87,7 @@ public class VolumeChangeWindow extends ChatiWindow {
             }
         });
 
-        confirmButton = new ChatiTextButton("Übernehmen", false);
+        confirmButton = new ChatiTextButton("Übernehmen", true);
         disableButton();
         confirmButton.addListener(new ClickListener() {
             @Override

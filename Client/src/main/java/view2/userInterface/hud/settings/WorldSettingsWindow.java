@@ -39,13 +39,25 @@ public class WorldSettingsWindow extends ChatiWindow {
             }
         });
 
-        confirmButton = new ChatiTextButton("Übernehmen", false);
+        Label pushToTalkLabel = new Label("Taste zum Sprechen drücken.", Chati.CHATI.getSkin());
+        CheckBox pushToTalkCheckBox = new CheckBox("", Chati.CHATI.getSkin());
+        pushToTalkCheckBox.setChecked(Chati.CHATI.getPreferences().getPushToTalk());
+        pushToTalkCheckBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                enableButton();
+                infoLabel.setText("Führe Welteinstellungen durch.");
+            }
+        });
+
+        confirmButton = new ChatiTextButton("Übernehmen", true);
         disableButton();
         confirmButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 disableButton();
                 Chati.CHATI.getPreferences().setShowNamesInWorld(showNameCheckBox.isChecked());
+                Chati.CHATI.getPreferences().setPushToTalk(pushToTalkCheckBox.isChecked());
                 infoLabel.setText("Deine Änderungen wurden gespeichert!");
             }
         });
@@ -82,6 +94,12 @@ public class WorldSettingsWindow extends ChatiWindow {
         showNameContainer.add(showNameCheckBox).colspan(1);
         showNameCheckBox.getImage().scaleBy(0.25f);
         container.add(showNameContainer).row();
+        Table pushToTalkContainer = new Table();
+        pushToTalkContainer.defaults().colspan(16).height(ROW_HEIGHT).space(SPACING).growX();
+        pushToTalkContainer.add(pushToTalkLabel).colspan(15);
+        pushToTalkContainer.add(pushToTalkCheckBox).colspan(1);
+        pushToTalkCheckBox.getImage().scaleBy(0.25f);
+        container.add(pushToTalkContainer).row();
         Table buttonContainer = new Table();
         buttonContainer.defaults().colspan(3).bottom().height(ROW_HEIGHT).growX();
         buttonContainer.add(confirmButton).padRight(SPACING / 2);

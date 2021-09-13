@@ -3496,14 +3496,14 @@ rick_sit_left
   size: 32, 48
   orig: 32, 48
   offset: 0, 0
-  index: 5
+  index: 4
 rick_sit_left
   rotate: false
   xy: 948, 118
   size: 32, 48
   orig: 32, 48
   offset: 0, 0
-  index: 4
+  index: 5
 rick_sit_left
   rotate: false
   xy: 416, 65
