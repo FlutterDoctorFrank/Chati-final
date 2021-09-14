@@ -1,4 +1,4 @@
-package view2;
+package view2.userInterface;
 
 import model.context.ContextID;
 import org.jetbrains.annotations.NotNull;

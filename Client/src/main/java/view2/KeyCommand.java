@@ -81,7 +81,7 @@ public enum KeyCommand {
 
     /**
      * Prüft, ob eine Taste in der Tastenbelegung eines Kommandos enthalten ist.
-     * @param inputKeycode Zu überprüfende Taste.
+     * @param inputKeycode Code der zu überprüfenden Taste.
      * @return true, wenn die Taste enthalten ist, sonst false.
      */
     public boolean matches(int inputKeycode) {

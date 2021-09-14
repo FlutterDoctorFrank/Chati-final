@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
-import view2.ContextEntry;
+import view2.userInterface.ContextEntry;
 import view2.Response;
 
 /**

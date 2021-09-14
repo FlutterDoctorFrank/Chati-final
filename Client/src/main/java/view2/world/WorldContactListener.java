@@ -21,7 +21,7 @@ public class WorldContactListener implements ContactListener {
         Fixture fixtureB = contact.getFixtureB();
 
         if (isInternUserAvatar(fixtureA, fixtureB) && isInteractionArea(fixtureA, fixtureB)) {
-            Chati.CHATI.getWorldScreen().getInternUserAvatar().canInteract(true);
+            Chati.CHATI.getWorldScreen().getInternUserAvatar().countInteractables(true);
         }
     }
 
@@ -31,7 +31,7 @@ public class WorldContactListener implements ContactListener {
         Fixture fixtureB = contact.getFixtureB();
 
         if (isInternUserAvatar(fixtureA, fixtureB) && isInteractionArea(fixtureA, fixtureB)) {
-            Chati.CHATI.getWorldScreen().getInternUserAvatar().canInteract(false);
+            Chati.CHATI.getWorldScreen().getInternUserAvatar().countInteractables(false);
         }
     }
 

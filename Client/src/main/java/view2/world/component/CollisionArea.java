@@ -9,8 +9,15 @@ import view2.Chati;
 import view2.world.WorldCamera;
 import view2.world.WorldScreen;
 
+/**
+ * Eine Klasse, welche Kollisionsflächen repräsentiert.
+ */
 public class CollisionArea {
 
+    /**
+     * Erzeugt eine neue Instanz der CollisionArea.
+     * @param rectangle Zugehöriges Rechteck auf der Karte.
+     */
     public CollisionArea(Rectangle rectangle) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;

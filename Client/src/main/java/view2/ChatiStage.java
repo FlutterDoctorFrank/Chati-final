@@ -97,7 +97,7 @@ public class ChatiStage extends Stage {
     }
 
     /**
-     * Fügt ein geöffnetes Fenster in den Stack aller geöffneten Fenster ein und zeigt es an.
+     * Fügt ein geöffnetes Fenster in den Stack aller geöffneter Fenster ein und zeigt es an.
      * @param window Neu geöffnetes Fenster.
      */
     public void openWindow(ChatiWindow window) {
@@ -106,7 +106,7 @@ public class ChatiStage extends Stage {
     }
 
     /**
-     * Entfernt ein Fenster aus dem Stack aller geöffneten Fenster und lässt es nicht mehr anzeigen.
+     * Entfernt ein Fenster aus dem Stack aller geöffneter Fenster und lässt es nicht mehr anzeigen.
      * @param window Zu schließendes Fenster.
      */
     public void closeWindow(ChatiWindow window) {

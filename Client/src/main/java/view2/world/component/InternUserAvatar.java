@@ -12,6 +12,9 @@ import view2.world.WorldScreen;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+/**
+ * Eine Klasse, welche den Avatar des intern angemeldeten Benutzers repräsentiert.
+ */
 public class InternUserAvatar extends UserAvatar {
 
     private final LinkedList<Direction> currentDirectionalInputs;
@@ -20,6 +23,9 @@ public class InternUserAvatar extends UserAvatar {
     private boolean isSprinting;
     private int interactCount;
 
+    /**
+     * Erzeugt eine neue Instanz des InternUserAvatar.
+     */
     public InternUserAvatar() {
         super(Chati.CHATI.getInternUser());
         this.body.setUserData(ContactType.INTERN_USER);
@@ -77,6 +83,9 @@ public class InternUserAvatar extends UserAvatar {
         }
     }
 
+    /**
+     * Lässt den Benutzer mit einem Interaktionsobjekt in der Nähe seines Avatars interagieren.
+     */
     public void interact() {
         if (interactCount > 0) {
             IInternUserView internUser = Chati.CHATI.getInternUser();
@@ -91,6 +100,9 @@ public class InternUserAvatar extends UserAvatar {
         }
     }
 
+    /**
+     * Sendet die aktuelle Position des Avatars zum Server.
+     */
     public void sendPosition() {
         if (user.getLocation() == null) {
             return;
@@ -102,14 +114,22 @@ public class InternUserAvatar extends UserAvatar {
         }
     }
 
-    public void canInteract(final boolean canInteract) {
-        if (canInteract) {
+    /**
+     * Erhöht oder verringert den Zähler der sich um den Avatar des Benutzers befindlichen Interaktionsobjekte.
+     * @param increment Falls true, wird der Zähler erhöht, sonst verringert.
+     */
+    public void countInteractables(final boolean increment) {
+        if (increment) {
             interactCount++;
         } else if (interactCount > 0) {
             interactCount--;
         }
     }
 
+    /**
+     * Gibt anhand der momentan gedrückten Tasten zurück, in welche Richtung der Avatar bewegt werden soll.
+     * @return Richtung, in die der Avatar bewegt werden soll.
+     */
     private Direction getCurrentDirectionalInput() {
         Arrays.stream(Direction.values()).forEach(direction -> {
             if (!currentDirectionalInputs.contains(direction)

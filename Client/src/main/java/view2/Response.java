@@ -5,6 +5,7 @@ package view2;
  * erwartet.
  */
 public enum Response {
+
     /** Signalisiert, dass keine Antwort erwartet wird. */
     NONE,
 
@@ -39,5 +40,5 @@ public enum Response {
     CLOSE_MENU,
 
     /** Signalisiert, dass die Antwort auf eine durchgeführte Menüaktion eines Interaktionsobjekts erwartet wird. */
-    MENU_ACTION_RESPONSE
+    MENU_ACTION
 }

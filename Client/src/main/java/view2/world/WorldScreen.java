@@ -27,7 +27,7 @@ import view2.userInterface.interactableMenu.PortalWindow;
 import view2.userInterface.interactableMenu.RoomReceptionWindow;
 import view2.userInterface.interactableMenu.SeatWindow;
 import view2.world.component.CollisionArea;
-import view2.world.component.InteractionObject;
+import view2.world.component.InteractionArea;
 import view2.world.component.InternUserAvatar;
 import view2.world.component.UserAvatar;
 import java.util.HashMap;
@@ -182,10 +182,10 @@ public class WorldScreen extends ChatiScreen {
     /**
      * Öffnet das Menü eines Interaktionsobjekts.
      * @param contextId ID des Interaktionsobjekts.
-     * @param contextMenu Zu öffnendes Menü.
+     * @param menu Zu öffnendes Menü.
      */
-    public void openMenu(ContextID contextId, ContextMenu contextMenu) {
-        switch (contextMenu) {
+    public void openMenu(ContextID contextId, ContextMenu menu) {
+        switch (menu) {
             case ROOM_RECEPTION_MENU:
                 currentInteractableWindow = new RoomReceptionWindow(contextId);
                 break;
@@ -213,11 +213,11 @@ public class WorldScreen extends ChatiScreen {
     /**
      * Schließt das Menü eines Interaktionsobjekts.
      * @param contextId ID des Interaktionsobjekts.
-     * @param contextMenu Zu schließendes Menü.
+     * @param menu Zu schließendes Menü.
      */
-    public void closeMenu(ContextID contextId, ContextMenu contextMenu) {
+    public void closeMenu(ContextID contextId, ContextMenu menu) {
         if (currentInteractableWindow != null && (!currentInteractableWindow.getInteractableId().equals(contextId)
-            || currentInteractableWindow.getInteractableMenu() != contextMenu)) {
+            || currentInteractableWindow.getInteractableMenu() != menu)) {
             throw new IllegalArgumentException("Tried to close a menu that is not open.");
         }
         stage.closeWindow(currentInteractableWindow);
@@ -269,7 +269,7 @@ public class WorldScreen extends ChatiScreen {
         tiledMapRenderer.getMap().getLayers().get("Collisions").getObjects().getByType(RectangleMapObject.class)
                 .forEach(border -> new CollisionArea(border.getRectangle()));
         tiledMapRenderer.getMap().getLayers().get("Interactions").getObjects().getByType(RectangleMapObject.class)
-                .forEach(interactiveObject -> new InteractionObject(interactiveObject.getRectangle()));
+                .forEach(interactiveObject -> new InteractionArea(interactiveObject.getRectangle()));
     }
 
     /**

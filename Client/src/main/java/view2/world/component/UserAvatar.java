@@ -13,6 +13,9 @@ import view2.userInterface.UserInfoContainer;
 import view2.world.WorldCamera;
 import view2.world.WorldScreen;
 
+/**
+ * Eine Klasse, welche den Avatar eines Benutzers repräsentiert.
+ */
 public class UserAvatar extends Sprite {
 
     public static final float DEFAULT_VELOCITY = 10f;
@@ -38,6 +41,10 @@ public class UserAvatar extends Sprite {
     protected Direction previousDirection;
     private float stateTime;
 
+    /**
+     * Erzeugt eine neue Instanz des UserAvatar.
+     * @param user Zu dem Avatar zugehöriger Benutzer.
+     */
     public UserAvatar(IUserView user) {
         this.user = user;
         this.head = new Head();
@@ -77,10 +84,20 @@ public class UserAvatar extends Sprite {
         super.draw(batch);
     }
 
+    /**
+     * Zeichnet den Container mit den Benutzerinformationen über dem Avatar,
+     * @param batch Verwendeter Batch.
+     * @param delta Zeit seit dem letzten Rendern.
+     */
     public void drawHead(Batch batch, float delta) {
         head.draw(batch, delta);
     }
 
+    /**
+     * Gibt die momentan anzuzeigende Textur zurück.
+     * @param delta Zeit seit dem letzten Rendern.
+     * @return Anzuzeigende Textur.
+     */
     private TextureRegion getKeyFrame(float delta) {
         currentDirection = getCurrentDirection();
         stateTime = currentDirection == previousDirection ? stateTime + delta : 0;
@@ -110,6 +127,10 @@ public class UserAvatar extends Sprite {
         }
     }
 
+    /**
+     * Berechnet die momentane Richtung des Avatars anhand der auf ihn einwirkenden Kräfte.
+     * @return Richtung des Avatars.
+     */
     protected Direction getCurrentDirection() {
         Vector2 velocity = body.getLinearVelocity();
         if (velocity.y > Math.abs(velocity.x)) {
@@ -127,6 +148,9 @@ public class UserAvatar extends Sprite {
         return previousDirection;
     }
 
+    /**
+     * Aktualisiert den Avatar durch ein Teleportieren oder Hinbewegen zu der im Modell hinterlegten Benutzerposition.
+     */
     protected void update() {
         ILocationView location = user.getLocation();
         if (location == null) {
@@ -155,6 +179,9 @@ public class UserAvatar extends Sprite {
         }
     }
 
+    /**
+     * Teleportiert den Avatar zu der im Modell hinterlegten Benutzerposition.
+     */
     public void teleport() {
         ILocationView location = user.getLocation();
         if (location == null) {
@@ -168,18 +195,33 @@ public class UserAvatar extends Sprite {
         previousDirection = currentDirection;
     }
 
+    /**
+     * Gibt den zugehörigen Benutzer zurück.
+     * @return Zugehöriger Benutzer.
+     */
     public IUserView getUser() {
         return user;
     }
 
+    /**
+     * Gibt den Body des Avatars zurück.
+     * @return Body
+     */
     public Body getBody() {
         return body;
     }
 
+    /**
+     * Gibt die Position des Avatars zurück.
+     * @return Position
+     */
     public Vector2 getPosition() {
         return body.getPosition();
     }
 
+    /**
+     * Eine Klasse, welche die über dem Avatar anzuzeigenden Benutzerinformationen repräsentiert.
+     */
     private class Head extends Table {
 
         private static final float COMMUNICABLE_USER_ICON_SIZE = 35;
@@ -187,6 +229,9 @@ public class UserAvatar extends Sprite {
 
         private final Image communicableIcon;
 
+        /**
+         * Erzeugt eine neue Instanz des Head.
+         */
         public Head() {
             setTransform(true);
             this.communicableIcon = new Image();

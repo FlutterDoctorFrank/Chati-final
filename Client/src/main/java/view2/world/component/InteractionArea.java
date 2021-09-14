@@ -5,9 +5,16 @@ import com.badlogic.gdx.physics.box2d.*;
 import view2.Chati;
 import view2.world.WorldCamera;
 
-public class InteractionObject {
+/**
+ * Eine Klasse, welche den Bereich repräsentiert, in dem mit einem Interaktionsobjekt interagiert werden kann.
+ */
+public class InteractionArea {
 
-    public InteractionObject(Rectangle rectangle) {
+    /**
+     * Erzeugt eine neue Instanz der InteractionArea.
+     * @param rectangle Zugehöriges Rechteck auf der Karte.
+     */
+    public InteractionArea(Rectangle rectangle) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
         bodyDef.position.set(WorldCamera.scaleToUnit((rectangle.getX() + rectangle.getWidth() / 2)),
