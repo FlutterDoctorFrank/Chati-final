@@ -15,12 +15,15 @@ import model.user.IInternUserView;
 import view2.Chati;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.hud.notificationList.NotificationListWindow;
-import view2.userInterface.hud.configurations.ConfigurationWindow;
+import view2.userInterface.hud.settings.SettingsWindow;
 import view2.userInterface.hud.userList.UserListWindow;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Eine Klasse, welche das HeadUpDisplay der Anwendung repräsentiert.
+ */
 public class HeadUpDisplay extends Table {
 
     public static final float BUTTON_SCALE_FACTOR = 0.1f;
@@ -42,6 +45,9 @@ public class HeadUpDisplay extends Table {
     private CommunicationWindow communicationWindow;
     private Table internUserDisplay;
 
+    /**
+     * Erzeugt eine neue Instanz des HeadUpDisplay.
+     */
     private HeadUpDisplay() {
         this.chatWindow = new ChatWindow();
 
@@ -209,6 +215,9 @@ public class HeadUpDisplay extends Table {
         super.act(delta);
     }
 
+    /**
+     * Öffnet das Benutzermenü.
+     */
     public void openUserMenu() {
         closeCurrentMenu();
         userListButton.setChecked(true);
@@ -216,6 +225,9 @@ public class HeadUpDisplay extends Table {
         currentMenuWindow.open();
     }
 
+    /**
+     * Öffnet das Benachrichtigungsmenü.
+     */
     public void openNotificationMenu() {
         closeCurrentMenu();
         notificationListButton.setChecked(true);
@@ -223,13 +235,19 @@ public class HeadUpDisplay extends Table {
         currentMenuWindow.open();
     }
 
+    /**
+     * Öffnet das Einstellungsmenü.
+     */
     public void openSettingsMenu() {
         closeCurrentMenu();
         settingsButton.setChecked(true);
-        currentMenuWindow = new ConfigurationWindow();
+        currentMenuWindow = new SettingsWindow();
         currentMenuWindow.open();
     }
 
+    /**
+     * Schließt das Benutzer-, Benachrichtigungs-, oder Einstellungsmenü, sofern eines von diesen geöffnet ist.
+     */
     public void closeCurrentMenu() {
         if (currentMenuWindow != null) {
             currentMenuWindow.close();
@@ -237,6 +255,9 @@ public class HeadUpDisplay extends Table {
         }
     }
 
+    /**
+     * Entfernt ein geschlossenes Benutzer-, Benachrichtigungs-, oder Einstellungsmenü.
+     */
     public void removeCurrentMenu() {
         userListButton.setChecked(false);
         notificationListButton.setChecked(false);
@@ -244,11 +265,17 @@ public class HeadUpDisplay extends Table {
         currentMenuWindow = null;
     }
 
+    /**
+     * Öffnet das Kommunikationsfenster.
+     */
     public void openCommunicationWindow() {
         communicationButton.setChecked(true);
         (communicationWindow = new CommunicationWindow()).open();
     }
 
+    /**
+     * Schließt das Kommunikationsfenster, sofern es geöffnet ist.
+     */
     public void closeCommunicationWindow() {
         if (communicationWindow != null) {
             communicationWindow.close();
@@ -256,21 +283,33 @@ public class HeadUpDisplay extends Table {
         }
     }
 
+    /**
+     * Entfernt das geschlossene Kommunikationsfenster.
+     */
     public void removeCommunicationWindow() {
         communicationButton.setChecked(false);
         communicationWindow = null;
     }
 
+    /**
+     * Schaltet das Mikrofon ein oder aus.
+     */
     public void toggleMicrophone() {
         microphoneButton.setChecked(!microphoneButton.isChecked());
         Chati.CHATI.getPreferences().setMicrophoneOn(microphoneButton.isChecked());
     }
 
+    /**
+     * Schaltet den Ton ein oder aus.
+     */
     public void toggleSound() {
         soundButton.setChecked(!soundButton.isChecked());
         Chati.CHATI.getPreferences().setSoundOn(soundButton.isChecked());
     }
 
+    /**
+     * Zeigt das Chatfenster an.
+     */
     public void showChatWindow() {
         if (isChatOpen()) {
             return;
@@ -280,16 +319,32 @@ public class HeadUpDisplay extends Table {
         chatWindow.show();
     }
 
+    /**
+     * Zeigt das Chatfenster nicht mehr an.
+     */
     public void hideChatWindow() {
         chatButton.setChecked(false);
         chatWindow.hide();
     }
 
+    /**
+     * Zeigt einen tippenden Benutzer im Chatfenster an.
+     * @param userId ID des tippenden Benutzers.
+     */
     public void showTypingUser(UUID userId) {
-        chatWindow.updateTypingUser(userId);
+        chatWindow.addTypingUser(userId);
     }
 
-    public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message,
+    /**
+     * Zeigt eine Nachricht im Chatfenster an.
+     * @param senderId ID des Senders.
+     * @param timestamp Zeitstempel der Nachricht.
+     * @param messageType Typ der Nachricht.
+     * @param message Anzuzeigende Nachricht.
+     * @param messageBundle Übersetzbare Nachricht mit deren benötigte Argumente.
+     * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
+     */
+    public void showChatMessage(UUID senderId, LocalDateTime timestamp, MessageType messageType, String message,
                                 MessageBundle messageBundle) throws UserNotFoundException {
         if (!isChatOpen()) {
             chatButton.startBlinking();
@@ -297,38 +352,70 @@ public class HeadUpDisplay extends Table {
         if (messageType == MessageType.INFO) {
             chatWindow.showInfoMessage(timestamp, messageBundle);
         } else {
-            chatWindow.showUserMessage(userId, timestamp, messageType, message);
+            chatWindow.showUserMessage(senderId, timestamp, messageType, message);
         }
     }
 
+    /**
+     * Gibt zurück, ob das Benutzer-, Benachrichtiungs-, oder Einstellungsmenü geöffnet ist.
+     * @return true, wenn das Benutzer-, Benachrichtigungs-, oder Einstellungsmenü geöffnet ist, sonst false.
+     */
     public boolean isMenuOpen() {
         return currentMenuWindow != null;
     }
 
+    /**
+     * Gibt zurück, ob das Benutzermenü geöffnet ist.
+     * @return true, wenn das Benutzermenü geöffnet ist, sonst false.
+     */
     public boolean isUserMenuOpen() {
         return isMenuOpen() && userListButton.isChecked();
     }
 
+    /**
+     * Gibt zurück, ob das Benachrichtigungsmenü geöffnet ist.
+     * @return true, wenn das Benachrichtigungsmenü geöffnet ist, sonst false.
+     */
     public boolean isNotificationMenuOpen() {
         return isMenuOpen() && notificationListButton.isChecked();
     }
 
+    /**
+     * Gibt zurück, ob das Einstellungsmenü geöffnet ist.
+     * @return true, wenn das Einstellungsmenü geöffnet ist, sonst false.
+     */
     public boolean isSettingsMenuOpen() {
         return isMenuOpen() && settingsButton.isChecked();
     }
 
+    /**
+     * Gibt zurück, ob das Kommunikationsmenü geöffnet ist.
+     * @return true, wenn das Kommunikationsmenü geöffnet ist, sonst false.
+     */
     public boolean isCommunicationWindowOpen() {
         return communicationWindow != null && communicationButton.isChecked();
     }
 
+    /**
+     * Gibt zurück, ob das Chatfenster sichtbar ist.
+     * @return true, wenn das Chatfenster sichtbar ist, sonst false.
+     */
     public boolean isChatOpen() {
         return chatButton.isVisible() && chatWindow.isVisible();
     }
 
+    /**
+     * Gibt das Chatfenster zurück.
+     * @return Chatfenster.
+     */
     public ChatWindow getChatWindow() {
         return chatWindow;
     }
 
+    /**
+     * Das kommt weg, nicht ins Entwurfsdokument übernehmen.
+     * @return // TODO
+     */
     public static HeadUpDisplay getInstance() {
         if (headUpDisplay == null) {
             headUpDisplay = new HeadUpDisplay();
@@ -336,6 +423,9 @@ public class HeadUpDisplay extends Table {
         return headUpDisplay;
     }
 
+    /**
+     * Eine Klasse, welche den Button zum Öffnen des Chats repräsentiert.
+     */
     private static class ChatButton extends ChatiImageButton {
 
         private static final float BLINKING_FREQUENCY = 2; // Pro Sekunde
@@ -344,6 +434,11 @@ public class HeadUpDisplay extends Table {
         private boolean visible;
         private float delta;
 
+        /**
+         * Erzeugt eine neue Instanz des ChatButton.
+         * @param imageUnchecked Im nicht ausgewählten und deaktivierten Zustand anzuzeigendes Bild.
+         * @param imageChecked Im ausgewählten Zustand anzuzeigendes Bild.
+         */
         public ChatButton(Drawable imageUnchecked, Drawable imageChecked) {
             super(imageUnchecked, imageChecked);
         }
@@ -366,25 +461,42 @@ public class HeadUpDisplay extends Table {
             }
         }
 
+        /**
+         * Starte das Blinken des Icons.
+         */
         public void startBlinking() {
             blinking = true;
         }
 
+        /**
+         * Stoppe das Blinken des Icons.
+         */
         public void stopBlinking() {
             blinking = false;
         }
     }
 
+    /**
+     * Eine Klasse, welche den Button zum Öffnen des Benachrichtigungsmenüs repräsentiert.
+     */
     private static class NotificationButton extends ChatiImageButton {
 
         private static final float DURATION = 2; // In Sekunden
-        private static final float ANGLE = 15;
+        private static final float ANGLE = 15; // In Grad
         private boolean isAnimating;
 
+        /**
+         * Erzeugt eine neue Instanz des NotificationButton.
+         * @param imageUnchecked Im nicht ausgewählten und deaktivierten Zustand anzuzeigendes Bild.
+         * @param imageChecked Im ausgewählten Zustand anzuzeigendes Bild.
+         */
         public NotificationButton(Drawable imageUnchecked, Drawable imageChecked) {
             super(imageUnchecked, imageChecked);
         }
 
+        /**
+         * Beginne die Animation zum Signalisieren des Erhalts einer neuer Benachrichtigung.
+         */
         public void startAnimation() {
             if (isAnimating) {
                 return;

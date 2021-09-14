@@ -21,6 +21,9 @@ import view2.userInterface.ChatiWindow;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Eine Klasse, welche einen Eintrag in der Benachrichtigungsliste des HeadUpDisplay repräsentiert.
+ */
 public class NotificationListEntry extends Table implements Comparable<NotificationListEntry> {
 
     private static final float SHOW_BUTTON_WIDTH = 150;
@@ -33,6 +36,10 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
 
     private final INotificationView notification;
 
+    /**
+     * Erzeugt eine neue Instanz des NotificationListEntry.
+     * @param notification Zum Eintrag zugehörige Benachrichtigung.
+     */
     protected NotificationListEntry(INotificationView notification) {
         this.notification = notification;
 
@@ -141,11 +148,17 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         }
     }
 
+    /**
+     * Eine Klasse, welche das Menü zur Anzeige des Benachrichtigungstexts einer Benachrichtigung repräsentiert.
+     */
     private class NotificationTextWindow extends ChatiWindow {
 
         private static final float WINDOW_WIDTH = 750;
         private static final float WINDOW_HEIGHT = 400;
 
+        /**
+         * Erzeugt eine neue Instanz des NotificationTextWindow.
+         */
         public NotificationTextWindow() {
             super(String.valueOf(typeLabel.getText()));
 
@@ -230,10 +243,17 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         }
     }
 
+    /**
+     * Eine Klasse, welche das Menü zum Bestätigen einer durchgeführen Benachrichtigungsaktion repräsentiert.
+     */
     private class ConfirmWindow extends ChatiWindow {
         private static final float WINDOW_WIDTH = 550;
         private static final float WINDOW_HEIGHT = 275;
 
+        /**
+         * Erzeugt eine neue Instanz des ConfirmWindow.
+         * @param action Durchzuführende Benachrichtigungsaktion.
+         */
         public ConfirmWindow(NotificationAction action) {
             super("Bestätigen");
 

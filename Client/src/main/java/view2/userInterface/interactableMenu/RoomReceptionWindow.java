@@ -19,6 +19,9 @@ import view2.userInterface.menu.table.MenuTable;
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
+/**
+ * Eine Klasse, welche das Menü der RoomReception repräsentiert.
+ */
 public class RoomReceptionWindow extends InteractableWindow {
 
     private static final int MENU_OPTION_CREATE = 1;
@@ -31,6 +34,10 @@ public class RoomReceptionWindow extends InteractableWindow {
 
     private MenuTable currentTable;
 
+    /**
+     * Erzeugt eine neue Instanz des RoomReceptionWindow.
+     * @param roomReceptionId ID des zugehörigen RoomReceptionWindow.
+     */
     public RoomReceptionWindow(ContextID roomReceptionId) {
         super("Raumrezeption", roomReceptionId, ContextMenu.ROOM_RECEPTION_MENU);
         setCurrentTable(new RoomSelectTable());
@@ -43,6 +50,10 @@ public class RoomReceptionWindow extends InteractableWindow {
         setHeight(WINDOW_HEIGHT);
     }
 
+    /**
+     * Setzt den momentan anzuzeigenden Inhalt.
+     * @param table Container des anzuzeigenden Inhalts.
+     */
     public void setCurrentTable(MenuTable table) {
         removeActor(currentTable);
         currentTable = table;
@@ -56,10 +67,16 @@ public class RoomReceptionWindow extends InteractableWindow {
         }
     }
 
+    /**
+     * Eine Klasse, welche das Menü zur Auswahl einer Raums repräsentiert.
+     */
     private class RoomSelectTable extends MenuTable {
 
         private final SelectBox<ContextEntry> roomSelectBox;
 
+        /**
+         * Erzeugt eine neue Instanz des RoomSelectTable.
+         */
         public RoomSelectTable() {
             infoLabel.setText("Wähle eine Aktion aus!");
 
@@ -142,16 +159,25 @@ public class RoomReceptionWindow extends InteractableWindow {
         public void resetTextFields() {
         }
 
+        /**
+         * Aktualisiert die Liste der angezeigten privaten Räume.
+         */
         private void updateRoomList() {
             roomSelectBox.setItems(Chati.CHATI.getPrivateRooms().toArray(new ContextEntry[0]));
         }
     }
 
+    /**
+     * Eine Klasse, welche das Menü zur Erstellung eines Raums repräsentiert.
+     */
     private class RoomCreateTable extends MenuTable {
 
         private final ChatiTextField roomnameField;
         private final ChatiTextField passwordField;
 
+        /**
+         * Erzeugt eine neue Instanz des RoomCreateTable.
+         */
         public RoomCreateTable() {
             infoLabel.setText("Erstelle einen privaten Raum!");
 
@@ -214,10 +240,17 @@ public class RoomReceptionWindow extends InteractableWindow {
         }
     }
 
+    /**
+     * Eine Klasse, welche das Menü zum Betreten eines Raums repräsentiert.
+     */
     private class RoomJoinTable extends MenuTable {
 
         private final ChatiTextField passwordField;
 
+        /**
+         * Erzeugt eine neue Instanz des RoomJoinTable.
+         * @param roomEntry Eintrag des zu betretenden Raums.
+         */
         public RoomJoinTable(ContextEntry roomEntry) {
 
             infoLabel.setText("Bitte gib das Passwort ein!");
@@ -263,10 +296,17 @@ public class RoomReceptionWindow extends InteractableWindow {
         }
     }
 
+    /**
+     * Eine Klasse, welche das Menü zur Anfrage zum Beitritt eines Raums repräsentiert.
+     */
     private class RoomRequestTable extends MenuTable {
 
         private final ChatiTextArea messageArea;
 
+        /**
+         * Erzeugt eine neue Instanz des RoomRequestTable.
+         * @param roomEntry Eintrag des anzufragenden Raums.
+         */
         public RoomRequestTable(ContextEntry roomEntry) {
 
             infoLabel.setText("Füge deiner Anfrage eine Nachricht hinzu!");

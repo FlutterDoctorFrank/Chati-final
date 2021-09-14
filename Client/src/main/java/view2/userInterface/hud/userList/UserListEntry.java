@@ -17,6 +17,9 @@ import view2.Chati;
 import view2.Response;
 import view2.userInterface.*;
 
+/**
+ * Eine Klasse, welche einen Eintrag in der Benutzerliste des HeadUpDisplay repräsentiert.
+ */
 public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
     private static final float BUTTON_SIZE = 30;
@@ -26,6 +29,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
     private final IUserView user;
 
+    /**
+     * Erzeugt eine neue Instanz des UserListEntry.
+     * @param user Zum Eintrag zugehöriger Benutzer.
+     */
     public UserListEntry(IUserView user) {
         this.user = user;
 
@@ -294,6 +301,9 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 : (this.user.getUsername().compareTo(other.user.getUsername())));
     }
 
+    /**
+     * Eine Klasse, welches ein Bestätigungsmenü zur Durchführung einer administrativen Benutzeraktion repräsentiert.
+     */
     private class MessageWindow extends ChatiWindow {
 
         private static final float WINDOW_WIDTH = 750;
@@ -301,6 +311,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
         private final ChatiTextArea userMessageArea;
 
+        /**
+         * Erzeugt eine neue Instanz des MessageWindow.
+         * @param action Durchzuführende administrative Aktion.
+         */
         protected MessageWindow(AdministrativeAction action) {
             super("");
 

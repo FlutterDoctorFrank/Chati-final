@@ -13,6 +13,10 @@ import view2.Chati;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Eine Klasse, welche die Anzeige der Informationen repräsentiert, die sowohl über den Avataren innerhalb der Welt,
+ * als auch in den Listen der Benutzer sichtbar sind.
+ */
 public class UserInfoContainer extends Table {
 
     private static final float USER_INFO_ICON_SIZE = 22.5f;
@@ -24,6 +28,10 @@ public class UserInfoContainer extends Table {
     private final Label usernameLabel;
     private final Table roleIconContainer;
 
+    /**
+     * Erzeugt eine neue Instanz des UserInfoContainer.
+     * @param user Benutzer, dessen Informationen angezeigt werden soll.
+     */
     public UserInfoContainer(IUserView user) {
         this.user = user;
         this.roleIcons = new ArrayList<>();
@@ -45,6 +53,9 @@ public class UserInfoContainer extends Table {
         super.act(delta);
     }
 
+    /**
+     * Aktualisiert die Information des Benutzers.
+     */
     private void updateInfo() {
         roleIcons.clear();
         roleIconContainer.clear();

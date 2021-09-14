@@ -1,4 +1,4 @@
-package view2.userInterface.hud.configurations;
+package view2.userInterface.hud.settings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -17,6 +17,9 @@ import view2.ChatiPreferences;
 import view2.userInterface.ChatiWindow;
 import view2.userInterface.ChatiTextButton;
 
+/**
+ * Eine Klasse, welche das Menü zum Vornehmen von Soundeinstellungen repräsentiert.
+ */
 public class SoundConfigurationWindow extends ChatiWindow {
 
     private static final float WINDOW_WIDTH = 750;
@@ -30,6 +33,9 @@ public class SoundConfigurationWindow extends ChatiWindow {
 
     private final ChatiTextButton confirmButton;
 
+    /**
+     * Erzeugt eine neue Instanz des SoundConfigurationWindow.
+     */
     public SoundConfigurationWindow() {
         super("Audioeinstellungen");
 
@@ -199,11 +205,17 @@ public class SoundConfigurationWindow extends ChatiWindow {
         add(container).padLeft(SPACING).padRight(SPACING).grow();
     }
 
+    /**
+     * Aktiviert den Bestätigungsbutton.
+     */
     private void enableButton() {
         confirmButton.setTouchable(Touchable.enabled);
         confirmButton.getLabel().setColor(Color.WHITE);
     }
 
+    /**
+     * Deaktiviert den Bestätigungsbutton.
+     */
     private void disableButton() {
         confirmButton.setTouchable(Touchable.disabled);
         confirmButton.getLabel().setColor(Color.DARK_GRAY);

@@ -34,6 +34,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * Eine Klasse, welche den Bildschirm innerhalb der Welt in der Anwendung repräsentiert.
+ */
 public class WorldScreen extends ChatiScreen {
 
     public static final short COLLISION_AREA_BIT = 1;
@@ -57,6 +60,9 @@ public class WorldScreen extends ChatiScreen {
     private InternUserAvatar internUserAvatar;
     private InteractableWindow currentInteractableWindow;
 
+    /**
+     * Erzeugt eine neue Instanz des WorldScreen.
+     */
     public WorldScreen() {
         this.worldInputProcessor = new WorldInputProcessor();
         this.camera = new WorldCamera();
@@ -133,26 +139,51 @@ public class WorldScreen extends ChatiScreen {
         return new InputMultiplexer(stage, worldInputProcessor);
     }
 
+    /**
+     * Gibt den WorldInputProcessor zurück.
+     * @return WorldInputProcessor.
+     */
     public WorldInputProcessor getWorldInputProcessor() {
         return worldInputProcessor;
     }
 
+    /**
+     * Gibt die aktuelle Karte zurück.
+     * @return Aktuelle Karte.
+     */
     public TiledMap getTiledMap() {
         return tiledMapRenderer.getMap();
     }
 
+    /**
+     * Gibt die Instanz der World (LibGDX-Klasse) zurück.
+     * @return Instanz der World.
+     */
     public World getWorld() {
         return world;
     }
 
+    /**
+     * Gibt die Kamera zurück.
+     * @return Kamera.
+     */
     public WorldCamera getCamera() {
         return camera;
     }
 
+    /**
+     * Gibt den Avatar des intern angemeldeten Benutzers zurück.
+     * @return Avatar des internen Benutzers.
+     */
     public InternUserAvatar getInternUserAvatar() {
         return internUserAvatar;
     }
 
+    /**
+     * Öffnet das Menü eines Interaktionsobjekts.
+     * @param contextId ID des Interaktionsobjekts.
+     * @param contextMenu Zu öffnendes Menü.
+     */
     public void openMenu(ContextID contextId, ContextMenu contextMenu) {
         switch (contextMenu) {
             case ROOM_RECEPTION_MENU:
@@ -179,6 +210,11 @@ public class WorldScreen extends ChatiScreen {
         currentInteractableWindow.open();
     }
 
+    /**
+     * Schließt das Menü eines Interaktionsobjekts.
+     * @param contextId ID des Interaktionsobjekts.
+     * @param contextMenu Zu schließendes Menü.
+     */
     public void closeMenu(ContextID contextId, ContextMenu contextMenu) {
         if (currentInteractableWindow != null && (!currentInteractableWindow.getInteractableId().equals(contextId)
             || currentInteractableWindow.getInteractableMenu() != contextMenu)) {
@@ -188,6 +224,11 @@ public class WorldScreen extends ChatiScreen {
         currentInteractableWindow = null;
     }
 
+    /**
+     * Veranlasst die Verarbeitung einer Antwort auf eine durchgeführte Menüaktion im aktuell geöffneten Menü.
+     * @param success Information, ob die durchgeführte Aktion erfolgreich war.
+     * @param messageKey Kennung der Nachricht, die angezeigt werden soll.
+     */
     public void menuActionResponse(boolean success, String messageKey) {
         if (currentInteractableWindow == null) {
             return;
@@ -195,11 +236,17 @@ public class WorldScreen extends ChatiScreen {
         currentInteractableWindow.receiveResponse(success, messageKey);
     }
 
+    /**
+     * Lädt die Avatare aller Benutzer.
+     */
     private void initialize() {
         this.internUserAvatar = new InternUserAvatar();
         loadExternUserAvatars();
     }
 
+    /**
+     * Entfernt die Avatare aller Benutzer und die Karte.
+     */
     private void destroy() {
         Array<Body> bodies = new Array<>();
         world.getBodies(bodies);
@@ -209,6 +256,9 @@ public class WorldScreen extends ChatiScreen {
         tiledMapRenderer.setMap(null);
     }
 
+    /**
+     * Erzeugt eine neue Karte.
+     */
     private void createMap() {
         IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
         if (internUser == null || internUser.getCurrentRoom() == null || internUser.getCurrentRoom().getMap() == null) {
@@ -222,6 +272,9 @@ public class WorldScreen extends ChatiScreen {
                 .forEach(interactiveObject -> new InteractionObject(interactiveObject.getRectangle()));
     }
 
+    /**
+     * Lädt die Avatare aller externen Benutzer.
+     */
     private void loadExternUserAvatars() {
         Chati.CHATI.getUserManager().getUsersInRoom().values().forEach(externUser -> {
             if (!externUserAvatars.containsKey(externUser)) {

@@ -10,10 +10,16 @@ import view2.userInterface.menu.table.LoginTable;
 import view2.userInterface.menu.table.MenuTable;
 import view2.userInterface.menu.table.StartTable;
 
+/**
+ * Eine Klasse, welche den Menübildschirm der Anwendung repräsentiert.
+ */
 public class MenuScreen extends ChatiScreen {
 
     private MenuTable currentMenuTable;
 
+    /**
+     * Erzeugt eine neue Instanz des MenuScreen.
+     */
     public MenuScreen() {
         setMenuTable(new LoginTable());
     }
@@ -24,6 +30,11 @@ public class MenuScreen extends ChatiScreen {
         super.render(delta);
     }
 
+    /**
+     * Verarbeitet die Antwort auf eine durchgeführte Registrierung.
+     * @param success Information, ob die Registrierung erfolgreich war.
+     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     */
     public void registrationResponse(boolean success, String messageKey) {
         if (pendingResponse != Response.REGISTRATION) {
             return;
@@ -37,6 +48,11 @@ public class MenuScreen extends ChatiScreen {
         }
     }
 
+    /**
+     * Verarbeitet die Antwort auf eine durchgeführte Anmeldung.
+     * @param success Information, ob die Anmeldung erfolgreich war.
+     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     */
     public void loginResponse(boolean success, String messageKey) {
         if (pendingResponse != Response.LOGIN) {
             return;
@@ -50,6 +66,11 @@ public class MenuScreen extends ChatiScreen {
         }
     }
 
+    /**
+     * Verarbeitet die Antwort auf eine durchgeführte Passwortänderung.
+     * @param success Information, ob die Passwortänderung erfolgreich war.
+     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     */
     public void passwordChangeResponse(boolean success, String messageKey) {
         if (pendingResponse != Response.PASSWORD_CHANGE) {
             return;
@@ -64,6 +85,11 @@ public class MenuScreen extends ChatiScreen {
         }
     }
 
+    /**
+     * Verarbeitet die Antwort auf eine durchgeführte Kontolöschung.
+     * @param success Information, ob die Kontolöschung erfolgreich war.
+     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     */
     public void deleteAccountResponse(boolean success, String messageKey) {
         if (pendingResponse != Response.DELETE_ACCOUNT) {
             return;
@@ -78,6 +104,11 @@ public class MenuScreen extends ChatiScreen {
         }
     }
 
+    /**
+     * Verarbeitet die Antwort auf eine durchgeführte Avataränderung.
+     * @param success Information, ob die Avataränderung erfolgreich war.
+     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     */
     public void avatarChangeResponse(boolean success, String messageKey) {
         if (pendingResponse != Response.AVATAR_CHANGE) {
             return;
@@ -91,6 +122,11 @@ public class MenuScreen extends ChatiScreen {
         }
     }
 
+    /**
+     * Verarbeitet die Antwort auf eine durchgeführte Welterstellung.
+     * @param success Information, ob die Welterstellung erfolgreich war.
+     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     */
     public void createWorldResponse(boolean success, String messageKey) {
         if (pendingResponse != Response.CREATE_WORLD) {
             return;
@@ -105,6 +141,11 @@ public class MenuScreen extends ChatiScreen {
         }
     }
 
+    /**
+     * Verarbeitet die Antwort auf eine durchgeführte Weltlöschung.
+     * @param success Information, ob die Weltlöschung erfolgreich war.
+     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     */
     public void deleteWorldResponse(boolean success, String messageKey) {
         if (pendingResponse != Response.DELETE_WORLD) {
             return;
@@ -117,6 +158,11 @@ public class MenuScreen extends ChatiScreen {
         }
     }
 
+    /**
+     * verarbeitet die Antwort auf einen durchgeführten Weltbeitritt.
+     * @param success Information, ob der Weltbeitritt erfolgreich war.
+     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     */
     public void joinWorldResponse(boolean success, String messageKey) {
         if (pendingResponse != Response.JOIN_WORLD) {
             return;
@@ -129,6 +175,10 @@ public class MenuScreen extends ChatiScreen {
         }
     }
 
+    /**
+     * Setzt den momentan anzuzeigenden Inhalt.
+     * @param table Container des anzuzeigenden Inhalts.
+     */
     public void setMenuTable(MenuTable table) {
         if (currentMenuTable != null) {
             currentMenuTable.remove();

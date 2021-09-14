@@ -10,10 +10,16 @@ import view2.userInterface.ChatiTextButton;
 import view2.ContextEntry;
 import view2.Response;
 
+/**
+ * Eine Klasse, welche das Menü zum Auswählen eines zu betretenden Welt oder weiteren Menüs repräsentiert.
+ */
 public class StartTable extends MenuTable {
 
     private final SelectBox<ContextEntry> worldSelectBox;
 
+    /**
+     * Erzeugt eine neue Instanz des StartTable.
+     */
     public StartTable() {
         infoLabel.setText("Bitte wähle eine Aktion aus!");
 
@@ -115,6 +121,9 @@ public class StartTable extends MenuTable {
     public void resetTextFields() {
     }
 
+    /**
+     * Aktualisiert die Liste der angezeigten Welten.
+     */
     private void updateWorldList() {
         worldSelectBox.setItems(Chati.CHATI.getWorlds().toArray(new ContextEntry[0]));
     }

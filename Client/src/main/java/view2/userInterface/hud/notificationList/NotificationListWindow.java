@@ -15,6 +15,9 @@ import view2.userInterface.hud.HudMenuWindow;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Eine Klasse, welche das Benachrichtigungsmenü des HeadUpDisplay repräsentiert.
+ */
 public class NotificationListWindow extends HudMenuWindow {
 
     private final Set<NotificationListEntry> globalNotificationEntries;
@@ -24,6 +27,9 @@ public class NotificationListWindow extends HudMenuWindow {
     private final ChatiTextButton worldNotificationTabButton;
     private final Table notificationListContainer;
 
+    /**
+     * Erzeugt eine neue Instanz des NotificationListWindow.
+     */
     public NotificationListWindow() {
         super("Benachrichtigungen");
         this.globalNotificationEntries = new TreeSet<>();
@@ -123,6 +129,9 @@ public class NotificationListWindow extends HudMenuWindow {
         super.act(delta);
     }
 
+    /**
+     * Zeigt die Liste aller globalen Benachrichtigungen an.
+     */
     private void showGlobalNotifications() {
         globalNotificationEntries.clear();
         IUserManagerView userManager = Chati.CHATI.getUserManager();
@@ -133,6 +142,9 @@ public class NotificationListWindow extends HudMenuWindow {
         }
     }
 
+    /**
+     * Zeigt die Liste aller Benachrichtigungen in der aktuellen Welt an.
+     */
     private void showWorldNotifications() {
         worldNotificationEntries.clear();
         IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
@@ -143,12 +155,18 @@ public class NotificationListWindow extends HudMenuWindow {
         }
     }
 
+    /**
+     * Deaktiviert den Tab zur Anzeige aller globalen Benachrichtigungen.
+     */
     private void disableGlobalNotificationTab() {
         disableButton(globalNotificationTabButton);
         globalNotificationEntries.clear();
         notificationListContainer.clearChildren();
     }
 
+    /**
+     * Deaktiviert den Tab zur Anzeige aller Benachrichtigungen der aktuellen Welt.
+     */
     private void disableWorldNotificationTab() {
         if (worldNotificationTabButton.isChecked() && !globalNotificationTabButton.isDisabled()) {
             worldNotificationTabButton.setChecked(false);
@@ -159,6 +177,10 @@ public class NotificationListWindow extends HudMenuWindow {
         worldNotificationEntries.clear();
     }
 
+    /**
+     * Zeigt die übergebenen Einträge in der Liste an.
+     * @param entries Anzuzeigende Einträge.
+     */
     private void layoutEntries(Set<NotificationListEntry> entries) {
         notificationListContainer.clearChildren();
         entries.forEach(entry -> notificationListContainer.add(entry).growX().row());

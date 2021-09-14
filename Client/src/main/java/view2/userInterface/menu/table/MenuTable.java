@@ -5,6 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import view2.Chati;
 
+/**
+ * Eine abstrakte Klasse, welche ein Menü im Menübildschirm repräsentiert.
+ */
 public abstract class MenuTable extends Table {
 
     protected static final float ROW_WIDTH = 600;
@@ -13,6 +16,9 @@ public abstract class MenuTable extends Table {
 
     protected final Label infoLabel;
 
+    /**
+     * Erzeugt eine neue Instanz des MenuTable.
+     */
     public MenuTable() {
         this.infoLabel = new Label("", Chati.CHATI.getSkin());
         infoLabel.setAlignment(Align.center, Align.center);
@@ -21,9 +27,16 @@ public abstract class MenuTable extends Table {
         setFillParent(true);
     }
 
-    public abstract void resetTextFields();
-
+    /**
+     * Zeigt eine Nachricht auf dem Info-Label an.
+     * @param message Anzuzeigende Nachricht.
+     */
     public void showMessage(String message) {
         infoLabel.setText(message);
     }
+
+    /**
+     * Setzt alle Textfelder in diesem Menü zurück.
+     */
+    public abstract void resetTextFields();
 }

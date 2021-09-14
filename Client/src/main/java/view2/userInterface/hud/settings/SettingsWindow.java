@@ -1,4 +1,4 @@
-package view2.userInterface.hud.configurations;
+package view2.userInterface.hud.settings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -14,7 +14,10 @@ import view2.userInterface.hud.HudMenuWindow;
 import view2.userInterface.menu.table.LoginTable;
 import view2.userInterface.menu.table.StartTable;
 
-public class ConfigurationWindow extends HudMenuWindow {
+/**
+ * Eine Klasse, welche das Einstellungsmenü des HeadUpDisplay repräsentiert.
+ */
+public class SettingsWindow extends HudMenuWindow {
 
     private static final float TOP_SPACING = 7.5f;
     private static final float HORIZONTAL_SPACING = 20;
@@ -24,7 +27,10 @@ public class ConfigurationWindow extends HudMenuWindow {
     private final ChatiTextButton leaveWorldButton;
     private final ChatiTextButton logoutButton;
 
-    public ConfigurationWindow() {
+    /**
+     * Erzeugt eine neue Instanz des SettingsWindow.
+     */
+    public SettingsWindow() {
         super("Einstellungen");
 
         IInternUserView internUser = Chati.CHATI.getInternUser();

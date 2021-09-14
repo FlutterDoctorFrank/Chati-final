@@ -1,9 +1,7 @@
 package view2.audio;
 
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import model.context.spatial.ContextMusic;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import view2.Chati;
@@ -11,6 +9,9 @@ import view2.KeyCommand;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Eine Klasse, welche den VoiceChat sowie das Abspielen von Soundeffekten koordiniert.
+ */
 public class AudioManager {
 
     public static final int SAMPLE_RATE = 44100;
@@ -18,16 +19,12 @@ public class AudioManager {
     public static final int BLOCK_SIZE = SAMPLE_RATE / SEND_RATE;
     public static final boolean MONO = true;
 
-    private static final String CHAT_MESSAGE_SOUND_PATH = ""; // TODO
-    private static final String NOTIFICATION_SOUND_PATH = ""; // TODO
-    private static final String ROOM_ENTER_SOUND_PATH = ""; // TODO
-
     private VoiceRecorder voiceRecorder;
     private AudioConsumer audioConsumer;
-    private Sound chatMessageSound;
-    private Sound notificationSound;
-    private Sound roomEnterSound;
 
+    /**
+     * Erzeugt eine neue Instanz des AudioManager.
+     */
     public AudioManager() {
         try {
             this.voiceRecorder = new VoiceRecorder();
@@ -40,6 +37,10 @@ public class AudioManager {
         //this.roomEnterSound = Gdx.audio.newSound(Gdx.files.internal(ROOM_ENTER_SOUND_PATH));
     }
 
+    /**
+     * Wird periodisch aufgerufen, um den das Aufnehmen von Sprachdaten und Abspielen von erhaltenen Audiopaketen nach
+     * Bedarf ein- oder auszuschalten.
+     */
     public void update() {
         IInternUserView internUser = Chati.CHATI.getInternUser();
 
@@ -69,50 +70,37 @@ public class AudioManager {
         }
     }
 
-    public void playAudioData(UUID userId, LocalDateTime timestamp, byte[] audioData) throws UserNotFoundException {
+    /**
+     * Veranlasst das Abspielen erhaltener Audiodaten.
+     * @param senderId ID des sendenden Benutzers oder null, falls es sich um Daten eines Musikstreams handelt.
+     * @param timestamp Zeitstempel der Audiodaten.
+     * @param audioData Abzuspielende Daten.
+     * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
+     */
+    public void playAudioData(UUID senderId, LocalDateTime timestamp, byte[] audioData) throws UserNotFoundException {
         if (audioConsumer != null && audioConsumer.isRunning()) {
-            if (userId == null) {
+            if (senderId == null) {
                 audioConsumer.receiveMusicStream(timestamp, audioData);
             } else {
-                audioConsumer.receiveVoiceData(userId, timestamp, audioData);
+                audioConsumer.receiveVoiceData(senderId, timestamp, audioData);
             }
         }
     }
 
-    public void playChatMessageSound() {
-        // TODO
-        /*
-        if (chatMessageSound != null) {
-            float volume = (float) Math.sqrt(Settings.getTotalVolume() * Settings.getSoundVolume());
-            chatMessageSound.play(volume);
-        }
-         */
-    }
-
-    public void playNotificationSound() {
-        // TODO
-        /*
-        if (notificationSound != null) {
-            float volume = (float) Math.sqrt(Settings.getTotalVolume() * Settings.getSoundVolume());
-            notificationSound.play(volume);
-        }
-         */
-    }
-
-    public void playRoomEnterSound() {
-        // TODO
-        /*
-        if (roomEnterSound != null) {
-            float volume = (float) Math.sqrt(Settings.getTotalVolume() * Settings.getSoundVolume());
-            roomEnterSound.play(volume);
-        }
-         */
-    }
-
+    /**
+     * Gibt zurück, ob gerade Daten eines Musikstreams abgespielt werden.
+     * @return true, wenn Musikdaten abgespielt werden, sonst false.
+     */
     public boolean isPlayingMusic() {
         return audioConsumer.isPlayingMusic();
     }
 
+    /**
+     * Kopiert Daten aus einem Short-Array in einen Byte-Array doppelter Größe.
+     * @param shorts Short-Array der zu kopierenden Daten.
+     * @param bigEndian Endianität der Daten.
+     * @return Byte-Array mit den kopierten Daten.
+     */
     public static byte[] toByte(short[] shorts, boolean bigEndian) {
         byte[] bytes = new byte[shorts.length * 2];
         if (bigEndian) {
@@ -129,6 +117,12 @@ public class AudioManager {
         return bytes;
     }
 
+    /**
+     * Kopiert Daten aus einem Byte-Array in einen Short-Array halber Größe.
+     * @param bytes Byte-Array der zu kopierenden Daten.
+     * @param bigEndian Endianität der Daten.
+     * @return Short-Array mit den kopierten Daten.
+     */
     public static short[] toShort(byte[] bytes, boolean bigEndian) {
         short[] shorts = new short[bytes.length / 2];
         if (bigEndian) {

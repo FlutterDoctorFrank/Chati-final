@@ -4,12 +4,18 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
 import view2.userInterface.hud.HeadUpDisplay;
 
+/**
+ * Eine abstrakte Klasse, die einen Bildschirm der Anwendung repräsentiert.
+ */
 public abstract class ChatiScreen extends ScreenAdapter {
 
     protected final ChatiStage stage;
 
     protected Response pendingResponse;
 
+    /**
+     * Erzeugt eine neue Instanz eines ChatiScreen.
+     */
     protected ChatiScreen() {
         this.stage = new ChatiStage();
         this.pendingResponse = Response.NONE;
@@ -36,13 +42,25 @@ public abstract class ChatiScreen extends ScreenAdapter {
         stage.clear();
     }
 
-    public ChatiStage getStage() {
-        return stage;
-    }
-
+    /**
+     * Setzt die Information darüber, auf welche Antwort gerade gewartet wird.
+     * @param pendingResponse Information, auf welche Antwort gerade gewartet wird.
+     */
     public void setPendingResponse(Response pendingResponse) {
         this.pendingResponse = pendingResponse;
     }
 
+    /**
+     * Gibt die Stage dieses Bildschirms zurück.
+     * @return Stage des Bildschirms.
+     */
+    public ChatiStage getStage() {
+        return stage;
+    }
+
+    /**
+     * Gibt den InputProcessor dieses Bildschirms zurück.
+     * @return InputProcessor des Bildschirms.
+     */
     public abstract InputProcessor getInputProcessor();
 }

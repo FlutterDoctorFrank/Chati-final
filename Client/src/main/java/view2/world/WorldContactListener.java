@@ -9,6 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.world.component.ContactType;
 
+/**
+ * Eine Klasse, welche einen ContactListener repräsentiert, der den Kontakt zwischen dem Benutzer und einem
+ * Interaktionsobjekt verarbeitet.
+ */
 public class WorldContactListener implements ContactListener {
 
     @Override
@@ -16,7 +20,7 @@ public class WorldContactListener implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
-        if (isInternAvatar(fixtureA, fixtureB) && isInteractionArea(fixtureA, fixtureB)) {
+        if (isInternUserAvatar(fixtureA, fixtureB) && isInteractionArea(fixtureA, fixtureB)) {
             Chati.CHATI.getWorldScreen().getInternUserAvatar().canInteract(true);
         }
     }
@@ -26,14 +30,14 @@ public class WorldContactListener implements ContactListener {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
-        if (isInternAvatar(fixtureA, fixtureB) && isInteractionArea(fixtureA, fixtureB)) {
+        if (isInternUserAvatar(fixtureA, fixtureB) && isInteractionArea(fixtureA, fixtureB)) {
             Chati.CHATI.getWorldScreen().getInternUserAvatar().canInteract(false);
         }
     }
 
     @Override
     public void preSolve(@NotNull final Contact contact, @NotNull final Manifold oldManifold) {
-        if (isInternAvatar(contact.getFixtureA(), contact.getFixtureB())) {
+        if (isInternUserAvatar(contact.getFixtureA(), contact.getFixtureB())) {
             if (!Chati.CHATI.getWorldScreen().getInternUserAvatar().getUser().isMovable()) {
                 contact.setEnabled(false);
             }
@@ -45,13 +49,25 @@ public class WorldContactListener implements ContactListener {
 
     }
 
-    private boolean isInternAvatar(@NotNull final Fixture first, @NotNull final Fixture second) {
-        return first.getBody().getUserData() == ContactType.INTERN_USER
-                || second.getBody().getUserData() == ContactType.INTERN_USER;
+    /**
+     * Gibt zurück, ob eine der beiden Kontaktflächen zu dem intern angemeldeten Benutzer gehört.
+     * @param fixtureA Erste Kontaktfläche.
+     * @param fixtureB Zweite Kontaktfläche.
+     * @return true, wenn eine der Flächen zu dem Benutzer gehört, sonst false.
+     */
+    private boolean isInternUserAvatar(@NotNull final Fixture fixtureA, @NotNull final Fixture fixtureB) {
+        return fixtureA.getBody().getUserData() == ContactType.INTERN_USER
+                || fixtureB.getBody().getUserData() == ContactType.INTERN_USER;
     }
 
-    public boolean isInteractionArea(@NotNull final Fixture first, @NotNull final Fixture second) {
-        return first.getBody().getUserData() == ContactType.INTERACTION_AREA
-                || second.getBody().getUserData() == ContactType.INTERACTION_AREA;
+    /**
+     * Gibt zurück, ob eine der beiden Kontaktflächen zu einem Interaktionsobjekt gehört.
+     * @param fixtureA Erste Kontaktfläche.
+     * @param fixtureB Zweite Kontaktfläche.
+     * @return true, wenn eine der Flächen zu einem Interaktionsobjekt gehört, sonst false.
+     */
+    private boolean isInteractionArea(@NotNull final Fixture fixtureA, @NotNull final Fixture fixtureB) {
+        return fixtureA.getBody().getUserData() == ContactType.INTERACTION_AREA
+                || fixtureB.getBody().getUserData() == ContactType.INTERACTION_AREA;
     }
 }

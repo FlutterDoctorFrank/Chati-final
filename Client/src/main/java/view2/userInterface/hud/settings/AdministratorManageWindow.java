@@ -1,4 +1,4 @@
-package view2.userInterface.hud.configurations;
+package view2.userInterface.hud.settings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -16,6 +16,9 @@ import view2.userInterface.ChatiTextArea;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
 
+/**
+ * Eine Klasse, welche das Menü zum Vergeben oder Entziehen der Administratorrole repräsentiert.
+ */
 public class AdministratorManageWindow extends ChatiWindow {
 
     private static final float WINDOW_WIDTH = 750;
@@ -26,6 +29,9 @@ public class AdministratorManageWindow extends ChatiWindow {
     private final ChatiTextField usernameField;
     private final ChatiTextArea messageArea;
 
+    /**
+     * Erzeugt eine neue Instanz des AdministratorManageWindow.
+     */
     public AdministratorManageWindow() {
         super("Administratoren verwalten");
 
@@ -143,6 +149,9 @@ public class AdministratorManageWindow extends ChatiWindow {
         add(container).padLeft(SPACING).padRight(SPACING).grow();
     }
 
+    /**
+     * Setzt alle Textfelder zurück.
+     */
     private void resetTextFields() {
         usernameField.reset();
         messageArea.reset();

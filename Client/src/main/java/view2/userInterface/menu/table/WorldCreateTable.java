@@ -12,10 +12,16 @@ import view2.Response;
 
 import java.util.EnumSet;
 
+/**
+ * Eine Klasse, welche das Menü zum Erstellen eine Welt repräsentiert.
+ */
 public class WorldCreateTable extends MenuTable {
 
     private final ChatiTextField worldNameField;
 
+    /**
+     * Erzeugt eine neue Instanz des WorldCreateTable.
+     */
     public WorldCreateTable() {
         infoLabel.setText("Bitte wähle einen Namen und eine Karte!");
 

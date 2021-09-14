@@ -12,6 +12,9 @@ import model.context.spatial.ContextMenu;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 
+/**
+ * Eine Klasse, welche das Menü des Seat repräsentiert.
+ */
 public class SeatWindow extends InteractableWindow {
 
     private static final int MENU_OPTION_SIT = 1;
@@ -19,6 +22,10 @@ public class SeatWindow extends InteractableWindow {
     private static final float WINDOW_WIDTH = 550;
     private static final float WINDOW_HEIGHT = 275;
 
+    /**
+     * Erzeugt eine neue Instanz des SeatWindow.
+     * @param seatId ID des zugehörigen Seat.
+     */
     public SeatWindow(ContextID seatId) {
         super("Hinsetzen", seatId, ContextMenu.SEAT_MENU);
 

@@ -18,6 +18,9 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.NoSuchElementException;
 
+/**
+ * Eine Klasse, welche das Menü des MusicStreamer repräsentiert.
+ */
 public class MusicStreamerWindow extends InteractableWindow {
 
     /** Menü-Option zum Auswählen eines abzuspielenden Musikstücks. */
@@ -55,9 +58,12 @@ public class MusicStreamerWindow extends InteractableWindow {
     private final ChatiImageButton backButton;
     private final ChatiImageButton skipButton;
 
+    /**
+     * Erzeugt eine neue Instanz des MusicStreamerWindow.
+     * @param musicPlayerId ID des zugehörigen MusicStreamer.
+     */
     public MusicStreamerWindow(ContextID musicPlayerId) {
         super("Jukebox", musicPlayerId, ContextMenu.MUSIC_STREAMER_MENU);
-
         infoLabel = new Label("Wähle einen Titel.", Chati.CHATI.getSkin());
 
         musicList = new List<>(Chati.CHATI.getSkin(), "dimmed");
@@ -205,6 +211,9 @@ public class MusicStreamerWindow extends InteractableWindow {
         }
     }
 
+    /**
+     * Setzt das aktuell abgespielte Musikstück in der Liste der angezeigten Musikstücke.
+     */
     private void setSelectedMusic() {
         IInternUserView internUser = Chati.CHATI.getInternUser();
 
@@ -221,6 +230,9 @@ public class MusicStreamerWindow extends InteractableWindow {
         }
     }
 
+    /**
+     * Setzt die korrekte Anzeige der ImageButtons.
+     */
     private void setButtonImages() {
         IInternUserView internUser = Chati.CHATI.getInternUser();
 
@@ -238,24 +250,43 @@ public class MusicStreamerWindow extends InteractableWindow {
         }
     }
 
+    /**
+     * Aktiviert einen ImageButtons.
+     * @param button Zu aktivierender ImageButton.
+     */
     private void enableButton(Button button) {
         button.setDisabled(false);
         button.setTouchable(Touchable.enabled);
     }
 
+    /**
+     * Deaktiviert einen ImageButton.
+     * @param button Zu deaktivierender ImageButton.
+     */
     private void disableButton(Button button) {
         button.setDisabled(true);
         button.setTouchable(Touchable.disabled);
     }
 
+    /**
+     * Eine Klasse, welche die Elemente repräsentiert, die in der Liste aller Musikstücke angezeigt werden.
+     */
     private static class MusicListItem {
 
         private final ContextMusic music;
 
+        /**
+         * Erzeugt eine neue Instanz des MusicListItem.
+         * @param music Zugehörige Musik.
+         */
         public MusicListItem(ContextMusic music) {
             this.music = music;
         }
 
+        /**
+         * Gibt die Musik dieses Elements zurück.
+         * @return Musik des Elements.
+         */
         public ContextMusic getMusic() {
             return music;
         }

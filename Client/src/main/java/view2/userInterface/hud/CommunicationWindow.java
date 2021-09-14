@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Eine Klasse, welche das Kommunikationsfenster der Anwendung repräsentiert.
+ */
 public class CommunicationWindow extends ChatiWindow {
 
     private static final float HUD_WINDOW_WIDTH = 400;
@@ -19,6 +22,9 @@ public class CommunicationWindow extends ChatiWindow {
     private final Set<UserListEntry> communicableUserEntries;
     private final Table userListContainer;
 
+    /**
+     * Erzeugt eine neue Instanz des CommunicationWindow.
+     */
     public CommunicationWindow() {
         super("Kommunikation");
         this.communicableUserEntries = new TreeSet<>();
@@ -55,6 +61,9 @@ public class CommunicationWindow extends ChatiWindow {
         super.close();
     }
 
+    /**
+     * Zeigt die Liste aller Benutzer an, mit denen gerade kommuniziert werden kann.
+     */
     private void showCommunicableUsers() {
         communicableUserEntries.clear();
         IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
@@ -65,6 +74,10 @@ public class CommunicationWindow extends ChatiWindow {
         }
     }
 
+    /**
+     * Zeigt die übergebenen Einträge in der Liste an.
+     * @param entries Anzuzeigende Einträge.
+     */
     private void layoutEntries(Set<UserListEntry> entries) {
         userListContainer.clearChildren();
         entries.forEach(entry -> userListContainer.add(entry).growX().row());

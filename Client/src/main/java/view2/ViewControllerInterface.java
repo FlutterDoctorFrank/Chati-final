@@ -33,8 +33,9 @@ public interface ViewControllerInterface {
      * Setzt die innerhalb einer Welt verfügbaren privaten Räume, die der Benutzer betreten kann.
      * @param worldId ID der übergeordneten Welt der privaten Räume.
      * @param privateRooms Verfügbare private Räume.
+     * @throws ContextNotFoundException falls der Benutzer nicht in einer Welt mit der ID ist.
      */
-    void updateRooms(ContextID worldId, Map<ContextID, String> privateRooms);
+    void updateRooms(ContextID worldId, Map<ContextID, String> privateRooms) throws ContextNotFoundException;
 
     /**
      * Benachrichtigt die View, ob eine Registrierung von einem Benutzer erfolgreich beim Server durchgeführt wurde.

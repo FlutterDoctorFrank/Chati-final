@@ -10,10 +10,17 @@ import view2.userInterface.hud.HeadUpDisplay;
 
 import java.util.Stack;
 
+/**
+ * Eine Klasse, welche einen Container für alle auf einem Bildschirm anzuzeigenden Inhalte darstellt und das verarbeiten
+ * von Input auf diesen koordiniert.
+ */
 public class ChatiStage extends Stage {
 
     private final Stack<ChatiWindow> openWindows;
 
+    /**
+     * Erzeugt eine neue Instanz der ChatiStage.
+     */
     public ChatiStage() {
         super(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()), Chati.CHATI.getSpriteBatch());
         this.openWindows = new Stack<>();
@@ -89,11 +96,19 @@ public class ChatiStage extends Stage {
         return super.touchDown(screenX, screenY, pointer, button);
     }
 
+    /**
+     * Fügt ein geöffnetes Fenster in den Stack aller geöffneten Fenster ein und zeigt es an.
+     * @param window Neu geöffnetes Fenster.
+     */
     public void openWindow(ChatiWindow window) {
         openWindows.push(window);
         addActor(window);
     }
 
+    /**
+     * Entfernt ein Fenster aus dem Stack aller geöffneten Fenster und lässt es nicht mehr anzeigen.
+     * @param window Zu schließendes Fenster.
+     */
     public void closeWindow(ChatiWindow window) {
         if (openWindows.remove(window)) {
             window.remove();

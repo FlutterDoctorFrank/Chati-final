@@ -1,4 +1,4 @@
-package view2.userInterface.hud.configurations;
+package view2.userInterface.hud.settings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -11,11 +11,17 @@ import view2.Chati;
 import view2.userInterface.ChatiWindow;
 import view2.userInterface.ChatiTextButton;
 
+/**
+ * Eine Klasse, welche das Menü zum Ändern der Sprache repräsentiert.
+ */
 public class LanguageSelectWindow extends ChatiWindow {
 
     private static final float WINDOW_WIDTH = 550;
     private static final float WINDOW_HEIGHT = 350;
 
+    /**
+     * Erzeugt eine neue Instanz des LanguageSelectWindow.
+     */
     public LanguageSelectWindow() {
         super("Sprache auswählen");
 

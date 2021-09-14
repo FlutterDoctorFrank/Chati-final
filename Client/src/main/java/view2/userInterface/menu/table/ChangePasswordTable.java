@@ -9,12 +9,18 @@ import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
 import view2.Response;
 
+/**
+ * Eine Klasse, welche das Menü zum Ändern des Passworts repräsentiert.
+ */
 public class ChangePasswordTable extends MenuTable {
 
     private final ChatiTextField passwordField;
     private final ChatiTextField newPasswordField;
     private final ChatiTextField confirmNewPasswordField;
 
+    /**
+     * Erzeugt eine neue Instant des ChangePasswordTable.
+     */
     public ChangePasswordTable() {
         infoLabel.setText("Gib dein aktuelles und ein neues Passwort ein!");
 

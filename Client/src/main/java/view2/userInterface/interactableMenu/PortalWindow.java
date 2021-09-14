@@ -12,11 +12,18 @@ import model.context.spatial.ContextMenu;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 
+/**
+ * Eine Klasse, welche das Menü des Portal repräsentiert.
+ */
 public class PortalWindow extends InteractableWindow {
 
     private static final float WINDOW_WIDTH = 550;
     private static final float WINDOW_HEIGHT = 275;
 
+    /**
+     * Erzeugt eine neue Instanz des PortalWindow.
+     * @param portalId ID des zugehörigen Portal.
+     */
     public PortalWindow(ContextID portalId) {
         super("Raum verlassen", portalId, ContextMenu.PORTAL_MENU);
 

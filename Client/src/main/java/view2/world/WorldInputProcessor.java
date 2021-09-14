@@ -5,6 +5,9 @@ import view2.Chati;
 import view2.KeyCommand;
 import model.context.spatial.Direction;
 
+/**
+ * Eine Klasse, welche einen InputProcessor repräsentiert, der den Input innerhalb einer Welt verarbeitet.
+ */
 public class WorldInputProcessor implements InputProcessor {
 
     private boolean moveUpPressed;
@@ -95,6 +98,11 @@ public class WorldInputProcessor implements InputProcessor {
         return true;
     }
 
+    /**
+     * Gibt zurück, ob momentan die Taste einer Richtungsbewegung gedrückt ist.
+     * @param direction Zu überprüfende Richtung.
+     * @return true, wenn die Taste der entsprechenden Richtung gedrückt ist, sonst false.
+     */
     public boolean isDirectionPressed(Direction direction) {
         switch (direction) {
             case UP:
@@ -110,10 +118,18 @@ public class WorldInputProcessor implements InputProcessor {
         }
     }
 
+    /**
+     * Gibt zurück, ob die Taste für das schnelle Fortbewegen des Avatars gedrückt ist.
+     * @return true, wenn die Taste gedrückt ist, sonst false.
+     */
     public boolean isSprintPressed() {
         return sprintPressed && KeyCommand.SPRINT.isPressed();
     }
 
+    /**
+     * Gibt zurück, ob die Taste für das dauerhafte Anzeigen der Benutzernamen über den Avataren gedrückt ist.
+     * @return true, wenn die Taste gedrückt ist, sonst false.
+     */
     public boolean isShowNamesPressed() {
         return showNamesPressed && KeyCommand.SHOW_NAMES.isPressed();
     }

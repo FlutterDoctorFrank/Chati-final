@@ -10,11 +10,17 @@ import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
 import view2.Response;
 
+/**
+ * Eine Klasse, welche das Menü zum Löschen eines Kontos repräsentiert.
+ */
 public class DeleteAccountTable extends MenuTable {
 
     private final ChatiTextField passwordField;
     private final ChatiTextField confirmPasswordField;
 
+    /**
+     * Erzeugt eine neue Instanz des DeleteAccountTable.
+     */
     public DeleteAccountTable() {
         infoLabel.setText("Gib dein aktuelles Passwort ein!");
 
@@ -66,8 +72,14 @@ public class DeleteAccountTable extends MenuTable {
         confirmPasswordField.reset();
     }
 
+    /**
+     * Eine Klasse, welche das Menü zum Bestätigen der Kontolöschung repräsentiert.
+     */
     private class ConfirmDeletionTable extends MenuTable {
 
+        /**
+         * Erzeugt eine neue Instanz des ConfirmDeletionTable.
+         */
         public ConfirmDeletionTable() {
             infoLabel.setText("Bist du sicher, dass du dein Konto löschen möchtest?");
 

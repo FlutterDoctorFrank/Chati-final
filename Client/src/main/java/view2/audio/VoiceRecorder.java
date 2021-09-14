@@ -5,6 +5,9 @@ import com.badlogic.gdx.audio.AudioRecorder;
 import controller.network.ServerSender;
 import view2.Chati;
 
+/**
+ * Eine Klasse, durch welche das Aufnehmen und Senden von Sprachdaten realisiert wird.
+ */
 public class VoiceRecorder {
 
     private static final long STOP_SENDING_DELAY = 250;
@@ -14,10 +17,16 @@ public class VoiceRecorder {
     private boolean isRunning;
     private boolean isRecording;
 
+    /**
+     * Erzeugt eine neue Instanz des VoiceRecorder.
+     */
     public VoiceRecorder() {
         this.recorder = Gdx.audio.newAudioRecorder(AudioManager.SAMPLE_RATE, AudioManager.MONO);
     }
 
+    /**
+     * Startet einen Thread zum Aufnehmen von Sprachdaten, sofern nicht bereits einer läuft.
+     */
     public void start() {
         if (isRunning) {
             return;
@@ -64,28 +73,48 @@ public class VoiceRecorder {
         recordAndSendThread.start();
     }
 
+    /**
+     * Stoppt den gerade laufenden Aufnahme- und Sendethread.
+     */
     public synchronized void stop() {
         isRunning = false;
         notifyAll();
     }
 
+    /**
+     * Startet das Aufnehmen von Sprachdaten.
+     */
     public synchronized void startRecording() {
         isRecording = true;
         notifyAll();
     }
 
+    /**
+     * Stoppt das Aufnehmen von Sprachdaten.
+     */
     public void stopRecording() {
         isRecording = false;
     }
 
+    /**
+     * Gibt zurück, ob gerade ein Aufnahme- und Sendethread aktiv ist.
+     * @return true, wenn ein Thread aktiv ist, sonst false.
+     */
     public boolean isRunning() {
         return isRunning;
     }
 
+    /**
+     * Gibt zurück, ob gerade Sprachdaten aufgenommen werden.
+     * @return true, wenn Sprachdaten aufgenommen werden, sonst false.
+     */
     public boolean isRecording() {
         return isRecording;
     }
 
+    /**
+     * Setzt das Gate zum Senden von Sprachdaten anhand der eingestellten Mikrofonempfindlichkeit.
+     */
     private void setSendGate() {
         float microphoneSensitivity = Chati.CHATI.getPreferences().getMicrophoneSensitivity();
         sendGate = 4608 * microphoneSensitivity * microphoneSensitivity - 8448 * microphoneSensitivity + 4096;

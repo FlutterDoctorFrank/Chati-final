@@ -1,4 +1,4 @@
-package view2.userInterface.hud.configurations;
+package view2.userInterface.hud.settings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -16,6 +16,9 @@ import view2.ChatiPreferences;
 import view2.userInterface.ChatiWindow;
 import view2.userInterface.ChatiTextButton;
 
+/**
+ * Eine Klasse, welche das Menü für diverse Einstellungen innerhalb einer Welt repräsentiert.
+ */
 public class WorldConfigurationWindow extends ChatiWindow {
 
     private static final float WINDOW_WIDTH = 750;
@@ -23,6 +26,9 @@ public class WorldConfigurationWindow extends ChatiWindow {
 
     private final ChatiTextButton confirmButton;
 
+    /**
+     * Erzeugt eine neue Instanz des WorldConfigurationWindow.
+     */
     public WorldConfigurationWindow() {
         super("Welteinstellungen");
 
@@ -110,11 +116,17 @@ public class WorldConfigurationWindow extends ChatiWindow {
         add(container).padLeft(SPACING).padRight(SPACING).grow();
     }
 
+    /**
+     * Aktiviert den Bestätigungsbutton.
+     */
     private void enableButton() {
         confirmButton.setTouchable(Touchable.enabled);
         confirmButton.getLabel().setColor(Color.WHITE);
     }
 
+    /**
+     * Deaktiviert den Bestätigungsbutton.
+     */
     private void disableButton() {
         confirmButton.setTouchable(Touchable.disabled);
         confirmButton.getLabel().setColor(Color.DARK_GRAY);

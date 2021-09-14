@@ -6,8 +6,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 
+/**
+ * Eine Klasse, welche das Menü zum Vornehmen von Einstellungen am Benutzerkonto repräsentiert.
+ */
 public class ProfileSettingsTable extends MenuTable {
 
+    /**
+     * Erzeugt eine neue Instanz des ProfileSettingsTable.
+     */
     public ProfileSettingsTable() {
         infoLabel.setText("Bitte wähle eine Aktion aus!");
 

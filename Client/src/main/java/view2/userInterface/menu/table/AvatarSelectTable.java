@@ -16,6 +16,9 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Eine Klasse, welche das Menü zum Wechseln des Avatars repräsentiert.
+ */
 public class AvatarSelectTable extends MenuTable {
 
     private static final int AVATARS_PER_ROW = 3;
@@ -24,6 +27,9 @@ public class AvatarSelectTable extends MenuTable {
 
     private final Set<AvatarListEntry> avatarEntries;
 
+    /**
+     * Erzeugt eine neue Instanz des AvatarSelectTable.
+     */
     public AvatarSelectTable() {
         infoLabel.setText("Bitte wähle einen Avatar!");
 
@@ -96,10 +102,17 @@ public class AvatarSelectTable extends MenuTable {
     public void resetTextFields() {
     }
 
+    /**
+     * Eine Klasse, welche einen Eintrag in der Liste aller verfügbaren Avatare repräsentiert.
+     */
     private static class AvatarListEntry extends ChatiTextButton implements Comparable<AvatarListEntry> {
 
         private final Avatar avatar;
 
+        /**
+         * Erzeugt eine neue Instanz eines AvatarListEntry.
+         * @param avatar Zum Eintrag zugehöriger Avatar.
+         */
         public AvatarListEntry(Avatar avatar) {
             super(avatar.getName(), false);
             this.avatar = avatar;
@@ -117,6 +130,10 @@ public class AvatarSelectTable extends MenuTable {
             }
         }
 
+        /**
+         * Gibt den Avatar dieses Eintrags zurück.
+         * @return
+         */
         public Avatar getAvatar() {
             return avatar;
         }

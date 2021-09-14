@@ -93,9 +93,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         new Lwjgl3Application(this, config);
     }
 
-    /**
-     * Initialisiert alle Benötigten Komponenten und startet den Menübildschirm.
-     */
     @Override
     public void create() {
         this.assetManager = new ChatiAssetManager();
@@ -107,9 +104,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         setScreen(menuScreen);
     }
 
-    /**
-     * Wird periodisch aufgerufen um die View zu aktualisieren und neu zu zeichnen.
-     */
     @Override
     public void render() {
         /* Übertrage alle Flags auf eine andere Menge von Flags, welche im nächsten Render-Aufruf abgefragt wird.
@@ -129,10 +123,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         super.setScreen(screen);
     }
 
-    /**
-     * Gibt den momentan angezeigten Bildschirm zurück.
-     * @return Angezeigter Bildschirm.
-     */
     @Override
     public ChatiScreen getScreen() {
         if (screen.equals(menuScreen)) {

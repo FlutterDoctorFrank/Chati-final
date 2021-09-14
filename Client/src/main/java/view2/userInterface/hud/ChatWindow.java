@@ -22,6 +22,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * Eine Klasse, welche das Chatfenster der Anwendung repräsentiert.
+ */
 public class ChatWindow extends Window {
 
     private static final long SHOW_TYPING_DURATION = 1000; // in Millisekunden
@@ -42,6 +45,9 @@ public class ChatWindow extends Window {
     private final ChatiTextArea typeMessageArea;
     private final Label typingUsersLabel;
 
+    /**
+     * Erzeugt eine neue Instanz des ChatWindow.
+     */
     public ChatWindow() {
         super("Chat", Chati.CHATI.getSkin());
         this.typingUsers = new HashMap<>();
@@ -126,7 +132,11 @@ public class ChatWindow extends Window {
         super.act(delta);
     }
 
-    public void updateTypingUser(UUID userId) {
+    /**
+     * Fügt einen Benutzer zu der Menge an Benutzern hinzu, die gerade als tippend angezeigt werden sollen.
+     * @param userId ID des hinzuzufügenden Benutzers.
+     */
+    public void addTypingUser(UUID userId) {
         IUserView user;
         try {
             user = Chati.CHATI.getUserManager().getExternUserView(userId);
@@ -137,14 +147,22 @@ public class ChatWindow extends Window {
         showTypingUsers();
     }
 
-    public void showUserMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String userMessage)
+    /**
+     * Zeigt eine von einem anderen Benutzer erhalten Nachricht an.
+     * @param senderId ID des Senders.
+     * @param timestamp Zeitstempel der Nachricht.
+     * @param messageType Typ der Nachricht.
+     * @param userMessage Anzuzeigende Nachricht.
+     * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
+     */
+    public void showUserMessage(UUID senderId, LocalDateTime timestamp, MessageType messageType, String userMessage)
             throws UserNotFoundException {
         String username;
         IInternUserView internUser = Chati.CHATI.getInternUser();
-        if (internUser != null && internUser.getUserId().equals(userId)) {
+        if (internUser != null && internUser.getUserId().equals(senderId)) {
             username = internUser.getUsername();
         } else {
-            username = Chati.CHATI.getUserManager().getExternUserView(userId).getUsername();
+            username = Chati.CHATI.getUserManager().getExternUserView(senderId).getUsername();
         }
         Color messageColor;
         switch (messageType) {
@@ -167,17 +185,28 @@ public class ChatWindow extends Window {
         showMessage(timestamp, message, messageColor);
     }
 
+    /**
+     * Zeigt eine Info-Nachricht an.
+     * @param timestamp Zeitstempel der Nachricht.
+     * @param messageBundle Übersetzbare Nachricht zusammen mit ihren benötigten Argumenten.
+     */
     public void showInfoMessage(LocalDateTime timestamp, MessageBundle messageBundle) {
         // TODO get Message from messageBundle with Arguments.
         String message = "Info: " + messageBundle.getMessageKey();  // vorläufig
         showMessage(timestamp, message, Color.RED);
     }
 
+    /**
+     * Leert den Nachrichtenverlauf und das Nachrichtenfeld.
+     */
     public void clearChat() {
         typeMessageArea.reset();
         messageLabelContainer.clearChildren();
     }
 
+    /**
+     * Sendet eine eingegebene Nachricht.
+     */
     private void sendMessage() {
         if (typeMessageArea.isBlank()) {
             return;
@@ -186,6 +215,12 @@ public class ChatWindow extends Window {
         typeMessageArea.setText("");
     }
 
+    /**
+     * Zeigt eine Nachricht an.
+     * @param timestamp Zeitstempel der anzuzeigenden Nachricht.
+     * @param message Anzuzeigende Nachricht.
+     * @param messageColor Farbe, in der die Nachricht angezeigt werden soll.
+     */
     private void showMessage(LocalDateTime timestamp, String message, Color messageColor) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         String timeString = timestamp.format(formatter);
@@ -205,6 +240,9 @@ public class ChatWindow extends Window {
         }
     }
 
+    /**
+     * Zeige die momentan tippenden Benutzer an.
+     */
     private void showTypingUsers() {
         if (typingUsers.isEmpty()) {
             typingUsersLabel.setText("");
@@ -220,6 +258,9 @@ public class ChatWindow extends Window {
         }
     }
 
+    /**
+     * Zeige das Chatfenster an und fokussiere es.
+     */
     public void show() {
         setVisible(true);
         historyScrollPane.layout();
@@ -228,6 +269,9 @@ public class ChatWindow extends Window {
         Chati.CHATI.getScreen().getStage().setScrollFocus(typeMessageArea);
     }
 
+    /**
+     * Zeige das Chatfenster nicht an und entferne den Fokus.
+     */
     public void hide() {
         setVisible(false);
         if (getStage() != null) {

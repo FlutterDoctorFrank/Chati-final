@@ -14,6 +14,9 @@ import view2.userInterface.hud.HudMenuWindow;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Eine Klasse, welche das Benutzermenü des HeadUpDisplay repräsentiert.
+ */
 public class UserListWindow extends HudMenuWindow {
 
     private final Set<UserListEntry> friendEntries;
@@ -25,6 +28,9 @@ public class UserListWindow extends HudMenuWindow {
     private final ChatiTextButton bannedUserTabButton;
     private final Table userListContainer;
 
+    /**
+     * Erzeugt eine neue Instanz des UserListWindow.
+     */
     public UserListWindow() {
         super("Benutzer");
         this.friendEntries = new TreeSet<>();
@@ -150,6 +156,9 @@ public class UserListWindow extends HudMenuWindow {
         super.act(delta);
     }
 
+    /**
+     * Zeigt die Liste alle befreundeten Benutzer an.
+     */
     private void showFriends() {
         friendEntries.clear();
         if (Chati.CHATI.getInternUser() != null) {
@@ -159,6 +168,9 @@ public class UserListWindow extends HudMenuWindow {
         }
     }
 
+    /**
+     * Zeigt die Liste aller in der momentanen Welt aktiven Benutzer an.
+     */
     private void showActiveUsers() {
         activeUserEntries.clear();
         IInternUserView internUser = Chati.CHATI.getInternUser();
@@ -169,6 +181,9 @@ public class UserListWindow extends HudMenuWindow {
         }
     }
 
+    /**
+     * Zeigt die Liste aller in der momentanen Welt gesperrten Benutzer an.
+     */
     private void showBannedUsers() {
         bannedUserEntries.clear();
         IInternUserView internUser = Chati.CHATI.getInternUser();
@@ -180,12 +195,18 @@ public class UserListWindow extends HudMenuWindow {
         }
     }
 
+    /**
+     * Deaktiviert den Tab zur Anzeige der Liste der Freunde.
+     */
     private void disableFriendsTab() {
         disableButton(friendTabButton);
         friendEntries.clear();
         userListContainer.clearChildren();
     }
 
+    /**
+     * Deaktiviert den Tab zur Anzeige der Liste der in der Welt aktiven Benutzer.
+     */
     private void disableActiveUsersTab() {
         if (activeUserTabButton.isChecked() && !friendTabButton.isDisabled()) {
             activeUserTabButton.setChecked(false);
@@ -196,6 +217,9 @@ public class UserListWindow extends HudMenuWindow {
         activeUserEntries.clear();
     }
 
+    /**
+     * Deaktiviert den Tab zur Anzeige der Liste der in der Welt gesperrten Benutzer.
+     */
     private void disableBannedUsersTab() {
         if (bannedUserTabButton.isChecked() && !friendTabButton.isDisabled()) {
             bannedUserTabButton.setChecked(false);
@@ -206,6 +230,10 @@ public class UserListWindow extends HudMenuWindow {
         bannedUserEntries.clear();
     }
 
+    /**
+     * Zeigt die übergebenen Einträge in der Liste an.
+     * @param entries Anzuzeigende Einträge.
+     */
     private void layoutEntries(Set<UserListEntry> entries) {
         userListContainer.clearChildren();
         entries.forEach(entry -> userListContainer.add(entry).growX().row());

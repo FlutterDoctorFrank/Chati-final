@@ -13,6 +13,9 @@ import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTooltip;
 import view2.userInterface.UserInfoContainer;
 
+/**
+ * Eine Klasse, welche die Anzeige der Informationen des intern angemeldeten Benutzers repräsentiert.
+ */
 public class InternUserDisplay extends Table {
 
     private static final float USER_INFO_ICON_SIZE = 22.5f;
@@ -22,6 +25,9 @@ public class InternUserDisplay extends Table {
     private StatusSelectTable statusSelectTable;
     private final Image statusImage;
 
+    /**
+     * Erzeugt eine neue Instanz des InternUserDisplay.
+     */
     public InternUserDisplay() {
         UserInfoContainer userInfoContainer = new UserInfoContainer(Chati.CHATI.getUserManager().getInternUserView());
 
@@ -73,6 +79,9 @@ public class InternUserDisplay extends Table {
         super.act(delta);
     }
 
+    /**
+     * Setzt das aktuall anzuzeigende Statussymbol.
+     */
     private void setStatusImage() {
         IInternUserView internUser = Chati.CHATI.getInternUser();
 
@@ -101,8 +110,14 @@ public class InternUserDisplay extends Table {
         }
     }
 
+    /**
+     * Eine Klasse, welche das Menü zur Auswahl des Status repräsentiert.
+     */
     private static class StatusSelectTable extends Table {
 
+        /**
+         * Erzeugt eine neue Instanz des StatusSelectTable.
+         */
         public StatusSelectTable() {
             IInternUserView internUser = Chati.CHATI.getInternUser();
 

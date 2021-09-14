@@ -10,11 +10,17 @@ import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
 import view2.Response;
 
+/**
+ * Eine Klasse, welche das Menü zum Anmelden repräsentiert.
+ */
 public class LoginTable extends MenuTable {
 
     private final ChatiTextField usernameField;
     private final ChatiTextField passwordField;
 
+    /**
+     * Erzeugt eine neue Instanz des LoginTable.
+     */
     public LoginTable() {
         infoLabel.setText("Bitte gib dein Benutzername und dein Passwort ein!");
 
