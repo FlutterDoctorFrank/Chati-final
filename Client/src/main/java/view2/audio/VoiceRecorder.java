@@ -82,7 +82,7 @@ public class VoiceRecorder {
     }
 
     /**
-     * Startet das Aufnehmen von Sprachdaten.
+     * Startet das Aufnehmen und Senden von Sprachdaten.
      */
     public synchronized void startRecording() {
         isRecording = true;
@@ -90,7 +90,7 @@ public class VoiceRecorder {
     }
 
     /**
-     * Stoppt das Aufnehmen von Sprachdaten.
+     * Stoppt das Aufnehmen und Senden von Sprachdaten.
      */
     public void stopRecording() {
         isRecording = false;

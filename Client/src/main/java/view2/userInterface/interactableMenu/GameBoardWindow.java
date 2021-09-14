@@ -4,7 +4,7 @@ import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 
 /**
- * Ein Fenster, welches das Menü des GameBoard repräsentiert.
+ * Eine Klasse, welches das Menü des GameBoard repräsentiert.
  */
 public class GameBoardWindow extends InteractableWindow {
 

@@ -11,8 +11,8 @@ import model.user.IInternUserView;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.hud.HudMenuWindow;
-import view2.userInterface.menu.table.LoginTable;
-import view2.userInterface.menu.table.StartTable;
+import view2.userInterface.menu.LoginTable;
+import view2.userInterface.menu.StartTable;
 
 /**
  * Eine Klasse, welche das Einstellungsmenü des HeadUpDisplay repräsentiert.

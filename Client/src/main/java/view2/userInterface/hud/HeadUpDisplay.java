@@ -256,7 +256,7 @@ public class HeadUpDisplay extends Table {
     }
 
     /**
-     * Entfernt ein geschlossenes Benutzer-, Benachrichtigungs-, oder Einstellungsmenü.
+     * Setzt die entsprechenden Icons zur Anzeige der geschlossenen Menüs.
      */
     public void removeCurrentMenu() {
         userListButton.setChecked(false);
@@ -284,7 +284,7 @@ public class HeadUpDisplay extends Table {
     }
 
     /**
-     * Entfernt das geschlossene Kommunikationsfenster.
+     * Setzt das entsprechende Icon zur Anzeige eines geschlossenen Kommunikationsfensters.
      */
     public void removeCommunicationWindow() {
         communicationButton.setChecked(false);
@@ -341,7 +341,7 @@ public class HeadUpDisplay extends Table {
      * @param timestamp Zeitstempel der Nachricht.
      * @param messageType Typ der Nachricht.
      * @param message Anzuzeigende Nachricht.
-     * @param messageBundle Übersetzbare Nachricht mit deren benötigte Argumente.
+     * @param messageBundle Übersetzbare Nachricht mit deren benötigten Argumenten.
      * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
      */
     public void showChatMessage(UUID senderId, LocalDateTime timestamp, MessageType messageType, String message,

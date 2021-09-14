@@ -1,4 +1,4 @@
-package view2.userInterface.menu.table;
+package view2.userInterface.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;

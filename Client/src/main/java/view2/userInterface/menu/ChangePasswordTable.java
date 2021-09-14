@@ -1,4 +1,4 @@
-package view2.userInterface.menu.table;
+package view2.userInterface.menu;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -19,7 +19,7 @@ public class ChangePasswordTable extends MenuTable {
     private final ChatiTextField confirmNewPasswordField;
 
     /**
-     * Erzeugt eine neue Instant des ChangePasswordTable.
+     * Erzeugt eine neue Instanz des ChangePasswordTable.
      */
     public ChangePasswordTable() {
         infoLabel.setText("Gib dein aktuelles und ein neues Passwort ein!");

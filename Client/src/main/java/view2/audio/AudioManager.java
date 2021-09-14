@@ -1,6 +1,5 @@
 package view2.audio;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;

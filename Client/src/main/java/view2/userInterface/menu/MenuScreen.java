@@ -6,9 +6,6 @@ import com.badlogic.gdx.graphics.GL20;
 import view2.Chati;
 import view2.ChatiScreen;
 import view2.Response;
-import view2.userInterface.menu.table.LoginTable;
-import view2.userInterface.menu.table.MenuTable;
-import view2.userInterface.menu.table.StartTable;
 
 /**
  * Eine Klasse, welche den Menübildschirm der Anwendung repräsentiert.

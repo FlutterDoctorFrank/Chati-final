@@ -205,6 +205,27 @@ public class ChatWindow extends Window {
     }
 
     /**
+     * Zeige das Chatfenster an und fokussiere es.
+     */
+    public void show() {
+        setVisible(true);
+        historyScrollPane.layout();
+        historyScrollPane.scrollTo(0, 0, 0, 0);
+        Chati.CHATI.getScreen().getStage().setKeyboardFocus(typeMessageArea);
+        Chati.CHATI.getScreen().getStage().setScrollFocus(typeMessageArea);
+    }
+
+    /**
+     * Zeige das Chatfenster nicht an und entferne den Fokus.
+     */
+    public void hide() {
+        setVisible(false);
+        if (getStage() != null) {
+            getStage().unfocus(this);
+        }
+    }
+
+    /**
      * Sendet eine eingegebene Nachricht.
      */
     private void sendMessage() {
@@ -255,27 +276,6 @@ public class ChatWindow extends Window {
             }
         } else {
             typingUsersLabel.setText(typingUsers.size() + " Benutzer tippen gerade...");
-        }
-    }
-
-    /**
-     * Zeige das Chatfenster an und fokussiere es.
-     */
-    public void show() {
-        setVisible(true);
-        historyScrollPane.layout();
-        historyScrollPane.scrollTo(0, 0, 0, 0);
-        Chati.CHATI.getScreen().getStage().setKeyboardFocus(typeMessageArea);
-        Chati.CHATI.getScreen().getStage().setScrollFocus(typeMessageArea);
-    }
-
-    /**
-     * Zeige das Chatfenster nicht an und entferne den Fokus.
-     */
-    public void hide() {
-        setVisible(false);
-        if (getStage() != null) {
-            getStage().unfocus(this);
         }
     }
 }

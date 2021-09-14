@@ -1,4 +1,4 @@
-package view2.userInterface.menu.table;
+package view2.userInterface.menu;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

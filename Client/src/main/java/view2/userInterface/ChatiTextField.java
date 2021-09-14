@@ -40,7 +40,7 @@ public class ChatiTextField extends TextField {
     }
 
     /**
-     * Leert den Text und entfernt den Fokus von der TextArea.
+     * Leert den Text und entfernt den Fokus von des TextField.
      */
     public void reset() {
         setText("");

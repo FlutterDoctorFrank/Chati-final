@@ -7,7 +7,7 @@ import view2.userInterface.ChatiWindow;
 import view2.userInterface.ChatiTextButton;
 
 /**
- * Eine Klasse, welche ein Menü des HeadUpDisplay repräsentiert.
+ * Eine abstrakte Klasse, welche ein Menü des HeadUpDisplay repräsentiert.
  */
 public abstract class HudMenuWindow extends ChatiWindow {
 

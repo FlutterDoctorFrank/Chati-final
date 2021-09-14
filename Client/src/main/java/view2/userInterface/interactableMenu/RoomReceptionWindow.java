@@ -14,7 +14,7 @@ import view2.userInterface.ChatiTextArea;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
 import view2.userInterface.ContextEntry;
-import view2.userInterface.menu.table.MenuTable;
+import view2.userInterface.menu.MenuTable;
 
 import java.util.EnumSet;
 import java.util.function.Predicate;

@@ -128,7 +128,7 @@ public class UserAvatar extends Sprite {
     }
 
     /**
-     * Berechnet die momentane Richtung des Avatars anhand der auf ihn einwirkenden Kräfte.
+     * Bestimmt die momentane Richtung des Avatars anhand der auf ihn einwirkenden Kräfte.
      * @return Richtung des Avatars.
      */
     protected Direction getCurrentDirection() {
