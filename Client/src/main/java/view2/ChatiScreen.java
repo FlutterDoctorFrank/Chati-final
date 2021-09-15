@@ -23,7 +23,6 @@ public abstract class ChatiScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        Chati.CHATI.getAudioManager().update();
         stage.act(delta);
         stage.draw();
         super.render(delta);

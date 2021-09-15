@@ -111,8 +111,18 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
            So werden keine eingehenden Informationen verpasst, wenn diese am Ende eines Render-Durchlaufs eintreffen. */
         transferFlags();
         resetModelChangeReceivedFlags();
+        audioManager.update();
         super.render();
         resetModelChangedFlags();
+    }
+
+    @Override
+    public void dispose() {
+        audioManager.dispose();
+        spriteBatch.dispose();
+        menuScreen.dispose();
+        worldScreen.dispose();
+        super.dispose();
     }
 
     /**
