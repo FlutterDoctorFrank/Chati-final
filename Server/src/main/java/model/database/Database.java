@@ -95,7 +95,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
         try {
             Connection con = this.getConnection();
-            PreparedStatement ps = con.prepareStatement(SQL_QUERY_WORLD);
+            PreparedStatement ps = con.prepareStatement(SQL_QUERY_WORLD, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
             ps.setString(1, worldId.getId());
             ResultSet res = ps.executeQuery();
 
@@ -370,7 +370,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
         try {
             UUID userId = null;
             Connection con = this.getConnection();
-            PreparedStatement ps = con.prepareStatement(SQL_QUERY_USER_ID);
+            PreparedStatement ps = con.prepareStatement(SQL_QUERY_USER_ID, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
             ps.setString(1, username);
             ResultSet res = ps.executeQuery();
 
@@ -445,7 +445,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
         try {
             Connection con = this.getConnection();
-            PreparedStatement ps = con.prepareStatement(SQL_QUERY_FRIENDSHIP);
+            PreparedStatement ps = con.prepareStatement(SQL_QUERY_FRIENDSHIP, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
             ps.setString(1, user.getUserId().toString());
             ps.setString(2, user.getUserId().toString());
             ResultSet res = ps.executeQuery();
@@ -523,7 +523,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
         try {
             Connection con = this.getConnection();
-            PreparedStatement ps = con.prepareStatement(SQL_QUERY_IGNORE);
+            PreparedStatement ps = con.prepareStatement(SQL_QUERY_IGNORE, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
             ps.setString(1, user.getUserId().toString());
             ResultSet res = ps.executeQuery();
 
@@ -595,7 +595,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
         try {
             Connection con = this.getConnection();
-            PreparedStatement ps = con.prepareStatement(SQL_QUERY_ROLE);
+            PreparedStatement ps = con.prepareStatement(SQL_QUERY_ROLE, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
             ps.setString(1, user.getUserId().toString());
             ResultSet res = ps.executeQuery();
 
@@ -673,7 +673,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
 
         try {
             Connection con = this.getConnection();
-            PreparedStatement ps = con.prepareStatement(SQL_QUERY_NOTIFICATION);
+            PreparedStatement ps = con.prepareStatement(SQL_QUERY_NOTIFICATION, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
             ps.setString(1, user.getUserId().toString());
             ResultSet res = ps.executeQuery();
 
@@ -867,7 +867,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void getBannedUsers(@NotNull final World world) {
         try {
             Connection con = this.getConnection();
-            PreparedStatement ps = con.prepareStatement(SQL_QUERY_BAN);
+            PreparedStatement ps = con.prepareStatement(SQL_QUERY_BAN, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
             ps.setString(1, world.getContextId().getId());
             ResultSet res = ps.executeQuery();
             Map<UUID, User> bans = new HashMap<>();
@@ -935,7 +935,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
     public void getAreaReservations(@NotNull final World world) {
         try {
             Connection con = this.getConnection();
-            PreparedStatement ps = con.prepareStatement(SQL_QUERY_RESERVATION);
+            PreparedStatement ps = con.prepareStatement(SQL_QUERY_RESERVATION, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
             ps.setString(1, world.getContextId().getId());
             ResultSet res = ps.executeQuery();
 
