@@ -64,6 +64,14 @@
 
     <build>
         <finalName>Chati-Client</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>textures/**</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -95,7 +103,7 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <groupId>org.apache.maven.plugins</groupId>
-                <version>2.4.1</version>
+                <version>3.1.1</version>
                 <executions>
                     <execution>
                         <id>make-executable-jar-with-dependencies</id>

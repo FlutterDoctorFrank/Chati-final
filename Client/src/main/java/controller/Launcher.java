@@ -6,9 +6,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import model.user.UserManager;
 import org.jetbrains.annotations.NotNull;
-import view.Chati;
-import view2.IModelObserver;
-import view2.ViewControllerInterface;
+import view2.Chati;
 import java.io.IOException;
 import java.util.List;
 
@@ -23,35 +21,16 @@ public class Launcher {
     }
 
     /**
-     * Setzt im Controller die Schnittstelle zur View.
-     * @param observer die View-Schnittstelle für den Controller.
-     */
-    public void setControllerView(@NotNull final ViewControllerInterface observer) {
-        this.network.setView(observer);
-        this.network.start();
-    }
-
-    /**
-     * Setzt im Model die Schnittstelle zur View.
-     * @param observer die View-Schnittstelle für die View.
-     */
-    public void setModelObserver(@NotNull final IModelObserver observer) {
-        this.manager.setModelObserver(observer);
-    }
-
-    /**
      * Startet die Client-Anwendung.
      */
-    public void launch(final boolean second) {
-        if (second) {
-            view2.Chati chati = new view2.Chati(this.manager);
-            setControllerView(chati);
-            setModelObserver(chati);
-            chati.start();
-            return;
-        }
+    public void launch() {
+        final Chati view = new Chati(this.manager);
 
-        new Chati(this, this.manager);
+        this.manager.setModelObserver(view);
+        this.network.setView(view);
+        this.network.start();
+
+        view.start();
     }
 
     public static void main(@NotNull final String[] args) {
@@ -73,10 +52,6 @@ public class Launcher {
                         .withRequiredArg()
                         .ofType(Integer.class)
                         .describedAs("UDP-Port");
-
-                this.acceptsAll(List.of("v", "view-only"), "Runs the view without the other components");
-
-                this.acceptsAll(List.of("s", "view-second"), "Runs the application with the second view");
             }
         };
 
@@ -88,13 +63,6 @@ public class Launcher {
                     parser.printHelpOn(System.out);
                 } catch (IOException ex) {
                     System.err.println("Failed to print help: " + ex.getMessage());
-                }
-            } else if (options.has("view-only")) {
-                try {
-                    new Chati();
-                } catch (Exception ex) {
-                    System.err.println("Exception while running application view: " + ex.getMessage());
-                    ex.printStackTrace();
                 }
             } else {
                 final Launcher launcher = new Launcher();
@@ -133,7 +101,7 @@ public class Launcher {
                 }
 
                 System.out.println("Starting Client...");
-                launcher.launch(options.has("view-second"));
+                launcher.launch();
             }
         } catch (OptionException ex) {
             System.err.println("Failed to parse arguments: " + ex.getMessage());
