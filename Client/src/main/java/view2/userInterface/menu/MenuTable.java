@@ -10,6 +10,7 @@ import view2.Chati;
  */
 public abstract class MenuTable extends Table {
 
+    protected static final int MAX_LIST_COUNT = 10;
     protected static final float ROW_WIDTH = 600;
     protected static final float ROW_HEIGHT = 60;
     protected static final float SPACING = 15;

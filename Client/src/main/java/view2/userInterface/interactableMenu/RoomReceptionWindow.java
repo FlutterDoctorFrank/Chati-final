@@ -82,6 +82,7 @@ public class RoomReceptionWindow extends InteractableWindow {
 
             Label roomSelectLabel = new Label("Raum: ", Chati.CHATI.getSkin());
             roomSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
+            roomSelectBox.setMaxListCount(MAX_LIST_COUNT);
             updateRoomList();
 
             ChatiTextButton createButton = new ChatiTextButton("Raum erstellen", true);
@@ -186,6 +187,7 @@ public class RoomReceptionWindow extends InteractableWindow {
 
             Label mapSelectLabel = new Label("Karte: ", Chati.CHATI.getSkin());
             SelectBox<ContextMap> mapSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
+            mapSelectBox.setMaxListCount(MAX_LIST_COUNT);
             mapSelectBox.setItems(EnumSet.allOf(ContextMap.class)
                     .stream().filter(Predicate.not(ContextMap::isPublicRoomMap)).toArray(ContextMap[]::new));
 

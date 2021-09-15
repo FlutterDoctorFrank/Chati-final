@@ -25,6 +25,7 @@ public class StartTable extends MenuTable {
 
         Label worldSelectLabel = new Label("Welt: ", Chati.CHATI.getSkin());
         worldSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
+        worldSelectBox.setMaxListCount(MAX_LIST_COUNT);
         updateWorldList();
 
         ChatiTextButton joinWorldButton = new ChatiTextButton("Welt Beitreten", true);

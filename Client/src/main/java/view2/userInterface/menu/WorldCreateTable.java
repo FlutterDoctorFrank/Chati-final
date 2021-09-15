@@ -27,6 +27,7 @@ public class WorldCreateTable extends MenuTable {
 
         Label mapSelectLabel = new Label("Karte: ", Chati.CHATI.getSkin());
         SelectBox<ContextMap> mapSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
+        mapSelectBox.setMaxListCount(MAX_LIST_COUNT);
         mapSelectBox.setItems(EnumSet.allOf(ContextMap.class)
                 .stream().filter(ContextMap::isPublicRoomMap).toArray(ContextMap[]::new));
 
