@@ -2,13 +2,14 @@ package view2.audio;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioRecorder;
+import com.badlogic.gdx.utils.Disposable;
 import controller.network.ServerSender;
 import view2.Chati;
 
 /**
  * Eine Klasse, durch welche das Aufnehmen und Senden von Sprachdaten realisiert wird.
  */
-public class VoiceRecorder {
+public class VoiceRecorder implements Disposable {
 
     private static final long STOP_SENDING_DELAY = 250;
 
@@ -110,6 +111,11 @@ public class VoiceRecorder {
      */
     public boolean isRecording() {
         return isRecording;
+    }
+
+    @Override
+    public void dispose() {
+        recorder.dispose();
     }
 
     /**

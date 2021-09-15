@@ -2,6 +2,7 @@ package view2.audio;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioDevice;
+import com.badlogic.gdx.utils.Disposable;
 import model.exception.UserNotFoundException;
 import model.user.IUserView;
 import view2.Chati;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * Eine Klasse, durch welche das Mischen und Abspielen empfangener Audiodaten realisiert wird.
  */
-public class AudioConsumer {
+public class AudioConsumer implements Disposable {
 
     private static final int MIN_PACKETS = 6;
     private static final int MAX_PACKETS = 30;
@@ -165,6 +166,11 @@ public class AudioConsumer {
             musicStream.addData(timestamp, receivedData);
             notifyAll();
         }
+    }
+
+    @Override
+    public void dispose() {
+        player.dispose();
     }
 
     /**

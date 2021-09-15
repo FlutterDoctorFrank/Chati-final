@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -53,7 +54,7 @@ public class WorldScreen extends ChatiScreen {
     private final WorldCamera camera;
     private final FitViewport viewport;
     private final OrthogonalTiledMapRenderer tiledMapRenderer;
-    //private final Box2DDebugRenderer debugRenderer;
+    // private final Box2DDebugRenderer debugRenderer;
     private final World world;
 
     private final Map<IUserView, UserAvatar> externUserAvatars;
@@ -69,7 +70,7 @@ public class WorldScreen extends ChatiScreen {
         this.viewport = new FitViewport(WorldCamera.scaleToUnit(Gdx.graphics.getWidth()),
                 WorldCamera.scaleToUnit(Gdx.graphics.getHeight()), camera);
         this.tiledMapRenderer = new OrthogonalTiledMapRenderer(null, WorldCamera.scaleToUnit(1));
-        //this.debugRenderer = new Box2DDebugRenderer();
+        // this.debugRenderer = new Box2DDebugRenderer();
         this.world = new World(new Vector2(0, 0), true);
         this.world.setContactListener(new WorldContactListener());
         this.externUserAvatars = new HashMap<>();
@@ -127,6 +128,14 @@ public class WorldScreen extends ChatiScreen {
     public void hide() {
         destroy();
         super.hide();
+    }
+
+    @Override
+    public void dispose() {
+        tiledMapRenderer.dispose();
+        // debugRenderer.dispose();
+        world.dispose();
+        super.dispose();
     }
 
     @Override

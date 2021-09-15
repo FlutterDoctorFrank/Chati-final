@@ -1,5 +1,6 @@
 package view2.audio;
 
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
@@ -11,7 +12,7 @@ import java.util.UUID;
 /**
  * Eine Klasse, welche den VoiceChat sowie das Abspielen von Soundeffekten koordiniert.
  */
-public class AudioManager {
+public class AudioManager implements Disposable {
 
     public static final int SAMPLE_RATE = 44100;
     public static final int SEND_RATE = 30;
@@ -66,6 +67,16 @@ public class AudioManager {
                     voiceRecorder.stopRecording();
                 }
             }
+        }
+    }
+
+    @Override
+    public void dispose() {
+        if (voiceRecorder != null) {
+            voiceRecorder.dispose();
+        }
+        if (audioConsumer != null) {
+            audioConsumer.dispose();
         }
     }
 

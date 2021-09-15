@@ -26,12 +26,14 @@ public abstract class ChatiScreen extends ScreenAdapter {
         Chati.CHATI.getAudioManager().update();
         stage.act(delta);
         stage.draw();
+        super.render(delta);
     }
 
     @Override
     public void show() {
         stage.addActor(HeadUpDisplay.getInstance());
         stage.addActor(HeadUpDisplay.getInstance().getChatWindow());
+        super.show();
     }
 
     @Override
@@ -40,6 +42,13 @@ public abstract class ChatiScreen extends ScreenAdapter {
         HeadUpDisplay.getInstance().closeCurrentMenu();
         HeadUpDisplay.getInstance().closeCommunicationWindow();
         stage.clear();
+        super.hide();
+    }
+
+    @Override
+    public void dispose() {
+        stage.dispose();
+        super.dispose();
     }
 
     /**
