@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Eine abstrakte Klasse, welche das räumliche Ausmaÿ repräsentiert, über welches in einem räumlichen Kontext
+ * Eine abstrakte Klasse, welche das räumliche Ausmaß repräsentiert, über welches in einem räumlichen Kontext
  * kommuniziert werden kann.
  */
 public abstract class CommunicationRegion {

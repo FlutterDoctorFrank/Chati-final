@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Predicate;
 
 /**
  * Eine Klasse, welche den globalen Kontext der Anwendung repräsentiert. Kann nur einmal instanziiert werden.
@@ -158,8 +157,6 @@ public class GlobalContext extends Context implements IGlobalContext {
      * Sendet die Liste aller existierenden Welten an alle Benutzer im Startbildschirm.
      */
     private void sendWorldList() {
-        this.containedUsers.values().stream()
-                .filter(Predicate.not(User::isInWorld))
-                .forEach(receiver -> receiver.send(SendAction.CONTEXT_LIST, this));
+        this.containedUsers.values().forEach(receiver -> receiver.send(SendAction.CONTEXT_LIST, this));
     }
 }

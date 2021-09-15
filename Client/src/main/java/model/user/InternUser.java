@@ -179,7 +179,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
                 .filter(context -> context.getExpanse().isAround(direction, posX, posY, SpatialContext.INTERACTION_DISTANCE)
                 && context.isInteractable()).collect(Collectors.toList());
         if (!interactables.isEmpty()) {
-            System.out.println("Found " + interactables.size() + " interactables from location: " + posX + ", " + posY + ", " + direction);
             if (interactables.size() == 1) {
                 return interactables.get(0);
             }
@@ -199,6 +198,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
     public void leaveRoom() {
         // Entferne alle Referenzen auf den Raum und allen untergeordneten Kontexten.
         UserManager.getInstance().discardRoomInfo();
+        currentWorld.removeChild(currentRoom);
         currentLocation = null;
         currentRoom = null;
     }
