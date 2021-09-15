@@ -4,7 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
@@ -13,19 +17,25 @@ import model.communication.message.MessageType;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import model.user.IUserView;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.KeyCommand;
+import view2.Localization;
+import view2.Localization.Translatable;
 import view2.userInterface.ChatiTextArea;
 import view2.userInterface.ChatiTextButton;
-import view2.KeyCommand;
-
+import view2.userInterface.ChatiTooltip;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
 /**
  * Eine Klasse, welche das Chatfenster der Anwendung repräsentiert.
  */
-public class ChatWindow extends Window {
+public class ChatWindow extends Window implements Translatable {
 
     private static final long SHOW_TYPING_DURATION = 1000; // in Millisekunden
 
@@ -43,27 +53,28 @@ public class ChatWindow extends Window {
     private final Table messageLabelContainer;
     private final ScrollPane historyScrollPane;
     private final ChatiTextArea typeMessageArea;
+    private final ChatiTextButton sendButton;
     private final Label typingUsersLabel;
 
     /**
      * Erzeugt eine neue Instanz des ChatWindow.
      */
     public ChatWindow() {
-        super("Chat", Chati.CHATI.getSkin());
+        super(Localization.translate("window.title.chat"), Chati.CHATI.getSkin());
         this.typingUsers = new HashMap<>();
 
         messageLabelContainer = new Table();
         historyScrollPane = new ScrollPane(messageLabelContainer, Chati.CHATI.getSkin());
         historyScrollPane.setOverscroll(false, false);
 
-        typeMessageArea = new ChatiTextArea("Nachricht", false);
+        typeMessageArea = new ChatiTextArea("menu.text-field.message", false);
         typeMessageArea.addListener(new InputListener() {
             @Override
-            public boolean keyDown(InputEvent event, int keycode) {
+            public boolean keyDown(@NotNull final InputEvent event, final int keycode) {
                 return KeyCommand.SEND_CHAT_MESSAGE.matches(keycode);
             }
             @Override
-            public boolean keyUp(InputEvent event, int keycode) {
+            public boolean keyUp(@NotNull final InputEvent event, final int keycode) {
                 if (KeyCommand.SEND_CHAT_MESSAGE.matches(keycode)) {
                     sendMessage();
                     return true;
@@ -71,7 +82,7 @@ public class ChatWindow extends Window {
                 return false;
             }
             @Override
-            public boolean keyTyped(InputEvent event, char c) {
+            public boolean keyTyped(@NotNull final InputEvent event, final char c) {
                 long now = System.currentTimeMillis();
                 if (c != 0 && now - lastTimeTypingSent >= SHOW_TYPING_DURATION / 2) {
                     lastTimeTypingSent = now;
@@ -84,18 +95,20 @@ public class ChatWindow extends Window {
         typingUsersLabel = new Label("", Chati.CHATI.getSkin());
         typingUsersLabel.setFontScale(0.67f);
 
-        ChatiTextButton sendButton = new ChatiTextButton("Senden", true);
+        sendButton = new ChatiTextButton("menu.button.send", true);
         sendButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 sendMessage();
             }
         });
 
-        ChatiTextButton minimizeButton = new ChatiTextButton("X", true);
+        TextButton minimizeButton = new TextButton("_", Chati.CHATI.getSkin());
+        minimizeButton.setDisabled(true);
+        minimizeButton.addListener(new ChatiTooltip("hud.tooltip.minimize"));
         minimizeButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 HeadUpDisplay.getInstance().hideChatWindow();
             }
         });
@@ -125,7 +138,7 @@ public class ChatWindow extends Window {
     }
 
     @Override
-    public void act(float delta) {
+    public void act(final float delta) {
         long now = System.currentTimeMillis();
         typingUsers.values().removeIf(lastTypingTime -> now - lastTypingTime >= SHOW_TYPING_DURATION);
         showTypingUsers();
@@ -136,7 +149,7 @@ public class ChatWindow extends Window {
      * Fügt einen Benutzer zu der Menge an Benutzern hinzu, die gerade als tippend angezeigt werden sollen.
      * @param userId ID des hinzuzufügenden Benutzers.
      */
-    public void addTypingUser(UUID userId) {
+    public void addTypingUser(@NotNull final UUID userId) {
         IUserView user;
         try {
             user = Chati.CHATI.getUserManager().getExternUserView(userId);
@@ -155,8 +168,8 @@ public class ChatWindow extends Window {
      * @param userMessage Anzuzeigende Nachricht.
      * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
      */
-    public void showUserMessage(UUID senderId, LocalDateTime timestamp, MessageType messageType, String userMessage)
-            throws UserNotFoundException {
+    public void showUserMessage(@NotNull final UUID senderId, @NotNull final LocalDateTime timestamp,
+                                @NotNull final MessageType messageType, @NotNull final String userMessage) throws UserNotFoundException {
         String username;
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser != null && internUser.getUserId().equals(senderId)) {
@@ -179,10 +192,9 @@ public class ChatWindow extends Window {
                 messageColor = Color.SKY;
                 break;
             default:
-                throw new IllegalArgumentException("No valid messagetype.");
+                throw new IllegalArgumentException("No valid message type.");
         }
-        String message = username + ": " + userMessage;
-        showMessage(timestamp, message, messageColor);
+        showMessage(timestamp, Localization.format("pattern.chat.message", username, userMessage), messageColor);
     }
 
     /**
@@ -190,10 +202,9 @@ public class ChatWindow extends Window {
      * @param timestamp Zeitstempel der Nachricht.
      * @param messageBundle Übersetzbare Nachricht zusammen mit ihren benötigten Argumenten.
      */
-    public void showInfoMessage(LocalDateTime timestamp, MessageBundle messageBundle) {
-        // TODO get Message from messageBundle with Arguments.
-        String message = "Info: " + messageBundle.getMessageKey();  // vorläufig
-        showMessage(timestamp, message, Color.RED);
+    public void showInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle) {
+        String message = Localization.format(messageBundle.getMessageKey(), messageBundle.getArguments());
+        showMessage(timestamp, Localization.format("pattern.chat.info", message), Color.RED);
     }
 
     /**
@@ -234,6 +245,7 @@ public class ChatWindow extends Window {
         }
         Chati.CHATI.send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());
         typeMessageArea.setText("");
+        typeMessageArea.translate();
     }
 
     /**
@@ -242,10 +254,9 @@ public class ChatWindow extends Window {
      * @param message Anzuzeigende Nachricht.
      * @param messageColor Farbe, in der die Nachricht angezeigt werden soll.
      */
-    private void showMessage(LocalDateTime timestamp, String message, Color messageColor) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        String timeString = timestamp.format(formatter);
-        String showMessage = "[" + timeString + "] " + message;
+    private void showMessage(@NotNull final LocalDateTime timestamp, @NotNull final String message,
+                             @NotNull final Color messageColor) {
+        String showMessage = Localization.format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
         Label showLabel = new Label(showMessage, Chati.CHATI.getSkin());
         showLabel.setColor(messageColor);
         showLabel.setWrap(true);
@@ -269,13 +280,20 @@ public class ChatWindow extends Window {
             typingUsersLabel.setText("");
         } else if (typingUsers.size() == 1) {
             try {
-                typingUsersLabel.setText(typingUsers.keySet().iterator().next().getUsername() + " tippt gerade...");
+                typingUsersLabel.setText(Localization.format("window.chat.typing-single", typingUsers.keySet().iterator().next().getUsername()));
             } catch (NoSuchElementException e) {
                 // Sollte niemals eintreffen.
                 e.printStackTrace();
             }
         } else {
-            typingUsersLabel.setText(typingUsers.size() + " Benutzer tippen gerade...");
+            typingUsersLabel.setText(Localization.format("window.chat.typing-multiple", typingUsers.size()));
         }
+    }
+
+    @Override
+    public void translate() {
+        getTitleLabel().setText(Localization.translate("window.title.chat"));
+        typeMessageArea.translate();
+        sendButton.translate();
     }
 }

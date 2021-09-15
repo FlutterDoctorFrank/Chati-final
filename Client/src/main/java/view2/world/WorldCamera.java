@@ -28,7 +28,7 @@ public class WorldCamera extends OrthographicCamera {
     @Override
     public void update() {
         WorldScreen worldScreen = Chati.CHATI.getWorldScreen();
-        if (worldScreen.getTiledMap() != null) {
+        if (worldScreen.getTiledMap() != null && worldScreen.getInternUserAvatar() != null) {
             TiledMapTileLayer layer = (TiledMapTileLayer) worldScreen.getTiledMap().getLayers().get(0);
             float mapWidth = layer.getWidth() * layer.getTileWidth();
             float mapHeight = layer.getHeight() * layer.getTileHeight();
@@ -68,7 +68,7 @@ public class WorldCamera extends OrthographicCamera {
      * Zoomt innerhalb festgelegter Grenzen um einen festgelegten Schritt herein oder heraus.
      * @param in Falls true, wird hereingezoomt, sonst herausgezoomt.
      */
-    public void zoom(boolean in) {
+    public void zoom(final boolean in) {
         if (in && zoom <= MAX_ZOOM) {
             zoom += ZOOM_STEP;
         } else if (!in && zoom >= MIN_ZOOM) {
@@ -81,7 +81,7 @@ public class WorldCamera extends OrthographicCamera {
      * @param value Größe in Pixel.
      * @return Größe in der verwendeten Einheit.
      */
-    public static float scaleToUnit(float value) {
+    public static float scaleToUnit(final float value) {
         return value * UNIT_SCALE;
     }
 
@@ -90,7 +90,7 @@ public class WorldCamera extends OrthographicCamera {
      * @param value Größe in der verwendeten Einheit.
      * @return Größe in Pixel.
      */
-    public static float scaleFromUnit(float value) {
+    public static float scaleFromUnit(final float value) {
         return value / UNIT_SCALE;
     }
 }

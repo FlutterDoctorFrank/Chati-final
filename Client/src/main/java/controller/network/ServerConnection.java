@@ -242,6 +242,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             this.logInvalidPacket(packet, "Message can not be null");
                             return;
                         }
+
+                        this.manager.getView().showChatMessage(packet.getSenderId(), packet.getTimestamp(), packet.getMessageType(), packet.getMessage());
                         break;
 
                     case INFO:
@@ -250,13 +252,9 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             return;
                         }
 
-                        // TODO Vielleicht eine showInfoMessage(LocalDateTime timestamp, MessageBundle message) Methode?
-                        // Befindet sich schon in der View. Übers Interface läuft alles über die gleiche Methode.
+                        this.manager.getView().showInfoMessage(packet.getTimestamp(), packet.getBundle());
                         break;
                 }
-
-                this.manager.getView().showChatMessage(packet.getSenderId(), packet.getTimestamp(),
-                        packet.getMessageType(), packet.getMessage(), packet.getBundle());
             } catch (UserNotFoundException ex) {
                 // Unbekannter Sender.
                 LOGGER.warning("Server tried to send message from unknown sender with id: " + ex.getUserID());
@@ -274,8 +272,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         if (this.worldId != null) {
-            this.manager.getView().menuActionResponse(packet.isSuccess(),
-                    packet.getMessage() != null ? packet.getMessage().getMessageKey() : null);
+            this.manager.getView().menuActionResponse(packet.isSuccess(), packet.getMessage());
         } else {
             this.logUnexpectedPacket(packet, "Can not receive menu option while user is not in a world");
         }

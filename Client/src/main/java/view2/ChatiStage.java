@@ -4,10 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import org.jetbrains.annotations.NotNull;
 import view2.userInterface.ChatiWindow;
 import view2.userInterface.hud.ChatWindow;
 import view2.userInterface.hud.HeadUpDisplay;
-
 import java.util.Stack;
 
 /**
@@ -27,7 +27,7 @@ public class ChatiStage extends Stage {
     }
 
     @Override
-    public boolean keyDown(int keycode) {
+    public boolean keyDown(final int keycode) {
         if (!(getKeyboardFocus() instanceof TextField)) {
             if (KeyCommand.OPEN_CHAT.matches(keycode)) {
                 HeadUpDisplay.getInstance().showChatWindow();
@@ -82,7 +82,7 @@ public class ChatiStage extends Stage {
     }
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+    public boolean touchDown(final int screenX, final int screenY, final int pointer, final int button) {
         if (HeadUpDisplay.getInstance().isChatOpen()) {
             ChatWindow chatWindow = HeadUpDisplay.getInstance().getChatWindow();
             if (screenX < chatWindow.getX() || screenX > chatWindow.getX() + chatWindow.getWidth()
@@ -100,7 +100,7 @@ public class ChatiStage extends Stage {
      * Fügt ein geöffnetes Fenster in den Stack aller geöffneter Fenster ein und zeigt es an.
      * @param window Neu geöffnetes Fenster.
      */
-    public void openWindow(ChatiWindow window) {
+    public void openWindow(@NotNull final ChatiWindow window) {
         openWindows.push(window);
         addActor(window);
     }
@@ -109,7 +109,7 @@ public class ChatiStage extends Stage {
      * Entfernt ein Fenster aus dem Stack aller geöffneter Fenster und lässt es nicht mehr anzeigen.
      * @param window Zu schließendes Fenster.
      */
-    public void closeWindow(ChatiWindow window) {
+    public void closeWindow(@NotNull final ChatiWindow window) {
         if (openWindows.remove(window)) {
             window.remove();
         }

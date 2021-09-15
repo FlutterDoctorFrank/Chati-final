@@ -10,14 +10,16 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import model.MessageBundle;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 import model.user.IInternUserView;
 import model.user.IUserView;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import view2.Chati;
 import view2.ChatiScreen;
 import view2.userInterface.interactableMenu.AreaPlannerWindow;
@@ -79,7 +81,7 @@ public class WorldScreen extends ChatiScreen {
     }
 
     @Override
-    public void render(float delta) {
+    public void render(final float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (Chati.CHATI.isRoomChanged()) {
@@ -139,12 +141,12 @@ public class WorldScreen extends ChatiScreen {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(final int width, final int height) {
         viewport.update(width, height);
     }
 
     @Override
-    public InputProcessor getInputProcessor() {
+    public @NotNull InputProcessor getInputProcessor() {
         return new InputMultiplexer(stage, worldInputProcessor);
     }
 
@@ -152,7 +154,7 @@ public class WorldScreen extends ChatiScreen {
      * Gibt den WorldInputProcessor zurück.
      * @return WorldInputProcessor.
      */
-    public WorldInputProcessor getWorldInputProcessor() {
+    public @NotNull WorldInputProcessor getWorldInputProcessor() {
         return worldInputProcessor;
     }
 
@@ -160,7 +162,7 @@ public class WorldScreen extends ChatiScreen {
      * Gibt die aktuelle Karte zurück.
      * @return Aktuelle Karte.
      */
-    public TiledMap getTiledMap() {
+    public @Nullable TiledMap getTiledMap() {
         return tiledMapRenderer.getMap();
     }
 
@@ -168,7 +170,7 @@ public class WorldScreen extends ChatiScreen {
      * Gibt die Instanz der World (LibGDX-Klasse) zurück.
      * @return Instanz der World.
      */
-    public World getWorld() {
+    public @NotNull World getWorld() {
         return world;
     }
 
@@ -176,7 +178,7 @@ public class WorldScreen extends ChatiScreen {
      * Gibt die Kamera zurück.
      * @return Kamera.
      */
-    public WorldCamera getCamera() {
+    public @NotNull WorldCamera getCamera() {
         return camera;
     }
 
@@ -184,7 +186,7 @@ public class WorldScreen extends ChatiScreen {
      * Gibt den Avatar des intern angemeldeten Benutzers zurück.
      * @return Avatar des internen Benutzers.
      */
-    public InternUserAvatar getInternUserAvatar() {
+    public @Nullable InternUserAvatar getInternUserAvatar() {
         return internUserAvatar;
     }
 
@@ -193,7 +195,7 @@ public class WorldScreen extends ChatiScreen {
      * @param contextId ID des Interaktionsobjekts.
      * @param menu Zu öffnendes Menü.
      */
-    public void openMenu(ContextID contextId, ContextMenu menu) {
+    public void openMenu(@NotNull final ContextID contextId, @NotNull final ContextMenu menu) {
         switch (menu) {
             case ROOM_RECEPTION_MENU:
                 currentInteractableWindow = new RoomReceptionWindow(contextId);
@@ -224,9 +226,9 @@ public class WorldScreen extends ChatiScreen {
      * @param contextId ID des Interaktionsobjekts.
      * @param menu Zu schließendes Menü.
      */
-    public void closeMenu(ContextID contextId, ContextMenu menu) {
-        if (currentInteractableWindow != null && (!currentInteractableWindow.getInteractableId().equals(contextId)
-            || currentInteractableWindow.getInteractableMenu() != menu)) {
+    public void closeMenu(@NotNull final ContextID contextId, @NotNull final ContextMenu menu) {
+        if (currentInteractableWindow == null || !currentInteractableWindow.getInteractableId().equals(contextId)
+            || currentInteractableWindow.getInteractableMenu() != menu) {
             throw new IllegalArgumentException("Tried to close a menu that is not open.");
         }
         stage.closeWindow(currentInteractableWindow);
@@ -236,13 +238,13 @@ public class WorldScreen extends ChatiScreen {
     /**
      * Veranlasst die Verarbeitung einer Antwort auf eine durchgeführte Menüaktion im aktuell geöffneten Menü.
      * @param success Information, ob die durchgeführte Aktion erfolgreich war.
-     * @param messageKey Kennung der Nachricht, die angezeigt werden soll.
+     * @param messageBundle die Nachricht mit ihren Argumenten, die angezeigt werden soll.
      */
-    public void menuActionResponse(boolean success, String messageKey) {
+    public void menuActionResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (currentInteractableWindow == null) {
             return;
         }
-        currentInteractableWindow.receiveResponse(success, messageKey);
+        currentInteractableWindow.receiveResponse(success, messageBundle);
     }
 
     /**
@@ -300,5 +302,10 @@ public class WorldScreen extends ChatiScreen {
                 iterator.remove();
             }
         }
+    }
+
+    @Override
+    public void translate() {
+
     }
 }

@@ -1,12 +1,13 @@
 package model.notification;
 
-import controller.network.ClientSender;
-import model.MessageBundle;
-import model.context.global.GlobalContext;
+import model.exception.IllegalNotificationActionException;
+import model.exception.NotificationNotFoundException;
 import model.user.User;
 import model.user.account.UserAccountManager;
-import org.junit.*;
-
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -62,8 +63,22 @@ public class FriendRequestTest {
         try {
             this.userAccountManager.registerUser("frn_sender", "11111");
             sender = UserAccountManager.getInstance().getUser("frn_sender");
+            sender.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             this.userAccountManager.registerUser("frn_receiver", "22222");
             receiver = UserAccountManager.getInstance().getUser("frn_receiver");
+            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);
@@ -90,8 +105,22 @@ public class FriendRequestTest {
         try {
             this.userAccountManager.registerUser("fru_sender", "11111");
             sender = UserAccountManager.getInstance().getUser("fru_sender");
+            sender.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             this.userAccountManager.registerUser("fru_receiver", "22222");
             receiver = UserAccountManager.getInstance().getUser("fru_receiver");
+            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);
@@ -117,11 +146,23 @@ public class FriendRequestTest {
     public void ignoredAcceptTest() {
         try {
             this.userAccountManager.registerUser("fri_sender", "11111");
-
             sender = UserAccountManager.getInstance().getUser("fri_sender");
+            sender.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             this.userAccountManager.registerUser("fri_receiver", "22222");
-
             receiver = UserAccountManager.getInstance().getUser("fri_receiver");
+            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);
@@ -147,11 +188,23 @@ public class FriendRequestTest {
     public void notExistSenderAcceptTest() {
         try {
             this.userAccountManager.registerUser("frne_sender", "11111");
-
             sender = UserAccountManager.getInstance().getUser("frne_sender");
+            sender.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             this.userAccountManager.registerUser("frne_receiver", "22222");
-
             receiver = UserAccountManager.getInstance().getUser("frne_receiver");
+            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);
@@ -176,11 +229,23 @@ public class FriendRequestTest {
     public void normalDeclineTest() {
         try {
             this.userAccountManager.registerUser("frnd_sender", "11111");
-
             sender = UserAccountManager.getInstance().getUser("frnd_sender");
+            sender.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             this.userAccountManager.registerUser("frnd_receiver", "22222");
-
             receiver = UserAccountManager.getInstance().getUser("frnd_receiver");
+            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);
@@ -206,11 +271,23 @@ public class FriendRequestTest {
     public void uselessDeclineTest() {
         try {
             this.userAccountManager.registerUser("frud_sender", "11111");
-
             sender = UserAccountManager.getInstance().getUser("frud_sender");
+            sender.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             this.userAccountManager.registerUser("frud_receiver", "22222");
-
             receiver = UserAccountManager.getInstance().getUser("frud_receiver");
+            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);
@@ -238,11 +315,23 @@ public class FriendRequestTest {
     public void notExistSenderDeclineTest() {
         try {
             this.userAccountManager.registerUser("frned_sender", "11111");
-
             sender = UserAccountManager.getInstance().getUser("frned_sender");
+            sender.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             this.userAccountManager.registerUser("frned_receiver", "22222");
-
             receiver = UserAccountManager.getInstance().getUser("frned_receiver");
+            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);

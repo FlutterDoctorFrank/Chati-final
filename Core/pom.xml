@@ -28,6 +28,7 @@
                 <configuration>
                     <encoding>${file.encoding}</encoding>
                     <includes>
+                        <include>**/localizations/*</include>
                         <include>**/maps/*</include>
                     </includes>
                 </configuration>

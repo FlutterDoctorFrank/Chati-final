@@ -6,11 +6,13 @@ import controller.network.ServerSender;
 import model.context.spatial.Direction;
 import model.context.spatial.ISpatialContextView;
 import model.user.IInternUserView;
+import org.jetbrains.annotations.Nullable;
 import view2.Chati;
 import view2.world.WorldCamera;
 import view2.world.WorldScreen;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  * Eine Klasse, welche den Avatar des intern angemeldeten Benutzers repräsentiert.
@@ -27,7 +29,7 @@ public class InternUserAvatar extends UserAvatar {
      * Erzeugt eine neue Instanz des InternUserAvatar.
      */
     public InternUserAvatar() {
-        super(Chati.CHATI.getInternUser());
+        super(Objects.requireNonNull(Chati.CHATI.getInternUser()));
         this.body.setUserData(ContactType.INTERN_USER);
         Fixture fixture = body.getFixtureList().get(0);
         if (fixture != null) {
@@ -130,7 +132,7 @@ public class InternUserAvatar extends UserAvatar {
      * Gibt anhand der momentan gedrückten Tasten zurück, in welche Richtung der Avatar bewegt werden soll.
      * @return Richtung, in die der Avatar bewegt werden soll.
      */
-    private Direction getCurrentDirectionalInput() {
+    private @Nullable Direction getCurrentDirectionalInput() {
         Arrays.stream(Direction.values()).forEach(direction -> {
             if (!currentDirectionalInputs.contains(direction)
                     && Chati.CHATI.getWorldScreen().getWorldInputProcessor().isDirectionPressed(direction)) {

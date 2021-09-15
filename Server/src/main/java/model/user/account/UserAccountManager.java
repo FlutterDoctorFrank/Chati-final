@@ -1,12 +1,14 @@
 package model.user.account;
 
 import controller.network.ClientSender;
+import model.MessageBundle;
 import model.context.Context;
 import model.context.global.GlobalContext;
 import model.database.Database;
 import model.database.IUserAccountManagerDatabase;
 import model.exception.IllegalAccountActionException;
 import model.exception.UserNotFoundException;
+import model.notification.Notification;
 import model.role.Permission;
 import model.role.Role;
 import model.user.User;
@@ -77,11 +79,14 @@ public class UserAccountManager implements IUserAccountManager {
             throw new IllegalAccountActionException("errorMsg console", "account.register.failed");
         }
 
-        // Der erste registrierte Benutzer eines Server bekommt die Rolle des Besitzers. Sollen mehrere Benutzer diese
+        // Der erste registrierte Benutzer eines Servers bekommt die Rolle des Besitzers. Sollen mehrere Benutzer diese
         // Rolle besitzen, ist dies nur über einen Konsolenbefehl im Controller oder Datenbankmanipulation möglich.
         if (registeredUsers.isEmpty()) {
             createdUser.addRole(GlobalContext.getInstance(), Role.OWNER);
         }
+
+        // Setze Willkommen-Benachrichtigung für den frisch registrierten Benutzer.
+        createdUser.addNotification(new Notification(createdUser, GlobalContext.getInstance(), new MessageBundle("notification.welcome")));
 
         //User createdUser = new User(username);
         registeredUsers.put(createdUser.getUserId(), createdUser);

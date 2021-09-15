@@ -1,7 +1,7 @@
 package view2;
 
 import com.badlogic.gdx.Gdx;
-
+import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +75,7 @@ public enum KeyCommand {
      * Fügt die Tastenbelegung zu einem Kommando hinzu.
      * @param keyBindings Tastenbelegung des Kommandos.
      */
-    public void addKeyBindings(List<Integer> keyBindings) {
+    public void addKeyBindings(@NotNull final List<Integer> keyBindings) {
         this.keyBindings.addAll(keyBindings);
     }
 
@@ -84,7 +84,7 @@ public enum KeyCommand {
      * @param inputKeycode Code der zu überprüfenden Taste.
      * @return true, wenn die Taste enthalten ist, sonst false.
      */
-    public boolean matches(int inputKeycode) {
+    public boolean matches(final int inputKeycode) {
         return keyBindings.contains(inputKeycode);
     }
 

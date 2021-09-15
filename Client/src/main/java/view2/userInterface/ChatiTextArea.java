@@ -3,31 +3,36 @@ package view2.userInterface;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.Localization;
+import view2.Localization.Translatable;
 
 /**
  * Eine Klasse, welche die in der Anwendung verwendeten TextAreas repräsentiert.
  */
-public class ChatiTextArea extends TextArea {
+public class ChatiTextArea extends TextArea implements Translatable {
 
     private static final int TEXT_AREA_MAX_LENGTH = 512;
 
+    private final String messageTextKey;
+
     /**
      * Erzeugt eine neue Instanz der ChatiTextArea.
-     * @param messageText Anzuzeigender Nachricht wenn der Text leer ist.
+     * @param messageTextKey Kennung der anzuzeigenden Nachricht, wenn der Text leer ist.
      * @param writeEnters Information, ob das Drücken der Enter-Taste bei nicht leerem Text in der TextArea einen
      * Zeilenumbruch verursacht.
      */
-    public ChatiTextArea(String messageText, boolean writeEnters) {
+    public ChatiTextArea(@NotNull final String messageTextKey, final boolean writeEnters) {
         super("", Chati.CHATI.getSkin());
-        setMessageText(messageText);
+        this.messageTextKey = messageTextKey;
+        this.writeEnters = false;
+        translate();
 
         setMaxLength(TEXT_AREA_MAX_LENGTH);
-        this.writeEnters = false;
-
         addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(@NotNull final ChangeEvent event, @NotNull final Actor actor) {
                 ChatiTextArea.this.writeEnters = writeEnters && !getText().isBlank();
             }
         });
@@ -51,5 +56,11 @@ public class ChatiTextArea extends TextArea {
         if (hasKeyboardFocus() && getStage() != null) {
             getStage().unfocus(this);
         }
+        translate();
+    }
+
+    @Override
+    public void translate() {
+        setMessageText(Localization.translate(messageTextKey));
     }
 }

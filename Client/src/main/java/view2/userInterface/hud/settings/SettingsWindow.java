@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import model.role.Permission;
 import model.user.IInternUserView;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.hud.HudMenuWindow;
@@ -31,52 +32,52 @@ public class SettingsWindow extends HudMenuWindow {
      * Erzeugt eine neue Instanz des SettingsWindow.
      */
     public SettingsWindow() {
-        super("Einstellungen");
+        super("window.title.settings");
 
         IInternUserView internUser = Chati.CHATI.getInternUser();
 
-        ChatiTextButton languageSelectMenuButton = new ChatiTextButton("Sprache wählen", true);
+        ChatiTextButton languageSelectMenuButton = new ChatiTextButton("menu.button.select-language", true);
         languageSelectMenuButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 new LanguageSelectWindow().open();
             }
         });
 
-        ChatiTextButton volumeChangeMenuButton = new ChatiTextButton("Audioeinstellungen", true);
+        ChatiTextButton volumeChangeMenuButton = new ChatiTextButton("menu.button.sound-settings", true);
         volumeChangeMenuButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 new SoundConfigurationWindow().open();
             }
         });
 
-        ChatiTextButton worldSettingsButton = new ChatiTextButton("Welteinstellungen", true);
+        ChatiTextButton worldSettingsButton = new ChatiTextButton("menu.button.world-settings", true);
         worldSettingsButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 new WorldConfigurationWindow().open();
             }
         });
 
-        administratorManageMenuButton = new ChatiTextButton("Administratoren verwalten", true);
+        administratorManageMenuButton = new ChatiTextButton("menu.button.manage-administrator", true);
         if (internUser == null || !internUser.hasPermission(Permission.ASSIGN_ADMINISTRATOR)) {
             disableButton(administratorManageMenuButton);
         }
         administratorManageMenuButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 new AdministratorManageWindow().open();
             }
         });
 
-        leaveWorldButton = new ChatiTextButton("Welt verlassen", true);
+        leaveWorldButton = new ChatiTextButton("menu.button.world-leave", true);
         if (internUser == null || internUser.getCurrentWorld() == null) {
             disableButton(leaveWorldButton);
         }
         leaveWorldButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
                 if (internUser == null || internUser.getCurrentWorld() == null) {
                     return;
@@ -87,13 +88,13 @@ public class SettingsWindow extends HudMenuWindow {
             }
         });
 
-        logoutButton = new ChatiTextButton("Abmelden", true);
+        logoutButton = new ChatiTextButton("menu.button.logout", true);
         if (internUser == null) {
             disableButton(logoutButton);
         }
         logoutButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
                 if (!Chati.CHATI.getScreen().equals(Chati.CHATI.getMenuScreen())) {
                     Chati.CHATI.setScreen(Chati.CHATI.getMenuScreen());
@@ -102,10 +103,10 @@ public class SettingsWindow extends HudMenuWindow {
             }
         });
 
-        ChatiTextButton quitButton = new ChatiTextButton("Beenden", true);
+        ChatiTextButton quitButton = new ChatiTextButton("menu.button.exit", true);
         quitButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Gdx.app.exit();
             }
         });
@@ -119,10 +120,20 @@ public class SettingsWindow extends HudMenuWindow {
         add(leaveWorldButton).row();
         add(logoutButton).row();
         add(quitButton);
+
+        // Translatable register
+        translates.add(languageSelectMenuButton);
+        translates.add(volumeChangeMenuButton);
+        translates.add(worldSettingsButton);
+        translates.add(administratorManageMenuButton);
+        translates.add(leaveWorldButton);
+        translates.add(logoutButton);
+        translates.add(quitButton);
+        translates.trimToSize();
     }
 
     @Override
-    public void act(float delta) {
+    public void act(final float delta) {
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
             IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
             if (!administratorManageMenuButton.isDisabled()
@@ -147,13 +158,13 @@ public class SettingsWindow extends HudMenuWindow {
     }
 
     @Override
-    protected void enableButton(ChatiTextButton button) {
+    protected void enableButton(@NotNull final ChatiTextButton button) {
         button.setTouchable(Touchable.enabled);
         button.getLabel().setColor(Color.WHITE);
     }
 
     @Override
-    protected void disableButton(ChatiTextButton button) {
+    protected void disableButton(@NotNull final ChatiTextButton button) {
         button.setTouchable(Touchable.disabled);
         button.getLabel().setColor(Color.DARK_GRAY);
     }

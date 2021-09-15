@@ -2,14 +2,17 @@ package view2.userInterface.hud;
 
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import controller.network.ServerSender;
 import model.user.IInternUserView;
 import model.user.Status;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTooltip;
 import view2.userInterface.UserInfoContainer;
 
@@ -28,13 +31,14 @@ public class InternUserDisplay extends Table {
     /**
      * Erzeugt eine neue Instanz des InternUserDisplay.
      */
-    public InternUserDisplay() {
-        UserInfoContainer userInfoContainer = new UserInfoContainer(Chati.CHATI.getUserManager().getInternUserView());
+    public InternUserDisplay(@NotNull final IInternUserView internUser) {
+        UserInfoContainer userInfoContainer = new UserInfoContainer(internUser);
 
-        ChatiTextButton statusButton = new ChatiTextButton("", false);
+        TextButton statusButton = new TextButton("", Chati.CHATI.getSkin());
+        statusButton.setDisabled(false);
         statusButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (statusSelectTable == null) {
                     statusSelectTable = new StatusSelectTable();
                     add(statusSelectTable).top().left().row();
@@ -68,7 +72,7 @@ public class InternUserDisplay extends Table {
     }
 
     @Override
-    public void act(float delta) {
+    public void act(final float delta) {
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()
                 || Chati.CHATI.isRoomChanged()) {
             IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
@@ -80,28 +84,32 @@ public class InternUserDisplay extends Table {
     }
 
     /**
-     * Setzt das aktuall anzuzeigende Statussymbol.
+     * Setzt das aktuell anzuzeigende Statussymbol.
      */
     private void setStatusImage() {
         IInternUserView internUser = Chati.CHATI.getInternUser();
+
+        if (internUser == null) {
+            return;
+        }
 
         statusImage.getListeners().forEach(statusImage::removeListener);
         switch (internUser.getStatus()) {
             case ONLINE:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_online"));
-                statusImage.addListener(new ChatiTooltip("Online"));
+                statusImage.addListener(new ChatiTooltip("hud.tooltip.online"));
                 break;
             case AWAY:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_away"));
-                statusImage.addListener(new ChatiTooltip("Abwesend"));
+                statusImage.addListener(new ChatiTooltip("hud.tooltip.away"));
                 break;
             case BUSY:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_busy"));
-                statusImage.addListener(new ChatiTooltip("Beschäftigt"));
+                statusImage.addListener(new ChatiTooltip("hud.tooltip.busy"));
                 break;
             case INVISIBLE:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_invisible"));
-                statusImage.addListener(new ChatiTooltip("Unsichtbar"));
+                statusImage.addListener(new ChatiTooltip("hud.tooltip.invisible"));
                 break;
             case OFFLINE:
                 throw new IllegalArgumentException("Intern user cannot be offline");
@@ -121,59 +129,71 @@ public class InternUserDisplay extends Table {
         public StatusSelectTable() {
             IInternUserView internUser = Chati.CHATI.getInternUser();
 
+            if (internUser == null) {
+                return;
+            }
+
             Image onlineStatusImage = new Image(Chati.CHATI.getDrawable("status_online"));
             Image busyStatusImage = new Image(Chati.CHATI.getDrawable("status_busy"));
             Image invisibleStatusImage = new Image(Chati.CHATI.getDrawable("status_invisible"));
 
-            ChatiTextButton onlineStatusButton = new ChatiTextButton("", false);
-            onlineStatusButton.addListener(new ChatiTooltip("Online"));
+            TextButton onlineStatusButton = new TextButton("", Chati.CHATI.getSkin());
+            onlineStatusButton.setDisabled(false);
+            onlineStatusButton.addListener(new ChatiTooltip("hud.tooltip.online"));
             if (internUser.getStatus() == Status.ONLINE || internUser.getStatus() == Status.AWAY) {
                 onlineStatusButton.setChecked(true);
             }
             onlineStatusButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                public boolean touchDown(@NotNull final InputEvent event, final float x, final float y,
+                                         final int pointer, final int button) {
                     return !onlineStatusButton.isChecked();
                 }
                 @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void touchUp(@NotNull final InputEvent event, final float x, final float y,
+                                    final int pointer, final int button) {
                     Chati.CHATI.send(ServerSender.SendAction.PROFILE_CHANGE, Status.ONLINE);
                 }
             });
 
-            ChatiTextButton busyStatusButton = new ChatiTextButton("", false);
-            busyStatusButton.addListener(new ChatiTooltip("Beschäftigt"));
+            TextButton busyStatusButton = new TextButton("", Chati.CHATI.getSkin());
+            busyStatusButton.setDisabled(false);
+            busyStatusButton.addListener(new ChatiTooltip("hud.tooltip.busy"));
             if (internUser.getStatus() == Status.BUSY) {
                 busyStatusButton.setChecked(true);
             }
             busyStatusButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                public boolean touchDown(@NotNull final InputEvent event, final float x, final float y,
+                                         final int pointer, final int button) {
                     return !busyStatusButton.isChecked();
                 }
                 @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void touchUp(@NotNull final InputEvent event, final float x, final float y,
+                                    final int pointer, final int button) {
                     Chati.CHATI.send(ServerSender.SendAction.PROFILE_CHANGE, Status.BUSY);
                 }
             });
 
-            ChatiTextButton invisibleStatusButton = new ChatiTextButton("", false);
-            invisibleStatusButton.addListener(new ChatiTooltip("Unsichtbar"));
+            TextButton invisibleStatusButton = new TextButton("", Chati.CHATI.getSkin());
+            invisibleStatusButton.addListener(new ChatiTooltip("hud.tooltip.invisible"));
             if (internUser.getStatus() == Status.INVISIBLE) {
                 invisibleStatusButton.setChecked(true);
             }
             invisibleStatusButton.addListener(new ClickListener() {
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                public boolean touchDown(@NotNull final InputEvent event, final float x, final float y,
+                                         final int pointer, final int button) {
                     return !invisibleStatusButton.isChecked();
                 }
                 @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                public void touchUp(@NotNull final InputEvent event, final float x, final float y,
+                                    final int pointer, final int button) {
                     Chati.CHATI.send(ServerSender.SendAction.PROFILE_CHANGE, Status.INVISIBLE);
                 }
             });
 
-            ButtonGroup<ChatiTextButton> statusButtonGroup = new ButtonGroup<>();
+            ButtonGroup<TextButton> statusButtonGroup = new ButtonGroup<>();
             statusButtonGroup.setMinCheckCount(1);
             statusButtonGroup.setMaxCheckCount(1);
             statusButtonGroup.setUncheckLast(true);

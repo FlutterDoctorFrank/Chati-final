@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.world.WorldCamera;
 import view2.world.WorldScreen;
@@ -18,7 +19,7 @@ public class CollisionArea {
      * Erzeugt eine neue Instanz der CollisionArea.
      * @param rectangle Zugehöriges Rechteck auf der Karte.
      */
-    public CollisionArea(Rectangle rectangle) {
+    public CollisionArea(@NotNull final Rectangle rectangle) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
         bodyDef.position.set(WorldCamera.scaleToUnit((rectangle.getX() + rectangle.getWidth() / 2)),

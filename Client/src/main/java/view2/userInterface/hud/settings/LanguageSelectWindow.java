@@ -2,14 +2,18 @@ package view2.userInterface.hud.settings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.userInterface.ChatiWindow;
+import view2.Localization;
+import view2.userInterface.ChatiLabel;
+import view2.userInterface.ChatiSelectBox;
 import view2.userInterface.ChatiTextButton;
+import view2.userInterface.ChatiWindow;
+import view2.userInterface.hud.HeadUpDisplay;
+import java.util.Locale;
 
 /**
  * Eine Klasse, welche das Menü zum Ändern der Sprache repräsentiert.
@@ -23,26 +27,29 @@ public class LanguageSelectWindow extends ChatiWindow {
      * Erzeugt eine neue Instanz des LanguageSelectWindow.
      */
     public LanguageSelectWindow() {
-        super("Sprache auswählen");
+        super("window.title.select-language");
 
-        Label infoLabel = new Label("Wähle eine Sprache aus!", Chati.CHATI.getSkin());
+        ChatiLabel infoLabel = new ChatiLabel("window.entry.select-language");
+        ChatiSelectBox<Locale> languageSelectBox = new ChatiSelectBox<>(locale -> locale.getDisplayLanguage(Localization.locale()));
+        languageSelectBox.setItems(Localization.AVAILABLE_LOCALES);
 
-        SelectBox<String> languageSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
-        // TODO Brauchen wir ein Enum mit allen Sprachen oder wie läuft das ?
-
-        ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
+        ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
         confirmButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                // TODO
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                Localization.getInstance().load(languageSelectBox.getSelected());
+                Chati.CHATI.getPreferences().setLanguage(languageSelectBox.getSelected());
+                Chati.CHATI.getMenuScreen().translate();
+                Chati.CHATI.getWorldScreen().translate();
+                HeadUpDisplay.getInstance().translate();
                 close();
             }
         });
 
-        ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("menu.button.cancel", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 close();
             }
         });
@@ -67,5 +74,11 @@ public class LanguageSelectWindow extends ChatiWindow {
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
+
+        // Translatable register
+        translates.add(infoLabel);
+        translates.add(confirmButton);
+        translates.add(cancelButton);
+        translates.trimToSize();
     }
 }

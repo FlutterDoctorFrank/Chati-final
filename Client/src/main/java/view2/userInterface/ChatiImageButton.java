@@ -5,6 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Eine Klasse, welche die in der Anwendung verwendeten ImageButtons repräsentiert.
@@ -21,29 +23,34 @@ public class ChatiImageButton extends ImageButton {
      * @param imageScaleFactor Faktor, um den das Bild beim hovern beziehungsweise klicken vergrößert beziehungsweise
      * verkleinert werden soll.
      */
-    public ChatiImageButton(Drawable imageUnchecked, Drawable imageChecked, Drawable imageDisabled, float imageScaleFactor) {
+    public ChatiImageButton(@NotNull final Drawable imageUnchecked, @NotNull final Drawable imageChecked,
+                            @NotNull final Drawable imageDisabled, final float imageScaleFactor) {
         super(imageUnchecked, imageUnchecked, imageChecked);
         getStyle().imageDisabled = imageDisabled;
         getImage().scaleBy(-imageScaleFactor);
 
         addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            public boolean touchDown(@NotNull final InputEvent event, final float x, final float y,
+                                     final int pointer, final int button) {
                 getImage().scaleBy(-imageScaleFactor);
                 return true;
             }
             @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void touchUp(@NotNull final InputEvent event, final float x, final float y,
+                                final int pointer, final int button) {
                 getImage().scaleBy(imageScaleFactor);
             }
             @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+            public void enter(@NotNull final InputEvent event, final float x, final float y,
+                              final int pointer, @Nullable final Actor fromActor) {
                 if (pointer == -1) {
                     getImage().scaleBy(imageScaleFactor);
                 }
             }
             @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+            public void exit(@NotNull final InputEvent event, final float x, final float y,
+                             final int pointer, @Nullable final Actor fromActor) {
                 if (pointer == -1) {
                     getImage().scaleBy(-imageScaleFactor);
                 }
@@ -56,7 +63,7 @@ public class ChatiImageButton extends ImageButton {
      * @param imageUnchecked Im nicht ausgewählten und deaktivierten Zustand anzuzeigendes Bild.
      * @param imageChecked Im ausgewählten Zustand anzuzeigendes Bild.
      */
-    public ChatiImageButton(Drawable imageUnchecked, Drawable imageChecked) {
+    public ChatiImageButton(@NotNull final Drawable imageUnchecked, @NotNull final Drawable imageChecked) {
         this(imageUnchecked, imageChecked, imageUnchecked, DEFAULT_IMAGE_SCALE_FACTOR);
     }
 
@@ -64,7 +71,7 @@ public class ChatiImageButton extends ImageButton {
      * Erzeugt eine neue Instanz eines ChatiImageButton.
      * @param imageUnchecked Anzuzeigendes Bild.
      */
-    public ChatiImageButton(Drawable imageUnchecked) {
+    public ChatiImageButton(@NotNull final Drawable imageUnchecked) {
         this(imageUnchecked, imageUnchecked, imageUnchecked, DEFAULT_IMAGE_SCALE_FACTOR);
     }
 }

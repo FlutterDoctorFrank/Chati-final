@@ -3,6 +3,7 @@ package view2.userInterface.menu;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 
@@ -15,28 +16,28 @@ public class ProfileSettingsTable extends MenuTable {
      * Erzeugt eine neue Instanz des ProfileSettingsTable.
      */
     public ProfileSettingsTable() {
-        infoLabel.setText("Bitte wähle eine Aktion aus!");
+        super("table.entry.choose-action");
 
-        ChatiTextButton changePasswordButton = new ChatiTextButton("Passwort ändern", true);
+        ChatiTextButton changePasswordButton = new ChatiTextButton("menu.button.change-password", true);
         changePasswordButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new ChangePasswordTable());
             }
         });
 
-        ChatiTextButton deleteAccountButton = new ChatiTextButton("Konto löschen", true);
+        ChatiTextButton deleteAccountButton = new ChatiTextButton("menu.button.delete-account", true);
         deleteAccountButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new DeleteAccountTable());
             }
         });
 
-        ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("menu.button.back", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
             }
         });
@@ -52,9 +53,16 @@ public class ProfileSettingsTable extends MenuTable {
         container.add(buttonContainer).row();
         container.add(cancelButton);
         add(container).width(ROW_WIDTH);
+
+        // Translatable register
+        translates.add(changePasswordButton);
+        translates.add(deleteAccountButton);
+        translates.add(cancelButton);
+        translates.trimToSize();
     }
 
     @Override
     public void resetTextFields() {
+
     }
 }

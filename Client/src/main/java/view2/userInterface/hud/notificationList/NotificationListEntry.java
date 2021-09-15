@@ -4,69 +4,71 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
+import model.MessageBundle;
 import model.notification.INotificationView;
 import model.notification.NotificationAction;
 import model.notification.NotificationType;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.Localization.Translatable;
 import view2.userInterface.ChatiImageButton;
+import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTooltip;
 import view2.userInterface.ChatiWindow;
-
-import java.time.format.DateTimeFormatter;
+import java.sql.Timestamp;
 
 /**
  * Eine Klasse, welche einen Eintrag in der Benachrichtigungsliste des HeadUpDisplay repräsentiert.
  */
-public class NotificationListEntry extends Table implements Comparable<NotificationListEntry> {
+public class NotificationListEntry extends Table implements Translatable, Comparable<NotificationListEntry> {
 
     private static final float SHOW_BUTTON_WIDTH = 150;
     private static final float BUTTON_SIZE = 30;
     private static final float VERTICAL_SPACING = 5;
     private static final float HORIZONTAL_SPACING = 7.5f;
 
-    private NotificationTextWindow notificationTextWindow;
-    private final Label typeLabel;
-
     private final INotificationView notification;
+    private final ChatiTextButton showButton;
+    private final ChatiLabel typeLabel;
+    private final ChatiLabel dateLabel;
+    private NotificationTextWindow notificationTextWindow;
 
     /**
      * Erzeugt eine neue Instanz des NotificationListEntry.
      * @param notification Zum Eintrag zugehörige Benachrichtigung.
      */
-    protected NotificationListEntry(INotificationView notification) {
+    protected NotificationListEntry(@NotNull final INotificationView notification) {
         this.notification = notification;
-
-        typeLabel = new Label(notification.getType().getName(), Chati.CHATI.getSkin());
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm");
-        Label dateLabel = new Label(notification.getTimestamp().format(formatter), Chati.CHATI.getSkin());
+        this.typeLabel = new ChatiLabel(notification.getType().getMessageKey());
+        this.dateLabel = new ChatiLabel("pattern.notification.time", Timestamp.valueOf(notification.getTimestamp()));
 
         Image stateImage = new Image();
         if (!notification.isRead()) {
             stateImage.setDrawable(Chati.CHATI.getDrawable("notification_new"));
-            stateImage.addListener(new ChatiTooltip("Neu"));
+            stateImage.addListener(new ChatiTooltip("hud.tooltip.new"));
         } else if (notification.isAccepted()) {
             stateImage.setDrawable(Chati.CHATI.getDrawable("notification_accepted"));
-            stateImage.addListener(new ChatiTooltip("Angenommen"));
+            stateImage.addListener(new ChatiTooltip("hud.tooltip.accepted"));
         } else if (notification.isDeclined()) {
             stateImage.setDrawable(Chati.CHATI.getDrawable("notification_declined"));
-            stateImage.addListener(new ChatiTooltip("Abgelehnt"));
+            stateImage.addListener(new ChatiTooltip("hud.tooltip.declined"));
         } else {
             stateImage.setDrawable(Chati.CHATI.getDrawable("notification_pending"));
-            stateImage.addListener(new ChatiTooltip("Ausstehend"));
+            stateImage.addListener(new ChatiTooltip("hud.tooltip.pending"));
         }
 
-        ChatiTextButton showButton = new ChatiTextButton("Anzeigen", true);
+        showButton = new ChatiTextButton("menu.button.show", true);
         showButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (!notification.isRead()) {
                     Chati.CHATI.send(ServerSender.SendAction.NOTIFICATION_READ, notification.getNotificationId());
                 }
@@ -79,7 +81,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         if (notification.getType() != NotificationType.INFORMATION
                 && !notification.isAccepted() && !notification.isDeclined()) {
             acceptButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_accept"));
-            acceptButton.addListener(new ChatiTooltip("Annehmen"));
+            acceptButton.addListener(new ChatiTooltip("hud.tooltip.accept"));
         } else {
             acceptButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_accept_disabled"));
             acceptButton.setDisabled(true);
@@ -87,7 +89,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         }
         acceptButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 new ConfirmWindow(NotificationAction.ACCEPT).open();
             }
         });
@@ -96,7 +98,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         if (notification.getType() != NotificationType.INFORMATION
                 && !notification.isAccepted() && !notification.isDeclined()) {
             declineButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_decline"));
-            declineButton.addListener(new ChatiTooltip("Ablehnen"));
+            declineButton.addListener(new ChatiTooltip("hud.tooltip.decline"));
         } else {
             declineButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_decline_disabled"));
             declineButton.setDisabled(true);
@@ -104,16 +106,16 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
         }
         declineButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 new ConfirmWindow(NotificationAction.DECLINE).open();
             }
         });
 
         ChatiImageButton deleteButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_delete"));
-        deleteButton.addListener(new ChatiTooltip("Löschen"));
+        deleteButton.addListener(new ChatiTooltip("hud.tooltip.delete"));
         deleteButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 new ConfirmWindow(NotificationAction.DELETE).open();
             }
         });
@@ -140,12 +142,19 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
     }
 
     @Override
-    public int compareTo(@NotNull NotificationListEntry other) {
+    public int compareTo(@NotNull final NotificationListEntry other) {
         if (other.notification.getTimestamp().compareTo(this.notification.getTimestamp()) == 0) {
             return this.notification.getNotificationId().compareTo(other.notification.getNotificationId());
         } else {
             return other.notification.getTimestamp().compareTo(this.notification.getTimestamp());
         }
+    }
+
+    @Override
+    public void translate() {
+        typeLabel.translate();
+        dateLabel.translate();
+        showButton.translate();
     }
 
     /**
@@ -160,18 +169,16 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
          * Erzeugt eine neue Instanz des NotificationTextWindow.
          */
         public NotificationTextWindow() {
-            super(String.valueOf(typeLabel.getText()));
+            super(notification.getType().getMessageKey());
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm");
-            Label dateLabel = new Label(notification.getTimestamp().format(formatter), Chati.CHATI.getSkin());
-
-            Label textLabel = new Label(notification.getMessageBundle().getMessageKey(), Chati.CHATI.getSkin());
+            ChatiLabel dateLabel = new ChatiLabel("pattern.notification.time", Timestamp.valueOf(notification.getTimestamp()));
+            ChatiLabel textLabel = new ChatiLabel(notification.getMessageBundle());
             textLabel.setWrap(true);
 
-            TextButton okButton = new ChatiTextButton("Ok", true);
+            ChatiTextButton okButton = new ChatiTextButton("menu.button.okay", true);
             okButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     notificationTextWindow = null;
                     close();
                 }
@@ -181,7 +188,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             if (notification.getType() != NotificationType.INFORMATION
                     && !notification.isAccepted() && !notification.isDeclined()) {
                 acceptButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_accept"));
-                acceptButton.addListener(new ChatiTooltip("Annehmen"));
+                acceptButton.addListener(new ChatiTooltip("hud.tooltip.accept"));
             } else {
                 acceptButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_accept_disabled"));
                 acceptButton.setDisabled(true);
@@ -189,7 +196,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             }
             acceptButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     new ConfirmWindow(NotificationAction.ACCEPT).open();
                 }
             });
@@ -198,7 +205,7 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             if (notification.getType() != NotificationType.INFORMATION
                     && !notification.isAccepted() && !notification.isDeclined()) {
                 declineButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_decline"));
-                declineButton.addListener(new ChatiTooltip("Ablehnen"));
+                declineButton.addListener(new ChatiTooltip("hud.tooltip.decline"));
             } else {
                 declineButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_decline_disabled"));
                 declineButton.setDisabled(true);
@@ -206,16 +213,16 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             }
             declineButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     new ConfirmWindow(NotificationAction.DECLINE).open();
                 }
             });
 
             ImageButton deleteButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_delete"));
-            deleteButton.addListener(new ChatiTooltip("Löschen"));
+            deleteButton.addListener(new ChatiTooltip("hud.tooltip.delete"));
             deleteButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     new ConfirmWindow(NotificationAction.DELETE).open();
                 }
             });
@@ -240,13 +247,20 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             buttonContainer.add(acceptButton, declineButton, deleteButton);
             container.add(buttonContainer).bottom().padBottom(VERTICAL_SPACING).grow().row();
             add(container).padLeft(SPACING).padRight(SPACING).grow();
+
+            // Translatable register
+            translates.add(dateLabel);
+            translates.add(textLabel);
+            translates.add(okButton);
+            translates.trimToSize();
         }
     }
 
     /**
-     * Eine Klasse, welche das Menü zum Bestätigen einer durchgeführen Benachrichtigungsaktion repräsentiert.
+     * Eine Klasse, welche das Menü zum Bestätigen einer durchgeführten Benachrichtigungsaktion repräsentiert.
      */
     private class ConfirmWindow extends ChatiWindow {
+
         private static final float WINDOW_WIDTH = 550;
         private static final float WINDOW_HEIGHT = 275;
 
@@ -254,30 +268,29 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
          * Erzeugt eine neue Instanz des ConfirmWindow.
          * @param action Durchzuführende Benachrichtigungsaktion.
          */
-        public ConfirmWindow(NotificationAction action) {
-            super("Bestätigen");
+        public ConfirmWindow(@NotNull final NotificationAction action) {
+            super("window.title.confirm");
 
-            String text;
+            MessageBundle message;
             switch (action) {
                 case ACCEPT:
-                    text = "Bist du sicher, dass du diese " + typeLabel.getText() + " annehmen möchtest?";
+                    message = new MessageBundle("window.notification.confirm-accept", typeLabel.getText());
                     break;
                 case DECLINE:
-                    text = "Bist du sicher, dass du diese " + typeLabel.getText() + " ablehnen möchtest?";
+                    message = new MessageBundle("window.notification.confirm-decline", typeLabel.getText());
                     break;
                 case DELETE:
-                    text = "Bist du sicher, dass du diese " + typeLabel.getText() + " löschen möchtest?";
+                    message = new MessageBundle("window.notification.confirm-delete", typeLabel.getText());
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + action);
             }
 
-            Label infoLabel = new Label(text, Chati.CHATI.getSkin());
-
-            ChatiTextButton confirmButton = new ChatiTextButton("Ja", true);
+            ChatiLabel infoLabel = new ChatiLabel(message);
+            ChatiTextButton confirmButton = new ChatiTextButton("menu.button.yes", true);
             confirmButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     switch (action) {
                         case ACCEPT:
                             Chati.CHATI.send(ServerSender.SendAction.NOTIFICATION_RESPONSE,
@@ -301,10 +314,10 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
                 }
             });
 
-            ChatiTextButton cancelButton = new ChatiTextButton("Nein", true);
+            ChatiTextButton cancelButton = new ChatiTextButton("menu.button.no", true);
             cancelButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     close();
                 }
             });
@@ -327,6 +340,12 @@ public class NotificationListEntry extends Table implements Comparable<Notificat
             buttonContainer.add(cancelButton).padLeft(SPACING / 2);
             container.add(buttonContainer);
             add(container).padLeft(SPACING).padRight(SPACING).grow();
+
+            // Translatable register
+            translates.add(infoLabel);
+            translates.add(confirmButton);
+            translates.add(cancelButton);
+            translates.trimToSize();
         }
     }
 }

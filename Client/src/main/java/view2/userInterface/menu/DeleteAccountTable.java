@@ -2,9 +2,9 @@ package view2.userInterface.menu;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
@@ -22,21 +22,21 @@ public class DeleteAccountTable extends MenuTable {
      * Erzeugt eine neue Instanz des DeleteAccountTable.
      */
     public DeleteAccountTable() {
-        infoLabel.setText("Gib dein aktuelles Passwort ein!");
+        super("table.entry.delete-account");
 
-        passwordField = new ChatiTextField("Passwort", true);
-        confirmPasswordField = new ChatiTextField("Passwort bestätigen", true);
+        passwordField = new ChatiTextField("menu.text-field.password", true);
+        confirmPasswordField = new ChatiTextField("menu.text-field.password-confirm", true);
 
-        TextButton confirmButton = new ChatiTextButton("Bestätigen", true);
+        ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
         confirmButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (passwordField.isBlank() || confirmPasswordField.isBlank()) {
-                    infoLabel.setText("Bitte fülle alle Felder aus.");
+                    showMessage("table.general.fill-fields");
                     return;
                 }
                 if (!passwordField.getText().equals(confirmPasswordField.getText())) {
-                    infoLabel.setText("Die Passwörter stimmen nicht überein.");
+                    showMessage("table.delete-account.no-match");
                     resetTextFields();
                     return;
                 }
@@ -44,10 +44,10 @@ public class DeleteAccountTable extends MenuTable {
             }
         });
 
-        TextButton cancelButton = new ChatiTextButton("Abbrechen", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("menu.button.cancel", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new ProfileSettingsTable());
             }
         });
@@ -64,6 +64,13 @@ public class DeleteAccountTable extends MenuTable {
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).width(ROW_WIDTH);
+
+        // Translatable register
+        translates.add(passwordField);
+        translates.add(confirmPasswordField);
+        translates.add(confirmButton);
+        translates.add(cancelButton);
+        translates.trimToSize();
     }
 
     @Override
@@ -81,21 +88,21 @@ public class DeleteAccountTable extends MenuTable {
          * Erzeugt eine neue Instanz des ConfirmDeletionTable.
          */
         public ConfirmDeletionTable() {
-            infoLabel.setText("Bist du sicher, dass du dein Konto löschen möchtest?");
+            super("table.delete-account.confirm");
 
-            ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
+            ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
             confirmButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     Chati.CHATI.getMenuScreen().setPendingResponse(Response.DELETE_ACCOUNT);
                     Chati.CHATI.send(ServerSender.SendAction.PROFILE_LOGOUT, passwordField.getText(), true);
                 }
             });
 
-            ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
+            ChatiTextButton cancelButton = new ChatiTextButton("menu.button.back", true);
             cancelButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     Chati.CHATI.getMenuScreen().setMenuTable(new ChangePasswordTable());
                 }
             });
@@ -110,10 +117,16 @@ public class DeleteAccountTable extends MenuTable {
             buttonContainer.add(cancelButton).padLeft(SPACING / 2);
             container.add(buttonContainer);
             add(container).width(ROW_WIDTH);
+
+            // Translatable register
+            translates.add(confirmButton);
+            translates.add(cancelButton);
+            translates.trimToSize();
         }
 
         @Override
         public void resetTextFields() {
+
         }
     }
 }

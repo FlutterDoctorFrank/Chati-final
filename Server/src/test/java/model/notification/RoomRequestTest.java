@@ -10,6 +10,8 @@ import model.context.global.GlobalContext;
 import model.context.spatial.Room;
 import model.context.spatial.ContextMap;
 import model.context.spatial.World;
+import model.exception.IllegalNotificationActionException;
+import model.exception.NotificationNotFoundException;
 import model.role.Role;
 import model.user.User;
 import model.user.account.UserAccountManager;
@@ -102,6 +104,13 @@ public class RoomRequestTest {
         try {
             this.userAccountManager.registerUser("rrn_sender", "11111");
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
+            sender.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             this.userAccountManager.registerUser("rrn_receiver", "22222");
             receiver = UserAccountManager.getInstance().loginUser("rrn_receiver", "22222", testClientSender);
             Room test_room = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
@@ -134,6 +143,13 @@ public class RoomRequestTest {
         try {
             this.userAccountManager.registerUser("rrn_sender", "11111");
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
+            sender.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             this.userAccountManager.registerUser("rrn_receiver", "22222");
             receiver = UserAccountManager.getInstance().loginUser("rrn_receiver", "22222", testClientSender);
             Room test_room = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
@@ -198,6 +214,13 @@ public class RoomRequestTest {
         try {
             this.userAccountManager.registerUser("rrn_sender", "11111");
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
+            sender.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             this.userAccountManager.registerUser("rrn_receiver", "22222");
             receiver = UserAccountManager.getInstance().loginUser("rrn_receiver", "22222", testClientSender);
             Room test_room = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
@@ -230,6 +253,13 @@ public class RoomRequestTest {
         try {
             this.userAccountManager.registerUser("rrn_sender", "11111");
             sender = UserAccountManager.getInstance().loginUser("rrn_sender", "11111", testClientSender);
+            sender.getGlobalNotifications().keySet().forEach(uuid -> {
+                try {
+                    sender.manageNotification(uuid, NotificationAction.DELETE);
+                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
+                    Assert.fail("Failed in delete initialized notifications");
+                }
+            });
             this.userAccountManager.registerUser("rrn_receiver", "22222");
             receiver = UserAccountManager.getInstance().loginUser("rrn_receiver", "22222", testClientSender);
             Room test_room = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");

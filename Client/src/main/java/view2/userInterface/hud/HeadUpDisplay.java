@@ -5,26 +5,29 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.Localization.Translatable;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.hud.notificationList.NotificationListWindow;
 import view2.userInterface.hud.settings.SettingsWindow;
 import view2.userInterface.hud.userList.UserListWindow;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
  * Eine Klasse, welche das HeadUpDisplay der Anwendung repräsentiert.
  */
-public class HeadUpDisplay extends Table {
+public class HeadUpDisplay extends Table implements Translatable {
 
     public static final float BUTTON_SCALE_FACTOR = 0.1f;
     public static final float BUTTON_SIZE = 75;
@@ -55,7 +58,7 @@ public class HeadUpDisplay extends Table {
                 Chati.CHATI.getDrawable("user_menu_open"));
         userListButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (userListButton.isChecked()) {
                     openUserMenu();
                 } else {
@@ -68,7 +71,7 @@ public class HeadUpDisplay extends Table {
                 Chati.CHATI.getDrawable("notification_menu_open"));
         notificationListButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (notificationListButton.isChecked()) {
                     openNotificationMenu();
                 } else {
@@ -81,7 +84,7 @@ public class HeadUpDisplay extends Table {
                 Chati.CHATI.getDrawable("settings_menu_open"));
         settingsButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (settingsButton.isChecked()) {
                     openSettingsMenu();
                 } else {
@@ -94,7 +97,7 @@ public class HeadUpDisplay extends Table {
         chatButton.setVisible(false);
         chatButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (chatButton.isChecked()) {
                     showChatWindow();
                 } else {
@@ -108,7 +111,7 @@ public class HeadUpDisplay extends Table {
         communicationButton.setVisible(false);
         communicationButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (communicationButton.isChecked()) {
                     openCommunicationWindow();
                 } else {
@@ -123,7 +126,7 @@ public class HeadUpDisplay extends Table {
         microphoneButton.setVisible(false);
         microphoneButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.getPreferences().setMicrophoneOn(microphoneButton.isChecked());
             }
         });
@@ -133,7 +136,7 @@ public class HeadUpDisplay extends Table {
         soundButton.setVisible(false);
         soundButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.getPreferences().setSoundOn(soundButton.isChecked());
             }
         });
@@ -176,12 +179,12 @@ public class HeadUpDisplay extends Table {
     }
 
     @Override
-    public void act(float delta) {
+    public void act(final float delta) {
         IInternUserView internUser = Chati.CHATI.getInternUser();
 
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged() || Chati.CHATI.isRoomChanged()) {
             if (internUser != null && internUserDisplay == null) {
-                internUserDisplay = new InternUserDisplay();
+                internUserDisplay = new InternUserDisplay(internUser);
                 addActor(internUserDisplay);
             } else if (internUser == null && internUserDisplay != null) {
                 internUserDisplay.remove();
@@ -246,7 +249,7 @@ public class HeadUpDisplay extends Table {
     }
 
     /**
-     * Schließt das Benutzer-, Benachrichtigungs-, oder Einstellungsmenü, sofern eines von diesen geöffnet ist.
+     * Schließt das Benutzer-, Benachrichtigungs- oder Einstellungsmenü, sofern eines von diesen geöffnet ist.
      */
     public void closeCurrentMenu() {
         if (currentMenuWindow != null) {
@@ -331,7 +334,7 @@ public class HeadUpDisplay extends Table {
      * Zeigt einen tippenden Benutzer im Chatfenster an.
      * @param userId ID des tippenden Benutzers.
      */
-    public void showTypingUser(UUID userId) {
+    public void showTypingUser(@NotNull final UUID userId) {
         chatWindow.addTypingUser(userId);
     }
 
@@ -341,24 +344,31 @@ public class HeadUpDisplay extends Table {
      * @param timestamp Zeitstempel der Nachricht.
      * @param messageType Typ der Nachricht.
      * @param message Anzuzeigende Nachricht.
-     * @param messageBundle Übersetzbare Nachricht mit deren benötigten Argumenten.
      * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
      */
-    public void showChatMessage(UUID senderId, LocalDateTime timestamp, MessageType messageType, String message,
-                                MessageBundle messageBundle) throws UserNotFoundException {
+    public void showChatMessage(@NotNull final UUID senderId, @NotNull final LocalDateTime timestamp,
+                                @NotNull final MessageType messageType, @NotNull final String message) throws UserNotFoundException {
         if (!isChatOpen()) {
             chatButton.startBlinking();
         }
-        if (messageType == MessageType.INFO) {
-            chatWindow.showInfoMessage(timestamp, messageBundle);
-        } else {
-            chatWindow.showUserMessage(senderId, timestamp, messageType, message);
-        }
+        chatWindow.showUserMessage(senderId, timestamp, messageType, message);
     }
 
     /**
-     * Gibt zurück, ob das Benutzer-, Benachrichtiungs-, oder Einstellungsmenü geöffnet ist.
-     * @return true, wenn das Benutzer-, Benachrichtigungs-, oder Einstellungsmenü geöffnet ist, sonst false.
+     * Zeigt eine Informationsnachricht im Chatfenster an.
+     * @param timestamp Zeitstempel der Nachricht.
+     * @param messageBundle Übersetzbare Nachricht mit deren benötigten Argumenten.
+     */
+    public void showInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle) {
+        if (!isChatOpen()) {
+            chatButton.startBlinking();
+        }
+        chatWindow.showInfoMessage(timestamp, messageBundle);
+    }
+
+    /**
+     * Gibt zurück, ob das Benutzer-, Benachrichtigungs- oder Einstellungsmenü geöffnet ist.
+     * @return true, wenn das Benutzer-, Benachrichtigungs- oder Einstellungsmenü geöffnet ist, sonst false.
      */
     public boolean isMenuOpen() {
         return currentMenuWindow != null;
@@ -408,19 +418,30 @@ public class HeadUpDisplay extends Table {
      * Gibt das Chatfenster zurück.
      * @return Chatfenster.
      */
-    public ChatWindow getChatWindow() {
+    public @NotNull ChatWindow getChatWindow() {
         return chatWindow;
     }
 
     /**
      * Das kommt weg, nicht ins Entwurfsdokument übernehmen.
-     * @return // TODO
+     * @return // TODO Wird durch die Lokalisierung momentan benötigt, außer es gibt eine andere Möglichkeit an die HUD ranzukommen.
      */
-    public static HeadUpDisplay getInstance() {
+    public static @NotNull HeadUpDisplay getInstance() {
         if (headUpDisplay == null) {
             headUpDisplay = new HeadUpDisplay();
         }
         return headUpDisplay;
+    }
+
+    @Override
+    public void translate() {
+        chatWindow.translate();
+        if (communicationWindow != null) {
+            communicationWindow.translate();
+        }
+        if (currentMenuWindow != null) {
+            currentMenuWindow.translate();
+        }
     }
 
     /**
@@ -439,12 +460,12 @@ public class HeadUpDisplay extends Table {
          * @param imageUnchecked Im nicht ausgewählten und deaktivierten Zustand anzuzeigendes Bild.
          * @param imageChecked Im ausgewählten Zustand anzuzeigendes Bild.
          */
-        public ChatButton(Drawable imageUnchecked, Drawable imageChecked) {
+        public ChatButton(@NotNull final Drawable imageUnchecked, @NotNull final Drawable imageChecked) {
             super(imageUnchecked, imageChecked);
         }
 
         @Override
-        public void draw(Batch batch, float parentAlpha) {
+        public void draw(@NotNull final Batch batch, final float parentAlpha) {
             delta += Gdx.graphics.getDeltaTime();
             if (blinking) {
                 if (delta >= 1 / BLINKING_FREQUENCY) {
@@ -490,12 +511,12 @@ public class HeadUpDisplay extends Table {
          * @param imageUnchecked Im nicht ausgewählten und deaktivierten Zustand anzuzeigendes Bild.
          * @param imageChecked Im ausgewählten Zustand anzuzeigendes Bild.
          */
-        public NotificationButton(Drawable imageUnchecked, Drawable imageChecked) {
+        public NotificationButton(@NotNull final Drawable imageUnchecked, @NotNull final Drawable imageChecked) {
             super(imageUnchecked, imageChecked);
         }
 
         /**
-         * Beginne die Animation zum Signalisieren des Erhalts einer neuer Benachrichtigung.
+         * Beginne die Animation zum Signalisieren des Erhalts einer neuen Benachrichtigung.
          */
         public void startAnimation() {
             if (isAnimating) {
@@ -508,7 +529,7 @@ public class HeadUpDisplay extends Table {
                     Actions.scaleBy(-BUTTON_SCALE_FACTOR, -BUTTON_SCALE_FACTOR, DURATION / 8),
                     new Action() {
                         @Override
-                        public boolean act(float delta) {
+                        public boolean act(final float delta) {
                             isAnimating = false;
                             return true;
                         }

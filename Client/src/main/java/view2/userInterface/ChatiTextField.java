@@ -1,24 +1,30 @@
 package view2.userInterface;
 
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.Localization;
+import view2.Localization.Translatable;
 
 /**
  * Eine Klasse, welche die in der Anwendung verwendeten TextFields repräsentiert.
  */
-public class ChatiTextField extends TextField {
+public class ChatiTextField extends TextField implements Translatable {
 
     private static final int TEXT_FIELD_MAX_LENGTH = 32;
     private static final int PASSWORD_FIELD_MAX_LENGTH = 48;
 
+    private final String messageTextKey;
+
     /**
      * Erzeugt eine neue Instanz der ChatiTextArea.
-     * @param messageText Anzuzeigender Nachricht wenn der Text leer ist.
+     * @param messageTextKey Kennung der anzuzeigenden Nachricht, wenn der Text leer ist.
      * @param passwordField Information, ob dieses TextFields für Passwörter genutzt wird.
      */
-    public ChatiTextField(String messageText, boolean passwordField) {
+    public ChatiTextField(@NotNull final String messageTextKey, final boolean passwordField) {
         super("", Chati.CHATI.getSkin());
-        setMessageText(messageText);
+        this.messageTextKey = messageTextKey;
+        this.translate();
 
         if (passwordField) {
             setMaxLength(PASSWORD_FIELD_MAX_LENGTH);
@@ -47,5 +53,11 @@ public class ChatiTextField extends TextField {
         if (hasKeyboardFocus() && getStage() != null) {
             getStage().unfocus(this);
         }
+        translate();
+    }
+
+    @Override
+    public void translate() {
+        setMessageText(Localization.translate(messageTextKey));
     }
 }

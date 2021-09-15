@@ -6,16 +6,17 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.ChatiPreferences;
-import view2.userInterface.ChatiWindow;
+import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiTextButton;
+import view2.userInterface.ChatiWindow;
 
 /**
  * Eine Klasse, welche das Menü zum Vornehmen von Soundeinstellungen repräsentiert.
@@ -37,37 +38,37 @@ public class SoundConfigurationWindow extends ChatiWindow {
      * Erzeugt eine neue Instanz des SoundConfigurationWindow.
      */
     public SoundConfigurationWindow() {
-        super("Audioeinstellungen");
+        super("window.title.sound-settings");
 
-        Label infoLabel = new Label("Führe Audioeinstellungen durch.", Chati.CHATI.getSkin());
+        infoLabel = new ChatiLabel("window.entry.sound-settings");
 
-        Label totalVolumeLabel = new Label("Gesamt", Chati.CHATI.getSkin());
+        ChatiLabel totalVolumeLabel = new ChatiLabel("menu.label.total");
         Slider totalVolumeSlider = new Slider(MIN_VALUE, MAX_VALUE, STEP_SIZE, false, Chati.CHATI.getSkin());
         totalVolumeSlider.setSnapToValues(new float[]{0, SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                 3 * SNAP_VALUE_STEP_SIZE, MAX_VALUE}, SNAP_VALUE_THRESHOLD);
         totalVolumeSlider.setValue(Chati.CHATI.getPreferences().getTotalVolume());
         totalVolumeSlider.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(@NotNull final ChangeEvent event, @NotNull final Actor actor) {
                 enableButton();
-                infoLabel.setText("Führe Audioeinstellungen durch.");
+                infoLabel.translate();
             }
         });
 
-        Label voiceVolumeLabel = new Label("Sprache", Chati.CHATI.getSkin());
+        ChatiLabel voiceVolumeLabel = new ChatiLabel("menu.label.voice");
         Slider voiceVolumeSlider = new Slider(MIN_VALUE, MAX_VALUE, STEP_SIZE, false, Chati.CHATI.getSkin());
         voiceVolumeSlider.setSnapToValues(new float[]{0, SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                 3 * SNAP_VALUE_STEP_SIZE, MAX_VALUE}, SNAP_VALUE_THRESHOLD);
         voiceVolumeSlider.setValue(Chati.CHATI.getPreferences().getVoiceVolume());
         voiceVolumeSlider.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(@NotNull final ChangeEvent event, @NotNull final Actor actor) {
                 enableButton();
-                infoLabel.setText("Führe Audioeinstellungen durch.");
+                infoLabel.translate();
             }
         });
 
-        Label musicVolumeLabel = new Label("Musik", Chati.CHATI.getSkin());
+        ChatiLabel musicVolumeLabel = new ChatiLabel("menu.label.music");
         Slider musicVolumeSlider = new Slider(MIN_VALUE, MAX_VALUE, STEP_SIZE, false, Chati.CHATI.getSkin());
         musicVolumeSlider.setSnapToValues(new float[]{0, SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                 3 * SNAP_VALUE_STEP_SIZE, MAX_VALUE}, SNAP_VALUE_THRESHOLD);
@@ -76,52 +77,52 @@ public class SoundConfigurationWindow extends ChatiWindow {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 enableButton();
-                infoLabel.setText("Führe Audioeinstellungen durch.");
+                infoLabel.translate();
             }
         });
 
-        Label soundVolumeLabel = new Label("Hintergrundgeräusche", Chati.CHATI.getSkin());
+        ChatiLabel soundVolumeLabel = new ChatiLabel("menu.label.sound");
         Slider soundVolumeSlider = new Slider(MIN_VALUE, MAX_VALUE, STEP_SIZE, false, Chati.CHATI.getSkin());
         soundVolumeSlider.setSnapToValues(new float[]{0, SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                 3 * SNAP_VALUE_STEP_SIZE, MAX_VALUE}, SNAP_VALUE_THRESHOLD);
         soundVolumeSlider.setValue(Chati.CHATI.getPreferences().getSoundVolume());
         soundVolumeSlider.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(@NotNull final ChangeEvent event, @NotNull final Actor actor) {
                 enableButton();
-                infoLabel.setText("Führe Audioeinstellungen durch.");
+                infoLabel.translate();
             }
         });
 
-        Label microphoneSensitivityLabel = new Label("Mikrofonempfindlichkeit", Chati.CHATI.getSkin());
+        ChatiLabel microphoneSensitivityLabel = new ChatiLabel("menu.label.sensitivity");
         Slider microphoneSensitivitySlider = new Slider(MIN_VALUE, MAX_VALUE, STEP_SIZE, false, Chati.CHATI.getSkin());
         microphoneSensitivitySlider.setSnapToValues(new float[]{0, SNAP_VALUE_STEP_SIZE, 2 * SNAP_VALUE_STEP_SIZE,
                 3 * SNAP_VALUE_STEP_SIZE, MAX_VALUE}, SNAP_VALUE_THRESHOLD);
         microphoneSensitivitySlider.setValue(Chati.CHATI.getPreferences().getMicrophoneSensitivity());
         microphoneSensitivitySlider.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(@NotNull final ChangeEvent event, @NotNull final Actor actor) {
                 enableButton();
-                infoLabel.setText("Führe Audioeinstellungen durch.");
+                infoLabel.translate();
             }
         });
 
-        Label pushToTalkLabel = new Label("Taste zum Sprechen drücken.", Chati.CHATI.getSkin());
+        ChatiLabel pushToTalkLabel = new ChatiLabel("menu.label.push-to-talk");
         CheckBox pushToTalkCheckBox = new CheckBox("", Chati.CHATI.getSkin());
         pushToTalkCheckBox.setChecked(Chati.CHATI.getPreferences().getPushToTalk());
         pushToTalkCheckBox.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(@NotNull final ChangeEvent event, @NotNull final Actor actor) {
                 enableButton();
-                infoLabel.setText("Führe Audioeinstellungen durch.");
+                infoLabel.translate();
             }
         });
 
-        confirmButton = new ChatiTextButton("Übernehmen", true);
+        confirmButton = new ChatiTextButton("menu.button.apply", true);
         disableButton();
         confirmButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 disableButton();
                 Chati.CHATI.getPreferences().setTotalVolume(totalVolumeSlider.getValue());
                 Chati.CHATI.getPreferences().setVoiceVolume(voiceVolumeSlider.getValue());
@@ -129,27 +130,28 @@ public class SoundConfigurationWindow extends ChatiWindow {
                 Chati.CHATI.getPreferences().setSoundVolume(soundVolumeSlider.getValue());
                 Chati.CHATI.getPreferences().setMicrophoneSensitivity(microphoneSensitivitySlider.getValue());
                 Chati.CHATI.getPreferences().setPushToTalk(pushToTalkCheckBox.isChecked());
-                infoLabel.setText("Deine Änderungen wurden gespeichert!");
+                showMessage("window.settings.saved");
             }
         });
 
-        ChatiTextButton defaultButton = new ChatiTextButton("Standardeinstellung", true);
+        ChatiTextButton defaultButton = new ChatiTextButton("menu.button.default-settings", true);
         defaultButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 totalVolumeSlider.setValue(ChatiPreferences.DEFAULT_TOTAL_VOLUME);
                 voiceVolumeSlider.setValue(ChatiPreferences.DEFAULT_VOICE_VOLUME);
                 musicVolumeSlider.setValue(ChatiPreferences.DEFAULT_MUSIC_VOLUME);
                 soundVolumeSlider.setValue(ChatiPreferences.DEFAULT_SOUND_VOLUME);
                 microphoneSensitivitySlider.setValue(ChatiPreferences.DEFAULT_MICROPHONE_SENSITIVITY);
                 pushToTalkCheckBox.setChecked(ChatiPreferences.DEFAULT_PUSH_TO_TALK);
+                showMessage("window.settings.restored");
             }
         });
 
-        ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("menu.button.cancel", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 close();
             }
         });
@@ -203,6 +205,19 @@ public class SoundConfigurationWindow extends ChatiWindow {
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer).padTop(SPACING);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
+
+        // Translatable register
+        translates.add(infoLabel);
+        translates.add(totalVolumeLabel);
+        translates.add(voiceVolumeLabel);
+        translates.add(musicVolumeLabel);
+        translates.add(soundVolumeLabel);
+        translates.add(microphoneSensitivityLabel);
+        translates.add(pushToTalkLabel);
+        translates.add(confirmButton);
+        translates.add(defaultButton);
+        translates.add(cancelButton);
+        translates.trimToSize();
     }
 
     /**

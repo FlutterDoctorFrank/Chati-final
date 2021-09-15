@@ -5,11 +5,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import model.context.spatial.ContextMap;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.userInterface.ChatiLabel;
+import view2.userInterface.ChatiSelectBox;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
 import view2.Response;
-
 import java.util.EnumSet;
 
 /**
@@ -23,26 +25,26 @@ public class WorldCreateTable extends MenuTable {
      * Erzeugt eine neue Instanz des WorldCreateTable.
      */
     public WorldCreateTable() {
-        infoLabel.setText("Bitte wähle einen Namen und eine Karte!");
+        super("table.entry.create-world");
 
-        Label mapSelectLabel = new Label("Karte: ", Chati.CHATI.getSkin());
-        SelectBox<ContextMap> mapSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
+        ChatiLabel mapSelectLabel = new ChatiLabel("menu.label.map");
+        ChatiSelectBox<ContextMap> mapSelectBox = new ChatiSelectBox<>(ContextMap::getName);
         mapSelectBox.setMaxListCount(MAX_LIST_COUNT);
         mapSelectBox.setItems(EnumSet.allOf(ContextMap.class)
                 .stream().filter(ContextMap::isPublicRoomMap).toArray(ContextMap[]::new));
 
-        worldNameField = new ChatiTextField("Name der Welt", false);
+        worldNameField = new ChatiTextField("menu.text-field.world-name", false);
 
-        ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
+        ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
         confirmButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (worldNameField.isBlank()) {
-                    infoLabel.setText("Bitte gib den Namen der zu erstellenden Welt ein!");
+                    showMessage("table.create-world.no-name");
                     return;
                 }
                 if (mapSelectBox.getSelected() == null) {
-                    infoLabel.setText("Bitte wähle eine Karte aus!");
+                    showMessage("table.create-world.no-map");
                     return;
                 }
                 Chati.CHATI.getMenuScreen().setPendingResponse(Response.CREATE_WORLD);
@@ -50,10 +52,10 @@ public class WorldCreateTable extends MenuTable {
             }
         });
 
-        ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("menu.button.back", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
             }
         });
@@ -73,6 +75,13 @@ public class WorldCreateTable extends MenuTable {
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).width(ROW_WIDTH);
+
+        // Translatable register
+        translates.add(mapSelectLabel);
+        translates.add(worldNameField);
+        translates.add(confirmButton);
+        translates.add(cancelButton);
+        translates.trimToSize();
     }
 
     @Override

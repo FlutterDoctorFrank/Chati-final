@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
@@ -22,17 +23,17 @@ public class LoginTable extends MenuTable {
      * Erzeugt eine neue Instanz des LoginTable.
      */
     public LoginTable() {
-        infoLabel.setText("Bitte gib dein Benutzername und dein Passwort ein!");
+        super("table.entry.login");
 
-        usernameField = new ChatiTextField("Benutzername", false);
-        passwordField = new ChatiTextField("Passwort", true);
+        usernameField = new ChatiTextField("menu.text-field.username", false);
+        passwordField = new ChatiTextField("menu.text-field.password", true);
 
-        ChatiTextButton loginButton = new ChatiTextButton("Anmelden", true);
+        ChatiTextButton loginButton = new ChatiTextButton("menu.button.login", true);
         loginButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (usernameField.isBlank() || passwordField.isBlank()) {
-                    infoLabel.setText("Bitte fülle alle Felder aus.");
+                    showMessage("table.general.fill-fields");
                     return;
                 }
                 Chati.CHATI.getMenuScreen().setPendingResponse(Response.LOGIN);
@@ -40,12 +41,12 @@ public class LoginTable extends MenuTable {
             }
         });
 
-        ChatiTextButton registerButton = new ChatiTextButton("Registrieren", true);
+        ChatiTextButton registerButton = new ChatiTextButton("menu.button.register", true);
         registerButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (usernameField.isBlank() || passwordField.isBlank()) {
-                    infoLabel.setText("Bitte fülle alle Felder aus.");
+                    showMessage("table.general.fill-fields");
                     return;
                 }
                 Chati.CHATI.getMenuScreen().setPendingResponse(Response.REGISTRATION);
@@ -53,10 +54,10 @@ public class LoginTable extends MenuTable {
             }
         });
 
-        ChatiTextButton exitButton = new ChatiTextButton("Beenden", true);
+        ChatiTextButton exitButton = new ChatiTextButton("menu.button.exit", true);
         exitButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Gdx.app.exit();
             }
         });
@@ -74,6 +75,14 @@ public class LoginTable extends MenuTable {
         container.add(buttonContainer).row();
         container.add(exitButton);
         add(container).width(ROW_WIDTH);
+
+        // Translatable register
+        translates.add(usernameField);
+        translates.add(passwordField);
+        translates.add(loginButton);
+        translates.add(registerButton);
+        translates.add(exitButton);
+        translates.trimToSize();
     }
 
     @Override

@@ -1,29 +1,42 @@
 package view2.userInterface;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.Localization;
+import view2.Localization.Translatable;
+import java.util.ArrayList;
 
 /**
  * Eine Klasse, welche die in der Anwendung verwendeten Windows repräsentiert.
  */
-public abstract class ChatiWindow extends Window {
+public abstract class ChatiWindow extends Window implements Translatable {
 
     protected static final float ROW_HEIGHT = 60;
     protected static final float SPACING = 15;
 
+    protected final ArrayList<Translatable> translates;
+    protected ChatiLabel infoLabel;
+    protected String titleKey;
+
     /**
      * Erzeugt eine neue Instanz eines ChatiWindow.
-     * @param title Anzuzeigender Titel.
+     * @param titleKey Kennung des anzuzeigenden Titels.
      */
-    protected ChatiWindow(String title) {
-        super(title, Chati.CHATI.getSkin());
+    protected ChatiWindow(@NotNull final String titleKey) {
+        super(!titleKey.isBlank() ? Localization.translate(titleKey) : "", Chati.CHATI.getSkin());
+        this.translates = new ArrayList<>();
+        this.titleKey = titleKey;
 
-        ChatiTextButton closeButton = new ChatiTextButton("X", true);
+        TextButton closeButton = new TextButton("X", Chati.CHATI.getSkin());
+        closeButton.setDisabled(true);
+        closeButton.addListener(new ChatiTooltip("hud.tooltip.close"));
         closeButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 close();
             }
         });
@@ -43,5 +56,21 @@ public abstract class ChatiWindow extends Window {
      */
     public void close() {
         Chati.CHATI.getScreen().getStage().closeWindow(this);
+    }
+
+    /**
+     * Zeigt eine Nachricht auf dem Info-Label an.
+     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     */
+    public void showMessage(@NotNull final String messageKey) {
+        if (infoLabel != null) {
+            infoLabel.setText(Localization.translate(messageKey));
+        }
+    }
+
+    @Override
+    public void translate() {
+        getTitleLabel().setText(!titleKey.isBlank() ? Localization.translate(titleKey) : "");
+        translates.forEach(Translatable::translate);
     }
 }

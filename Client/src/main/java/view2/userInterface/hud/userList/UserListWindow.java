@@ -7,10 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.role.Permission;
 import model.user.IInternUserView;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.hud.HudMenuWindow;
-
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -32,7 +32,7 @@ public class UserListWindow extends HudMenuWindow {
      * Erzeugt eine neue Instanz des UserListWindow.
      */
     public UserListWindow() {
-        super("Benutzer");
+        super("window.title.users");
         this.friendEntries = new TreeSet<>();
         this.activeUserEntries = new TreeSet<>();
         this.bannedUserEntries = new TreeSet<>();
@@ -40,40 +40,46 @@ public class UserListWindow extends HudMenuWindow {
         userListContainer = new Table();
         ScrollPane userListScrollPane = new ScrollPane(userListContainer, Chati.CHATI.getSkin());
 
-        friendTabButton = new ChatiTextButton("Freunde", false);
+        friendTabButton = new ChatiTextButton("menu.button.friends", false);
         friendTabButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            public boolean touchDown(@NotNull final InputEvent event, final float x, final float y,
+                                     final int pointer, final int button) {
                 return !friendTabButton.isChecked();
             }
             @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void touchUp(@NotNull final InputEvent event, final float x, final float y,
+                                final int pointer, final int button) {
                 showFriends();
                 friendTabButton.setChecked(true);
             }
         });
 
-        activeUserTabButton = new ChatiTextButton("Welt", false);
+        activeUserTabButton = new ChatiTextButton("menu.button.world", false);
         activeUserTabButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            public boolean touchDown(@NotNull final InputEvent event, final float x, final float y,
+                                     final int pointer, final int button) {
                 return !activeUserTabButton.isChecked();
             }
             @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void touchUp(@NotNull final InputEvent event, final float x, final float y,
+                                final int pointer, final int button) {
                 showActiveUsers();
                 activeUserTabButton.setChecked(true);
             }
         });
 
-        bannedUserTabButton = new ChatiTextButton("Gesperrt", false);
+        bannedUserTabButton = new ChatiTextButton("menu.button.banned", false);
         bannedUserTabButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            public boolean touchDown(@NotNull final InputEvent event, final float x, final float y,
+                                     final int pointer, final int button) {
                 return !bannedUserTabButton.isChecked();
             }
             @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void touchUp(@NotNull final InputEvent event, final float x, final float y,
+                                final int pointer, final int button) {
                 showBannedUsers();
                 bannedUserTabButton.setChecked(true);
             }
@@ -112,10 +118,16 @@ public class UserListWindow extends HudMenuWindow {
         add(buttonContainer).growX().row();
         add(userListScrollPane).grow();
         Chati.CHATI.getScreen().getStage().setScrollFocus(userListScrollPane);
+
+        // Translatable register
+        translates.add(friendTabButton);
+        translates.add(activeUserTabButton);
+        translates.add(bannedUserTabButton);
+        translates.trimToSize();
     }
 
     @Override
-    public void act(float delta) {
+    public void act(final float delta) {
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()
                 || Chati.CHATI.isRoomChanged()) {
             IInternUserView user = Chati.CHATI.getInternUser();
@@ -234,7 +246,7 @@ public class UserListWindow extends HudMenuWindow {
      * Zeigt die übergebenen Einträge in der Liste an.
      * @param entries Anzuzeigende Einträge.
      */
-    private void layoutEntries(Set<UserListEntry> entries) {
+    private void layoutEntries(@NotNull final Set<UserListEntry> entries) {
         userListContainer.clearChildren();
         entries.forEach(entry -> userListContainer.add(entry).growX().row());
     }

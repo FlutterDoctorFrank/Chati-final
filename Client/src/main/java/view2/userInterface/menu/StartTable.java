@@ -2,10 +2,12 @@ package view2.userInterface.menu;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.userInterface.ChatiLabel;
+import view2.userInterface.ChatiSelectBox;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ContextEntry;
 import view2.Response;
@@ -15,25 +17,25 @@ import view2.Response;
  */
 public class StartTable extends MenuTable {
 
-    private final SelectBox<ContextEntry> worldSelectBox;
+    private final ChatiSelectBox<ContextEntry> worldSelectBox;
 
     /**
      * Erzeugt eine neue Instanz des StartTable.
      */
     public StartTable() {
-        infoLabel.setText("Bitte wähle eine Aktion aus!");
+        super("table.entry.choose-action");
 
-        Label worldSelectLabel = new Label("Welt: ", Chati.CHATI.getSkin());
-        worldSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
+        ChatiLabel worldSelectLabel = new ChatiLabel("menu.label.world");
+        worldSelectBox = new ChatiSelectBox<>(ContextEntry::getName);
         worldSelectBox.setMaxListCount(MAX_LIST_COUNT);
         updateWorldList();
 
-        ChatiTextButton joinWorldButton = new ChatiTextButton("Welt Beitreten", true);
+        ChatiTextButton joinWorldButton = new ChatiTextButton("menu.button.world-join", true);
         joinWorldButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (worldSelectBox.getSelected() == null) {
-                    infoLabel.setText("Bitte wähle eine Welt aus!");
+                    showMessage("table.entry.choose-world");
                     return;
                 }
                 Chati.CHATI.getMenuScreen().setPendingResponse(Response.JOIN_WORLD);
@@ -41,20 +43,20 @@ public class StartTable extends MenuTable {
             }
         });
 
-        ChatiTextButton createWorldButton = new ChatiTextButton("Welt erstellen", true);
+        ChatiTextButton createWorldButton = new ChatiTextButton("menu.button.world-create", true);
         createWorldButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new WorldCreateTable());
             }
         });
 
-        ChatiTextButton deleteWorldButton = new ChatiTextButton("Welt löschen", true);
+        ChatiTextButton deleteWorldButton = new ChatiTextButton("menu.button.world-delete", true);
         deleteWorldButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (worldSelectBox.getSelected() == null) {
-                    infoLabel.setText("Bitte wähle eine Welt aus!");
+                    showMessage("table.entry.choose-world");
                     return;
                 }
                 Chati.CHATI.getMenuScreen().setPendingResponse(Response.DELETE_WORLD);
@@ -62,26 +64,26 @@ public class StartTable extends MenuTable {
             }
         });
 
-        ChatiTextButton changeAvatarButton = new ChatiTextButton("Avatar ändern", true);
+        ChatiTextButton changeAvatarButton = new ChatiTextButton("menu.button.change-avatar", true);
         changeAvatarButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new AvatarSelectTable());
             }
         });
 
-        ChatiTextButton profileSettingsButton = new ChatiTextButton("Konto verwalten", true);
+        ChatiTextButton profileSettingsButton = new ChatiTextButton("menu.button.manage-account", true);
         profileSettingsButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new ProfileSettingsTable());
             }
         });
 
-        ChatiTextButton logoutButton = new ChatiTextButton("Abmelden", true);
+        ChatiTextButton logoutButton = new ChatiTextButton("menu.button.logout", true);
         logoutButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.send(ServerSender.SendAction.PROFILE_LOGOUT, "", false);
                 Chati.CHATI.getMenuScreen().setMenuTable(new LoginTable());
             }
@@ -108,10 +110,20 @@ public class StartTable extends MenuTable {
         container.add(settingsButtonContainer).row();
         container.add(logoutButton);
         add(container).width(ROW_WIDTH);
+
+        // Translatable register
+        translates.add(worldSelectLabel);
+        translates.add(joinWorldButton);
+        translates.add(createWorldButton);
+        translates.add(deleteWorldButton);
+        translates.add(changeAvatarButton);
+        translates.add(profileSettingsButton);
+        translates.add(logoutButton);
+        translates.trimToSize();
     }
 
     @Override
-    public void act(float delta) {
+    public void act(final float delta) {
         if (Chati.CHATI.isWorldListChanged()) {
             updateWorldList();
         }
@@ -120,6 +132,7 @@ public class StartTable extends MenuTable {
 
     @Override
     public void resetTextFields() {
+
     }
 
     /**

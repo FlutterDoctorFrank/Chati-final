@@ -8,8 +8,8 @@ import model.role.Permission;
 import model.role.Role;
 import model.user.IUserView;
 import model.user.Status;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class UserInfoContainer extends Table {
      * Erzeugt eine neue Instanz des UserInfoContainer.
      * @param user Benutzer, dessen Informationen angezeigt werden soll.
      */
-    public UserInfoContainer(IUserView user) {
+    public UserInfoContainer(@NotNull final IUserView user) {
         this.user = user;
         this.roleIcons = new ArrayList<>();
 
@@ -46,7 +46,7 @@ public class UserInfoContainer extends Table {
     }
 
     @Override
-    public void act(float delta) {
+    public void act(final float delta) {
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged() || Chati.CHATI.isRoomChanged()) {
             updateInfo();
         }
@@ -65,17 +65,17 @@ public class UserInfoContainer extends Table {
         if (user.hasRole(Role.OWNER)) {
             usernameLabel.setColor(Color.GOLD);
             Image ownerImage = new Image(Chati.CHATI.getDrawable("role_owner"));
-            ownerImage.addListener(new ChatiTooltip("Besitzer"));
+            ownerImage.addListener(new ChatiTooltip("hud.tooltip.owner"));
             roleIcons.add(ownerImage);
         } else if (user.hasRole(Role.ADMINISTRATOR)) {
             usernameLabel.setColor(Color.SKY);
             Image administratorImage = new Image(Chati.CHATI.getDrawable("role_administrator"));
-            administratorImage.addListener(new ChatiTooltip("Administrator"));
+            administratorImage.addListener(new ChatiTooltip("hud.tooltip.administrator"));
             roleIcons.add(administratorImage);
         } else if (user.hasRole(Role.MODERATOR)) {
             usernameLabel.setColor(Color.ORANGE);
             Image moderatorImage = new Image(Chati.CHATI.getDrawable("role_moderator"));
-            moderatorImage.addListener(new ChatiTooltip("Moderator"));
+            moderatorImage.addListener(new ChatiTooltip("hud.tooltip.moderator"));
             roleIcons.add(moderatorImage);
         } else {
             usernameLabel.setColor(Color.WHITE);
@@ -83,12 +83,12 @@ public class UserInfoContainer extends Table {
 
         if (user.hasRole(Role.ROOM_OWNER)) {
             Image roomOwnerImage = new Image(Chati.CHATI.getDrawable("role_room_owner"));
-            roomOwnerImage.addListener(new ChatiTooltip("Raumbesitzer"));
+            roomOwnerImage.addListener(new ChatiTooltip("hud.tooltip.room-owner"));
             roleIcons.add(roomOwnerImage);
         }
         if (user.hasRole(Role.AREA_MANAGER)) {
             Image areaManagerImage = new Image(Chati.CHATI.getDrawable("role_area_manager"));
-            areaManagerImage.addListener(new ChatiTooltip("Bereichsberechtigter"));
+            areaManagerImage.addListener(new ChatiTooltip("hud.tooltip.area-manager"));
             roleIcons.add(areaManagerImage);
         }
 

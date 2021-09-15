@@ -1,6 +1,7 @@
 package view2.world;
 
 import com.badlogic.gdx.InputProcessor;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.KeyCommand;
 import model.context.spatial.Direction;
@@ -18,7 +19,7 @@ public class WorldInputProcessor implements InputProcessor {
     private boolean showNamesPressed;
 
     @Override
-    public boolean keyDown(int keycode) {
+    public boolean keyDown(final int keycode) {
         if (KeyCommand.MOVE_UP.matches(keycode)) {
             moveUpPressed = true;
         }
@@ -38,14 +39,15 @@ public class WorldInputProcessor implements InputProcessor {
             showNamesPressed = true;
         }
         if (KeyCommand.INTERACT.matches(keycode)) {
-            System.out.println("Pressed " + KeyCommand.INTERACT);
-            Chati.CHATI.getWorldScreen().getInternUserAvatar().interact();
+            if (Chati.CHATI.getWorldScreen().getInternUserAvatar() != null) {
+                Chati.CHATI.getWorldScreen().getInternUserAvatar().interact();
+            }
         }
         return true;
     }
 
     @Override
-    public boolean keyUp(int keycode) {
+    public boolean keyUp(final int keycode) {
         if (KeyCommand.MOVE_UP.matches(keycode)) {
             moveUpPressed = false;
         }
@@ -68,32 +70,32 @@ public class WorldInputProcessor implements InputProcessor {
     }
 
     @Override
-    public boolean keyTyped(char character) {
+    public boolean keyTyped(final char character) {
         return true;
     }
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+    public boolean touchDown(final int screenX, final int screenY, final int pointer, final int button) {
         return true;
     }
 
     @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+    public boolean touchUp(final int screenX, final int screenY, final int pointer, final int button) {
         return true;
     }
 
     @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
+    public boolean touchDragged(final int screenX, final int screenY, final int pointer) {
         return true;
     }
 
     @Override
-    public boolean mouseMoved(int screenX, int screenY) {
+    public boolean mouseMoved(final int screenX, final int screenY) {
         return true;
     }
 
     @Override
-    public boolean scrolled(float amountX, float amountY) {
+    public boolean scrolled(final float amountX, final float amountY) {
         Chati.CHATI.getWorldScreen().getCamera().zoom(amountY > 0);
         return true;
     }
@@ -103,7 +105,7 @@ public class WorldInputProcessor implements InputProcessor {
      * @param direction Zu überprüfende Richtung.
      * @return true, wenn die Taste der entsprechenden Richtung gedrückt ist, sonst false.
      */
-    public boolean isDirectionPressed(Direction direction) {
+    public boolean isDirectionPressed(@NotNull final Direction direction) {
         switch (direction) {
             case UP:
                 return moveUpPressed && KeyCommand.MOVE_UP.isPressed();

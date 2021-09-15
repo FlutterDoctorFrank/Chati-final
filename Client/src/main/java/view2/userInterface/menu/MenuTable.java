@@ -1,27 +1,33 @@
 package view2.userInterface.menu;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
-import view2.Chati;
+import model.MessageBundle;
+import org.jetbrains.annotations.NotNull;
+import view2.Localization;
+import view2.Localization.Translatable;
+import view2.userInterface.ChatiLabel;
+import java.util.ArrayList;
 
 /**
  * Eine abstrakte Klasse, welche ein Menü im Menübildschirm repräsentiert.
  */
-public abstract class MenuTable extends Table {
+public abstract class MenuTable extends Table implements Translatable {
 
     protected static final int MAX_LIST_COUNT = 10;
     protected static final float ROW_WIDTH = 600;
     protected static final float ROW_HEIGHT = 60;
     protected static final float SPACING = 15;
 
-    protected final Label infoLabel;
+    protected final ArrayList<Translatable> translates;
+    protected final ChatiLabel infoLabel;
 
     /**
      * Erzeugt eine neue Instanz des MenuTable.
      */
-    public MenuTable() {
-        this.infoLabel = new Label("", Chati.CHATI.getSkin());
+    public MenuTable(@NotNull final String infoKey) {
+        this.translates = new ArrayList<>();
+        this.infoLabel = new ChatiLabel(infoKey);
         infoLabel.setAlignment(Align.center, Align.center);
         infoLabel.setWrap(true);
 
@@ -30,10 +36,24 @@ public abstract class MenuTable extends Table {
 
     /**
      * Zeigt eine Nachricht auf dem Info-Label an.
-     * @param message Anzuzeigende Nachricht.
+     * @param messageKey Kennung der anzuzeigenden Nachricht.
      */
-    public void showMessage(String message) {
-        infoLabel.setText(message);
+    public void showMessage(@NotNull final String messageKey) {
+        infoLabel.setText(Localization.translate(messageKey));
+    }
+
+    /**
+     * Zeigt eine Nachricht auf dem Info-Label an.
+     * @param messageBundle Kennung der anzuzeigenden Nachricht.
+     */
+    public void showMessage(@NotNull final MessageBundle messageBundle) {
+        infoLabel.setText(Localization.format(messageBundle.getMessageKey(), messageBundle.getArguments()));
+    }
+
+    @Override
+    public void translate() {
+        infoLabel.translate();
+        translates.forEach(Translatable::translate);
     }
 
     /**

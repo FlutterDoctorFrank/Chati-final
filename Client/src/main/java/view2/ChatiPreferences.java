@@ -3,15 +3,18 @@ package view2;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
-
+import org.jetbrains.annotations.NotNull;
+import java.util.IllformedLocaleException;
 import java.util.List;
+import java.util.Locale;
+import java.util.Locale.Builder;
 
 /**
  * Eine Klasse, über die Einstellungen dauerhaft gespeichert und abgerufen werden können.
  */
 public class ChatiPreferences {
 
-    public static final String DEFAULT_LANGUAGE = "german";
+    public static final Locale DEFAULT_LANGUAGE = Locale.GERMAN;
     public static final boolean DEFAULT_ALWAYS_SPRINTING = false;
     public static final boolean DEFAULT_SHOW_NAMES_IN_WORLD = true;
     public static final boolean DEFAULT_MICROPHONE_ON = false;
@@ -37,8 +40,8 @@ public class ChatiPreferences {
      * Setzt die aktuell ausgewählte Sprache
      * @param language Ausgewählte Sprache.
      */
-    public void setLanguage(String language) {
-        preferences.putString("language", language);
+    public void setLanguage(@NotNull final Locale language) {
+        preferences.putString("language", language.toString());
         preferences.flush();
     }
 
@@ -152,8 +155,26 @@ public class ChatiPreferences {
      * Gibt die momentan ausgewählte Sprache zurück.
      * @return Ausgewählte Sprache.
      */
-    public String getLanguage() {
-        return preferences.getString("language", DEFAULT_LANGUAGE);
+    public @NotNull Locale getLanguage() {
+        final Builder builder = new Builder();
+        final String[] parts = preferences.getString("language", DEFAULT_LANGUAGE.toString()).split("_");
+
+        try {
+            if (parts.length > 0) {
+                builder.setLanguage(parts[0]);
+
+                if (parts.length > 1) {
+                    builder.setRegion(parts[1]);
+                }
+            }
+
+            return builder.build();
+        } catch (IllformedLocaleException ex) {
+            preferences.putString("language", DEFAULT_LANGUAGE.toString());
+            preferences.flush();
+
+            return DEFAULT_LANGUAGE;
+        }
     }
 
     /**

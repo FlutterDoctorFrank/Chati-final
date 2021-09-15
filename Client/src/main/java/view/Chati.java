@@ -53,9 +53,6 @@ public class Chati extends Game {
     @Override
     public void create() {
         this.setScreen(new ApplicationScreen(this));
-
-        this.launcher.setModelObserver(this.currentScreen.getHud());
-        this.launcher.setControllerView(this.currentScreen.getHud());
     }
 
     @Override

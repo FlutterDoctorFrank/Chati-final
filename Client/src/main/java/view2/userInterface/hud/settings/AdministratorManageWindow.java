@@ -2,7 +2,7 @@ package view2.userInterface.hud.settings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
@@ -10,14 +10,16 @@ import model.exception.UserNotFoundException;
 import model.role.Role;
 import model.user.AdministrativeAction;
 import model.user.IUserView;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.userInterface.ChatiWindow;
+import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiTextArea;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
+import view2.userInterface.ChatiWindow;
 
 /**
- * Eine Klasse, welche das Menü zum Vergeben oder Entziehen der Administratorrole repräsentiert.
+ * Eine Klasse, welche das Menü zum Vergeben oder Entziehen der Administratorrolle repräsentiert.
  */
 public class AdministratorManageWindow extends ChatiWindow {
 
@@ -33,23 +35,23 @@ public class AdministratorManageWindow extends ChatiWindow {
      * Erzeugt eine neue Instanz des AdministratorManageWindow.
      */
     public AdministratorManageWindow() {
-        super("Administratoren verwalten");
+        super("window.title.manage-administrator");
 
-        Label infoLabel = new Label("Erteile oder entziehe die Rolle des Administrators!", Chati.CHATI.getSkin());
+        infoLabel = new ChatiLabel("window.entry.manage-administrator");
+        usernameField = new ChatiTextField("menu.text-field.username", false);
+        messageArea = new ChatiTextArea("menu.text-field.message", true);
 
-        usernameField = new ChatiTextField("Benutzername", false);
-        messageArea = new ChatiTextArea("Füge eine Nachricht hinzu!", true);
-
-        ChatiTextButton assignButton = new ChatiTextButton("Rolle erteilen", true);
+        ChatiTextButton assignButton = new ChatiTextButton("menu.button.role-add", true);
         assignButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (usernameField.isBlank()) {
-                    infoLabel.setText("Bitte gib einen Benutzernamen ein!");
+                    showMessage("window.general.no-username");
                     return;
                 }
-                if (usernameField.getText().equals(Chati.CHATI.getInternUser().getUsername())) {
-                    infoLabel.setText("Du kannst dir nicht selbst eine Rolle erteilen!");
+                if (Chati.CHATI.getInternUser() != null
+                        && usernameField.getText().equals(Chati.CHATI.getInternUser().getUsername())) {
+                    showMessage("window.administrator.assign-self");
                     resetTextFields();
                     return;
                 }
@@ -57,12 +59,12 @@ public class AdministratorManageWindow extends ChatiWindow {
                 try {
                     externUser = Chati.CHATI.getUserManager().getExternUserView(usernameField.getText());
                 } catch (UserNotFoundException e) {
-                    infoLabel.setText("Es existiert kein Benutzer mit diesem Namen.");
+                    showMessage("window.general.user-not-found");
                     resetTextFields();
                     return;
                 }
                 if (externUser.hasRole(Role.ADMINISTRATOR) || externUser.hasRole(Role.OWNER)) {
-                    infoLabel.setText("Dieser Benutzer hat bereits Administratorenrechte.");
+                    showMessage("window.administrator.assign-already");
                     resetTextFields();
                     return;
                 }
@@ -72,21 +74,22 @@ public class AdministratorManageWindow extends ChatiWindow {
                 }
                 Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),
                         AdministrativeAction.ASSIGN_ADMINISTRATOR, message);
-                infoLabel.setText("Die Aktion war erfolgreich!");
+                showMessage("window.general.success");
                 resetTextFields();
             }
         });
 
-        ChatiTextButton withdrawButton = new ChatiTextButton("Rolle entziehen", true);
+        ChatiTextButton withdrawButton = new ChatiTextButton("menu.button.role-remove", true);
         withdrawButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (usernameField.isBlank()) {
-                    infoLabel.setText("Bitte gib einen Benutzernamen ein!");
+                    showMessage("window.general.no-username");
                     return;
                 }
-                if (usernameField.getText().equals(Chati.CHATI.getInternUser().getUsername())) {
-                    infoLabel.setText("Du kannst dir nicht selbst eine Rolle entziehen!");
+                if (Chati.CHATI.getInternUser() != null
+                        && usernameField.getText().equals(Chati.CHATI.getInternUser().getUsername())) {
+                    showMessage("window.administrator.withdraw-self");
                     resetTextFields();
                     return;
                 }
@@ -94,17 +97,17 @@ public class AdministratorManageWindow extends ChatiWindow {
                 try {
                     externUser = Chati.CHATI.getUserManager().getExternUserView(usernameField.getText());
                 } catch (UserNotFoundException e) {
-                    infoLabel.setText("Es existiert kein Benutzer mit diesem Namen.");
+                    showMessage("window.general.user-not-found");
                     resetTextFields();
                     return;
                 }
                 if (!externUser.hasRole(Role.ADMINISTRATOR) && !externUser.hasRole(Role.OWNER)) {
-                    infoLabel.setText("Dieser Benutzer hat keine Administratorenrechte.");
+                    showMessage("window.administrator.withdraw-already");
                     resetTextFields();
                     return;
                 }
                 if (externUser.hasRole(Role.OWNER)) {
-                    infoLabel.setText("Du kannst einem anderen Besitzer nicht die Rechte wegnehmen.");
+                    showMessage("window.administrator.withdraw-denied");
                     resetTextFields();
                     return;
                 }
@@ -114,15 +117,15 @@ public class AdministratorManageWindow extends ChatiWindow {
                 }
                 Chati.CHATI.send(ServerSender.SendAction.USER_MANAGE, externUser.getUserId(),
                         AdministrativeAction.WITHDRAW_ADMINISTRATOR, message);
-                infoLabel.setText("Die Aktion war erfolgreich!");
+                showMessage("window.general.success");
                 resetTextFields();
             }
         });
 
-        ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("menu.button.cancel", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 close();
             }
         });
@@ -147,6 +150,15 @@ public class AdministratorManageWindow extends ChatiWindow {
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
+
+        // Translatable register
+        translates.add(infoLabel);
+        translates.add(usernameField);
+        translates.add(messageArea);
+        translates.add(assignButton);
+        translates.add(withdrawButton);
+        translates.add(cancelButton);
+        translates.trimToSize();
     }
 
     /**

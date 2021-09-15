@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import model.context.spatial.Direction;
 import model.context.spatial.ILocationView;
 import model.user.IUserView;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.userInterface.UserInfoContainer;
 import view2.world.WorldCamera;
@@ -45,7 +46,7 @@ public class UserAvatar extends Sprite {
      * Erzeugt eine neue Instanz des UserAvatar.
      * @param user Zu dem Avatar zugehöriger Benutzer.
      */
-    public UserAvatar(IUserView user) {
+    public UserAvatar(@NotNull final IUserView user) {
         this.user = user;
         this.head = new Head();
 
@@ -77,7 +78,7 @@ public class UserAvatar extends Sprite {
     }
 
     @Override
-    public void draw(Batch batch, float delta) {
+    public void draw(@NotNull final Batch batch, final float delta) {
         update();
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getKeyFrame(delta));
@@ -89,7 +90,7 @@ public class UserAvatar extends Sprite {
      * @param batch Verwendeter Batch.
      * @param delta Zeit seit dem letzten Rendern.
      */
-    public void drawHead(Batch batch, float delta) {
+    public void drawHead(@NotNull final Batch batch, final float delta) {
         head.draw(batch, delta);
     }
 
@@ -98,7 +99,7 @@ public class UserAvatar extends Sprite {
      * @param delta Zeit seit dem letzten Rendern.
      * @return Anzuzeigende Textur.
      */
-    private TextureRegion getKeyFrame(float delta) {
+    private @NotNull TextureRegion getKeyFrame(final float delta) {
         currentDirection = getCurrentDirection();
         stateTime = currentDirection == previousDirection ? stateTime + delta : 0;
         if (currentDirection == previousDirection && body.getLinearVelocity().isZero()) {
@@ -131,7 +132,7 @@ public class UserAvatar extends Sprite {
      * Bestimmt die momentane Richtung des Avatars anhand der auf ihn einwirkenden Kräfte.
      * @return Richtung des Avatars.
      */
-    protected Direction getCurrentDirection() {
+    protected @NotNull Direction getCurrentDirection() {
         Vector2 velocity = body.getLinearVelocity();
         if (velocity.y > Math.abs(velocity.x)) {
             return Direction.UP;
@@ -199,7 +200,7 @@ public class UserAvatar extends Sprite {
      * Gibt den zugehörigen Benutzer zurück.
      * @return Zugehöriger Benutzer.
      */
-    public IUserView getUser() {
+    public @NotNull IUserView getUser() {
         return user;
     }
 
@@ -207,7 +208,7 @@ public class UserAvatar extends Sprite {
      * Gibt den Body des Avatars zurück.
      * @return Body
      */
-    public Body getBody() {
+    public @NotNull Body getBody() {
         return body;
     }
 
@@ -215,7 +216,7 @@ public class UserAvatar extends Sprite {
      * Gibt die Position des Avatars zurück.
      * @return Position
      */
-    public Vector2 getPosition() {
+    public @NotNull Vector2 getPosition() {
         return body.getPosition();
     }
 
@@ -241,7 +242,7 @@ public class UserAvatar extends Sprite {
         }
 
         @Override
-        public void draw(Batch batch, float delta) {
+        public void draw(@NotNull final Batch batch, final float delta) {
             if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isShowNamesPressed()
                     || Chati.CHATI.getPreferences().getShowNamesInWorld()) {
                 setPosition(body.getPosition().x, body.getPosition().y + UserAvatar.this.getHeight() +

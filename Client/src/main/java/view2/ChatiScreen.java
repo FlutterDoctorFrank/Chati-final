@@ -2,12 +2,14 @@ package view2;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
+import org.jetbrains.annotations.NotNull;
+import view2.Localization.Translatable;
 import view2.userInterface.hud.HeadUpDisplay;
 
 /**
  * Eine abstrakte Klasse, die einen Bildschirm der Anwendung repräsentiert.
  */
-public abstract class ChatiScreen extends ScreenAdapter {
+public abstract class ChatiScreen extends ScreenAdapter implements Translatable {
 
     protected final ChatiStage stage;
 
@@ -22,7 +24,7 @@ public abstract class ChatiScreen extends ScreenAdapter {
     }
 
     @Override
-    public void render(float delta) {
+    public void render(final float delta) {
         stage.act(delta);
         stage.draw();
         super.render(delta);
@@ -54,7 +56,7 @@ public abstract class ChatiScreen extends ScreenAdapter {
      * Setzt die Information darüber, auf welche Antwort gerade gewartet wird.
      * @param pendingResponse Information, auf welche Antwort gerade gewartet wird.
      */
-    public void setPendingResponse(Response pendingResponse) {
+    public void setPendingResponse(@NotNull final Response pendingResponse) {
         this.pendingResponse = pendingResponse;
     }
 
@@ -62,7 +64,7 @@ public abstract class ChatiScreen extends ScreenAdapter {
      * Gibt die Stage dieses Bildschirms zurück.
      * @return Stage des Bildschirms.
      */
-    public ChatiStage getStage() {
+    public @NotNull ChatiStage getStage() {
         return stage;
     }
 
@@ -70,5 +72,5 @@ public abstract class ChatiScreen extends ScreenAdapter {
      * Gibt den InputProcessor dieses Bildschirms zurück.
      * @return InputProcessor des Bildschirms.
      */
-    public abstract InputProcessor getInputProcessor();
+    public abstract @NotNull InputProcessor getInputProcessor();
 }

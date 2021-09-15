@@ -3,6 +3,7 @@ package view2.userInterface.hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import org.jetbrains.annotations.NotNull;
 import view2.userInterface.ChatiWindow;
 import view2.userInterface.ChatiTextButton;
 
@@ -16,10 +17,10 @@ public abstract class HudMenuWindow extends ChatiWindow {
 
     /**
      * Erzeugt eine neue Instanz des HudMenuWindow.
-     * @param title Anzuzeigender Titel.
+     * @param titleKey Kennung des anzuzeigenden Titels.
      */
-    protected HudMenuWindow(String title) {
-        super(title);
+    protected HudMenuWindow(@NotNull final String titleKey) {
+        super(titleKey);
         setMovable(false);
         setSize(HUD_WINDOW_WIDTH, HUD_WINDOW_HEIGHT);
         setPosition(Gdx.graphics.getWidth() - HUD_WINDOW_WIDTH,
@@ -30,7 +31,7 @@ public abstract class HudMenuWindow extends ChatiWindow {
      * Aktiviert einen Button.
      * @param button Zu aktivierender Button.
      */
-    protected void enableButton(ChatiTextButton button) {
+    protected void enableButton(@NotNull final ChatiTextButton button) {
         button.setDisabled(false);
         button.setTouchable(Touchable.enabled);
         button.getLabel().setColor(Color.WHITE);
@@ -40,7 +41,7 @@ public abstract class HudMenuWindow extends ChatiWindow {
      * Deaktiviert einen Button.
      * @param button Zu deaktivierender Button.
      */
-    protected void disableButton(ChatiTextButton button) {
+    protected void disableButton(@NotNull final ChatiTextButton button) {
         button.setDisabled(true);
         button.setTouchable(Touchable.disabled);
         button.getLabel().setColor(Color.DARK_GRAY);

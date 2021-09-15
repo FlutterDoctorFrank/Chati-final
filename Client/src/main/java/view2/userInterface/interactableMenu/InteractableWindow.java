@@ -1,8 +1,11 @@
 package view2.userInterface.interactableMenu;
 
 import controller.network.ServerSender;
+import model.MessageBundle;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import view2.Chati;
 import view2.userInterface.ChatiWindow;
 import view2.Response;
@@ -19,12 +22,13 @@ public abstract class InteractableWindow extends ChatiWindow {
 
     /**
      * Erzeugt eine neue Instanz des InteractableWindow.
-     * @param title Anzuzeigender Titel.
+     * @param titleKey Kennung des anzuzeigenden Titels.
      * @param interactableId ID des zugehörigen Interaktionsobjekts.
      * @param interactableMenu Typ des anzuzeigenden Menüs.
      */
-    protected InteractableWindow(String title, ContextID interactableId, ContextMenu interactableMenu) {
-        super(title);
+    protected InteractableWindow(@NotNull final String titleKey, @NotNull final ContextID interactableId,
+                                 @NotNull final ContextMenu interactableMenu) {
+        super(titleKey);
         this.interactableId = interactableId;
         this.interactableMenu = interactableMenu;
     }
@@ -33,7 +37,7 @@ public abstract class InteractableWindow extends ChatiWindow {
      * Gibt die ID des zugehörigen Interaktionsobjekts zurück.
      * @return ID des zugehörigen Interaktionsobjekts.
      */
-    public ContextID getInteractableId() {
+    public @NotNull ContextID getInteractableId() {
         return interactableId;
     }
 
@@ -41,16 +45,16 @@ public abstract class InteractableWindow extends ChatiWindow {
      * Gibt den Typ des Menüs zurück.
      * @return Typ des Menüs.
      */
-    public ContextMenu getInteractableMenu() {
+    public @NotNull ContextMenu getInteractableMenu() {
         return interactableMenu;
     }
 
     /**
      * Verarbeitet eine Antwort auf eine durchgeführte Menüaktion.
      * @param success Information, ob die durchgeführte Aktion erfolgreich war.
-     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     * @param messageBundle Kennung der anzuzeigenden Nachricht.
      */
-    public abstract void receiveResponse(boolean success, String messageKey);
+    public abstract void receiveResponse(final boolean success, @Nullable final MessageBundle messageBundle);
 
     @Override
     public void close() {

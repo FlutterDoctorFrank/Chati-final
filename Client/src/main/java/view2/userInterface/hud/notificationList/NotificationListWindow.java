@@ -8,10 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.user.IInternUserView;
 import model.user.IUserManagerView;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.hud.HudMenuWindow;
-
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -31,21 +31,23 @@ public class NotificationListWindow extends HudMenuWindow {
      * Erzeugt eine neue Instanz des NotificationListWindow.
      */
     public NotificationListWindow() {
-        super("Benachrichtigungen");
+        super("window.title.notifications");
         this.globalNotificationEntries = new TreeSet<>();
         this.worldNotificationEntries = new TreeSet<>();
 
         notificationListContainer = new Table();
         ScrollPane notificationListScrollPane = new ScrollPane(notificationListContainer, Chati.CHATI.getSkin());
 
-        globalNotificationTabButton = new ChatiTextButton("Global", false);
+        globalNotificationTabButton = new ChatiTextButton("menu.button.global", false);
         globalNotificationTabButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            public boolean touchDown(@NotNull final InputEvent event, final float x, final float y,
+                                     final int pointer, final int button) {
                 return !globalNotificationTabButton.isChecked();
             }
             @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void touchUp(@NotNull final InputEvent event, final float x, final float y,
+                                final int pointer, final int button) {
                 showGlobalNotifications();
                 globalNotificationTabButton.setChecked(true);
                 if (!worldNotificationTabButton.isDisabled()) {
@@ -54,14 +56,16 @@ public class NotificationListWindow extends HudMenuWindow {
             }
         });
 
-        worldNotificationTabButton = new ChatiTextButton("Welt", false);
+        worldNotificationTabButton = new ChatiTextButton("menu.button.world", false);
         worldNotificationTabButton.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            public boolean touchDown(@NotNull final InputEvent event, final float x, final float y,
+                                     final int pointer, final int button) {
                 return !worldNotificationTabButton.isChecked();
             }
             @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            public void touchUp(@NotNull final InputEvent event, final float x, final float y,
+                                final int pointer, final int button) {
                 showWorldNotifications();
                 worldNotificationTabButton.setChecked(true);
                 if (!globalNotificationTabButton.isDisabled()) {
@@ -98,10 +102,15 @@ public class NotificationListWindow extends HudMenuWindow {
         add(buttonContainer).growX().row();
         add(notificationListScrollPane).grow();
         Chati.CHATI.getScreen().getStage().setScrollFocus(notificationListScrollPane);
+
+        // Translatable register
+        translates.add(globalNotificationTabButton);
+        translates.add(worldNotificationTabButton);
+        translates.trimToSize();
     }
 
     @Override
-    public void act(float delta) {
+    public void act(final float delta) {
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isUserNotificationChanged() ||
                 Chati.CHATI.isNewNotificationReceived() || Chati.CHATI.isWorldChanged()) {
             IInternUserView user = Chati.CHATI.getUserManager().getInternUserView();
@@ -181,7 +190,7 @@ public class NotificationListWindow extends HudMenuWindow {
      * Zeigt die übergebenen Einträge in der Liste an.
      * @param entries Anzuzeigende Einträge.
      */
-    private void layoutEntries(Set<NotificationListEntry> entries) {
+    private void layoutEntries(@NotNull final Set<NotificationListEntry> entries) {
         notificationListContainer.clearChildren();
         entries.forEach(entry -> notificationListContainer.add(entry).growX().row());
     }

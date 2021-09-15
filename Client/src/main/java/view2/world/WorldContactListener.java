@@ -17,6 +17,10 @@ public class WorldContactListener implements ContactListener {
 
     @Override
     public void beginContact(@NotNull final Contact contact) {
+        if (Chati.CHATI.getWorldScreen().getInternUserAvatar() == null) {
+            return;
+        }
+
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
@@ -27,6 +31,10 @@ public class WorldContactListener implements ContactListener {
 
     @Override
     public void endContact(@NotNull final Contact contact) {
+        if (Chati.CHATI.getWorldScreen().getInternUserAvatar() == null) {
+            return;
+        }
+
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
 
@@ -37,6 +45,10 @@ public class WorldContactListener implements ContactListener {
 
     @Override
     public void preSolve(@NotNull final Contact contact, @NotNull final Manifold oldManifold) {
+        if (Chati.CHATI.getWorldScreen().getInternUserAvatar() == null) {
+            return;
+        }
+
         if (isInternUserAvatar(contact.getFixtureA(), contact.getFixtureB())) {
             if (!Chati.CHATI.getWorldScreen().getInternUserAvatar().getUser().isMovable()) {
                 contact.setEnabled(false);

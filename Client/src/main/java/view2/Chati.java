@@ -17,6 +17,7 @@ import model.context.spatial.ContextMenu;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import model.user.IUserManagerView;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view2.audio.AudioManager;
 import view2.userInterface.ContextEntry;
@@ -75,7 +76,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @param userManager Interface, über welches auf das Model zur Abfrage benötigter Informationen zugegriffen werden
      * kann.
      */
-    public Chati(IUserManagerView userManager) {
+    public Chati(@NotNull final IUserManagerView userManager) {
         CHATI = this;
         this.worlds = new TreeSet<>();
         this.privateRooms = new TreeSet<>();
@@ -100,6 +101,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         this.preferences = new ChatiPreferences();
         this.audioManager = new AudioManager();
         this.spriteBatch = new SpriteBatch();
+        Localization.getInstance().load(preferences.getLanguage());
         this.menuScreen = new MenuScreen();
         this.worldScreen = new WorldScreen();
         setScreen(menuScreen);
@@ -129,27 +131,27 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * Setzt den momentan anzuzeigenden Bildschirm.
      * @param screen Anzuzeigender Bildschirm.
      */
-    public void setScreen(ChatiScreen screen) {
+    public void setScreen(@NotNull final ChatiScreen screen) {
         Gdx.input.setInputProcessor(screen.getInputProcessor());
         super.setScreen(screen);
     }
 
     @Override
-    public ChatiScreen getScreen() {
+    public @NotNull ChatiScreen getScreen() {
         if (screen.equals(menuScreen)) {
             return menuScreen;
         }
         if (screen.equals(worldScreen)) {
             return worldScreen;
         }
-        return null;
+        throw new IllegalStateException("Screen not available");
     }
 
     /**
      * Gibt den Menübildschirm zurück.
      * @return Menübildschirm
      */
-    public MenuScreen getMenuScreen() {
+    public @NotNull MenuScreen getMenuScreen() {
         return menuScreen;
     }
 
@@ -157,7 +159,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * Gibt den Weltbildschirm zurück.
      * @return Weltbildschirm
      */
-    public WorldScreen getWorldScreen() {
+    public @NotNull WorldScreen getWorldScreen() {
         return worldScreen;
     }
 
@@ -165,7 +167,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * Gibt den UserManager zurück.
      * @return UserManager
      */
-    public IUserManagerView getUserManager() {
+    public @NotNull IUserManagerView getUserManager() {
         return userManager;
     }
 
@@ -173,7 +175,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * Gibt den intern angemeldeten Benutzer zurück.
      * @return Interner Benutzer.
      */
-    public IInternUserView getInternUser() {
+    public @Nullable IInternUserView getInternUser() {
         return userManager.getInternUserView();
     }
 
@@ -182,7 +184,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @param action Information darüber, welches Paket an den Server gesendet werden soll.
      * @param objects Zu sendende Informationen.
      */
-    public void send(ServerSender.SendAction action, Object... objects) {
+    public void send(@NotNull final ServerSender.SendAction action, @NotNull final Object... objects) {
         serverSender.send(action, objects);
     }
 
@@ -190,7 +192,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * Gibt den Skin der Anwendung zurück.
      * @return Verwendeter Skin.
      */
-    public Skin getSkin() {
+    public @NotNull Skin getSkin() {
         return assetManager.getSkin();
     }
 
@@ -199,7 +201,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @param name Name der Textur.
      * @return Angeforderte Textur.
      */
-    public TextureRegionDrawable getDrawable(String name) {
+    public @NotNull TextureRegionDrawable getDrawable(@NotNull final String name) {
         return assetManager.getDrawable(name);
     }
 
@@ -208,7 +210,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @param name Name der Menge der Texturen.
      * @return Angeforderte Menge an Texturen.
      */
-    public Array<TextureAtlas.AtlasRegion> getRegions(String name) {
+    public @NotNull Array<TextureAtlas.AtlasRegion> getRegions(@NotNull final String name) {
         return assetManager.getRegions(name);
     }
 
@@ -216,7 +218,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * Gibt die Instanz der Präferenzen zurück.
      * @return Präferenzen
      */
-    public ChatiPreferences getPreferences() {
+    public @NotNull ChatiPreferences getPreferences() {
         return preferences;
     }
 
@@ -224,7 +226,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * Gibt die Instanz des AudioManager zurück.
      * @return AudioManager
      */
-    public AudioManager getAudioManager() {
+    public @NotNull AudioManager getAudioManager() {
         return audioManager;
     }
 
@@ -232,12 +234,12 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * Gibt die Instanz des SpriteBatch zurück.
      * @return SpriteBatch
      */
-    public SpriteBatch getSpriteBatch() {
+    public @NotNull SpriteBatch getSpriteBatch() {
         return spriteBatch;
     }
 
     @Override
-    public void setSender(@Nullable ServerSender sender) {
+    public void setSender(@Nullable final ServerSender sender) {
         this.serverSender = sender;
     }
 
@@ -272,94 +274,94 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void updateWorlds(Map<ContextID, String> worlds) {
+    public void updateWorlds(@NotNull final Map<ContextID, String> worlds) {
         this.worlds.clear();
         worlds.forEach((key, value) -> this.worlds.add(new ContextEntry(key, value)));
         worldListUpdateReceived = true;
     }
 
     @Override
-    public void updateRooms(ContextID worldId, Map<ContextID, String> privateRooms) {
+    public void updateRooms(@NotNull final ContextID worldId, @NotNull final Map<ContextID, String> privateRooms) {
         this.privateRooms.clear();
         privateRooms.forEach((key, value) -> this.privateRooms.add(new ContextEntry(key, value)));
         roomListUpdateReceived = true;
     }
 
     @Override
-    public void registrationResponse(boolean success, String messageKey) {
+    public void registrationResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(menuScreen)) {
-                menuScreen.registrationResponse(success, messageKey);
+                menuScreen.registrationResponse(success, messageBundle);
             }
         });
     }
 
     @Override
-    public void loginResponse(boolean success, String messageKey) {
+    public void loginResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         loggedIn = success;
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(menuScreen)) {
-                menuScreen.loginResponse(success, messageKey);
+                menuScreen.loginResponse(success, messageBundle);
             }
         });
     }
 
     @Override
-    public void passwordChangeResponse(boolean success, String messageKey) {
+    public void passwordChangeResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(menuScreen)) {
-                menuScreen.passwordChangeResponse(success, messageKey);
+                menuScreen.passwordChangeResponse(success, messageBundle);
             }
         });
     }
 
     @Override
-    public void deleteAccountResponse(boolean success, String messageKey) {
+    public void deleteAccountResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(menuScreen)) {
-                menuScreen.deleteAccountResponse(success, messageKey);
+                menuScreen.deleteAccountResponse(success, messageBundle);
             }
         });
     }
 
     @Override
-    public void avatarChangeResponse(boolean success, String messageKey) {
+    public void avatarChangeResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(menuScreen)) {
-                menuScreen.avatarChangeResponse(success, messageKey);
+                menuScreen.avatarChangeResponse(success, messageBundle);
             }
         });
     }
 
     @Override
-    public void createWorldResponse(boolean success, String messageKey) {
+    public void createWorldResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(menuScreen)) {
-                menuScreen.createWorldResponse(success, messageKey);
+                menuScreen.createWorldResponse(success, messageBundle);
             }
         });
     }
 
     @Override
-    public void deleteWorldResponse(boolean success, String messageKey) {
+    public void deleteWorldResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(menuScreen)) {
-                menuScreen.deleteWorldResponse(success, messageKey);
+                menuScreen.deleteWorldResponse(success, messageBundle);
             }
         });
     }
 
     @Override
-    public void joinWorldResponse(boolean success, String messageKey) {
+    public void joinWorldResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(menuScreen)) {
-                menuScreen.joinWorldResponse(success, messageKey);
+                menuScreen.joinWorldResponse(success, messageBundle);
             }
         });
     }
 
     @Override
-    public void showTypingUser(UUID userId) {
+    public void showTypingUser(@NotNull final UUID userId) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(worldScreen)) {
                 HeadUpDisplay.getInstance().showTypingUser(userId);
@@ -368,13 +370,15 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void showChatMessage(UUID userId, LocalDateTime timestamp, MessageType messageType, String message,
-            MessageBundle messageBundle) {
+    public void showChatMessage(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
+                                @NotNull final MessageType messageType, @NotNull final String message) {
+        if (messageType == MessageType.INFO) {
+            return;
+        }
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(worldScreen)) {
                 try {
-                    HeadUpDisplay.getInstance()
-                            .showChatMessage(userId, timestamp, messageType, message, messageBundle);
+                    HeadUpDisplay.getInstance().showChatMessage(userId, timestamp, messageType, message);
                 } catch (UserNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -383,14 +387,23 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void playAudioData(UUID userId, LocalDateTime timestamp, byte[] audioData) throws UserNotFoundException {
+    public void showInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle) {
+        Gdx.app.postRunnable(() -> {
+            if (this.screen.equals(worldScreen)) {
+                HeadUpDisplay.getInstance().showInfoMessage(timestamp, messageBundle);
+            }
+        });
+    }
+
+    @Override
+    public void playAudioData(@Nullable final UUID userId, @NotNull LocalDateTime timestamp, final byte[] audioData) throws UserNotFoundException {
         if (this.screen.equals(worldScreen)) {
             audioManager.playAudioData(userId, timestamp, audioData);
         }
     }
 
     @Override
-    public void openMenu(ContextID contextId, ContextMenu contextMenu) {
+    public void openMenu(@NotNull final ContextID contextId, @NotNull final ContextMenu contextMenu) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(worldScreen)) {
                 worldScreen.openMenu(contextId, contextMenu);
@@ -399,7 +412,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void closeMenu(ContextID contextId, ContextMenu contextMenu) {
+    public void closeMenu(@NotNull final ContextID contextId, @NotNull final ContextMenu contextMenu) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(worldScreen)) {
                 worldScreen.closeMenu(contextId, contextMenu);
@@ -408,10 +421,10 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void menuActionResponse(boolean success, String messageKey) {
+    public void menuActionResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(worldScreen)) {
-                worldScreen.menuActionResponse(success, messageKey);
+                worldScreen.menuActionResponse(success, messageBundle);
             }
         });
     }
@@ -506,7 +519,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * Gibt die Menge aller verfügbaren Welten zurück.
      * @return Menge aller verfügbaren Welten.
      */
-    public Set<ContextEntry> getWorlds() {
+    public @NotNull Set<ContextEntry> getWorlds() {
         return Set.copyOf(worlds);
     }
 
@@ -514,7 +527,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * Gibt die Menge aller verfügbaren privaten Räume zurück.
      * @return Menge aller verfügbaren privaten Räume.
      */
-    public Set<ContextEntry> getPrivateRooms() {
+    public @NotNull Set<ContextEntry> getPrivateRooms() {
         return Set.copyOf(privateRooms);
     }
 

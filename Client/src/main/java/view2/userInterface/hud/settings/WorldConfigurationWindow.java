@@ -6,15 +6,16 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.ChatiPreferences;
-import view2.userInterface.ChatiWindow;
+import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiTextButton;
+import view2.userInterface.ChatiWindow;
 
 /**
  * Eine Klasse, welche das Menü für diverse Einstellungen innerhalb einer Welt repräsentiert.
@@ -30,57 +31,58 @@ public class WorldConfigurationWindow extends ChatiWindow {
      * Erzeugt eine neue Instanz des WorldConfigurationWindow.
      */
     public WorldConfigurationWindow() {
-        super("Welteinstellungen");
+        super("window.title.world-settings");
 
-        Label infoLabel = new Label("Führe Welteinstellungen durch.", Chati.CHATI.getSkin());
+        infoLabel = new ChatiLabel("window.entry.world-settings");
 
-        Label alwaysSprintLabel = new Label("Dauerhaft schnell laufen.", Chati.CHATI.getSkin());
+        ChatiLabel alwaysSprintLabel = new ChatiLabel("menu.label.sprint-always");
         CheckBox alwaysSprintCheckBox = new CheckBox("", Chati.CHATI.getSkin());
         alwaysSprintCheckBox.setChecked(Chati.CHATI.getPreferences().isAlwaysSprinting());
         alwaysSprintCheckBox.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(@NotNull final ChangeEvent event, @NotNull final Actor actor) {
                 enableButton();
-                infoLabel.setText("Führe Welteinstellungen durch.");
+                infoLabel.translate();
             }
         });
 
-        Label showNameLabel = new Label("Benutzernamen dauerhaft anzeigen.", Chati.CHATI.getSkin());
+        ChatiLabel showNameLabel = new ChatiLabel("menu.label.show-usernames");
         CheckBox showNameCheckBox = new CheckBox("", Chati.CHATI.getSkin());
         showNameCheckBox.setChecked(Chati.CHATI.getPreferences().getShowNamesInWorld());
         showNameCheckBox.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(@NotNull final ChangeEvent event, @NotNull final Actor actor) {
                 enableButton();
-                infoLabel.setText("Führe Welteinstellungen durch.");
+                infoLabel.translate();
             }
         });
 
-        confirmButton = new ChatiTextButton("Übernehmen", true);
+        confirmButton = new ChatiTextButton("menu.button.apply", true);
         disableButton();
         confirmButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 disableButton();
                 Chati.CHATI.getPreferences().setAlwaysSprinting(alwaysSprintCheckBox.isChecked());
                 Chati.CHATI.getPreferences().setShowNamesInWorld(showNameCheckBox.isChecked());
-                infoLabel.setText("Deine Änderungen wurden gespeichert!");
+                showMessage("window.settings.saved");
             }
         });
 
-        ChatiTextButton defaultButton = new ChatiTextButton("Standardeinstellung", true);
+        ChatiTextButton defaultButton = new ChatiTextButton("menu.button.default-settings", true);
         defaultButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 alwaysSprintCheckBox.setChecked(ChatiPreferences.DEFAULT_ALWAYS_SPRINTING);
                 showNameCheckBox.setChecked(ChatiPreferences.DEFAULT_SHOW_NAMES_IN_WORLD);
+                showMessage("window.settings.restored");
             }
         });
 
-        ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("menu.button.cancel", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 close();
             }
         });
@@ -114,6 +116,15 @@ public class WorldConfigurationWindow extends ChatiWindow {
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer).padTop(SPACING);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
+
+        // Translatable register
+        translates.add(infoLabel);
+        translates.add(alwaysSprintLabel);
+        translates.add(showNameLabel);
+        translates.add(confirmButton);
+        translates.add(defaultButton);
+        translates.add(cancelButton);
+        translates.trimToSize();
     }
 
     /**

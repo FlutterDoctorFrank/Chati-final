@@ -2,20 +2,24 @@ package view2.userInterface.interactableMenu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
+import model.MessageBundle;
 import model.context.ContextID;
-import model.context.spatial.ContextMenu;
 import model.context.spatial.ContextMap;
+import model.context.spatial.ContextMenu;
 import model.role.Permission;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import view2.Chati;
+import view2.userInterface.ChatiLabel;
+import view2.userInterface.ChatiSelectBox;
 import view2.userInterface.ChatiTextArea;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
 import view2.userInterface.ContextEntry;
 import view2.userInterface.menu.MenuTable;
-
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
@@ -38,8 +42,8 @@ public class RoomReceptionWindow extends InteractableWindow {
      * Erzeugt eine neue Instanz des RoomReceptionWindow.
      * @param roomReceptionId ID des zugehörigen RoomReceptionWindow.
      */
-    public RoomReceptionWindow(ContextID roomReceptionId) {
-        super("Raumrezeption", roomReceptionId, ContextMenu.ROOM_RECEPTION_MENU);
+    public RoomReceptionWindow(@NotNull final ContextID roomReceptionId) {
+        super("window.title.room-reception", roomReceptionId, ContextMenu.ROOM_RECEPTION_MENU);
         setCurrentTable(new RoomSelectTable());
 
         // Layout
@@ -54,51 +58,60 @@ public class RoomReceptionWindow extends InteractableWindow {
      * Setzt den momentan anzuzeigenden Inhalt.
      * @param table Container des anzuzeigenden Inhalts.
      */
-    public void setCurrentTable(MenuTable table) {
+    public void setCurrentTable(@NotNull final MenuTable table) {
         removeActor(currentTable);
         currentTable = table;
         addActor(currentTable);
     }
 
     @Override
-    public void receiveResponse(boolean success, String messageKey) {
-        if (!success) {
-            currentTable.showMessage(messageKey);
+    public void receiveResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
+        if (!success && messageBundle != null) {
+            currentTable.showMessage(messageBundle);
         }
     }
 
+    @Override
+    public void translate() {
+        super.translate();
+        currentTable.translate();
+    }
+
     /**
-     * Eine Klasse, welche das Menü zur Auswahl einer Raums repräsentiert.
+     * Eine Klasse, welche das Menü zur Auswahl eines Raums repräsentiert.
      */
     private class RoomSelectTable extends MenuTable {
 
-        private final SelectBox<ContextEntry> roomSelectBox;
+        private final ChatiSelectBox<ContextEntry> roomSelectBox;
 
         /**
          * Erzeugt eine neue Instanz des RoomSelectTable.
          */
         public RoomSelectTable() {
-            infoLabel.setText("Wähle eine Aktion aus!");
+            super("table.entry.select-room");
 
-            Label roomSelectLabel = new Label("Raum: ", Chati.CHATI.getSkin());
-            roomSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
+            ChatiLabel roomSelectLabel = new ChatiLabel("menu.label.room");
+            roomSelectBox = new ChatiSelectBox<>(ContextEntry::getName);
             roomSelectBox.setMaxListCount(MAX_LIST_COUNT);
             updateRoomList();
 
-            ChatiTextButton createButton = new ChatiTextButton("Raum erstellen", true);
+            ChatiTextButton createButton = new ChatiTextButton("menu.button.room-create", true);
             createButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     setCurrentTable(new RoomCreateTable());
                 }
             });
 
-            ChatiTextButton joinButton = new ChatiTextButton("Beitreten", true);
+            ChatiTextButton joinButton = new ChatiTextButton("menu.button.room-join", true);
             joinButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                    if (Chati.CHATI.getInternUser() == null) {
+                        return;
+                    }
                     if (roomSelectBox.getSelected() == null) {
-                        infoLabel.setText("Bitte wähle einen Raum aus.");
+                        showMessage("table.entry.choose-room");
                         return;
                     }
                     if (Chati.CHATI.getInternUser().hasPermission(Permission.ENTER_PRIVATE_ROOM)) {
@@ -110,22 +123,22 @@ public class RoomReceptionWindow extends InteractableWindow {
                 }
             });
 
-            ChatiTextButton requestButton = new ChatiTextButton("Beitritt anfragen", true);
+            ChatiTextButton requestButton = new ChatiTextButton("menu.button.room-request", true);
             requestButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     if (roomSelectBox.getSelected() == null) {
-                        infoLabel.setText("Bitte wähle einen Raum aus.");
+                        showMessage("table.entry.choose-room");
                         return;
                     }
                     setCurrentTable(new RoomRequestTable(roomSelectBox.getSelected()));
                 }
             });
 
-            ChatiTextButton cancelButton = new ChatiTextButton("Abbrechen", true);
+            ChatiTextButton cancelButton = new ChatiTextButton("menu.button.cancel", true);
             cancelButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     close();
                 }
             });
@@ -146,10 +159,18 @@ public class RoomReceptionWindow extends InteractableWindow {
             container.add(roomButtonContainer).row();
             container.add(cancelButton);
             add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
+
+            // Translatable register
+            translates.add(roomSelectLabel);
+            translates.add(createButton);
+            translates.add(joinButton);
+            translates.add(requestButton);
+            translates.add(cancelButton);
+            translates.trimToSize();
         }
 
         @Override
-        public void act(float delta) {
+        public void act(final float delta) {
             if (Chati.CHATI.isRoomListChanged()) {
                 updateRoomList();
             }
@@ -180,27 +201,27 @@ public class RoomReceptionWindow extends InteractableWindow {
          * Erzeugt eine neue Instanz des RoomCreateTable.
          */
         public RoomCreateTable() {
-            infoLabel.setText("Erstelle einen privaten Raum!");
+            super("table.entry.create-room");
 
-            roomnameField = new ChatiTextField("Name des Raums", false);
-            passwordField = new ChatiTextField("Passwort", true);
+            roomnameField = new ChatiTextField("menu.text-field.room-name", false);
+            passwordField = new ChatiTextField("menu.text-field.password", true);
 
-            Label mapSelectLabel = new Label("Karte: ", Chati.CHATI.getSkin());
-            SelectBox<ContextMap> mapSelectBox = new SelectBox<>(Chati.CHATI.getSkin());
+            ChatiLabel mapSelectLabel = new ChatiLabel("menu.label.map");
+            ChatiSelectBox<ContextMap> mapSelectBox = new ChatiSelectBox<>(ContextMap::getName);
             mapSelectBox.setMaxListCount(MAX_LIST_COUNT);
             mapSelectBox.setItems(EnumSet.allOf(ContextMap.class)
                     .stream().filter(Predicate.not(ContextMap::isPublicRoomMap)).toArray(ContextMap[]::new));
 
-            ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
+            ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
             confirmButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     if (roomnameField.isBlank() || passwordField.isBlank()) {
-                        infoLabel.setText("Bitte fülle alle Felder aus.");
+                        showMessage("table.general.fill-fields");
                         return;
                     }
                     if (mapSelectBox.getSelected() == null) {
-                        infoLabel.setText("Bitte wähle eine Karte aus!");
+                        showMessage("table.create-room.no-map");
                         return;
                     }
                     Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId,
@@ -209,10 +230,10 @@ public class RoomReceptionWindow extends InteractableWindow {
                 }
             });
 
-            ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
+            ChatiTextButton cancelButton = new ChatiTextButton("menu.button.back", true);
             cancelButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     setCurrentTable(new RoomSelectTable());
                 }
             });
@@ -233,6 +254,14 @@ public class RoomReceptionWindow extends InteractableWindow {
             buttonContainer.add(cancelButton).padLeft(SPACING / 2);
             container.add(buttonContainer);
             add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
+
+            // Translatable register
+            translates.add(roomnameField);
+            translates.add(passwordField);
+            translates.add(mapSelectLabel);
+            translates.add(confirmButton);
+            translates.add(cancelButton);
+            translates.trimToSize();
         }
 
         @Override
@@ -253,17 +282,16 @@ public class RoomReceptionWindow extends InteractableWindow {
          * Erzeugt eine neue Instanz des RoomJoinTable.
          * @param roomEntry Eintrag des zu betretenden Raums.
          */
-        public RoomJoinTable(ContextEntry roomEntry) {
+        public RoomJoinTable(@NotNull final ContextEntry roomEntry) {
+            super("table.entry.join-room");
 
-            infoLabel.setText("Bitte gib das Passwort ein!");
-            passwordField = new ChatiTextField("Passwort", true);
+            passwordField = new ChatiTextField("menu.text-field.password", true);
 
-            ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
+            ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
             confirmButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     if (passwordField.isBlank()) {
-                        infoLabel.setText("Bitte gib das Passwort ein!");
                         return;
                     }
                     Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId,
@@ -271,10 +299,10 @@ public class RoomReceptionWindow extends InteractableWindow {
                 }
             });
 
-            ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
+            ChatiTextButton cancelButton = new ChatiTextButton("menu.button.back", true);
             cancelButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     setCurrentTable(new RoomSelectTable());
                 }
             });
@@ -290,6 +318,12 @@ public class RoomReceptionWindow extends InteractableWindow {
             buttonContainer.add(cancelButton).padLeft(SPACING / 2);
             container.add(buttonContainer);
             add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
+
+            // Translatable register
+            translates.add(passwordField);
+            translates.add(confirmButton);
+            translates.add(cancelButton);
+            translates.trimToSize();
         }
 
         @Override
@@ -309,16 +343,15 @@ public class RoomReceptionWindow extends InteractableWindow {
          * Erzeugt eine neue Instanz des RoomRequestTable.
          * @param roomEntry Eintrag des anzufragenden Raums.
          */
-        public RoomRequestTable(ContextEntry roomEntry) {
+        public RoomRequestTable(@NotNull final ContextEntry roomEntry) {
+            super("table.entry.request-room");
 
-            infoLabel.setText("Füge deiner Anfrage eine Nachricht hinzu!");
+            messageArea = new ChatiTextArea("menu.text-field.message", true);
 
-            messageArea = new ChatiTextArea("Nachricht", true);
-
-            ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
+            ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
             confirmButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     String message;
                     if (messageArea.isBlank()) {
                         message = "";
@@ -330,14 +363,14 @@ public class RoomReceptionWindow extends InteractableWindow {
                             new String[]{roomEntry.getName(), message}, MENU_OPTION_REQUEST);
 
                     setCurrentTable(new RoomSelectTable());
-                    currentTable.showMessage("Deine Anfrage wurde übermittelt!");
+                    currentTable.showMessage("table.general.request-sent");
                 }
             });
 
-            ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
+            ChatiTextButton cancelButton = new ChatiTextButton("menu.button.back", true);
             cancelButton.addListener(new ClickListener() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     setCurrentTable(new RoomSelectTable());
                 }
             });
@@ -353,6 +386,12 @@ public class RoomReceptionWindow extends InteractableWindow {
             buttonContainer.add(cancelButton).padLeft(SPACING / 2);
             container.add(buttonContainer);
             add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
+
+            // Translatable register
+            translates.add(messageArea);
+            translates.add(confirmButton);
+            translates.add(cancelButton);
+            translates.trimToSize();
         }
 
         @Override

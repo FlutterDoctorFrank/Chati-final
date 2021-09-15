@@ -2,18 +2,21 @@ package view2.userInterface.interactableMenu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
+import model.MessageBundle;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import view2.Chati;
+import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiTextButton;
 
 /**
- * Eine Klasse, welche das Menü des Portal repräsentiert.
+ * Eine Klasse, welche das Menü des Portals repräsentiert.
  */
 public class PortalWindow extends InteractableWindow {
 
@@ -22,25 +25,25 @@ public class PortalWindow extends InteractableWindow {
 
     /**
      * Erzeugt eine neue Instanz des PortalWindow.
-     * @param portalId ID des zugehörigen Portal.
+     * @param portalId ID des zugehörigen Portals.
      */
-    public PortalWindow(ContextID portalId) {
-        super("Raum verlassen", portalId, ContextMenu.PORTAL_MENU);
+    public PortalWindow(@NotNull final ContextID portalId) {
+        super("window.title.portal", portalId, ContextMenu.PORTAL_MENU);
 
-        Label infoLabel = new Label("Möchtest du den Raum wirklich verlassen?", Chati.CHATI.getSkin());
+        infoLabel = new ChatiLabel("window.entry.portal");
 
-        ChatiTextButton confirmButton = new ChatiTextButton("Ja", true);
+        ChatiTextButton confirmButton = new ChatiTextButton("menu.button.yes", true);
         confirmButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], 1);
             }
         });
 
-        ChatiTextButton cancelButton = new ChatiTextButton("Nein", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("menu.button.no", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 close();
             }
         });
@@ -62,9 +65,16 @@ public class PortalWindow extends InteractableWindow {
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
+
+        // Translatable register
+        translates.add(infoLabel);
+        translates.add(confirmButton);
+        translates.add(cancelButton);
+        translates.trimToSize();
     }
 
     @Override
-    public void receiveResponse(boolean success, String messageKey) {
+    public void receiveResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
+
     }
 }

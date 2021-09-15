@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
@@ -22,29 +23,29 @@ public class ChangePasswordTable extends MenuTable {
      * Erzeugt eine neue Instanz des ChangePasswordTable.
      */
     public ChangePasswordTable() {
-        infoLabel.setText("Gib dein aktuelles und ein neues Passwort ein!");
+        super("table.entry.change-password");
 
-        passwordField = new ChatiTextField("Aktuelles Passwort", true);
-        newPasswordField = new ChatiTextField("Neues Passwort", true);
-        confirmNewPasswordField = new ChatiTextField("Neues Passwort bestätigen", true);
+        passwordField = new ChatiTextField("menu.text-field.password-current", true);
+        newPasswordField = new ChatiTextField("menu.text-field.password-new", true);
+        confirmNewPasswordField = new ChatiTextField("menu.text-field.password-new-confirm", true);
 
-        ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
+        ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
         confirmButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (passwordField.isBlank() || newPasswordField.isBlank()
                         || confirmNewPasswordField.isBlank()) {
-                    infoLabel.setText("Bitte fülle alle Felder aus.");
+                    showMessage("table.general.fill-fields");
                     return;
                 }
                 if (!newPasswordField.getText().equals(confirmNewPasswordField.getText())) {
-                    infoLabel.setText("Die neuen Passwörter stimmen nicht überein.");
+                    showMessage("table.change-password.no-match");
                     newPasswordField.reset();
                     confirmNewPasswordField.reset();
                     return;
                 }
                 if (passwordField.getText().equals(newPasswordField.getText())) {
-                    infoLabel.setText("Bitte gib ein neues Passwort ein!");
+                    showMessage("table.change-password.no-new");
                     newPasswordField.reset();
                     confirmNewPasswordField.reset();
                     return;
@@ -54,10 +55,10 @@ public class ChangePasswordTable extends MenuTable {
             }
         });
 
-        ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("menu.button.back", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new ProfileSettingsTable());
             }
         });
@@ -75,6 +76,14 @@ public class ChangePasswordTable extends MenuTable {
         buttonContainer.add(cancelButton).padLeft(SPACING / 2);
         container.add(buttonContainer);
         add(container).width(ROW_WIDTH);
+
+        // Translatable register
+        translates.add(passwordField);
+        translates.add(newPasswordField);
+        translates.add(confirmNewPasswordField);
+        translates.add(confirmButton);
+        translates.add(cancelButton);
+        translates.trimToSize();
     }
 
     @Override

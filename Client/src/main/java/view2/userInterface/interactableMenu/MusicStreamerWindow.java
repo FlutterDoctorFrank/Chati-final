@@ -7,13 +7,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
+import model.MessageBundle;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 import model.context.spatial.ContextMusic;
 import model.user.IInternUserView;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import view2.Chati;
+import view2.Localization;
 import view2.userInterface.ChatiImageButton;
-
+import view2.userInterface.ChatiLabel;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.NoSuchElementException;
@@ -50,7 +54,6 @@ public class MusicStreamerWindow extends InteractableWindow {
     private static final float BUTTON_SIZE = 100;
     private static final float BUTTON_SCALE_FACTOR = 0.05f;
 
-    private final Label infoLabel;
     private final MusicListItem[] musicListItems;
     private final List<MusicListItem> musicList;
     private final ChatiImageButton playButton;
@@ -62,10 +65,10 @@ public class MusicStreamerWindow extends InteractableWindow {
      * Erzeugt eine neue Instanz des MusicStreamerWindow.
      * @param musicPlayerId ID des zugehörigen MusicStreamer.
      */
-    public MusicStreamerWindow(ContextID musicPlayerId) {
-        super("Jukebox", musicPlayerId, ContextMenu.MUSIC_STREAMER_MENU);
-        infoLabel = new Label("Wähle einen Titel.", Chati.CHATI.getSkin());
+    public MusicStreamerWindow(@NotNull final ContextID musicPlayerId) {
+        super("window.title.music-player", musicPlayerId, ContextMenu.MUSIC_STREAMER_MENU);
 
+        infoLabel = new ChatiLabel("window.entry.music-player");
         musicList = new List<>(Chati.CHATI.getSkin(), "dimmed");
         musicListItems = EnumSet.allOf(ContextMusic.class).stream().map(MusicListItem::new).toArray(MusicListItem[]::new);
         musicList.setItems(musicListItems);
@@ -73,7 +76,7 @@ public class MusicStreamerWindow extends InteractableWindow {
         musicList.getStyle().over = Chati.CHATI.getSkin().getDrawable("list-selection");
         musicList.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (musicList.getSelected() == null) {
                     return;
                 }
@@ -87,7 +90,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_play_disabled"), BUTTON_SCALE_FACTOR);
         playButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_PAUSE);
             }
         });
@@ -96,7 +99,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_stop_disabled"), BUTTON_SCALE_FACTOR);
         stopButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_STOP);
             }
         });
@@ -105,7 +108,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_back_disabled"), BUTTON_SCALE_FACTOR);
         backButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_PREVIOUS);
             }
         });
@@ -114,7 +117,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_skip_disabled"), BUTTON_SCALE_FACTOR);
         skipButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_NEXT);
             }
         });
@@ -123,7 +126,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_loop"), Chati.CHATI.getDrawable("music_loop_disabled"), BUTTON_SCALE_FACTOR);
         loopingButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_LOOPING);
             }
         });
@@ -132,7 +135,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_random"), Chati.CHATI.getDrawable("music_random_disabled"), BUTTON_SCALE_FACTOR);
         randomButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_RANDOM);
             }
         });
@@ -141,7 +144,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 Chati.CHATI.getDrawable("music_volume"), Chati.CHATI.getDrawable("music_volume_disabled"), BUTTON_SCALE_FACTOR);
         volumeButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 // TODO
             }
         });
@@ -198,16 +201,16 @@ public class MusicStreamerWindow extends InteractableWindow {
     }
 
     @Override
-    public void act(float delta) {
+    public void act(final float delta) {
         setSelectedMusic();
         setButtonImages();
         super.act(delta);
     }
 
     @Override
-    public void receiveResponse(boolean success, String messageKey) {
-        if (!success) {
-            infoLabel.setText(messageKey);
+    public void receiveResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
+        if (!success && messageBundle != null) {
+            infoLabel.setText(Localization.format(messageBundle.getMessageKey(), messageBundle.getArguments()));
         }
     }
 
@@ -254,7 +257,7 @@ public class MusicStreamerWindow extends InteractableWindow {
      * Aktiviert einen ImageButtons.
      * @param button Zu aktivierender ImageButton.
      */
-    private void enableButton(Button button) {
+    private void enableButton(@NotNull final Button button) {
         button.setDisabled(false);
         button.setTouchable(Touchable.enabled);
     }
@@ -263,7 +266,7 @@ public class MusicStreamerWindow extends InteractableWindow {
      * Deaktiviert einen ImageButton.
      * @param button Zu deaktivierender ImageButton.
      */
-    private void disableButton(Button button) {
+    private void disableButton(@NotNull final Button button) {
         button.setDisabled(true);
         button.setTouchable(Touchable.disabled);
     }
@@ -279,7 +282,7 @@ public class MusicStreamerWindow extends InteractableWindow {
          * Erzeugt eine neue Instanz des MusicListItem.
          * @param music Zugehörige Musik.
          */
-        public MusicListItem(ContextMusic music) {
+        public MusicListItem(@NotNull final ContextMusic music) {
             this.music = music;
         }
 
@@ -287,12 +290,12 @@ public class MusicStreamerWindow extends InteractableWindow {
          * Gibt die Musik dieses Elements zurück.
          * @return Musik des Elements.
          */
-        public ContextMusic getMusic() {
+        public @NotNull ContextMusic getMusic() {
             return music;
         }
 
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return music.getName();
         }
     }

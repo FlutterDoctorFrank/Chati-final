@@ -3,6 +3,9 @@ package view2.userInterface.menu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
+import model.MessageBundle;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import view2.Chati;
 import view2.ChatiScreen;
 import view2.Response;
@@ -22,7 +25,7 @@ public class MenuScreen extends ChatiScreen {
     }
 
     @Override
-    public void render(float delta) {
+    public void render(final float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         super.render(delta);
     }
@@ -30,17 +33,21 @@ public class MenuScreen extends ChatiScreen {
     /**
      * Verarbeitet die Antwort auf eine durchgeführte Registrierung.
      * @param success Information, ob die Registrierung erfolgreich war.
-     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     * @param messageBundle Kennung der anzuzeigenden Nachricht.
      */
-    public void registrationResponse(boolean success, String messageKey) {
+    public void registrationResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (pendingResponse != Response.REGISTRATION) {
             return;
         }
         setPendingResponse(Response.NONE);
         if (success) {
-            currentMenuTable.showMessage("Die Registrierung war erfolgreich!");
+            currentMenuTable.showMessage("account.register.success");
         } else {
-            currentMenuTable.showMessage(messageKey);
+            if (messageBundle != null) {
+                currentMenuTable.showMessage(messageBundle);
+            } else {
+                currentMenuTable.showMessage("account.register.failed");
+            }
             currentMenuTable.resetTextFields();
         }
     }
@@ -48,9 +55,9 @@ public class MenuScreen extends ChatiScreen {
     /**
      * Verarbeitet die Antwort auf eine durchgeführte Anmeldung.
      * @param success Information, ob die Anmeldung erfolgreich war.
-     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     * @param messageBundle Kennung der anzuzeigenden Nachricht.
      */
-    public void loginResponse(boolean success, String messageKey) {
+    public void loginResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (pendingResponse != Response.LOGIN) {
             return;
         }
@@ -58,7 +65,11 @@ public class MenuScreen extends ChatiScreen {
         if (success) {
             setMenuTable(new StartTable());
         } else {
-            currentMenuTable.showMessage(messageKey);
+            if (messageBundle != null) {
+                currentMenuTable.showMessage(messageBundle);
+            } else {
+                currentMenuTable.showMessage("account.login.failed");
+            }
             currentMenuTable.resetTextFields();
         }
     }
@@ -66,18 +77,22 @@ public class MenuScreen extends ChatiScreen {
     /**
      * Verarbeitet die Antwort auf eine durchgeführte Passwortänderung.
      * @param success Information, ob die Passwortänderung erfolgreich war.
-     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     * @param messageBundle Kennung der anzuzeigenden Nachricht.
      */
-    public void passwordChangeResponse(boolean success, String messageKey) {
+    public void passwordChangeResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (pendingResponse != Response.PASSWORD_CHANGE) {
             return;
         }
         setPendingResponse(Response.NONE);
         if (success) {
             setMenuTable(new StartTable());
-            currentMenuTable.showMessage("Dein Passwort wurde geändert!");
+            currentMenuTable.showMessage("account.change-password.success");
         } else {
-            currentMenuTable.showMessage(messageKey);
+            if (messageBundle != null) {
+                currentMenuTable.showMessage(messageBundle);
+            } else {
+                currentMenuTable.showMessage("account.change-password.failed");
+            }
             currentMenuTable.resetTextFields();
         }
     }
@@ -85,18 +100,22 @@ public class MenuScreen extends ChatiScreen {
     /**
      * Verarbeitet die Antwort auf eine durchgeführte Kontolöschung.
      * @param success Information, ob die Kontolöschung erfolgreich war.
-     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     * @param messageBundle Kennung der anzuzeigenden Nachricht.
      */
-    public void deleteAccountResponse(boolean success, String messageKey) {
+    public void deleteAccountResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (pendingResponse != Response.DELETE_ACCOUNT) {
             return;
         }
         setPendingResponse(Response.NONE);
         if (success) {
             setMenuTable(new LoginTable());
-            currentMenuTable.showMessage("Dein Konto wurde gelöscht.");
+            currentMenuTable.showMessage("account.delete.success");
         } else {
-            currentMenuTable.showMessage(messageKey);
+            if (messageBundle != null) {
+                currentMenuTable.showMessage(messageBundle);
+            } else {
+                currentMenuTable.showMessage("account.delete.failed");
+            }
             currentMenuTable.resetTextFields();
         }
     }
@@ -104,36 +123,44 @@ public class MenuScreen extends ChatiScreen {
     /**
      * Verarbeitet die Antwort auf eine durchgeführte Avataränderung.
      * @param success Information, ob die Avataränderung erfolgreich war.
-     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     * @param messageBundle Kennung der anzuzeigenden Nachricht.
      */
-    public void avatarChangeResponse(boolean success, String messageKey) {
+    public void avatarChangeResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (pendingResponse != Response.AVATAR_CHANGE) {
             return;
         }
         setPendingResponse(Response.NONE);
         if (success) {
             setMenuTable(new StartTable());
-            currentMenuTable.showMessage("Dein Avatar wurde geändert!");
+            currentMenuTable.showMessage("account.change-avatar.success");
         } else {
-            currentMenuTable.showMessage(messageKey);
+            if (messageBundle != null) {
+                currentMenuTable.showMessage(messageBundle);
+            } else {
+                currentMenuTable.showMessage("account.change-avatar.failed");
+            }
         }
     }
 
     /**
      * Verarbeitet die Antwort auf eine durchgeführte Welterstellung.
      * @param success Information, ob die Welterstellung erfolgreich war.
-     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     * @param messageBundle Kennung der anzuzeigenden Nachricht.
      */
-    public void createWorldResponse(boolean success, String messageKey) {
+    public void createWorldResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (pendingResponse != Response.CREATE_WORLD) {
             return;
         }
         setPendingResponse(Response.NONE);
         if (success) {
             setMenuTable(new StartTable());
-            currentMenuTable.showMessage("Die Welt wurde erfolgreich erstellt!");
+            currentMenuTable.showMessage("action.world-create.success");
         } else {
-            currentMenuTable.showMessage(messageKey);
+            if (messageBundle != null) {
+                currentMenuTable.showMessage(messageBundle);
+            } else {
+                currentMenuTable.showMessage("action.world-create.failed");
+            }
             currentMenuTable.resetTextFields();
         }
     }
@@ -141,26 +168,30 @@ public class MenuScreen extends ChatiScreen {
     /**
      * Verarbeitet die Antwort auf eine durchgeführte Weltlöschung.
      * @param success Information, ob die Weltlöschung erfolgreich war.
-     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     * @param messageBundle Kennung der anzuzeigenden Nachricht.
      */
-    public void deleteWorldResponse(boolean success, String messageKey) {
+    public void deleteWorldResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (pendingResponse != Response.DELETE_WORLD) {
             return;
         }
         setPendingResponse(Response.NONE);
         if (success) {
-            currentMenuTable.showMessage("Die Welt wurde erfolgreich gelöscht.");
+            currentMenuTable.showMessage("action.world-delete.success");
         } else {
-            currentMenuTable.showMessage(messageKey);
+            if (messageBundle != null) {
+                currentMenuTable.showMessage(messageBundle);
+            } else {
+                currentMenuTable.showMessage("action.world-delete.failed");
+            }
         }
     }
 
     /**
      * verarbeitet die Antwort auf einen durchgeführten Weltbeitritt.
      * @param success Information, ob der Weltbeitritt erfolgreich war.
-     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     * @param messageBundle Kennung der anzuzeigenden Nachricht.
      */
-    public void joinWorldResponse(boolean success, String messageKey) {
+    public void joinWorldResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (pendingResponse != Response.JOIN_WORLD) {
             return;
         }
@@ -168,7 +199,11 @@ public class MenuScreen extends ChatiScreen {
         if (success) {
             Chati.CHATI.setScreen(Chati.CHATI.getWorldScreen());
         } else {
-            currentMenuTable.showMessage(messageKey);
+            if (messageBundle != null) {
+                currentMenuTable.showMessage(messageBundle);
+            } else {
+                currentMenuTable.showMessage("action.world-join.failed");
+            }
         }
     }
 
@@ -176,7 +211,7 @@ public class MenuScreen extends ChatiScreen {
      * Setzt den momentan anzuzeigenden Inhalt.
      * @param table Container des anzuzeigenden Inhalts.
      */
-    public void setMenuTable(MenuTable table) {
+    public void setMenuTable(@NotNull final MenuTable table) {
         if (currentMenuTable != null) {
             currentMenuTable.remove();
         }
@@ -185,7 +220,12 @@ public class MenuScreen extends ChatiScreen {
     }
 
     @Override
-    public InputProcessor getInputProcessor() {
+    public @NotNull InputProcessor getInputProcessor() {
         return stage;
+    }
+
+    @Override
+    public void translate() {
+        currentMenuTable.translate();
     }
 }

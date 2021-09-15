@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 import view2.Response;
-
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -31,8 +30,7 @@ public class AvatarSelectTable extends MenuTable {
      * Erzeugt eine neue Instanz des AvatarSelectTable.
      */
     public AvatarSelectTable() {
-        infoLabel.setText("Bitte wähle einen Avatar!");
-
+        super("table.entry.change-avatar");
         this.avatarEntries = new TreeSet<>();
 
         Table avatarListContainer = new Table();
@@ -43,19 +41,19 @@ public class AvatarSelectTable extends MenuTable {
         avatarButtonGroup.setMaxCheckCount(1);
         avatarButtonGroup.setUncheckLast(true);
 
-        ChatiTextButton confirmButton = new ChatiTextButton("Bestätigen", true);
+        ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
         confirmButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.getScreen().setPendingResponse(Response.AVATAR_CHANGE);
                 Chati.CHATI.send(ServerSender.SendAction.PROFILE_CHANGE, avatarButtonGroup.getChecked().getAvatar());
             }
         });
 
-        ChatiTextButton cancelButton = new ChatiTextButton("Zurück", true);
+        ChatiTextButton cancelButton = new ChatiTextButton("menu.button.back", true);
         cancelButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Chati.CHATI.getMenuScreen().setMenuTable(new StartTable());
             }
         });
@@ -65,7 +63,7 @@ public class AvatarSelectTable extends MenuTable {
             avatarEntries.add(avatarListEntry);
             avatarButtonGroup.add(avatarListEntry);
 
-            if (avatar == Chati.CHATI.getInternUser().getAvatar()) {
+            if (Chati.CHATI.getInternUser() != null && avatar == Chati.CHATI.getInternUser().getAvatar()) {
                 avatarListEntry.setChecked(true);
             }
         });
@@ -96,10 +94,16 @@ public class AvatarSelectTable extends MenuTable {
         add(container).width(ROW_WIDTH);
 
         Chati.CHATI.getScreen().getStage().setScrollFocus(avatarScrollPane);
+
+        // Translatable register
+        translates.add(confirmButton);
+        translates.add(cancelButton);
+        translates.trimToSize();
     }
 
     @Override
     public void resetTextFields() {
+
     }
 
     /**
@@ -113,8 +117,8 @@ public class AvatarSelectTable extends MenuTable {
          * Erzeugt eine neue Instanz eines AvatarListEntry.
          * @param avatar Zum Eintrag zugehöriger Avatar.
          */
-        public AvatarListEntry(Avatar avatar) {
-            super(avatar.getName(), false);
+        public AvatarListEntry(@NotNull final Avatar avatar) {
+            super(avatar, false);
             this.avatar = avatar;
             getLabelCell().padTop(-2 * SPACING).row();
             TextureRegion avatarDrawable = Chati.CHATI.getDrawable(avatar.getPath() + "_stand_down").getRegion();
@@ -122,8 +126,9 @@ public class AvatarSelectTable extends MenuTable {
         }
 
         @Override
-        public void draw(Batch batch, float parentAlpha) {
-            if (this.avatar != Chati.CHATI.getInternUser().getAvatar() && this.avatar.getName().matches("\\s*")) {
+        public void draw(@NotNull final Batch batch, final float parentAlpha) {
+            if (Chati.CHATI.getInternUser() != null && this.avatar != Chati.CHATI.getInternUser().getAvatar() &&
+                    this.avatar.getName().matches("\\s*")) {
                 super.draw(batch, 0.01f);
             } else {
                 super.draw(batch, 1);
@@ -132,15 +137,15 @@ public class AvatarSelectTable extends MenuTable {
 
         /**
          * Gibt den Avatar dieses Eintrags zurück.
-         * @return
+         * @return den Avatar des Eintrags.
          */
-        public Avatar getAvatar() {
+        public @NotNull Avatar getAvatar() {
             return avatar;
         }
 
         @Override
-        public int compareTo(@NotNull AvatarSelectTable.AvatarListEntry other) {
-            return this.avatar == Chati.CHATI.getInternUser().getAvatar() ? -1
+        public int compareTo(@NotNull final AvatarSelectTable.AvatarListEntry other) {
+            return Chati.CHATI.getInternUser() != null && this.avatar == Chati.CHATI.getInternUser().getAvatar() ? -1
                     : (this.avatar.getName().matches("\\s*")) ? 1
                     : this.avatar.getName().compareTo(other.avatar.getName());
         }

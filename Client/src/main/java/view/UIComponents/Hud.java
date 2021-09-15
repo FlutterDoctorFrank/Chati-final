@@ -9,21 +9,24 @@ import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import controller.network.ServerSender;
 import model.MessageBundle;
-import model.context.spatial.ContextMap;
-import model.exception.ContextNotFoundException;
 import model.communication.message.MessageType;
 import model.context.ContextID;
+import model.context.spatial.ContextMap;
 import model.context.spatial.ContextMenu;
 import model.exception.UserNotFoundException;
 import model.user.IUserView;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view.Chati;
-import view.Screens.*;
+import view.Screens.ApplicationScreen;
 import view2.IModelObserver;
 import view2.ViewControllerInterface;
-
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 public class Hud extends Stage implements IModelObserver, ViewControllerInterface {
     private static Hud hud;
@@ -193,16 +196,16 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
-    public void updateWorlds(Map<ContextID, String> worlds) {
+    public void updateWorlds(@NotNull Map<ContextID, String> worlds) {
         Gdx.app.postRunnable(() -> hud.worlds = worlds);
     }
 
     @Override
-    public void updateRooms(ContextID worldId, Map<ContextID, String> privateRooms) {
+    public void updateRooms(@NotNull ContextID worldId, @NotNull Map<ContextID, String> privateRooms) {
     }
 
     @Override
-    public void registrationResponse(boolean success, String messageKey) {
+    public void registrationResponse(boolean success, MessageBundle messageBundle) {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -211,7 +214,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
         });
         LoginTable table = (LoginTable) group.findActor("login-table");
         if (!Objects.isNull(table) && waitingRegistrationResponse) {
-                table.displayMessage(messageKey);
+                table.displayMessage(messageBundle.getMessageKey());
         }
 
         waitingRegistrationResponse = false;
@@ -230,7 +233,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
 
     @Override
-    public void loginResponse(boolean success, String messageKey) {
+    public void loginResponse(boolean success, MessageBundle messageBundle) {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -239,7 +242,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
                     if (success) {
                         addMenuTable(new StartScreenTable(hud));
                     } else {
-                        table.displayMessage(messageKey);
+                        table.displayMessage(messageBundle.getMessageKey());
                     }
                 }
 
@@ -261,17 +264,17 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
-    public void passwordChangeResponse(boolean success, String messageKey) {
+    public void passwordChangeResponse(boolean success, MessageBundle messageBundle) {
 
     }
 
     @Override
-    public void deleteAccountResponse(boolean success, String messageKey) {
+    public void deleteAccountResponse(boolean success, MessageBundle messageBundle) {
 
     }
 
     @Override
-    public void avatarChangeResponse(boolean success, String messageKey) {
+    public void avatarChangeResponse(boolean success, MessageBundle messageBundle) {
 
     }
 
@@ -285,20 +288,20 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
-    public void createWorldResponse(boolean success, String messageKey) {
+    public void createWorldResponse(boolean success, MessageBundle messageBundle) {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
                 StartScreenTable table = (StartScreenTable) group.findActor("start-screen-table");
                 if (!Objects.isNull(table)) {
-                    table.displayMessage(messageKey);
+                    table.displayMessage(messageBundle.getMessageKey());
                 }
             }
         });
     }
 
     @Override
-    public void deleteWorldResponse(boolean success, String messageKey) {
+    public void deleteWorldResponse(boolean success, MessageBundle messageBundle) {
 
     }
 
@@ -317,7 +320,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
 
     @Override
-    public void joinWorldResponse(boolean success, String messageKey) {
+    public void joinWorldResponse(boolean success, MessageBundle messageBundle) {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -325,7 +328,7 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
                 if (success && !Objects.isNull(contextID)) {
                     //applicationScreen.getGame().setScreen(new PlayScreen(applicationScreen.getGame(), this));
                 } else {
-                    table.displayMessage(messageKey);
+                    table.displayMessage(messageBundle.getMessageKey());
                 }
             }
         });
@@ -333,17 +336,12 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
-    public void showTypingUser(UUID userId) {
+    public void showTypingUser(@NotNull UUID userId) {
 
     }
 
     @Override
-    public void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message, MessageBundle messageBundle) throws UserNotFoundException {
-
-    }
-
-
-    public void showChatMessage(UUID userID, LocalDateTime timestamp, MessageType messageType, String message) throws UserNotFoundException {
+    public void showChatMessage(@NotNull UUID userID, @NotNull LocalDateTime timestamp, @NotNull MessageType messageType, @NotNull String message) throws UserNotFoundException {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -356,22 +354,27 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
-    public void playAudioData(UUID userID, LocalDateTime timestamp, byte[] voiceData) {
+    public void showInfoMessage(@NotNull LocalDateTime timestamp, @NotNull MessageBundle messageBundle) {
 
     }
 
     @Override
-    public void openMenu(ContextID contextId, ContextMenu menu) {
+    public void playAudioData(UUID userID, @NotNull LocalDateTime timestamp, byte[] voiceData) {
 
     }
 
     @Override
-    public void closeMenu(ContextID contextId, ContextMenu menu) {
+    public void openMenu(@NotNull ContextID contextId, @NotNull ContextMenu menu) {
 
     }
 
     @Override
-    public void menuActionResponse(boolean success, String messageKey) {
+    public void closeMenu(@NotNull ContextID contextId, @NotNull ContextMenu menu) {
+
+    }
+
+    @Override
+    public void menuActionResponse(boolean success, MessageBundle messageBundle) {
 
     }
 

@@ -16,7 +16,7 @@ public class ContextEntry implements Comparable<ContextEntry> {
      * @param contextId ID des Kontextes.
      * @param contextName Name des Kontextes.
      */
-    public ContextEntry(ContextID contextId, String contextName) {
+    public ContextEntry(@NotNull final ContextID contextId, @NotNull final String contextName) {
         this.contextId = contextId;
         this.contextName = contextName;
     }
@@ -25,7 +25,7 @@ public class ContextEntry implements Comparable<ContextEntry> {
      * Gibt die ID des Kontextes zurück.
      * @return ID des Kontextes.
      */
-    public ContextID getContextId() {
+    public @NotNull ContextID getContextId() {
         return contextId;
     }
 
@@ -33,17 +33,17 @@ public class ContextEntry implements Comparable<ContextEntry> {
      * Gibt den Namen des Kontextes zurück.
      * @return Name des Kontextes.
      */
-    public String getName() {
+    public @NotNull String getName() {
         return contextName;
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return contextName;
     }
 
     @Override
-    public int compareTo(@NotNull ContextEntry other) {
+    public int compareTo(@NotNull final ContextEntry other) {
         return this.getName().compareTo(other.getName());
     }
 }
