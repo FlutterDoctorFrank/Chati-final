@@ -13,7 +13,7 @@ import view2.userInterface.ChatiTextButton;
  */
 public abstract class HudMenuWindow extends ChatiWindow {
 
-    protected static final float HUD_WINDOW_WIDTH = 500;
+    protected static final float HUD_WINDOW_WIDTH = 525;
     protected static final float HUD_WINDOW_HEIGHT = 600;
 
     /**

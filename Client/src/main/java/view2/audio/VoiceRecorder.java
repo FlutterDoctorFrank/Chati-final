@@ -53,8 +53,6 @@ public class VoiceRecorder implements Disposable {
                     }
                 }
 
-                setSendGate();
-
                 // Überprüfe ob Lautstärke eines Samples gewissen Wert überschreitet, fange dann an zu senden und setze
                 // Zeitstempel. Sende ab diesem Zeitpunkt mindestens für eine gewisse Dauer weiter, bevor das Senden
                 // gestoppt wird. Dadurch wird ein Dauersenden verhindert, ohne am Ende "abgehackt" zu werden.
@@ -119,10 +117,10 @@ public class VoiceRecorder implements Disposable {
     }
 
     /**
-     * Setzt das Gate zum Senden von Sprachdaten anhand der eingestellten Mikrofonempfindlichkeit.
+     * Setzt das Gate zum Senden von Sprachdaten anhand der Mikrofonempfindlichkeit.
+     * @param microphoneSensitivity Mikrofonempfindlichkeit
      */
-    private void setSendGate() {
-        float microphoneSensitivity = Chati.CHATI.getPreferences().getMicrophoneSensitivity();
+    public void setMicrophoneSensitivity(float microphoneSensitivity) {
         sendGate = 4608 * microphoneSensitivity * microphoneSensitivity - 8448 * microphoneSensitivity + 4096;
     }
 }

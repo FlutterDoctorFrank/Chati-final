@@ -30,6 +30,8 @@ public class AudioManager implements Disposable {
         try {
             this.voiceRecorder = new VoiceRecorder();
             this.audioConsumer = new AudioConsumer();
+            setMicrophoneSensitivity();
+            setVolume();
         } catch (GdxRuntimeException e) {
             e.printStackTrace(); // Line is not available
         }
@@ -79,6 +81,28 @@ public class AudioManager implements Disposable {
         if (audioConsumer != null) {
             audioConsumer.dispose();
         }
+    }
+
+    /**
+     * Setzt die in den Einstellungen hinterlegte Lautstärke.
+     */
+    public void setVolume() {
+        float totalVolume = Chati.CHATI.getPreferences().isSoundOn() ?
+                (float) (-Math.pow(Chati.CHATI.getPreferences().getTotalVolume() - 1, 2) + 1) : 0;
+        float voiceVolume = (float) (-Math.pow(Chati.CHATI.getPreferences().getVoiceVolume() - 1, 2) + 1);
+        float musicVolume = 0.1f * (float) (-Math.pow(Chati.CHATI.getPreferences().getMusicVolume() - 1, 2) + 1);
+        float soundVolume = 0.1f * (float) (-Math.pow(Chati.CHATI.getPreferences().getSoundVolume() - 1, 2) + 1);
+
+        audioConsumer.setTotalVolume(totalVolume);
+        audioConsumer.setVoiceVolume(voiceVolume);
+        audioConsumer.setMusicVolume(musicVolume);
+    }
+
+    /**
+     * Setzt die in den Einstellungen hinterlegte Mikrofonempfindlichkeit.
+     */
+    public void setMicrophoneSensitivity() {
+        voiceRecorder.setMicrophoneSensitivity(Chati.CHATI.getPreferences().getMicrophoneSensitivity());
     }
 
     /**

@@ -68,9 +68,6 @@ public class AudioConsumer implements Disposable {
                     }
                 }
 
-                setVoiceVolume();
-                setMusicVolume();
-
                 int[] temp = new int[AudioManager.BLOCK_SIZE];
                 // Mische das oberste Element aller Warteschlangen pro Sender und des Musikstreams zusammen.
                 final Set<ProducerQueue.AudioDataBlock> blocks = voiceDataBuffer.values().stream()
@@ -93,7 +90,9 @@ public class AudioConsumer implements Disposable {
                     mixedData[i] = (short) (temp[i] > Short.MAX_VALUE ? Short.MAX_VALUE :
                             (temp[i] < Short.MIN_VALUE ? Short.MIN_VALUE : temp[i]));
                 }
-                player.writeSamples(mixedData, 0, mixedData.length);
+                if (Chati.CHATI.getPreferences().isSoundOn()) {
+                    player.writeSamples(mixedData, 0, mixedData.length);
+                }
                 voiceDataBuffer.values().removeIf(Predicate.not(ProducerQueue::hasData));
             }
             this.voiceDataBuffer.clear();
@@ -174,21 +173,27 @@ public class AudioConsumer implements Disposable {
     }
 
     /**
-     * Setzt die Lautstärke der abzuspielenden Sprachdaten anhand der Einstellungen von dieser und der Gesamtlautstärke.
+     * Setzt die Gesamtlautstärke.
+     * @param totalVolume Gesamtlautstärke
      */
-    private void setVoiceVolume() {
-        voiceVolume = Chati.CHATI.getPreferences().isSoundOn() ?
-                (float) Math.sqrt(Chati.CHATI.getPreferences().getTotalVolume() *
-                Chati.CHATI.getPreferences().getVoiceVolume()) : 0;
+    public void setTotalVolume(float totalVolume) {
+        player.setVolume(totalVolume);
     }
 
     /**
-     * Setzt die Lautstärke der abzuspielenden Musikdaten anhand der Einstellungen von dieser und der Gesamtlautstärke.
+     * Setzt die Lautstärke des Sprachchats.
+     * @param voiceVolume Lautstärke des Sprachchats.
      */
-    private void setMusicVolume() {
-        musicVolume = Chati.CHATI.getPreferences().isSoundOn() ?
-                (float) (0.25 * Math.sqrt(Chati.CHATI.getPreferences().getTotalVolume() *
-                Chati.CHATI.getPreferences().getMusicVolume())) : 0;
+    public void setVoiceVolume(float voiceVolume) {
+        this.voiceVolume = voiceVolume;
+    }
+
+    /**
+     * Setzt die Lautstärke der Musik.
+     * @param musicVolume Lautstärke der Musik.
+     */
+    public void setMusicVolume(float musicVolume) {
+        this.musicVolume = musicVolume;
     }
 
     /**

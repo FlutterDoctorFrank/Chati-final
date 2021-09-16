@@ -17,8 +17,8 @@ import java.util.TreeSet;
  */
 public class CommunicationWindow extends ChatiWindow {
 
-    private static final float HUD_WINDOW_WIDTH = 400;
-    private static final float HUD_WINDOW_HEIGHT = 500;
+    private static final float HUD_WINDOW_WIDTH = 425;
+    private static final float HUD_WINDOW_HEIGHT = 550;
 
     private final Set<UserListEntry> communicableUserEntries;
     private final Table userListContainer;
