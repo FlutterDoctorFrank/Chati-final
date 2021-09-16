@@ -144,7 +144,6 @@ public class SoundConfigurationWindow extends ChatiWindow {
                 soundVolumeSlider.setValue(ChatiPreferences.DEFAULT_SOUND_VOLUME);
                 microphoneSensitivitySlider.setValue(ChatiPreferences.DEFAULT_MICROPHONE_SENSITIVITY);
                 pushToTalkCheckBox.setChecked(ChatiPreferences.DEFAULT_PUSH_TO_TALK);
-                showMessage("window.settings.restored");
             }
         });
 

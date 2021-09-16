@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import org.jetbrains.annotations.NotNull;
+import view2.Chati;
 import view2.userInterface.ChatiWindow;
 import view2.userInterface.ChatiTextButton;
 
@@ -49,7 +50,7 @@ public abstract class HudMenuWindow extends ChatiWindow {
 
     @Override
     public void close() {
-        HeadUpDisplay.getInstance().removeCurrentMenu();
+        Chati.CHATI.getHeadUpDisplay().removeCurrentMenu();
         super.close();
     }
 }

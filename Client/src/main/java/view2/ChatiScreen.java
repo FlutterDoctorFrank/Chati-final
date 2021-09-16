@@ -32,16 +32,16 @@ public abstract class ChatiScreen extends ScreenAdapter implements Translatable 
 
     @Override
     public void show() {
-        stage.addActor(HeadUpDisplay.getInstance());
-        stage.addActor(HeadUpDisplay.getInstance().getChatWindow());
+        stage.addActor(Chati.CHATI.getHeadUpDisplay());
+        stage.addActor(Chati.CHATI.getHeadUpDisplay().getChatWindow());
         super.show();
     }
 
     @Override
     public void hide() {
-        HeadUpDisplay.getInstance().hideChatWindow();
-        HeadUpDisplay.getInstance().closeCurrentMenu();
-        HeadUpDisplay.getInstance().closeCommunicationWindow();
+        Chati.CHATI.getHeadUpDisplay().hideChatWindow();
+        Chati.CHATI.getHeadUpDisplay().closeCurrentMenu();
+        Chati.CHATI.getHeadUpDisplay().closeCommunicationWindow();
         stage.clear();
         super.hide();
     }

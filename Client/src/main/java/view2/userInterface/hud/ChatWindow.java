@@ -103,13 +103,13 @@ public class ChatWindow extends Window implements Translatable {
             }
         });
 
-        TextButton minimizeButton = new TextButton("_", Chati.CHATI.getSkin());
-        minimizeButton.setDisabled(true);
-        minimizeButton.addListener(new ChatiTooltip("hud.tooltip.minimize"));
-        minimizeButton.addListener(new ClickListener() {
+        TextButton closeButton = new TextButton("X", Chati.CHATI.getSkin());
+        closeButton.setDisabled(true);
+        closeButton.addListener(new ChatiTooltip("hud.tooltip.close"));
+        closeButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                HeadUpDisplay.getInstance().hideChatWindow();
+                Chati.CHATI.getHeadUpDisplay().hideChatWindow();
             }
         });
 
@@ -134,7 +134,7 @@ public class ChatWindow extends Window implements Translatable {
         sendContainer.add(sendButton).width(SEND_BUTTON_WIDTH);
         add(sendContainer).growX();
 
-        getTitleTable().add(minimizeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
+        getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }
 
     @Override

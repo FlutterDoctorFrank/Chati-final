@@ -35,7 +35,7 @@ import java.util.UUID;
 /**
  * Eine Klasse, welche die für die gesamte View relevanten Komponenten beinhaltet und deren Zusammenspiel koordiniert.
  */
-public class Chati extends Game implements ViewControllerInterface, IModelObserver {
+public class Chati extends Game implements ViewControllerInterface, IModelObserver, Localization.Translatable {
 
     public static Chati CHATI;
 
@@ -48,6 +48,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private ChatiPreferences preferences;
     private AudioManager audioManager;
     private SpriteBatch spriteBatch;
+    private HeadUpDisplay headUpDisplay;
     private MenuScreen menuScreen;
     private WorldScreen worldScreen;
 
@@ -102,6 +103,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         this.audioManager = new AudioManager();
         this.spriteBatch = new SpriteBatch();
         Localization.getInstance().load(preferences.getLanguage());
+        this.headUpDisplay = new HeadUpDisplay();
         this.menuScreen = new MenuScreen();
         this.worldScreen = new WorldScreen();
         setScreen(menuScreen);
@@ -161,6 +163,14 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      */
     public @NotNull WorldScreen getWorldScreen() {
         return worldScreen;
+    }
+
+    /**
+     * Gibt den HeadUpDisplay zurück.
+     * @return HeadUpDisplay
+     */
+    public @NotNull HeadUpDisplay getHeadUpDisplay() {
+        return headUpDisplay;
     }
 
     /**
@@ -364,7 +374,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public void showTypingUser(@NotNull final UUID userId) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(worldScreen)) {
-                HeadUpDisplay.getInstance().showTypingUser(userId);
+                headUpDisplay.showTypingUser(userId);
             }
         });
     }
@@ -372,13 +382,10 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void showChatMessage(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
                                 @NotNull final MessageType messageType, @NotNull final String message) {
-        if (messageType == MessageType.INFO) {
-            return;
-        }
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(worldScreen)) {
                 try {
-                    HeadUpDisplay.getInstance().showChatMessage(userId, timestamp, messageType, message);
+                    headUpDisplay.showChatMessage(userId, timestamp, messageType, message);
                 } catch (UserNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -390,7 +397,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public void showInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(worldScreen)) {
-                HeadUpDisplay.getInstance().showInfoMessage(timestamp, messageBundle);
+                headUpDisplay.showInfoMessage(timestamp, messageBundle);
             }
         });
     }
@@ -449,6 +456,13 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
                 setScreen(menuScreen);
             }
         });
+    }
+
+    @Override
+    public void translate() {
+        menuScreen.translate();
+        worldScreen.translate();
+        headUpDisplay.translate();
     }
 
     /**

@@ -132,7 +132,6 @@ public class StartTable extends MenuTable {
 
     @Override
     public void resetTextFields() {
-
     }
 
     /**

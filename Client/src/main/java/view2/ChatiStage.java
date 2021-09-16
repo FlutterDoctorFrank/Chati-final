@@ -30,40 +30,40 @@ public class ChatiStage extends Stage {
     public boolean keyDown(final int keycode) {
         if (!(getKeyboardFocus() instanceof TextField)) {
             if (KeyCommand.OPEN_CHAT.matches(keycode)) {
-                HeadUpDisplay.getInstance().showChatWindow();
+                Chati.CHATI.getHeadUpDisplay().showChatWindow();
             }
             if (KeyCommand.OPEN_COMMUNICATION_MENU.matches(keycode)) {
-                if (HeadUpDisplay.getInstance().isCommunicationWindowOpen()) {
-                    HeadUpDisplay.getInstance().closeCommunicationWindow();
+                if (Chati.CHATI.getHeadUpDisplay().isCommunicationWindowOpen()) {
+                    Chati.CHATI.getHeadUpDisplay().closeCommunicationWindow();
                 } else {
-                    HeadUpDisplay.getInstance().openCommunicationWindow();
+                    Chati.CHATI.getHeadUpDisplay().openCommunicationWindow();
                 }
             }
             if (KeyCommand.TOGGLE_MICROPHONE.matches(keycode)) {
-                HeadUpDisplay.getInstance().toggleMicrophone();
+                Chati.CHATI.getHeadUpDisplay().toggleMicrophone();
             }
             if (KeyCommand.TOGGLE_SOUND.matches(keycode)) {
-                HeadUpDisplay.getInstance().toggleSound();
+                Chati.CHATI.getHeadUpDisplay().toggleSound();
             }
             if (KeyCommand.OPEN_USER_MENU.matches(keycode)) {
-                if (HeadUpDisplay.getInstance().isUserMenuOpen()) {
-                    HeadUpDisplay.getInstance().closeCurrentMenu();
+                if (Chati.CHATI.getHeadUpDisplay().isUserMenuOpen()) {
+                    Chati.CHATI.getHeadUpDisplay().closeCurrentMenu();
                 } else {
-                    HeadUpDisplay.getInstance().openUserMenu();
+                    Chati.CHATI.getHeadUpDisplay().openUserMenu();
                 }
             }
             if (KeyCommand.OPEN_NOTIFICATION_MENU.matches(keycode)) {
-                if (HeadUpDisplay.getInstance().isNotificationMenuOpen()) {
-                    HeadUpDisplay.getInstance().closeCurrentMenu();
+                if (Chati.CHATI.getHeadUpDisplay().isNotificationMenuOpen()) {
+                    Chati.CHATI.getHeadUpDisplay().closeCurrentMenu();
                 } else {
-                    HeadUpDisplay.getInstance().openNotificationMenu();
+                    Chati.CHATI.getHeadUpDisplay().openNotificationMenu();
                 }
             }
             if (KeyCommand.OPEN_SETTINGS_MENU.matches(keycode)) {
-                if (HeadUpDisplay.getInstance().isSettingsMenuOpen()) {
-                    HeadUpDisplay.getInstance().closeCurrentMenu();
+                if (Chati.CHATI.getHeadUpDisplay().isSettingsMenuOpen()) {
+                    Chati.CHATI.getHeadUpDisplay().closeCurrentMenu();
                 } else {
-                    HeadUpDisplay.getInstance().openSettingsMenu();
+                    Chati.CHATI.getHeadUpDisplay().openSettingsMenu();
                 }
             }
         }
@@ -72,10 +72,10 @@ public class ChatiStage extends Stage {
             setKeyboardFocus(null);
             if (!openWindows.isEmpty()) {
                 openWindows.peek().close();
-            } else if (HeadUpDisplay.getInstance().isChatOpen()) {
-                HeadUpDisplay.getInstance().hideChatWindow();
+            } else if (Chati.CHATI.getHeadUpDisplay().isChatOpen()) {
+                Chati.CHATI.getHeadUpDisplay().hideChatWindow();
             } else {
-                HeadUpDisplay.getInstance().openSettingsMenu();
+                Chati.CHATI.getHeadUpDisplay().openSettingsMenu();
             }
         }
         return super.keyDown(keycode);
@@ -83,8 +83,8 @@ public class ChatiStage extends Stage {
 
     @Override
     public boolean touchDown(final int screenX, final int screenY, final int pointer, final int button) {
-        if (HeadUpDisplay.getInstance().isChatOpen()) {
-            ChatWindow chatWindow = HeadUpDisplay.getInstance().getChatWindow();
+        if (Chati.CHATI.getHeadUpDisplay().isChatOpen()) {
+            ChatWindow chatWindow = Chati.CHATI.getHeadUpDisplay().getChatWindow();
             if (screenX < chatWindow.getX() || screenX > chatWindow.getX() + chatWindow.getWidth()
                     || Gdx.graphics.getHeight() - screenY < chatWindow.getY()
                     || Gdx.graphics.getHeight() - screenY > chatWindow.getY() + chatWindow.getHeight()) {

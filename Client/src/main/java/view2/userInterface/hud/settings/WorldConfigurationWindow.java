@@ -75,7 +75,6 @@ public class WorldConfigurationWindow extends ChatiWindow {
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 alwaysSprintCheckBox.setChecked(ChatiPreferences.DEFAULT_ALWAYS_SPRINTING);
                 showNameCheckBox.setChecked(ChatiPreferences.DEFAULT_SHOW_NAMES_IN_WORLD);
-                showMessage("window.settings.restored");
             }
         });
 

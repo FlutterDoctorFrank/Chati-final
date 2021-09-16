@@ -63,6 +63,5 @@ public class ProfileSettingsTable extends MenuTable {
 
     @Override
     public void resetTextFields() {
-
     }
 }

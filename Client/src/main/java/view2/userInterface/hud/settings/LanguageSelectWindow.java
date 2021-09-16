@@ -12,7 +12,6 @@ import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiSelectBox;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiWindow;
-import view2.userInterface.hud.HeadUpDisplay;
 import java.util.Locale;
 
 /**
@@ -39,9 +38,7 @@ public class LanguageSelectWindow extends ChatiWindow {
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 Localization.getInstance().load(languageSelectBox.getSelected());
                 Chati.CHATI.getPreferences().setLanguage(languageSelectBox.getSelected());
-                Chati.CHATI.getMenuScreen().translate();
-                Chati.CHATI.getWorldScreen().translate();
-                HeadUpDisplay.getInstance().translate();
+                Chati.CHATI.translate();
                 close();
             }
         });

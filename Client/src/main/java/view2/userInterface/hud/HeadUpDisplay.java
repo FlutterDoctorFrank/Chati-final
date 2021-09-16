@@ -51,7 +51,7 @@ public class HeadUpDisplay extends Table implements Translatable {
     /**
      * Erzeugt eine neue Instanz des HeadUpDisplay.
      */
-    private HeadUpDisplay() {
+    public HeadUpDisplay() {
         this.chatWindow = new ChatWindow();
 
         userListButton = new ChatiImageButton(Chati.CHATI.getDrawable("user_menu_closed"),
@@ -184,7 +184,7 @@ public class HeadUpDisplay extends Table implements Translatable {
 
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged() || Chati.CHATI.isRoomChanged()) {
             if (internUser != null && internUserDisplay == null) {
-                internUserDisplay = new InternUserDisplay(internUser);
+                internUserDisplay = new InternUserDisplay();
                 addActor(internUserDisplay);
             } else if (internUser == null && internUserDisplay != null) {
                 internUserDisplay.remove();
@@ -420,17 +420,6 @@ public class HeadUpDisplay extends Table implements Translatable {
      */
     public @NotNull ChatWindow getChatWindow() {
         return chatWindow;
-    }
-
-    /**
-     * Das kommt weg, nicht ins Entwurfsdokument übernehmen.
-     * @return // TODO Wird durch die Lokalisierung momentan benötigt, außer es gibt eine andere Möglichkeit an die HUD ranzukommen.
-     */
-    public static @NotNull HeadUpDisplay getInstance() {
-        if (headUpDisplay == null) {
-            headUpDisplay = new HeadUpDisplay();
-        }
-        return headUpDisplay;
     }
 
     @Override

@@ -31,8 +31,8 @@ public class InternUserDisplay extends Table {
     /**
      * Erzeugt eine neue Instanz des InternUserDisplay.
      */
-    public InternUserDisplay(@NotNull final IInternUserView internUser) {
-        UserInfoContainer userInfoContainer = new UserInfoContainer(internUser);
+    public InternUserDisplay() {
+        UserInfoContainer userInfoContainer = new UserInfoContainer(Chati.CHATI.getInternUser());
 
         TextButton statusButton = new TextButton("", Chati.CHATI.getSkin());
         statusButton.setDisabled(false);

@@ -126,7 +126,6 @@ public class DeleteAccountTable extends MenuTable {
 
         @Override
         public void resetTextFields() {
-
         }
     }
 }
