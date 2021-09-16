@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -72,7 +71,7 @@ public class NotificationListEntry extends Table implements Translatable, Compar
                 if (!notification.isRead()) {
                     Chati.CHATI.send(ServerSender.SendAction.NOTIFICATION_READ, notification.getNotificationId());
                 }
-                notificationTextWindow = new NotificationTextWindow();
+                notificationTextWindow = new NotificationTextWindow(notification);
                 notificationTextWindow.open();
             }
         });
@@ -165,11 +164,16 @@ public class NotificationListEntry extends Table implements Translatable, Compar
         private static final float WINDOW_WIDTH = 750;
         private static final float WINDOW_HEIGHT = 400;
 
+        private final INotificationView notification;
+        private final ChatiImageButton acceptButton;
+        private final ChatiImageButton declineButton;
+
         /**
          * Erzeugt eine neue Instanz des NotificationTextWindow.
          */
-        public NotificationTextWindow() {
+        public NotificationTextWindow(@NotNull final INotificationView notification) {
             super(notification.getType().getMessageKey());
+            this.notification = notification;
 
             ChatiLabel dateLabel = new ChatiLabel("pattern.notification.time", Timestamp.valueOf(notification.getTimestamp()));
             ChatiLabel textLabel = new ChatiLabel(notification.getMessageBundle());
@@ -184,10 +188,11 @@ public class NotificationListEntry extends Table implements Translatable, Compar
                 }
             });
 
-            ImageButton acceptButton;
             if (notification.getType() != NotificationType.INFORMATION
                     && !notification.isAccepted() && !notification.isDeclined()) {
-                acceptButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_accept"));
+                acceptButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_accept"),
+                        Chati.CHATI.getDrawable("notification_action_accept"),
+                        Chati.CHATI.getDrawable("notification_action_accept_disabled"));
                 acceptButton.addListener(new ChatiTooltip("hud.tooltip.accept"));
             } else {
                 acceptButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_accept_disabled"));
@@ -201,10 +206,11 @@ public class NotificationListEntry extends Table implements Translatable, Compar
                 }
             });
 
-            ImageButton declineButton;
             if (notification.getType() != NotificationType.INFORMATION
                     && !notification.isAccepted() && !notification.isDeclined()) {
-                declineButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_decline"));
+                declineButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_decline"),
+                        Chati.CHATI.getDrawable("notification_action_decline"),
+                        Chati.CHATI.getDrawable("notification_action_decline_disabled"));
                 declineButton.addListener(new ChatiTooltip("hud.tooltip.decline"));
             } else {
                 declineButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_decline_disabled"));
@@ -218,7 +224,7 @@ public class NotificationListEntry extends Table implements Translatable, Compar
                 }
             });
 
-            ImageButton deleteButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_delete"));
+            ChatiImageButton deleteButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_delete"));
             deleteButton.addListener(new ChatiTooltip("hud.tooltip.delete"));
             deleteButton.addListener(new ClickListener() {
                 @Override
@@ -239,7 +245,7 @@ public class NotificationListEntry extends Table implements Translatable, Compar
             container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
             dateLabel.setAlignment(Align.right, Align.right);
             container.add(dateLabel).spaceBottom(SPACING / 2).row();
-            textLabel.setAlignment(Align.center, Align.center);
+            textLabel.setAlignment(Align.left, Align.left);
             container.add(textLabel).row();
             Table buttonContainer = new Table();
             buttonContainer.defaults().bottom().right().size(BUTTON_SIZE).space(SPACING);
@@ -253,6 +259,18 @@ public class NotificationListEntry extends Table implements Translatable, Compar
             translates.add(textLabel);
             translates.add(okButton);
             translates.trimToSize();
+        }
+
+        @Override
+        public void act(final float delta) {
+            if (Chati.CHATI.isUserNotificationChanged()) {
+                if (notification.isAccepted() || notification.isDeclined()) {
+                    acceptButton.setDisabled(true);
+                    acceptButton.setTouchable(Touchable.disabled);
+                    declineButton.setDisabled(true);
+                    declineButton.setTouchable(Touchable.disabled);
+                }
+            }
         }
     }
 

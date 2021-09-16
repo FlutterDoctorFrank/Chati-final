@@ -60,6 +60,17 @@ public class ChatiImageButton extends ImageButton {
 
     /**
      * Erzeugt eine neue Instanz eines ChatiImageButton.
+     * @param imageUnchecked Im nicht ausgewählten Zustand anzuzeigendes Bild.
+     * @param imageChecked Im ausgewählten Zustand anzuzeigendes Bild.
+     * @param imageDisabled Im deaktivierten Zustand anzuzeigendes Bild.
+     */
+    public ChatiImageButton(@NotNull final Drawable imageUnchecked, @NotNull final Drawable imageChecked,
+                            @NotNull final Drawable imageDisabled) {
+        this(imageUnchecked, imageChecked, imageDisabled, DEFAULT_IMAGE_SCALE_FACTOR);
+    }
+
+    /**
+     * Erzeugt eine neue Instanz eines ChatiImageButton.
      * @param imageUnchecked Im nicht ausgewählten und deaktivierten Zustand anzuzeigendes Bild.
      * @param imageChecked Im ausgewählten Zustand anzuzeigendes Bild.
      */
