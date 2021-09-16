@@ -6,8 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.Localization;
-import view2.Localization.Translatable;
+import view2.ChatiLocalization;
+import view2.ChatiLocalization.Translatable;
 import java.util.ArrayList;
 
 /**
@@ -27,7 +27,7 @@ public abstract class ChatiWindow extends Window implements Translatable {
      * @param titleKey Kennung des anzuzeigenden Titels.
      */
     protected ChatiWindow(@NotNull final String titleKey) {
-        super(!titleKey.isBlank() ? Localization.translate(titleKey) : "", Chati.CHATI.getSkin());
+        super(!titleKey.isBlank() ? Chati.CHATI.getLocalization().translate(titleKey) : "", Chati.CHATI.getSkin());
         this.translates = new ArrayList<>();
         this.titleKey = titleKey;
 
@@ -64,13 +64,13 @@ public abstract class ChatiWindow extends Window implements Translatable {
      */
     public void showMessage(@NotNull final String messageKey) {
         if (infoLabel != null) {
-            infoLabel.setText(Localization.translate(messageKey));
+            infoLabel.setText(Chati.CHATI.getLocalization().translate(messageKey));
         }
     }
 
     @Override
     public void translate() {
-        getTitleLabel().setText(!titleKey.isBlank() ? Localization.translate(titleKey) : "");
+        getTitleLabel().setText(!titleKey.isBlank() ? Chati.CHATI.getLocalization().translate(titleKey) : "");
         translates.forEach(Translatable::translate);
     }
 }

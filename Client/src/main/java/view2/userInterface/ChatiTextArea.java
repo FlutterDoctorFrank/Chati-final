@@ -5,8 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.Localization;
-import view2.Localization.Translatable;
+import view2.ChatiLocalization;
+import view2.ChatiLocalization.Translatable;
 
 /**
  * Eine Klasse, welche die in der Anwendung verwendeten TextAreas repräsentiert.
@@ -61,6 +61,6 @@ public class ChatiTextArea extends TextArea implements Translatable {
 
     @Override
     public void translate() {
-        setMessageText(Localization.translate(messageTextKey));
+        setMessageText(Chati.CHATI.getLocalization().translate(messageTextKey));
     }
 }

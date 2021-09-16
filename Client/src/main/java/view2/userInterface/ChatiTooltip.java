@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view2.Chati;
-import view2.Localization;
+import view2.ChatiLocalization;
 
 /**
  * Eine Klasse, welche die in der Anwendung verwendeten TextTooltips repräsentiert.
@@ -33,7 +33,7 @@ public class ChatiTooltip extends TextTooltip {
     @Override
     public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
                       @Nullable final Actor fromActor) {
-        super.getActor().setText(Localization.translate(tooltipKey));
+        super.getActor().setText(Chati.CHATI.getLocalization().translate(tooltipKey));
         super.enter(event, x, y, pointer, fromActor);
     }
 

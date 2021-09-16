@@ -13,33 +13,32 @@ import java.util.logging.Logger;
  * Eine Klasse, die die Sprache der Anwendung verwaltet und für die Übersetzung und Formatierung
  * von Nachrichten zuständig ist.
  */
-public class Localization {
+public class ChatiLocalization {
 
     public static final Locale[] AVAILABLE_LOCALES = new Locale[]{Locale.GERMAN, Locale.ENGLISH};
 
     private static final Logger LOGGER = Logger.getLogger("chati.localization");
     private static final String BASE = "localizations/localization";
-    private static Localization instance;
 
     private final FileHandle handle;
     private I18NBundle bundle;
 
-    private Localization() {
+    public ChatiLocalization() {
         this.handle = Gdx.files.internal(BASE);
 
         I18NBundle.setExceptionOnMissingKey(true);
         I18NBundle.setSimpleFormatter(false);
 
-        instance = this;
+        this.load();
     }
 
     /**
      * Lädt die Nachrichten, die in die angegebene Sprache übersetzt sind.
      * Falls keine Übersetzung in die angegebene Sprache gefunden wird, so wird die Standardsprache der Anwendung
      * geladen.
-     * @param locale Die Sprache die geladen werden soll.
      */
-    public void load(@NotNull final Locale locale) {
+    public void load() {
+        Locale locale = Chati.CHATI.getPreferences().getLanguage();
         try {
             this.bundle = I18NBundle.createBundle(this.handle, locale);
 
@@ -49,8 +48,8 @@ public class Localization {
                 LOGGER.warning("Unable to find resource bundle for language: " + locale);
                 LOGGER.info("Loaded fallback resource bundle for language: " + this.bundle.getLocale());
             }
-        } catch (MissingResourceException ex) {
-            throw new IllegalStateException("Resource bundle " + this.handle.name() + " not available", ex);
+        } catch (MissingResourceException e) {
+            throw new IllegalStateException("Resource bundle " + this.handle.name() + " not available", e);
         }
 
         LOGGER.info(String.format("Locale has been changed. Using locale %s", this.bundle.getLocale()));
@@ -60,12 +59,8 @@ public class Localization {
      * Gibt die aktuelle Sprache der Anwendung zurück.
      * @return die aktuell ausgewählte Sprache.
      */
-    public static @NotNull Locale locale() {
-        if (instance == null) {
-            throw new IllegalStateException("Localization is not initialized");
-        }
-
-        return instance.bundle.getLocale();
+    public @NotNull Locale getLocale() {
+        return bundle.getLocale();
     }
 
     /**
@@ -73,17 +68,13 @@ public class Localization {
      * @param key Der Nachrichten-Schlüssel.
      * @return Die übersetzte Nachricht.
      */
-    public static @NotNull String translate(@NotNull final String key) {
-        if (instance == null) {
-            throw new IllegalStateException("Localization is not initialized");
-        }
-
+    public @NotNull String translate(@NotNull final String key) {
         try {
-            return instance.bundle.get(key);
-        } catch (MissingResourceException ex) {
-            LOGGER.log(Level.WARNING, String.format("Missing translation key '%s' in resource bundles", ex.getKey()), ex);
+            return bundle.get(key);
+        } catch (MissingResourceException e) {
+            LOGGER.log(Level.WARNING, String.format("Missing translation key '%s' in resource bundles", e.getKey()), e);
 
-            return "???" + ex.getKey() + "???";
+            return "???" + e.getKey() + "???";
         }
     }
 
@@ -93,34 +84,18 @@ public class Localization {
      * @param arguments Die Argumente zum Formatieren der Nachricht.
      * @return Die übersetzte und formatierte Nachricht.
      */
-    public static @NotNull String format(@NotNull final String key, @NotNull final Object... arguments) {
-        if (instance == null) {
-            throw new IllegalStateException("Localization is not initialized");
-        }
-
+    public @NotNull String format(@NotNull final String key, @NotNull final Object... arguments) {
         if (arguments.length > 0) {
             try {
-                return instance.bundle.format(key, arguments);
-            } catch (MissingResourceException ex) {
-                LOGGER.log(Level.WARNING, String.format("Missing translation key '%s' in resource bundles", ex.getKey()), ex);
+                return bundle.format(key, arguments);
+            } catch (MissingResourceException e) {
+                LOGGER.log(Level.WARNING, String.format("Missing translation key '%s' in resource bundles", e.getKey()), e);
 
-                return "???" + ex.getKey() + "???";
+                return "???" + e.getKey() + "???";
             }
         }
 
         return translate(key);
-    }
-
-    /**
-     * Gibt die Instanz der Localization Klasse zurück.
-     * @return die Localization Instanz.
-     */
-    public static @NotNull Localization getInstance() {
-        if (instance == null) {
-            return instance = new Localization();
-        }
-
-        return instance;
     }
 
     /**

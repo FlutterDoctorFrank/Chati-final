@@ -3,8 +3,8 @@ package view2.userInterface;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.Localization;
-import view2.Localization.Translatable;
+import view2.ChatiLocalization;
+import view2.ChatiLocalization.Translatable;
 
 /**
  * Eine Klasse, welche die in der Anwendung verwendeten TextFields repräsentiert.
@@ -58,6 +58,6 @@ public class ChatiTextField extends TextField implements Translatable {
 
     @Override
     public void translate() {
-        setMessageText(Localization.translate(messageTextKey));
+        setMessageText(Chati.CHATI.getLocalization().translate(messageTextKey));
     }
 }

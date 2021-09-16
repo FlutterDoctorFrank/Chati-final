@@ -27,15 +27,12 @@ import view2.userInterface.menu.LoginTable;
 import view2.userInterface.menu.StartTable;
 import view2.world.WorldScreen;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Eine Klasse, welche die für die gesamte View relevanten Komponenten beinhaltet und deren Zusammenspiel koordiniert.
  */
-public class Chati extends Game implements ViewControllerInterface, IModelObserver, Localization.Translatable {
+public class Chati extends Game implements ViewControllerInterface, IModelObserver, ChatiLocalization.Translatable {
 
     public static Chati CHATI;
 
@@ -46,6 +43,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private ServerSender serverSender;
     private ChatiAssetManager assetManager;
     private ChatiPreferences preferences;
+    private ChatiLocalization localization;
     private AudioManager audioManager;
     private SpriteBatch spriteBatch;
     private HeadUpDisplay headUpDisplay;
@@ -100,9 +98,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public void create() {
         this.assetManager = new ChatiAssetManager();
         this.preferences = new ChatiPreferences();
+        this.localization = new ChatiLocalization();
         this.audioManager = new AudioManager();
         this.spriteBatch = new SpriteBatch();
-        Localization.getInstance().load(preferences.getLanguage());
         this.headUpDisplay = new HeadUpDisplay();
         this.menuScreen = new MenuScreen();
         this.worldScreen = new WorldScreen();
@@ -230,6 +228,14 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      */
     public @NotNull ChatiPreferences getPreferences() {
         return preferences;
+    }
+
+    /**
+     * Gibt die Instanz der Lokalisierung zurück.
+     * @return Lokalisierung
+     */
+    public @NotNull ChatiLocalization getLocalization() {
+        return localization;
     }
 
     /**
@@ -460,6 +466,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void translate() {
+        localization.load();
         menuScreen.translate();
         worldScreen.translate();
         headUpDisplay.translate();

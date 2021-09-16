@@ -15,7 +15,7 @@ import model.user.IInternUserView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view2.Chati;
-import view2.Localization;
+import view2.ChatiLocalization;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.ChatiLabel;
 import java.util.Arrays;
@@ -210,7 +210,7 @@ public class MusicStreamerWindow extends InteractableWindow {
     @Override
     public void receiveResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (!success && messageBundle != null) {
-            infoLabel.setText(Localization.format(messageBundle.getMessageKey(), messageBundle.getArguments()));
+            infoLabel.setText(Chati.CHATI.getLocalization().format(messageBundle.getMessageKey(), messageBundle.getArguments()));
         }
     }
 

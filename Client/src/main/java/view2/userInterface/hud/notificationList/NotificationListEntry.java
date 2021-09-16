@@ -17,7 +17,7 @@ import model.notification.NotificationAction;
 import model.notification.NotificationType;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.Localization.Translatable;
+import view2.ChatiLocalization.Translatable;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiTextButton;

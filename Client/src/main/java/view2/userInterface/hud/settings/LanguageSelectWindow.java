@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.Localization;
+import view2.ChatiLocalization;
 import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiSelectBox;
 import view2.userInterface.ChatiTextButton;
@@ -29,14 +29,15 @@ public class LanguageSelectWindow extends ChatiWindow {
         super("window.title.select-language");
 
         ChatiLabel infoLabel = new ChatiLabel("window.entry.select-language");
-        ChatiSelectBox<Locale> languageSelectBox = new ChatiSelectBox<>(locale -> locale.getDisplayLanguage(Localization.locale()));
-        languageSelectBox.setItems(Localization.AVAILABLE_LOCALES);
+        ChatiSelectBox<Locale> languageSelectBox = new ChatiSelectBox<>(locale ->
+                locale.getDisplayLanguage(Chati.CHATI.getLocalization().getLocale()));
+        languageSelectBox.setItems(ChatiLocalization.AVAILABLE_LOCALES);
+        languageSelectBox.setSelected(Chati.CHATI.getLocalization().getLocale());
 
         ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
         confirmButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                Localization.getInstance().load(languageSelectBox.getSelected());
                 Chati.CHATI.getPreferences().setLanguage(languageSelectBox.getSelected());
                 Chati.CHATI.translate();
                 close();

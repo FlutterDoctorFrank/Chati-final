@@ -4,8 +4,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import model.MessageBundle;
 import org.jetbrains.annotations.NotNull;
-import view2.Localization;
-import view2.Localization.Translatable;
+import view2.Chati;
+import view2.ChatiLocalization;
+import view2.ChatiLocalization.Translatable;
 import view2.userInterface.ChatiLabel;
 import java.util.ArrayList;
 
@@ -39,7 +40,7 @@ public abstract class MenuTable extends Table implements Translatable {
      * @param messageKey Kennung der anzuzeigenden Nachricht.
      */
     public void showMessage(@NotNull final String messageKey) {
-        infoLabel.setText(Localization.translate(messageKey));
+        infoLabel.setText(Chati.CHATI.getLocalization().translate(messageKey));
     }
 
     /**
@@ -47,7 +48,7 @@ public abstract class MenuTable extends Table implements Translatable {
      * @param messageBundle Kennung der anzuzeigenden Nachricht.
      */
     public void showMessage(@NotNull final MessageBundle messageBundle) {
-        infoLabel.setText(Localization.format(messageBundle.getMessageKey(), messageBundle.getArguments()));
+        infoLabel.setText(Chati.CHATI.getLocalization().format(messageBundle.getMessageKey(), messageBundle.getArguments()));
     }
 
     @Override

@@ -4,8 +4,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import model.Resource;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.Localization;
-import view2.Localization.Translatable;
+import view2.ChatiLocalization;
+import view2.ChatiLocalization.Translatable;
 
 /**
  * Eine Klasse, welche die in der Anwendung verwendeten TextButtons repräsentiert.
@@ -42,7 +42,7 @@ public class ChatiTextButton extends TextButton implements Translatable {
     @Override
     public void translate() {
         if (messageKey != null && !messageKey.isBlank()) {
-            setText(Localization.translate(messageKey));
+            setText(Chati.CHATI.getLocalization().translate(messageKey));
         }
     }
 }

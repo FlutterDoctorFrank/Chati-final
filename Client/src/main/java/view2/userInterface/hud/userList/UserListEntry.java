@@ -15,7 +15,7 @@ import model.user.AdministrativeAction;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.Localization;
+import view2.ChatiLocalization;
 import view2.Response;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.ChatiLabel;
@@ -349,7 +349,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
 
             if (!titleKey.isBlank()) {
-                getTitleLabel().setText(Localization.translate(titleKey));
+                getTitleLabel().setText(Chati.CHATI.getLocalization().translate(titleKey));
             }
 
             userMessageArea = new ChatiTextArea("menu.text-field.message", true);

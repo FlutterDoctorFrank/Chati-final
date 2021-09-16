@@ -16,7 +16,7 @@ import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.Localization.Translatable;
+import view2.ChatiLocalization.Translatable;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.hud.notificationList.NotificationListWindow;
 import view2.userInterface.hud.settings.SettingsWindow;

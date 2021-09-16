@@ -3,8 +3,7 @@ package view2;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
 import org.jetbrains.annotations.NotNull;
-import view2.Localization.Translatable;
-import view2.userInterface.hud.HeadUpDisplay;
+import view2.ChatiLocalization.Translatable;
 
 /**
  * Eine abstrakte Klasse, die einen Bildschirm der Anwendung repräsentiert.

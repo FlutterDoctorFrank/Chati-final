@@ -20,8 +20,8 @@ import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.KeyCommand;
-import view2.Localization;
-import view2.Localization.Translatable;
+import view2.ChatiLocalization;
+import view2.ChatiLocalization.Translatable;
 import view2.userInterface.ChatiTextArea;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTooltip;
@@ -60,7 +60,7 @@ public class ChatWindow extends Window implements Translatable {
      * Erzeugt eine neue Instanz des ChatWindow.
      */
     public ChatWindow() {
-        super(Localization.translate("window.title.chat"), Chati.CHATI.getSkin());
+        super(Chati.CHATI.getLocalization().translate("window.title.chat"), Chati.CHATI.getSkin());
         this.typingUsers = new HashMap<>();
 
         messageLabelContainer = new Table();
@@ -194,7 +194,7 @@ public class ChatWindow extends Window implements Translatable {
             default:
                 throw new IllegalArgumentException("No valid message type.");
         }
-        showMessage(timestamp, Localization.format("pattern.chat.message", username, userMessage), messageColor);
+        showMessage(timestamp, Chati.CHATI.getLocalization().format("pattern.chat.message", username, userMessage), messageColor);
     }
 
     /**
@@ -203,8 +203,8 @@ public class ChatWindow extends Window implements Translatable {
      * @param messageBundle Übersetzbare Nachricht zusammen mit ihren benötigten Argumenten.
      */
     public void showInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle) {
-        String message = Localization.format(messageBundle.getMessageKey(), messageBundle.getArguments());
-        showMessage(timestamp, Localization.format("pattern.chat.info", message), Color.RED);
+        String message = Chati.CHATI.getLocalization().format(messageBundle.getMessageKey(), messageBundle.getArguments());
+        showMessage(timestamp, Chati.CHATI.getLocalization().format("pattern.chat.info", message), Color.RED);
     }
 
     /**
@@ -256,7 +256,7 @@ public class ChatWindow extends Window implements Translatable {
      */
     private void showMessage(@NotNull final LocalDateTime timestamp, @NotNull final String message,
                              @NotNull final Color messageColor) {
-        String showMessage = Localization.format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
+        String showMessage = Chati.CHATI.getLocalization().format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
         Label showLabel = new Label(showMessage, Chati.CHATI.getSkin());
         showLabel.setColor(messageColor);
         showLabel.setWrap(true);
@@ -280,19 +280,19 @@ public class ChatWindow extends Window implements Translatable {
             typingUsersLabel.setText("");
         } else if (typingUsers.size() == 1) {
             try {
-                typingUsersLabel.setText(Localization.format("window.chat.typing-single", typingUsers.keySet().iterator().next().getUsername()));
+                typingUsersLabel.setText(Chati.CHATI.getLocalization().format("window.chat.typing-single", typingUsers.keySet().iterator().next().getUsername()));
             } catch (NoSuchElementException e) {
                 // Sollte niemals eintreffen.
                 e.printStackTrace();
             }
         } else {
-            typingUsersLabel.setText(Localization.format("window.chat.typing-multiple", typingUsers.size()));
+            typingUsersLabel.setText(Chati.CHATI.getLocalization().format("window.chat.typing-multiple", typingUsers.size()));
         }
     }
 
     @Override
     public void translate() {
-        getTitleLabel().setText(Localization.translate("window.title.chat"));
+        getTitleLabel().setText(Chati.CHATI.getLocalization().translate("window.title.chat"));
         typeMessageArea.translate();
         sendButton.translate();
     }
