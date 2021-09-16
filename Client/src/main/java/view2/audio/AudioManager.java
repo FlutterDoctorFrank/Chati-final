@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.KeyCommand;
 import java.time.LocalDateTime;
@@ -81,19 +82,27 @@ public class AudioManager implements Disposable {
     }
 
     /**
-     * Veranlasst das Abspielen erhaltener Audiodaten.
-     * @param senderId ID des sendenden Benutzers oder null, falls es sich um Daten eines Musikstreams handelt.
-     * @param timestamp Zeitstempel der Audiodaten.
-     * @param audioData Abzuspielende Daten.
+     * Veranlasst das Abspielen erhaltener Sprachdaten.
+     * @param senderId ID des sendenden Benutzers.
+     * @param timestamp Zeitstempel der Sprachdaten.
+     * @param voiceData Abzuspielende Sprachdaten.
      * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
      */
-    public void playAudioData(UUID senderId, LocalDateTime timestamp, byte[] audioData) throws UserNotFoundException {
+    public void playVoiceData(@NotNull final UUID senderId, @NotNull final LocalDateTime timestamp, final byte[] voiceData)
+            throws UserNotFoundException {
         if (audioConsumer != null && audioConsumer.isRunning()) {
-            if (senderId == null) {
-                audioConsumer.receiveMusicStream(timestamp, audioData);
-            } else {
-                audioConsumer.receiveVoiceData(senderId, timestamp, audioData);
-            }
+            audioConsumer.receiveVoiceData(senderId, timestamp, voiceData);
+        }
+    }
+
+    /**
+     * Veranlasst das Abspielen erhaltener Musikdaten.
+     * @param timestamp Zeitstempel der Sprachdaten.
+     * @param musicData Abzuspielende Musikdaten.
+     */
+    public void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData) {
+        if (audioConsumer != null && audioConsumer.isRunning()) {
+            audioConsumer.receiveMusicStream(timestamp, musicData);
         }
     }
 

@@ -198,11 +198,15 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                 return;
             }
 
-            try {
-                this.manager.getView().playAudioData(packet.getSenderId(), packet.getTimestamp(), packet.getAudioData());
-            } catch (UserNotFoundException ex) {
-                // Unbekannter Sender.
-                LOGGER.warning("Server tried to send voice message from unknown sender with id: " + ex.getUserID());
+            if (packet.getSenderId() == null) {
+                this.manager.getView().playMusicData(packet.getTimestamp(), packet.getAudioData());
+            } else {
+                try {
+                    this.manager.getView().playVoiceData(packet.getSenderId(), packet.getTimestamp(), packet.getAudioData());
+                } catch (UserNotFoundException ex) {
+                    // Unbekannter Sender.
+                    LOGGER.warning("Server tried to send voice message from unknown sender with id: " + ex.getUserID());
+                }
             }
         } else {
             this.logUnexpectedPacket(packet, "Can not receive audio message while user is not in a world");

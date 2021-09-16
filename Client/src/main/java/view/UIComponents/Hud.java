@@ -359,9 +359,15 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
-    public void playAudioData(UUID userID, @NotNull LocalDateTime timestamp, byte[] voiceData) {
+    public void playVoiceData(@NotNull UUID userId, @NotNull LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
 
     }
+
+    @Override
+    public void playMusicData(@NotNull LocalDateTime timestamp, byte[] musicData) {
+
+    }
+
 
     @Override
     public void openMenu(@NotNull ContextID contextId, @NotNull ContextMenu menu) {

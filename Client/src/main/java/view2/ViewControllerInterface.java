@@ -120,14 +120,20 @@ public interface ViewControllerInterface {
     void showInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle);
 
     /**
-     * Benachrichtigt die View, dass ein neues Audio-Paket erhalten wurde.
-     * @param userId ID des Benutzers, der dieses Paket gesendet hat oder null, falls das Paket einem laufenden
-     * Musikstream angehört.
+     * Benachrichtigt die View, dass ein neues Voice-Paket erhalten wurde.
+     * @param userId ID des Benutzers, der dieses Paket gesendet hat.
      * @param timestamp Zeitpunkt, an dem dieses Paket gesendet wurde.
-     * @param audioData Data Audiodaten, die abgespielt werden sollen.
+     * @param voiceData Sprachdaten, die abgespielt werden sollen.
      * @throws UserNotFoundException wenn kein Benutzer mit der ID gefunden werden konnte.
      */
-    void playAudioData(@Nullable final UUID userId, @NotNull final LocalDateTime timestamp, final byte[] audioData) throws UserNotFoundException;
+    void playVoiceData(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, final byte[] voiceData) throws UserNotFoundException;
+
+    /**
+     * Benachrichtigt die View, dass ein neues Musikdaten-Paket erhalten wurde.
+     * @param timestamp Zeitpunkt, an dem dieses Paket gesendet wurde.
+     * @param musicData Musikdaten, die abgespielt werden sollen.
+     */
+    void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData);
 
     /**
      * Benachrichtigt die View, dass das Menü eines Interaktionsobjekts geöffnet werden soll.
