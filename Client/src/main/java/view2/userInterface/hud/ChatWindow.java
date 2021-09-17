@@ -223,7 +223,7 @@ public class ChatWindow extends Window implements Translatable {
         historyScrollPane.layout();
         historyScrollPane.scrollTo(0, 0, 0, 0);
         Chati.CHATI.getScreen().getStage().setKeyboardFocus(typeMessageArea);
-        Chati.CHATI.getScreen().getStage().setScrollFocus(typeMessageArea);
+        Chati.CHATI.getScreen().getStage().setScrollFocus(historyScrollPane);
     }
 
     /**

@@ -144,7 +144,7 @@ public class AudioManager implements Disposable {
      * @param bigEndian Endianität der Daten.
      * @return Byte-Array mit den kopierten Daten.
      */
-    public static byte[] toByte(short[] shorts, boolean bigEndian) {
+    public static byte[] toByte(final short[] shorts, final boolean bigEndian) {
         byte[] bytes = new byte[shorts.length * 2];
         if (bigEndian) {
             for (int i = 0; i < shorts.length; i++) {
@@ -166,7 +166,7 @@ public class AudioManager implements Disposable {
      * @param bigEndian Endianität der Daten.
      * @return Short-Array mit den kopierten Daten.
      */
-    public static short[] toShort(byte[] bytes, boolean bigEndian) {
+    public static short[] toShort(final byte[] bytes, final boolean bigEndian) {
         short[] shorts = new short[bytes.length / 2];
         if (bigEndian) {
             for (int i = 0; i < shorts.length; i++) {

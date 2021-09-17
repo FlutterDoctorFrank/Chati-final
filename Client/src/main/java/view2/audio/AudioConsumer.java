@@ -5,15 +5,14 @@ import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.utils.Disposable;
 import model.exception.UserNotFoundException;
 import model.user.IUserView;
+import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -22,12 +21,9 @@ import java.util.stream.Collectors;
  */
 public class AudioConsumer implements Disposable {
 
-    private static final int MIN_PACKETS = 6;
-    private static final int MAX_PACKETS = 30;
-
     private final AudioDevice player;
-    private final Map<IUserView, ProducerQueue> voiceDataBuffer;
-    private final ProducerQueue musicStream;
+    private final Map<IUserView, VoiceChatUser> voiceDataBuffer;
+    private final MusicStream musicStream;
 
     private float musicVolume;
     private float voiceVolume;
@@ -39,7 +35,7 @@ public class AudioConsumer implements Disposable {
     public AudioConsumer() {
         this.player = Gdx.audio.newAudioDevice(AudioManager.SAMPLE_RATE, AudioManager.MONO);
         this.voiceDataBuffer = new ConcurrentHashMap<>();
-        this.musicStream = new ProducerQueue();
+        this.musicStream = new MusicStream();
     }
 
     /**
@@ -70,20 +66,20 @@ public class AudioConsumer implements Disposable {
 
                 int[] temp = new int[AudioManager.BLOCK_SIZE];
                 // Mische das oberste Element aller Warteschlangen pro Sender und des Musikstreams zusammen.
-                final Set<ProducerQueue.AudioDataBlock> blocks = voiceDataBuffer.values().stream()
-                        .filter(ProducerQueue::isReady)
-                        .map(ProducerQueue::getBlock)
+                Set<short[]> blocks = voiceDataBuffer.values().stream()
+                        .filter(VoiceChatUser::isReady)
+                        .map(VoiceChatUser::getAudioDataBlock)
                         .collect(Collectors.toSet());
                 for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
                     int j = i;
-                    blocks.forEach(block -> temp[j] += block.getAudioData()[j]);
+                    blocks.forEach(block -> temp[j] += block[j]);
                     temp[j] *= voiceVolume;
                 }
                 if (musicStream.isReady()) {
-                    ProducerQueue.AudioDataBlock musicBlock = musicStream.getBlock();
+                    short[] musicBlock = musicStream.getAudioDataBlock();
                     for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
-                        musicBlock.getAudioData()[i] *= musicVolume;
-                        temp[i] += musicBlock.getAudioData()[i];
+                        musicBlock[i] *= musicVolume;
+                        temp[i] += musicBlock[i];
                     }
                 }
                 for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
@@ -93,10 +89,10 @@ public class AudioConsumer implements Disposable {
                 if (Chati.CHATI.getPreferences().isSoundOn()) {
                     player.writeSamples(mixedData, 0, mixedData.length);
                 }
-                voiceDataBuffer.values().removeIf(Predicate.not(ProducerQueue::hasData));
+                voiceDataBuffer.values().removeIf(Predicate.not(VoiceChatUser::hasData));
             }
             this.voiceDataBuffer.clear();
-            this.musicStream.audioDataQueue.clear();
+            this.musicStream.clear();
         });
         mixAndPlaybackThread.setDaemon(true);
         mixAndPlaybackThread.start();
@@ -133,18 +129,19 @@ public class AudioConsumer implements Disposable {
      * @param voiceData Abzuspielende Sprachdaten.
      * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
      */
-    public void receiveVoiceData(UUID senderId, LocalDateTime timestamp, byte[] voiceData) throws UserNotFoundException {
+    public void receiveVoiceData(@NotNull final UUID senderId, @NotNull final LocalDateTime timestamp, final byte[] voiceData)
+            throws UserNotFoundException {
         if (!isRunning) {
             return;
         }
-        IUserView user = Chati.CHATI.getUserManager().getExternUserView(senderId);
+        IUserView sender = Chati.CHATI.getUserManager().getExternUserView(senderId);
         short[] receivedData = AudioManager.toShort(voiceData, true);
 
         synchronized (this) {
-            if (!voiceDataBuffer.containsKey(user)) {
-                voiceDataBuffer.put(user, new ProducerQueue(senderId, timestamp, receivedData));
+            if (!voiceDataBuffer.containsKey(sender)) {
+                voiceDataBuffer.put(sender, new VoiceChatUser(sender, timestamp, receivedData));
             } else {
-                voiceDataBuffer.get(user).addData(timestamp, receivedData);
+                voiceDataBuffer.get(sender).addAudioDataBlock(timestamp, receivedData);
             }
             notifyAll();
         }
@@ -155,14 +152,14 @@ public class AudioConsumer implements Disposable {
      * @param timestamp Zeitstempel der Musikstreamdaten.
      * @param musicData Abzuspielende Musikdaten.
      */
-    public void receiveMusicStream(LocalDateTime timestamp, byte[] musicData) {
+    public void receiveMusicStream(@NotNull final LocalDateTime timestamp, final byte[] musicData) {
         if (!isRunning) {
             return;
         }
         short[] receivedData = AudioManager.toShort(musicData, false);
 
         synchronized (this) {
-            musicStream.addData(timestamp, receivedData);
+            musicStream.addAudioDataBlock(timestamp, receivedData);
             notifyAll();
         }
     }
@@ -176,7 +173,7 @@ public class AudioConsumer implements Disposable {
      * Setzt die Gesamtlautstärke.
      * @param totalVolume Gesamtlautstärke
      */
-    public void setTotalVolume(float totalVolume) {
+    public void setTotalVolume(final float totalVolume) {
         player.setVolume(totalVolume);
     }
 
@@ -184,7 +181,7 @@ public class AudioConsumer implements Disposable {
      * Setzt die Lautstärke des Sprachchats.
      * @param voiceVolume Lautstärke des Sprachchats.
      */
-    public void setVoiceVolume(float voiceVolume) {
+    public void setVoiceVolume(final float voiceVolume) {
         this.voiceVolume = voiceVolume;
     }
 
@@ -192,121 +189,7 @@ public class AudioConsumer implements Disposable {
      * Setzt die Lautstärke der Musik.
      * @param musicVolume Lautstärke der Musik.
      */
-    public void setMusicVolume(float musicVolume) {
+    public void setMusicVolume(final float musicVolume) {
         this.musicVolume = musicVolume;
-    }
-
-    /**
-     * Eine Klasse, welche eine Warteschlange repräsentiert, in der die Daten eines Senders eingereiht werden.
-     */
-    private static class ProducerQueue {
-
-        private final UUID producerId;
-        private final Queue<AudioDataBlock> audioDataQueue;
-        private LocalDateTime lastTimeReceived;
-        private boolean ready;
-
-        /**
-         * Erzeugt eine neue Instanz eines ProducerQueue. Wird für das Einreihen von Daten eines Musikstreams verwendet.
-         */
-        public ProducerQueue() {
-            this.producerId = null;
-            this.audioDataQueue = new LinkedBlockingQueue<>();
-        }
-
-        /**
-         * Erzeugt eine neue Instanz eines ProducerQueue. Wird für das Einreihen von Sprachdaten verwendet.
-         * @param producerId ID des sendenden Benutzers.
-         * @param timestamp Zeitstempel der Sprachdaten.
-         * @param receivedData Erhaltene Sprachdaten.
-         */
-        public ProducerQueue(UUID producerId, LocalDateTime timestamp, short[] receivedData) {
-            this.producerId = producerId;
-            this.audioDataQueue = new LinkedBlockingQueue<>();
-            addData(timestamp, receivedData);
-        }
-
-        /**
-         * Reiht neue Daten in die Warteschlange ein.
-         * @param timestamp Zeitstempel der empfangenen Daten.
-         * @param audioData Abzuspielende Daten.
-         */
-        private void addData(LocalDateTime timestamp, short[] audioData) {
-            this.audioDataQueue.add(new AudioDataBlock(audioData));
-            this.lastTimeReceived = timestamp;
-
-            // Warteschlange ist erst bereit, wenn eine minimale Anzahl an Paketen vorhanden ist. Dies führt zu einer
-            // kleinen Verzögerung von MIN_PACKETS / SEND_RATE, sorgt aber dafür, dass man nicht abgehackt wird wenn
-            // ein Paket verspätet ankommt, da sich sonst evtl. die Warteschlange bis zum Eintreffen des verspäteten
-            // Pakets entleert. Ein Zurücksetzen des Ready-Parameters ist nicht nötig, da die Warteschlange aus der
-            // Hashmap entfernt wird, wenn in einer Iteration keine Daten vorhanden sind.
-            if (!ready && audioDataQueue.size() >= MIN_PACKETS) {
-                ready = true;
-            }
-        }
-
-        /**
-         * Gibt zurück, ob die Warteschlange Daten enthält.
-         * @return true, wenn sie Daten enthält, sonst false.
-         */
-        private boolean hasData() {
-            return !audioDataQueue.isEmpty();
-        }
-
-        /**
-         * Gibt zurück, ob die Warteschlange bereit zum Abspielen von Daten ist.
-         * @return true, wenn sie bereit ist, sonst false.
-         */
-        private boolean isReady() {
-            return hasData() && ready;
-        }
-
-        /**
-         * Gibt die ID des zu dieser Warteschlange gehörigen Benutzers zurück.
-         * @return ID des Benutzers.
-         */
-        public UUID getProducerId() {
-            return producerId;
-        }
-
-        /**
-         * Entfernt den aktuell abzuspielenden Block mit Audiodaten aus der Warteschlange und gibt diesen zurück.
-         * @return Block mit aktuell abzuspielenden Audiodaten.
-         */
-        private AudioDataBlock getBlock() {
-            return audioDataQueue.poll();
-        }
-
-        /**
-         * Gibt den Zeitstempel zurück, an dem in dieser Warteschlange das letzte mal Daten empfangen wurde.
-         * @return Zeitstempel der letzten empfangenen Daten.
-         */
-        private LocalDateTime getLastTimeReceived() {
-            return lastTimeReceived;
-        }
-
-        /**
-         * Eine Klasse, welche einen Block mit Audiodaten repräsentiert.
-         */
-        private static class AudioDataBlock {
-
-            private final short[] audioData;
-
-            /**
-             * Erzeugt eine neue Instanz des AudioDataBlock.
-             * @param audioData Enthaltene Audiodaten.
-             */
-            private AudioDataBlock(short[] audioData) {
-                this.audioData = audioData;
-            }
-
-            /**
-             * Gibt die enthaltenen Audiodaten zurück.
-             * @return Enthaltene Audiodaten.
-             */
-            private short[] getAudioData() {
-                return audioData;
-            }
-        }
     }
 }

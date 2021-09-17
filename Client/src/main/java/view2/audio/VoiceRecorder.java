@@ -120,7 +120,7 @@ public class VoiceRecorder implements Disposable {
      * Setzt das Gate zum Senden von Sprachdaten anhand der Mikrofonempfindlichkeit.
      * @param microphoneSensitivity Mikrofonempfindlichkeit
      */
-    public void setMicrophoneSensitivity(float microphoneSensitivity) {
+    public void setMicrophoneSensitivity(final float microphoneSensitivity) {
         sendGate = 4608 * microphoneSensitivity * microphoneSensitivity - 8448 * microphoneSensitivity + 4096;
     }
 }
