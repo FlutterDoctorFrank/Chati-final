@@ -3,6 +3,7 @@ package model.user.account;
 import controller.network.ClientSender;
 import model.context.Context;
 import model.context.global.GlobalContext;
+import model.database.PasswordEncryption;
 import model.role.Permission;
 import model.role.Role;
 import model.user.User;
@@ -19,7 +20,7 @@ import java.sql.Statement;
 import java.util.Map;
 import java.util.UUID;
 
-@Ignore
+
 public class UserAccountManagerTest {
 
     private UserAccountManager userAccountManager;
@@ -61,6 +62,8 @@ public class UserAccountManagerTest {
         deleteData("USER_RESERVATION");
         deleteData("ROLE_WITH_CONTEXT");
         deleteData("NOTIFICATION");
+
+        userAccountManager.load();
 
 
     }
@@ -150,7 +153,7 @@ public class UserAccountManagerTest {
             UUID real_id = real.getUserId();
 
             //Registieren erfolgreich
-            Assert.assertTrue(this.userAccountManager.isRegistered("registerTest"));
+            Assert.assertTrue(this.userAccountManager.isRegistered("deleteTest"));
             Assert.assertTrue(this.userAccountManager.isRegistered(real_id));
 
             //delete testen
@@ -180,7 +183,8 @@ public class UserAccountManagerTest {
             //changePassword testen
             this.userAccountManager.changePassword(real_id, "11111", "22222");
             //Pruefe ob in Datenbank geaendert
-            String real_new_psw = null;
+            String real_new_psw_salt = null;
+            String real_new_psw_hash = null;
             try{
                 Connection con = DriverManager.getConnection(dbURL);
                 Statement st = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -192,13 +196,14 @@ public class UserAccountManagerTest {
                 }
                 if (count == 1) {
                     res.first();
-                    real_new_psw = res.getString("USER_PSW");
+                    real_new_psw_salt = res.getString("PSW_SALT");
+                    real_new_psw_hash = res.getString("PSW_HASH");
                 }
                 con.close();
             } catch(SQLException e){
                 System.out.println(e);
             }
-            Assert.assertEquals("22222", real_new_psw);
+            Assert.assertTrue(PasswordEncryption.verify("22222", real_new_psw_salt, real_new_psw_hash));
 
 
         } catch (Exception e) {

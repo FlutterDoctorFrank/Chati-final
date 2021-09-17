@@ -89,7 +89,7 @@ public class WorldTest {
 
     @Test
     public void addPrivateRoomTest() {
-        Room test_room = new Room("test_room", this.test_world, ContextMap.PUBLIC_ROOM_MAP,
+        Room test_room = new Room("test_room", this.test_world, ContextMap.PRIVATE_ROOM_MAP,
                 "11111");
         this.test_world.addPrivateRoom(test_room);
         Assert.assertEquals(1, this.test_world.getPrivateRooms().size());
