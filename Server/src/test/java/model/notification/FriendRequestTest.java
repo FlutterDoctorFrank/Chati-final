@@ -1,8 +1,10 @@
 package model.notification;
 
+import controller.network.ClientSender;
 import model.exception.IllegalNotificationActionException;
 import model.exception.NotificationNotFoundException;
 import model.user.User;
+import model.user.UserTesten;
 import model.user.account.UserAccountManager;
 import org.junit.After;
 import org.junit.Assert;
@@ -54,43 +56,37 @@ public class FriendRequestTest {
         deleteData("NOTIFICATION");
         this.userAccountManager.load();
 
+    }
 
+    class TestClientSender implements ClientSender {
+        public void send(SendAction sendAction, Object object) {
 
+        }
     }
 
     @Test
     public void normalAcceptTest() {
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("frn_sender", "11111");
-            sender = UserAccountManager.getInstance().getUser("frn_sender");
-            sender.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+            sender = UserAccountManager.getInstance().loginUser("frn_sender", "11111", testClientSender);
+
             this.userAccountManager.registerUser("frn_receiver", "22222");
-            receiver = UserAccountManager.getInstance().getUser("frn_receiver");
-            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+            receiver = UserAccountManager.getInstance().loginUser("frn_receiver", "22222", testClientSender);
+
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);
             }
-            Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
-            Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
+            // noch eine Notification fuer Join
+            Assert.assertEquals(2, this.receiver.getGlobalNotifications().size());
+            Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
 
             this.test_fr.accept();
 
             Assert.assertTrue(this.receiver.getFriends().values().contains(this.sender));
             Assert.assertTrue(this.sender.getFriends().values().contains(this.receiver));
-            Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
+            Assert.assertEquals(2, this.sender.getGlobalNotifications().size());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,37 +98,28 @@ public class FriendRequestTest {
     // Falls die zwei Benutzer schon Freunde sind
     @Test
     public void uselessAcceptTest() {
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("fru_sender", "11111");
             sender = UserAccountManager.getInstance().getUser("fru_sender");
-            sender.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+
             this.userAccountManager.registerUser("fru_receiver", "22222");
             receiver = UserAccountManager.getInstance().getUser("fru_receiver");
-            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);
             }
-            Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
-            Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
+            // noch eine Notification fuer Join
+            Assert.assertEquals(2, this.receiver.getGlobalNotifications().size());
+            Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
 
             this.receiver.addFriend(this.sender);
             this.sender.addFriend(this.receiver);
             this.test_fr.accept();
 
-            Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
+            // keine Rueck-Notifikation
+            Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,31 +131,21 @@ public class FriendRequestTest {
     // If sender then ignores receiver
     @Test
     public void ignoredAcceptTest() {
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("fri_sender", "11111");
             sender = UserAccountManager.getInstance().getUser("fri_sender");
-            sender.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+
             this.userAccountManager.registerUser("fri_receiver", "22222");
             receiver = UserAccountManager.getInstance().getUser("fri_receiver");
-            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);
             }
-            Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
-            Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
+            // Join + FriendRequest
+            Assert.assertEquals(2, this.receiver.getGlobalNotifications().size());
+            Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
 
             this.sender.ignoreUser(this.receiver);
             this.test_fr.accept();
@@ -186,31 +163,21 @@ public class FriendRequestTest {
     // If sender doesn't exist
     @Test
     public void notExistSenderAcceptTest() {
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("frne_sender", "11111");
             sender = UserAccountManager.getInstance().getUser("frne_sender");
-            sender.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+
             this.userAccountManager.registerUser("frne_receiver", "22222");
             receiver = UserAccountManager.getInstance().getUser("frne_receiver");
-            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);
             }
-            Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
-            Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
+            // Join + FriendRequest
+            Assert.assertEquals(2, this.receiver.getGlobalNotifications().size());
+            Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
 
             UserAccountManager.getInstance().deleteUser(this.sender);
             this.test_fr.accept();
@@ -227,37 +194,27 @@ public class FriendRequestTest {
 
     @Test
     public void normalDeclineTest() {
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("frnd_sender", "11111");
             sender = UserAccountManager.getInstance().getUser("frnd_sender");
-            sender.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+
             this.userAccountManager.registerUser("frnd_receiver", "22222");
             receiver = UserAccountManager.getInstance().getUser("frnd_receiver");
-            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);
             }
-            Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
-            Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
+            // Join + FriendRequest
+            Assert.assertEquals(2, this.receiver.getGlobalNotifications().size());
+            Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
 
             this.test_fr.decline();
 
             Assert.assertFalse(this.receiver.getFriends().values().contains(this.sender));
             Assert.assertFalse(this.sender.getFriends().values().contains(this.receiver));
-            Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
+            Assert.assertEquals(2, this.sender.getGlobalNotifications().size());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -269,37 +226,27 @@ public class FriendRequestTest {
     // Falls die zwei Benutzer schon Freunde sind
     @Test
     public void uselessDeclineTest() {
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("frud_sender", "11111");
             sender = UserAccountManager.getInstance().getUser("frud_sender");
-            sender.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+
             this.userAccountManager.registerUser("frud_receiver", "22222");
             receiver = UserAccountManager.getInstance().getUser("frud_receiver");
-            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);
             }
-            Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
-            Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
+            // Join + FriendRequest
+            Assert.assertEquals(2, this.receiver.getGlobalNotifications().size());
+            Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
 
             this.receiver.addFriend(this.sender);
             this.sender.addFriend(this.receiver);
             this.test_fr.decline();
 
-            Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
+            Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
             Assert.assertTrue(this.receiver.getFriends().values().contains(this.sender));
             Assert.assertTrue(this.sender.getFriends().values().contains(this.receiver));
 
@@ -313,38 +260,28 @@ public class FriendRequestTest {
     // If sender doesn't exist
     @Test
     public void notExistSenderDeclineTest() {
+        TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("frned_sender", "11111");
             sender = UserAccountManager.getInstance().getUser("frned_sender");
-            sender.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+
             this.userAccountManager.registerUser("frned_receiver", "22222");
             receiver = UserAccountManager.getInstance().getUser("frned_receiver");
-            receiver.getGlobalNotifications().keySet().forEach(uuid -> {
-                try {
-                    sender.manageNotification(uuid, NotificationAction.DELETE);
-                } catch (NotificationNotFoundException | IllegalNotificationActionException e) {
-                    Assert.fail("Failed in delete initialized notifications");
-                }
-            });
+
             test_fr = new FriendRequest(receiver, "hallo", sender);
             if (!receiver.getGlobalNotifications().values().contains(test_fr)) {
                 receiver.addNotification(test_fr);
             }
-            Assert.assertEquals(1, this.receiver.getGlobalNotifications().size());
-            Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
+            // Join + FriendRequest
+            Assert.assertEquals(2, this.receiver.getGlobalNotifications().size());
+            Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
 
             UserAccountManager.getInstance().deleteUser(this.sender);
             this.test_fr.decline();
 
             Assert.assertFalse(this.receiver.getFriends().values().contains(this.sender));
             Assert.assertFalse(this.sender.getFriends().values().contains(this.receiver));
-            Assert.assertEquals(0, this.sender.getGlobalNotifications().size());
+            Assert.assertEquals(1, this.sender.getGlobalNotifications().size());
 
         } catch (Exception e) {
 
