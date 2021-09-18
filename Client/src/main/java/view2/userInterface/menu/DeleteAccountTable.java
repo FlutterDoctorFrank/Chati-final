@@ -103,7 +103,7 @@ public class DeleteAccountTable extends MenuTable {
             cancelButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                    Chati.CHATI.getMenuScreen().setMenuTable(new ChangePasswordTable());
+                    Chati.CHATI.getMenuScreen().setMenuTable(new DeleteAccountTable());
                 }
             });
 
