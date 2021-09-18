@@ -345,11 +345,13 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                         // Informationen über die befreundeten Benutzer.
                         for (final IUser friend : this.user.getFriends().values()) {
                             final UserInfo info = new UserInfo(friend.getUserId(), friend.getUsername());
+                            final IContextRole global = friend.getGlobalRoles();
 
                             info.setStatus(friend.getStatus());
                             info.addFlag(Flag.FRIEND);
 
                             this.send(new PacketOutUserInfo(null, PacketOutUserInfo.Action.UPDATE_USER, info));
+                            this.send(new PacketOutContextRole(global.getContext().getContextId(), friend.getUserId(), global.getRoles()));
                         }
 
                         // Informationen über die erhaltenen globalen Benachrichtigungen.

@@ -449,6 +449,7 @@ public class User implements IUser {
         // Ausschließlich der eigene Benutzer muss über den neuen Freund informiert werden.
         // Der andere Benutzer wird über seine eigene addFriend() Methode informiert.
         send(SendAction.USER_INFO, user);
+        send(SendAction.CONTEXT_ROLE, user.getGlobalRoles());
     }
 
     /**
