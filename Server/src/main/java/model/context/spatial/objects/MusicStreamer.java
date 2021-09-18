@@ -164,25 +164,11 @@ public class MusicStreamer extends Interactable {
                 loadBuffer();
                 break;
             case MENU_OPTION_LOOPING: // Ein abgespieltes Lied wird immer wiederholt.
-                if (args.length < 1) {
-                    throw new IllegalMenuActionException("", "object.arguments.to-few");
-                }
-                boolean isLooping = Boolean.parseBoolean(args[0]);
-                if (this.isLooping && isLooping || !this.isLooping && !isLooping) {
-                    throw new IllegalMenuActionException("", "object.music-player.illegal-looping");
-                }
-                this.isLooping = isLooping;
+                this.isLooping = !this.isLooping;
                 break;
             case MENU_OPTION_RANDOM: // Nach Ablauf eines Musikstücks wird ein zufälliges anderes abgespielt, sofern
                                      // nicht Looping eingestellt ist.
-                if (args.length < 1) {
-                    throw new IllegalMenuActionException("", "object.arguments.to-few");
-                }
-                boolean isRandom = Boolean.parseBoolean(args[0]);
-                if (this.isRandom && isRandom || !this.isRandom && !isRandom) {
-                    throw new IllegalMenuActionException("", "object.music-player.illegal-random");
-                }
-                this.isRandom = isRandom;
+                this.isRandom = !this.isRandom;
                 break;
             default:
                 throw new IllegalInteractionException("No valid menu option", user);
@@ -206,12 +192,7 @@ public class MusicStreamer extends Interactable {
             }
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
             byte[] inputData = audioInputStream.readAllBytes();
-            byte[] musicStreamData;
-            if (MONO) {
-                musicStreamData = toMono(inputData);
-            } else {
-                musicStreamData = inputData;
-            }
+            byte[] musicStreamData = MONO ? toMono(inputData) : inputData;
             musicStreamBuffer = ByteBuffer.allocate(musicStreamData.length);
             musicStreamBuffer.put(musicStreamData);
             musicStreamBuffer.position(0);
@@ -252,6 +233,13 @@ public class MusicStreamer extends Interactable {
                             }
                         } else {
                             isPaused = true;
+                        }
+                    } else {
+                        currentMusic = ContextMusic.values()[(currentMusic.ordinal() + 1) % ContextMusic.values().length];
+                        try {
+                            loadBuffer();
+                        } catch (IllegalMenuActionException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
