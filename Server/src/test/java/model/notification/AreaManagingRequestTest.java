@@ -19,6 +19,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 
 public class AreaManagingRequestTest {
 
@@ -113,6 +114,7 @@ public class AreaManagingRequestTest {
             LocalDateTime from = LocalDateTime.now();
             test_amr = new AreaManagingRequest(receiver, sender, test_world.getPublicRoom(), from,
                     from.plusDays(1));
+            receiver.addNotification(test_amr);
             Assert.assertEquals(sender, test_amr.getRequestingUser());
             Assert.assertEquals(test_world.getPublicRoom(), test_amr.getRequestedArea());
             Assert.assertEquals(from, test_amr.getFrom());
@@ -145,6 +147,7 @@ public class AreaManagingRequestTest {
             LocalDateTime from = LocalDateTime.now();
             test_amr = new AreaManagingRequest(receiver, sender, test_world.getPublicRoom(), from,
                     from.plusDays(1));
+            receiver.addNotification(test_amr);
             Assert.assertEquals(sender, test_amr.getRequestingUser());
             Assert.assertEquals(test_world.getPublicRoom(), test_amr.getRequestedArea());
             Assert.assertEquals(from, test_amr.getFrom());
@@ -179,6 +182,7 @@ public class AreaManagingRequestTest {
             LocalDateTime from = LocalDateTime.now();
             test_amr = new AreaManagingRequest(receiver, sender, test_world.getPublicRoom(), from,
                     from.plusDays(1));
+            receiver.addNotification(test_amr);
             Assert.assertEquals(sender, test_amr.getRequestingUser());
             Assert.assertEquals(test_world.getPublicRoom(), test_amr.getRequestedArea());
             Assert.assertEquals(from, test_amr.getFrom());
@@ -186,14 +190,23 @@ public class AreaManagingRequestTest {
 
             test_amr.accept();
             Assert.assertTrue(test_world.getPublicRoom().isReservedBy(sender));
-            //Assert.assertEquals(1, sender.getWorldNotifications().size());
+
+            /*
+            Iterator<INotification> iterator = sender.getWorldNotifications().values().iterator();
+            while(iterator.hasNext()) {
+                System.out.println(iterator.next().getNotificationType());
+            }
+            Assert.assertEquals(1, sender.getWorldNotifications().size());
+
+             */
+
 
             /*
             // Duplicate
             AreaManagingRequest dup_request = new AreaManagingRequest(receiver, sender, test_world.getPublicRoom(),
                     from, from.plusDays(1));
+            receiver.addNotification(dup_request);
             dup_request.accept();
-            System.out.println(test_world.getPublicRoom().);
             // keine Rueck-Notifikation fuer 2.Request
             Assert.assertEquals(1, sender.getWorldNotifications().size());
 
@@ -292,6 +305,8 @@ public class AreaManagingRequestTest {
 
             sender.joinWorld(this.test_world.getContextId());
             receiver.joinWorld(this.test_world.getContextId());
+            System.out.println(sender.getWorldNotifications().size());
+            System.out.println(receiver.getWorldNotifications().size());
 
             LocalDateTime from = LocalDateTime.now();
             test_amr = new AreaManagingRequest(receiver, sender, test_world.getPublicRoom(), from,
