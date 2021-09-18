@@ -90,6 +90,7 @@ public class AreaManagingRequest extends Notification {
             TextMessage infoMessage = new TextMessage("request.area-manage.not-permitted", requestedArea.getContextName(),
                     Permission.ASSIGN_AREA_MANAGER);
             owner.send(SendAction.MESSAGE, infoMessage);
+            return;
         }
         // Überprüfe, ob der anfragende Benutzer noch existiert.
         if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserId())) {
@@ -132,6 +133,7 @@ public class AreaManagingRequest extends Notification {
             TextMessage infoMessage = new TextMessage("request.area-manage.not-permitted", requestedArea.getContextName(),
                     Permission.ASSIGN_AREA_MANAGER);
             owner.send(SendAction.MESSAGE, infoMessage);
+            return;
         }
         // Überprüfe, ob der anfragende Benutzer noch existiert.
         if (!UserAccountManager.getInstance().isRegistered(requestingUser.getUserId())) {

@@ -9,10 +9,7 @@ import model.MessageBundle;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
-import model.context.spatial.AreaReservation;
-import model.context.spatial.ContextMap;
-import model.context.spatial.Room;
-import model.context.spatial.World;
+import model.context.spatial.*;
 import model.notification.AreaManagingRequest;
 import model.notification.FriendRequest;
 import model.notification.Notification;
@@ -30,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -481,18 +479,31 @@ public class UserAccountManagerDatabaseTest {
         Room test_area = null;
         LocalDateTime test_to = null;
         LocalDateTime test_from = null;
-        World test_world = null;
         TestClientSender clientSender = new TestClientSender();
         try {
-            UserAccountManager.getInstance().registerUser("test_reserver", "11111");
-            test_reserver = UserAccountManager.getInstance().loginUser("test_reserver", "11111",
-                    clientSender);
-
             UserAccountManager.getInstance().registerUser("area_owner", "22222");
             area_owner = UserAccountManager.getInstance().getUser("area_owner");
-            test_world = setTestWorld();
-            test_reserver.joinWorld(test_world.getContextId());
-            test_area = new Room("test_room", test_world, ContextMap.PUBLIC_ROOM_MAP, "11111");
+            UserAccountManager.getInstance().registerUser("test_reserver1", "11111");
+            test_reserver = UserAccountManager.getInstance().loginUser("test_reserver1", "11111",
+                    clientSender);
+
+            setTestWorld();
+            IWorld itest_world = null;
+            ContextID world_id = null;
+            Iterator<IWorld> iterator = GlobalContext.getInstance().getIWorlds().values().iterator();
+            while (iterator.hasNext()) {
+                IWorld world = iterator.next();
+                if (world.getContextName() == "test_world") {
+                    itest_world = world;
+                    world_id = world.getContextId();
+                    break;
+                }
+            }
+            Assert.assertNotNull(itest_world);
+            World test_world = GlobalContext.getInstance().getWorld(itest_world.getContextId());
+
+            test_reserver.joinWorld(itest_world.getContextId());
+            test_area = new Room("test_room", test_world, ContextMap.PRIVATE_ROOM_MAP, "11111");
             test_world.addPrivateRoom(test_area);
             test_from = LocalDateTime.now();
             test_to = test_from.plusDays(1);
@@ -501,12 +512,13 @@ public class UserAccountManagerDatabaseTest {
                     test_area, test_from, test_to);
             this.user_database.addNotification(area_owner, test_aremanage);
 
-            Map<UUID, User> real_users = this.database.getUsers();
-            User real = real_users.get(area_owner.getUserId());
-            real = UserAccountManager.getInstance().loginUser("area_owner", "22222",
+            UserAccountManager.getInstance().load();
+
+            // getUsers wird ausgefuehrt bei UserAccountManager.getInstance
+            User real = UserAccountManager.getInstance().loginUser("area_owner", "22222",
                     clientSender);
             real.joinWorld(test_world.getContextId());
-            Assert.assertEquals(0, real.getGlobalNotifications().size());
+            Assert.assertEquals(1, real.getGlobalNotifications().size());
 
         } catch (Exception e) {
             e.printStackTrace();
