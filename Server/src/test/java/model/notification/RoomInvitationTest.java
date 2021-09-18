@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.mock.graphics.MockGL20;
 import controller.network.ClientSender;
+import model.communication.CommunicationMedium;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
 import model.context.spatial.ContextMap;
@@ -99,6 +100,7 @@ public class RoomInvitationTest {
         }
     }
 
+    // Receiver nicht mehr in dieser Welt
     @Test(expected = IllegalStateException.class)
     public void falseAccept1() {
         TestClientSender testClientSender = new TestClientSender();
@@ -113,6 +115,8 @@ public class RoomInvitationTest {
                     "11111");
             test_room.build();
             this.test_world.addPrivateRoom(test_room);
+            Assert.assertTrue(test_room.canCommunicateWith(CommunicationMedium.TEXT));
+            Assert.assertTrue(test_room.canCommunicateWith(CommunicationMedium.VOICE));
             this.sender.addRole(test_room, Role.ROOM_OWNER);
             this.sender.teleport(test_room.getSpawnLocation());
 

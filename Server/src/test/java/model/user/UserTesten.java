@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.mock.graphics.MockGL20;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import controller.network.ClientSender;
+import model.communication.CommunicationMedium;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
 import model.context.spatial.*;
@@ -12,9 +13,9 @@ import model.database.Database;
 import model.database.IContextDatabase;
 import model.database.IUserAccountManagerDatabase;
 import model.database.IUserDatabase;
-import model.notification.INotification;
-import model.notification.NotificationAction;
-import model.notification.NotificationType;
+import model.exception.IllegalNotificationActionException;
+import model.exception.NotificationNotFoundException;
+import model.notification.*;
 import model.role.Role;
 import model.user.account.UserAccountManager;
 import org.junit.*;
@@ -83,6 +84,9 @@ public class UserTesten {
 
     @After
     public void tearDown() {
+        typeUsercount = 0;
+        chatcount = 0;
+        talkcount = 0;
         deleteData("USER_ACCOUNT");
         deleteData("WORLDS");
         deleteData("BAN");
@@ -127,7 +131,6 @@ public class UserTesten {
                 globalContext.createWorld(performer.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
             }
             ContextID newworld_id = globalContext.getIWorlds().keySet().iterator().next();
-            System.out.println(globalContext.getIWorlds().size());
             test_world = globalContext.getWorld(newworld_id);
         } catch (Exception e) {
             e.printStackTrace();
@@ -203,16 +206,100 @@ public class UserTesten {
 
     }
 
+    public int typeUsercount = 0;
+    public int chatcount = 0;
+    public int talkcount = 0;
+    class TypeClientSender implements ClientSender {
+        public void send(SendAction sendAction, Object object) {
+            if (sendAction == SendAction.TYPING) {
+                typeUsercount = 1;
+            } else if (sendAction == SendAction.MESSAGE) {
+                chatcount = 1;
+            } else if (sendAction == SendAction.AUDIO) {
+                talkcount = 1;
+            }
+        }
+    }
+
+    // Type/Chat/Talk koennen zusammen mit CommunicationHandler testen
+    // Noch Fehlerfall nicht geschrieben
+    @Test
+    public void typeTest() {
+        setTestWorld("fortype");
+        TypeClientSender typeClientSender = new TypeClientSender();
+        try {
+            this.userAccountManager.registerUser("typer", "11111");
+            user = UserAccountManager.getInstance().loginUser("typer", "11111", typeClientSender);
+            this.userAccountManager.registerUser("rrn_receiver", "22222");
+            User receiver = UserAccountManager.getInstance().loginUser("rrn_receiver", "22222",
+                    typeClientSender);
+            user.joinWorld(test_world.getContextId());
+            receiver.joinWorld(test_world.getContextId());
+            Assert.assertEquals(test_world.getPublicRoom().getSpawnLocation(), user.getLocation());
+            Assert.assertEquals(test_world.getPublicRoom().getSpawnLocation(), receiver.getLocation());
+            Assert.assertEquals(2, user.getCommunicableUsers().size());
+            Assert.assertTrue(user.getCommunicableUsers().containsValue(user));
+            Assert.assertTrue(user.getCommunicableUsers().containsValue(receiver));
+
+            user.type();
+            Assert.assertEquals(1, typeUsercount);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+    }
+
 
     @Test
     public void chatTest() {
+        setTestWorld("forchat");
+        TypeClientSender typeClientSender = new TypeClientSender();
+        try {
+            this.userAccountManager.registerUser("chater", "11111");
+            user = UserAccountManager.getInstance().loginUser("chater", "11111", typeClientSender);
+            user.joinWorld(test_world.getContextId());
+            Assert.assertEquals(test_world.getPublicRoom().getSpawnLocation(), user.getLocation());
 
+            user.chat("hallo");
+            Assert.assertEquals(1, chatcount);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
     }
 
 
     @Test
     public void talkTest() {
+        setTestWorld("fortalk");
+        TypeClientSender typeClientSender = new TypeClientSender();
+        try {
+            this.userAccountManager.registerUser("talker", "11111");
+            user = UserAccountManager.getInstance().loginUser("talker", "11111", typeClientSender);
+            this.userAccountManager.registerUser("listener", "11111");
+            User listener = UserAccountManager.getInstance().loginUser("listener", "11111",
+                    typeClientSender);
+            user.joinWorld(test_world.getContextId());
+            listener.joinWorld(test_world.getContextId());
+            Location newloc = new Location(test_world.getPublicRoom(), Direction.UP, 1300, 1000);
+            //System.out.println(newloc.getArea().getContextName());
+            user.move(Direction.UP, 1300, 1000, false);
+            listener.move(Direction.UP, 1300, 1000, false);
+            Assert.assertTrue(user.getLocation().getArea().canCommunicateWith(CommunicationMedium.VOICE));
+            Assert.assertTrue(listener.getLocation().getArea().canCommunicateWith(CommunicationMedium.VOICE));
 
+            byte a = 1;
+            byte b = 2;
+            byte[] voiceData = new byte[]{a, b};
+            user.talk(voiceData);
+            Assert.assertEquals(1, talkcount);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
     }
 
     @Test

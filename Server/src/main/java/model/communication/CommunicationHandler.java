@@ -37,11 +37,10 @@ public class CommunicationHandler {
         // Überprüfung, ob in dem Bereich des Benutzers Textnachrichten versendet werden können oder der sendende
         // Benutzer in dem Kontext stummgeschaltet ist.
         Area communicationContext = typingUser.getLocation().getArea();
-        if (!communicationContext.canCommunicateWith(CommunicationMedium.VOICE)
+        if (!communicationContext.canCommunicateWith(CommunicationMedium.TEXT)
                 || communicationContext.isMuted(typingUser)) {
             return;
         }
-
         // Ermittle die empfangsberechtigten Benutzer gemäß der Kommunikationsform, ohne den sendenden Benutzer.
         Map<UUID, User> receivers = typingUser.getCommunicableUsers();
         receivers.remove(typingUser.getUserId());
