@@ -75,7 +75,7 @@ public class Room extends Area implements IRoom {
      * übereinstimmt.
      */
     public boolean checkPassword(@NotNull final String password) {
-        return !(this.password == null) && this.password.equals(password);
+        return this.password != null && this.password.equals(password);
     }
 
     /**

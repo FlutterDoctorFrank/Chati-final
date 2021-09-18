@@ -96,9 +96,11 @@ public class World extends Area implements IWorld {
                         // Versenden der Benutzerinformationen.
                         user.send(SendAction.USER_INFO, receiver);
                         receiver.send(SendAction.USER_INFO, user);
-                        // Versenden der globalen Rollen.
+                        // Versenden der globalen und weltbezogenen Rollen.
                         user.send(SendAction.CONTEXT_ROLE, receiver.getGlobalRoles());
+                        user.send(SendAction.CONTEXT_ROLE, receiver.getWorldRoles());
                         receiver.send(SendAction.CONTEXT_ROLE, user.getGlobalRoles());
+                        receiver.send(SendAction.CONTEXT_ROLE, user.getWorldRoles());
                     });
 
             if (user.hasPermission(this, Permission.BAN_USER) || user.hasPermission(this, Permission.BAN_MODERATOR)) {

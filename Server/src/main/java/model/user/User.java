@@ -713,6 +713,26 @@ public class User implements IUser {
     }
 
     /**
+     * Gibt die Rollen des Benutzers innerhalb seiner aktuellen Welt zurück.
+     * @return Menge der Rollen in seiner aktuellen Welt.
+     * @throws IllegalStateException wenn sich der Benutzer in keiner Welt befindet.
+     */
+    public @NotNull ContextRole getWorldRoles() throws IllegalStateException {
+        // Prüfe, ob der Benutzer in einer Welt ist.
+        if (currentWorld == null) {
+            throw new IllegalStateException("User is not in a world.");
+        }
+
+        try {
+            return contextRoles.values().stream()
+                    .filter(contextRole -> contextRole.getContext().equals(currentWorld))
+                    .findFirst().orElseThrow();
+        } catch (NoSuchElementException e) {
+            return new ContextRole(this, currentWorld, new HashSet<>());
+        }
+    }
+
+    /**
      * Gibt die Rollen des Benutzers innerhalb seines aktuellen Raums und allen untergeordneten Kontexten zurück.
      * @return Menge der Rollen des Benutzers in seinem aktuellen Raum und allen untergeordneten Kontexten.
      * @throws IllegalStateException wenn sich der Benutzer in keinem Raum befindet.
