@@ -58,6 +58,10 @@ public interface IUser {
      */
     void move(@NotNull final Direction direction, final float posX, final float posY, final boolean isSprinting) throws IllegalPositionException;
 
+    /**
+     * Signalisiert, dass der Benutzer gerade am tippen ist.
+     * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
+     */
     void type() throws IllegalStateException;
 
     /**

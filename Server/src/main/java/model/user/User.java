@@ -701,6 +701,10 @@ public class User implements IUser {
         }
     }
 
+    /**
+     * Setzt die aktuelle Welt des Benutzers.
+     * @param world Die zu neue Welt des Benutzers oder null.
+     */
     public void setWorld(@Nullable final World world) {
         currentWorld = world;
     }
@@ -796,7 +800,7 @@ public class User implements IUser {
         return lastActivity;
     }
 
-    /*
+    /**
      * Sendet Pakete an alle relevanten Benutzer mit der aktualisierten Benutzerinformation.
      */
     public void updateUserInfo(final boolean includeSelf) {
@@ -846,6 +850,10 @@ public class User implements IUser {
         return Objects.hash(userId);
     }
 
+    /**
+     * Setzt den Status und den ClientSender des Benutzers.
+     * @param sender Der zu setzende ClientSender.
+     */
     public void login(@NotNull final ClientSender sender) {
         if (this.isOnline()) {
             throw new IllegalStateException("User is already logged in");
@@ -858,6 +866,9 @@ public class User implements IUser {
         updateLastActivity();
     }
 
+    /**
+     * Setzt Status und Welt des Benutzers zurück.
+     */
     public void logout() {
         if (!this.isOnline()) {
             throw new IllegalStateException("User is not logged in");
@@ -876,6 +887,12 @@ public class User implements IUser {
         updateLastLogoutTime();
     }
 
+    /**
+     * übergibt dem ClientSender ein Java-Objekt und eine Aktion. Dieser kann sich entsprechend der Aktion die Daten
+     * aus dem Java-Objekt ziehen.
+     * @param action Die zu sendende Aktion.
+     * @param object Das zu sendende Objekt.
+     */
     public void send(@NotNull final SendAction action, @NotNull final Object object) {
         if (this.isOnline()) {
             this.clientSender.send(action, object);
@@ -911,7 +928,7 @@ public class User implements IUser {
      * @param oldArea der alte Bereich des Benutzers.
      * @param newArea der neue Bereich des Benutzers.
      */
-    public void updateArea(@Nullable final Area oldArea, @Nullable final Area newArea) {
+    private void updateArea(@Nullable final Area oldArea, @Nullable final Area newArea) {
         if (newArea != null) {
             if (oldArea != null) {
                 Context lastCommonAncestor = oldArea.lastCommonAncestor(newArea);

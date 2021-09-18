@@ -1,8 +1,6 @@
 package model.context;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Objects;
 
 /**
@@ -16,6 +14,10 @@ public class ContextID {
         this.contextId = contextId;
     }
 
+    /**
+     * Gibt die String Repräsentation der ID zurück.
+     * @return die String Repräsentation.
+     */
     public @NotNull String getId() {
         return this.contextId;
     }

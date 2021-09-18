@@ -71,6 +71,10 @@ public class Location implements ILocation {
         this.posY = posY;
     }
 
+    /**
+     * Setzt die Richtung dieser Position.
+     * @param direction Zu setzende Richtung.
+     */
     public void setDirection(@NotNull final Direction direction) {
         this.direction = direction;
     }
