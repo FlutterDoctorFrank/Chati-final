@@ -86,6 +86,7 @@ public class World extends Area implements IWorld {
         if (!contains(user)) {
             user.setWorld(this);
             user.send(SendAction.WORLD_ACTION, this);
+            user.send(SendAction.CONTEXT_ROLE, user.getWorldRoles());
 
             super.addUser(user);
 
