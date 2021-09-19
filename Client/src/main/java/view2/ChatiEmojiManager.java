@@ -5,41 +5,33 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.StringBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 /**
  * Eine Klasse, durch welche das Verwenden von Emojis in der Anwendung ermöglicht wird.
- * Der Code in dieser Klasse basiert auf: https://github.com/DavidPDev/gdx-EmojiSupport
  */
 public class ChatiEmojiManager {
 
     private static final char START_CHAR = 0xB000; // Selten genutzter Character-Bereich
 
-    private final Map<Integer, Emoji> emojis;
+    private final Map<Character, Emoji> emojis;
 
     /**
      * Erzeugt eine neue Instanz des ChatiEmojiManager.
      */
     public ChatiEmojiManager() {
-        this.emojis = new HashMap<>();
+        this.emojis = new TreeMap<>();
 
         // Ermittle alle Emoji-Texturen und füge Emojis in einer Datenstruktur ein.
-        // Emojis sind im TexturAtlas nach dem Schema emoji_codePoint benannt, wobei codePoint dem Unicode-Codepoint
-        // entspricht.
         Array<TextureAtlas.AtlasRegion> atlasRegions = Chati.CHATI.getAtlas().getRegions();
         for (int i = 0; i < atlasRegions.size; i++) {
             String regionName = atlasRegions.get(i).name;
-            try {
-                if (regionName.matches("^emoji_.*")) {
-                    int codePoint = Integer.parseInt(regionName.split("_")[1], 16);
-                    emojis.put(codePoint, new Emoji(codePoint, (char) (START_CHAR + i), atlasRegions.get(i)));
-                }
-            }
-            catch (NumberFormatException e) {
-                throw new GdxRuntimeException("Invalid emoji (Not valid Hex code): " + atlasRegions.get(i).name, e);
+            if (regionName.matches("^emoji_.*")) {
+                char character = (char) (START_CHAR + i);
+                int unicode = Integer.parseInt(regionName.split("_")[1], 16);
+                emojis.put(character, new Emoji(character, unicode, atlasRegions.get(i)));
             }
         }
 
@@ -49,48 +41,16 @@ public class ChatiEmojiManager {
         addEmojisToFont(Chati.CHATI.getSkin().getFont("font-button"));
     }
 
-    /**
-     * Ersetzt Unicode-Codepoints durch Character von Emojis in einem übergebenen Text.
-     * @param text Text, in dem Codepoints durch Emojis ersetzt werden sollen.
-     * @return Text, in dem Codepoints durch Emojis ersetzt wurden.
-     */
-    public String insertEmojis(String text) {
-        if (text == null || text.isBlank()) {
-            return text;
-        }
-        StringBuilder stringBuilder = new StringBuilder();
-        int i = 0;
-        while (i < text.length()) {
-            char c = text.charAt(i);
-            boolean isSurrogate = (c >= '\uD800' && c <= '\uDFFF');
-            boolean isIgnorable = (c >= '\uFE00' && c <= '\uFE0F');
-            Emoji emoji = emojis.get(text.codePointAt(i));
-            if (emoji != null) {
-                stringBuilder.append(String.valueOf(emoji.getChar()));
-            } else if (!isSurrogate && !isIgnorable) {
-                stringBuilder.append(c);
-            }
-            i += isSurrogate ? 2 : 1;
-        }
-        return stringBuilder.toString();
-    }
-
-    /**
-     * Gibt den, beziehungsweise im Falle eines Surrogates die beiden Character zurück, die den Emoji des übergebenen
-     * Unicode-Codepoints repräsentieren.
-     * @param codePoint Unicode-Codepoint des zurückzugebenden Emojis.
-     * @return Der String mit den enthaltenen Charactern des Emojis.
-     */
-    public String getEmojiChar(int codePoint) {
-        return new StringBuilder().append(emojis.get(codePoint).getChar()).toString();
+    public boolean isEmoji(char character) {
+        return emojis.containsKey(character);
     }
 
     /**
      * Gibt alle in der Anwendung bekannten Emojis zurück.
      * @return Alle Emojis
      */
-    public Collection<Emoji> getEmojis() {
-        return Collections.unmodifiableCollection(emojis.values());
+    public Map<Character, Emoji> getEmojis() {
+        return Collections.unmodifiableMap(emojis);
     }
 
     /**
@@ -125,30 +85,21 @@ public class ChatiEmojiManager {
     /**
      * Eine Klasse, welche Emojis repräsentiert.
      */
-    public static class Emoji {
+    public static class Emoji implements Comparable<Emoji> {
 
-        private final int codePoint;
         private final char character;
+        private final int unicode;
         private final TextureRegion region;
 
         /**
          * Erzeugt eine neue Instanz eines Emoji.
-         * @param codePoint Unicode-Codepoint des Emoji.
          * @param character Character, der diesen Emoji repräsentiert.
          * @param region Textur-Region des Emoji.
          */
-        public Emoji(int codePoint, char character, TextureRegion region) {
-            this.codePoint = codePoint;
+        public Emoji(char character, int unicode, TextureRegion region) {
             this.character = character;
+            this.unicode = unicode;
             this.region = region;
-        }
-
-        /**
-         * Gibt den Unicode-Codepoint des Emoji zurück.
-         * @return Unicode-Codepoint
-         */
-        public int getCodePoint() {
-            return codePoint;
         }
 
         /**
@@ -165,6 +116,11 @@ public class ChatiEmojiManager {
          */
         public TextureRegion getRegion() {
             return region;
+        }
+
+        @Override
+        public int compareTo(@NotNull ChatiEmojiManager.Emoji other) {
+            return Integer.compare(this.unicode, other.unicode);
         }
     }
 }

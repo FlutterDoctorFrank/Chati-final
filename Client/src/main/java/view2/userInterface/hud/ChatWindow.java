@@ -66,12 +66,12 @@ public class ChatWindow extends Window implements Translatable {
         historyScrollPane.setScrollingDisabled(true, false);
 
         HorizontalGroup emojiContainer = new HorizontalGroup().wrap(true).rowAlign(Align.left).padLeft(SPACE);
-        Chati.CHATI.getEmojiManager().getEmojis().forEach(emoji -> {
+        Chati.CHATI.getEmojiManager().getEmojis().values().forEach(emoji -> {
             ChatiImageButton emojiButton = new ChatiImageButton(new TextureRegionDrawable(emoji.getRegion()));
             emojiButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                    typeMessageArea.appendEmoji(emoji);
+                    typeMessageArea.appendText(String.valueOf(emoji.getChar()));
                     InputEvent typingEvent = new InputEvent();
                     typingEvent.setType(InputEvent.Type.keyTyped);
                     typeMessageArea.fire(typingEvent);
@@ -247,6 +247,8 @@ public class ChatWindow extends Window implements Translatable {
             case WORLD:
                 messageColor = Color.SKY;
                 break;
+            case INFO:
+                throw new IllegalArgumentException("Users cannot send info messages.");
             default:
                 throw new IllegalArgumentException("No valid message type.");
         }
@@ -305,6 +307,9 @@ public class ChatWindow extends Window implements Translatable {
         typeMessageArea.setText("");
         typeMessageArea.translate();
         closeEmojiMenu();
+        if (historyScrollPane.getStage() != null) {
+            historyScrollPane.getStage().setScrollFocus(historyScrollPane);
+        }
         disableSendButton();
     }
 
@@ -317,8 +322,8 @@ public class ChatWindow extends Window implements Translatable {
     private void showMessage(@NotNull final LocalDateTime timestamp, @NotNull final String message,
                              @NotNull final Color messageColor) {
         String showMessage = Chati.CHATI.getLocalization().format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
-        Label showLabel = new Label(Chati.CHATI.getEmojiManager().insertEmojis(showMessage), Chati.CHATI.getSkin());
-        showLabel.setColor(messageColor);
+        Label showLabel = new Label(colorizeText(showMessage, messageColor), Chati.CHATI.getSkin());
+        //showLabel.setColor(messageColor);
         showLabel.setWrap(true);
 
         boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
@@ -349,6 +354,31 @@ public class ChatWindow extends Window implements Translatable {
         } else {
             typingUsersLabel.setText(Chati.CHATI.getLocalization().format("window.chat.typing-multiple", typingUsers.size()));
         }
+    }
+
+    /**
+     * Färbt den anzuzeigendend Text mithilfe der Color Markup Language Zeichen für Zeichen ein. Dies ist nötig, da
+     * durch die Verwendung der setColor-Methode eines Labels auch die Glyphen der Emojis eingefärbt werden würden.
+     * @param messageText Einzufärbender Text.
+     * @param messageColor Farbe, in die der Text eingefärbt werden soll.
+     * @return Eingefärbter Text.
+     */
+    private String colorizeText(String messageText, Color messageColor) {
+        StringBuilder coloredStringBuilder = new StringBuilder();
+        for (int i = 0; i < messageText.length(); i++) {
+            char character = messageText.charAt(i);
+            if (Chati.CHATI.getEmojiManager().isEmoji(character)) {
+                coloredStringBuilder.append("[WHITE]").append(character);
+            } else {
+                coloredStringBuilder.append("[#").append(messageColor.toString()).append("]");
+                if (character == '[') {
+                    coloredStringBuilder.append("[[");
+                } else {
+                    coloredStringBuilder.append(character);
+                }
+            }
+        }
+        return coloredStringBuilder.toString();
     }
 
     /**

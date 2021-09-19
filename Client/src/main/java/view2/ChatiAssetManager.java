@@ -65,6 +65,7 @@ public class ChatiAssetManager implements Disposable {
         fontTitle.setUseIntegerPositions(false);
         parameter.size = LABEL_FONT_SIZE;
         BitmapFont fontLabel = fontGenerator.generateFont(parameter);
+        fontLabel.getData().markupEnabled = true;
         fontLabel.setUseIntegerPositions(false);
         parameter.size = BUTTON_FONT_SIZE;
         BitmapFont fontButton = fontGenerator.generateFont(parameter);

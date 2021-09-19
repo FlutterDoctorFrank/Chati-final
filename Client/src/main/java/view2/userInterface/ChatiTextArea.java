@@ -40,10 +40,6 @@ public class ChatiTextArea extends TextArea implements Translatable {
         setTextFieldFilter((textField, c) -> !isBlank() || !Character.toString(c).matches("\\s"));
     }
 
-    public void appendEmoji(ChatiEmojiManager.Emoji emoji) {
-        appendText(Chati.CHATI.getEmojiManager().getEmojiChar(emoji.getCodePoint()));
-    }
-
     /**
      * Gibt zurück, ob der Text leer ist oder nur Leerzeichen enthält.
      * @return true, wenn der Text leer ist oder nur Leerzeichen enthält, sonst false.
