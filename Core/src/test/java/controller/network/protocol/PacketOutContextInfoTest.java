@@ -20,7 +20,8 @@ public class PacketOutContextInfoTest extends PacketTest<PacketOutContextInfo> {
     public void callListenerTest() {
         final MockPacketListenerOut listener = new MockPacketListenerOut();
 
-        this.before = new PacketOutContextInfo(randomContextId(), randomEnum(ContextMusic.class), Collections.emptySet());
+        this.before = new PacketOutContextInfo(randomContextId(), Collections.emptySet(), randomEnum(ContextMusic.class),
+                randomBoolean(), randomBoolean());
         this.before.call(listener);
 
         Assert.assertTrue(listener.handled(PacketOutContextInfo.class));
@@ -28,7 +29,8 @@ public class PacketOutContextInfoTest extends PacketTest<PacketOutContextInfo> {
 
     @Test
     public void setSerializationTest() {
-        this.before = new PacketOutContextInfo(randomContextId(), randomEnum(ContextMusic.class), Collections.emptySet());
+        this.before = new PacketOutContextInfo(randomContextId(), Collections.emptySet(), randomEnum(ContextMusic.class),
+                randomBoolean(), randomBoolean());
 
         this.serialize();
         this.equals();
@@ -36,7 +38,7 @@ public class PacketOutContextInfoTest extends PacketTest<PacketOutContextInfo> {
 
     @Test
     public void unsetSerializationTest() {
-        this.before = new PacketOutContextInfo(randomContextId(), null, Collections.emptySet());
+        this.before = new PacketOutContextInfo(randomContextId(), Collections.emptySet(), null, randomBoolean(), randomBoolean());
 
         this.serialize();
         this.equals();
@@ -51,7 +53,7 @@ public class PacketOutContextInfoTest extends PacketTest<PacketOutContextInfo> {
             mutes.add(randomUniqueId());
         }
 
-        this.before = new PacketOutContextInfo(randomContextId(), null, mutes);
+        this.before = new PacketOutContextInfo(randomContextId(),  mutes, null, randomBoolean(), randomBoolean());
 
         this.serialize();
         this.equals();
@@ -61,6 +63,8 @@ public class PacketOutContextInfoTest extends PacketTest<PacketOutContextInfo> {
     public void equals() {
         // Vergleiche Kontext-ID und Stumm geschaltete Benutzer
         Assert.assertEquals(this.before.getContextId(), this.after.getContextId());
+        Assert.assertEquals(this.before.isLooping(), this.after.isLooping());
+        Assert.assertEquals(this.before.isRandom(), this.after.isRandom());
         Assert.assertArrayEquals(this.before.getMutes(), this.after.getMutes());
 
         // Vergleiche Musik, fall gesetzt.

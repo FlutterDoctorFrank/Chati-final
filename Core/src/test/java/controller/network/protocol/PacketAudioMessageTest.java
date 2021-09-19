@@ -31,7 +31,7 @@ public class PacketAudioMessageTest extends PacketTest<PacketAudioMessage> {
 
     @Test
     public void serverAudioSerializationTest() {
-        this.before = new PacketAudioMessage(LocalDateTime.now(), randomBytes());
+        this.before = new PacketAudioMessage(LocalDateTime.now(), randomBytes(), randomFloat());
 
         this.serialize();
         this.equals();
@@ -65,5 +65,6 @@ public class PacketAudioMessageTest extends PacketTest<PacketAudioMessage> {
 
         // Vergleiche Sprachdaten
         Assert.assertArrayEquals(this.before.getAudioData(), this.after.getAudioData());
+        Assert.assertEquals(this.before.getPosition(), this.after.getPosition(), 0.0f);
     }
 }

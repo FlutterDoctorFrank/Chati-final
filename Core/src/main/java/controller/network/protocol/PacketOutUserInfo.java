@@ -66,7 +66,8 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         output.writeAscii(this.info.name);
         PacketUtils.writeNullableEnum(output, this.info.avatar);
         PacketUtils.writeNullableEnum(output, this.info.status);
-        output.writeBoolean(this.info.inPrivateRoom);
+        PacketUtils.writeNullableContextId(output, this.info.world);
+        PacketUtils.writeNullableContextId(output, this.info.room);
 
         /*
          * Um die gesetzten Flags der Benutzerinformation in serialisierter Form kompakt zu halten, werden die Flags
@@ -91,7 +92,8 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         this.info.name = input.readString();
         this.info.avatar = PacketUtils.readNullableEnum(input, Avatar.class);
         this.info.status = PacketUtils.readNullableEnum(input, Status.class);
-        this.info.inPrivateRoom = input.readBoolean();
+        this.info.world = PacketUtils.readNullableContextId(input);
+        this.info.room = PacketUtils.readNullableContextId(input);
 
         /*
          * Wie in der #write()-Methode beschrieben, werden die gesetzten Flags in ein Bitfeld geschrieben und
@@ -147,7 +149,8 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         private String name;
         private Avatar avatar;
         private Status status;
-        private boolean inPrivateRoom;
+        private ContextID world;
+        private ContextID room;
 
         private Set<Flag> flags;
 
@@ -234,25 +237,41 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         }
 
         /**
-         * Gibt zurück, ob sich der Benutzer in einem privaten Raum befindet.
-         * @return true, wenn der Benutzer in einem privaten Raum ist, ansonsten false.
+         * Gibt zurück, in welcher Welt sich der Benutzer befindet.
+         * @return die Welt des Benutzers oder null.
          */
-        public boolean getInPrivateRoom() {
-            return this.inPrivateRoom;
+        public @Nullable ContextID getWorld() {
+            return this.world;
         }
 
         /**
-         * Setzt, ob sich der Benutzer in einem privaten Raum befindet.
-         * @param inPrivateRoom true, wenn der Benutzer in einem privaten Raum ist, ansonsten false.
+         * Setzt, in welcher Welt sich der Benutzer befindet.
+         * @param contextId die ID der Welt in der sich der Benutzer befindet.
          */
-        public void setInPrivateRoom(final boolean inPrivateRoom) {
-            this.inPrivateRoom = inPrivateRoom;
+        public void setWorld(@NotNull final ContextID contextId) {
+            this.world = contextId;
+        }
+
+        /**
+         * Gibt zurück, in welchem Raum sich der Benutzer befindet.
+         * @return der Raum des Benutzers oder null.
+         */
+        public @Nullable ContextID getRoom() {
+            return this.room;
+        }
+
+        /**
+         * Setzt, in welchem Raum sich der Benutzer befindet.
+         * @param contextId die ID des Raumes in dem sich der Benutzer befindet.
+         */
+        public void setRoom(@NotNull final ContextID contextId) {
+            this.room = contextId;
         }
 
         @Override
         public @NotNull String toString() {
             return "{userId=" + this.userId + ", name='" + this.name + "', avatar=" + this.avatar + ", status="
-                    + this.status + ", inPrivateRoom=" + this.inPrivateRoom + ", flags=" + this.flags + "}";
+                    + this.status + ", world=" + this.world + ", room=" + this.room + ", flags=" + this.flags + "}";
         }
 
         @Override

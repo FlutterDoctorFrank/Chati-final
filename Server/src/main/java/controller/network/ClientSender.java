@@ -107,12 +107,13 @@ public interface ClientSender {
                             info.addFlag(Flag.IGNORED);
                         }
 
+                        if (other.getWorld() != null && other.getLocation() != null) {
+                            info.setWorld(other.getWorld().getContextId());
+                            info.setRoom(other.getLocation().getRoom().getContextId());
+                        }
+
                         if (world.equals(other.getWorld())) {
                             info.setAvatar(other.getAvatar());
-
-                            if (other.getLocation() != null) {
-                                info.setInPrivateRoom(other.getLocation().getRoom().isPrivate());
-                            }
 
                             if (world.getReportedUsers().containsKey(other.getUserId())) {
                                 info.addFlag(Flag.REPORTED);
@@ -141,6 +142,11 @@ public interface ClientSender {
 
                             info.setStatus(other.getStatus());
                             info.addFlag(Flag.FRIEND);
+
+                            if (other.getWorld() != null && other.getLocation() != null) {
+                                info.setWorld(other.getWorld().getContextId());
+                                info.setRoom(other.getLocation().getRoom().getContextId());
+                            }
 
                             return new PacketOutUserInfo(null, Action.UPDATE_USER, info);
                         }
@@ -243,7 +249,7 @@ public interface ClientSender {
                         mutes.add(mute.getUserId());
                     }
 
-                    return new PacketOutContextInfo(area.getContextId(), area.getMusic(), mutes);
+                    return new PacketOutContextInfo(area.getContextId(), mutes, area.getMusic(), false, false);
                 } else {
                     throw new IllegalArgumentException("Expected IArea, got " + object.getClass());
                 }
@@ -493,7 +499,7 @@ public interface ClientSender {
                                 message.getAudioData());
                     }
 
-                    return new PacketAudioMessage(message.getTimestamp(), message.getAudioData());
+                    return new PacketAudioMessage(message.getTimestamp(), message.getAudioData(), 0.0f);
                 } else {
                     throw new IllegalArgumentException("Expected IAudioMessage, got " + object.getClass());
                 }

@@ -698,7 +698,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         }
 
                         user.setReport(packet.getContextId(), info.getFlags().contains(Flag.REPORTED));
-                        user.setInPrivateRoom(info.getInPrivateRoom());
+                        //user.setInPrivateRoom(info.getInPrivateRoom());
                         user.setInCurrentWorld(true);
                         break;
 
@@ -727,7 +727,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                         user.setFriend(info.getFlags().contains(Flag.FRIEND));
                         user.setIgnored(info.getFlags().contains(Flag.IGNORED));
-                        user.setInPrivateRoom(info.getInPrivateRoom());
+                        //user.setInPrivateRoom(info.getInPrivateRoom());
                         user.setInCurrentWorld(false);
                         break;
 

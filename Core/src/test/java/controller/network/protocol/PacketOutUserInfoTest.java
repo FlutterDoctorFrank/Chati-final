@@ -31,7 +31,8 @@ public class PacketOutUserInfoTest extends PacketTest<PacketOutUserInfo> {
                 new UserInfo(randomUniqueId(), randomString()));
 
         // Hier werden zufällige Werte in die Benutzerinformation geschrieben
-        this.before.getInfo().setInPrivateRoom(randomBoolean());
+        this.before.getInfo().setWorld(randomContextId());
+        this.before.getInfo().setRoom(randomContextId());
         this.before.getInfo().setAvatar(randomEnum(Avatar.class));
         this.before.getInfo().setStatus(randomEnum(Status.class));
 
@@ -90,8 +91,21 @@ public class PacketOutUserInfoTest extends PacketTest<PacketOutUserInfo> {
             Assert.assertNull(this.after.getInfo().getAvatar());
         }
 
+        if (this.before.getInfo().getWorld() != null) {
+            Assert.assertNotNull(this.after.getInfo().getWorld());
+            Assert.assertEquals(this.before.getInfo().getWorld(), this.after.getInfo().getWorld());
+        } else {
+            Assert.assertNull(this.after.getInfo().getWorld());
+        }
+
+        if (this.before.getInfo().getRoom() != null) {
+            Assert.assertNotNull(this.after.getInfo().getRoom());
+            Assert.assertEquals(this.before.getInfo().getRoom(), this.after.getInfo().getRoom());
+        } else {
+            Assert.assertNull(this.after.getInfo().getRoom());
+        }
+
         Assert.assertEquals(this.before.getInfo().getStatus(), this.after.getInfo().getStatus());
-        Assert.assertEquals(this.before.getInfo().getInPrivateRoom(), this.after.getInfo().getInPrivateRoom());
         Assert.assertEquals(this.before.getInfo().getFlags(), this.after.getInfo().getFlags());
     }
 }

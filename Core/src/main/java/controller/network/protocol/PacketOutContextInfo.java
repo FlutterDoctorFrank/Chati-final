@@ -22,8 +22,11 @@ import java.util.UUID;
 public class PacketOutContextInfo implements Packet<PacketListenerOut> {
 
     private ContextID contextId;
-    private ContextMusic music;
     private UUID[] mutes;
+
+    private ContextMusic music;
+    private boolean looping;
+    private boolean random;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -39,11 +42,13 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
      * @param music die neue Musik im Kontext, oder null, wenn dort keine Musik läuft.
      * @param mutes die im Kontext stumm geschalteten Benutzer.
      */
-    public PacketOutContextInfo(@NotNull final ContextID contextId, @Nullable final ContextMusic music,
-                                @NotNull final Collection<UUID> mutes) {
+    public PacketOutContextInfo(@NotNull final ContextID contextId, @NotNull final Collection<UUID> mutes,
+                                @Nullable final ContextMusic music, final boolean looping, final boolean random) {
         this.contextId = contextId;
-        this.music = music;
         this.mutes = mutes.toArray(new UUID[0]);
+        this.music = music;
+        this.looping = looping;
+        this.random = random;
     }
 
     @Override
@@ -55,6 +60,8 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeContextId(output, this.contextId);
         PacketUtils.writeNullableEnum(output, this.music);
+        output.writeBoolean(this.looping);
+        output.writeBoolean(this.random);
         output.writeVarInt(this.mutes.length, true);
 
         for (final UUID mute : this.mutes) {
@@ -66,6 +73,8 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.contextId = PacketUtils.readContextId(input);
         this.music = PacketUtils.readNullableEnum(input, ContextMusic.class);
+        this.looping = input.readBoolean();
+        this.random = input.readBoolean();
         this.mutes = new UUID[input.readVarInt(true)];
 
         for (int index = 0; index < this.mutes.length; index++) {
@@ -76,7 +85,8 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
     @Override
     public @NotNull String toString() {
         return this.getClass().getSimpleName() + "{contextId=" + this.contextId + ", mutes="
-                + Arrays.toString(this.mutes) + ", music=" + this.music + "}";
+                + Arrays.toString(this.mutes) + ", music=" + this.music + ", looping="
+                + this.looping + ", random=" + this.random + "}";
     }
 
     /**
@@ -88,6 +98,14 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
     }
 
     /**
+     * Gibt die Benutzer zurück, die in diesem Kontext stumm geschaltet sind.
+     * @return die stumm geschalteten Benutzer.
+     */
+    public @NotNull UUID[] getMutes() {
+        return mutes;
+    }
+
+    /**
      * Gibt die Musik, die innerhalb des Kontexts abgespielt werden soll, zurück.
      * @return die neue Musik im Kontext.
      */
@@ -96,10 +114,18 @@ public class PacketOutContextInfo implements Packet<PacketListenerOut> {
     }
 
     /**
-     * Gibt die Benutzer zurück, die in diesem Kontext stumm geschaltet sind.
-     * @return die stumm geschalteten Benutzer.
+     * Gibt zurück, ob die Musikoption looping im Bereich aktiviert ist.
+     * @return true, wenn looping aktiviert ist, sonst false.
      */
-    public @NotNull UUID[] getMutes() {
-        return mutes;
+    public boolean isLooping() {
+        return this.looping;
+    }
+
+    /**
+     * Gibt zurück, ob die Musikoption random im Bereich aktiviert ist.
+     * @return true, wenn random aktiviert ist, sonst false.
+     */
+    public boolean isRandom() {
+        return this.random;
     }
 }
