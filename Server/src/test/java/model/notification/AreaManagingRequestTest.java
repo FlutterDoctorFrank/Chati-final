@@ -101,7 +101,6 @@ public class AreaManagingRequestTest {
     public void normalAccept() {
         TestClientSender testClientSender = new TestClientSender();
         try {
-            // Erster Benutzer automatisch Besitzer
             this.userAccountManager.registerUser("normal1", "11111");
             sender = UserAccountManager.getInstance().loginUser("normal1", "11111", testClientSender);
             this.userAccountManager.registerUser("nreceiver1", "22222");

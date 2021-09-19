@@ -8,6 +8,8 @@ import model.communication.CommunicationMedium;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.ContextMap;
+import model.context.spatial.IWorld;
+import model.context.spatial.World;
 import model.database.Database;
 import model.database.IContextDatabase;
 import model.database.IUserAccountManagerDatabase;
@@ -21,6 +23,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -81,6 +84,8 @@ public class GlobalContextTest {
         deleteData("USER_RESERVATION");
         deleteData("ROLE_WITH_CONTEXT");
         deleteData("NOTIFICATION");
+        globalContext.load();
+        userAccountManager.load();
 
     }
 
@@ -93,11 +98,9 @@ public class GlobalContextTest {
             UUID performer_id = performer.getUserId();
             this.globalContext.createWorld(performer_id, "testWorld", ContextMap.PUBLIC_ROOM_MAP);
 
-            Assert.assertEquals(1, this.globalContext.getIWorlds().size());
             ContextID actual_world_id = this.globalContext.getIWorlds().keySet().iterator().next();
             Assert.assertEquals("testWorld", this.globalContext.getWorld(actual_world_id).getContextName());
             //auch mit getChildren Methode
-            Assert.assertEquals(1, this.globalContext.getChildren().size());
             Assert.assertTrue(this.globalContext.getChildren().containsKey(actual_world_id));
             //test auch getContext
             Context getContext = this.globalContext.getContext(actual_world_id);
@@ -117,19 +120,21 @@ public class GlobalContextTest {
             User performer = this.userAccountManager.getUser("removeWorld");
             performer.addRole(this.globalContext, Role.OWNER);
             UUID performer_id = performer.getUserId();
-            this.globalContext.createWorld(performer_id, "testWorld", ContextMap.PUBLIC_ROOM_MAP);
+            this.globalContext.createWorld(performer_id, "removeWorld", ContextMap.PUBLIC_ROOM_MAP);
 
-            Assert.assertEquals(1, this.globalContext.getIWorlds().size());
-            ContextID actual_world_id = this.globalContext.getIWorlds().keySet().iterator().next();
-            Assert.assertEquals("testWorld", this.globalContext.getWorld(actual_world_id).getContextName());
-
-            Assert.assertEquals(1, this.globalContext.getChildren().size());
-            Assert.assertTrue(this.globalContext.getChildren().containsKey(actual_world_id));
+            Iterator<World> iterator = globalContext.getWorlds().values().iterator();
+            ContextID actual_world_id = null;
+            while (iterator.hasNext()) {
+                World current = iterator.next();
+                if (current.getContextName() == "removeWorld") {
+                    actual_world_id = current.getContextId();
+                }
+            }
+            Assert.assertNotNull(actual_world_id);
 
             //Nach erfolgreiche addWorld, remove
             this.globalContext.removeWorld(performer_id, actual_world_id);
-            Assert.assertEquals(0, this.globalContext.getIWorlds().size());
-            Assert.assertEquals(0, this.globalContext.getChildren().size());
+            Assert.assertFalse(this.globalContext.getWorlds().containsKey(actual_world_id));
 
         } catch (Exception e) {
             e.printStackTrace();
