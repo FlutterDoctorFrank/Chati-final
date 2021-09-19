@@ -72,6 +72,9 @@ public class ChatWindow extends Window implements Translatable {
                 @Override
                 public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     typeMessageArea.appendEmoji(emoji);
+                    InputEvent typingEvent = new InputEvent();
+                    typingEvent.setType(InputEvent.Type.keyTyped);
+                    typeMessageArea.fire(typingEvent);
                 }
             });
             emojiContainer.addActor(emojiButton);
@@ -102,9 +105,9 @@ public class ChatWindow extends Window implements Translatable {
                     lastTimeTypingSent = now;
                     Chati.CHATI.send(ServerSender.SendAction.TYPING);
                 }
-                if (typeMessageArea.getText().isBlank() && sendButton.isTouchable()) {
+                if (typeMessageArea.isBlank() && sendButton.isTouchable()) {
                     disableSendButton();
-                } else if (!typeMessageArea.getText().isBlank() && !sendButton.isTouchable()) {
+                } else if (!typeMessageArea.isBlank() && !sendButton.isTouchable()) {
                     enableSendButton();
                 }
                 return true;
@@ -141,13 +144,7 @@ public class ChatWindow extends Window implements Translatable {
         placeHolderButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                typeMessageArea.appendText("\\world");
-                typeMessageArea.appendText(" ich");
-                typeMessageArea.appendText(" bin");
-                typeMessageArea.appendText(" schwul");
-                typeMessageArea.appendText(Chati.CHATI.getEmojiManager().getEmojiChar(0x1F921));
-                typeMessageArea.appendText(Chati.CHATI.getEmojiManager().getEmojiChar(0x1F4A9));
-                sendMessage();
+                // TODO
             }
         });
 
@@ -307,6 +304,7 @@ public class ChatWindow extends Window implements Translatable {
         Chati.CHATI.send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());
         typeMessageArea.setText("");
         typeMessageArea.translate();
+        closeEmojiMenu();
         disableSendButton();
     }
 

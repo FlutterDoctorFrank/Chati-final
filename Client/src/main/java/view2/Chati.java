@@ -42,7 +42,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     private ServerSender serverSender;
     private ChatiAssetManager assetManager;
-    private ChatiEmojiManager emojiSupport;
+    private ChatiEmojiManager emojiManager;
     private ChatiPreferences preferences;
     private ChatiLocalization localization;
     private AudioManager audioManager;
@@ -50,7 +50,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private HeadUpDisplay headUpDisplay;
     private MenuScreen menuScreen;
     private WorldScreen worldScreen;
-
     private boolean loggedIn;
 
     private boolean userInfoChangeReceived;
@@ -98,7 +97,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void create() {
         this.assetManager = new ChatiAssetManager();
-        this.emojiSupport = new ChatiEmojiManager();
+        this.emojiManager = new ChatiEmojiManager();
         this.preferences = new ChatiPreferences();
         this.localization = new ChatiLocalization();
         this.audioManager = new AudioManager();
@@ -238,7 +237,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @return EmojiSupport
      */
     public @NotNull ChatiEmojiManager getEmojiManager() {
-        return emojiSupport;
+        return emojiManager;
     }
 
     /**

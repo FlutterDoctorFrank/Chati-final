@@ -66,7 +66,7 @@ public class ChatiEmojiManager {
             boolean isIgnorable = (c >= '\uFE00' && c <= '\uFE0F');
             Emoji emoji = emojis.get(text.codePointAt(i));
             if (emoji != null) {
-                stringBuilder.append(emoji.getChar());
+                stringBuilder.append(String.valueOf(emoji.getChar()));
             } else if (!isSurrogate && !isIgnorable) {
                 stringBuilder.append(c);
             }
