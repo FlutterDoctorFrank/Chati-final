@@ -91,28 +91,22 @@ public class SpatialContext extends Context implements ISpatialContextView {
             return; // Der Raum wurde bereits mit einer Karte initialisiert.
         }
 
-        FutureTask<?> buildTask = new FutureTask<>(() -> buildMap(map), null);
+        FutureTask<?> buildTask = new FutureTask<>(() -> {
+            TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
+
+            this.map = map;
+            this.expanse = MapUtils.createMapExpanse(tiledMap);
+            this.communicationRegion = MapUtils.parseCommunicationRegion(tiledMap.getProperties());
+            this.communicationMedia = MapUtils.parseCommunicationMedia(tiledMap.getProperties());
+            MapUtils.createContexts(this, tiledMap.getLayers().get("Contexts"));
+            UserManager.getInstance().getModelObserver().setRoomChanged();
+        }, null);
         Gdx.app.postRunnable(buildTask);
         try {
             buildTask.get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Baut die Raumstruktur auf. Wird von außen lediglich für Testzwecke aufgerufen.
-     * @param map Aufzubauende Karte
-     */
-    public void buildMap(@NotNull final ContextMap map) {
-        TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
-
-        this.map = map;
-        this.expanse = MapUtils.createMapExpanse(tiledMap);
-        this.communicationRegion = MapUtils.parseCommunicationRegion(tiledMap.getProperties());
-        this.communicationMedia = MapUtils.parseCommunicationMedia(tiledMap.getProperties());
-        MapUtils.createContexts(this, tiledMap.getLayers().get("Contexts"));
-        UserManager.getInstance().getModelObserver().setRoomChanged();
     }
 
     /**

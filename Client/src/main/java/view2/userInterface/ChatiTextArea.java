@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.ChatiEmojiManager;
 import view2.ChatiLocalization.Translatable;
 
 /**
@@ -39,8 +40,8 @@ public class ChatiTextArea extends TextArea implements Translatable {
         setTextFieldFilter((textField, c) -> !isBlank() || !Character.toString(c).matches("\\s"));
     }
 
-    public void appendEmoji(int codePoint) {
-        appendText(Chati.CHATI.getEmojiSupport().getEmojiString(codePoint));
+    public void appendEmoji(ChatiEmojiManager.Emoji emoji) {
+        appendText(Chati.CHATI.getEmojiManager().getEmojiChar(emoji.getCodePoint()));
     }
 
     /**

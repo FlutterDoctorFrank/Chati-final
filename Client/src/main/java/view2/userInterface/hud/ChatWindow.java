@@ -66,12 +66,12 @@ public class ChatWindow extends Window implements Translatable {
         historyScrollPane.setScrollingDisabled(true, false);
 
         HorizontalGroup emojiContainer = new HorizontalGroup().wrap(true).rowAlign(Align.left).padLeft(SPACE);
-        Chati.CHATI.getEmojiSupport().getEmojis().forEach(emoji -> {
-            ChatiImageButton emojiButton = new ChatiImageButton(new TextureRegionDrawable(emoji.atlasRegion));
+        Chati.CHATI.getEmojiManager().getEmojis().forEach(emoji -> {
+            ChatiImageButton emojiButton = new ChatiImageButton(new TextureRegionDrawable(emoji.getRegion()));
             emojiButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                    typeMessageArea.appendEmoji(emoji.codepoint);
+                    typeMessageArea.appendEmoji(emoji);
                 }
             });
             emojiContainer.addActor(emojiButton);
@@ -145,8 +145,8 @@ public class ChatWindow extends Window implements Translatable {
                 typeMessageArea.appendText(" ich");
                 typeMessageArea.appendText(" bin");
                 typeMessageArea.appendText(" schwul");
-                typeMessageArea.appendEmoji(0x1F921);
-                typeMessageArea.appendEmoji(0x1F4A9);
+                typeMessageArea.appendText(Chati.CHATI.getEmojiManager().getEmojiChar(0x1F921));
+                typeMessageArea.appendText(Chati.CHATI.getEmojiManager().getEmojiChar(0x1F4A9));
                 sendMessage();
             }
         });
@@ -319,7 +319,7 @@ public class ChatWindow extends Window implements Translatable {
     private void showMessage(@NotNull final LocalDateTime timestamp, @NotNull final String message,
                              @NotNull final Color messageColor) {
         String showMessage = Chati.CHATI.getLocalization().format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
-        Label showLabel = new Label(Chati.CHATI.getEmojiSupport().filterEmojis(showMessage), Chati.CHATI.getSkin());
+        Label showLabel = new Label(Chati.CHATI.getEmojiManager().insertEmojis(showMessage), Chati.CHATI.getSkin());
         showLabel.setColor(messageColor);
         showLabel.setWrap(true);
 
