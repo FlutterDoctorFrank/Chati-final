@@ -22,7 +22,6 @@ public class MapUtils {
     private static final Logger LOGGER = Logger.getLogger("chati.map-loader");
 
     private MapUtils() {
-
     }
 
     /**
@@ -67,8 +66,8 @@ public class MapUtils {
                     throw new IllegalArgumentException("Properties does not contain type");
                 }
 
-                Set<CommunicationMedium> media = parseMedia(object.getProperties());
-                CommunicationRegion communication = parseCommunication(object.getProperties());
+                Set<CommunicationMedium> media = parseCommunicationMedia(object.getProperties());
+                CommunicationRegion communication = parseCommunicationRegion(object.getProperties());
                 boolean interactable = !object.getProperties().get("type", String.class).equalsIgnoreCase("area");
 
                 parent.addChild(new SpatialContext(name, parent, communication, media, expanse, interactable));
@@ -85,14 +84,13 @@ public class MapUtils {
      * @param properties Die Properties eines Tiled Map Objects.
      * @return Menge der verfügbaren Kommunikationsmedien, die in den Properties enthalten ist.
      */
-    public static @NotNull Set<CommunicationMedium> parseMedia(@NotNull final MapProperties properties) {
+    public static @NotNull Set<CommunicationMedium> parseCommunicationMedia(@NotNull final MapProperties properties) {
         final Set<CommunicationMedium> media = EnumSet.noneOf(CommunicationMedium.class);
 
         for (final String medium : properties.get("media", "", String.class).split(";")) {
             try {
                 media.add(CommunicationMedium.valueOf(medium.toUpperCase()));
             } catch (IllegalArgumentException ignored) {
-
             }
         }
 
@@ -104,7 +102,7 @@ public class MapUtils {
      * @param properties Die Properties eines Tiled Map Objects.
      * @return Kommunikationsform, die in den Properties enthalten ist.
      */
-    public static @NotNull CommunicationRegion parseCommunication(@NotNull final MapProperties properties) throws IllegalArgumentException {
+    public static @NotNull CommunicationRegion parseCommunicationRegion(@NotNull final MapProperties properties) throws IllegalArgumentException {
         if (!properties.containsKey("communication")) {
             throw new IllegalArgumentException("Properties does not contain communication region");
         }
