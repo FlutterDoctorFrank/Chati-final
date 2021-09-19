@@ -1,16 +1,20 @@
 package model.user;
 
 import model.context.Context;
+import model.context.ContextID;
 import model.context.spatial.Direction;
 import model.context.spatial.Location;
 import model.exception.ContextNotFoundException;
-import model.context.ContextID;
 import model.exception.UserNotFoundException;
 import model.role.Permission;
 import model.role.Role;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Eine Klasse, welche einen Benutzer der Anwendung repräsentiert.
@@ -469,8 +473,8 @@ public class User implements IUserController, IUserView {
      */
     public boolean isKnown() {
         return isInCurrentWorld || isFriend
-                || isBanned() && UserManager.getInstance().getInternUser().hasPermission(Permission.BAN_USER)
-                && UserManager.getInstance().getInternUser().hasPermission(Permission.BAN_MODERATOR);
+                || isBanned() && (UserManager.getInstance().getInternUser().hasPermission(Permission.BAN_USER)
+                || UserManager.getInstance().getInternUser().hasPermission(Permission.BAN_MODERATOR));
     }
 
     @Override
