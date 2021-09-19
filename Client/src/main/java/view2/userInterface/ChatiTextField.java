@@ -3,7 +3,6 @@ package view2.userInterface;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.ChatiLocalization;
 import view2.ChatiLocalization.Translatable;
 
 /**

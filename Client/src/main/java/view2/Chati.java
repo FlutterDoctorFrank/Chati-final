@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import view2.audio.AudioManager;
 import view2.userInterface.ContextEntry;
 import view2.userInterface.hud.HeadUpDisplay;
+import view2.userInterface.menu.ConnectionTable;
 import view2.userInterface.menu.MenuScreen;
 import view2.userInterface.menu.LoginTable;
 import view2.userInterface.menu.StartTable;
@@ -105,6 +106,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         this.headUpDisplay = new HeadUpDisplay();
         this.menuScreen = new MenuScreen();
         this.worldScreen = new WorldScreen();
+        if (serverSender == null) {
+            menuScreen.setMenuTable(new ConnectionTable("table.connection.connect"));
+        }
         setScreen(menuScreen);
     }
 
@@ -274,6 +278,13 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void setSender(@Nullable final ServerSender sender) {
+        if (Gdx.app != null) {
+            Gdx.app.postRunnable(() -> {
+                if (this.menuScreen != null) {
+                    this.menuScreen.setMenuTable(sender != null ? new LoginTable() : new ConnectionTable("table.connection.reconnect"));
+                }
+            });
+        }
         this.serverSender = sender;
     }
 

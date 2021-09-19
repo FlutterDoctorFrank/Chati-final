@@ -126,7 +126,7 @@ public class ChatWindow extends Window implements Translatable {
         });
 
         ChatiImageButton emojiButton = new ChatiImageButton(Chati.CHATI.getDrawable("emoji_1f600"));
-        emojiButton.addListener(new ChatiTooltip("window.chat.tooltip.emoji"));
+        emojiButton.addListener(new ChatiTooltip("hud.tooltip.emoji"));
         emojiButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -140,7 +140,7 @@ public class ChatWindow extends Window implements Translatable {
 
         TextButton placeHolderButton = new TextButton("", Chati.CHATI.getSkin());
         placeHolderButton.setDisabled(true);
-        placeHolderButton.addListener(new ChatiTooltip("window.chat.tooltip.placeholder"));
+        placeHolderButton.addListener(new ChatiTooltip("hud.tooltip.placeholder"));
         placeHolderButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {

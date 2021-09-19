@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view2.Chati;
-import view2.ChatiLocalization;
 
 /**
  * Eine Klasse, welche die in der Anwendung verwendeten TextTooltips repräsentiert.

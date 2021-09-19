@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.ChatiLocalization;
 import view2.ChatiLocalization.Translatable;
 import java.util.ArrayList;
 

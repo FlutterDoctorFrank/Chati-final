@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.Align;
 import model.MessageBundle;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.ChatiLocalization;
 import view2.ChatiLocalization.Translatable;
 import view2.userInterface.ChatiLabel;
 import java.util.ArrayList;

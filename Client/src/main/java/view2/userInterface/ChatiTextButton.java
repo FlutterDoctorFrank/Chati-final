@@ -4,7 +4,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import model.Resource;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.ChatiLocalization;
 import view2.ChatiLocalization.Translatable;
 
 /**
