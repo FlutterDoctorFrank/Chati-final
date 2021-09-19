@@ -121,6 +121,8 @@ public class VoiceRecorder implements Disposable {
      * @param microphoneSensitivity Mikrofonempfindlichkeit
      */
     public void setMicrophoneSensitivity(final float microphoneSensitivity) {
+        // Verwendet Polynom zweiten Grades mit Werten an den Stellen 0, 0.5 und 1, die sich durch Erproben als geeignet
+        // herausgestellt haben.
         sendGate = 4608 * microphoneSensitivity * microphoneSensitivity - 8448 * microphoneSensitivity + 4096;
     }
 }

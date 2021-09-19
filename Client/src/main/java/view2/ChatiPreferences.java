@@ -272,7 +272,7 @@ public class ChatiPreferences {
         KeyCommand.SHOW_NAMES.addKeyBindings(List.of(Input.Keys.TAB));
         KeyCommand.INTERACT.addKeyBindings(List.of(Input.Keys.E));
         KeyCommand.OPEN_CHAT.addKeyBindings(List.of(Input.Keys.SPACE));
-        KeyCommand.SEND_CHAT_MESSAGE.addKeyBindings(List.of(Input.Keys.ENTER));
+        KeyCommand.SEND_CHAT_MESSAGE.addKeyBindings(List.of(Input.Keys.ENTER, Input.Keys.NUMPAD_ENTER));
         KeyCommand.PUSH_TO_TALK.addKeyBindings(List.of(Input.Keys.P));
         KeyCommand.OPEN_USER_MENU.addKeyBindings(List.of(Input.Keys.NUM_1, Input.Keys.NUMPAD_1));
         KeyCommand.OPEN_NOTIFICATION_MENU.addKeyBindings(List.of(Input.Keys.NUM_2, Input.Keys.NUMPAD_2));

@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
  * Eine Klasse, in welcher sämtliche verwendete Ressourcen geladen werden und die der Anwendung den Zugriff auf diese
  * Ressourcen bereitstellt.
  */
-public class ChatiAssetManager {
+public class ChatiAssetManager implements Disposable {
 
     private static final int TITLE_FONT_SIZE = 22;
     private static final int LABEL_FONT_SIZE = 23;
@@ -64,6 +65,7 @@ public class ChatiAssetManager {
         fontTitle.setUseIntegerPositions(false);
         parameter.size = LABEL_FONT_SIZE;
         BitmapFont fontLabel = fontGenerator.generateFont(parameter);
+        fontLabel.getData().markupEnabled = true;
         fontLabel.setUseIntegerPositions(false);
         parameter.size = BUTTON_FONT_SIZE;
         BitmapFont fontButton = fontGenerator.generateFont(parameter);
@@ -75,11 +77,18 @@ public class ChatiAssetManager {
         fontMap.put("font-button", fontButton);
 
         // Skin in die Warteschlange des AssetManager mit ObjectMap der generierten Fonts als Parameter.
-        assetManager.load(Gdx.files.internal("shadeui/uiskin.json").path(), Skin.class,
-                new SkinLoader.SkinParameter(fontMap));
+        assetManager.load(Gdx.files.internal("shadeui/uiskin.json").path(), Skin.class, new SkinLoader.SkinParameter(fontMap));
 
         // Lade Ressourcen.
         assetManager.finishLoading();
+    }
+
+    /**
+     * Gibt den TextureAtlas zurück.
+     * @return TextureAtlas
+     */
+    public @NotNull TextureAtlas getAtlas() {
+        return assetManager.get(Gdx.files.internal("atlas/image_atlas.atlas").path(), TextureAtlas.class);
     }
 
     /**
@@ -88,8 +97,7 @@ public class ChatiAssetManager {
      * @return Die angeforderte Textur.
      */
     public @NotNull TextureRegionDrawable getDrawable(@NotNull final String name) {
-        return new TextureRegionDrawable(assetManager.get(Gdx.files.internal("atlas/image_atlas.atlas").path(),
-                TextureAtlas.class).findRegion(name));
+        return new TextureRegionDrawable(getAtlas().findRegion(name));
     }
 
     /**
@@ -98,8 +106,7 @@ public class ChatiAssetManager {
      * @return Die angeforderte Menge von Texturen.
      */
     public @NotNull Array<TextureAtlas.AtlasRegion> getRegions(@NotNull final String name) {
-        return assetManager.get(Gdx.files.internal("atlas/image_atlas.atlas").path(),
-                TextureAtlas.class).findRegions(name);
+        return getAtlas().findRegions(name);
     }
 
     /**
@@ -108,5 +115,10 @@ public class ChatiAssetManager {
      */
     public @NotNull Skin getSkin() {
         return assetManager.get(Gdx.files.internal("shadeui/uiskin.json").path(), Skin.class);
+    }
+
+    @Override
+    public void dispose() {
+        assetManager.dispose();
     }
 }

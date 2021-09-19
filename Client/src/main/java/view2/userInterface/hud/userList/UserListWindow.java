@@ -39,6 +39,9 @@ public class UserListWindow extends HudMenuWindow {
 
         userListContainer = new Table();
         ScrollPane userListScrollPane = new ScrollPane(userListContainer, Chati.CHATI.getSkin());
+        userListScrollPane.setFadeScrollBars(false);
+        userListScrollPane.setOverscroll(false, false);
+        userListScrollPane.setScrollingDisabled(true, false);
 
         friendTabButton = new ChatiTextButton("menu.button.friends", false);
         friendTabButton.addListener(new ClickListener() {

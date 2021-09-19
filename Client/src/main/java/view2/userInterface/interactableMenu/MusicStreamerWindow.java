@@ -85,6 +85,9 @@ public class MusicStreamerWindow extends InteractableWindow {
             }
         });
         ScrollPane musicListScrollPane = new ScrollPane(musicList);
+        musicListScrollPane.setFadeScrollBars(false);
+        musicListScrollPane.setOverscroll(false, false);
+        musicListScrollPane.setScrollingDisabled(true, false);
 
         playButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_play"), Chati.CHATI.getDrawable("music_pause"),
                 Chati.CHATI.getDrawable("music_play_disabled"), BUTTON_SCALE_FACTOR);

@@ -42,6 +42,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     private ServerSender serverSender;
     private ChatiAssetManager assetManager;
+    private ChatiEmojiSupport emojiSupport;
     private ChatiPreferences preferences;
     private ChatiLocalization localization;
     private AudioManager audioManager;
@@ -97,6 +98,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void create() {
         this.assetManager = new ChatiAssetManager();
+        this.emojiSupport = new ChatiEmojiSupport();
         this.preferences = new ChatiPreferences();
         this.localization = new ChatiLocalization();
         this.audioManager = new AudioManager();
@@ -120,6 +122,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void dispose() {
+        assetManager.dispose();
         audioManager.dispose();
         spriteBatch.dispose();
         menuScreen.dispose();
@@ -205,6 +208,14 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     /**
+     * Gibt den TextureAtlas zurück.
+     * @return TextureAtlas
+     */
+    public @NotNull TextureAtlas getAtlas() {
+        return assetManager.getAtlas();
+    }
+
+    /**
      * Gibt eine Textur zurück.
      * @param name Name der Textur.
      * @return Angeforderte Textur.
@@ -220,6 +231,14 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      */
     public @NotNull Array<TextureAtlas.AtlasRegion> getRegions(@NotNull final String name) {
         return assetManager.getRegions(name);
+    }
+
+    /**
+     * Gibt die Instanz des EmojiSupport zurück.
+     * @return EmojiSupport
+     */
+    public @NotNull ChatiEmojiSupport getEmojiSupport() {
+        return emojiSupport;
     }
 
     /**

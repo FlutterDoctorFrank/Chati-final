@@ -37,6 +37,9 @@ public class NotificationListWindow extends HudMenuWindow {
 
         notificationListContainer = new Table();
         ScrollPane notificationListScrollPane = new ScrollPane(notificationListContainer, Chati.CHATI.getSkin());
+        notificationListScrollPane.setFadeScrollBars(false);
+        notificationListScrollPane.setOverscroll(false, false);
+        notificationListScrollPane.setScrollingDisabled(true, false);
 
         globalNotificationTabButton = new ChatiTextButton("menu.button.global", false);
         globalNotificationTabButton.addListener(new ClickListener() {

@@ -35,6 +35,9 @@ public class AvatarSelectTable extends MenuTable {
 
         Table avatarListContainer = new Table();
         ScrollPane avatarScrollPane = new ScrollPane(avatarListContainer, Chati.CHATI.getSkin());
+        avatarScrollPane.setFadeScrollBars(false);
+        avatarScrollPane.setOverscroll(false, false);
+        avatarScrollPane.setScrollingDisabled(true, false);
 
         ButtonGroup<AvatarListEntry> avatarButtonGroup = new ButtonGroup<>();
         avatarButtonGroup.setMinCheckCount(1);

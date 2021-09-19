@@ -128,7 +128,7 @@ public class NotificationListEntry extends Table implements Translatable, Compar
         Table labelContainer = new Table();
         labelContainer.add(stateImage).left().size(BUTTON_SIZE).padRight(VERTICAL_SPACING);
         labelContainer.add(typeLabel).left().growX();
-        labelContainer.add(dateLabel).right().padRight(VERTICAL_SPACING);
+        labelContainer.add(dateLabel).right();
 
         add(labelContainer).spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).growX().row();
 
