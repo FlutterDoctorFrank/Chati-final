@@ -156,6 +156,8 @@ public class User implements IUser {
         // Betrete die Welt.
         currentWorld = world;
         currentWorld.addUser(this);
+        // Teleportiere den Benutzer an die Spawn Position des öffentlichen Raums.
+        teleport(currentWorld.getPublicRoom().getSpawnLocation());
     }
 
     @Override
