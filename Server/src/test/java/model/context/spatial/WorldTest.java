@@ -91,32 +91,49 @@ public class WorldTest {
     public void addPrivateRoomTest() {
         Room test_room = new Room("test_room", this.test_world, ContextMap.PRIVATE_ROOM_MAP,
                 "11111");
+        test_room.build();
         this.test_world.addPrivateRoom(test_room);
-        Assert.assertEquals(1, this.test_world.getPrivateRooms().size());
+        Assert.assertTrue(this.test_world.getPrivateRooms().containsValue(test_room));
         ContextID actual_room_id = test_room.getContextId();
         Assert.assertEquals(test_room, this.test_world.getPrivateRooms().get(actual_room_id));
         Assert.assertEquals(test_room, this.test_world.getChildren().get(actual_room_id));
 
         //test auch containsPrivateRoom
         Assert.assertTrue(this.test_world.containsPrivateRoom(test_room));
-
-
-
     }
 
     @Test
     public void removePrivateRoomTest() {
         // zuerst add ein Raum
-        Room test_room = new Room("test_room", this.test_world, ContextMap.PUBLIC_ROOM_MAP,
+        Room test_room = new Room("test_room", this.test_world, ContextMap.PRIVATE_ROOM_MAP,
                 "11111");
+        test_room.build();
         this.test_world.addPrivateRoom(test_room);
-        Assert.assertEquals(1, this.test_world.getPrivateRooms().size());
+        Assert.assertTrue(this.test_world.getPrivateRooms().containsValue(test_room));
         ContextID actual_room_id = test_room.getContextId();
         Assert.assertEquals(test_room, this.test_world.getPrivateRooms().get(actual_room_id));
 
-        // remove
-        this.test_world.removePrivateRoom(test_room);
-        Assert.assertEquals(0, this.test_world.getPrivateRooms().size());
+        TestClientSender testClientSender = new TestClientSender();
+        try {
+            this.userAccountManager.registerUser("NoIdeaAboutName", "11111");
+            User owner = this.userAccountManager.loginUser("NoIdeaAboutName",
+                    "11111", testClientSender);
+            this.userAccountManager.registerUser("NoIdeaName", "11111");
+            User privateRoomTester = this.userAccountManager.loginUser("NoIdeaName",
+                    "11111", testClientSender);
+            owner.addRole(test_room, Role.ROOM_OWNER);
+            owner.teleport(test_room.getSpawnLocation());
+            privateRoomTester.teleport(test_room.getSpawnLocation());
+            System.out.println(privateRoomTester.getLocation().getArea().getContextName());
+            // remove
+            this.test_world.removePrivateRoom(test_room);
+            Assert.assertFalse(this.test_world.getPrivateRooms().containsValue(test_room));
+            Assert.assertEquals("test_room",
+                    privateRoomTester.getLocation().getArea().getContextName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     static class TestClientSender implements ClientSender {

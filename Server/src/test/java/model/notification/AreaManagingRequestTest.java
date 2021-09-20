@@ -46,22 +46,31 @@ public class AreaManagingRequestTest {
         Gdx.app.exit();
     }
 
-    @Before
-    public void setUp() {
+    private World setWorld(String createrName, String world_name) {
+        World result = null;
         try {
             this.userAccountManager = UserAccountManager.getInstance();
             this.globalContext = GlobalContext.getInstance();
 
-            userAccountManager.registerUser("performer", "22222");
-            User performer = userAccountManager.getUser("performer");
+            userAccountManager.registerUser(createrName, "11111");
+            User performer = userAccountManager.getUser(createrName);
             performer.addRole(globalContext, Role.OWNER);
-            globalContext.createWorld(performer.getUserId(), "test_world", ContextMap.PUBLIC_ROOM_MAP);
-            ContextID newworld_id = globalContext.getIWorlds().keySet().iterator().next();
-            test_world = globalContext.getWorld(newworld_id);
+            globalContext.createWorld(performer.getUserId(), world_name, ContextMap.PUBLIC_ROOM_MAP);
+            Assert.assertNotNull(globalContext.getWorlds().size());
 
+            Iterator<World> worlds_iterator = globalContext.getWorlds().values().iterator();
+            while (worlds_iterator.hasNext()) {
+                World current = worlds_iterator.next();
+                if (current.getContextName().equals(world_name)) {
+                    result = current;
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Assert.assertNotNull(result);
+        this.test_world = result;
+        return result;
     }
 
     private void deleteData(String tableName){
@@ -99,6 +108,7 @@ public class AreaManagingRequestTest {
 
     @Test
     public void normalAccept() {
+        setWorld("performer1", "world1");
         TestClientSender testClientSender = new TestClientSender();
         try {
             this.userAccountManager.registerUser("normal1", "11111");
@@ -132,6 +142,7 @@ public class AreaManagingRequestTest {
     // Receiver No Permission
     @Test
     public void falseAccept1() {
+        setWorld("performer2", "world2");
         TestClientSender testClientSender = new TestClientSender();
         try {
             // Erster Benutzer automatisch Besitzer
@@ -166,6 +177,7 @@ public class AreaManagingRequestTest {
     // Already Reserved
     @Test
     public void falseAccept2() {
+        setWorld("performer3", "world3");
         TestClientSender testClientSender = new TestClientSender();
         try {
             // Erster Benutzer automatisch Besitzer
@@ -229,6 +241,7 @@ public class AreaManagingRequestTest {
     // RequestingUser nicht existiert
     @Test
     public void falseAccept3() {
+        setWorld("performer4", "world4");
         TestClientSender testClientSender = new TestClientSender();
         try {
             // Erster Benutzer automatisch Besitzer
@@ -260,6 +273,7 @@ public class AreaManagingRequestTest {
 
     @Test
     public void normalDecline() {
+        setWorld("performer5", "world5");
         TestClientSender testClientSender = new TestClientSender();
         try {
             // Erster Benutzer automatisch Besitzer
@@ -293,6 +307,7 @@ public class AreaManagingRequestTest {
     // No Permission
     @Test
     public void falseDecline1() {
+        setWorld("performer6", "world6");
         TestClientSender testClientSender = new TestClientSender();
         try {
             // Erster Benutzer automatisch Besitzer
@@ -328,6 +343,7 @@ public class AreaManagingRequestTest {
     // RequestingUser nicht existiert
     @Test
     public void falseDecline2() {
+        setWorld("performer7", "world7");
         TestClientSender testClientSender = new TestClientSender();
         try {
             // Erster Benutzer automatisch Besitzer

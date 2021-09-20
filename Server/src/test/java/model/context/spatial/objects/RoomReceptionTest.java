@@ -433,4 +433,41 @@ public class RoomReceptionTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void roomCreateInUserTest() {
+        TestClientSender testClientSender = new TestClientSender();
+        try {
+            this.userAccountManager.registerUser("userCreater", "11111");
+            User creater = UserAccountManager.getInstance().loginUser("userCreater", "11111",
+                    testClientSender);
+            creater.joinWorld(test_world.getContextId());
+
+            // Find RoomReception Area
+            Area reception = findReception();
+            Assert.assertNotNull(reception);
+
+            // Teleport and Interact
+            Location recep_loc = new Location(test_world.getPublicRoom(), Direction.UP,
+                    1550, 1800);
+            creater.teleport(recep_loc);
+
+            RoomReception roomReception = null;
+            if (reception instanceof RoomReception) {
+                roomReception = (RoomReception) reception;
+            }
+            Assert.assertNotNull(roomReception);
+
+            String[] args = new String[]{"inter_test", "1234", ContextMap.PRIVATE_ROOM_MAP.name()};
+            creater.setCurrentInteractable(roomReception);
+            creater.executeOption(roomReception.getContextId(), 1, args);
+
+            Assert.assertEquals("inter_test", creater.getLocation().getRoom().getContextName());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+    }
 }

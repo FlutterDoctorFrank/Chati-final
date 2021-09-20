@@ -104,6 +104,10 @@ public class MusicStreamer extends Interactable {
                                   @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
         super.executeMenuOption(user, menuOption, args);
 
+        // !!!!!!!!!!!
+        // Yujie: Wenn menuOption 0 ist, wird hier aber weiter laufen und dann bekommen ein Exception mit
+        // "No valid menu option".
+
         switch (menuOption) {
             case MENU_OPTION_PLAY: // Spiele ein Musikstück ab.
                 if (args.length < 1) {
