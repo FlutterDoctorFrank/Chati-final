@@ -1,25 +1,25 @@
 package model.exception;
 
-import model.notification.Notification;
-import model.user.User;
+import model.notification.INotification;
+import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
 
 public class IllegalNotificationActionException extends Exception {
 
-    private final User user;
-    private final Notification notification;
+    private final IUser user;
+    private final INotification notification;
     private final boolean accept;
 
-    public IllegalNotificationActionException(@NotNull final String errorMessage, @NotNull final User user,
-                                              @NotNull final Notification notification, final boolean accept) {
+    public IllegalNotificationActionException(@NotNull final String errorMessage, @NotNull final IUser user,
+                                              @NotNull final INotification notification, final boolean accept) {
         super(errorMessage);
         this.user = user;
         this.notification = notification;
         this.accept = accept;
     }
 
-    public IllegalNotificationActionException(@NotNull final String errorMessage, @NotNull final User user,
-                                              @NotNull final Notification notification, final boolean accept,
+    public IllegalNotificationActionException(@NotNull final String errorMessage, @NotNull final IUser user,
+                                              @NotNull final INotification notification, final boolean accept,
                                               @NotNull final Throwable cause) {
         super(errorMessage, cause);
         this.user = user;
@@ -27,11 +27,11 @@ public class IllegalNotificationActionException extends Exception {
         this.accept = accept;
     }
 
-    public @NotNull User getUser() {
+    public @NotNull IUser getUser() {
         return user;
     }
 
-    public @NotNull Notification getNotification() {
+    public @NotNull INotification getNotification() {
         return notification;
     }
 

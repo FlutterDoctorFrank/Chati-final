@@ -1,14 +1,15 @@
 package model.exception;
 
-import model.user.User;
+import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
 
 public class IllegalPositionException extends Exception {
-    private final User user;
+
+    private final IUser user;
     private final float posX;
     private final float posY;
 
-    public IllegalPositionException(@NotNull final String errorMessage, @NotNull final User user,
+    public IllegalPositionException(@NotNull final String errorMessage, @NotNull final IUser user,
                                     final float posX, final float posY) {
         super(errorMessage);
         this.user = user;
@@ -16,7 +17,7 @@ public class IllegalPositionException extends Exception {
         this.posY = posY;
     }
 
-    public IllegalPositionException(@NotNull final String errorMessage, @NotNull final User user,
+    public IllegalPositionException(@NotNull final String errorMessage, @NotNull final IUser user,
                                     final float posX, final float posY, @NotNull final Throwable cause) {
         super(errorMessage, cause);
         this.user = user;
@@ -24,7 +25,7 @@ public class IllegalPositionException extends Exception {
         this.posY = posY;
     }
 
-    public @NotNull User getUser() {
+    public @NotNull IUser getUser() {
         return user;
     }
 

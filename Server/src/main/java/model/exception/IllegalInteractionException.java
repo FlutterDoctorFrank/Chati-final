@@ -1,44 +1,44 @@
 package model.exception;
 
-import model.context.spatial.objects.Interactable;
-import model.user.User;
+import model.context.spatial.objects.IInteractable;
+import model.user.IUser;
 import org.jetbrains.annotations.NotNull;
 
 public class IllegalInteractionException extends Exception {
 
-    private final User user;
-    private Interactable interactable;
+    private final IUser user;
+    private IInteractable interactable;
 
-    public IllegalInteractionException(@NotNull final String errorMessage, @NotNull final User user) {
+    public IllegalInteractionException(@NotNull final String errorMessage, @NotNull final IUser user) {
         super(errorMessage);
         this.user = user;
     }
 
-    public IllegalInteractionException(@NotNull final String errorMessage, @NotNull final User user,
+    public IllegalInteractionException(@NotNull final String errorMessage, @NotNull final IUser user,
                                        @NotNull final Throwable cause) {
         super(errorMessage, cause);
         this.user = user;
     }
 
-    public IllegalInteractionException(@NotNull final String errorMessage, @NotNull final User user,
-                                       @NotNull final Interactable interactable) {
+    public IllegalInteractionException(@NotNull final String errorMessage, @NotNull final IUser user,
+                                       @NotNull final IInteractable interactable) {
         super(errorMessage);
         this.user = user;
         this.interactable = interactable;
     }
 
-    public IllegalInteractionException(@NotNull final String errorMessage, @NotNull final User user,
-                                       @NotNull final Interactable interactable, @NotNull final Throwable cause) {
+    public IllegalInteractionException(@NotNull final String errorMessage, @NotNull final IUser user,
+                                       @NotNull final IInteractable interactable, @NotNull final Throwable cause) {
         super(errorMessage, cause);
         this.user = user;
         this.interactable = interactable;
     }
 
-    public @NotNull User getUser() {
+    public @NotNull IUser getUser() {
         return user;
     }
 
-    public @NotNull Interactable getInteractable() {
+    public @NotNull IInteractable getInteractable() {
         return interactable;
     }
 }

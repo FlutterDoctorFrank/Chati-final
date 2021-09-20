@@ -1,14 +1,17 @@
 package controller.network;
 
 import controller.network.ClientSender.SendAction;
+import controller.network.mock.MockIUser;
 import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
 import model.context.spatial.Direction;
 import model.context.spatial.ILocation;
+import model.context.spatial.IWorld;
 import model.user.IUser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import java.util.logging.Level;
 
 public class PacketAvatarMoveTest extends PacketServerTest {
 
@@ -110,5 +113,98 @@ public class PacketAvatarMoveTest extends PacketServerTest {
         Assert.assertEquals(AvatarAction.REMOVE_AVATAR, packet.getAction());
         Assert.assertNotNull(packet.getUserId());
         Assert.assertEquals(target.getUserId(), packet.getUserId());
+    }
+
+    @Test
+    public void handleUnexpectedPacketTest() {
+        final PacketAvatarMove packet = new PacketAvatarMove(randomEnum(Direction.class), randomFloat(), randomFloat(), randomBoolean());
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Can not move while not logged in"));
+
+        final MockIUser user = this.login();
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Can not move while not in a world"));
+        Assert.assertFalse(user.called("move"));
+    }
+
+    @Test
+    public void handleInvalidPacketTest() {
+        final MockIUser user = this.login();
+        final PacketAvatarMove packet = Mockito.mock(PacketAvatarMove.class);
+
+        user.setWorld(Mockito.mock(IWorld.class));
+        Mockito.when(packet.getAction()).thenReturn(randomEnum(AvatarAction.class, AvatarAction.MOVE_AVATAR));
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Only Avatar-Action MOVE_AVATAR is allowed"));
+        Assert.assertFalse(user.called("move"));
+        Mockito.when(packet.getAction()).thenReturn(AvatarAction.MOVE_AVATAR);
+        Mockito.when(packet.getDirection()).thenReturn(null);
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Missing Direction for avatar move"));
+        Assert.assertFalse(user.called("move"));
+        Mockito.when(packet.getUserId()).thenReturn(randomUniqueId());
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "User-ID must be the own or null"));
+        Assert.assertFalse(user.called("move"));
+    }
+
+    @Test
+    public void handleCorrectMoveTest() {
+        final PacketAvatarMove packet = new PacketAvatarMove(randomEnum(Direction.class), randomFloat(), randomFloat(), randomBoolean());
+        final MockIUser user = this.login();
+
+        user.setWorld(Mockito.mock(IWorld.class));
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertFalse(this.handler.logged());
+        Assert.assertTrue(user.called("move"));
+    }
+
+    @Test
+    public void handleIllegalMoveTest() {
+        final PacketAvatarMove packet = new PacketAvatarMove(randomEnum(Direction.class), -randomFloat(), -randomFloat(), randomBoolean());
+        final MockIUser user = this.login();
+
+        user.setWorld(Mockito.mock(IWorld.class));
+        user.setLocation(Mockito.mock(ILocation.class));
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "illegal movement"));
+        Assert.assertTrue(user.called("move"));
+
+        user.reset();
+        user.setLocation(null);
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "no valid position"));
+        Assert.assertTrue(user.called("move"));
     }
 }

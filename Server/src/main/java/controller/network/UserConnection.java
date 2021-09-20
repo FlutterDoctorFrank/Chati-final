@@ -67,7 +67,6 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
     public void send(@NotNull final Packet<?> packet) {
         if (this.connection.isConnected()) {
-
             this.connection.sendTCP(packet);
 
             if (!(packet instanceof PacketAvatarMove || packet instanceof PacketAudioMessage)) {
@@ -159,12 +158,12 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 this.user.move(packet.getDirection(), packet.getPosX(), packet.getPosY(), packet.isSprinting());
             } catch (IllegalPositionException ex) {
                 if (user.getLocation() == null) {
-                    LOGGER.warning("User " + this.user.getIgnoredUsers() + " has no valid position.");
+                    LOGGER.warning("User " + this.user + " has no valid position.");
                     return;
                 }
 
                 // Illegale Position erhalten. Sende vorherige Position.
-                LOGGER.warning("User " + this.user.getUsername() + " tried illegal movement: " + ex.getMessage());
+                LOGGER.warning("User " + this.user + " tried illegal movement: " + ex.getMessage());
 
                 final Direction direction = this.user.getLocation().getDirection();
                 final float posX = this.user.getLocation().getPosX();
