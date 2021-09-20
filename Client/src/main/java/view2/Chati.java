@@ -98,9 +98,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void create() {
         this.assetManager = new ChatiAssetManager();
-        this.emojiManager = new ChatiEmojiManager();
         this.preferences = new ChatiPreferences();
         this.localization = new ChatiLocalization();
+        this.emojiManager = new ChatiEmojiManager();
         this.audioManager = new AudioManager();
         this.spriteBatch = new SpriteBatch();
         this.headUpDisplay = new HeadUpDisplay();

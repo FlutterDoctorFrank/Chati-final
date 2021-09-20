@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -16,7 +15,7 @@ public class ChatiEmojiManager {
 
     private static final char START_CHAR = 0xB000; // Selten genutzter Character-Bereich
 
-    private final Map<Character, Emoji> emojis;
+    private final Map<Integer, Emoji> emojis;
 
     /**
      * Erzeugt eine neue Instanz des ChatiEmojiManager.
@@ -25,18 +24,9 @@ public class ChatiEmojiManager {
         this.emojis = new TreeMap<>();
 
         // Ermittle alle Emoji-Texturen und füge Emojis in einer Datenstruktur ein.
-        Array<TextureAtlas.AtlasRegion> atlasRegions = Chati.CHATI.getAtlas().getRegions();
+        Array<TextureAtlas.AtlasRegion> atlasRegions = Chati.CHATI.getRegions("emoji");
         for (int i = 0; i < atlasRegions.size; i++) {
-            String regionName = atlasRegions.get(i).name;
-            if (regionName.matches("^emoji_.*")) {
-                char character = (char) (START_CHAR + i);
-                try {
-                    int unicode = Integer.parseInt(regionName.split("_")[1], 16);
-                    emojis.put(character, new Emoji(character, unicode, atlasRegions.get(i)));
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                }
-            }
+            emojis.put(i, new Emoji((char) (START_CHAR + i), atlasRegions.get(i)));
         }
 
         // Füge Glyphen der Emojis zu den Fonts hinzu.
@@ -46,14 +36,14 @@ public class ChatiEmojiManager {
     }
 
     public boolean isEmoji(char character) {
-        return emojis.containsKey(character);
+        return emojis.values().stream().anyMatch(emoji -> emoji.getChar() == character);
     }
 
     /**
      * Gibt alle in der Anwendung bekannten Emojis zurück.
      * @return Alle Emojis
      */
-    public Map<Character, Emoji> getEmojis() {
+    public Map<Integer, Emoji> getEmojis() {
         return Collections.unmodifiableMap(emojis);
     }
 
@@ -72,14 +62,19 @@ public class ChatiEmojiManager {
             if (font.getData().getGlyph(emoji.getChar()) == null) {
                 BitmapFont.Glyph emojiGlyph = new BitmapFont.Glyph();
                 emojiGlyph.id = emoji.getChar();
+                emojiGlyph.srcX = 0;
+                emojiGlyph.srcY = 0;
                 emojiGlyph.width = size;
                 emojiGlyph.height = size;
                 emojiGlyph.u = emoji.getRegion().getU();
                 emojiGlyph.v = emoji.getRegion().getV2();
                 emojiGlyph.u2 = emoji.getRegion().getU2();
                 emojiGlyph.v2 = emoji.getRegion().getV();
+                emojiGlyph.xoffset = 0;
                 emojiGlyph.yoffset = -size;
                 emojiGlyph.xadvance = size;
+                emojiGlyph.kerning = null;
+                emojiGlyph.fixedWidth = true;
                 emojiGlyph.page = page;
                 font.getData().setGlyph(emoji.getChar(), emojiGlyph);
             }
@@ -89,10 +84,9 @@ public class ChatiEmojiManager {
     /**
      * Eine Klasse, welche Emojis repräsentiert.
      */
-    public static class Emoji implements Comparable<Emoji> {
+    public static class Emoji {
 
         private final char character;
-        private final int unicode;
         private final TextureRegion region;
 
         /**
@@ -100,9 +94,8 @@ public class ChatiEmojiManager {
          * @param character Character, der diesen Emoji repräsentiert.
          * @param region Textur-Region des Emoji.
          */
-        public Emoji(char character, int unicode, TextureRegion region) {
+        public Emoji(char character, TextureRegion region) {
             this.character = character;
-            this.unicode = unicode;
             this.region = region;
         }
 
@@ -120,11 +113,6 @@ public class ChatiEmojiManager {
          */
         public TextureRegion getRegion() {
             return region;
-        }
-
-        @Override
-        public int compareTo(@NotNull ChatiEmojiManager.Emoji other) {
-            return Integer.compare(this.unicode, other.unicode);
         }
     }
 }

@@ -125,7 +125,7 @@ public class ChatWindow extends Window implements Translatable {
             }
         });
 
-        ChatiImageButton emojiButton = new ChatiImageButton(Chati.CHATI.getDrawable("emoji_1f600"));
+        ChatiImageButton emojiButton = new ChatiImageButton(new TextureRegionDrawable(Chati.CHATI.getRegions("emoji").get(1)));
         emojiButton.addListener(new ChatiTooltip("hud.tooltip.emoji"));
         emojiButton.addListener(new ClickListener() {
             @Override
