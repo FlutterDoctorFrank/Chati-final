@@ -271,9 +271,9 @@ public class TextArea extends TextField {
     }
 
     protected void drawText (Batch batch, BitmapFont font, float x, float y) {
-        float offsetX = 0;
         float offsetY = 0;
         for (int i = firstLineShowing * 2; i < (firstLineShowing + linesShowing) * 2 && i < linesBreak.size; i += 2) {
+            float offsetX = 0;
             for (int j = linesBreak.items[i]; j < linesBreak.items[i + 1]; j++) {
                 char c = displayText.charAt(j);
                 if (Chati.CHATI.getEmojiManager().isEmoji(c)) {
@@ -285,7 +285,6 @@ public class TextArea extends TextField {
                 font.draw(batch, glyph.toString(), x + offsetX + glyph.xoffset, y + offsetY);
                 offsetX += glyph.xadvance * font.getData().scaleX;
             }
-            offsetX = 0;
             offsetY -= font.getLineHeight();
         }
     }

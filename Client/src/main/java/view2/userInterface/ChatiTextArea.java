@@ -5,7 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.ChatiEmojiManager;
 import view2.ChatiLocalization.Translatable;
 
 /**

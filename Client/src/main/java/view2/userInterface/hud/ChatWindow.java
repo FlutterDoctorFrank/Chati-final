@@ -65,7 +65,7 @@ public class ChatWindow extends Window implements Translatable {
         historyScrollPane.setOverscroll(false, false);
         historyScrollPane.setScrollingDisabled(true, false);
 
-        HorizontalGroup emojiContainer = new HorizontalGroup().wrap(true).rowAlign(Align.left).padLeft(SPACE);
+        HorizontalGroup emojiContainer = new HorizontalGroup().wrap().rowAlign(Align.left).padLeft(SPACE);
         Chati.CHATI.getEmojiManager().getEmojis().values().forEach(emoji -> {
             ChatiImageButton emojiButton = new ChatiImageButton(new TextureRegionDrawable(emoji.getRegion()));
             emojiButton.addListener(new ClickListener() {
@@ -321,12 +321,13 @@ public class ChatWindow extends Window implements Translatable {
      */
     private void showMessage(@NotNull final LocalDateTime timestamp, @NotNull final String message,
                              @NotNull final Color messageColor) {
-        String showMessage = Chati.CHATI.getLocalization().format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
-        Label showLabel = new Label(colorizeText(showMessage, messageColor), Chati.CHATI.getSkin());
-        showLabel.setWrap(true);
+        String datedMessage = Chati.CHATI.getLocalization().format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
+        String colorizedMessage = getColorizedMessage(datedMessage, messageColor);
+        Label messageLabel = new Label(colorizedMessage, Chati.CHATI.getSkin());
+        messageLabel.setWrap(true);
 
         boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
-        messageLabelContainer.add(showLabel).top().left().padLeft(SPACE).padBottom(SPACE).growX().row();
+        messageLabelContainer.add(messageLabel).top().left().padLeft(SPACE).padBottom(SPACE).growX().row();
 
         // Scrolle beim Erhalten einer neuen Nachricht nur bis nach unten, wenn die Scrollleiste bereits ganz unten war.
         // Ansonsten wird ein Durchscrollen des Verlaufs durch das Erhalten neuer Nachrichten gestört.
@@ -334,6 +335,38 @@ public class ChatWindow extends Window implements Translatable {
             historyScrollPane.layout();
             historyScrollPane.scrollTo(0, 0, 0, 0);
         }
+    }
+
+    /**
+     * Färbe die Nachricht mithilfe der Color-Markup-Language ein. Glyphen von Emojis bleiben hierbei weiß, um korrekt
+     * dargestellt zu werden.
+     * @param message Nachricht, die eingefärbt werden soll.
+     * @param color Farbe, in die die Nachricht eingefärbt werden soll.
+     * @return Eingefärbte Nachricht.
+     */
+    private String getColorizedMessage(String message, Color color) {
+        if (color == Color.WHITE) {
+            return message;
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        boolean white = true;
+        for (int i = 0; i < message.length(); i++) {
+            char c = message.charAt(i);
+            boolean isEmoji = Chati.CHATI.getEmojiManager().isEmoji(c);
+            if (isEmoji && !white) {
+                stringBuilder.append("[WHITE]");
+                white = true;
+            } else if (!isEmoji && !Character.isWhitespace(c) && white) {
+                stringBuilder.append("[#").append(color).append("]");
+                white = false;
+            }
+            if (c == '[') {
+                stringBuilder.append("[[");
+            } else {
+                stringBuilder.append(c);
+            }
+        }
+        return stringBuilder.toString();
     }
 
     /**
@@ -353,31 +386,6 @@ public class ChatWindow extends Window implements Translatable {
         } else {
             typingUsersLabel.setText(Chati.CHATI.getLocalization().format("window.chat.typing-multiple", typingUsers.size()));
         }
-    }
-
-    /**
-     * Färbt den anzuzeigendend Text mithilfe der Color Markup Language Zeichen für Zeichen ein. Dies ist nötig, da
-     * durch die Verwendung der setColor-Methode eines Labels auch die Glyphen der Emojis eingefärbt werden würden.
-     * @param messageText Einzufärbender Text.
-     * @param messageColor Farbe, in die der Text eingefärbt werden soll.
-     * @return Eingefärbter Text.
-     */
-    private String colorizeText(String messageText, Color messageColor) {
-        StringBuilder coloredStringBuilder = new StringBuilder();
-        for (int i = 0; i < messageText.length(); i++) {
-            char character = messageText.charAt(i);
-            if (Chati.CHATI.getEmojiManager().isEmoji(character)) {
-                coloredStringBuilder.append("[WHITE]");
-            } else {
-                coloredStringBuilder.append("[#").append(messageColor.toString()).append("]");
-            }
-            if (character == '[') {
-                coloredStringBuilder.append("[[");
-            } else {
-                coloredStringBuilder.append(character);
-            }
-        }
-        return coloredStringBuilder.toString();
     }
 
     /**

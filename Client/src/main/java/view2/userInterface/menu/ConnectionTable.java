@@ -14,9 +14,11 @@ import view2.Chati;
  */
 public class ConnectionTable extends MenuTable {
 
-    private final Animation<TextureRegion> animation;
-    private final Image animationImage;
-    private float timer = 0;
+    private static final float FRAME_DURATION = 0.1f;
+
+    private final Animation<TextureRegion> loadingAnimation;
+    private final Image keyFrameImage;
+    private float stateTime = 0;
 
     /**
      * Erzeugt eine neue Instanz des ConnectionTable.
@@ -24,22 +26,21 @@ public class ConnectionTable extends MenuTable {
     public ConnectionTable(@NotNull final String labelKey) {
         super(labelKey);
 
-        animation = new Animation<>(0.1f, Chati.CHATI.getRegions("loading"), PlayMode.LOOP);
-        animationImage = new Image();
+        loadingAnimation = new Animation<>(FRAME_DURATION, Chati.CHATI.getRegions("loading"), PlayMode.LOOP);
+        keyFrameImage = new Image();
 
         Table container = new Table();
-        container.add(animationImage).size(ROW_HEIGHT / 2).padBottom(SPACING).row();
+        container.add(keyFrameImage).size(ROW_HEIGHT / 2).padBottom(SPACING).row();
         container.add(infoLabel);
         add(container);
     }
 
     @Override
     public void act(final float delta) {
-        animationImage.setDrawable(new TextureRegionDrawable(animation.getKeyFrame(timer += delta, true)));
+        keyFrameImage.setDrawable(new TextureRegionDrawable(loadingAnimation.getKeyFrame(stateTime += delta, true)));
     }
 
     @Override
     public void resetTextFields() {
-
     }
 }
