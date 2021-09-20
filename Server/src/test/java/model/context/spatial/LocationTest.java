@@ -1,4 +1,4 @@
-package model.context.spatial.objects;
+package model.context.spatial;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
