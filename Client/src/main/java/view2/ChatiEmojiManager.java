@@ -30,8 +30,12 @@ public class ChatiEmojiManager {
             String regionName = atlasRegions.get(i).name;
             if (regionName.matches("^emoji_.*")) {
                 char character = (char) (START_CHAR + i);
-                int unicode = Integer.parseInt(regionName.split("_")[1], 16);
-                emojis.put(character, new Emoji(character, unicode, atlasRegions.get(i)));
+                try {
+                    int unicode = Integer.parseInt(regionName.split("_")[1], 16);
+                    emojis.put(character, new Emoji(character, unicode, atlasRegions.get(i)));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

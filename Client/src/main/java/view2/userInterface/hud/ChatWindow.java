@@ -323,7 +323,6 @@ public class ChatWindow extends Window implements Translatable {
                              @NotNull final Color messageColor) {
         String showMessage = Chati.CHATI.getLocalization().format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
         Label showLabel = new Label(colorizeText(showMessage, messageColor), Chati.CHATI.getSkin());
-        //showLabel.setColor(messageColor);
         showLabel.setWrap(true);
 
         boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
@@ -368,14 +367,14 @@ public class ChatWindow extends Window implements Translatable {
         for (int i = 0; i < messageText.length(); i++) {
             char character = messageText.charAt(i);
             if (Chati.CHATI.getEmojiManager().isEmoji(character)) {
-                coloredStringBuilder.append("[WHITE]").append(character);
+                coloredStringBuilder.append("[WHITE]");
             } else {
                 coloredStringBuilder.append("[#").append(messageColor.toString()).append("]");
-                if (character == '[') {
-                    coloredStringBuilder.append("[[");
-                } else {
-                    coloredStringBuilder.append(character);
-                }
+            }
+            if (character == '[') {
+                coloredStringBuilder.append("[[");
+            } else {
+                coloredStringBuilder.append(character);
             }
         }
         return coloredStringBuilder.toString();

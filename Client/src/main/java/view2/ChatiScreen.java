@@ -2,6 +2,7 @@ package view2;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import org.jetbrains.annotations.NotNull;
 import view2.ChatiLocalization.Translatable;
 
@@ -26,6 +27,7 @@ public abstract class ChatiScreen extends ScreenAdapter implements Translatable 
     public void render(final float delta) {
         stage.act(delta);
         stage.draw();
+
         super.render(delta);
     }
 
