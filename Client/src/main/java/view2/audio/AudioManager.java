@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
+import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.KeyCommand;
@@ -15,9 +16,9 @@ import java.util.UUID;
  */
 public class AudioManager implements Disposable {
 
-    public static final int SAMPLE_RATE = 44100;
+    public static final int SAMPLING_RATE = 44100;
     public static final int SEND_RATE = 30;
-    public static final int BLOCK_SIZE = SAMPLE_RATE / SEND_RATE;
+    public static final int BLOCK_SIZE = SAMPLING_RATE / SEND_RATE;
     public static final boolean MONO = true;
 
     private VoiceRecorder voiceRecorder;
@@ -87,8 +88,7 @@ public class AudioManager implements Disposable {
      * Setzt die in den Einstellungen hinterlegte Lautstärke.
      */
     public void setVolume() {
-        float totalVolume = Chati.CHATI.getPreferences().isSoundOn() ?
-                (float) (-Math.pow(Chati.CHATI.getPreferences().getTotalVolume() - 1, 2) + 1) : 0;
+        float totalVolume = (float) (-Math.pow(Chati.CHATI.getPreferences().getTotalVolume() - 1, 2) + 1);
         float voiceVolume = (float) (-Math.pow(Chati.CHATI.getPreferences().getVoiceVolume() - 1, 2) + 1);
         float musicVolume = 0.1f * (float) (-Math.pow(Chati.CHATI.getPreferences().getMusicVolume() - 1, 2) + 1);
         float soundVolume = 0.1f * (float) (-Math.pow(Chati.CHATI.getPreferences().getSoundVolume() - 1, 2) + 1);
@@ -128,6 +128,15 @@ public class AudioManager implements Disposable {
         if (audioConsumer != null && audioConsumer.isRunning()) {
             audioConsumer.receiveMusicStream(timestamp, musicData);
         }
+    }
+
+    /**
+     * Gibt zurück, ob im gerade Sprachdaten von einem Benutzer abgespielt werden.
+     * @param user Zu überprüfender Benutzer.
+     * @return true, wenn Sprachdaten von diesem Benutzer abgespielt werden, sonst false.
+     */
+    public boolean isTalking(IUserView user) {
+        return audioConsumer.isTalking(user);
     }
 
     /**

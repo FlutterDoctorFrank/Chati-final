@@ -1,11 +1,17 @@
 package view2.world.component;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import controller.network.ServerSender;
 import model.context.spatial.Direction;
 import model.context.spatial.ISpatialContextView;
 import model.user.IInternUserView;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view2.Chati;
 import view2.world.WorldCamera;
@@ -19,6 +25,7 @@ import java.util.Objects;
  */
 public class InternUserAvatar extends UserAvatar {
 
+    private final InteractionAnimationSprite interactionAnimationSprite;
     private final LinkedList<Direction> currentDirectionalInputs;
     private Vector2 oldPosition;
     private boolean isTeleporting;
@@ -36,8 +43,18 @@ public class InternUserAvatar extends UserAvatar {
             fixture.getFilterData().categoryBits = WorldScreen.INTERN_USER_BIT;
             fixture.getFilterData().maskBits = WorldScreen.COLLISION_AREA_BIT;
         }
+
+        this.interactionAnimationSprite = new InteractionAnimationSprite();
         this.currentDirectionalInputs = new LinkedList<>();
         this.oldPosition = body.getPosition().cpy();
+    }
+
+    @Override
+    public void draw(@NotNull final Batch batch, final float alpha) {
+        super.draw(batch, alpha);
+        if (canInteract()) {
+            interactionAnimationSprite.draw(batch);
+        }
     }
 
     @Override
@@ -58,8 +75,10 @@ public class InternUserAvatar extends UserAvatar {
                 || Chati.CHATI.getWorldScreen().getWorldInputProcessor().isSprintPressed()) {
             isSprinting = true;
             velocity *= SPRINT_VELOCITY_FACTOR;
+            setFrameDuration(FRAME_DURATION / SPRINT_VELOCITY_FACTOR);
         } else {
             isSprinting = false;
+            setFrameDuration(FRAME_DURATION);
         }
         oldPosition = body.getPosition().cpy();
         currentDirection = getCurrentDirectionalInput();
@@ -89,7 +108,7 @@ public class InternUserAvatar extends UserAvatar {
      * Lässt den Benutzer mit einem Interaktionsobjekt in der Nähe seines Avatars interagieren.
      */
     public void interact() {
-        if (interactCount > 0) {
+        if (canInteract()) {
             IInternUserView internUser = Chati.CHATI.getInternUser();
             if (internUser == null) {
                 return;
@@ -144,5 +163,37 @@ public class InternUserAvatar extends UserAvatar {
             }
         });
         return currentDirectionalInputs.peekLast();
+    }
+
+    /**
+     * Gibt zurück, ob eine Interaktion momentan möglich ist.
+     * @return true, wenn eine Interaktion möglich ist, sonst false.
+     */
+    private boolean canInteract() {
+        return interactCount > 0;
+    }
+
+    private class InteractionAnimationSprite extends Sprite {
+
+        private static final int SIZE = 24;
+        private static final float FRAME_DURATION = 0.075f;
+
+        private final Animation<TextureRegion> interactionAnimation;
+        private float stateTime;
+
+        public InteractionAnimationSprite() {
+            this.interactionAnimation = new Animation<>(FRAME_DURATION, Chati.CHATI.getRegions("e"), Animation.PlayMode.LOOP);
+            setSize(WorldCamera.scaleToUnit(SIZE), WorldCamera.scaleToUnit(SIZE));
+            this.stateTime = 0;
+        }
+
+        @Override
+        public void draw(@NotNull final Batch batch) {
+            setPosition(InternUserAvatar.this.getPosition().x - getWidth() / 2,
+                    InternUserAvatar.this.getPosition().y + 3 * InternUserAvatar.this.getHeight() / 2 );
+            setRegion(interactionAnimation.getKeyFrame(stateTime, true));
+            stateTime += Gdx.graphics.getDeltaTime();
+            super.draw(batch);
+        }
     }
 }

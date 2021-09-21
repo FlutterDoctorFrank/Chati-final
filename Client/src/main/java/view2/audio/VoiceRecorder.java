@@ -22,7 +22,7 @@ public class VoiceRecorder implements Disposable {
      * Erzeugt eine neue Instanz des VoiceRecorder.
      */
     public VoiceRecorder() {
-        this.recorder = Gdx.audio.newAudioRecorder(AudioManager.SAMPLE_RATE, AudioManager.MONO);
+        this.recorder = Gdx.audio.newAudioRecorder(AudioManager.SAMPLING_RATE, AudioManager.MONO);
     }
 
     /**

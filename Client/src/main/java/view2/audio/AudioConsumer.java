@@ -33,7 +33,7 @@ public class AudioConsumer implements Disposable {
      * Erzeugt eine neue Instanz des AudioConsumer.
      */
     public AudioConsumer() {
-        this.player = Gdx.audio.newAudioDevice(AudioManager.SAMPLE_RATE, AudioManager.MONO);
+        this.player = Gdx.audio.newAudioDevice(AudioManager.SAMPLING_RATE, AudioManager.MONO);
         this.voiceDataBuffer = new ConcurrentHashMap<>();
         this.musicStream = new MusicStream();
     }
@@ -64,33 +64,41 @@ public class AudioConsumer implements Disposable {
                     }
                 }
 
-                int[] temp = new int[AudioManager.BLOCK_SIZE];
-                // Mische das oberste Element aller Warteschlangen pro Sender und des Musikstreams zusammen.
-                Set<short[]> blocks = voiceDataBuffer.values().stream()
-                        .filter(VoiceChatUser::isReady)
-                        .map(VoiceChatUser::getAudioDataBlock)
-                        .collect(Collectors.toSet());
-                for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
-                    int j = i;
-                    blocks.forEach(block -> temp[j] += block[j]);
-                    temp[j] *= voiceVolume;
-                }
+                // Entferne die obersten Elemente aus den Puffern des Voicechats und des Musikstreams.
+                Set<short[]> blocks = voiceDataBuffer.values().stream().filter(VoiceChatUser::isReady)
+                        .map(VoiceChatUser::getAudioDataBlock).collect(Collectors.toSet());
+                voiceDataBuffer.values().removeIf(Predicate.not(VoiceChatUser::hasData));
+                short[] musicBlock = new short[AudioManager.BLOCK_SIZE];
                 if (musicStream.isReady()) {
-                    short[] musicBlock = musicStream.getAudioDataBlock();
-                    for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
-                        musicBlock[i] *= musicVolume;
-                        temp[i] += musicBlock[i];
-                    }
+                    musicBlock = musicStream.getAudioDataBlock();
                 }
+
+                // Ton ist aus, beende Iteration ohne Verarbeitung der empfangenen Daten.
+                if (!Chati.CHATI.getPreferences().isSoundOn()) {
+                    continue;
+                }
+
+                int[] temp = new int[AudioManager.BLOCK_SIZE];
                 for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
+                    // Mische Daten aller Teilnehmer des Voicechats und setze die entsprechende Lautstärke.
+                    for (short[] block : blocks) {
+                        temp[i] += block[i];
+                    }
+                    temp[i] *= voiceVolume;
+
+                    // Mische Daten des Musikstreams dazu und setze die entsprechende Lautstärke.
+                    musicBlock[i] *= musicVolume;
+                    temp[i] += musicBlock[i];
+
+                    // Verhindere einen Overflow der gemischten Daten.
                     mixedData[i] = (short) (temp[i] > Short.MAX_VALUE ? Short.MAX_VALUE :
                             (temp[i] < Short.MIN_VALUE ? Short.MIN_VALUE : temp[i]));
                 }
-                if (Chati.CHATI.getPreferences().isSoundOn()) {
-                    player.writeSamples(mixedData, 0, mixedData.length);
-                }
-                voiceDataBuffer.values().removeIf(Predicate.not(VoiceChatUser::hasData));
+
+                // Spiele die gemischten Daten ab.
+                player.writeSamples(mixedData, 0, mixedData.length);
             }
+
             this.voiceDataBuffer.clear();
             this.musicStream.clear();
         });
@@ -112,6 +120,16 @@ public class AudioConsumer implements Disposable {
      */
     public boolean isRunning() {
         return isRunning;
+    }
+
+    /**
+     * Gibt zurück, ob im gerade Sprachdaten von einem Benutzer abgespielt werden.
+     * @param user Zu überprüfender Benutzer.
+     * @return true, wenn Sprachdaten von diesem Benutzer abgespielt werden, sonst false.
+     */
+    public boolean isTalking(IUserView user) {
+        VoiceChatUser voiceChatUser = voiceDataBuffer.get(user);
+        return voiceChatUser != null && voiceChatUser.isReady();
     }
 
     /**

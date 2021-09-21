@@ -44,7 +44,7 @@ public class MusicStream extends AudioProducer {
         float numPlaybackSample = 0;
         for (short musicData : musicDataBlock) {
             numPlaybackSample += slowDownRate;
-            for (int i = 0; i < Math.floor(numPlaybackSample); i++) {
+            for (int i = (int) numPlaybackSample; i > 0; i--) {
                 audioDataQueue.add(musicData);
                 numPlaybackSample--;
             }
