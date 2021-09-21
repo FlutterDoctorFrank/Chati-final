@@ -22,10 +22,11 @@ public interface IInternUserController extends IUserController {
 
     /**
      * Setzt die Welt des internen Benutzers.
+     * @param worldId ID der Welt.
      * @param worldName Name der Welt.
      * @see SpatialContext
      */
-    void joinWorld(@NotNull final String worldName);
+    void joinWorld(@NotNull final ContextID worldId, @NotNull final String worldName);
 
     /**
      * Verwirft alle initialisierten Kontexte im Modell.

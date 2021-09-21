@@ -51,10 +51,10 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void joinWorld(@NotNull final String worldName) {
-        this.currentWorld = new SpatialContext(worldName, Context.getGlobal());
+    public void joinWorld(@NotNull final ContextID worldId, @NotNull final String worldName) {
+        this.currentWorld = Context.getGlobal().getChildren().get(worldId);
         this.isInCurrentWorld = true;
-        Context.getGlobal().addChild(currentWorld);
+
         UserManager.getInstance().getModelObserver().setWorldChanged();
     }
 
@@ -80,8 +80,12 @@ public class InternUser extends User implements IInternUserController, IInternUs
         if (currentRoom != null) {
             leaveRoom();
         }
-        this.currentRoom = new SpatialContext(roomName, currentWorld);
-        this.currentWorld.addChild(this.currentRoom);
+        try {
+            this.currentRoom = currentWorld.getContext(roomId);
+        } catch (ContextNotFoundException e) {
+            this.currentRoom = new SpatialContext(roomName, currentWorld);
+            this.currentWorld.addChild(this.currentRoom);
+        }
         this.isInCurrentRoom = true;
         this.currentRoom.build(map);
     }

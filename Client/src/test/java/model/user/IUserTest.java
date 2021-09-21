@@ -80,7 +80,7 @@ public class IUserTest {
             @Override
             public void create() {
                 Gdx.app.exit();
-                UserManager.getInstance().getInternUser().joinWorld(world.getContextName());
+                UserManager.getInstance().getInternUser().joinWorld(world.getContextId(), world.getContextName());
                 UserManager.getInstance().getInternUser().joinRoom(room.getContextId(), room.getContextName(), map);
             }
         };

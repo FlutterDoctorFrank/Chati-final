@@ -77,7 +77,9 @@ public class UserManager implements IUserManagerController, IUserManagerView {
             throw new ContextNotFoundException("Tried to update private rooms in an unknown world.", worldId);
         }
         privateRooms.forEach((roomId, roomName) -> world.addChild(new SpatialContext(roomName, world)));
-        world.getChildren().values().removeIf(room -> !room.isPrivate() && privateRooms.containsKey(room.getContextId()));
+        world.getChildren().values().forEach(child -> System.out.println(child.getContextId()));
+        world.getChildren().values().removeIf(room -> room.isPrivate() && !privateRooms.containsKey(room.getContextId()));
+        world.getChildren().values().forEach(child -> System.out.println(child.getContextId()));
         modelObserver.setRoomListChanged();
     }
 
@@ -183,7 +185,8 @@ public class UserManager implements IUserManagerController, IUserManagerView {
         throwIfNotInWorld();
         SpatialContext world = internUser.getCurrentWorld();
         if (world != null) {
-            return Collections.unmodifiableMap(internUser.getCurrentWorld().getChildren());
+            return internUser.getCurrentWorld().getChildren().values().stream().filter(Context::isPrivate)
+                    .collect(Collectors.toUnmodifiableMap(SpatialContext::getContextId, Function.identity()));
         } else {
             return Collections.emptyMap();
         }

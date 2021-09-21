@@ -121,7 +121,7 @@ public class IUserManagerTest {
             public void create() {
                 room.build(map);
                 Gdx.app.exit();
-                UserManager.getInstance().getInternUser().joinWorld(world.getContextName());
+                UserManager.getInstance().getInternUser().joinWorld(world.getContextId(), world.getContextName());
                 UserManager.getInstance().getInternUser().joinRoom(world.getContextId(), world.getContextName(), map);
             }
         };
