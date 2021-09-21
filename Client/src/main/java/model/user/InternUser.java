@@ -29,12 +29,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
     /** Die Benachrichtigungen des internen Benutzers. */
     private final Map<UUID, Notification> notifications;
 
-    /** Die Welt, in der sich der interne Benutzer befindet. */
-    private SpatialContext currentWorld;
-
-    /** Der Raum, in dem sich der interne Benutzer befindet. */
-    private SpatialContext currentRoom;
-
     /**
      * Erzeugt eine neue Instanz des intern angemeldeten Benutzers.
      * @param userId ID des Benutzers.
@@ -45,16 +39,12 @@ public class InternUser extends User implements IInternUserController, IInternUs
     public InternUser(@NotNull final UUID userId, @NotNull final String username,
                       @NotNull final Status status, @NotNull final Avatar avatar) {
         super(userId, username, status, avatar);
-        this.currentWorld = null;
-        this.currentRoom = null;
         this.notifications = new HashMap<>();
     }
 
     @Override
-    public void joinWorld(@NotNull final ContextID worldId, @NotNull final String worldName) {
-        this.currentWorld = Context.getGlobal().getChildren().get(worldId);
-        this.isInCurrentWorld = true;
-
+    public void joinWorld(@NotNull final ContextID worldId) throws ContextNotFoundException {
+        super.joinWorld(worldId);
         UserManager.getInstance().getModelObserver().setWorldChanged();
     }
 
@@ -64,8 +54,8 @@ public class InternUser extends User implements IInternUserController, IInternUs
             throw new IllegalStateException("User is not in a world.");
         }
         UserManager.getInstance().discardWorldInfo();
-        Context.getGlobal().removeChild(currentWorld);
         notifications.values().removeIf(notification -> !notification.getContext().equals(Context.getGlobal()));
+        currentWorld.removeChildren();
         currentRoom = null;
         currentWorld = null;
         UserManager.getInstance().getModelObserver().setWorldChanged();
@@ -81,13 +71,21 @@ public class InternUser extends User implements IInternUserController, IInternUs
             leaveRoom();
         }
         try {
-            this.currentRoom = currentWorld.getContext(roomId);
+            joinRoom(roomId);
         } catch (ContextNotFoundException e) {
             this.currentRoom = new SpatialContext(roomName, currentWorld);
             this.currentWorld.addChild(this.currentRoom);
         }
-        this.isInCurrentRoom = true;
         this.currentRoom.build(map);
+    }
+
+    @Override
+    public void leaveRoom() {
+        // Entferne alle Referenzen auf den Raum und allen untergeordneten Kontexten.
+        UserManager.getInstance().discardRoomInfo();
+        currentRoom.removeChildren();
+        currentLocation = null;
+        currentRoom = null;
     }
 
     @Override
@@ -194,16 +192,5 @@ public class InternUser extends User implements IInternUserController, IInternUs
             System.out.println("Found no interactables from location: " + posX + ", " + posY + ", " + direction);
         }
         return null;
-    }
-
-    /**
-     * Entfernt alle Referenzen auf einen verlassen (privaten) Raum.
-     */
-    public void leaveRoom() {
-        // Entferne alle Referenzen auf den Raum und allen untergeordneten Kontexten.
-        UserManager.getInstance().discardRoomInfo();
-        currentWorld.removeChild(currentRoom);
-        currentLocation = null;
-        currentRoom = null;
     }
 }

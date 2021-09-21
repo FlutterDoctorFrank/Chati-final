@@ -4,6 +4,7 @@ import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.Direction;
 import model.context.spatial.Location;
+import model.context.spatial.SpatialContext;
 import model.exception.ContextNotFoundException;
 import model.exception.UserNotFoundException;
 import model.role.Permission;
@@ -33,16 +34,14 @@ public class User implements IUserController, IUserView {
     /** Der Avatar des Benutzers. */
     private Avatar avatar;
 
-    /** Die Information, ob sich der Benutzer gerade in der aktuellen Welt des intern angemeldeten Benutzers dieses
-        Clients befindet.*/
-    protected boolean isInCurrentWorld;
-
-    /** Die Information, ob sich der Benutzer gerade im aktuellen Raum des intern angemeldeten Benutzers dieses
-        Clients befindet. */
-    protected boolean isInCurrentRoom;
-
     /** Die Information, ob sich der Benutzer in einem privaten Raum befindet. */
     protected boolean isInPrivateRoom;
+
+    /** Die aktuelle Welt des Benutzers. */
+    protected SpatialContext currentWorld;
+
+    /** Der aktuelle Raum des Benutzers. */
+    protected SpatialContext currentRoom;
 
     /** Die aktuelle Position des Benutzers auf der Karte des aktuell angezeigten Raums. */
     protected Location currentLocation;
@@ -91,8 +90,8 @@ public class User implements IUserController, IUserView {
         this.username = username;
         this.status = status;
         this.avatar = avatar;
-        this.isInCurrentWorld = false;
-        this.isInCurrentRoom = false;
+        this.currentWorld = null;
+        this.currentRoom = null;
         this.currentLocation = null;
         this.isSprinting = false;
         this.isTeleporting = false;
@@ -124,21 +123,39 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void setInCurrentWorld(final boolean isInCurrentWorld) {
-        this.isInCurrentWorld = isInCurrentWorld;
-        if (!isInCurrentWorld) {
-            discardWorldInfo();
+    public void joinWorld(@NotNull ContextID worldId) throws ContextNotFoundException {
+        this.currentWorld = Context.getGlobal().getChildren().get(worldId);
+        if (currentWorld == null) {
+            throw new ContextNotFoundException("Tried to join a world that does not exist.", worldId);
         }
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
-    public void setInCurrentRoom(final boolean isInCurrentRoom) {
-        this.isInCurrentRoom = isInCurrentRoom;
-        if (!isInCurrentRoom) {
-            discardRoomInfo();
+    public void leaveWorld() {
+        if (this.currentWorld != null) {
+            discardWorldInfo();
+            this.currentWorld = null;
+            UserManager.getInstance().getModelObserver().setUserInfoChanged();
         }
+    }
+
+    @Override
+    public void joinRoom(@NotNull ContextID roomId) throws ContextNotFoundException {
+        if (currentWorld == null) {
+            throw new IllegalStateException("Cannot join a room when not in a world.");
+        }
+        this.currentRoom = currentWorld.getContext(roomId);
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
+    }
+
+    @Override
+    public void leaveRoom() {
+        if (this.currentRoom != null) {
+            discardRoomInfo();
+            this.currentRoom = null;
+            UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        }
     }
 
     @Override
@@ -256,7 +273,7 @@ public class User implements IUserController, IUserView {
         InternUser internUser = UserManager.getInstance().getInternUser();
         return (this.equals(internUser) || status != Status.INVISIBLE) ? status
                 : (internUser.hasPermission(Permission.SEE_INVISIBLE_USERS) ? Status.INVISIBLE
-                : (this.isInCurrentRoom ? Status.ONLINE
+                : (this.isInCurrentRoom() ? Status.ONLINE
                 : Status.OFFLINE));
     }
 
@@ -278,14 +295,14 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canBeInvited() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return this.isOnline() && internUser.isInCurrentRoom && internUser.isInPrivateRoom && !this.isInCurrentRoom
+        return this.isOnline() && !this.isInCurrentRoom() && internUser.isInPrivateRoom
                 && internUser.hasPermission(Permission.MANAGE_PRIVATE_ROOM) && this.status != Status.BUSY;
     }
 
     @Override
     public boolean canBeKicked() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return this.isOnline() && internUser.isInCurrentRoom && internUser.isInPrivateRoom && this.isInCurrentRoom
+        return this.isOnline() && this.isInCurrentRoom() && internUser.isInPrivateRoom
                 && internUser.hasPermission(Permission.MANAGE_PRIVATE_ROOM)
                 && !this.hasPermission(Permission.ENTER_PRIVATE_ROOM);
     }
@@ -300,7 +317,7 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canBeReported() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return this.isOnline() && internUser.isInCurrentWorld && this.isInCurrentWorld
+        return this.isOnline() && this.isInCurrentWorld()
                 && !internUser.hasPermission(Permission.BAN_MODERATOR) && !this.hasPermission(Permission.BAN_MODERATOR)
                 && (!internUser.hasPermission(Permission.BAN_USER) || this.hasPermission(Permission.BAN_USER));
     }
@@ -370,12 +387,20 @@ public class User implements IUserController, IUserView {
 
     @Override
     public boolean isInCurrentWorld() {
-        return isInCurrentWorld;
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        if (currentWorld == null || internUser.currentWorld == null) {
+            return false;
+        }
+        return currentWorld.equals(internUser.currentWorld);
     }
 
     @Override
     public boolean isInCurrentRoom() {
-        return isInCurrentRoom;
+        InternUser internUser = UserManager.getInstance().getInternUser();
+        if (!isInCurrentWorld() || currentRoom == null || internUser.currentRoom == null) {
+            return false;
+        }
+        return currentRoom.equals(internUser.currentRoom);
     }
 
     @Override
@@ -432,8 +457,8 @@ public class User implements IUserController, IUserView {
             throw new IllegalStateException("User is not online");
         }
 
-        return UserManager.getInstance().getInternUser().getCurrentWorld() == null || !isInCurrentWorld ? Context.getGlobal()
-                : (UserManager.getInstance().getInternUser().getCurrentRoom() == null || !isInCurrentRoom
+        return UserManager.getInstance().getInternUser().getCurrentWorld() == null || !isInCurrentWorld() ? Context.getGlobal()
+                : (UserManager.getInstance().getInternUser().getCurrentRoom() == null || !isInCurrentRoom()
                     || currentLocation == null ? UserManager.getInstance().getInternUser().getCurrentWorld()
                 : currentLocation.getArea());
     }
@@ -446,8 +471,7 @@ public class User implements IUserController, IUserView {
         mutedContexts.values().removeIf(context -> !context.equals(Context.getGlobal()));
         bannedContexts.values().removeIf(context -> !context.equals(Context.getGlobal()));
         contextRoles.keySet().removeIf(context -> !context.equals(Context.getGlobal()));
-        isInCurrentWorld = false;
-        isInCurrentRoom = false;
+        currentRoom = null;
         currentLocation = null;
     }
 
@@ -463,7 +487,6 @@ public class User implements IUserController, IUserView {
                 && !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
         contextRoles.keySet().removeIf(context -> !context.equals(Context.getGlobal())
                 && !context.equals(UserManager.getInstance().getInternUser().getCurrentWorld()));
-        isInCurrentRoom = false;
         currentLocation = null;
     }
 
@@ -472,7 +495,7 @@ public class User implements IUserController, IUserView {
      * @return true, wenn der Benutzer noch bekannt ist, sonst false.
      */
     public boolean isKnown() {
-        return isInCurrentWorld || isFriend
+        return isInCurrentWorld() || isFriend
                 || isBanned() && (UserManager.getInstance().getInternUser().hasPermission(Permission.BAN_USER)
                 || UserManager.getInstance().getInternUser().hasPermission(Permission.BAN_MODERATOR));
     }

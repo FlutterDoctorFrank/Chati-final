@@ -1,6 +1,7 @@
 package model.user;
 
 import model.context.Context;
+import model.context.spatial.ContextMap;
 import model.context.spatial.Direction;
 import model.context.spatial.Location;
 import model.context.spatial.SpatialContext;
@@ -34,19 +35,28 @@ public interface IUserController {
     void setAvatar(@NotNull final Avatar avatar);
 
     /**
-     * Setzt die Information, ob ein Benutzer sich in der aktuellen Welt des intern angemeldeten Benutzers befindet.
-     * @param isInCurrentWorld true, wenn der Benutzer in der aktuellen Welt ist, sonst false.
-     * @see SpatialContext
+     * Setzt die Welt des Benutzers.
+     * @param worldId ID der Welt.
+     * @throws ContextNotFoundException falls keine Welt mit der ID existiert.
      */
-    void setInCurrentWorld(final boolean isInCurrentWorld);
+    void joinWorld(@NotNull final ContextID worldId) throws ContextNotFoundException;
 
     /**
-     * Setzt die Information, ob ein Benutzer sich im aktuellen Raum des intern angemeldeten Benutzers bendet und somit
-     * auf der aktuell auf dem Client gezeigten Karte dargestellt werden soll.
-     * @param isInCurrentRoom true, wenn der Benutzer im aktuellen Raum ist, sonst false.
-     * @see SpatialContext
+     * Lässt den Benutzer die Welt verlassen.
      */
-    void setInCurrentRoom(final boolean isInCurrentRoom);
+    void leaveWorld();
+
+    /**
+     * Setzt den Raum des Benutzers.
+     * @param roomId ID des Raums.
+     * @throws ContextNotFoundException falls kein Raum mit der ID existiert.
+     */
+    void joinRoom(@NotNull final ContextID roomId) throws ContextNotFoundException;
+
+    /**
+     * Lässt den Benutzer den Raum verlassen.
+     */
+    void leaveRoom();
 
     /**
      * Setzt die Information, ob sich dieser Benutzer in einem privaten Raum befindet.

@@ -158,7 +158,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             return;
                         }
 
-                        user.setInCurrentRoom(true);
+                        //user.setInCurrentRoom(true);
                         user.setMovable(packet.isMovable());
                         user.setLocation(packet.getPosX(), packet.getPosY(), true, false, packet.getDirection());
                         break;
@@ -174,7 +174,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         break;
 
                     case REMOVE_AVATAR:
-                        user.setInCurrentRoom(false);
+                        //user.setInCurrentRoom(false);
                         break;
                 }
             } catch (UserNotFoundException ex) {
@@ -459,7 +459,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             return;
                         }
 
-                        this.getIntern().joinWorld(packet.getContextId(), packet.getName());
+                        try {
+                            this.getIntern().joinWorld(packet.getContextId());
+                        } catch (ContextNotFoundException e) {
+                            e.printStackTrace(); // TODO
+                        }
                         this.worldId = packet.getContextId();
                     }
 
@@ -692,14 +696,26 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         user.setIgnored(info.getFlags().contains(Flag.IGNORED));
 
                         if (info.getFlags().contains(Flag.BANNED)) {
-                            user.setInCurrentWorld(false);
+                            //user.setInCurrentWorld(false);
                             user.setBan(packet.getContextId(), true);
                             return;
                         }
 
                         user.setReport(packet.getContextId(), info.getFlags().contains(Flag.REPORTED));
                         //user.setInPrivateRoom(info.getInPrivateRoom());
-                        user.setInCurrentWorld(true);
+                        //user.setInCurrentWorld(true);
+
+                        if (info.getWorld() != null) {
+                            user.joinWorld(info.getWorld());
+                        } else {
+                            user.leaveWorld();
+                        }
+
+                        if (info.getRoom() != null) {
+                            user.joinRoom(info.getRoom());
+                        } else {
+                            user.leaveRoom();
+                        }
                         break;
 
                     case REMOVE_USER:
@@ -728,7 +744,19 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         user.setFriend(info.getFlags().contains(Flag.FRIEND));
                         user.setIgnored(info.getFlags().contains(Flag.IGNORED));
                         //user.setInPrivateRoom(info.getInPrivateRoom());
-                        user.setInCurrentWorld(false);
+                        //user.setInCurrentWorld(false);
+
+                        if (info.getWorld() != null) {
+                            user.joinWorld(info.getWorld());
+                        } else {
+                            user.leaveWorld();
+                        }
+
+                        if (info.getRoom() != null) {
+                            user.joinRoom(info.getRoom());
+                        } else {
+                            user.leaveRoom();
+                        }
                         break;
 
                     case REMOVE_USER:

@@ -121,13 +121,17 @@ public class IUserManagerTest {
             public void create() {
                 room.build(map);
                 Gdx.app.exit();
-                UserManager.getInstance().getInternUser().joinWorld(world.getContextId(), world.getContextName());
+                try {
+                    UserManager.getInstance().getInternUser().joinWorld(world.getContextId());
+                } catch (ContextNotFoundException e) {
+                    e.printStackTrace();
+                }
                 UserManager.getInstance().getInternUser().joinRoom(world.getContextId(), world.getContextName(), map);
             }
         };
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         new Lwjgl3Application(game, config);
-        testUserManagerController.getExternUsers().forEach((id, user) -> user.setInCurrentWorld(true));
+        //testUserManagerController.getExternUsers().forEach((id, user) -> user.setInCurrentWorld(true));
         userSet.forEach(id -> Assert.assertTrue(testUserManagerView.getActiveUsers().containsKey(id)));
         int posX = 500;
         int posY = 1500;

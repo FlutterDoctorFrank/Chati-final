@@ -21,19 +21,6 @@ import java.util.UUID;
 public interface IInternUserController extends IUserController {
 
     /**
-     * Setzt die Welt des internen Benutzers.
-     * @param worldId ID der Welt.
-     * @param worldName Name der Welt.
-     * @see SpatialContext
-     */
-    void joinWorld(@NotNull final ContextID worldId, @NotNull final String worldName);
-
-    /**
-     * Verwirft alle initialisierten Kontexte im Modell.
-     */
-    void leaveWorld();
-
-    /**
      * Setzt den Raum des internen Benutzers und erzeugt die gesamte Kontexthierarchie anhand einer Karte.
      * @param roomId ID des Raums.
      * @param roomName Name des Raums.

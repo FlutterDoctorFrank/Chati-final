@@ -55,7 +55,7 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     public void logout() {
         throwIfNotLoggedIn();
         UserManager.getInstance().getModelObserver().setUserInfoChanged();
-        if (internUser.isInCurrentWorld) {
+        if (internUser.getCurrentWorld() != null) {
             UserManager.getInstance().getModelObserver().setWorldChanged();
         }
         internUser = null;

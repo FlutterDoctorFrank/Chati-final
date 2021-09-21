@@ -80,7 +80,11 @@ public class IUserTest {
             @Override
             public void create() {
                 Gdx.app.exit();
-                UserManager.getInstance().getInternUser().joinWorld(world.getContextId(), world.getContextName());
+                try {
+                    UserManager.getInstance().getInternUser().joinWorld(world.getContextId());
+                } catch (ContextNotFoundException e) {
+                    e.printStackTrace();
+                }
                 UserManager.getInstance().getInternUser().joinRoom(room.getContextId(), room.getContextName(), map);
             }
         };
@@ -134,14 +138,14 @@ public class IUserTest {
     @Test
     public void setIsInCurrentWorld() {
         boolean inCurrentWorld = new Random().nextBoolean();
-        testUserController.setInCurrentWorld(inCurrentWorld);
+        //testUserController.setInCurrentWorld(inCurrentWorld);
         Assert.assertEquals(inCurrentWorld, testUserView.isInCurrentWorld());
     }
 
     @Test
     public void setIsInCurrentRoom() {
         boolean inCurrentRoom = new Random().nextBoolean();
-        testUserController.setInCurrentRoom(inCurrentRoom);
+        //testUserController.setInCurrentRoom(inCurrentRoom);
         Assert.assertEquals(inCurrentRoom, testUserView.isInCurrentRoom());
     }
 

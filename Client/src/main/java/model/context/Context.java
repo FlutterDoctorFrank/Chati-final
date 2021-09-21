@@ -91,6 +91,13 @@ public class Context implements IContextView {
     }
 
     /**
+     * Entfernt alle untergeordneten Kontexte.
+     */
+    public void removeChildren() {
+        children.clear();
+    }
+
+    /**
      * Gibt den übergeordneten Kontext zurück.
      * @return Übergeordneter Kontext.
      */
