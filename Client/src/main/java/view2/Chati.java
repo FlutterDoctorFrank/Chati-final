@@ -304,6 +304,16 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
+    public void setWorldListChanged() {
+        this.worldListUpdateReceived = true;
+    }
+
+    @Override
+    public void setRoomListChanged() {
+        this.roomListUpdateReceived = true;
+    }
+
+    @Override
     public void setWorldChanged() {
         this.worldChangeReceived = true;
     }
@@ -316,20 +326,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void setMusicChanged() {
         this.musicChangeReceived = true;
-    }
-
-    @Override
-    public void updateWorlds(@NotNull final Map<ContextID, String> worlds) {
-        this.worlds.clear();
-        worlds.forEach((key, value) -> this.worlds.add(new ContextEntry(key, value)));
-        worldListUpdateReceived = true;
-    }
-
-    @Override
-    public void updateRooms(@NotNull final ContextID worldId, @NotNull final Map<ContextID, String> privateRooms) {
-        this.privateRooms.clear();
-        privateRooms.forEach((key, value) -> this.privateRooms.add(new ContextEntry(key, value)));
-        roomListUpdateReceived = true;
     }
 
     @Override
@@ -570,22 +566,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      */
     public boolean isRoomListChanged() {
         return changeRoomList;
-    }
-
-    /**
-     * Gibt die Menge aller verfügbaren Welten zurück.
-     * @return Menge aller verfügbaren Welten.
-     */
-    public @NotNull Set<ContextEntry> getWorlds() {
-        return Set.copyOf(worlds);
-    }
-
-    /**
-     * Gibt die Menge aller verfügbaren privaten Räume zurück.
-     * @return Menge aller verfügbaren privaten Räume.
-     */
-    public @NotNull Set<ContextEntry> getPrivateRooms() {
-        return Set.copyOf(privateRooms);
     }
 
     /**

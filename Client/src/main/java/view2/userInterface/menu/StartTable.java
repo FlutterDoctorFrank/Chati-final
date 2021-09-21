@@ -138,6 +138,8 @@ public class StartTable extends MenuTable {
      * Aktualisiert die Liste der angezeigten Welten.
      */
     private void updateWorldList() {
-        worldSelectBox.setItems(Chati.CHATI.getWorlds().toArray(new ContextEntry[0]));
+        worldSelectBox.setItems(Chati.CHATI.getUserManager().getWorlds().values().stream()
+                .map(world -> new ContextEntry(world.getContextId(), world.getContextName()))
+                .distinct().toArray(ContextEntry[]::new));
     }
 }

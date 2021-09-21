@@ -45,6 +45,16 @@ public class IUserTest {
             }
 
             @Override
+            public void setWorldListChanged() {
+
+            }
+
+            @Override
+            public void setRoomListChanged() {
+
+            }
+
+            @Override
             public void setNewNotificationReceived() {
 
             }

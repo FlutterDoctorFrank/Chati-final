@@ -77,7 +77,9 @@ public class Context implements IContextView {
      * @param context Hinzuzufügender Kontext.
      */
     public void addChild(@NotNull final SpatialContext context) {
-        this.children.put(context.getContextId(), context);
+        if (!children.containsKey(context.getContextId())) {
+            children.put(context.getContextId(), context);
+        }
     }
 
     /**
@@ -85,7 +87,7 @@ public class Context implements IContextView {
      * @param context Zu entfernender Kontext.
      */
     public void removeChild(@NotNull final SpatialContext context) {
-        this.children.remove(context.getContextId());
+        children.remove(context.getContextId());
     }
 
     /**
@@ -122,8 +124,8 @@ public class Context implements IContextView {
     }
 
     /**
-     * Gibt den global Kontext zurück.
-     * @return globaler Kontext.
+     * Gibt den globalen (übergeordnetsten) Kontext zurück.
+     * @return Globaler Kontext.
      */
     public static @NotNull Context getGlobal() {
         if (global == null) {
@@ -133,11 +135,19 @@ public class Context implements IContextView {
     }
 
     /**
-     * gibt alle Kinder des Kontexts zurück
-     * @return Kinder des Kontexts
+     * Gibt alle untergeordneten Kontexte zurück.
+     * @return Untergeordnete Kontexte.
      */
     public @NotNull Map<ContextID, SpatialContext> getChildren() {
         return children;
+    }
+
+    /**
+     * Gibt zurück, ob dieser Kontext ein privater Raum ist.
+     * @return true, wenn er ein privater Raum ist, sonst false.
+     */
+    public boolean isPrivate() {
+        return !contextName.equals("Public");
     }
 
     @Override

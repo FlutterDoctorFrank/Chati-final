@@ -1,5 +1,7 @@
 package model.user;
 
+import model.context.ContextID;
+import model.context.spatial.ISpatialContextView;
 import model.exception.UserNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,4 +77,16 @@ public interface IUserManagerView {
      * @return true, wenn ein Benutzer angemeldet ist, sonst false.
      */
     boolean isLoggedIn();
+
+    /**
+     * Gibt die Menge aller Welten zurück.
+     * @return Menge aller Welten.
+     */
+    @NotNull Map<ContextID, ISpatialContextView> getWorlds();
+
+    /**
+     * Gibt die Menge aller privaten Räume in der aktuellen Welt des intern angemeldeten Benutzers zurück.
+     * @return Menge aller privaten Räume.
+     */
+    @NotNull Map<ContextID, ISpatialContextView> getPrivateRooms();
 }

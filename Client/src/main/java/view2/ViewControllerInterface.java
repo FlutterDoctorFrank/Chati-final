@@ -25,20 +25,6 @@ public interface ViewControllerInterface {
     void setSender(@Nullable final ServerSender sender);
 
     /**
-     * Setzt die verfügbaren Welten, die der Benutzer betreten kann.
-     * @param worlds Verfügbare Welten.
-     */
-    void updateWorlds(@NotNull final Map<ContextID, String> worlds);
-
-    /**
-     * Setzt die innerhalb einer Welt verfügbaren privaten Räume, die der Benutzer betreten kann.
-     * @param worldId ID der übergeordneten Welt der privaten Räume.
-     * @param privateRooms Verfügbare private Räume.
-     * @throws ContextNotFoundException falls der Benutzer nicht in einer Welt mit der ID ist.
-     */
-    void updateRooms(@NotNull final ContextID worldId, @NotNull final Map<ContextID, String> privateRooms) throws ContextNotFoundException;
-
-    /**
      * Benachrichtigt die View, ob eine Registrierung von einem Benutzer erfolgreich beim Server durchgeführt wurde.
      * @param success true, falls die Registrierung erfolgreich war, sonst false.
      * @param messageBundle Die Kennung der Nachricht, die dem Benutzer angezeigt werden soll.

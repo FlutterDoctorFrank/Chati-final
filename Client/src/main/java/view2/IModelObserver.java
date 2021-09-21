@@ -21,6 +21,17 @@ public interface IModelObserver {
     void setUserNotificationChanged();
 
     /**
+     * Benachrichtigt die View darüber, dass sich die Menge der Welten geändert hat.
+     */
+    void setWorldListChanged();
+
+    /**
+     * Benachrichtigt die View darüber, dass sich die Menge der privaten Räume in der Welt des angemeldeten Benutzers
+     * geändert hat.
+     */
+    void setRoomListChanged();
+
+    /**
      * Benachrichtigt die View darüber, dass sich die Welt geändert hat, in der sich der angemeldete Benutzer befindet.
      */
     void setWorldChanged();

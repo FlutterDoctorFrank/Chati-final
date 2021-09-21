@@ -152,6 +152,16 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
+    public void setWorldListChanged() {
+
+    }
+
+    @Override
+    public void setRoomListChanged() {
+
+    }
+
+    @Override
     public void setNewNotificationReceived() {
 
     }
@@ -193,15 +203,6 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     public void setMusicChanged() {
 
-    }
-
-    @Override
-    public void updateWorlds(@NotNull Map<ContextID, String> worlds) {
-        Gdx.app.postRunnable(() -> hud.worlds = worlds);
-    }
-
-    @Override
-    public void updateRooms(@NotNull ContextID worldId, @NotNull Map<ContextID, String> privateRooms) {
     }
 
     @Override

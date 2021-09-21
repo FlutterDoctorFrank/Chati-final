@@ -1,5 +1,7 @@
 package model.user;
 
+import model.context.ContextID;
+import model.exception.ContextNotFoundException;
 import model.exception.UserNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +25,19 @@ public interface IUserManagerController {
      * Verwirft alle initialisierten Benutzer und Kontexte im Modell.
      */
     void logout();
+
+    /**
+     * Aktualisiert die Menge aller Welten.
+     * @param worlds Menge aller Welten.
+     */
+    void updateWorlds(@NotNull final Map<ContextID, String> worlds);
+
+    /**
+     * Aktualisiert die Menge aller privaten Räume einer Welt.
+     * @param worldId Welt, in der die Menge der privaten Räume aktualisiert werden soll.
+     * @param privateRooms Menge aller privaten Räume.
+     */
+    void updatePrivateRooms(@NotNull ContextID worldId, @NotNull final Map<ContextID, String> privateRooms) throws ContextNotFoundException;
 
     /**
      * Fügt einen externen Benutzer in die Liste der bekannten externen Benutzer hinzu, falls dieser in der Liste noch

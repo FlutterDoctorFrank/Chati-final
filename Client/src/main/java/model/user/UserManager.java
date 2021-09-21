@@ -1,14 +1,16 @@
 package model.user;
 
+import model.context.Context;
+import model.context.ContextID;
+import model.context.spatial.ISpatialContextView;
+import model.context.spatial.SpatialContext;
+import model.exception.ContextNotFoundException;
 import model.exception.UserNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view2.IModelObserver;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -58,6 +60,25 @@ public class UserManager implements IUserManagerController, IUserManagerView {
         }
         internUser = null;
         externUsers.clear();
+    }
+
+    @Override
+    public void updateWorlds(@NotNull Map<ContextID, String> worlds) {
+        worlds.forEach((worldId, worldName) -> Context.getGlobal().addChild(new SpatialContext(worldName, Context.getGlobal())));
+        Context.getGlobal().getChildren().values().removeIf(world -> !worlds.containsKey(world.getContextId()));
+        modelObserver.setWorldListChanged();
+    }
+
+    @Override
+    public void updatePrivateRooms(@NotNull ContextID worldId, @NotNull Map<ContextID, String> privateRooms) throws ContextNotFoundException {
+        throwIfNotInWorld();
+        SpatialContext world = Context.getGlobal().getChildren().get(worldId);
+        if (world == null) {
+            throw new ContextNotFoundException("Tried to update private rooms in an unknown world.", worldId);
+        }
+        privateRooms.forEach((roomId, roomName) -> world.addChild(new SpatialContext(roomName, world)));
+        world.getChildren().values().removeIf(room -> !room.isPrivate() && privateRooms.containsKey(room.getContextId()));
+        modelObserver.setRoomListChanged();
     }
 
     @Override
@@ -149,6 +170,24 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     @Override
     public boolean isLoggedIn() {
         return internUser != null;
+    }
+
+    @Override
+    public @NotNull Map<ContextID, ISpatialContextView> getWorlds() {
+        return Collections.unmodifiableMap(Context.getGlobal().getChildren());
+    }
+
+    @Override
+    public @NotNull Map<ContextID, ISpatialContextView> getPrivateRooms() {
+        throwIfNotLoggedIn();
+        throwIfNotInWorld();
+        SpatialContext world = internUser.getCurrentWorld();
+        if (world != null) {
+            return Collections.unmodifiableMap(internUser.getCurrentWorld().getChildren());
+        } else {
+            return Collections.emptyMap();
+        }
+
     }
 
     /**

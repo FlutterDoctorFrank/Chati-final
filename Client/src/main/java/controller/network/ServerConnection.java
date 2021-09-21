@@ -517,11 +517,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             }
 
             if (packet.getContextId() != null) {
-                this.manager.getView().updateRooms(packet.getContextId(), contexts);
+                this.manager.getUserManager().updatePrivateRooms(packet.getContextId(), contexts);
                 return;
             }
 
-            this.manager.getView().updateWorlds(contexts);
+            this.manager.getUserManager().updateWorlds(contexts);
         } catch (ContextNotFoundException ex) {
             // Der übergeordnete Kontext wurde nicht gefunden.
             LOGGER.warning("Server tried to send rooms info for unknown world with id: " + ex.getContextID());

@@ -185,7 +185,9 @@ public class RoomReceptionWindow extends InteractableWindow {
          * Aktualisiert die Liste der angezeigten privaten Räume.
          */
         private void updateRoomList() {
-            roomSelectBox.setItems(Chati.CHATI.getPrivateRooms().toArray(new ContextEntry[0]));
+            roomSelectBox.setItems(Chati.CHATI.getUserManager().getPrivateRooms().values().stream()
+                    .map(room -> new ContextEntry(room.getContextId(), room.getContextName()))
+                    .distinct().toArray(ContextEntry[]::new));
         }
     }
 

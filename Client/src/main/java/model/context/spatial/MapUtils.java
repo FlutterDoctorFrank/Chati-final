@@ -49,12 +49,12 @@ public class MapUtils {
         // richtige Stelle in der Kontexthierarchie eingefügt werden.
         rectangles.sort((prev, next) -> Float.compare(next.getRectangle().area(), prev.getRectangle().area()));
 
-        for (final RectangleMapObject object : rectangles) {
-            String name = object.getName();
-            float posX = object.getRectangle().getX();
-            float posY = object.getRectangle().getY();
-            float width = object.getRectangle().getWidth();
-            float height = object.getRectangle().getHeight();
+        for (int i = 0; i < rectangles.size; i++) {
+            String name = rectangles.get(i).getName();
+            float posX = rectangles.get(i).getRectangle().getX();
+            float posY = rectangles.get(i).getRectangle().getY();
+            float width = rectangles.get(i).getRectangle().getWidth();
+            float height = rectangles.get(i).getRectangle().getHeight();
 
             // Ermittle den übergeordneten Kontext. Da die Quadrate absteigend ihrer Grö0e sortiert eingefügt werden,
             // befindet sich der übergeordnete Kontext immer bereits in der Kontexthierarchie.
@@ -62,13 +62,13 @@ public class MapUtils {
             Expanse expanse = new Expanse(posX, posY, width, height);
 
             try {
-                if (!object.getProperties().containsKey("type")) {
+                if (!rectangles.get(i).getProperties().containsKey("type")) {
                     throw new IllegalArgumentException("Properties does not contain type");
                 }
 
-                Set<CommunicationMedium> media = parseCommunicationMedia(object.getProperties());
-                CommunicationRegion communication = parseCommunicationRegion(object.getProperties());
-                boolean interactable = !object.getProperties().get("type", String.class).equalsIgnoreCase("area");
+                Set<CommunicationMedium> media = parseCommunicationMedia(rectangles.get(i).getProperties());
+                CommunicationRegion communication = parseCommunicationRegion(rectangles.get(i).getProperties());
+                boolean interactable = !rectangles.get(i).getProperties().get("type", String.class).equalsIgnoreCase("area");
 
                 parent.addChild(new SpatialContext(name, parent, communication, media, expanse, interactable));
             } catch (ClassCastException ex) {
@@ -109,8 +109,8 @@ public class MapUtils {
 
         try {
             return CommunicationRegion.valueOf(properties.get("communication", String.class).toUpperCase());
-        } catch (ClassCastException ex) {
-            throw new IllegalArgumentException("Properties communication region is not of type String");
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Properties communication region is not of type String", e);
         }
     }
 }

@@ -242,7 +242,8 @@ public class WorldScreen extends ChatiScreen {
      */
     public void menuActionResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (!isMenuOpen()) {
-            throw new IllegalStateException("Got a menu-action-response while no menu is open.");
+            // throw new IllegalStateException("Got a menu-action-response while no menu is open.");
+            return;
         }
         currentInteractableWindow.receiveResponse(success, messageBundle);
     }
