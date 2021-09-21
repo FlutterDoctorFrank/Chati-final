@@ -35,17 +35,18 @@ public class VoiceRecorder implements Disposable {
         isRunning = true;
 
         Thread recordAndSendThread = new Thread(() -> {
-            long timestamp = System.currentTimeMillis();
             short[] recordedData = new short[AudioManager.BLOCK_SIZE];
+            long timestamp = System.currentTimeMillis();
 
+            outer:
             while (isRunning) {
                 synchronized (this) {
-                    // Warte solange nicht gesendet werden soll.
+                    // Warte, solange nicht gesendet werden soll.
                     while (!isRecording) {
+                        if (!isRunning) {
+                            break outer;
+                        }
                         try {
-                            if (!isRunning) {
-                                return;
-                            }
                             wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();

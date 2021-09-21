@@ -35,7 +35,12 @@ public abstract class AudioProducer {
      * @param timestamp Zeitstempel der abzuspielenden Daten.
      * @param audioBlock Abzuspielende Daten.
      */
-    public abstract void addAudioDataBlock(@NotNull LocalDateTime timestamp, final short[] audioBlock);
+    public void addAudioDataBlock(@NotNull LocalDateTime timestamp, final short[] audioBlock) {
+        this.lastTimeReceived = timestamp;
+        if (!ready && queueSizeInBlocks() > MIN_BLOCKS) {
+            ready = true;
+        }
+    }
 
     /**
      * Entfernt den aktuell abzuspielenden Block mit Audiodaten aus der Warteschlange und gibt diesen zurück.

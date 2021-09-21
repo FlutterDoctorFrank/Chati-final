@@ -170,7 +170,7 @@ public class InternUserAvatar extends UserAvatar {
      * @return true, wenn eine Interaktion möglich ist, sonst false.
      */
     private boolean canInteract() {
-        return interactCount > 0;
+        return interactCount > 0 && !Chati.CHATI.getWorldScreen().isMenuOpen();
     }
 
     private class InteractionAnimationSprite extends Sprite {

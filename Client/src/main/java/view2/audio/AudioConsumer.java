@@ -49,14 +49,16 @@ public class AudioConsumer implements Disposable {
 
         Thread mixAndPlaybackThread = new Thread(() -> {
             short[] mixedData = new short[AudioManager.BLOCK_SIZE];
+
+            outer:
             while (isRunning) {
                 synchronized (this) {
                     // Warte, solange keine Daten vorhanden sind.
                     while (voiceDataBuffer.isEmpty() && !musicStream.isReady()) {
+                        if (!isRunning) {
+                            break outer;
+                        }
                         try {
-                            if (!isRunning) {
-                                return;
-                            }
                             wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -123,7 +125,7 @@ public class AudioConsumer implements Disposable {
     }
 
     /**
-     * Gibt zurück, ob im gerade Sprachdaten von einem Benutzer abgespielt werden.
+     * Gibt zurück, ob gerade Sprachdaten von einem Benutzer abgespielt werden.
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn Sprachdaten von diesem Benutzer abgespielt werden, sonst false.
      */
@@ -137,7 +139,7 @@ public class AudioConsumer implements Disposable {
      * @return true, wenn Musikdaten abgespielt werden, sonst false.
      */
     public boolean isPlayingMusic() {
-        return musicStream.hasData();
+        return musicStream.isReady();
     }
 
     /**

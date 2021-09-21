@@ -37,7 +37,7 @@ public class ChatiPreferences {
     }
 
     /**
-     * Setzt die aktuell ausgewählte Sprache
+     * Setzt die aktuell ausgewählte Sprache.
      * @param language Ausgewählte Sprache.
      */
     public void setLanguage(@NotNull final Locale language) {
@@ -169,7 +169,7 @@ public class ChatiPreferences {
             }
 
             return builder.build();
-        } catch (IllformedLocaleException ex) {
+        } catch (IllformedLocaleException e) {
             preferences.putString("language", DEFAULT_LANGUAGE.toString());
             preferences.flush();
 

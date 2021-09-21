@@ -35,6 +35,11 @@ public class ChatiEmojiManager {
         addEmojisToFont(Chati.CHATI.getSkin().getFont("font-button"));
     }
 
+    /**
+     * Gibt zurück, ob ein Character ein Emoji repräsentiert.
+     * @param character Zu überprüfender Character.
+     * @return true, wenn der Character ein Emoji repräsentiert, sonst false.
+     */
     public boolean isEmoji(char character) {
         return emojis.values().stream().anyMatch(emoji -> emoji.getChar() == character);
     }

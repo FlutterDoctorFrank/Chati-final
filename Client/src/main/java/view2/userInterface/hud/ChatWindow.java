@@ -307,9 +307,6 @@ public class ChatWindow extends Window implements Translatable {
         typeMessageArea.setText("");
         typeMessageArea.translate();
         closeEmojiMenu();
-        if (historyScrollPane.getStage() != null) {
-            historyScrollPane.getStage().setScrollFocus(historyScrollPane);
-        }
         disableSendButton();
     }
 
@@ -338,13 +335,32 @@ public class ChatWindow extends Window implements Translatable {
     }
 
     /**
+     * Zeige die momentan tippenden Benutzer an.
+     */
+    private void showTypingUsers() {
+        if (typingUsers.isEmpty()) {
+            typingUsersLabel.setText("");
+        } else if (typingUsers.size() == 1) {
+            try {
+                typingUsersLabel.setText(Chati.CHATI.getLocalization().format("window.chat.typing-single",
+                        typingUsers.keySet().iterator().next().getUsername()));
+            } catch (NoSuchElementException e) {
+                // Sollte niemals eintreffen.
+                e.printStackTrace();
+            }
+        } else {
+            typingUsersLabel.setText(Chati.CHATI.getLocalization().format("window.chat.typing-multiple", typingUsers.size()));
+        }
+    }
+
+    /**
      * Färbe die Nachricht mithilfe der Color-Markup-Language ein. Glyphen von Emojis bleiben hierbei weiß, um korrekt
      * dargestellt zu werden.
      * @param message Nachricht, die eingefärbt werden soll.
      * @param color Farbe, in die die Nachricht eingefärbt werden soll.
      * @return Eingefärbte Nachricht.
      */
-    private String getColorizedMessage(String message, Color color) {
+    private String getColorizedMessage(@NotNull final String message, @NotNull final Color color) {
         if (color == Color.WHITE) {
             return message;
         }
@@ -370,25 +386,6 @@ public class ChatWindow extends Window implements Translatable {
     }
 
     /**
-     * Zeige die momentan tippenden Benutzer an.
-     */
-    private void showTypingUsers() {
-        if (typingUsers.isEmpty()) {
-            typingUsersLabel.setText("");
-        } else if (typingUsers.size() == 1) {
-            try {
-                typingUsersLabel.setText(Chati.CHATI.getLocalization().format("window.chat.typing-single",
-                        typingUsers.keySet().iterator().next().getUsername()));
-            } catch (NoSuchElementException e) {
-                // Sollte niemals eintreffen.
-                e.printStackTrace();
-            }
-        } else {
-            typingUsersLabel.setText(Chati.CHATI.getLocalization().format("window.chat.typing-multiple", typingUsers.size()));
-        }
-    }
-
-    /**
      * Zeigt die Sendetaste als aktiviert an.
      */
     private void enableSendButton() {
@@ -404,6 +401,9 @@ public class ChatWindow extends Window implements Translatable {
         sendButton.setTouchable(Touchable.disabled);
     }
 
+    /**
+     * Öffnet das Menü zur Auswahl eines Emojis.
+     */
     private void openEmojiMenu() {
         chatStack.add(emojiScrollPaneContainer);
         if (emojiScrollPane.getStage() != null) {
@@ -412,8 +412,14 @@ public class ChatWindow extends Window implements Translatable {
         emojiScrollPane.setScrollPercentY(0);
     }
 
+    /**
+     * Schließt das Menü zur Auswahl eines Emojis.
+     */
     private void closeEmojiMenu() {
         emojiScrollPaneContainer.remove();
+        if (historyScrollPane.getStage() != null) {
+            historyScrollPane.getStage().setScrollFocus(historyScrollPane);
+        }
     }
 
     @Override

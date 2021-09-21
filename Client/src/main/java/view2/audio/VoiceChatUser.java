@@ -28,11 +28,7 @@ public class VoiceChatUser extends AudioProducer {
         for (short sample : voiceDataBlock) {
             audioDataQueue.add(sample);
         }
-
-        this.lastTimeReceived = timestamp;
-        if (!ready && queueSizeInBlocks() > MIN_BLOCKS) {
-            ready = true;
-        }
+        super.addAudioDataBlock(timestamp, voiceDataBlock);
     }
 
     /**

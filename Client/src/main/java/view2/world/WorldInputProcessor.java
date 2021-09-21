@@ -17,6 +17,7 @@ public class WorldInputProcessor implements InputProcessor {
     private boolean moveRightPressed;
     private boolean sprintPressed;
     private boolean showNamesPressed;
+    private boolean pushToTalkPressed;
 
     @Override
     public boolean keyDown(final int keycode) {
@@ -37,6 +38,9 @@ public class WorldInputProcessor implements InputProcessor {
         }
         if (KeyCommand.SHOW_NAMES.matches(keycode)) {
             showNamesPressed = true;
+        }
+        if (KeyCommand.PUSH_TO_TALK.matches(keycode)) {
+            pushToTalkPressed = true;
         }
         if (KeyCommand.INTERACT.matches(keycode)) {
             if (Chati.CHATI.getWorldScreen().getInternUserAvatar() != null) {
@@ -65,6 +69,9 @@ public class WorldInputProcessor implements InputProcessor {
         }
         if (KeyCommand.SHOW_NAMES.matches(keycode)) {
             showNamesPressed = false;
+        }
+        if (KeyCommand.PUSH_TO_TALK.matches(keycode)) {
+            pushToTalkPressed = false;
         }
         return true;
     }
@@ -134,5 +141,13 @@ public class WorldInputProcessor implements InputProcessor {
      */
     public boolean isShowNamesPressed() {
         return showNamesPressed && KeyCommand.SHOW_NAMES.isPressed();
+    }
+
+    /**
+     * Gibt zurück, ob die Taste zum Sprechen gedrückt ist.
+     * @return true, wenn die Taste gedrückt ist, sonst false.
+     */
+    public boolean isPushToTalkPressed() {
+        return pushToTalkPressed && KeyCommand.PUSH_TO_TALK.isPressed();
     }
 }

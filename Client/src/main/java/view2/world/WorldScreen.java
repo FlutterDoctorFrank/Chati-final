@@ -56,7 +56,6 @@ public class WorldScreen extends ChatiScreen {
     private final WorldCamera camera;
     private final FitViewport viewport;
     private final OrthogonalTiledMapRenderer tiledMapRenderer;
-    // private final Box2DDebugRenderer debugRenderer;
     private final World world;
 
     private final Map<IUserView, UserAvatar> externUserAvatars;
@@ -109,8 +108,6 @@ public class WorldScreen extends ChatiScreen {
             internUserAvatar.drawHead(Chati.CHATI.getSpriteBatch());
             Chati.CHATI.getSpriteBatch().end();
 
-            //debugRenderer.render(world, camera.combined);
-
             world.step(1 / WORLD_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 
             internUserAvatar.sendPosition();
@@ -136,7 +133,6 @@ public class WorldScreen extends ChatiScreen {
     public void dispose() {
         destroy();
         tiledMapRenderer.dispose();
-        // debugRenderer.dispose();
         world.dispose();
         super.dispose();
     }
@@ -197,6 +193,9 @@ public class WorldScreen extends ChatiScreen {
      * @param menu Zu öffnendes Menü.
      */
     public void openMenu(@NotNull final ContextID contextId, @NotNull final ContextMenu menu) {
+        if (isMenuOpen()) {
+            throw new IllegalStateException("Cannot open a menu while another menu is open.");
+        }
         switch (menu) {
             case ROOM_RECEPTION_MENU:
                 currentInteractableWindow = new RoomReceptionWindow(contextId);
@@ -217,7 +216,7 @@ public class WorldScreen extends ChatiScreen {
                 currentInteractableWindow = new PortalWindow(contextId);
                 break;
             default:
-                throw new IllegalArgumentException("Tried to open an unsupported menu.");
+                throw new IllegalArgumentException("Tried to open an unknown menu.");
         }
         currentInteractableWindow.open();
     }
@@ -228,8 +227,8 @@ public class WorldScreen extends ChatiScreen {
      * @param menu Zu schließendes Menü.
      */
     public void closeMenu(@NotNull final ContextID contextId, @NotNull final ContextMenu menu) {
-        if (currentInteractableWindow == null || !currentInteractableWindow.getInteractableId().equals(contextId)
-            || currentInteractableWindow.getInteractableMenu() != menu) {
+        if (!isMenuOpen() || !currentInteractableWindow.getInteractableId().equals(contextId)
+                || currentInteractableWindow.getInteractableMenu() != menu) {
             throw new IllegalArgumentException("Tried to close a menu that is not open.");
         }
         stage.closeWindow(currentInteractableWindow);
@@ -242,10 +241,18 @@ public class WorldScreen extends ChatiScreen {
      * @param messageBundle die Nachricht mit ihren Argumenten, die angezeigt werden soll.
      */
     public void menuActionResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
-        if (currentInteractableWindow == null) {
-            return;
+        if (!isMenuOpen()) {
+            throw new IllegalStateException("Got a menu-action-response while no menu is open.");
         }
         currentInteractableWindow.receiveResponse(success, messageBundle);
+    }
+
+    /**
+     * Gibt zurück, ob gerade das Menü eines Interaktionsobjekts geöffnet ist.
+     * @return true, wenn das Menü eines Interaktionsobjekts geöffnet ist, sonst false.
+     */
+    public boolean isMenuOpen() {
+        return currentInteractableWindow != null;
     }
 
     /**
@@ -307,6 +314,5 @@ public class WorldScreen extends ChatiScreen {
 
     @Override
     public void translate() {
-
     }
 }

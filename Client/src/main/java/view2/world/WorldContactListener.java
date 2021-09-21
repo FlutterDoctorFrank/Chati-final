@@ -58,7 +58,6 @@ public class WorldContactListener implements ContactListener {
 
     @Override
     public void postSolve(@NotNull final Contact contact, @NotNull final ContactImpulse impulse) {
-
     }
 
     /**

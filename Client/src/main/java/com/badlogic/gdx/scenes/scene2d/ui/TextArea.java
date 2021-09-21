@@ -31,7 +31,7 @@ import view2.Chati;
 
 /** Anmerkung: Diese Klasse ist eine exakte Kopie der Klasse TextArea von LibGDX, mit der Ausnahme der Methode drawText.
  *  Dies ist zur Korrekten Darstellung von Emojis in der TextArea nötig, da das dafür notwendige Verhalten nicht
- *  durch einfaches Überschreiben von Methoden erzeugt werden kann, sondern den Zugriff auf private Felder bedarf. */
+ *  durch einfaches Überschreiben der Methode erzeugt werden kann, sondern den Zugriff auf private Felder bedarf. */
 
 public class TextArea extends TextField {
     /** Array storing lines breaks positions **/
@@ -282,7 +282,7 @@ public class TextArea extends TextField {
                     font.setColor(Color.BLACK);
                 }
                 BitmapFont.Glyph glyph = font.getData().getGlyph(c);
-                font.draw(batch, glyph.toString(), x + offsetX + glyph.xoffset, y + offsetY);
+                font.draw(batch, glyph.toString(), x + offsetX + glyph.xoffset * font.getData().scaleX, y + offsetY);
                 offsetX += glyph.xadvance * font.getData().scaleX;
             }
             offsetY -= font.getLineHeight();

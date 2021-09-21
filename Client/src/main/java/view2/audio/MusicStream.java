@@ -49,11 +49,7 @@ public class MusicStream extends AudioProducer {
                 numPlaybackSample--;
             }
         }
-
-        this.lastTimeReceived = timestamp;
-        if (!ready && queueSizeInBlocks() > MIN_BLOCKS) {
-            ready = true;
-        }
+        super.addAudioDataBlock(timestamp, musicDataBlock);
     }
 
     /**

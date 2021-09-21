@@ -63,7 +63,8 @@ public class AudioManager implements Disposable {
 
             if (voiceRecorder.isRunning()) {
                 if (Chati.CHATI.getPreferences().isMicrophoneOn() && (!Chati.CHATI.getPreferences().getPushToTalk()
-                        || KeyCommand.PUSH_TO_TALK.isPressed()) && internUser != null && internUser.canTalk()) {
+                        || Chati.CHATI.getWorldScreen().getWorldInputProcessor().isPushToTalkPressed())
+                        && internUser != null && internUser.canTalk()) {
                     if (!voiceRecorder.isRecording()) {
                         voiceRecorder.startRecording();
                     }
