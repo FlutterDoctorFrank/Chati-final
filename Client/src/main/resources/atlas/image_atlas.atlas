@@ -3489,14 +3489,14 @@ rick_sit_left
   size: 32, 48
   orig: 32, 48
   offset: 0, 0
-  index: 4
+  index: 5
 rick_sit_left
   rotate: false
   xy: 1216, 226
   size: 32, 48
   orig: 32, 48
   offset: 0, 0
-  index: 5
+  index: 4
 rick_sit_left
   rotate: false
   xy: 1216, 226
@@ -3531,13 +3531,6 @@ rick_sit_right
   size: 32, 48
   orig: 32, 48
   offset: 0, 0
-  index: 1
-rick_sit_right
-  rotate: false
-  xy: 1182, 126
-  size: 32, 48
-  orig: 32, 48
-  offset: 0, 0
   index: 5
 rick_sit_right
   rotate: false
@@ -3546,6 +3539,13 @@ rick_sit_right
   orig: 32, 48
   offset: 0, 0
   index: 4
+rick_sit_right
+  rotate: false
+  xy: 1182, 126
+  size: 32, 48
+  orig: 32, 48
+  offset: 0, 0
+  index: 1
 rick_sit_right
   rotate: false
   xy: 1216, 176

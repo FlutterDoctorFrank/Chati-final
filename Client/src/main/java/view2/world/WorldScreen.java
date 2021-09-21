@@ -134,6 +134,7 @@ public class WorldScreen extends ChatiScreen {
 
     @Override
     public void dispose() {
+        destroy();
         tiledMapRenderer.dispose();
         // debugRenderer.dispose();
         world.dispose();

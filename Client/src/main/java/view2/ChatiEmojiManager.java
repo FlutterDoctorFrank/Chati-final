@@ -114,5 +114,10 @@ public class ChatiEmojiManager {
         public TextureRegion getRegion() {
             return region;
         }
+
+        @Override
+        public String toString() {
+            return String.valueOf(character);
+        }
     }
 }

@@ -39,7 +39,7 @@ public class ChatWindow extends Window implements Translatable {
     private static final float MINIMUM_HEIGHT = 200;
     private static final float SPACE = 5;
     private static final float SEND_BUTTON_WIDTH = 120;
-    private static final float SEND_BUTTON_HEIGHT = 65;
+    private static final float SEND_BUTTON_HEIGHT = 60;
 
     private final Map<IUserView, Long> typingUsers;
     private long lastTimeTypingSent;
@@ -71,7 +71,7 @@ public class ChatWindow extends Window implements Translatable {
             emojiButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                    typeMessageArea.appendText(String.valueOf(emoji.getChar()));
+                    typeMessageArea.appendText(emoji.toString());
                     InputEvent typingEvent = new InputEvent();
                     typingEvent.setType(InputEvent.Type.keyTyped);
                     typeMessageArea.fire(typingEvent);
