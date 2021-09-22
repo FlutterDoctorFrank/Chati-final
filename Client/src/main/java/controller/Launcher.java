@@ -7,8 +7,11 @@ import joptsimple.OptionSet;
 import model.user.UserManager;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.logging.LogManager;
 
 public class Launcher {
 
@@ -98,6 +101,19 @@ public class Launcher {
                     }
 
                     launcher.network.setPorts(-1, udpPort);
+                }
+
+                try {
+                    final InputStream properties = Launcher.class.getClassLoader().getResourceAsStream("logging.properties");
+                    final File home = new File(System.getProperty("user.home"), "Documents/Chati");
+
+                    if (home.mkdirs()) {
+                        System.out.println("Created home directory for Chati");
+                    }
+
+                    LogManager.getLogManager().readConfiguration(properties);
+                } catch (IOException | NullPointerException ex) {
+                    System.err.println("Failed to load logging properties. Using default configuration.");
                 }
 
                 System.out.println("Starting Client...");

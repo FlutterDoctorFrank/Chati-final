@@ -77,10 +77,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     public void send(@NotNull final Packet<?> packet) {
         if (this.manager.getEndPoint().isConnected()) {
             this.manager.getEndPoint().sendTCP(packet);
-
-            if (!(packet instanceof PacketAvatarMove || packet instanceof PacketAudioMessage)) {
-                LOGGER.info(String.format("Sent packet to server: %s", packet));
-            }
+            this.logSentPacket(packet);
         }
     }
 
@@ -98,9 +95,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         if (object instanceof Packet<?>) {
-            if (!(object instanceof PacketAvatarMove || object instanceof PacketAudioMessage)) {
-                LOGGER.info(String.format("Received packet from server: %s", object));
-            }
+            this.logReceivedPacket((Packet<?>) object);
 
             try {
                 call((Packet<?>) object, this);
@@ -756,6 +751,18 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             // Context wurde nicht gefunden.
             LOGGER.warning("Server tried to send user info for unknown context with id: " + ex.getContextID());
         }
+    }
+
+    private void logReceivedPacket(@NotNull final Packet<?> packet) {
+        final Level level = packet instanceof PacketAvatarMove || packet instanceof PacketAudioMessage ? Level.FINER : Level.FINE;
+
+        LOGGER.log(level, String.format("Received packet from server: %s", packet));
+    }
+
+    private void logSentPacket(@NotNull final Packet<?> packet) {
+        final Level level = packet instanceof PacketAvatarMove || packet instanceof PacketAudioMessage ? Level.FINER : Level.FINE;
+
+        LOGGER.log(level, String.format("Sent packet to server: %s", packet));
     }
 
     private void logInvalidPacket(@NotNull final Packet<?> packet, @NotNull final String message) {
