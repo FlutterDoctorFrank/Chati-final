@@ -63,23 +63,48 @@ public class UserManager implements IUserManagerController, IUserManagerView {
     }
 
     @Override
-    public void updateWorlds(@NotNull Map<ContextID, String> worlds) {
-        worlds.forEach((worldId, worldName) -> Context.getGlobal().addChild(new SpatialContext(worldName, Context.getGlobal())));
+    public void updateWorlds(@NotNull final Map<ContextID, String> worlds) {
         Context.getGlobal().getChildren().values().removeIf(world -> !worlds.containsKey(world.getContextId()));
+        worlds.forEach((worldId, worldName) -> {
+            if (!Context.getGlobal().hasChild(worldId)) {
+                Context.getGlobal().addChild(new SpatialContext(worldName, Context.getGlobal()));
+            }
+        });
         modelObserver.setWorldListChanged();
     }
 
     @Override
-    public void updatePrivateRooms(@NotNull ContextID worldId, @NotNull Map<ContextID, String> privateRooms) throws ContextNotFoundException {
+    public void updatePublicRoom(@NotNull final ContextID worldId, @NotNull final ContextID roomId,
+                                 @NotNull final String roomName) throws ContextNotFoundException {
+        throwIfNotInWorld();
+        SpatialContext world = Context.getGlobal().getChildren().get(worldId);
+        if (world == null) {
+            throw new ContextNotFoundException("Tried to update public room in an unknown world.", worldId);
+        }
+        world.getChildren().values().forEach(room -> {
+            if (!room.isPrivate() && !room.getContextId().equals(roomId)) {
+                throw new IllegalStateException("World has already a public room");
+            }
+        });
+
+        if (!world.hasChild(roomId)) {
+            world.addChild(new SpatialContext(roomName, world));
+        }
+    }
+
+    @Override
+    public void updatePrivateRooms(@NotNull final ContextID worldId, @NotNull final Map<ContextID, String> privateRooms) throws ContextNotFoundException {
         throwIfNotInWorld();
         SpatialContext world = Context.getGlobal().getChildren().get(worldId);
         if (world == null) {
             throw new ContextNotFoundException("Tried to update private rooms in an unknown world.", worldId);
         }
-        privateRooms.forEach((roomId, roomName) -> world.addChild(new SpatialContext(roomName, world)));
-        world.getChildren().values().forEach(child -> System.out.println(child.getContextId()));
         world.getChildren().values().removeIf(room -> room.isPrivate() && !privateRooms.containsKey(room.getContextId()));
-        world.getChildren().values().forEach(child -> System.out.println(child.getContextId()));
+        privateRooms.forEach((roomId, roomName) -> {
+            if (!world.hasChild(roomId)) {
+                world.addChild(new SpatialContext(roomName, world, true));
+            }
+        });
         modelObserver.setRoomListChanged();
     }
 

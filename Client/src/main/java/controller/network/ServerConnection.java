@@ -424,7 +424,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
         if (packet.getAction() == PacketWorldAction.Action.LEAVE) {
             if (this.worldId == null) {
-                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction().name() + " while user is not in a world");
+                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction() + " while user is not in a world");
                 return;
             }
 
@@ -442,7 +442,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             }
         } else {
             if (this.worldId != null) {
-                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction().name() + " while user is already in a world");
+                this.logUnexpectedPacket(packet, "Can not receive world action " + packet.getAction() + " while user is already in a world");
                 return;
             }
 
@@ -461,10 +461,12 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                         try {
                             this.getIntern().joinWorld(packet.getContextId());
-                        } catch (ContextNotFoundException e) {
-                            e.printStackTrace(); // TODO
+                            this.worldId = packet.getContextId();
+                        } catch (ContextNotFoundException ex) {
+                            // Eine Welt mit der angegebenen ID ist dem Model nicht bekannt.
+                            LOGGER.warning("Server tried to send world join for unknown world with id: " + ex.getContextID());
+                            return;
                         }
-                        this.worldId = packet.getContextId();
                     }
 
                     this.manager.getView().joinWorldResponse(packet.isSuccess(), packet.getMessage());
@@ -514,18 +516,31 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         try {
-            final Map<ContextID, String> contexts = new HashMap<>();
-
-            for (final ContextInfo info : packet.getInfos()) {
-                contexts.put(info.getContextId(), info.getName());
-            }
-
             if (packet.getContextId() != null) {
-                this.manager.getUserManager().updatePrivateRooms(packet.getContextId(), contexts);
-                return;
-            }
+                final Map<ContextID, String> privates = new HashMap<>();
 
-            this.manager.getUserManager().updateWorlds(contexts);
+                for (final ContextInfo info : packet.getInfos()) {
+                    if (info.isPrivate()) {
+                        privates.put(info.getContextId(), info.getName());
+                    } else {
+                        try {
+                            this.manager.getUserManager().updatePublicRoom(packet.getContextId(), info.getContextId(), info.getName());
+                        } catch (IllegalStateException ex) {
+                            LOGGER.warning("Server tried to send multiple public rooms for world with id: " + packet.getContextId());
+                        }
+                    }
+                }
+
+                this.manager.getUserManager().updatePrivateRooms(packet.getContextId(), privates);
+            } else {
+                final Map<ContextID, String> worlds = new HashMap<>();
+
+                for (final ContextInfo info : packet.getInfos()) {
+                    worlds.put(info.getContextId(), info.getName());
+                }
+
+                this.manager.getUserManager().updateWorlds(worlds);
+            }
         } catch (ContextNotFoundException ex) {
             // Der übergeordnete Kontext wurde nicht gefunden.
             LOGGER.warning("Server tried to send rooms info for unknown world with id: " + ex.getContextID());
@@ -551,7 +566,12 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                     return;
                 }
 
-                this.getIntern().joinRoom(packet.getContextId(), packet.getName(), packet.getMap());
+                try {
+                    this.getIntern().joinRoom(packet.getContextId(), packet.getName(), packet.getMap());
+                } catch (ContextNotFoundException ex) {
+                    // Der zu betretende Raum ist dem Model nicht bekannt.
+                    LOGGER.warning("Server tried to send context join unknown room: " + packet.getContextId());
+                }
             }
         } else {
             this.logUnexpectedPacket(packet, "Can not join context while user is not in a world");
@@ -661,108 +681,73 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         try {
-            final UserInfo info = packet.getInfo();
+            UserInfo info = packet.getInfo();
+            IUserController user;
 
-            // Ist eine Kontext-ID im Paket gesetzt, so handelt es sich um einen Benutzer innerhalb der aktuellen Welt.
-            if (packet.getContextId() != null) {
-                if (!packet.getContextId().equals(this.worldId)) {
-                    this.logUnexpectedPacket(packet, "Can not receive user info of a world that has not been entered");
-                    return;
-                }
-
-                IUserController user;
-
-                switch (packet.getAction()) {
-                    case UPDATE_USER:
-                        try {
-                            user = this.getUser(info.getUserId());
-                            user.setStatus(info.getStatus());
-
-                            if (info.getAvatar() != null) {
-                                user.setAvatar(info.getAvatar());
-                            }
-                        } catch (UserNotFoundException ex) {
-                            if (info.getName() == null) {
-                                this.logInvalidPacket(packet, "Name of unknown user can not be null");
-                            }
-
-                            // Externer Benutzer existiert noch nicht. Füge neuen hinzu.
-                            this.manager.getUserManager().addExternUser(info.getUserId(), info.getName(),
-                                    info.getStatus(), info.getAvatar());
-                            user = this.getExtern(info.getUserId());
+            switch (packet.getAction()) {
+                case UPDATE_USER:
+                    // Ist eine Kontext-ID im Paket gesetzt, so handelt es sich um einen Benutzer innerhalb der aktuellen Welt.
+                    if (packet.getContextId() != null) {
+                        if (!packet.getContextId().equals(this.worldId)) {
+                            this.logUnexpectedPacket(packet, "Can not receive user info of a world that has not been entered");
+                            return;
                         }
 
-                        user.setFriend(info.getFlags().contains(Flag.FRIEND));
-                        user.setIgnored(info.getFlags().contains(Flag.IGNORED));
+                        if (packet.getContextId().equals(info.getWorld()) && info.getFlags().contains(Flag.BANNED)) {
+                            this.logInvalidPacket(packet, "User can not be in a world where he is banned");
+                            return;
+                        }
+                    }
 
+                    try {
+                        user = this.getUser(info.getUserId());
+                        user.setStatus(info.getStatus());
+
+                        if (info.getAvatar() != null) {
+                            user.setAvatar(info.getAvatar());
+                        }
+                    } catch (UserNotFoundException ex) {
+                        if (info.getName() == null) {
+                            this.logInvalidPacket(packet, "Name of unknown user can not be null");
+                            return;
+                        }
+
+                        // Externer Benutzer existiert noch nicht. Füge neuen hinzu.
+                        this.manager.getUserManager().addExternUser(info.getUserId(), info.getName(),
+                                info.getStatus(), info.getAvatar());
+                        user = this.getExtern(info.getUserId());
+                    }
+
+                    user.setFriend(info.getFlags().contains(Flag.FRIEND));
+                    user.setIgnored(info.getFlags().contains(Flag.IGNORED));
+
+                    if (info.getWorld() != null) {
+                        user.joinWorld(info.getWorld());
+                    } else {
+                        user.leaveWorld();
+                    }
+
+                    if (info.getRoom() != null) {
+                        user.joinRoom(info.getRoom());
+                    } else {
+                        user.leaveRoom();
+                    }
+
+                    if (packet.getContextId() != null) {
                         if (info.getFlags().contains(Flag.BANNED)) {
-                            //user.setInCurrentWorld(false);
                             user.setBan(packet.getContextId(), true);
                             return;
                         }
 
                         user.setReport(packet.getContextId(), info.getFlags().contains(Flag.REPORTED));
-                        //user.setInPrivateRoom(info.getInPrivateRoom());
-                        //user.setInCurrentWorld(true);
 
-                        if (info.getWorld() != null) {
-                            user.joinWorld(info.getWorld());
-                        } else {
-                            user.leaveWorld();
-                        }
+                    }
+                    break;
 
-                        if (info.getRoom() != null) {
-                            user.joinRoom(info.getRoom());
-                        } else {
-                            user.leaveRoom();
-                        }
-                        break;
+                case REMOVE_USER:
+                    this.manager.getUserManager().removeExternUser(info.getUserId());
+                    break;
 
-                    case REMOVE_USER:
-                        this.manager.getUserManager().removeExternUser(info.getUserId());
-                        break;
-                }
-            } else {
-                switch (packet.getAction()) {
-                    case UPDATE_USER:
-                        IUserController user;
-
-                        try {
-                            user = this.getUser(info.getUserId());
-                            user.setStatus(info.getStatus());
-                        } catch (UserNotFoundException ex) {
-                            if (info.getName() == null) {
-                                this.logInvalidPacket(packet, "Name of unknown user can not be null");
-                            }
-
-                            // Externer Benutzer existiert noch nicht. Füge neuen hinzu.
-                            this.manager.getUserManager().addExternUser(info.getUserId(), info.getName(),
-                                    info.getStatus(), info.getAvatar());
-                            user = this.getExtern(info.getUserId());
-                        }
-
-                        user.setFriend(info.getFlags().contains(Flag.FRIEND));
-                        user.setIgnored(info.getFlags().contains(Flag.IGNORED));
-                        //user.setInPrivateRoom(info.getInPrivateRoom());
-                        //user.setInCurrentWorld(false);
-
-                        if (info.getWorld() != null) {
-                            user.joinWorld(info.getWorld());
-                        } else {
-                            user.leaveWorld();
-                        }
-
-                        if (info.getRoom() != null) {
-                            user.joinRoom(info.getRoom());
-                        } else {
-                            user.leaveRoom();
-                        }
-                        break;
-
-                    case REMOVE_USER:
-                        this.manager.getUserManager().removeExternUser(info.getUserId());
-                        break;
-                }
             }
         } catch (UserNotFoundException ex) {
             // Benutzer wurde nicht gefunden.

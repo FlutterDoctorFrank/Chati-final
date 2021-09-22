@@ -9,6 +9,7 @@ import controller.network.protocol.PacketOutCommunicable;
 import controller.network.protocol.PacketOutContextInfo;
 import controller.network.protocol.PacketOutContextJoin;
 import controller.network.protocol.PacketOutContextList;
+import controller.network.protocol.PacketOutContextList.ContextInfo;
 import controller.network.protocol.PacketOutContextRole;
 import controller.network.protocol.PacketOutMenuAction;
 import controller.network.protocol.PacketOutNotification;
@@ -173,13 +174,17 @@ public interface ClientSender {
 
                     if (object instanceof IGlobalContext) {
                         for (final IWorld world : ((IGlobalContext) object).getIWorlds().values()) {
-                            infos.add(new PacketOutContextList.ContextInfo(world.getContextId(), world.getContextName()));
+                            infos.add(new ContextInfo(world.getContextId(), world.getContextName(), false));
                         }
 
                         return new PacketOutContextList(null, infos);
                     } else {
+                        final IWorld world = (IWorld) object;
+
+                        infos.add(new ContextInfo(world.getPublicRoom().getContextId(), world.getPublicRoom().getContextName(), false));
+
                         for (final IRoom room : ((IWorld) object).getPrivateRooms().values()) {
-                            infos.add(new PacketOutContextList.ContextInfo(room.getContextId(), room.getContextName()));
+                            infos.add(new ContextInfo(room.getContextId(), room.getContextName(), true));
                         }
                     }
 

@@ -54,6 +54,7 @@ public class PacketOutContextList implements Packet<PacketListenerOut> {
         for (final ContextInfo info : this.infos) {
             PacketUtils.writeContextId(output, info.getContextId());
             output.writeString(info.getName());
+            output.writeBoolean(info.isPrivate());
         }
     }
 
@@ -63,7 +64,7 @@ public class PacketOutContextList implements Packet<PacketListenerOut> {
         this.infos = new ContextInfo[input.readInt(true)];
 
         for (int index = 0; index < this.infos.length; index++) {
-            this.infos[index] = new ContextInfo(PacketUtils.readContextId(input), input.readString());
+            this.infos[index] = new ContextInfo(PacketUtils.readContextId(input), input.readString(), input.readBoolean());
         }
     }
 
@@ -99,10 +100,12 @@ public class PacketOutContextList implements Packet<PacketListenerOut> {
 
         private final ContextID contextId;
         private final String name;
+        private final boolean isPrivate;
 
-        public ContextInfo(@NotNull final ContextID contextId, @NotNull final String name) {
+        public ContextInfo(@NotNull final ContextID contextId, @NotNull final String name, final boolean isPrivate) {
             this.contextId = contextId;
             this.name = name;
+            this.isPrivate = isPrivate;
         }
 
         /**
@@ -121,9 +124,17 @@ public class PacketOutContextList implements Packet<PacketListenerOut> {
             return this.name;
         }
 
+        /**
+         * Gibt zurück, ob der Raum privat ist. Im Fall einer Welt wird immer false zurückgegeben.
+         * @return true, wenn der Raum privat ist, sonst false.
+         */
+        public boolean isPrivate() {
+            return this.isPrivate;
+        }
+
         @Override
         public @NotNull String toString() {
-            return "{contextId=" + this.contextId + ", name='" + this.name + "}";
+            return "{contextId=" + this.contextId + ", name='" + this.name + "', private=" + this.isPrivate + "}";
         }
 
         @Override

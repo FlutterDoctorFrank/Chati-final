@@ -33,11 +33,20 @@ public interface IUserManagerController {
     void updateWorlds(@NotNull final Map<ContextID, String> worlds);
 
     /**
+     * Aktualisiert den öffentlichen Raum einer Welt.
+     * @param worldId Welt, in dem der öffentliche Raum aktualisiert werden soll.
+     * @param roomId Kontext-ID des zu aktualisierenden öffentlichen Raums.
+     * @param roomName Name des zu aktualisierenden öffentlichen Raums.
+     */
+    void updatePublicRoom(@NotNull final ContextID worldId, @NotNull final ContextID roomId,
+                          @NotNull final String roomName) throws ContextNotFoundException;
+
+    /**
      * Aktualisiert die Menge aller privaten Räume einer Welt.
      * @param worldId Welt, in der die Menge der privaten Räume aktualisiert werden soll.
      * @param privateRooms Menge aller privaten Räume.
      */
-    void updatePrivateRooms(@NotNull ContextID worldId, @NotNull final Map<ContextID, String> privateRooms) throws ContextNotFoundException;
+    void updatePrivateRooms(@NotNull final ContextID worldId, @NotNull final Map<ContextID, String> privateRooms) throws ContextNotFoundException;
 
     /**
      * Fügt einen externen Benutzer in die Liste der bekannten externen Benutzer hinzu, falls dieser in der Liste noch

@@ -58,6 +58,7 @@ public class PacketOutContextListTest extends PacketServerTest {
     @Test
     public void roomsPackagingTest() {
         final IWorld world = Mockito.mock(IWorld.class);
+        final Room publicRoom = Mockito.mock(Room.class);
         final Map<ContextID, Room> rooms = new HashMap<>();
         final int size = randomInt(2) + 1;
 
@@ -71,19 +72,28 @@ public class PacketOutContextListTest extends PacketServerTest {
             rooms.put(contextId, room);
         }
 
+        Mockito.when(publicRoom.getContextId()).thenReturn(randomContextId());
+        Mockito.when(publicRoom.getContextName()).thenReturn(randomString());
         Mockito.when(world.getContextId()).thenReturn(randomContextId());
+        Mockito.when(world.getPublicRoom()).thenReturn(publicRoom);
         Mockito.when(world.getPrivateRooms()).thenReturn(rooms);
 
         final PacketOutContextList packet = this.getPacket(PacketOutContextList.class, world);
 
         Assert.assertNotNull(packet.getContextId());
         Assert.assertEquals(world.getContextId(), packet.getContextId());
-        Assert.assertEquals(rooms.size(), packet.getInfos().length);
+        Assert.assertEquals(rooms.size() + 1, packet.getInfos().length);
 
         for (final ContextInfo info : packet.getInfos()) {
-            Assert.assertTrue(rooms.containsKey(info.getContextId()));
-            Assert.assertEquals(rooms.get(info.getContextId()).getContextId(), info.getContextId());
-            Assert.assertEquals(rooms.get(info.getContextId()).getContextName(), info.getName());
+            if (rooms.containsKey(info.getContextId())) {
+                Assert.assertEquals(rooms.get(info.getContextId()).getContextId(), info.getContextId());
+                Assert.assertEquals(rooms.get(info.getContextId()).getContextName(), info.getName());
+                Assert.assertTrue(info.isPrivate());
+            } else {
+                Assert.assertEquals(publicRoom.getContextId(), info.getContextId());
+                Assert.assertEquals(publicRoom.getContextName(), info.getName());
+                Assert.assertFalse(info.isPrivate());
+            }
         }
     }
 }

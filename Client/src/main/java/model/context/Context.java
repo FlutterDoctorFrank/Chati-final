@@ -91,6 +91,15 @@ public class Context implements IContextView {
     }
 
     /**
+     * Gibt zurück, ob der Kontext einen untergeordneten Kontext mit der gegebenen ID besitzt.
+     * @param contextId Zu prüfende Kontext-ID
+     * @return true, wenn ein untergeordneter Kontext mit der ID existiert.
+     */
+    public boolean hasChild(@NotNull final ContextID contextId) {
+        return children.containsKey(contextId);
+    }
+
+    /**
      * Entfernt alle untergeordneten Kontexte.
      */
     public void removeChildren() {
@@ -154,7 +163,7 @@ public class Context implements IContextView {
      * @return true, wenn er ein privater Raum ist, sonst false.
      */
     public boolean isPrivate() {
-        return !contextName.equals("Public");
+        return false;
     }
 
     @Override

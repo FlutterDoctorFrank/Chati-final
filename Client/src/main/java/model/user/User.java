@@ -141,7 +141,7 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
-    public void joinRoom(@NotNull ContextID roomId) throws ContextNotFoundException {
+    public void joinRoom(@NotNull final ContextID roomId) throws ContextNotFoundException {
         if (currentWorld == null) {
             throw new IllegalStateException("Cannot join a room when not in a world.");
         }
@@ -400,7 +400,7 @@ public class User implements IUserController, IUserView {
         if (!isInCurrentWorld() || currentRoom == null || internUser.currentRoom == null) {
             return false;
         }
-        return currentRoom.equals(internUser.currentRoom);
+        return currentRoom.equals(internUser.currentRoom) && currentLocation != null;
     }
 
     @Override

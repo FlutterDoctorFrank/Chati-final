@@ -7,7 +7,6 @@ import model.MessageBundle;
 import model.MockGL20;
 import model.context.Context;
 import model.context.ContextID;
-import model.context.global.GlobalContext;
 import model.context.spatial.ContextMap;
 import model.context.spatial.ContextMusic;
 import model.context.spatial.Direction;
@@ -15,15 +14,14 @@ import model.context.spatial.SpatialContext;
 import model.exception.ContextNotFoundException;
 import model.exception.NotificationNotFoundException;
 import model.exception.UserNotFoundException;
-import model.notification.Notification;
 import model.notification.NotificationType;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import view2.IModelObserver;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static org.junit.Assert.*;
 
 public class InternUserTest {
 

@@ -44,6 +44,9 @@ public class SpatialContext extends Context implements ISpatialContextView {
     /** Die Information, ob mit diesem Kontext interagiert werden darf. */
     private final boolean interactable;
 
+    /** Die Information, ob dieser Kontext ein privater Raum ist. */
+    private final boolean isPrivate;
+
     /**
      * Erzeugt eine neue Instanz eines räumlichen Kontextes.
      * @param contextName Name des Kontextes.
@@ -62,20 +65,32 @@ public class SpatialContext extends Context implements ISpatialContextView {
         this.expanse = expanse;
         this.map = null;
         this.interactable = interactable;
+        this.isPrivate = false;
     }
 
     /**
      * Erzeugt eine neue Instanz eines räumlichen Kontextes.
      * @param contextName Name des Kontextes.
      * @param parent Übergeordneter Kontext.
+     * @param isPrivate true, wenn der Kontext einen privaten Raum repräsentiert.
      */
-    public SpatialContext(@NotNull final String contextName, @NotNull final Context parent) {
+    public SpatialContext(@NotNull final String contextName, @NotNull final Context parent, final boolean isPrivate) {
         super(contextName, parent);
         this.communicationRegion = null;
         this.communicationMedia = null;
         this.expanse = null;
         this.map = null;
         this.interactable = false;
+        this.isPrivate = isPrivate;
+    }
+
+    /**
+     * Erzeugt eine neue Instanz eines öffentlichen Kontextes.
+     * @param contextName Name des Kontextes.
+     * @param parent Übergeordneter Kontext.
+     */
+    public SpatialContext(@NotNull final String contextName, @NotNull final Context parent) {
+        this(contextName, parent, false);
     }
 
     /**
@@ -123,6 +138,11 @@ public class SpatialContext extends Context implements ISpatialContextView {
      */
     public boolean isInteractable() {
         return interactable;
+    }
+
+    @Override
+    public boolean isPrivate() {
+        return isPrivate;
     }
 
     /**

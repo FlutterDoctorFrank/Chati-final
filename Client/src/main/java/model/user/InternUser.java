@@ -62,7 +62,8 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void joinRoom(@NotNull final ContextID roomId, @NotNull final String roomName, @NotNull final ContextMap map) {
+    public void joinRoom(@NotNull final ContextID roomId, @NotNull final String roomName,
+                         @NotNull final ContextMap map) throws ContextNotFoundException {
         if (currentWorld == null) {
             throw new IllegalStateException("User is not in world.");
         }
@@ -70,12 +71,8 @@ public class InternUser extends User implements IInternUserController, IInternUs
         if (currentRoom != null) {
             leaveRoom();
         }
-        try {
-            joinRoom(roomId);
-        } catch (ContextNotFoundException e) {
-            this.currentRoom = new SpatialContext(roomName, currentWorld);
-            this.currentWorld.addChild(this.currentRoom);
-        }
+
+        joinRoom(roomId);
         this.currentRoom.build(map);
     }
 
@@ -192,17 +189,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
             System.out.println("Found no interactables from location: " + posX + ", " + posY + ", " + direction);
         }
         return null;
-    }
-
-    /**
-     * Entfernt alle Referenzen auf einen verlassen (privaten) Raum.
-     */
-    public void leaveRoom() {
-        // Entferne alle Referenzen auf den Raum und allen untergeordneten Kontexten.
-        UserManager.getInstance().discardRoomInfo();
-        currentWorld.removeChild(currentRoom);
-        currentLocation = null;
-        currentRoom = null;
     }
 
     /**

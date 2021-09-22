@@ -86,6 +86,7 @@ public class World extends Area implements IWorld {
         if (!contains(user)) {
             user.setWorld(this);
             user.send(SendAction.WORLD_ACTION, this);
+            user.send(SendAction.CONTEXT_LIST, this);
             user.send(SendAction.CONTEXT_ROLE, user.getWorldRoles());
 
             super.addUser(user);
@@ -138,8 +139,6 @@ public class World extends Area implements IWorld {
     }
 
     public void sendRoomList() {
-        containedUsers.values().stream()
-                .filter(user -> user.getCurrentMenu() == ContextMenu.ROOM_RECEPTION_MENU)
-                .forEach(user -> user.send(SendAction.CONTEXT_LIST, this));
+        containedUsers.values().forEach(user -> user.send(SendAction.CONTEXT_LIST, this));
     }
 }

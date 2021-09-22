@@ -25,10 +25,12 @@ public interface IInternUserController extends IUserController {
      * @param roomId ID des Raums.
      * @param roomName Name des Raums.
      * @param map Karte des Raums, anhand der die Kontexthierarchie erzeugt wird.
+     * @throws ContextNotFoundException wenn es keinen Raum mit der gegebenen ID gibt.
      * @throws IllegalStateException wenn es keine aktuelle Welt gibt.
      * @see SpatialContext
      */
-    void joinRoom(@NotNull final ContextID roomId, @NotNull final String roomName, @NotNull final ContextMap map);
+    void joinRoom(@NotNull final ContextID roomId, @NotNull final String roomName,
+                  @NotNull final ContextMap map) throws ContextNotFoundException;
 
     /**
      * Setzt die Musik, die in einem Kontext abgespielt werden soll.

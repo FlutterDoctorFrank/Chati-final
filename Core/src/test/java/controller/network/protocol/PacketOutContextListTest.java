@@ -35,7 +35,7 @@ public class PacketOutContextListTest extends PacketTest<PacketOutContextList> {
     @Test
     public void singleSerializationTest() {
         this.before = new PacketOutContextList(randomContextId(),
-                Collections.singleton(new ContextInfo(randomContextId(), randomString())));
+                Collections.singleton(new ContextInfo(randomContextId(), randomString(), randomBoolean())));
 
         this.serialize();
         this.equals();
@@ -47,7 +47,7 @@ public class PacketOutContextListTest extends PacketTest<PacketOutContextList> {
         final int size = randomInt(8) + 1;
 
         while (infos.size() < size) {
-            infos.add(new ContextInfo(randomContextId(), randomString()));
+            infos.add(new ContextInfo(randomContextId(), randomString(), randomBoolean()));
         }
 
         this.before = new PacketOutContextList(randomContextId(), infos);
@@ -58,8 +58,8 @@ public class PacketOutContextListTest extends PacketTest<PacketOutContextList> {
 
     @Test
     public void equalContextInfoTest() {
-        final ContextInfo first = new ContextInfo(randomContextId(), randomString());
-        final ContextInfo second = new ContextInfo(first.getContextId(), first.getName());
+        final ContextInfo first = new ContextInfo(randomContextId(), randomString(), randomBoolean());
+        final ContextInfo second = new ContextInfo(first.getContextId(), first.getName(), first.isPrivate());
 
         Assert.assertEquals(first, first);
         Assert.assertEquals(first, second);

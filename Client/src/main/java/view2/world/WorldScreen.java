@@ -36,6 +36,7 @@ import view2.world.component.UserAvatar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Eine Klasse, welche den Bildschirm innerhalb der Welt in der Anwendung repräsentiert.
@@ -296,7 +297,8 @@ public class WorldScreen extends ChatiScreen {
      * Lädt die Avatare aller externen Benutzer.
      */
     private void loadExternUserAvatars() {
-        Chati.CHATI.getUserManager().getUsersInRoom().values().forEach(externUser -> {
+        Map<UUID, IUserView> usersInRoom = Chati.CHATI.getUserManager().getUsersInRoom();
+        usersInRoom.values().forEach(externUser -> {
             if (!externUserAvatars.containsKey(externUser)) {
                 UserAvatar newUserAvatar = new UserAvatar(externUser);
                 externUserAvatars.put(externUser, newUserAvatar);
@@ -306,7 +308,7 @@ public class WorldScreen extends ChatiScreen {
         Iterator<Map.Entry<IUserView, UserAvatar>> iterator = externUserAvatars.entrySet().iterator();
         while (iterator.hasNext()) {
             UserAvatar userAvatar = iterator.next().getValue();
-            if (!Chati.CHATI.getUserManager().getUsersInRoom().containsValue(userAvatar.getUser())) {
+            if (!usersInRoom.containsValue(userAvatar.getUser())) {
                 world.destroyBody(userAvatar.getBody());
                 iterator.remove();
             }
