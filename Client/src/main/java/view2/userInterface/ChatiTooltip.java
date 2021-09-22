@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import model.MessageBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view2.Chati;
@@ -17,22 +18,22 @@ import view2.Chati;
 public class ChatiTooltip extends TextTooltip {
 
     private static final float DEFAULT_WRAP_WIDTH = 400;
-    private final String tooltipKey;
+    private final MessageBundle tooltipBundle;
 
     /**
      * Erzeugt eine neue Instanz eines ChatiTooltip.
      * @param tooltipKey Kennung des anzuzeigenden Text.
      */
-    public ChatiTooltip(@NotNull final String tooltipKey) {
+    public ChatiTooltip(@NotNull final String tooltipKey, @NotNull final Object... tooltipArguments) {
         super("", new ChatiTooltipStyle());
-        this.tooltipKey = tooltipKey;
+        this.tooltipBundle = new MessageBundle(tooltipKey, tooltipArguments);
         setInstant(true);
     }
 
     @Override
     public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
                       @Nullable final Actor fromActor) {
-        super.getActor().setText(Chati.CHATI.getLocalization().translate(tooltipKey));
+        super.getActor().setText(Chati.CHATI.getLocalization().format(tooltipBundle.getMessageKey(), tooltipBundle.getArguments()));
         super.enter(event, x, y, pointer, fromActor);
     }
 
