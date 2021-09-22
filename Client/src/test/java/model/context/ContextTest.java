@@ -1,29 +1,24 @@
 package model.context;
 
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import controller.network.protocol.PacketAvatarMove;
+import model.MockGL20;
 import model.context.spatial.SpatialContext;
 import model.context.spatial.ContextMap;
 import model.exception.ContextNotFoundException;
 import model.user.UserManager;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import view2.IModelObserver;
 
-@Ignore
 public class ContextTest {
 
-    SpatialContext world;
-    SpatialContext room;
-    ContextMap map;
-
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void startGdx(){
         UserManager.getInstance().setModelObserver(new IModelObserver() {
             @Override
             public void setUserInfoChanged() {
@@ -60,54 +55,58 @@ public class ContextTest {
             public void setMusicChanged() {
             }
         });
-        world = new SpatialContext("World", Context.getGlobal());
-        room = new SpatialContext("Room", world);
-        map = ContextMap.PUBLIC_ROOM_MAP;
-        Game game = new Game() {
+        SpatialContext world = new SpatialContext("World", Context.getGlobal());
+        SpatialContext room = new SpatialContext("Room", world);
+        world.addChild(room);
+        Context.getGlobal().addChild(world);
+        new HeadlessApplication(new ApplicationAdapter() {
             @Override
-            public void create() {
-                room.build(map);
-                Gdx.app.exit();
+            public void create(){
+                Gdx.gl = new MockGL20();
             }
-        };
-        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        new Lwjgl3Application(game, config);
+        });
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        room.build(ContextMap.PUBLIC_ROOM_MAP);
     }
 
-    @After
-    public void tearDown() throws Exception {
-    }
-
-    @Test
-    public void addChild() {
-    }
-
-    @Test
-    public void removeChild() {
+    @AfterClass
+    public static void closeGdx(){
+        Gdx.app.exit();
     }
 
     @Test
-    public void getParent() {
+    public void addRemoveChildGetParent() {
+        SpatialContext spatialContext = new SpatialContext("TestWorld", Context.getGlobal());
+        Assert.assertEquals(spatialContext.getParent(), Context.getGlobal());
+        Context.getGlobal().addChild(spatialContext);
+        Assert.assertTrue(Context.getGlobal().children.containsValue(spatialContext));
+        Context.getGlobal().removeChild(spatialContext);
+        Assert.assertFalse(Context.getGlobal().children.containsValue(spatialContext));
     }
 
     @Test
     public void getContext() {
-        ContextID contextId = new ContextID("Global.World.Room.Park.BankArea_1.Bank_3");
+        ContextID contextId = new ContextID("Global.World.Room.Hotel.Bank_12.Seat_24");
         try {
             Assert.assertEquals(Context.getGlobal().
                     getContext(contextId).contextId, contextId);
         } catch (ContextNotFoundException e) {
             e.printStackTrace();
         }
-        contextId = new ContextID("keinContext");
-        try {
-            Context.getGlobal().getContext(contextId);
-        } catch (ContextNotFoundException e) {
-            Assert.assertTrue(true);
-        }
+    }
+
+    @Test(expected = ContextNotFoundException.class)
+    public void  getContextException() throws ContextNotFoundException {
+        ContextID contextId = new ContextID("keinContext");
+        Context.getGlobal().getContext(contextId);
     }
 
     @Test
     public void getGlobal() {
+        Assert.assertEquals(Context.getGlobal().contextId.toString(), "Global");
     }
 }

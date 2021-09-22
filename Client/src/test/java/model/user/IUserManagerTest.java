@@ -1,10 +1,14 @@
 package model.user;
 
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import model.MockGL20;
 import model.context.Context;
+import model.context.spatial.Direction;
 import model.context.spatial.SpatialContext;
 import model.context.spatial.ContextMap;
 import model.exception.ContextNotFoundException;
@@ -19,7 +23,6 @@ import view2.IModelObserver;
 import java.util.Set;
 import java.util.UUID;
 
-@Ignore
 public class IUserManagerTest {
 
     IUserManagerController testUserManagerController;
@@ -34,16 +37,6 @@ public class IUserManagerTest {
 
             @Override
             public void setUserNotificationChanged() {
-            }
-
-            @Override
-            public void setWorldListChanged() {
-
-            }
-
-            @Override
-            public void setRoomListChanged() {
-
             }
 
             @Override
@@ -73,15 +66,17 @@ public class IUserManagerTest {
         testUserManagerView = null;
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void login_getInternUser_logout() {
         UUID userId = UUID.randomUUID();
         UserManager.getInstance().login(userId, "internUser", Status.ONLINE, Avatar.ADAM);
         Assert.assertEquals(userId, UserManager.getInstance().getInternUser().getUserId());
         Assert.assertEquals(userId, testUserManagerView.getInternUserView().getUserId());
         UserManager.getInstance().logout();
-        Assert.assertEquals(null, UserManager.getInstance().getInternUser());
+        UserManager.getInstance().getInternUser();
     }
+
+
 
     @Test
     public void addRemoveGetExternUser() {
@@ -114,28 +109,34 @@ public class IUserManagerTest {
         UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.ADAM);
         testUserManagerController.addExternUser(userId1, userId1.toString(), Status.ONLINE, Avatar.ADAM);
         testUserManagerController.addExternUser(userId2, userId2.toString(), Status.ONLINE, Avatar.ADAM);
+
         SpatialContext world = new SpatialContext("World", Context.getGlobal());
+        Context.getGlobal().addChild(world);
         SpatialContext room = new SpatialContext("Room", world);
-        Game game = new Game() {
+        world.addChild(room);
+        new HeadlessApplication(new ApplicationAdapter() {
             @Override
-            public void create() {
-                room.build(map);
-                Gdx.app.exit();
-                try {
-                    UserManager.getInstance().getInternUser().joinWorld(world.getContextId());
-                } catch (ContextNotFoundException e) {
-                    e.printStackTrace();
-                }
-                UserManager.getInstance().getInternUser().joinRoom(world.getContextId(), world.getContextName(), map);
+            public void create(){
+                Gdx.gl = new MockGL20();
             }
-        };
-        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        new Lwjgl3Application(game, config);
-        //testUserManagerController.getExternUsers().forEach((id, user) -> user.setInCurrentWorld(true));
+        });
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        room.build(ContextMap.PUBLIC_ROOM_MAP);
+        Gdx.app.exit();
+        UserManager.getInstance().getInternUser().joinWorld(world.getContextName());
+
+
+        testUserManagerController.getExternUsers().forEach((id, user) -> user.setInCurrentWorld(true));
         userSet.forEach(id -> Assert.assertTrue(testUserManagerView.getActiveUsers().containsKey(id)));
+
         int posX = 500;
         int posY = 1500;
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false, null);
+
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false, Direction.DOWN);
         testUserManagerController.getExternUsers().forEach((id, user) -> {
             try {
                 user.setBan(UserManager.getInstance().getInternUser().getCurrentWorld().getContextId(), true);
@@ -147,5 +148,8 @@ public class IUserManagerTest {
         testUserManagerController.getExternUsers().forEach((id, user) -> user.setFriend(true));
         userSet.forEach(id -> Assert.assertTrue(testUserManagerView.getFriends().containsKey(id)));
         UserManager.getInstance().logout();
+
+
+
     }
 }

@@ -8,12 +8,16 @@ import static org.junit.Assert.*;
 
 public class UserManagerTest {
 
+    UserManager userManager;
+
     @Before
     public void setUp() throws Exception {
+        userManager = UserManager.getInstance();
     }
 
     @After
     public void tearDown() throws Exception {
+        userManager = null;
     }
 
     @Test

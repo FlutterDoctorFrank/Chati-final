@@ -193,4 +193,22 @@ public class InternUser extends User implements IInternUserController, IInternUs
         }
         return null;
     }
+
+    /**
+     * Entfernt alle Referenzen auf einen verlassen (privaten) Raum.
+     */
+    public void leaveRoom() {
+        // Entferne alle Referenzen auf den Raum und allen untergeordneten Kontexten.
+        UserManager.getInstance().discardRoomInfo();
+        currentWorld.removeChild(currentRoom);
+        currentLocation = null;
+        currentRoom = null;
+    }
+
+    /**
+     * wird zu Testzwecken gebraucht
+     */
+    public void setCurrentRoom(SpatialContext room){
+        this.currentRoom = room;
+    }
 }
