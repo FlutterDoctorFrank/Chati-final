@@ -190,17 +190,23 @@ public enum AdministrativeAction {
         @Override
         protected void execute(@NotNull final User performer, @NotNull final User target,
                                @NotNull final String[] args) throws NoPermissionException {
-            if (performer.getLocation() == null || target.getLocation() == null) {
-                throw new IllegalStateException("Performers/Targets location is not available");
+            if (target.getLocation() == null) {
+                throw new IllegalStateException("Targets location is not available");
             }
 
-            Area performerArea = performer.getLocation().getArea();
-            Area targetArea = target.getLocation().getArea();
+            Context commonContext;
+
+            if (performer.getLocation() != null) {
+                Area performerArea = performer.getLocation().getArea();
+                Area targetArea = target.getLocation().getArea();
+
+                commonContext = performerArea.lastCommonAncestor(targetArea);
+            } else {
+                commonContext = GlobalContext.getInstance();
+            }
 
             // Überprüfe, ob beide Benutzer sich innerhalb eines Kontextes befinden, in dem der ausführende Benutzer
             // die Berechtigung zum Teleportieren besitzt, oder ob die Benutzer befreundet sind.
-            Context commonContext = performerArea.lastCommonAncestor(targetArea);
-
             if (!performer.hasPermission(commonContext, Permission.TELEPORT_TO_USER)
                     && (!performer.isFriend(target) || target.getStatus() == Status.BUSY)) {
                 throw new NoPermissionException("Performer has not the required permission.",
