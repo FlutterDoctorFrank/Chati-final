@@ -42,8 +42,11 @@ public class GameBoard extends Interactable {
     }
 
     @Override
-    public void executeMenuOption(@NotNull final User user, final int menuOption, @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
-        super.executeMenuOption(user, menuOption, args);
+    public void executeMenuOption(@NotNull final User user, final int menuOption,
+                                  @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
+        if (executeCloseOption(user, menuOption)) {
+            return;
+        }
 
         // TODO
     }

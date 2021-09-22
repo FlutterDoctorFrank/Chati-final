@@ -66,16 +66,8 @@ public abstract class Interactable extends Area implements IInteractable {
      * @throws IllegalMenuActionException wenn die Menü-Option nicht unterstützt wird oder die übergebenen Argumente
      * ungültig sind.
      */
-    public void executeMenuOption(@NotNull final User user, final int menuOption,
-                                           @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
-        throwIfUserNotAvailable(user);
-
-        if (menuOption == MENU_OPTION_CLOSE) {
-            user.setCurrentInteractable(null);
-            user.setMovable(true);
-            user.send(ClientSender.SendAction.CLOSE_MENU, this);
-        }
-    }
+    public abstract void executeMenuOption(@NotNull final User user, final int menuOption,
+                                           @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException;
 
     @Override
     public @NotNull Interactable getInteractable(@NotNull final ContextID interactableId) throws ContextNotFoundException {
@@ -106,6 +98,19 @@ public abstract class Interactable extends Area implements IInteractable {
         if (this.equals(user.getCurrentInteractable())) {
             throw new IllegalInteractionException("User is already interacting with a context.", user);
         }
+    }
+
+    protected boolean executeCloseOption(@NotNull final User user, final int menuOption) {
+        throwIfUserNotAvailable(user);
+
+        if (menuOption == MENU_OPTION_CLOSE) {
+            user.setCurrentInteractable(null);
+            user.setMovable(true);
+            user.send(ClientSender.SendAction.CLOSE_MENU, this);
+            return true;
+        }
+
+        return false;
     }
 
     @Override

@@ -71,7 +71,9 @@ public class Seat extends Interactable {
     @Override
     public void executeMenuOption(@NotNull final User user, final int menuOption,
                                   @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
-        super.executeMenuOption(user, menuOption, args);
+        if (executeCloseOption(user, menuOption)) {
+            return;
+        }
 
         if (menuOption == MENU_OPTION_SIT) { // Bewege den Benutzer auf den Platz.
             user.send(SendAction.CLOSE_MENU, this);

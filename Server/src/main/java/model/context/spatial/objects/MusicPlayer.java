@@ -61,7 +61,9 @@ public class MusicPlayer extends Interactable {
     @Override
     public void executeMenuOption(@NotNull final User user, final int menuOption,
                                   @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
-        super.executeMenuOption(user, menuOption, args);
+        if (executeCloseOption(user, menuOption)) {
+            return;
+        }
 
         switch (menuOption) {
             case MENU_OPTION_PLAY: // Spiele ein Musikstück ab.

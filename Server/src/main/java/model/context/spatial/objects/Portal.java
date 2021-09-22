@@ -51,7 +51,9 @@ public class Portal extends Interactable {
     @Override
     public void executeMenuOption(@NotNull final User user, final int menuOption,
                                   @NotNull final String[] args) throws IllegalInteractionException, IllegalMenuActionException {
-        super.executeMenuOption(user, menuOption, args);
+        if (executeCloseOption(user, menuOption)) {
+            return;
+        }
 
         if (menuOption == MENU_OPTION_TELEPORT) { // Teleportiere den Benutzer zur festgelegten Position.
             user.setCurrentInteractable(null);

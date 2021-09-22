@@ -223,7 +223,6 @@ public class MusicStreamerTest {
         }
     }
 
-    // nicht erfolgreich
     @Test
     public void noActionTest() {
         TestClientSender testClientSender = new TestClientSender();
@@ -259,9 +258,8 @@ public class MusicStreamerTest {
             creater.setCurrentInteractable(musicStreamer);
             Assert.assertFalse(creater.isMovable());
             String[] args = new String[]{};
-            //musicStreamer.executeMenuOption(creater, 0, args);
-            //Assert.assertEquals(creater);
-
+            musicStreamer.executeMenuOption(creater, 0, args);
+            Assert.assertNull(creater.getCurrentInteractable());
         } catch (Exception e) {
             e.printStackTrace();
         }
