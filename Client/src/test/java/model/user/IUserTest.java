@@ -1,23 +1,24 @@
 package model.user;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import model.MockGL20;
 import model.context.Context;
 import model.context.ContextID;
+import model.context.spatial.ContextMap;
 import model.context.spatial.Direction;
 import model.context.spatial.SpatialContext;
-import model.context.spatial.ContextMap;
 import model.exception.ContextNotFoundException;
 import model.role.Permission;
 import model.role.Role;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import view2.IModelObserver;
-
 import java.util.Collections;
 import java.util.Random;
 import java.util.Set;
@@ -77,6 +78,7 @@ public class IUserTest {
         UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.ADAM);
         map = ContextMap.PUBLIC_ROOM_MAP;
         UserManager.getInstance().getInternUser().joinWorld(world.getContextId());
+        UserManager.getInstance().updatePublicRoom(world.getContextId(), room.getContextId(), room.getContextName());
         UserManager.getInstance().getInternUser().joinRoom(room.getContextId(), room.getContextName(), map);
         userId = UUID.randomUUID();
         testUser = new User(userId, "initialName", Status.ONLINE, Avatar.ADAM);
@@ -152,6 +154,7 @@ public class IUserTest {
     public void setIsInCurrentRoom() throws ContextNotFoundException {
         testUserController.joinWorld(world.getContextId());
         testUserController.joinRoom(room.getContextId());
+        testUserController.setLocation(1200.0f, 1500.0f, true, false, Direction.DOWN);
         Assert.assertTrue(testUserView.isInCurrentRoom());
     }
 
