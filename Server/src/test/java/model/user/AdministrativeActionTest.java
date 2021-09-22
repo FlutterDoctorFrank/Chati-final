@@ -97,18 +97,6 @@ public class AdministrativeActionTest {
 
         userAccountManager.load();
         globalContext.load();
-/*
-        if (userAccountManager.isRegistered(this.user.getUserId())) {
-            try {
-                userAccountManager.deleteUser(user);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-
- */
-
 
     }
 
@@ -178,8 +166,65 @@ public class AdministrativeActionTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    // Already Friends
+    @Test(expected = IllegalAdministrativeActionException.class)
+    public void executeFriendF1Test() throws Exception{
+        TestClientSender testClientSender = new TestClientSender();
+        this.userAccountManager.registerUser("already1", "11111");
+        User target = this.userAccountManager.loginUser("already1", "11111", testClientSender);
+        this.userAccountManager.registerUser("already2", "22222");
+        this.user = this.userAccountManager.loginUser("already2", "22222", testClientSender);
+        target.addFriend(this.user);
+        this.user.addFriend(target);
+        String[] args = new String[]{"hallo"};
 
+        this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.INVITE_FRIEND, args);
+    }
+
+    // the requester is ignored
+    @Test(expected = IllegalAdministrativeActionException.class)
+    public void executeFriendF2Test() throws Exception{
+        TestClientSender testClientSender = new TestClientSender();
+        this.userAccountManager.registerUser("ignore1", "11111");
+        User target = this.userAccountManager.loginUser("ignore1", "11111", testClientSender);
+        this.userAccountManager.registerUser("ignore2", "22222");
+        this.user = this.userAccountManager.loginUser("ignore2", "22222", testClientSender);
+        target.ignoreUser(this.user);
+        String[] args = new String[]{"hallo"};
+
+        this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.INVITE_FRIEND, args);
+    }
+
+    // If the performer ignores the receiver, after executing doesn't ignore any more
+    @Test
+    public void executeFriendNoMoreIgnoreTest() throws Exception{
+        TestClientSender testClientSender = new TestClientSender();
+        this.userAccountManager.registerUser("noignore1", "11111");
+        User target = this.userAccountManager.loginUser("noignore1", "11111", testClientSender);
+        this.userAccountManager.registerUser("noignore2", "22222");
+        this.user = this.userAccountManager.loginUser("noignore2", "22222", testClientSender);
+        this.user.ignoreUser(target);
+        String[] args = new String[]{"hallo"};
+
+        this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.INVITE_FRIEND, args);
+
+        Assert.assertFalse(this.user.getIgnoredUsers().containsValue(target));
+    }
+
+    // unfriend when unfriend
+    @Test(expected = IllegalAdministrativeActionException.class)
+    public void executeFriendIllegalUnfriendTest() throws Exception{
+        TestClientSender testClientSender = new TestClientSender();
+        this.userAccountManager.registerUser("illUnf1", "11111");
+        User target = this.userAccountManager.loginUser("illUnf1", "11111", testClientSender);
+        this.userAccountManager.registerUser("illUnf2", "22222");
+        this.user = this.userAccountManager.loginUser("illUnf2", "22222", testClientSender);
+
+        String[] args = new String[]{"weg"};
+
+        this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.REMOVE_FRIEND, args);
     }
 
     @Test
@@ -215,6 +260,33 @@ public class AdministrativeActionTest {
             e.printStackTrace();
         }
 
+    }
+
+    // Already Ignored
+    @Test(expected = IllegalAdministrativeActionException.class)
+    public void executeIgnoreF1Test() throws Exception{
+        TestClientSender testClientSender = new TestClientSender();
+        this.userAccountManager.registerUser("alreadyI1", "11111");
+        User target = this.userAccountManager.loginUser("alreadyI1", "11111", testClientSender);
+        this.userAccountManager.registerUser("alreadyI2", "22222");
+        this.user = this.userAccountManager.loginUser("alreadyI2", "22222", testClientSender);
+        this.user.ignoreUser(target);
+        String[] args = new String[]{"hallo"};
+
+        this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.IGNORE_USER, args);
+    }
+
+    // unignored when unignored
+    @Test(expected = IllegalAdministrativeActionException.class)
+    public void executeIgnoreF2Test() throws Exception{
+        TestClientSender testClientSender = new TestClientSender();
+        this.userAccountManager.registerUser("illI1", "11111");
+        User target = this.userAccountManager.loginUser("illI1", "11111", testClientSender);
+        this.userAccountManager.registerUser("illI2", "22222");
+        this.user = this.userAccountManager.loginUser("illI2", "22222", testClientSender);
+        String[] args = new String[]{"hallo"};
+
+        this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.UNIGNORE_USER, args);
     }
 
     @Test
@@ -277,6 +349,61 @@ public class AdministrativeActionTest {
             e.printStackTrace();
         }
 
+    }
+
+    // Location == null
+    @Test(expected = IllegalStateException.class)
+    public void executeRoomInviteF1est() throws Exception{
+        TestClientSender testClientSender = new TestClientSender();
+        this.userAccountManager.registerUser("NoLocation1", "11111");
+        User target = this.userAccountManager.loginUser("NoLocation1", "11111", testClientSender);
+        this.userAccountManager.registerUser("NoLocation2", "22222");
+        this.user = this.userAccountManager.loginUser("NoLocation2", "22222", testClientSender);
+        String[] args = new String[]{"hallo"};
+
+        this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.ROOM_INVITE, args);
+    }
+
+    // Location == null
+    @Test(expected = IllegalStateException.class)
+    public void executeRoomKickF1est() throws Exception{
+        TestClientSender testClientSender = new TestClientSender();
+        this.userAccountManager.registerUser("NoLocation3", "11111");
+        User target = this.userAccountManager.loginUser("NoLocation3", "11111", testClientSender);
+        this.userAccountManager.registerUser("NoLocation4", "22222");
+        this.user = this.userAccountManager.loginUser("NoLocation4", "22222", testClientSender);
+        String[] args = new String[]{"hallo"};
+
+        this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.ROOM_KICK, args);
+    }
+
+    // args size illegal
+    @Test(expected = IllegalArgumentException.class)
+    public void executeRoomInviteF2est() throws Exception{
+        TestClientSender testClientSender = new TestClientSender();
+        this.userAccountManager.registerUser("illArgs1", "11111");
+        User target = this.userAccountManager.loginUser("illArgs1", "11111", testClientSender);
+        this.userAccountManager.registerUser("illArgs2", "22222");
+        this.user = this.userAccountManager.loginUser("illArgs2", "22222", testClientSender);
+
+        setTestWorld("execRoom");
+        IWorld test_world = null;
+        ContextID world_id = null;
+        Iterator<IWorld> iterator = globalContext.getIWorlds().values().iterator();
+        while (iterator.hasNext()) {
+            IWorld world = iterator.next();
+            if (world.getContextName() == "test_world") {
+                test_world = world;
+                world_id = world.getContextId();
+                break;
+            }
+        }
+        Assert.assertNotNull(test_world);
+        target.joinWorld(world_id);
+        this.user.joinWorld(world_id);
+
+        String[] args = new String[]{};
+        this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.ROOM_INVITE, args);
     }
 
     @Test

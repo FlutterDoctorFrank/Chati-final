@@ -4,6 +4,8 @@ import controller.network.ClientSender;
 import model.context.Context;
 import model.context.global.GlobalContext;
 import model.database.PasswordEncryption;
+import model.exception.IllegalAccountActionException;
+import model.exception.UserNotFoundException;
 import model.role.Permission;
 import model.role.Role;
 import model.user.User;
@@ -83,11 +85,27 @@ public class UserAccountManagerTest {
             Assert.assertEquals(real, real_with_name);
             Assert.assertTrue(this.userAccountManager.isRegistered("registerTest"));
             Assert.assertTrue(this.userAccountManager.isRegistered(real_id));
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    @Test(expected = IllegalAccountActionException.class)
+    public void wrongNameFormatTest() throws Exception{
+
+            this.userAccountManager.registerUser("a", "11111");
+
+    }
+
+    @Test(expected = IllegalAccountActionException.class)
+    public void wrongPasswordFormatTest() throws Exception{
+        this.userAccountManager.registerUser("wrongPswF", "1");
+    }
+
+    @Test(expected = IllegalAccountActionException.class)
+    public void duplicateTest() throws Exception{
+        this.userAccountManager.registerUser("duplicate", "11111");
+        this.userAccountManager.registerUser("duplicate", "11111");
     }
 
     @Test
@@ -210,6 +228,11 @@ public class UserAccountManagerTest {
             e.printStackTrace();
         }
 
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    public void userNotFoundTest() throws Exception{
+        this.userAccountManager.getUser("userNotFound");
     }
 
 
