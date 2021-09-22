@@ -18,6 +18,7 @@ import model.role.Role;
 import org.junit.*;
 import view2.IModelObserver;
 
+import java.util.Collections;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -44,6 +45,16 @@ public class IUserTest {
             }
 
             @Override
+            public void setWorldListChanged() {
+
+            }
+
+            @Override
+            public void setRoomListChanged() {
+
+            }
+
+            @Override
             public void setNewNotificationReceived() {
 
             }
@@ -61,10 +72,11 @@ public class IUserTest {
             }
         });
         world = new SpatialContext("World", Context.getGlobal());
+        UserManager.getInstance().updateWorlds(Collections.singletonMap(world.getContextId(), world.getContextName()));
         room = new SpatialContext("Room", world);
         UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.ADAM);
         map = ContextMap.PUBLIC_ROOM_MAP;
-        UserManager.getInstance().getInternUser().joinWorld(world.getContextName());
+        UserManager.getInstance().getInternUser().joinWorld(world.getContextId());
         UserManager.getInstance().getInternUser().joinRoom(room.getContextId(), room.getContextName(), map);
         userId = UUID.randomUUID();
         testUser = new User(userId, "initialName", Status.ONLINE, Avatar.ADAM);
@@ -131,17 +143,16 @@ public class IUserTest {
     }
 
     @Test
-    public void setIsInCurrentWorld() {
-        boolean inCurrentWorld = new Random().nextBoolean();
-        testUserController.setInCurrentWorld(inCurrentWorld);
-        Assert.assertEquals(inCurrentWorld, testUserView.isInCurrentWorld());
+    public void setIsInCurrentWorld() throws ContextNotFoundException {
+        testUserController.joinWorld(world.getContextId());
+        Assert.assertTrue(testUserView.isInCurrentWorld());
     }
 
     @Test
-    public void setIsInCurrentRoom() {
-        boolean inCurrentRoom = new Random().nextBoolean();
-        testUserController.setInCurrentRoom(inCurrentRoom);
-        Assert.assertEquals(inCurrentRoom, testUserView.isInCurrentRoom());
+    public void setIsInCurrentRoom() throws ContextNotFoundException {
+        testUserController.joinWorld(world.getContextId());
+        testUserController.joinRoom(room.getContextId());
+        Assert.assertTrue(testUserView.isInCurrentRoom());
     }
 
     @Test

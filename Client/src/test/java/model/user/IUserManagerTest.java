@@ -8,6 +8,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import model.MockGL20;
 import model.context.Context;
+import model.context.ContextID;
 import model.context.spatial.Direction;
 import model.context.spatial.SpatialContext;
 import model.context.spatial.ContextMap;
@@ -20,6 +21,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import view2.IModelObserver;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,6 +42,16 @@ public class IUserManagerTest {
             }
 
             @Override
+            public void setWorldListChanged() {
+
+            }
+
+            @Override
+            public void setRoomListChanged() {
+
+            }
+
+            @Override
             public void setNewNotificationReceived() {
 
             }
@@ -56,6 +68,10 @@ public class IUserManagerTest {
             public void setMusicChanged() {
             }
         });
+        UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.ALEX);
+        SpatialContext world = new SpatialContext("World", Context.getGlobal());
+        UserManager.getInstance().updateWorlds(Collections.singletonMap(world.getContextId(), world.getContextName()));
+        UserManager.getInstance().getInternUser().joinWorld(world.getContextId());
         testUserManagerController = UserManager.getInstance();
         testUserManagerView = UserManager.getInstance();
     }
@@ -64,6 +80,7 @@ public class IUserManagerTest {
     public void tearDown() throws Exception {
         testUserManagerController = null;
         testUserManagerView = null;
+        UserManager.getInstance().logout();
     }
 
     @Test(expected = IllegalStateException.class)
@@ -106,7 +123,6 @@ public class IUserManagerTest {
         UUID userId1 = UUID.randomUUID();
         UUID userId2 = UUID.randomUUID();
         Set<UUID> userSet = Set.of(userId1, userId2);
-        UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.ADAM);
         testUserManagerController.addExternUser(userId1, userId1.toString(), Status.ONLINE, Avatar.ADAM);
         testUserManagerController.addExternUser(userId2, userId2.toString(), Status.ONLINE, Avatar.ADAM);
 
@@ -127,10 +143,14 @@ public class IUserManagerTest {
         }
         room.build(ContextMap.PUBLIC_ROOM_MAP);
         Gdx.app.exit();
-        UserManager.getInstance().getInternUser().joinWorld(world.getContextName());
 
-
-        testUserManagerController.getExternUsers().forEach((id, user) -> user.setInCurrentWorld(true));
+        testUserManagerController.getExternUsers().forEach((id, user) -> {
+            try {
+                user.joinWorld(world.getContextId());
+            } catch (ContextNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
         userSet.forEach(id -> Assert.assertTrue(testUserManagerView.getActiveUsers().containsKey(id)));
 
         int posX = 500;
@@ -147,9 +167,5 @@ public class IUserManagerTest {
         userSet.forEach(id -> Assert.assertTrue(testUserManagerView.getBannedUsers().containsKey(id)));
         testUserManagerController.getExternUsers().forEach((id, user) -> user.setFriend(true));
         userSet.forEach(id -> Assert.assertTrue(testUserManagerView.getFriends().containsKey(id)));
-        UserManager.getInstance().logout();
-
-
-
     }
 }

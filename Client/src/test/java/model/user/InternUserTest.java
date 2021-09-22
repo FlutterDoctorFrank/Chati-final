@@ -43,6 +43,16 @@ public class InternUserTest {
             }
 
             @Override
+            public void setWorldListChanged() {
+
+            }
+
+            @Override
+            public void setRoomListChanged() {
+
+            }
+
+            @Override
             public void setNewNotificationReceived() {
             }
 
@@ -62,11 +72,10 @@ public class InternUserTest {
         Status status = Status.ONLINE;
         UserManager.getInstance().login(UUID.randomUUID(), "internUser", status, Avatar.ADAM);
         internUser = UserManager.getInstance().getInternUser();
-        internUser.joinWorld("World");
+        internUser.joinWorld(new ContextID("Global.World"));
         SpatialContext room = new SpatialContext("Room", internUser.getCurrentWorld());
         internUser.getCurrentWorld().addChild(room);
         internUser.setCurrentRoom(room);
-        internUser.setInCurrentRoom(true);
         new HeadlessApplication(new ApplicationAdapter() {
             @Override
             public void create() {
