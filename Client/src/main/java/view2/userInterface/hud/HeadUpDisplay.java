@@ -21,6 +21,7 @@ import view2.userInterface.ChatiImageButton;
 import view2.userInterface.hud.notificationList.NotificationListWindow;
 import view2.userInterface.hud.settings.SettingsWindow;
 import view2.userInterface.hud.userList.UserListWindow;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -32,8 +33,6 @@ public class HeadUpDisplay extends Table implements Translatable {
     public static final float BUTTON_SCALE_FACTOR = 0.1f;
     public static final float BUTTON_SIZE = 75;
     public static final float BUTTON_SPACING = 10;
-
-    private static HeadUpDisplay headUpDisplay;
 
     private final ChatWindow chatWindow;
     private final ImageButton userListButton;

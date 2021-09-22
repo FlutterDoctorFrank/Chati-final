@@ -120,9 +120,9 @@ public class NotificationListEntry extends Table implements Translatable, Compar
         });
 
         // Layout
-        NinePatchDrawable controlsBackground =
+        NinePatchDrawable background =
                 new NinePatchDrawable(new NinePatch(Chati.CHATI.getSkin().getRegion("panel1"), 10, 10, 10, 10));
-        setBackground(controlsBackground);
+        setBackground(background);
         left().defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).padTop(VERTICAL_SPACING);
 
         Table labelContainer = new Table();
@@ -142,11 +142,18 @@ public class NotificationListEntry extends Table implements Translatable, Compar
 
     @Override
     public int compareTo(@NotNull final NotificationListEntry other) {
-        if (other.notification.getTimestamp().compareTo(this.notification.getTimestamp()) == 0) {
-            return this.notification.getNotificationId().compareTo(other.notification.getNotificationId());
-        } else {
-            return other.notification.getTimestamp().compareTo(this.notification.getTimestamp());
-        }
+        int readComp = Boolean.compare(this.notification.isRead(), other.notification.isRead());
+        int handledComp = -Boolean.compare(other.notification.isAccepted() || other.notification.isDeclined(),
+                this.notification.isAccepted() || this.notification.isDeclined());
+        int acceptedComp = Boolean.compare(other.notification.isAccepted(), this.notification.isAccepted());
+        int timeComp = other.notification.getTimestamp().compareTo(this.notification.getTimestamp());
+        int idComp = this.notification.getNotificationId().compareTo(other.notification.getNotificationId());
+
+        return readComp != 0 ? readComp
+                : (handledComp != 0 ? handledComp
+                : (acceptedComp != 0 ? acceptedComp
+                : (timeComp != 0 ? timeComp
+                : idComp)));
     }
 
     @Override

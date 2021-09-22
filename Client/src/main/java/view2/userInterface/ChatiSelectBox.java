@@ -14,7 +14,7 @@ public class ChatiSelectBox<T> extends SelectBox<T> {
 
     /**
      * Erzeugt eine neue Instanz einer ChatiSelectBox.
-     * @param mapper die Funktion, die ein Objekt der Klasse T auf einen String mapped.
+     * @param mapper Die Funktion, die ein Objekt der Klasse T auf einen String mapped.
      */
     public ChatiSelectBox(@NotNull final Function<T, String> mapper) {
         super(Chati.CHATI.getSkin());

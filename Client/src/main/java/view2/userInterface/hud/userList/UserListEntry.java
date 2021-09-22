@@ -275,9 +275,9 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         });
 
         // Layout
-        NinePatchDrawable controlsBackground =
+        NinePatchDrawable background =
                 new NinePatchDrawable(new NinePatch(Chati.CHATI.getSkin().getRegion("panel1"), 10, 10, 10, 10));
-        setBackground(controlsBackground);
+        setBackground(background);
         left().defaults().padTop(VERTICAL_SPACING);
 
         Table container = new Table();
@@ -297,16 +297,16 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
     @Override
     public int compareTo(@NotNull final UserListEntry other) {
         int statusComp = this.user.getStatus().compareTo(other.user.getStatus());
-
         Role thisHighestRole = this.user.getHighestRole();
         Role otherHighestRole = other.user.getHighestRole();
         int roleComp = thisHighestRole == null ? 1
                 : (otherHighestRole == null ? -1
                 : thisHighestRole.compareTo(otherHighestRole));
+        int nameComp = this.user.getUsername().compareTo(other.user.getUsername());
 
         return statusComp != 0 ? statusComp
                 : (roleComp != 0 ? roleComp
-                : (this.user.getUsername().compareTo(other.user.getUsername())));
+                : nameComp);
     }
 
     /**
