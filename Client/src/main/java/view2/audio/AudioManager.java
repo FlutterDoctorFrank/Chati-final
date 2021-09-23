@@ -7,7 +7,6 @@ import model.user.IInternUserView;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.KeyCommand;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -29,10 +28,11 @@ public class AudioManager implements Disposable {
      */
     public AudioManager() {
         try {
-            this.voiceRecorder = new VoiceRecorder();
             this.audioConsumer = new AudioConsumer();
-            setMicrophoneSensitivity();
             setVolume();
+
+            this.voiceRecorder = new VoiceRecorder();
+            setMicrophoneSensitivity();
         } catch (GdxRuntimeException e) {
             e.printStackTrace(); // Line is not available
         }
@@ -48,20 +48,26 @@ public class AudioManager implements Disposable {
     public void update() {
         IInternUserView internUser = Chati.CHATI.getInternUser();
 
-        if (voiceRecorder != null && audioConsumer != null) {
+        if (audioConsumer != null) {
             if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
-                if ((!voiceRecorder.isRunning() || !audioConsumer.isRunning())
-                        && internUser != null && internUser.isInCurrentWorld()) {
-                    voiceRecorder.start();
-                    audioConsumer.start();
-                } else if ((voiceRecorder.isRunning() || audioConsumer.isRunning())
-                        && (internUser == null || !internUser.isInCurrentWorld())) {
-                    voiceRecorder.stop();
-                    audioConsumer.stop();
+                if (internUser != null && internUser.isInCurrentWorld()) {
+                    if (!audioConsumer.isRunning()) {
+                        audioConsumer.start();
+                    }
+                    if (voiceRecorder != null && !voiceRecorder.isRunning()) {
+                        voiceRecorder.start();
+                    }
+                } else if (internUser == null || !internUser.isInCurrentWorld()) {
+                    if (audioConsumer.isRunning()) {
+                        audioConsumer.stop();
+                    }
+                    if (voiceRecorder != null && voiceRecorder.isRunning()) {
+                        voiceRecorder.stop();
+                    }
                 }
             }
 
-            if (voiceRecorder.isRunning()) {
+            if (voiceRecorder != null && voiceRecorder.isRunning()) {
                 if (Chati.CHATI.getPreferences().isMicrophoneOn() && (!Chati.CHATI.getPreferences().getPushToTalk()
                         || Chati.CHATI.getWorldScreen().getWorldInputProcessor().isPushToTalkPressed())
                         && internUser != null && internUser.canTalk()) {
@@ -136,7 +142,7 @@ public class AudioManager implements Disposable {
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn Sprachdaten von diesem Benutzer abgespielt werden, sonst false.
      */
-    public boolean isTalking(IUserView user) {
+    public boolean isTalking(@NotNull final IUserView user) {
         return audioConsumer.isTalking(user);
     }
 

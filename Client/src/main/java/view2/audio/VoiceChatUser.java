@@ -35,7 +35,7 @@ public class VoiceChatUser extends AudioProducer {
      * Gibt den sendenden Benutzer zurück.
      * @return Sendender Benutzer.
      */
-    public IUserView getSender() {
+    public @NotNull IUserView getSender() {
         return sender;
     }
 }

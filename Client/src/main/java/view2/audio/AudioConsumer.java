@@ -7,7 +7,6 @@ import model.exception.UserNotFoundException;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Eine Klasse, durch welche das Mischen und Abspielen empfangener Audiodaten realisiert wird.
  */
-public class AudioConsumer implements Disposable {
+public class AudioConsumer implements Disposable, Runnable {
 
     private final AudioDevice player;
     private final Map<IUserView, VoiceChatUser> voiceDataBuffer;
@@ -39,6 +38,68 @@ public class AudioConsumer implements Disposable {
         this.musicStream = new MusicStream();
     }
 
+    @Override
+    public void run() {
+        short[] mixedData = new short[AudioManager.BLOCK_SIZE];
+
+        outer:
+        while (isRunning) {
+            synchronized (this) {
+                // Warte, solange keine Daten vorhanden sind.
+                while (voiceDataBuffer.isEmpty() && !musicStream.isReady()) {
+                    if (!isRunning) {
+                        break outer;
+                    }
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            // Entferne die obersten Elemente aus den Puffern des Voicechats und des Musikstreams.
+            Set<short[]> blocks = voiceDataBuffer.values().stream().filter(VoiceChatUser::isReady)
+                    .map(VoiceChatUser::getAudioDataBlock).collect(Collectors.toSet());
+            voiceDataBuffer.values().removeIf(Predicate.not(VoiceChatUser::hasData));
+            short[] musicBlock = new short[AudioManager.BLOCK_SIZE];
+            if (musicStream.isReady()) {
+                musicBlock = musicStream.getAudioDataBlock();
+                isPlayingMusic = true;
+            } else {
+                isPlayingMusic = false;
+            }
+
+            // Ton ist aus, beende Iteration ohne Verarbeitung der empfangenen Daten.
+            if (!Chati.CHATI.getPreferences().isSoundOn()) {
+                continue;
+            }
+
+            int[] temp = new int[AudioManager.BLOCK_SIZE];
+            for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
+                // Mische Daten aller Teilnehmer des Voicechats und setze die entsprechende Lautstärke.
+                for (short[] block : blocks) {
+                    temp[i] += block[i];
+                }
+                temp[i] *= voiceVolume;
+
+                // Mische Daten des Musikstreams dazu und setze die entsprechende Lautstärke.
+                musicBlock[i] *= musicVolume;
+                temp[i] += musicBlock[i];
+
+                // Verhindere einen Overflow der gemischten Daten.
+                mixedData[i] = (short) (temp[i] > Short.MAX_VALUE ? Short.MAX_VALUE :
+                        (temp[i] < Short.MIN_VALUE ? Short.MIN_VALUE : temp[i]));
+            }
+
+            // Spiele die gemischten Daten ab.
+            player.writeSamples(mixedData, 0, mixedData.length);
+        }
+
+        this.voiceDataBuffer.clear();
+        this.musicStream.clear();
+    }
+
     /**
      * Startet einen Thread zum Mischen und Abspielen empfangener Audiodaten, sofern nicht bereits einer läuft.
      */
@@ -48,66 +109,7 @@ public class AudioConsumer implements Disposable {
         }
         isRunning = true;
 
-        Thread mixAndPlaybackThread = new Thread(() -> {
-            short[] mixedData = new short[AudioManager.BLOCK_SIZE];
-
-            outer:
-            while (isRunning) {
-                synchronized (this) {
-                    // Warte, solange keine Daten vorhanden sind.
-                    while (voiceDataBuffer.isEmpty() && !musicStream.isReady()) {
-                        if (!isRunning) {
-                            break outer;
-                        }
-                        try {
-                            wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-                // Entferne die obersten Elemente aus den Puffern des Voicechats und des Musikstreams.
-                Set<short[]> blocks = voiceDataBuffer.values().stream().filter(VoiceChatUser::isReady)
-                        .map(VoiceChatUser::getAudioDataBlock).collect(Collectors.toSet());
-                voiceDataBuffer.values().removeIf(Predicate.not(VoiceChatUser::hasData));
-                short[] musicBlock = new short[AudioManager.BLOCK_SIZE];
-                if (musicStream.isReady()) {
-                    musicBlock = musicStream.getAudioDataBlock();
-                    isPlayingMusic = true;
-                } else {
-                    isPlayingMusic = false;
-                }
-
-                // Ton ist aus, beende Iteration ohne Verarbeitung der empfangenen Daten.
-                if (!Chati.CHATI.getPreferences().isSoundOn()) {
-                    continue;
-                }
-
-                int[] temp = new int[AudioManager.BLOCK_SIZE];
-                for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
-                    // Mische Daten aller Teilnehmer des Voicechats und setze die entsprechende Lautstärke.
-                    for (short[] block : blocks) {
-                        temp[i] += block[i];
-                    }
-                    temp[i] *= voiceVolume;
-
-                    // Mische Daten des Musikstreams dazu und setze die entsprechende Lautstärke.
-                    musicBlock[i] *= musicVolume;
-                    temp[i] += musicBlock[i];
-
-                    // Verhindere einen Overflow der gemischten Daten.
-                    mixedData[i] = (short) (temp[i] > Short.MAX_VALUE ? Short.MAX_VALUE :
-                            (temp[i] < Short.MIN_VALUE ? Short.MIN_VALUE : temp[i]));
-                }
-
-                // Spiele die gemischten Daten ab.
-                player.writeSamples(mixedData, 0, mixedData.length);
-            }
-
-            this.voiceDataBuffer.clear();
-            this.musicStream.clear();
-        });
+        Thread mixAndPlaybackThread = new Thread(this);
         mixAndPlaybackThread.setDaemon(true);
         mixAndPlaybackThread.start();
     }
@@ -133,7 +135,7 @@ public class AudioConsumer implements Disposable {
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn Sprachdaten von diesem Benutzer abgespielt werden, sonst false.
      */
-    public boolean isTalking(IUserView user) {
+    public boolean isTalking(@NotNull final IUserView user) {
         VoiceChatUser voiceChatUser = voiceDataBuffer.get(user);
         return voiceChatUser != null && voiceChatUser.isReady();
     }
