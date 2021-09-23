@@ -140,7 +140,7 @@ public class CommunicationHandler {
         receivers.remove(sender.getUserId());
 
         // Versende die Sprachnachricht.
-        AudioMessage audioMessage = new AudioMessage(sender, voiceData);
+        AudioMessage audioMessage = new AudioMessage(sender, voiceData, 0);
         receivers.values().forEach(user -> user.send(SendAction.AUDIO, audioMessage));
     }
 

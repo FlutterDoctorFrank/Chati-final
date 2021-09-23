@@ -23,7 +23,7 @@ import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.Set;
 
-public class MusicStreamer extends Interactable {
+public class MusicStreamer extends Interactable implements Runnable {
 
     /** Sample-Rate der gestreamten Musik. */
     private static final int SAMPLING_RATE = 44100;
@@ -62,7 +62,7 @@ public class MusicStreamer extends Interactable {
 
     private boolean isRunning;
 
-    private boolean isPaused;
+    private volatile boolean isPaused;
 
     private boolean isLooping;
 
@@ -119,29 +119,22 @@ public class MusicStreamer extends Interactable {
                 }
                 setMusic(music);
                 loadBuffer();
-                isPaused = false;
-                synchronized (this) {
-                    notifyAll();
-                }
+                play();
                 break;
             case MENU_OPTION_PAUSE: // Pausiere das Abspielen des Musikstücks oder setze es fort, falls es pausiert ist.
                 if (musicStreamBuffer == null || !isRunning) {
                     throw new IllegalMenuActionException("", "object.music-player.pause-not-possible");
                 }
                 if (isPaused) {
-                    isPaused = false;
-                    synchronized (this) {
-                        notifyAll();
-                    }
+                    play();
                 } else {
-                    isPaused = true;
+                    pause();
                 }
                 break;
             case MENU_OPTION_STOP: // Stoppe das Abspielen des Musikstücks.
                 if (musicStreamBuffer == null || musicStreamBuffer.position() == 0 || !isRunning) {
                     throw new IllegalMenuActionException("", "object.music-player.stop-not-possible");
                 }
-                isPaused = true;
                 setMusic(null);
                 break;
             case MENU_OPTION_PREVIOUS: // Beginne das momentane Musikstück von vorn, oder spiele das letzte ab, falls
@@ -154,6 +147,7 @@ public class MusicStreamer extends Interactable {
                 } else {
                     setMusic(ContextMusic.values()[(getMusic().ordinal() - 1) % ContextMusic.values().length]);
                     loadBuffer();
+                    play();
                 }
                 break;
             case MENU_OPTION_NEXT: // Spiele das nächste Musikstück ab.
@@ -162,6 +156,7 @@ public class MusicStreamer extends Interactable {
                 }
                 setMusic(ContextMusic.values()[(getMusic().ordinal() + 1) % ContextMusic.values().length]);
                 loadBuffer();
+                play();
                 break;
             case MENU_OPTION_LOOPING: // Ein abgespieltes Lied wird immer wiederholt.
                 this.isLooping = !this.isLooping;
@@ -222,63 +217,68 @@ public class MusicStreamer extends Interactable {
         }
         this.isRunning = true;
 
-        Thread streamingThread = new Thread(() -> {
-            byte[] sendData = new byte[BLOCK_SIZE];
+        Thread streamingThread = new Thread(this);
+        streamingThread.setDaemon(true);
+        streamingThread.start();
+    }
 
-            outer:
-            while (isRunning) {
-                synchronized (this) {
-                    // Warte, solange die Musik pausiert ist oder keine Daten verfügbar sind.
-                    while (isPaused || !musicStreamBuffer.hasRemaining()) {
-                        if (!isRunning) {
-                            break outer;
-                        }
+    @Override
+    public void run() {
+        byte[] sendData = new byte[BLOCK_SIZE];
+
+        outer:
+        while (isRunning) {
+            synchronized (this) {
+                // Warte, solange die Musik pausiert ist oder keine Daten verfügbar sind.
+                while (isPaused || !musicStreamBuffer.hasRemaining()) {
+                    if (!isRunning) {
+                        break outer;
+                    }
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            if (musicStreamBuffer.remaining() > sendData.length) {
+                musicStreamBuffer.get(sendData);
+            } else {
+                musicStreamBuffer.get(sendData, 0, musicStreamBuffer.remaining());
+                if (!isLooping) {
+                    if (isRandom) {
+                        setMusic(ContextMusic.values()[new Random().nextInt(ContextMusic.values().length)]);
                         try {
-                            wait();
-                        } catch (InterruptedException e) {
+                            loadBuffer();
+                        } catch (IllegalMenuActionException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        pause();
+                    }
+                } else {
+                    if (getMusic() != null) {
+                        setMusic(ContextMusic.values()[(getMusic().ordinal() + 1) % ContextMusic.values().length]);
+                        try {
+                            loadBuffer();
+                        } catch (IllegalMenuActionException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-
-                if (musicStreamBuffer.remaining() > sendData.length) {
-                    musicStreamBuffer.get(sendData);
-                } else {
-                    musicStreamBuffer.get(sendData, 0, musicStreamBuffer.remaining());
-                    if (!isLooping) {
-                        if (isRandom) {
-                            setMusic(ContextMusic.values()[new Random().nextInt(ContextMusic.values().length)]);
-                            try {
-                                loadBuffer();
-                            } catch (IllegalMenuActionException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            isPaused = true;
-                        }
-                    } else {
-                        if (getMusic() != null) {
-                            setMusic(ContextMusic.values()[(getMusic().ordinal() + 1) % ContextMusic.values().length]);
-                            try {
-                                loadBuffer();
-                            } catch (IllegalMenuActionException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-                AudioMessage message = new AudioMessage(null, sendData);
-                getParent().getUsers().values().forEach(receiver -> receiver.send(ClientSender.SendAction.AUDIO, message));
-
-                try {
-                    Thread.sleep(955 / SEND_RATE);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
-        });
-        streamingThread.setDaemon(true);
-        streamingThread.start();
+            float position = (float) musicStreamBuffer.position() / musicStreamBuffer.capacity();
+            System.out.println(position);
+            AudioMessage message = new AudioMessage(null, sendData, position);
+            getParent().getUsers().values().forEach(receiver -> receiver.send(ClientSender.SendAction.AUDIO, message));
+
+            try {
+                Thread.sleep(955 / SEND_RATE);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -289,17 +289,37 @@ public class MusicStreamer extends Interactable {
         if (getMusic() == null) {
             return 0;
         }
-        return musicStreamBuffer.position() * SAMPLING_RATE;
+        return musicStreamBuffer.position() * SAMPLING_RATE / 2;
     }
 
     @Override
     public void setMusic(@Nullable final ContextMusic music) {
-        musicStreamBuffer.clear();
+        isPaused = true;
+        if (musicStreamBuffer != null) {
+            musicStreamBuffer.clear();
+        }
         parent.setMusic(music);
     }
 
     @Override
     public @Nullable ContextMusic getMusic() {
         return parent.getMusic();
+    }
+
+    /**
+     * Sendet Musik.
+     */
+    private void play() {
+        isPaused = false;
+        synchronized (this) {
+            notifyAll();
+        }
+    }
+
+    /**
+     * Unterbricht das Senden von Musik.
+     */
+    private void pause() {
+        isPaused = true;
     }
 }

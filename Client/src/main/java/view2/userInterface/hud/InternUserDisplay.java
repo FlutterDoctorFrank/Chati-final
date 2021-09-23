@@ -126,7 +126,6 @@ public class InternUserDisplay extends Table {
                 throw new IllegalArgumentException("There is no icon for this user status.");
         }
 
-        currentRoomImage.getListeners().forEach(currentRoomImage::removeListener);
         if (internUser.getCurrentRoom() != null) {
             currentRoomImage.setDrawable(Chati.CHATI.getDrawable("current_room"));
             currentRoomImage.addListener(new ChatiTooltip("hud.tooltip.current-room", internUser.getCurrentRoom().getContextName()));
@@ -134,7 +133,6 @@ public class InternUserDisplay extends Table {
             currentRoomImage.setDrawable(null);
         }
 
-        currentWorldImage.getListeners().forEach(currentWorldImage::removeListener);
         if (internUser.getCurrentWorld() != null) {
             currentWorldImage.setDrawable(Chati.CHATI.getDrawable("current_world"));
             currentWorldImage.addListener(new ChatiTooltip("hud.tooltip.current-world", internUser.getCurrentWorld().getContextName()));

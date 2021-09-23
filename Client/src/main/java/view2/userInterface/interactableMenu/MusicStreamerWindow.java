@@ -219,7 +219,7 @@ public class MusicStreamerWindow extends InteractableWindow {
     @Override
     public void act(final float delta) {
         if (Chati.CHATI.isMusicChanged()) {
-            //Chati.CHATI.getAudioManager().stopMusic(); // TODO
+            Chati.CHATI.getAudioManager().stopMusic();
         }
         setCurrentTitle();
         setButtonImages();
