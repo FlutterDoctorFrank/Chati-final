@@ -72,8 +72,9 @@ public class InternUser extends User implements IInternUserController, IInternUs
             leaveRoom();
         }
 
-        joinRoom(roomId);
+        this.currentRoom = currentWorld.getContext(roomId);
         this.currentRoom.build(map);
+        UserManager.getInstance().getModelObserver().setRoomChanged();
     }
 
     @Override

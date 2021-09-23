@@ -145,6 +145,12 @@ public class SpatialContext extends Context implements ISpatialContextView {
         return isPrivate;
     }
 
+    @Override
+    public void removeChildren() {
+        this.map = null;
+        super.removeChildren();
+    }
+
     /**
      * Gibt alle untergeordneten Kontexte dieses Kontextes zurück.
      * @return Alle untergeordneten Kontexte.
