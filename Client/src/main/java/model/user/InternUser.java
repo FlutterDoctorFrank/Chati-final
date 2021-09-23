@@ -171,20 +171,22 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     public @Nullable ISpatialContextView getCurrentInteractable() {
-        Direction direction = currentLocation.getDirection();
-        float posX = currentLocation.getPosX();
-        float posY = currentLocation.getPosY();
-        List<SpatialContext> interactables = currentRoom.getDescendants().values().stream()
-                .filter(context -> context.getExpanse().isAround(direction, posX, posY, SpatialContext.INTERACTION_DISTANCE)
-                && context.isInteractable()).collect(Collectors.toList());
-        if (!interactables.isEmpty()) {
-            if (interactables.size() == 1) {
-                return interactables.get(0);
-            }
+        if (currentLocation != null) {
+            Direction direction = currentLocation.getDirection();
+            float posX = currentLocation.getPosX();
+            float posY = currentLocation.getPosY();
+            List<SpatialContext> interactables = currentRoom.getDescendants().values().stream()
+                    .filter(context -> context.getExpanse().isAround(direction, posX, posY, SpatialContext.INTERACTION_DISTANCE)
+                            && context.isInteractable()).collect(Collectors.toList());
+            if (!interactables.isEmpty()) {
+                if (interactables.size() == 1) {
+                    return interactables.get(0);
+                }
 
-            return interactables.stream()
-                    .min(Comparator.comparingInt(interactable -> interactable.getCenter().distance(currentLocation)))
-                    .orElse(null);
+                return interactables.stream()
+                        .min(Comparator.comparingInt(interactable -> interactable.getCenter().distance(currentLocation)))
+                        .orElse(null);
+            }
         }
         return null;
     }
