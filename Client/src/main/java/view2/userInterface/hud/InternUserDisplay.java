@@ -21,18 +21,25 @@ import view2.userInterface.UserInfoContainer;
  */
 public class InternUserDisplay extends Table {
 
-    private static final float USER_INFO_ICON_SIZE = 22.5f;
+    private static final float ICON_SIZE = 22.5f;
     private static final float VERTICAL_SPACING = 5;
     private static final float HORIZONTAL_SPACING = 10;
 
     private StatusSelectTable statusSelectTable;
     private final Image statusImage;
+    private final Image currentRoomImage;
+    private final Image currentWorldImage;
 
     /**
      * Erzeugt eine neue Instanz des InternUserDisplay.
      */
     public InternUserDisplay() {
-        UserInfoContainer userInfoContainer = new UserInfoContainer(Chati.CHATI.getInternUser());
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+        if (internUser == null) {
+            throw new IllegalStateException("Cannot show internUserDisplay when internUser is null.");
+        }
+
+        UserInfoContainer userInfoContainer = new UserInfoContainer(internUser);
 
         TextButton statusButton = new TextButton("", Chati.CHATI.getSkin());
         statusButton.setDisabled(false);
@@ -41,7 +48,7 @@ public class InternUserDisplay extends Table {
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (statusSelectTable == null) {
                     statusSelectTable = new StatusSelectTable();
-                    add(statusSelectTable).top().left().row();
+                    addActor(statusSelectTable);
                 } else {
                     statusSelectTable.remove();
                     statusSelectTable = null;
@@ -50,34 +57,37 @@ public class InternUserDisplay extends Table {
         });
 
         statusImage = new Image();
-        setStatusImage();
+        currentRoomImage = new Image();
+        currentWorldImage = new Image();
+        setImages();
 
         // Layout
         setFillParent(true);
         top().left();
+
         Table container = new Table();
-
-        NinePatchDrawable controlsBackground =
+        NinePatchDrawable background =
                 new NinePatchDrawable(new NinePatch(Chati.CHATI.getSkin().getRegion("panel1"), 10, 10, 10, 10));
-        container.setBackground(controlsBackground);
-        container.left().defaults().top().padTop(VERTICAL_SPACING);
+        container.setBackground(background);
+        container.left();
 
-        statusButton.add(statusImage).width(USER_INFO_ICON_SIZE).height(USER_INFO_ICON_SIZE)
-                .padLeft(USER_INFO_ICON_SIZE).padRight(USER_INFO_ICON_SIZE);
-        container.add(statusButton).width(2 * USER_INFO_ICON_SIZE).height(2 * USER_INFO_ICON_SIZE)
-                .space(HORIZONTAL_SPACING).padLeft(HORIZONTAL_SPACING);
-        container.add(userInfoContainer).left().center().height(USER_INFO_ICON_SIZE).row();
-        add(container).top().left().width(HudMenuWindow.HUD_WINDOW_WIDTH)
-                .height(HeadUpDisplay.BUTTON_SIZE).grow().row();
+        statusButton.add(statusImage).width(ICON_SIZE).height(ICON_SIZE).padLeft(ICON_SIZE).padRight(ICON_SIZE);
+        container.add(statusButton).width(2 * ICON_SIZE).height(2 * ICON_SIZE).space(HORIZONTAL_SPACING).padLeft(HORIZONTAL_SPACING);
+        container.add(userInfoContainer).center().height(ICON_SIZE).padLeft(HORIZONTAL_SPACING / 2);
+        container.add(currentRoomImage).center().size(ICON_SIZE)
+                .padLeft(HudMenuWindow.HUD_WINDOW_WIDTH - userInfoContainer.getPrefWidth() - statusButton.getPrefWidth()
+                        - 2 * ICON_SIZE - background.getPatch().getPadLeft() - background.getPatch().getPadRight()
+                        - 5 * HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING);
+        container.add(currentWorldImage).center().size(ICON_SIZE).padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING);
+        add(container).top().left().width(HudMenuWindow.HUD_WINDOW_WIDTH).height(HeadUpDisplay.BUTTON_SIZE).grow();
     }
 
     @Override
     public void act(final float delta) {
-        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()
-                || Chati.CHATI.isRoomChanged()) {
+        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged() || Chati.CHATI.isRoomChanged()) {
             IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
             if (internUser != null) {
-                setStatusImage();
+                setImages();
             }
         }
         super.act(delta);
@@ -86,9 +96,8 @@ public class InternUserDisplay extends Table {
     /**
      * Setzt das aktuell anzuzeigende Statussymbol.
      */
-    private void setStatusImage() {
+    private void setImages() {
         IInternUserView internUser = Chati.CHATI.getInternUser();
-
         if (internUser == null) {
             return;
         }
@@ -116,6 +125,22 @@ public class InternUserDisplay extends Table {
             default:
                 throw new IllegalArgumentException("There is no icon for this user status.");
         }
+
+        currentRoomImage.getListeners().forEach(currentRoomImage::removeListener);
+        if (internUser.getCurrentRoom() != null) {
+            currentRoomImage.setDrawable(Chati.CHATI.getDrawable("current_room"));
+            currentRoomImage.addListener(new ChatiTooltip("hud.tooltip.current-room", internUser.getCurrentRoom().getContextName()));
+        } else {
+            currentRoomImage.setDrawable(null);
+        }
+
+        currentWorldImage.getListeners().forEach(currentWorldImage::removeListener);
+        if (internUser.getCurrentWorld() != null) {
+            currentWorldImage.setDrawable(Chati.CHATI.getDrawable("current_world"));
+            currentWorldImage.addListener(new ChatiTooltip("hud.tooltip.current-world", internUser.getCurrentWorld().getContextName()));
+        } else {
+            currentWorldImage.setDrawable(null);
+        }
     }
 
     /**
@@ -128,7 +153,6 @@ public class InternUserDisplay extends Table {
          */
         public StatusSelectTable() {
             IInternUserView internUser = Chati.CHATI.getInternUser();
-
             if (internUser == null) {
                 return;
             }
@@ -205,19 +229,19 @@ public class InternUserDisplay extends Table {
             setFillParent(true);
             Table container = new Table();
 
-            NinePatchDrawable controlsBackground =
+            NinePatchDrawable background =
                     new NinePatchDrawable(new NinePatch(Chati.CHATI.getSkin().getRegion("panel1"), 10, 10, 10, 10));
-            container.setBackground(controlsBackground);
+            container.setBackground(background);
 
-            onlineStatusButton.add(onlineStatusImage).size(USER_INFO_ICON_SIZE).pad(USER_INFO_ICON_SIZE);
-            busyStatusButton.add(busyStatusImage).size(USER_INFO_ICON_SIZE).pad(USER_INFO_ICON_SIZE);
-            invisibleStatusButton.add(invisibleStatusImage).size(USER_INFO_ICON_SIZE).pad(USER_INFO_ICON_SIZE);
+            onlineStatusButton.add(onlineStatusImage).size(ICON_SIZE).pad(ICON_SIZE);
+            busyStatusButton.add(busyStatusImage).size(ICON_SIZE).pad(ICON_SIZE);
+            invisibleStatusButton.add(invisibleStatusImage).size(ICON_SIZE).pad(ICON_SIZE);
 
-            container.add(onlineStatusButton).size(2 * USER_INFO_ICON_SIZE)
+            container.add(onlineStatusButton).size(2 * ICON_SIZE)
                     .spaceBottom(VERTICAL_SPACING).padTop(VERTICAL_SPACING).row();
-            container.add(busyStatusButton).size(2 * USER_INFO_ICON_SIZE)
+            container.add(busyStatusButton).size(2 * ICON_SIZE)
                     .spaceBottom(VERTICAL_SPACING).row();
-            container.add(invisibleStatusButton).size(2 * USER_INFO_ICON_SIZE)
+            container.add(invisibleStatusButton).size(2 * ICON_SIZE)
                     .spaceBottom(VERTICAL_SPACING).padBottom(VERTICAL_SPACING);
 
             add(container).top().left().width(HeadUpDisplay.BUTTON_SIZE + HORIZONTAL_SPACING)

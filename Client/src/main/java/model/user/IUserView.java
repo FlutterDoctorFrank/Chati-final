@@ -1,6 +1,7 @@
 package model.user;
 
 import model.context.spatial.ILocationView;
+import model.context.spatial.ISpatialContextView;
 import model.context.spatial.Location;
 import model.context.spatial.SpatialContext;
 import model.role.Permission;
@@ -138,6 +139,19 @@ public interface IUserView {
      * @see SpatialContext
      */
     boolean isInCurrentRoom();
+
+    /**
+     * Gibt die aktuelle Welt des Benutzers zurück.
+     * @return Aktuelle Welt des Benutzers.
+     */
+    @Nullable ISpatialContextView getCurrentWorld();
+
+    /**
+     * Gibt den aktuellen Raum des Benutzers zurück, sofern sich dieser in der aktuellen Welt des intern angemeldeten
+     * Benutzers befindet.
+     * @return Aktueller Raum des Benutzers.
+     */
+    @Nullable ISpatialContextView getCurrentRoom();
 
     /**
      * Gibt die aktuelle Position des Benutzers innerhalb des aktuellen Raumes zurück.

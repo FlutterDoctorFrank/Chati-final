@@ -3,6 +3,7 @@ package view2.world.component;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -22,6 +23,21 @@ import view2.world.WorldScreen;
  */
 public class UserAvatar extends Sprite {
 
+    /** Werden zur Anzeige eines Farbigen Rahmens um den Avatar verwendet, wenn der entsprechende Benutzer
+     * gerade spricht. */
+    private static final String VERTEX_SHADER = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n"
+            + "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n"
+            + "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" + "uniform mat4 u_projTrans;\n"
+            + "varying vec4 v_color;\n" + "varying vec2 v_texCoords;\n" + "\n" + "void main()\n" + "{\n"
+            + "   v_color = " + ShaderProgram.COLOR_ATTRIBUTE + ";\n"
+            + "   v_texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n"
+            + "   gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" + "}\n";
+
+    private static final String FRAGMENT_SHADER = "#ifdef GL_ES\n"
+            + "#define LOWP lowp\n" + "precision mediump float;\n" + "#else\n" + "#define LOWP \n" + "#endif\n"
+            + "varying LOWP vec4 v_color;\n" + "varying vec2 v_texCoords;\n" + "uniform sampler2D u_texture;\n"
+            + "void main()\n" + "{\n" + "  gl_FragColor = v_color * texture2D(u_texture, v_texCoords).a;\n" + "}";
+
     public static final float DEFAULT_VELOCITY = 10f;
     public static final float SPRINT_VELOCITY_FACTOR = 1.67f;
     protected static final float AVATAR_SIZE = 32;
@@ -38,6 +54,7 @@ public class UserAvatar extends Sprite {
     private final Animation<TextureRegion> avatarRunLeft;
     private final Animation<TextureRegion> avatarRunDown;
     private final Animation<TextureRegion> avatarRunRight;
+    private final ShaderProgram shaderProgram;
     private final float alpha;
 
     protected Direction currentDirection;
@@ -65,8 +82,10 @@ public class UserAvatar extends Sprite {
         body.createFixture(fixtureDef);
         body.setUserData(ContactType.USER);
 
+        this.shaderProgram = new ShaderProgram(VERTEX_SHADER, FRAGMENT_SHADER);
+
         Avatar avatar = user.getAvatar();
-        this.alpha = avatar.isGhost() ? 0.75f : 1;
+        this.alpha = avatar.isGhost() ? 0.67f : 1;
         this.avatarStandUp = Chati.CHATI.getDrawable(avatar.getPath() + "_stand_up").getRegion();
         this.avatarStandLeft = Chati.CHATI.getDrawable(avatar.getPath() + "_stand_left").getRegion();
         this.avatarStandDown = Chati.CHATI.getDrawable(avatar.getPath() + "_stand_down").getRegion();
@@ -83,14 +102,19 @@ public class UserAvatar extends Sprite {
     @Override
     public void draw(@NotNull final Batch batch, final float alpha) {
         update();
-        setPosition(getPosition().x - getWidth() / 2, getPosition().y - getHeight() / 2);
         setRegion(getKeyFrame());
 
         if (Chati.CHATI.getAudioManager().isTalking(user)) {
+            setSize(WorldCamera.scaleToUnit(AVATAR_SIZE + 3), WorldCamera.scaleToUnit(AVATAR_SIZE + 3));
+            setPosition(getPosition().x - getWidth() / 2, getPosition().y - getHeight() / 2);
             setColor(Color.GREEN);
-        } else {
-            setColor(Color.WHITE);
+            batch.setShader(shaderProgram);
+            super.draw(batch, this.alpha);
         }
+        setSize(WorldCamera.scaleToUnit(AVATAR_SIZE), WorldCamera.scaleToUnit(AVATAR_SIZE));
+        setPosition(getPosition().x - getWidth() / 2, getPosition().y - getHeight() / 2);
+        setColor(Color.WHITE);
+        batch.setShader(null);
         super.draw(batch, this.alpha);
     }
 

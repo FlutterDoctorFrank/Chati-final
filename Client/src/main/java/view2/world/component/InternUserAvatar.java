@@ -1,12 +1,10 @@
 package view2.world.component;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.utils.Array;
 import controller.network.ServerSender;
 import model.context.spatial.Direction;
 import model.context.spatial.ISpatialContextView;
@@ -170,27 +168,36 @@ public class InternUserAvatar extends UserAvatar {
      * @return true, wenn eine Interaktion möglich ist, sonst false.
      */
     private boolean canInteract() {
-        return interactCount > 0 && !Chati.CHATI.getWorldScreen().isMenuOpen();
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+        return interactCount > 0 && !Chati.CHATI.getWorldScreen().isMenuOpen() && internUser != null
+                && internUser.getCurrentInteractable() != null;
     }
 
+    /**
+     * Eine Klasse, welche die Animation zur Anzeige der Interaktionsmöglichkeit repräsentiert.
+     */
     private class InteractionAnimationSprite extends Sprite {
 
-        private static final int SIZE = 24;
-        private static final float FRAME_DURATION = 0.075f;
+        private static final int SIZE = 18;
+        private static final float SPACING = 10;
 
         private final Animation<TextureRegion> interactionAnimation;
         private float stateTime;
 
+        /**
+         * Erzeugt eine neue Instanz des InteractionAnimationSprite.
+         */
         public InteractionAnimationSprite() {
-            this.interactionAnimation = new Animation<>(FRAME_DURATION, Chati.CHATI.getRegions("e"), Animation.PlayMode.LOOP);
+            Array<TextureAtlas.AtlasRegion> regions = Chati.CHATI.getRegions("interaction");
+            this.interactionAnimation = new Animation<>(1f / regions.size, regions, Animation.PlayMode.LOOP);
             setSize(WorldCamera.scaleToUnit(SIZE), WorldCamera.scaleToUnit(SIZE));
             this.stateTime = 0;
         }
 
         @Override
         public void draw(@NotNull final Batch batch) {
-            setPosition(InternUserAvatar.this.getPosition().x - getWidth() / 2,
-                    InternUserAvatar.this.getPosition().y + 3 * InternUserAvatar.this.getHeight() / 2 );
+            setPosition(InternUserAvatar.this.getPosition().x - getWidth() / 2, InternUserAvatar.this.getPosition().y
+                    + InternUserAvatar.this.getHeight() + WorldCamera.scaleToUnit(SPACING));
             setRegion(interactionAnimation.getKeyFrame(stateTime, true));
             stateTime += Gdx.graphics.getDeltaTime();
             super.draw(batch);

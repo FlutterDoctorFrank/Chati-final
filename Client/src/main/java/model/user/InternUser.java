@@ -185,8 +185,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
             return interactables.stream()
                     .min(Comparator.comparingInt(interactable -> interactable.getCenter().distance(currentLocation)))
                     .orElse(null);
-        } else {
-            System.out.println("Found no interactables from location: " + posX + ", " + posY + ", " + direction);
         }
         return null;
     }

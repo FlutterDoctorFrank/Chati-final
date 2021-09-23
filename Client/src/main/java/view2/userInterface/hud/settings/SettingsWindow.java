@@ -20,10 +20,6 @@ import view2.userInterface.menu.StartTable;
  */
 public class SettingsWindow extends HudMenuWindow {
 
-    private static final float TOP_SPACING = 7.5f;
-    private static final float HORIZONTAL_SPACING = 20;
-    private static final float BOTTOM_SPACING  = 7.5f;
-
     private final ChatiTextButton administratorManageMenuButton;
     private final ChatiTextButton leaveWorldButton;
     private final ChatiTextButton logoutButton;
@@ -112,7 +108,7 @@ public class SettingsWindow extends HudMenuWindow {
         });
 
         // Layout
-        defaults().pad(TOP_SPACING, HORIZONTAL_SPACING, BOTTOM_SPACING, HORIZONTAL_SPACING).grow();
+        defaults().pad(SPACING / 2, 3 * SPACING / 4, SPACING / 2, 3 * SPACING / 4).grow();
         add(languageSelectMenuButton).row();
         add(volumeChangeMenuButton).row();
         add(worldSettingsButton).row();
@@ -136,21 +132,21 @@ public class SettingsWindow extends HudMenuWindow {
     public void act(final float delta) {
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
             IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
-            if (!administratorManageMenuButton.isDisabled()
+            if (administratorManageMenuButton.isTouchable()
                     && (internUser == null || !internUser.hasPermission(Permission.ASSIGN_ADMINISTRATOR))) {
                 disableButton(administratorManageMenuButton);
-            } else if (administratorManageMenuButton.isDisabled() && internUser != null
+            } else if (!administratorManageMenuButton.isTouchable() && internUser != null
                     && internUser.hasPermission(Permission.ASSIGN_ADMINISTRATOR)) {
                 enableButton(administratorManageMenuButton);
             }
-            if (leaveWorldButton.isDisabled() && internUser != null && internUser.isInCurrentWorld()) {
+            if (!leaveWorldButton.isTouchable() && internUser != null && internUser.isInCurrentWorld()) {
                 enableButton(leaveWorldButton);
-            } else if (!leaveWorldButton.isDisabled() && (internUser == null || !internUser.isInCurrentWorld())) {
+            } else if (leaveWorldButton.isTouchable() && (internUser == null || !internUser.isInCurrentWorld())) {
                 disableButton(leaveWorldButton);
             }
-            if (logoutButton.isDisabled() && internUser != null) {
+            if (!logoutButton.isTouchable() && internUser != null) {
                 enableButton(logoutButton);
-            } else if (!logoutButton.isDisabled() && internUser == null) {
+            } else if (logoutButton.isTouchable() && internUser == null) {
                 disableButton(logoutButton);
             }
         }

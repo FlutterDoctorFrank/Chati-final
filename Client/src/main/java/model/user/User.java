@@ -3,6 +3,7 @@ package model.user;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.Direction;
+import model.context.spatial.ISpatialContextView;
 import model.context.spatial.Location;
 import model.context.spatial.SpatialContext;
 import model.exception.ContextNotFoundException;
@@ -401,6 +402,16 @@ public class User implements IUserController, IUserView {
             return false;
         }
         return currentRoom.equals(internUser.currentRoom) && currentLocation != null;
+    }
+
+    @Override
+    public @Nullable ISpatialContextView getCurrentWorld() {
+        return currentWorld;
+    }
+
+    @Override
+    public @Nullable ISpatialContextView getCurrentRoom() {
+        return currentRoom;
     }
 
     @Override

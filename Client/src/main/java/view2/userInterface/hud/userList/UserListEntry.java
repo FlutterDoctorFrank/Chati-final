@@ -15,7 +15,6 @@ import model.user.AdministrativeAction;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.ChatiLocalization;
 import view2.Response;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.ChatiLabel;
@@ -73,15 +72,15 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         }
 
         Image currentRoomImage = new Image();
-        if (user.isOnline() && user.isInCurrentRoom()) {
+        if (user.isOnline() && user.getCurrentRoom() != null) {
             currentRoomImage.setDrawable(Chati.CHATI.getDrawable("current_room"));
-            currentRoomImage.addListener(new ChatiTooltip("hud.tooltip.current-room"));
+            currentRoomImage.addListener(new ChatiTooltip("hud.tooltip.current-room", user.getCurrentRoom().getContextName()));
         }
 
         Image currentWorldImage = new Image();
-        if (user.isOnline() && user.isInCurrentWorld()) {
+        if (user.isOnline() && user.getCurrentWorld() != null) {
             currentWorldImage.setDrawable(Chati.CHATI.getDrawable("current_world"));
-            currentWorldImage.addListener(new ChatiTooltip("hud.tooltip.current-world"));
+            currentWorldImage.addListener(new ChatiTooltip("hud.tooltip.current-world", user.getCurrentWorld().getContextName()));
         }
 
         ChatiImageButton friendButton;
