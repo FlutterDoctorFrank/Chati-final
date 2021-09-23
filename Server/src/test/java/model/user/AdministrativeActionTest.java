@@ -406,6 +406,69 @@ public class AdministrativeActionTest {
         this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.ROOM_INVITE, args);
     }
 
+    // no permission to invite
+    @Test(expected = NoPermissionException.class)
+    public void executeRoomInviteF3est() throws Exception{
+        TestClientSender testClientSender = new TestClientSender();
+        this.userAccountManager.registerUser("nPKick1", "11111");
+        User target = this.userAccountManager.loginUser("nPKick1", "11111", testClientSender);
+        this.userAccountManager.registerUser("nPKick2", "22222");
+        this.user = this.userAccountManager.loginUser("nPKick2", "22222", testClientSender);
+
+        setTestWorld("execRoom");
+        IWorld test_world = null;
+        ContextID world_id = null;
+        Iterator<IWorld> iterator = globalContext.getIWorlds().values().iterator();
+        while (iterator.hasNext()) {
+            IWorld world = iterator.next();
+            if (world.getContextName() == "test_world") {
+                test_world = world;
+                world_id = world.getContextId();
+                break;
+            }
+        }
+        Assert.assertNotNull(test_world);
+        target.joinWorld(world_id);
+        this.user.joinWorld(world_id);
+        String[] args = new String[]{"komm"};
+        this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.ROOM_INVITE, args);
+    }
+
+    // no permission to Kick
+    @Test(expected = NoPermissionException.class)
+    public void executeRoomKickF3est() throws Exception{
+        TestClientSender testClientSender = new TestClientSender();
+        this.userAccountManager.registerUser("nPKick1", "11111");
+        User target = this.userAccountManager.loginUser("nPKick1", "11111", testClientSender);
+        this.userAccountManager.registerUser("nPKick2", "22222");
+        this.user = this.userAccountManager.loginUser("nPKick2", "22222", testClientSender);
+
+        setTestWorld("execRoom");
+        IWorld test_world = null;
+        ContextID world_id = null;
+        Iterator<IWorld> iterator = globalContext.getIWorlds().values().iterator();
+        while (iterator.hasNext()) {
+            IWorld world = iterator.next();
+            if (world.getContextName() == "test_world") {
+                test_world = world;
+                world_id = world.getContextId();
+                break;
+            }
+        }
+        Assert.assertNotNull(test_world);
+        target.joinWorld(world_id);
+        this.user.joinWorld(world_id);
+
+        String[] args = new String[]{"komm"};
+        Room test_room = new Room("test_room", this.test_world, ContextMap.PRIVATE_ROOM_MAP,
+                "11111");
+        test_room.build();
+        this.test_world.addPrivateRoom(test_room);
+        this.user.teleport(test_room.getSpawnLocation());
+        target.teleport(test_room.getSpawnLocation());
+        this.user.executeAdministrativeAction(target.getUserId(), AdministrativeAction.ROOM_KICK, args);
+    }
+
     @Test
     public void executeTeleportTest() {
         TestClientSender testClientSender = new TestClientSender();
