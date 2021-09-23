@@ -11,7 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class Launcher {
 
@@ -122,8 +124,7 @@ public class Launcher {
         } catch (OptionException ex) {
             System.err.println("Failed to parse arguments: " + ex.getMessage());
         } catch (Exception ex) {
-            System.err.println("Exception while launching/running application: " + ex.getMessage());
-            ex.printStackTrace();
+            Logger.getLogger("chati").log(Level.SEVERE, "Exception while launching/running application", ex);
         }
     }
 }
