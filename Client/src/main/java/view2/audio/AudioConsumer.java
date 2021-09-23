@@ -28,6 +28,7 @@ public class AudioConsumer implements Disposable {
     private float musicVolume;
     private float voiceVolume;
     private boolean isRunning;
+    private volatile boolean isPlayingMusic;
 
     /**
      * Erzeugt eine neue Instanz des AudioConsumer.
@@ -73,6 +74,9 @@ public class AudioConsumer implements Disposable {
                 short[] musicBlock = new short[AudioManager.BLOCK_SIZE];
                 if (musicStream.isReady()) {
                     musicBlock = musicStream.getAudioDataBlock();
+                    isPlayingMusic = true;
+                } else {
+                    isPlayingMusic = false;
                 }
 
                 // Ton ist aus, beende Iteration ohne Verarbeitung der empfangenen Daten.
@@ -139,7 +143,14 @@ public class AudioConsumer implements Disposable {
      * @return true, wenn Musikdaten abgespielt werden, sonst false.
      */
     public boolean isPlayingMusic() {
-        return musicStream.isReady();
+        return isPlayingMusic;
+    }
+
+    /**
+     * Stoppt das Abspielen von Musik.
+     */
+    public void stopMusic() {
+        musicStream.clear();
     }
 
     /**

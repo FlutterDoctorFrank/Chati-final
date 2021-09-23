@@ -12,6 +12,8 @@ import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -24,7 +26,7 @@ import java.util.Set;
 public class MusicStreamer extends Interactable {
 
     /** Sample-Rate der gestreamten Musik. */
-    private static final int SAMPLE_RATE = 44100;
+    private static final int SAMPLING_RATE = 44100;
 
     /** Frequenz der gesendeten Pakete. */
     private static final int SEND_RATE = 30;
@@ -33,7 +35,7 @@ public class MusicStreamer extends Interactable {
     private static final boolean MONO = true;
 
     /** Größe der gesendeten Pakete. */
-    private static final int PACKET_SIZE = 2 * SAMPLE_RATE / SEND_RATE;
+    private static final int BLOCK_SIZE = 2 * SAMPLING_RATE / SEND_RATE;
 
     /** Menü-Option zum Auswählen eines abzuspielenden Musikstücks. */
     private static final int MENU_OPTION_PLAY = 1;
@@ -57,8 +59,6 @@ public class MusicStreamer extends Interactable {
     private static final int MENU_OPTION_RANDOM = 7;
 
     private ByteBuffer musicStreamBuffer;
-
-    private ContextMusic currentMusic;
 
     private boolean isRunning;
 
@@ -85,7 +85,6 @@ public class MusicStreamer extends Interactable {
         this.isPaused = true;
         this.isLooping = false;
         this.isRandom = false;
-
         start();
     }
 
@@ -118,13 +117,12 @@ public class MusicStreamer extends Interactable {
                 } catch (IllegalArgumentException e) {
                     throw new IllegalMenuActionException("", e, "object.music-player.music-not-found", args[0]);
                 }
-                currentMusic = music;
-                isPaused = false;
+                setMusic(music);
                 loadBuffer();
+                isPaused = false;
                 synchronized (this) {
                     notifyAll();
                 }
-                getParent().playMusic(music);
                 break;
             case MENU_OPTION_PAUSE: // Pausiere das Abspielen des Musikstücks oder setze es fort, falls es pausiert ist.
                 if (musicStreamBuffer == null || !isRunning) {
@@ -144,25 +142,25 @@ public class MusicStreamer extends Interactable {
                     throw new IllegalMenuActionException("", "object.music-player.stop-not-possible");
                 }
                 isPaused = true;
-                musicStreamBuffer.position(0);
-                getParent().stopMusic();
+                setMusic(null);
                 break;
             case MENU_OPTION_PREVIOUS: // Beginne das momentane Musikstück von vorn, oder spiele das letzte ab, falls
                                         // das momentane am Anfang ist.
-                if (musicStreamBuffer == null || !isRunning || currentMusic == null) {
+                if (musicStreamBuffer == null || !isRunning || getMusic() == null) {
                     throw new IllegalMenuActionException("", "object.music-player.previous-not-possible");
                 }
-                // TODO Nur bei unter 5 Sekunden Abspielzeit des aktuellen Lieds zum vorherigen, sonst neustarten
-                musicStreamBuffer.clear();
-                currentMusic = ContextMusic.values()[(currentMusic.ordinal() - 1) % ContextMusic.values().length];
-                loadBuffer();
+                if (getCurrentPlaytime() < 5) {
+                    musicStreamBuffer.position(0);
+                } else {
+                    setMusic(ContextMusic.values()[(getMusic().ordinal() - 1) % ContextMusic.values().length]);
+                    loadBuffer();
+                }
                 break;
             case MENU_OPTION_NEXT: // Spiele das nächste Musikstück ab.
-                if (musicStreamBuffer == null || !isRunning || currentMusic == null) {
+                if (musicStreamBuffer == null || !isRunning || getMusic() == null) {
                     throw new IllegalMenuActionException("", "object.music-player.next-not-possible");
                 }
-                musicStreamBuffer.clear();
-                currentMusic = ContextMusic.values()[(currentMusic.ordinal() + 1) % ContextMusic.values().length];
+                setMusic(ContextMusic.values()[(getMusic().ordinal() + 1) % ContextMusic.values().length]);
                 loadBuffer();
                 break;
             case MENU_OPTION_LOOPING: // Ein abgespieltes Lied wird immer wiederholt.
@@ -177,6 +175,11 @@ public class MusicStreamer extends Interactable {
         }
     }
 
+    /**
+     * Wandelt Stereodaten in Monodaten um.
+     * @param stereoData Stereodaten.
+     * @return Monodaten.
+     */
     private byte[] toMono(byte[] stereoData) {
         byte[] monoData = new byte[stereoData.length / 2];
         for (int i = 0; i < monoData.length; i += 2) {
@@ -186,9 +189,16 @@ public class MusicStreamer extends Interactable {
         return monoData;
     }
 
+    /**
+     * Lädt den Buffer mit Daten des aktuell ausgewählten Musikstücks.
+     * @throws IllegalMenuActionException falls das Laden der Daten fehlschlägt.
+     */
     private void loadBuffer() throws IllegalMenuActionException {
         try {
-            InputStream file = getClass().getClassLoader().getResourceAsStream(currentMusic.getPath());
+            if (getMusic() == null) {
+                throw new IllegalMenuActionException("", "object.music-player.failed-loading");
+            }
+            InputStream file = getClass().getClassLoader().getResourceAsStream(getMusic().getPath());
             if (file == null) {
                 throw new IllegalMenuActionException("", "object.music-player.failed-loading");
             }
@@ -203,6 +213,9 @@ public class MusicStreamer extends Interactable {
         }
     }
 
+    /**
+     * Startet einen Thread zum Senden von Musikstreamingdaten.
+     */
     private void start() {
         if (isRunning) {
             return;
@@ -210,10 +223,16 @@ public class MusicStreamer extends Interactable {
         this.isRunning = true;
 
         Thread streamingThread = new Thread(() -> {
-            byte[] sendData = new byte[PACKET_SIZE];
+            byte[] sendData = new byte[BLOCK_SIZE];
+
+            outer:
             while (isRunning) {
                 synchronized (this) {
+                    // Warte, solange die Musik pausiert ist oder keine Daten verfügbar sind.
                     while (isPaused || !musicStreamBuffer.hasRemaining()) {
+                        if (!isRunning) {
+                            break outer;
+                        }
                         try {
                             wait();
                         } catch (InterruptedException e) {
@@ -221,13 +240,14 @@ public class MusicStreamer extends Interactable {
                         }
                     }
                 }
+
                 if (musicStreamBuffer.remaining() > sendData.length) {
                     musicStreamBuffer.get(sendData);
                 } else {
                     musicStreamBuffer.get(sendData, 0, musicStreamBuffer.remaining());
                     if (!isLooping) {
                         if (isRandom) {
-                            currentMusic = ContextMusic.values()[new Random().nextInt(ContextMusic.values().length)];
+                            setMusic(ContextMusic.values()[new Random().nextInt(ContextMusic.values().length)]);
                             try {
                                 loadBuffer();
                             } catch (IllegalMenuActionException e) {
@@ -237,11 +257,13 @@ public class MusicStreamer extends Interactable {
                             isPaused = true;
                         }
                     } else {
-                        currentMusic = ContextMusic.values()[(currentMusic.ordinal() + 1) % ContextMusic.values().length];
-                        try {
-                            loadBuffer();
-                        } catch (IllegalMenuActionException e) {
-                            e.printStackTrace();
+                        if (getMusic() != null) {
+                            setMusic(ContextMusic.values()[(getMusic().ordinal() + 1) % ContextMusic.values().length]);
+                            try {
+                                loadBuffer();
+                            } catch (IllegalMenuActionException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -249,7 +271,7 @@ public class MusicStreamer extends Interactable {
                 getParent().getUsers().values().forEach(receiver -> receiver.send(ClientSender.SendAction.AUDIO, message));
 
                 try {
-                    Thread.sleep(1000 / SEND_RATE);
+                    Thread.sleep(955 / SEND_RATE);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -257,5 +279,27 @@ public class MusicStreamer extends Interactable {
         });
         streamingThread.setDaemon(true);
         streamingThread.start();
+    }
+
+    /**
+     * Gibt die Position des aktuell abgespielten Lieds in Sekunden zurück.
+     * @return Position des aktuell abgespielten Lieds in Sekunden.
+     */
+    public int getCurrentPlaytime() {
+        if (getMusic() == null) {
+            return 0;
+        }
+        return musicStreamBuffer.position() * SAMPLING_RATE;
+    }
+
+    @Override
+    public void setMusic(@Nullable final ContextMusic music) {
+        musicStreamBuffer.clear();
+        parent.setMusic(music);
+    }
+
+    @Override
+    public @Nullable ContextMusic getMusic() {
+        return parent.getMusic();
     }
 }

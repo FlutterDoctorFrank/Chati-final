@@ -15,12 +15,9 @@ import model.user.IInternUserView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view2.Chati;
-import view2.ChatiLocalization;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.ChatiLabel;
-import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.NoSuchElementException;
 
 /**
  * Eine Klasse, welche das Menü des MusicStreamer repräsentiert.
@@ -49,17 +46,17 @@ public class MusicStreamerWindow extends InteractableWindow {
     private static final int MENU_OPTION_RANDOM = 7;
 
     private static final float WINDOW_WIDTH = 750;
-    private static final float WINDOW_HEIGHT = 600;
+    private static final float WINDOW_HEIGHT = 675;
     private static final float BUTTON_SPACING = 5;
     private static final float BUTTON_SIZE = 100;
     private static final float BUTTON_SCALE_FACTOR = 0.05f;
 
-    private final MusicListItem[] musicListItems;
     private final List<MusicListItem> musicList;
     private final ChatiImageButton playButton;
     private final ChatiImageButton stopButton;
     private final ChatiImageButton backButton;
     private final ChatiImageButton skipButton;
+    private final Label titleNameLabel;
 
     /**
      * Erzeugt eine neue Instanz des MusicStreamerWindow.
@@ -70,14 +67,15 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         infoLabel = new ChatiLabel("window.entry.music-player");
         musicList = new List<>(Chati.CHATI.getSkin(), "dimmed");
-        musicListItems = EnumSet.allOf(ContextMusic.class).stream().map(MusicListItem::new).toArray(MusicListItem[]::new);
-        musicList.setItems(musicListItems);
-        setSelectedMusic();
+
+        musicList.setItems(EnumSet.allOf(ContextMusic.class).stream().map(MusicListItem::new).toArray(MusicListItem[]::new));
         musicList.getStyle().over = Chati.CHATI.getSkin().getDrawable("list-selection");
         musicList.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                if (musicList.getSelected() == null) {
+                IInternUserView internUser = Chati.CHATI.getInternUser();
+                if (musicList.getSelected() == null || internUser != null
+                        && internUser.getMusic() == musicList.getSelected().getMusic()) {
                     return;
                 }
                 Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId,
@@ -89,7 +87,7 @@ public class MusicStreamerWindow extends InteractableWindow {
         musicListScrollPane.setOverscroll(false, false);
         musicListScrollPane.setScrollingDisabled(true, false);
 
-        playButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_play"), Chati.CHATI.getDrawable("music_pause"),
+        playButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_play"), Chati.CHATI.getDrawable("music_play"),
                 Chati.CHATI.getDrawable("music_play_disabled"), BUTTON_SCALE_FACTOR);
         playButton.addListener(new ClickListener() {
             @Override
@@ -152,12 +150,16 @@ public class MusicStreamerWindow extends InteractableWindow {
             }
         });
 
+        ChatiLabel currentTitleLabel = new ChatiLabel("window.entry.current-title");
+        titleNameLabel = new Label("", Chati.CHATI.getSkin());
+        setCurrentTitle();
+
         Label musicProgressLabel = new Label("0:00", Chati.CHATI.getSkin()); // TODO
         ProgressBar musicProgressBar = new ProgressBar(0, 1, 0.01f, false, Chati.CHATI.getSkin());
 
         Label creditsLabel = new Label("Music by https://www.bensound.com", Chati.CHATI.getSkin());
 
-        setSelectedMusic();
+        setCurrentTitle();
         setButtonImages();
 
         // Layout
@@ -168,11 +170,18 @@ public class MusicStreamerWindow extends InteractableWindow {
         setHeight(WINDOW_HEIGHT);
 
         Table container = new Table();
-        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+        container.defaults().height(ROW_HEIGHT).padBottom(SPACING).center().growX();
         infoLabel.setAlignment(Align.center, Align.center);
-        container.add(infoLabel).row();
+        container.add(infoLabel).padTop(SPACING).row();
 
-        container.add(musicListScrollPane).top().height(2 / 5f * WINDOW_HEIGHT).growY().row();
+        container.add(musicListScrollPane).height(6 * musicList.getItemHeight() + SPACING / 2).grow().row();
+
+        Table currentTitleTable = new Table();
+        currentTitleTable.defaults().padRight(SPACING).left();
+        currentTitleLabel.setAlignment(Align.left, Align.left);
+        titleNameLabel.setAlignment(Align.left, Align.left);
+        currentTitleTable.add(currentTitleLabel, titleNameLabel).left();
+        container.add(currentTitleTable).height(ROW_HEIGHT / 2).left().growX().row();
 
         Table musicProgressContainer = new Table();
         musicProgressContainer.add(musicProgressLabel).width(WINDOW_WIDTH / 16).padRight(SPACING);
@@ -199,13 +208,20 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         creditsLabel.setFontScale(0.67f);
         creditsLabel.setAlignment(Align.center, Align.center);
-        container.add(creditsLabel);
+        container.add(creditsLabel).padBottom(0);
         add(container).padLeft(SPACING).padRight(SPACING).grow();
+
+        // Translatable Register
+        translates.add(currentTitleLabel);
+        translates.trimToSize();
     }
 
     @Override
     public void act(final float delta) {
-        setSelectedMusic();
+        if (Chati.CHATI.isMusicChanged()) {
+            //Chati.CHATI.getAudioManager().stopMusic(); // TODO
+        }
+        setCurrentTitle();
         setButtonImages();
         super.act(delta);
     }
@@ -218,22 +234,15 @@ public class MusicStreamerWindow extends InteractableWindow {
     }
 
     /**
-     * Setzt das aktuell abgespielte Musikstück in der Liste der angezeigten Musikstücke.
+     * Setzt das aktuell abgespielte Musikstück in der Anzeige des aktuellen Titels.
      */
-    private void setSelectedMusic() {
+    private void setCurrentTitle() {
+        String currentTitle = "";
         IInternUserView internUser = Chati.CHATI.getInternUser();
-
-        // TODO Das funktioniert noch nicht richtig.
-        if (Chati.CHATI.isMusicChanged() && internUser != null) {
-            MusicListItem item;
-            try {
-               item = Arrays.stream(musicListItems)
-                       .filter(selectItem -> selectItem.getMusic() == internUser.getMusic()).findFirst().orElseThrow();
-            } catch (NoSuchElementException e) {
-                item = null;
-            }
-            musicList.setSelected(item);
+        if (internUser != null && internUser.getMusic() != null) {
+            currentTitle = internUser.getMusic().getName();
         }
+        titleNameLabel.setText(currentTitle);
     }
 
     /**
@@ -243,35 +252,26 @@ public class MusicStreamerWindow extends InteractableWindow {
         IInternUserView internUser = Chati.CHATI.getInternUser();
 
         if (internUser != null && internUser.getMusic() != null) {
-            enableButton(playButton);
-            enableButton(stopButton);
-            enableButton(backButton);
-            enableButton(skipButton);
-            playButton.setChecked(Chati.CHATI.getAudioManager().isPlayingMusic());
+            playButton.setTouchable(Touchable.enabled);
+            stopButton.setTouchable(Touchable.enabled);
+            backButton.setTouchable(Touchable.enabled);
+            skipButton.setTouchable(Touchable.enabled);
+            playButton.getStyle().imageUp = Chati.CHATI.getDrawable("music_pause");
         } else {
-            disableButton(playButton);
-            disableButton(stopButton);
-            disableButton(backButton);
-            disableButton(skipButton);
+            playButton.setTouchable(Touchable.disabled);
+            stopButton.setTouchable(Touchable.disabled);
+            backButton.setTouchable(Touchable.disabled);
+            skipButton.setTouchable(Touchable.disabled);
+            playButton.getStyle().imageUp = Chati.CHATI.getDrawable("music_play");
         }
     }
 
-    /**
-     * Aktiviert einen ImageButtons.
-     * @param button Zu aktivierender ImageButton.
-     */
-    private void enableButton(@NotNull final Button button) {
-        button.setDisabled(false);
-        button.setTouchable(Touchable.enabled);
-    }
-
-    /**
-     * Deaktiviert einen ImageButton.
-     * @param button Zu deaktivierender ImageButton.
-     */
-    private void disableButton(@NotNull final Button button) {
-        button.setDisabled(true);
-        button.setTouchable(Touchable.disabled);
+    @Override
+    public void open() {
+        super.open();
+        if (getStage() != null) {
+            getStage().setScrollFocus(musicList);
+        }
     }
 
     /**

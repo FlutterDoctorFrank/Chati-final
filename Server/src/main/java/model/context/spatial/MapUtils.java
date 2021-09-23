@@ -13,7 +13,6 @@ import model.communication.ParentCommunication;
 import model.communication.RadiusCommunication;
 import model.context.spatial.objects.AreaPlanner;
 import model.context.spatial.objects.GameBoard;
-import model.context.spatial.objects.MusicPlayer;
 import model.context.spatial.objects.MusicStreamer;
 import model.context.spatial.objects.Portal;
 import model.context.spatial.objects.RoomReception;
@@ -122,11 +121,6 @@ public class MapUtils {
                     case "game_board":
                         context = new GameBoard(name, parent, communication, media, expanse);
                         parent.addInteractable((GameBoard) context);
-                        break;
-
-                    case "music_player":
-                        context = new MusicPlayer(name, parent, communication, media, expanse);
-                        parent.addInteractable((MusicPlayer) context);
                         break;
 
                     case "music_streamer":

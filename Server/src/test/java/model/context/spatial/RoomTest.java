@@ -223,10 +223,10 @@ public class RoomTest {
             privateRoomTester.addRole(test_proom, Role.ROOM_OWNER);
 
             // Musik testen
-            test_proom.playMusic(ContextMusic.DREAMS);
+            test_proom.setMusic(ContextMusic.DREAMS);
             Assert.assertEquals(ContextMusic.DREAMS, test_proom.getMusic());
 
-            test_proom.stopMusic();
+            test_proom.setMusic(null);
             Assert.assertNull(test_proom.getMusic());
 
         } catch (Exception e) {

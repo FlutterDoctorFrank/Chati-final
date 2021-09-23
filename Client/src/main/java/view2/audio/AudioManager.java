@@ -149,6 +149,13 @@ public class AudioManager implements Disposable {
     }
 
     /**
+     * Stoppt das Abspielen von Musik.
+     */
+    public void stopMusic() {
+        audioConsumer.stopMusic();
+    }
+
+    /**
      * Kopiert Daten aus einem Short-Array in einen Byte-Array doppelter Größe.
      * @param shorts Short-Array der zu kopierenden Daten.
      * @param bigEndian Endianität der Daten.
