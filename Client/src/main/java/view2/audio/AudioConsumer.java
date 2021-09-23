@@ -184,15 +184,18 @@ public class AudioConsumer implements Disposable, Runnable {
      * Reiht empfangene Daten eines Musikstreams in die Warteschlange der abzuspielenden Daten ein.
      * @param timestamp Zeitstempel der Musikstreamdaten.
      * @param musicData Abzuspielende Musikdaten.
+     * @param position Aktuelle Position im Musikstück.
+     * @param seconds Aktuelle Sekunde im Musikstück.
      */
-    public void receiveMusicStream(@NotNull final LocalDateTime timestamp, final byte[] musicData) {
+    public void receiveMusicStream(@NotNull final LocalDateTime timestamp, final byte[] musicData, final float position,
+                                   final int seconds) {
         if (!isRunning) {
             return;
         }
         short[] receivedData = AudioManager.toShort(musicData, false);
 
         synchronized (this) {
-            musicStream.addAudioDataBlock(timestamp, receivedData);
+            musicStream.addAudioDataBlock(timestamp, receivedData, position, seconds);
             notifyAll();
         }
     }
@@ -224,5 +227,21 @@ public class AudioConsumer implements Disposable, Runnable {
      */
     public void setMusicVolume(final float musicVolume) {
         this.musicVolume = musicVolume;
+    }
+
+    /**
+     * Gibt die aktuelle Position im laufenden Musikstück zurück.
+     * @return Aktuelle Position im Musikstück.
+     */
+    public float getCurrentPosition() {
+        return musicStream.getCurrentPosition();
+    }
+
+    /**
+     * Gibt die aktuelle Sekunde im laufenden Musikstück.
+     * @return Aktuelle Sekunde im Musikstück.
+     */
+    public int getCurrentSeconds() {
+        return musicStream.getCurrentSeconds();
     }
 }

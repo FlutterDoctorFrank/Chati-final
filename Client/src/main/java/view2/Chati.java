@@ -20,7 +20,6 @@ import model.user.IUserManagerView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view2.audio.AudioManager;
-import view2.userInterface.ContextEntry;
 import view2.userInterface.hud.HeadUpDisplay;
 import view2.userInterface.menu.ConnectionTable;
 import view2.userInterface.menu.MenuScreen;
@@ -37,8 +36,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     public static Chati CHATI;
 
-    private final Set<ContextEntry> worlds;
-    private final Set<ContextEntry> privateRooms;
     private final IUserManagerView userManager;
 
     private ServerSender serverSender;
@@ -78,8 +75,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      */
     public Chati(@NotNull final IUserManagerView userManager) {
         CHATI = this;
-        this.worlds = new TreeSet<>();
-        this.privateRooms = new TreeSet<>();
         this.userManager = userManager;
     }
 
@@ -281,7 +276,8 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         if (Gdx.app != null) {
             Gdx.app.postRunnable(() -> {
                 if (this.menuScreen != null) {
-                    this.menuScreen.setMenuTable(sender != null ? new LoginTable() : new ConnectionTable("table.connection.reconnect"));
+                    this.menuScreen.setMenuTable(sender != null ? new LoginTable() :
+                            new ConnectionTable("table.connection.reconnect"));
                 }
             });
         }
@@ -441,9 +437,10 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void playMusicData(@NotNull LocalDateTime timestamp, byte[] musicData) {
+    public void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData, final float position,
+                              final int seconds) {
         if (this.screen.equals(worldScreen)) {
-            audioManager.playMusicData(timestamp, musicData);
+            audioManager.playMusicData(timestamp, musicData, position, seconds);
         }
     }
 

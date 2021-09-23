@@ -24,6 +24,7 @@ public class PacketAudioMessage implements Packet<PacketListener> {
     private LocalDateTime timestamp;
     private byte[] audioData;
     private float position;
+    private int seconds;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -45,11 +46,15 @@ public class PacketAudioMessage implements Packet<PacketListener> {
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Server-Anwendung.
      * @param timestamp der Zeitpunkt, an dem die Audiodaten versendet wurden.
      * @param audioData die Audiodaten des Musikstückes.
+     * @param position die Position im Musikstück.
+     * @param seconds die Sekunde im Musikstück.
      */
-    public PacketAudioMessage(@NotNull final LocalDateTime timestamp, final byte[] audioData, final float position) {
+    public PacketAudioMessage(@NotNull final LocalDateTime timestamp, final byte[] audioData, final float position,
+                              final int seconds) {
         this.timestamp = timestamp;
         this.audioData = audioData;
         this.position = position;
+        this.seconds = seconds;
     }
 
     /**
@@ -75,6 +80,7 @@ public class PacketAudioMessage implements Packet<PacketListener> {
         PacketUtils.writeNullableUniqueId(output, this.senderId);
         kryo.writeObjectOrNull(output, this.timestamp, LocalDateTime.class);
         output.writeFloat(this.position);
+        output.writeVarInt(this.seconds, true);
         output.writeVarInt(this.audioData.length, true);
         output.writeBytes(this.audioData);
     }
@@ -84,13 +90,15 @@ public class PacketAudioMessage implements Packet<PacketListener> {
         this.senderId = PacketUtils.readNullableUniqueId(input);
         this.timestamp = kryo.readObjectOrNull(input, LocalDateTime.class);
         this.position = input.readFloat();
+        this.seconds = input.readVarInt(true);
         this.audioData = input.readBytes(input.readVarInt(true));
     }
 
     @Override
     public @NotNull String toString() {
         return this.getClass().getSimpleName() + "{senderId=" + this.senderId + ", timestamp=" + this.timestamp
-                + ",position=" + this.position + ", audioData=" + Arrays.toString(this.audioData) + "}";
+                + ",position=" + this.position + ",seconds=" + this.seconds + ", audioData="
+                + Arrays.toString(this.audioData) + "}";
     }
 
     /**
@@ -123,5 +131,13 @@ public class PacketAudioMessage implements Packet<PacketListener> {
      */
     public float getPosition() {
         return this.position;
+    }
+
+    /**
+     * Gibt die Sekunde der Audiodaten im Musikstück zurück, falls es sich um die Audiodaten eines Musikstückes handelt.
+     * @return die Sekunde im Musikstück.
+     */
+    public int getSeconds() {
+        return this.seconds;
     }
 }

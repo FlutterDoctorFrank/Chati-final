@@ -31,7 +31,7 @@ public class PacketAudioMessageTest extends PacketTest<PacketAudioMessage> {
 
     @Test
     public void serverAudioSerializationTest() {
-        this.before = new PacketAudioMessage(LocalDateTime.now(), randomBytes(), randomFloat());
+        this.before = new PacketAudioMessage(LocalDateTime.now(), randomBytes(), randomFloat(), randomInt());
 
         this.serialize();
         this.equals();

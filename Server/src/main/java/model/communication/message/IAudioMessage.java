@@ -11,4 +11,16 @@ public interface IAudioMessage extends IMessage {
      * @return Enthaltene Sprachdaten.
      */
     byte[] getAudioData();
+
+    /**
+     * Gibt die aktuelle Position in einer zusammenhängenden Audionachricht zurück.
+     * @return Position in Audionachricht.
+     */
+    float getPosition();
+
+    /**
+     * Gibt die aktuelle Sekunde in einr zusammenhängenden Audionachricht zurück.
+     * @return Sekunde in Audionachricht.
+     */
+    int getSeconds();
 }

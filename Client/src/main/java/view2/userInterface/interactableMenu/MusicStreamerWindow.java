@@ -17,6 +17,9 @@ import org.jetbrains.annotations.Nullable;
 import view2.Chati;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.ChatiLabel;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.EnumSet;
 
 /**
@@ -57,6 +60,8 @@ public class MusicStreamerWindow extends InteractableWindow {
     private final ChatiImageButton backButton;
     private final ChatiImageButton skipButton;
     private final Label titleNameLabel;
+    private final Label musicProgressLabel;
+    private final ProgressBar musicProgressBar;
 
     /**
      * Erzeugt eine neue Instanz des MusicStreamerWindow.
@@ -154,8 +159,8 @@ public class MusicStreamerWindow extends InteractableWindow {
         titleNameLabel = new Label("", Chati.CHATI.getSkin());
         setCurrentTitle();
 
-        Label musicProgressLabel = new Label("0:00", Chati.CHATI.getSkin()); // TODO
-        ProgressBar musicProgressBar = new ProgressBar(0, 1, 0.01f, false, Chati.CHATI.getSkin());
+        musicProgressLabel = new Label("0:00", Chati.CHATI.getSkin()); // TODO
+        musicProgressBar = new ProgressBar(0, 1, 0.01f, false, Chati.CHATI.getSkin());
 
         Label creditsLabel = new Label("Music by https://www.bensound.com", Chati.CHATI.getSkin());
 
@@ -221,6 +226,9 @@ public class MusicStreamerWindow extends InteractableWindow {
         if (Chati.CHATI.isMusicChanged()) {
             Chati.CHATI.getAudioManager().stopMusic();
         }
+        musicProgressBar.setValue(Chati.CHATI.getAudioManager().getCurrentPosition());
+        Date currentSeconds = new Date(Chati.CHATI.getAudioManager().getCurrentSeconds() * 1000L);
+        musicProgressLabel.setText(new SimpleDateFormat("mm:ss").format(currentSeconds));
         setCurrentTitle();
         setButtonImages();
         super.act(delta);

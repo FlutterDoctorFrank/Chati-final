@@ -194,7 +194,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             }
 
             if (packet.getSenderId() == null) {
-                this.manager.getView().playMusicData(packet.getTimestamp(), packet.getAudioData());
+                this.manager.getView().playMusicData(packet.getTimestamp(), packet.getAudioData(), packet.getPosition(),
+                        packet.getSeconds());
             } else {
                 try {
                     this.manager.getView().playVoiceData(packet.getSenderId(), packet.getTimestamp(), packet.getAudioData());

@@ -118,8 +118,11 @@ public interface ViewControllerInterface {
      * Benachrichtigt die View, dass ein neues Musikdaten-Paket erhalten wurde.
      * @param timestamp Zeitpunkt, an dem dieses Paket gesendet wurde.
      * @param musicData Musikdaten, die abgespielt werden sollen.
+     * @param position Aktuelle Position im Musikstück.
+     * @param seconds Aktuelle Sekunde im Musikstück.
      */
-    void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData);
+    void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData, final float position,
+                       final int seconds);
 
     /**
      * Benachrichtigt die View, dass das Menü eines Interaktionsobjekts geöffnet werden soll.

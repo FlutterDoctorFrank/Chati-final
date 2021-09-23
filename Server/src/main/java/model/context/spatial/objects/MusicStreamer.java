@@ -269,8 +269,7 @@ public class MusicStreamer extends Interactable implements Runnable {
                 }
             }
             float position = (float) musicStreamBuffer.position() / musicStreamBuffer.capacity();
-            System.out.println(position);
-            AudioMessage message = new AudioMessage(null, sendData, position);
+            AudioMessage message = new AudioMessage(null, sendData, position, getCurrentPlaytime());
             getParent().getUsers().values().forEach(receiver -> receiver.send(ClientSender.SendAction.AUDIO, message));
 
             try {
@@ -289,7 +288,7 @@ public class MusicStreamer extends Interactable implements Runnable {
         if (getMusic() == null) {
             return 0;
         }
-        return musicStreamBuffer.position() * SAMPLING_RATE / 2;
+        return musicStreamBuffer.position() / (2 * SAMPLING_RATE);
     }
 
     @Override

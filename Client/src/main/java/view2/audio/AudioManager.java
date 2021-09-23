@@ -130,10 +130,13 @@ public class AudioManager implements Disposable {
      * Veranlasst das Abspielen erhaltener Musikdaten.
      * @param timestamp Zeitstempel der Sprachdaten.
      * @param musicData Abzuspielende Musikdaten.
+     * @param position Aktuelle Position im Musikstück.
+     * @param seconds Aktuelle Sekunde im Musikstück.
      */
-    public void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData) {
+    public void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData, final float position,
+                              final int seconds) {
         if (audioConsumer != null && audioConsumer.isRunning()) {
-            audioConsumer.receiveMusicStream(timestamp, musicData);
+            audioConsumer.receiveMusicStream(timestamp, musicData, position, seconds);
         }
     }
 
@@ -201,5 +204,21 @@ public class AudioManager implements Disposable {
             }
         }
         return shorts;
+    }
+
+    /**
+     * Gibt die aktuelle Position im laufenden Musikstück zurück.
+     * @return Aktuelle Position im Musikstück.
+     */
+    public float getCurrentPosition() {
+        return audioConsumer != null ? audioConsumer.getCurrentPosition() : 0;
+    }
+
+    /**
+     * Gibt die aktuelle Sekunde im laufenden Musikstück.
+     * @return Aktuelle Sekunde im Musikstück.
+     */
+    public int getCurrentSeconds() {
+        return audioConsumer != null ? audioConsumer.getCurrentSeconds() : 0;
     }
 }
