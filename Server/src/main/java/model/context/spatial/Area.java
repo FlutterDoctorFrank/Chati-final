@@ -89,6 +89,20 @@ public class Area extends Context implements IArea {
         return new HashMap<>(communicationRegion.getCommunicableUsers(communicatingUser));
     }
 
+    /**
+     * Gibt die Benutzer in diesem Kontext zurück, die sich nicht in einem inneren Bereich mit einer exklusiven
+     * Kommunikationsform befinden.
+     * @return Menge der nicht exklusiv kommunizierbaren Benutzer in diesem Bereich.
+     * @see Area#isCommunicateExclusive()
+     */
+    public @NotNull Map<UUID, User> getCommunicableUsers() {
+        Map<UUID, User> communicableUsers = this.getExclusiveUsers();
+        children.values().stream()
+                .filter(Predicate.not(Area::isCommunicateExclusive))
+                .forEach(child -> communicableUsers.putAll(child.getCommunicableUsers()));
+        return communicableUsers;
+    }
+
     @Override
     public boolean canCommunicateWith(@NotNull final CommunicationMedium medium) {
         if (this.communicationMedia == null) {
@@ -96,6 +110,15 @@ public class Area extends Context implements IArea {
         }
 
         return communicationMedia.contains(medium);
+    }
+
+    /**
+     * Gibt zurück, ob in diesem Bereich eine exklusive Kommunikationsform gilt.
+     * @return true, wenn in diesem Bereich eine exklusive Kommunikationsform gilt, sonst false.
+     * @see CommunicationRegion#isExclusive()
+     */
+    public boolean isCommunicateExclusive() {
+        return communicationRegion.isExclusive();
     }
 
     /**

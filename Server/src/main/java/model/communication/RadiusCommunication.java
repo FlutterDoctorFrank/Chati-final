@@ -4,13 +4,11 @@ import model.user.User;
 import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Eine Klasse, welche eine radius-basierte Kommunikation repräsentiert.
  */
-public class RadiusCommunication extends CommunicationRegion {
+public class RadiusCommunication extends AreaCommunication {
 
     /** Standardmäßiger Radius, innerhalb dem Benutzer kommunizieren können. */
     private static final int DEFAULT_RADIUS = 2 * 32;
@@ -21,15 +19,15 @@ public class RadiusCommunication extends CommunicationRegion {
     /**
      * Erzeugt eine neue Instanz der RadiusCommunication.
      */
-    public RadiusCommunication() {
-        this(DEFAULT_RADIUS);
+    public RadiusCommunication(final boolean exclusive) {
+        this(exclusive, DEFAULT_RADIUS);
     }
 
     /**
      * Erzeugt eine neue Instanz der RadiusCommunication.
      */
-    public RadiusCommunication(final int radius) {
-        super();
+    public RadiusCommunication(final boolean exclusive, final int radius) {
+        super(exclusive);
         this.radius = radius;
     }
 
@@ -38,12 +36,9 @@ public class RadiusCommunication extends CommunicationRegion {
         if (user.getLocation() == null) {
             throw new IllegalStateException("Users location is not available");
         }
-        /*
-         * ANMERKUNG: Die Radiusbasierte Kommunikation kann man bereichsübergreifend machen, wenn man die Benutzer
-         * des Raums anstatt des Kontexts nimmt.
-         */
-        return area.getExclusiveUsers().values().stream()
-                .filter(otherUser -> otherUser.getLocation() != null && user.getLocation().distance(otherUser.getLocation()) <= radius)
-                .collect(Collectors.toMap(User::getUserId, Function.identity()));
+
+        Map<UUID, User> communicableUsers = super.getCommunicableUsers(user);
+        communicableUsers.values().removeIf(other -> other.getLocation() == null || user.getLocation().distance(other.getLocation()) > radius);
+        return communicableUsers;
     }
 }

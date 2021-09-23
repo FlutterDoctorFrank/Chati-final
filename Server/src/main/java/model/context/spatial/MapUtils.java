@@ -188,9 +188,11 @@ public class MapUtils {
         }
 
         try {
+            boolean exclusive = properties.get("exclusive", false, Boolean.class);
+
             switch (properties.get("communication", String.class)) {
                 case "area":
-                    return new AreaCommunication();
+                    return new AreaCommunication(exclusive);
 
                 case "parent":
                     return new ParentCommunication();
@@ -198,12 +200,12 @@ public class MapUtils {
                 case "radius":
                     if (properties.containsKey("radius")) {
                         try {
-                            return new RadiusCommunication(properties.get("radius", Integer.class));
+                            return new RadiusCommunication(exclusive, properties.get("radius", Integer.class));
                         } catch (ClassCastException ex) {
                             throw new IllegalArgumentException("Properties communication radius of not of type Integer");
                         }
                     }
-                    return new RadiusCommunication();
+                    return new RadiusCommunication(exclusive);
 
                 default:
                     throw new IllegalArgumentException("Properties communication region contains invalid value");

@@ -420,6 +420,7 @@
   <object id="389" name="Bank_1" x="210" y="1896" width="92" height="22">
    <properties>
     <property name="communication" value="area"/>
+    <property name="exclusive" type="bool" value="true"/>
     <property name="media" value="text;voice"/>
     <property name="type" value="area"/>
    </properties>
@@ -447,6 +448,7 @@
   <object id="392" name="Bank_2" x="530" y="1896" width="92" height="22">
    <properties>
     <property name="communication" value="area"/>
+    <property name="exclusive" type="bool" value="true"/>
     <property name="media" value="text;voice"/>
     <property name="type" value="area"/>
    </properties>
@@ -474,6 +476,7 @@
   <object id="395" name="Bank_3" x="690" y="1596" width="44" height="62">
    <properties>
     <property name="communication" value="area"/>
+    <property name="exclusive" type="bool" value="true"/>
     <property name="media" value="text;voice"/>
     <property name="type" value="area"/>
    </properties>
@@ -501,6 +504,7 @@
   <object id="178" name="Bank_4" x="1298" y="1704" width="92" height="22">
    <properties>
     <property name="communication" value="area"/>
+    <property name="exclusive" type="bool" value="true"/>
     <property name="media" value="text;voice"/>
     <property name="type" value="area"/>
    </properties>
@@ -528,6 +532,7 @@
   <object id="381" name="Bank_5" x="1682" y="1704" width="92" height="22">
    <properties>
     <property name="communication" value="area"/>
+    <property name="exclusive" type="bool" value="true"/>
     <property name="media" value="text;voice"/>
     <property name="type" value="area"/>
    </properties>
@@ -555,6 +560,7 @@
   <object id="398" name="Bank_6" x="1874" y="1372" width="44" height="62">
    <properties>
     <property name="communication" value="area"/>
+    <property name="exclusive" type="bool" value="true"/>
     <property name="media" value="text;voice"/>
     <property name="type" value="area"/>
    </properties>
@@ -610,6 +616,7 @@
   <object id="166" name="Bank_7" x="1186" y="700" width="44" height="62">
    <properties>
     <property name="communication" value="area"/>
+    <property name="exclusive" type="bool" value="true"/>
     <property name="media" value="text;voice"/>
     <property name="type" value="area"/>
    </properties>
@@ -637,6 +644,7 @@
   <object id="401" name="Bank_8" x="1362" y="700" width="44" height="66">
    <properties>
     <property name="communication" value="area"/>
+    <property name="exclusive" type="bool" value="true"/>
     <property name="media" value="text;voice"/>
     <property name="type" value="area"/>
    </properties>
@@ -664,6 +672,7 @@
   <object id="404" name="Bank_9" x="1762" y="700" width="44" height="62">
    <properties>
     <property name="communication" value="area"/>
+    <property name="exclusive" type="bool" value="true"/>
     <property name="media" value="text;voice"/>
     <property name="type" value="area"/>
    </properties>
@@ -691,6 +700,7 @@
   <object id="407" name="Bank_10" x="1938" y="700" width="44" height="62">
    <properties>
     <property name="communication" value="area"/>
+    <property name="exclusive" type="bool" value="true"/>
     <property name="media" value="text;voice"/>
     <property name="type" value="area"/>
    </properties>
@@ -718,6 +728,7 @@
   <object id="168" name="Bank_11" x="1248" y="618" width="96" height="50">
    <properties>
     <property name="communication" value="area"/>
+    <property name="exclusive" type="bool" value="true"/>
     <property name="media" value="text;voice"/>
     <property name="type" value="area"/>
    </properties>
@@ -755,6 +766,7 @@
   <object id="415" name="Bank_12" x="1824" y="618" width="96" height="50">
    <properties>
     <property name="communication" value="area"/>
+    <property name="exclusive" type="bool" value="true"/>
     <property name="media" value="text;voice"/>
     <property name="type" value="area"/>
    </properties>
