@@ -21,6 +21,7 @@ import view2.Chati;
 import view2.KeyCommand;
 import view2.ChatiLocalization.Translatable;
 import view2.userInterface.*;
+import view2.world.component.InternUserAvatar;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -138,16 +139,6 @@ public class ChatWindow extends Window implements Translatable {
             }
         });
 
-        TextButton placeHolderButton = new TextButton("", Chati.CHATI.getSkin());
-        placeHolderButton.setDisabled(true);
-        placeHolderButton.addListener(new ChatiTooltip("hud.tooltip.placeholder"));
-        placeHolderButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                // TODO
-            }
-        });
-
         TextButton closeButton = new TextButton("X", Chati.CHATI.getSkin());
         closeButton.setDisabled(true);
         closeButton.addListener(new ChatiTooltip("hud.tooltip.close"));
@@ -183,8 +174,7 @@ public class ChatWindow extends Window implements Translatable {
         Table buttonContainer = new Table();
         buttonContainer.defaults().width(SEND_BUTTON_HEIGHT / 2).height(SEND_BUTTON_HEIGHT / 2);
         emojiButton.getImage().setOrigin(SEND_BUTTON_HEIGHT / 4, SEND_BUTTON_HEIGHT / 4);
-        buttonContainer.add(emojiButton).row();
-        buttonContainer.add(placeHolderButton);
+        buttonContainer.add(emojiButton);
         sendContainer.add(buttonContainer).width(SEND_BUTTON_HEIGHT / 2).padLeft(SPACE);
         sendContainer.add(typeMessageArea).growX();
         sendContainer.add(sendButton).width(SEND_BUTTON_WIDTH).padRight(SPACE);
@@ -281,8 +271,12 @@ public class ChatWindow extends Window implements Translatable {
         setVisible(true);
         historyScrollPane.layout();
         historyScrollPane.scrollTo(0, 0, 0, 0);
-        Chati.CHATI.getScreen().getStage().setKeyboardFocus(typeMessageArea);
-        Chati.CHATI.getScreen().getStage().setScrollFocus(historyScrollPane);
+
+        InternUserAvatar internUserAvatar = Chati.CHATI.getWorldScreen().getInternUserAvatar();
+        if (internUserAvatar != null && !internUserAvatar.isMoving()) {
+            Chati.CHATI.getScreen().getStage().setKeyboardFocus(typeMessageArea);
+            Chati.CHATI.getScreen().getStage().setScrollFocus(historyScrollPane);
+        }
     }
 
     /**

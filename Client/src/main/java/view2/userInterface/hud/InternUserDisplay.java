@@ -29,6 +29,8 @@ public class InternUserDisplay extends Table {
     private final Image statusImage;
     private final Image currentRoomImage;
     private final Image currentWorldImage;
+    private final ChatiTooltip roomTooltip;
+    private final ChatiTooltip worldTooltip;
 
     /**
      * Erzeugt eine neue Instanz des InternUserDisplay.
@@ -57,8 +59,12 @@ public class InternUserDisplay extends Table {
         });
 
         statusImage = new Image();
+        roomTooltip = new ChatiTooltip();
         currentRoomImage = new Image();
+        currentRoomImage.addListener(roomTooltip);
+        worldTooltip = new ChatiTooltip();
         currentWorldImage = new Image();
+        currentWorldImage.addListener(worldTooltip);
         setImages();
 
         // Layout
@@ -72,13 +78,14 @@ public class InternUserDisplay extends Table {
         container.left();
 
         statusButton.add(statusImage).width(ICON_SIZE).height(ICON_SIZE).padLeft(ICON_SIZE).padRight(ICON_SIZE);
-        container.add(statusButton).width(2 * ICON_SIZE).height(2 * ICON_SIZE).space(HORIZONTAL_SPACING).padLeft(HORIZONTAL_SPACING);
+        container.add(statusButton).width(2 * ICON_SIZE).height(2 * ICON_SIZE).space(HORIZONTAL_SPACING)
+                .padLeft(HORIZONTAL_SPACING);
         container.add(userInfoContainer).center().height(ICON_SIZE).padLeft(HORIZONTAL_SPACING / 2);
-        container.add(currentRoomImage).center().size(ICON_SIZE)
-                .padLeft(HudMenuWindow.HUD_WINDOW_WIDTH - userInfoContainer.getPrefWidth() - statusButton.getPrefWidth()
-                        - 2 * ICON_SIZE - background.getPatch().getPadLeft() - background.getPatch().getPadRight()
-                        - 5 * HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING);
-        container.add(currentWorldImage).center().size(ICON_SIZE).padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING);
+        Table roomWorldContainer = new Table();
+        roomWorldContainer.add(currentRoomImage).size(ICON_SIZE).right().padRight(HORIZONTAL_SPACING).growX();
+        roomWorldContainer.add(currentWorldImage).size(ICON_SIZE).right().padLeft(HORIZONTAL_SPACING)
+                .padRight(HORIZONTAL_SPACING);
+        container.add(roomWorldContainer).center().growX();
         add(container).top().left().width(HudMenuWindow.HUD_WINDOW_WIDTH).height(HeadUpDisplay.BUTTON_SIZE).grow();
     }
 
@@ -128,14 +135,14 @@ public class InternUserDisplay extends Table {
 
         if (internUser.getCurrentRoom() != null) {
             currentRoomImage.setDrawable(Chati.CHATI.getDrawable("current_room"));
-            currentRoomImage.addListener(new ChatiTooltip("hud.tooltip.current-room", internUser.getCurrentRoom().getContextName()));
+            roomTooltip.setMessage("hud.tooltip.current-room", internUser.getCurrentRoom().getContextName());
         } else {
             currentRoomImage.setDrawable(null);
         }
 
         if (internUser.getCurrentWorld() != null) {
             currentWorldImage.setDrawable(Chati.CHATI.getDrawable("current_world"));
-            currentWorldImage.addListener(new ChatiTooltip("hud.tooltip.current-world", internUser.getCurrentWorld().getContextName()));
+            worldTooltip.setMessage("hud.tooltip.current-world", internUser.getCurrentWorld().getContextName());
         } else {
             currentWorldImage.setDrawable(null);
         }

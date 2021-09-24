@@ -18,15 +18,24 @@ import view2.Chati;
 public class ChatiTooltip extends TextTooltip {
 
     private static final float DEFAULT_WRAP_WIDTH = 400;
-    private final MessageBundle tooltipBundle;
+    private MessageBundle tooltipBundle;
 
     /**
      * Erzeugt eine neue Instanz eines ChatiTooltip.
      * @param tooltipKey Kennung des anzuzeigenden Text.
+     * @param tooltipArguments Argumente des anzuzeigenden Textes.
      */
     public ChatiTooltip(@NotNull final String tooltipKey, @NotNull final Object... tooltipArguments) {
         super("", new ChatiTooltipStyle());
         this.tooltipBundle = new MessageBundle(tooltipKey, tooltipArguments);
+        setInstant(true);
+    }
+
+    /**
+     * Erzeugt eine neue Instanz eines ChatiTooltip.
+     */
+    public ChatiTooltip() {
+        super("", new ChatiTooltipStyle());
         setInstant(true);
     }
 
@@ -35,6 +44,15 @@ public class ChatiTooltip extends TextTooltip {
                       @Nullable final Actor fromActor) {
         super.getActor().setText(Chati.CHATI.getLocalization().format(tooltipBundle.getMessageKey(), tooltipBundle.getArguments()));
         super.enter(event, x, y, pointer, fromActor);
+    }
+
+    /**
+     * Setzt die anzuzeigende Nachricht des Tooltips.
+     * @param tooltipKey Kennung des anzuzeigenden Textes.
+     * @param tooltipArguments Argumente des anzuzeigenden Textes.
+     */
+    public void setMessage(@NotNull final String tooltipKey, @NotNull final Object... tooltipArguments) {
+        this.tooltipBundle = new MessageBundle(tooltipKey, tooltipArguments);
     }
 
     /**

@@ -318,7 +318,7 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canBeReported() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return this.isOnline() && this.isInCurrentWorld()
+        return internUser.getCurrentWorld() != null && this.isOnline() && this.isInCurrentWorld()
                 && !internUser.hasPermission(Permission.BAN_MODERATOR) && !this.hasPermission(Permission.BAN_MODERATOR)
                 && (!internUser.hasPermission(Permission.BAN_USER) || this.hasPermission(Permission.BAN_USER));
     }
@@ -326,23 +326,23 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canBeMuted() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return this.isOnline() && internUser.isInCurrentWorld() && this.isInCurrentWorld()
+        return this.isOnline() && internUser.getCurrentWorld() != null && this.isInCurrentWorld()
                 && internUser.hasPermission(Permission.MUTE) && !this.hasPermission(Permission.MUTE);
     }
 
     @Override
     public boolean canBeBanned() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return !this.hasPermission(Permission.BAN_MODERATOR) && ((internUser.isInCurrentWorld()
-                && internUser.hasPermission(Permission.BAN_MODERATOR)) || (internUser.hasPermission(Permission.BAN_USER)
-                && !this.hasPermission(Permission.BAN_USER)));
+        return internUser.getCurrentWorld() != null && !this.hasPermission(Permission.BAN_MODERATOR)
+                && (internUser.hasPermission(Permission.BAN_MODERATOR) || internUser.hasPermission(Permission.BAN_USER)
+                && !this.hasPermission(Permission.BAN_USER));
     }
 
     @Override
     public boolean canAssignModerator() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return internUser.hasPermission(Permission.ASSIGN_MODERATOR) && !this.hasRole(Role.ADMINISTRATOR)
-                && !this.hasRole(Role.OWNER) && !this.isBanned();
+        return internUser.getCurrentWorld() != null && internUser.hasPermission(Permission.ASSIGN_MODERATOR)
+                && !this.hasRole(Role.ADMINISTRATOR) && !this.hasRole(Role.OWNER) && !this.isBanned();
     }
 
     @Override

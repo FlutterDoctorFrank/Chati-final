@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Array;
 import controller.network.ServerSender;
 import model.context.spatial.Direction;
@@ -79,7 +80,13 @@ public class InternUserAvatar extends UserAvatar {
             setFrameDuration(FRAME_DURATION);
         }
         oldPosition = body.getPosition().cpy();
-        currentDirection = getCurrentDirectionalInput();
+
+        if (Chati.CHATI.getScreen().getStage().getKeyboardFocus() instanceof TextField) {
+            currentDirection = null;
+        } else {
+            currentDirection = getCurrentDirectionalInput();
+        }
+
         if (currentDirection == null) {
             body.setLinearVelocity(0, 0);
         } else {
@@ -143,6 +150,14 @@ public class InternUserAvatar extends UserAvatar {
         } else if (interactCount > 0) {
             interactCount--;
         }
+    }
+
+    /**
+     * Gibt zurück, ob der Avatar gerade bewegt wird.
+     * @return true, wenn der Avatar bewegt wird, sonst false.
+     */
+    public boolean isMoving() {
+        return !currentDirectionalInputs.isEmpty();
     }
 
     /**
