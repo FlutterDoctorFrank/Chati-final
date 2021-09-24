@@ -585,7 +585,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             try {
                 final IInternUserController user = this.getIntern();
 
-                user.setMusic(packet.getContextId(), packet.getMusic());
+                user.setMusic(packet.getContextId(), packet.getMusic(), packet.isLooping(), packet.isRandom());
                 user.setMute(packet.getContextId(), false);
 
                 for (final IUserController extern : this.manager.getUserManager().getExternUsers().values()) {

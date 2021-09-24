@@ -41,6 +41,12 @@ public class SpatialContext extends Context implements ISpatialContextView {
     /** Musik dieses Kontextes. */
     private ContextMusic music;
 
+    /** Information, ob Musik in diesem Kontext wiederholt abgespielt wird. */
+    private boolean looping;
+
+    /** Information, ob nach Abschluss eines Musikstücks in diesem Kontext ein zufälliges nächstes abgespielt wird. */
+    private boolean random;
+
     /** Die Information, ob mit diesem Kontext interagiert werden darf. */
     private final boolean interactable;
 
@@ -206,16 +212,58 @@ public class SpatialContext extends Context implements ISpatialContextView {
         return map;
     }
 
-    public @Nullable ContextMusic getMusic() {
-        return music;
+    @Override
+    public @NotNull Location getCenter() {
+        return expanse.getCenter();
     }
 
+    /**
+     * Setzt die Musik in diesem Kontext.
+     * @param music Musik in dem Kontext.
+     */
     public void setMusic(@Nullable final ContextMusic music) {
         this.music = music;
     }
 
-    @Override
-    public @NotNull Location getCenter() {
-        return expanse.getCenter();
+    /**
+     * Setzt die Information, ob die Musik in diesem Kontext wiederholt abgespielt wird.
+     * @param looping Information, ob die Musik wiederholt abgespielt wird.
+     */
+    public void setLooping(final boolean looping) {
+        this.looping = looping;
+    }
+
+    /**
+     * Setzt die Information, ob nach Abschluss eines Musikstücks in diesem Kontext ein zufälliges nächstes abgespielt
+     * wird.
+     * @param random Information, ob ein zufälliges nächstes Musikstück abgespielt wird.
+     */
+    public void setRandom(final boolean random) {
+        this.random = random;
+    }
+
+    /**
+     * Gibt die Musik in diesem Kontext zurück.
+     * @return Musik in dem Kontext.
+     */
+    public @Nullable ContextMusic getMusic() {
+        return music;
+    }
+
+    /**
+     * Gibt die Information zurück, ob Musik in diesem Kontext wiederholt abgespielt wird.
+     * @return Information, ob Musik wiederholt abgespielt wird.
+     */
+    public boolean isLooping() {
+        return looping;
+    }
+
+    /**
+     * Gibt die Information zurück, ob nach Ablauf eines Musikstücks in diesem Kontext ein zufälliges nächstes
+     * abgespielt wird.
+     * @return Information, ob ein zufälliges nächstes Musikstück abgespielt wird.
+     */
+    public boolean isRandom() {
+        return random;
     }
 }

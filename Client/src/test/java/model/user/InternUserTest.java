@@ -104,7 +104,7 @@ public class InternUserTest {
     @Test
     public void setGetMusic() throws ContextNotFoundException {
         ContextMusic contextMusic = ContextMusic.COUNTRYBODY;
-        internUserController.setMusic(new ContextID("Global.World.Room.Disco"), contextMusic);
+        internUserController.setMusic(new ContextID("Global.World.Room.Disco"), contextMusic, false, false);
         int posX = 500;
         int posY = 1500;
         internUserController.setLocation(posX, posY, false, false, Direction.DOWN);

@@ -52,6 +52,19 @@ public interface IInternUserView extends IUserView {
     @Nullable ContextMusic getMusic();
 
     /**
+     * Gibt die Information zurück, ob Musik im aktuellen Kontext wiederholt abgespielt wird.
+     * @return Information, ob Musik im aktuellen Kontext wiederholt abgespielt wird.
+     */
+    boolean isLooping();
+
+    /**
+     * Gibt die Information zurück, ob nach Ablauf der Musik im aktuellen Kontext ein zufälliges nächstes abgespielt
+     * wird.
+     * @return Information, ob ein zufälliges nächstes Musikstück abgespielt wird.
+     */
+    boolean isRandom();
+
+    /**
      * Gibt zurück, ob der Benutzer gerade Sprachnachrichten versenden darf.
      * @return true, wenn er Sprachnachrichten versenden darf, sonst false.
      */

@@ -59,6 +59,8 @@ public class MusicStreamerWindow extends InteractableWindow {
     private final ChatiImageButton stopButton;
     private final ChatiImageButton backButton;
     private final ChatiImageButton skipButton;
+    private final ChatiImageButton loopingButton;
+    private final ChatiImageButton randomButton;
     private final Label titleNameLabel;
     private final Label musicProgressLabel;
     private final ProgressBar musicProgressBar;
@@ -128,8 +130,8 @@ public class MusicStreamerWindow extends InteractableWindow {
             }
         });
 
-        ChatiImageButton loopingButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_loop"),
-                Chati.CHATI.getDrawable("music_loop"), Chati.CHATI.getDrawable("music_loop_disabled"), BUTTON_SCALE_FACTOR);
+        loopingButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_looping_on"),
+                Chati.CHATI.getDrawable("music_looping_on"), Chati.CHATI.getDrawable("music_looping_off"), BUTTON_SCALE_FACTOR);
         loopingButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -137,8 +139,9 @@ public class MusicStreamerWindow extends InteractableWindow {
             }
         });
 
-        ChatiImageButton randomButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_random"),
-                Chati.CHATI.getDrawable("music_random"), Chati.CHATI.getDrawable("music_random_disabled"), BUTTON_SCALE_FACTOR);
+        randomButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_random_on"),
+                Chati.CHATI.getDrawable("music_random_on"), Chati.CHATI.getDrawable("music_random_off"), BUTTON_SCALE_FACTOR);
+        randomButton.setDisabled(true);
         randomButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -146,8 +149,8 @@ public class MusicStreamerWindow extends InteractableWindow {
             }
         });
 
-        ChatiImageButton volumeButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_volume"),
-                Chati.CHATI.getDrawable("music_volume"), Chati.CHATI.getDrawable("music_volume_disabled"), BUTTON_SCALE_FACTOR);
+        ChatiImageButton volumeButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_sound_on"),
+                Chati.CHATI.getDrawable("music_sound_off"), Chati.CHATI.getDrawable("music_sound_disabled"), BUTTON_SCALE_FACTOR);
         volumeButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -223,6 +226,19 @@ public class MusicStreamerWindow extends InteractableWindow {
 
     @Override
     public void act(final float delta) {
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+        if (internUser != null) {
+            if (loopingButton.isDisabled() && internUser.isLooping()) {
+                loopingButton.setDisabled(false);
+            } else if (!loopingButton.isDisabled() && !internUser.isLooping()) {
+                loopingButton.setDisabled(true);
+            }
+            if (randomButton.isDisabled() && internUser.isRandom()) {
+                randomButton.setDisabled(false);
+            } else if (!randomButton.isDisabled() && !internUser.isRandom()) {
+                randomButton.setDisabled(true);
+            }
+        }
         musicProgressBar.setValue(Chati.CHATI.getAudioManager().getCurrentPosition());
         Date currentSeconds = new Date(Chati.CHATI.getAudioManager().getCurrentSeconds() * 1000L);
         musicProgressLabel.setText(new SimpleDateFormat("mm:ss").format(currentSeconds));

@@ -36,10 +36,13 @@ public interface IInternUserController extends IUserController {
      * Setzt die Musik, die in einem Kontext abgespielt werden soll.
      * @param spatialId ID des räumlichen Kontextes, in dem die Musik abgespielt werden soll.
      * @param music Abzuspielende Musik.
+     * @param looping Information, ob Musik wiederholt abgespielt werden soll.
+     * @param random Information, ob nach Beenden eines Musikstücks ein zufälliges nächstes abgespielt werden soll.
      * @throws ContextNotFoundException falls dem Client kein Kontext mit der ID bekannt ist.
      * @see SpatialContext
      */
-    void setMusic(@NotNull final ContextID spatialId, @Nullable final ContextMusic music) throws ContextNotFoundException;
+    void setMusic(@NotNull final ContextID spatialId, @Nullable final ContextMusic music, final boolean looping,
+                  final boolean random) throws ContextNotFoundException;
 
     /**
      * Fügt dem Benutzer eine Benachrichtigung in einem Kontext hinzu.

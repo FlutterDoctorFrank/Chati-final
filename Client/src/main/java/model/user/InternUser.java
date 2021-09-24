@@ -87,11 +87,16 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
-    public void setMusic(@NotNull final ContextID spatialId, @Nullable final ContextMusic music) throws ContextNotFoundException {
+    public void setMusic(@NotNull final ContextID spatialId, @Nullable final ContextMusic music, final boolean looping,
+                         final boolean random) throws ContextNotFoundException {
         if (this.currentWorld == null) {
             throw new IllegalStateException("User is not in world.");
         }
-        currentWorld.getContext(spatialId).setMusic(music);
+        SpatialContext context = currentWorld.getContext(spatialId);
+        context.setMusic(music);
+        context.setLooping(looping);
+        context.setRandom(random);
+
         UserManager.getInstance().getModelObserver().setMusicChanged();
     }
 
@@ -162,6 +167,16 @@ public class InternUser extends User implements IInternUserController, IInternUs
     @Override
     public @Nullable ContextMusic getMusic() {
         return currentLocation != null ? currentLocation.getArea().getMusic() : null;
+    }
+
+    @Override
+    public boolean isLooping() {
+        return currentLocation != null && currentLocation.getArea().isLooping();
+    }
+
+    @Override
+    public boolean isRandom() {
+        return currentLocation != null && currentLocation.getArea().isRandom();
     }
 
     @Override
