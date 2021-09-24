@@ -31,11 +31,14 @@ public class MusicStreamer extends Interactable implements Runnable {
     /** Frequenz der gesendeten Pakete. */
     private static final int SEND_RATE = 30;
 
+    /** Größe der gesendeten Pakete. */
+    private static final int BLOCK_SIZE = 2 * SAMPLING_RATE / SEND_RATE;
+
     /** Mono oder Stereo. */
     private static final boolean MONO = true;
 
-    /** Größe der gesendeten Pakete. */
-    private static final int BLOCK_SIZE = 2 * SAMPLING_RATE / SEND_RATE;
+    /** Zeit in Sekunden, bis zu dem das aktuelle Musikstück durch die MENU_OPTION_PREVIOUS neugestartet wird. */
+    private static final float RESTART_SECONDS = 5;
 
     /** Menü-Option zum Auswählen eines abzuspielenden Musikstücks. */
     private static final int MENU_OPTION_PLAY = 1;
@@ -65,7 +68,7 @@ public class MusicStreamer extends Interactable implements Runnable {
     private boolean isRunning;
 
     /** Die Information, ob das Senden von Musikdaten gerade pausiert ist. */
-    private volatile boolean isPaused;
+    private boolean isPaused;
 
     /**
      * Erzeugt eine neue Instanz des MusicStreamer.
@@ -139,7 +142,7 @@ public class MusicStreamer extends Interactable implements Runnable {
                 if (musicStreamBuffer == null || !isRunning || getMusic() == null) {
                     throw new IllegalMenuActionException("", "object.music-player.previous-not-possible");
                 }
-                if (getCurrentPlaytime() < 10) {
+                if (getCurrentPlaytime() < RESTART_SECONDS) {
                     setMusic(ContextMusic.values()[(getMusic().ordinal() - 1) % ContextMusic.values().length]);
                 } else {
                     musicStreamBuffer.clear();
@@ -299,7 +302,6 @@ public class MusicStreamer extends Interactable implements Runnable {
 
     @Override
     public void setMusic(@Nullable final ContextMusic music) {
-        isPaused = true;
         musicStreamBuffer = ByteBuffer.allocate(0);
         parent.setMusic(music);
     }

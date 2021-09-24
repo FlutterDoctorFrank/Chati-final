@@ -93,12 +93,16 @@ public class InternUser extends User implements IInternUserController, IInternUs
             throw new IllegalStateException("User is not in world.");
         }
         SpatialContext context = currentWorld.getContext(spatialId);
-        context.setMusic(music);
+
+        if (context.getMusic() != music) {
+            context.setMusic(music);
+            UserManager.getInstance().getModelObserver().setMusicChanged();
+        }
+
         context.setLooping(looping);
         context.setRandom(random);
-
-        UserManager.getInstance().getModelObserver().setMusicChanged();
     }
+
 
     @Override
     public void addNotification(@NotNull final ContextID contextId, @NotNull final UUID notificationId,
@@ -186,6 +190,10 @@ public class InternUser extends User implements IInternUserController, IInternUs
                 && !isMuted() && !UserManager.getInstance().getCommunicableUsers().isEmpty();
     }
 
+    /**
+     * Gibt die Kontexte zurück, mit denen momentan interagiert werden kann.
+     * @return Kontexte mit denen interagiert werden kann.
+     */
     public @Nullable ISpatialContextView getCurrentInteractable() {
         if (currentLocation != null) {
             Direction direction = currentLocation.getDirection();
