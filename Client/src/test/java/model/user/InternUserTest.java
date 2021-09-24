@@ -73,8 +73,6 @@ public class InternUserTest {
         Gdx.app.exit();
     }
 
-
-
     @Test
     public void setGetMusic() throws ContextNotFoundException {
         ContextMusic contextMusic = ContextMusic.COUNTRYBODY;
@@ -119,7 +117,8 @@ public class InternUserTest {
     public void getGlobal_getWorld_Notifications() throws ContextNotFoundException {
         UUID worldNotificationId = RandomValues.randomUUID();
         UUID globalNotificationId = RandomValues.randomUUID();
-        internUserController.addNotification(Objects.requireNonNull(internUserView.getCurrentWorld()).getContextId(), worldNotificationId,
+        internUserController.addNotification(Objects.requireNonNull(internUserView.getCurrentWorld()).getContextId(),
+                worldNotificationId,
                 new MessageBundle(RandomValues.random8LengthString()), LocalDateTime.now(), NotificationType.FRIEND_REQUEST,
                 true, true, true);
         internUserController.addNotification(Context.getGlobal().getContextId(), globalNotificationId,
@@ -158,14 +157,17 @@ public class InternUserTest {
         float posX = ContextParameters.DISCO_LOCATION_JUKEBOX_INTERACT_X;
         float posY = ContextParameters.DISCO_LOCATION_JUKEBOX_INTERACT_Y;
         internUserController.setLocation(posX, posY, RandomValues.randomBoolean(), RandomValues.randomBoolean(), Direction.UP);
-        Assert.assertEquals(Objects.requireNonNull(internUserView.getCurrentInteractable()).getContextId(), ContextParameters.DISCO_Jukebox_ID);
+        Assert.assertEquals(Objects.requireNonNull(internUserView.getCurrentInteractable()).getContextId(),
+                ContextParameters.DISCO_Jukebox_ID);
 
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, RandomValues.randomBoolean(), RandomValues.randomBoolean(), Direction.DOWN);
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean(), Direction.DOWN);
         Assert.assertNull(internUserView.getCurrentInteractable());
 
         posX = ContextParameters.DISCO_LOCATION_JUKEBOX_INTERACT_X;
         posY = ContextParameters.DISCO_LOCATION_JUKEBOX_INTERACT_Y - ContextParameters.TILE_LENGTH;
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, RandomValues.randomBoolean(), RandomValues.randomBoolean(), Direction.UP);
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean(), Direction.UP);
         Assert.assertNull(internUserView.getCurrentInteractable());
     }
 }
