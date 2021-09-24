@@ -1,17 +1,15 @@
 package model.notification;
 
 import model.MessageBundle;
+import model.RandomValues;
 import model.context.Context;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static org.junit.Assert.*;
 
 public class INotificationViewTest {
 
@@ -23,18 +21,19 @@ public class INotificationViewTest {
     INotificationView iNotificationView;
 
     @Before
-    public void setUp() throws Exception {
-        notificationId = UUID.randomUUID();
-        messageBundle = new MessageBundle("TestMessage");
+    public void setUp() {
+        notificationId = RandomValues.randomUUID();
+        messageBundle = new MessageBundle(RandomValues.random8LengthString());
         timeStamp = LocalDateTime.now();
         notificationType = NotificationType.INFORMATION;
-        notification = new Notification(notificationId, new Context("Test", Context.getGlobal()),
-                messageBundle, timeStamp, notificationType , true, true, true);
+        notification = new Notification(notificationId, new Context(RandomValues.random8LengthString(), Context.getGlobal()),
+                messageBundle, timeStamp, notificationType , RandomValues.randomBoolean(), RandomValues.randomBoolean(),
+                RandomValues.randomBoolean());
         iNotificationView = notification;
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         iNotificationView = null;
         notificationId = null;
         messageBundle = null;

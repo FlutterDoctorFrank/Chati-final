@@ -1,6 +1,7 @@
 package model.notification;
 
 import model.MessageBundle;
+import model.RandomValues;
 import model.context.Context;
 import org.junit.After;
 import org.junit.Assert;
@@ -9,8 +10,6 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static org.junit.Assert.*;
 
 public class NotificationTest {
 
@@ -23,18 +22,19 @@ public class NotificationTest {
 
 
     @Before
-    public void setUp() throws Exception {
-        notificationId = UUID.randomUUID();
-        messageBundle = new MessageBundle("TestMessage");
+    public void setUp() {
+        notificationId = RandomValues.randomUUID();
+        messageBundle = new MessageBundle(RandomValues.random8LengthString());
         timeStamp = LocalDateTime.now();
         notificationType = NotificationType.INFORMATION;
-        context = new Context("Test", Context.getGlobal());
+        context = new Context(RandomValues.random8LengthString(), Context.getGlobal());
         notification = new Notification(notificationId, context,
-                messageBundle, timeStamp, notificationType , true, true, true);
+                messageBundle, timeStamp, notificationType , RandomValues.randomBoolean(), RandomValues.randomBoolean(),
+                RandomValues.randomBoolean());
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         notificationId = null;
         messageBundle = null;
         timeStamp = null;
