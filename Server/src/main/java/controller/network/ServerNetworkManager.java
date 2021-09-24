@@ -94,14 +94,14 @@ public class ServerNetworkManager extends NetworkManager<Server> {
 
         try {
             this.endPoint.start();
-            this.endPoint.bind(this.tcp, this.udp);
+            this.endPoint.bind(this.tcp);
             this.active = true;
 
-            LOGGER.info(String.format("Hosted Server on following Ports: %d, %d (TCP, UDP)", this.tcp, this.udp));
+            LOGGER.info(String.format("Hosted Server on port: %d", this.tcp));
         } catch (IOException ex) {
             this.active = false;
 
-            LOGGER.warning(String.format("Failed to host Server on Ports: %d, %d (TCP, UDP)", this.tcp, this.udp));
+            LOGGER.warning(String.format("Failed to host Server on port: %d", this.tcp));
         }
     }
 
