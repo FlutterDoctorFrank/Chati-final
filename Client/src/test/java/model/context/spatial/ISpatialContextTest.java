@@ -1,19 +1,15 @@
 package model.context.spatial;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import model.ContextParameters;
 import model.MockGL20;
+import model.SetUp;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
 import model.context.Context;
-import model.context.ContextID;
-import model.user.UserManager;
 import org.junit.*;
-import view2.IModelObserver;
 
 import java.util.Set;
 
@@ -27,50 +23,15 @@ public class ISpatialContextTest {
     @Before
     public void setUp() throws Exception {
         map = ContextMap.PUBLIC_ROOM_MAP;
-        testRoomView = (SpatialContext)Context.getGlobal().getContext(new ContextID("Global.World.Room"));
-        testSpatialContextView = (SpatialContext)Context.getGlobal().getContext(new ContextID("Global.World.Room.Disco"));
+        testRoomView = (SpatialContext)Context.getGlobal().getContext(ContextParameters.ROOM_ID);
+        testSpatialContextView = (SpatialContext)Context.getGlobal().getContext(ContextParameters.DISCO_ID);
     }
 
     @BeforeClass
     public static void startGdx(){
-        UserManager.getInstance().setModelObserver(new IModelObserver() {
-            @Override
-            public void setUserInfoChanged() {
-            }
-
-            @Override
-            public void setUserNotificationChanged() {
-            }
-
-            @Override
-            public void setWorldListChanged() {
-
-            }
-
-            @Override
-            public void setRoomListChanged() {
-
-            }
-
-            @Override
-            public void setNewNotificationReceived() {
-
-            }
-
-            @Override
-            public void setWorldChanged() {
-            }
-
-            @Override
-            public void setRoomChanged() {
-            }
-
-            @Override
-            public void setMusicChanged() {
-            }
-        });
-        SpatialContext world = new SpatialContext("World", Context.getGlobal());
-        SpatialContext room = new SpatialContext("Room", world);
+        SetUp.setUpModelObserver();
+        SpatialContext world = new SpatialContext(ContextParameters.WORLD_NAME, Context.getGlobal());
+        SpatialContext room = new SpatialContext(ContextParameters.ROOM_NAME, world);
         world.addChild(room);
         Context.getGlobal().addChild(world);
         new HeadlessApplication(new ApplicationAdapter() {

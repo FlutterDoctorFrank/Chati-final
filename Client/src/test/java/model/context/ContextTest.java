@@ -1,62 +1,27 @@
 package model.context;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import controller.network.protocol.PacketAvatarMove;
+import model.ContextParameters;
 import model.MockGL20;
-import model.context.spatial.SpatialContext;
+import model.RandomValues;
+import model.SetUp;
 import model.context.spatial.ContextMap;
+import model.context.spatial.SpatialContext;
 import model.exception.ContextNotFoundException;
-import model.user.UserManager;
-import org.junit.*;
-import view2.IModelObserver;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class ContextTest {
 
     @BeforeClass
     public static void startGdx(){
-        UserManager.getInstance().setModelObserver(new IModelObserver() {
-            @Override
-            public void setUserInfoChanged() {
-            }
-
-            @Override
-            public void setUserNotificationChanged() {
-            }
-
-            @Override
-            public void setWorldListChanged() {
-
-            }
-
-            @Override
-            public void setRoomListChanged() {
-
-            }
-
-            @Override
-            public void setNewNotificationReceived() {
-
-            }
-
-            @Override
-            public void setWorldChanged() {
-            }
-
-            @Override
-            public void setRoomChanged() {
-            }
-
-            @Override
-            public void setMusicChanged() {
-            }
-        });
-        SpatialContext world = new SpatialContext("World", Context.getGlobal());
-        SpatialContext room = new SpatialContext("Room", world);
+        SetUp.setUpModelObserver();
+        SpatialContext world = new SpatialContext(ContextParameters.WORLD_NAME, Context.getGlobal());
+        SpatialContext room = new SpatialContext(ContextParameters.ROOM_NAME, world);
         world.addChild(room);
         Context.getGlobal().addChild(world);
         new HeadlessApplication(new ApplicationAdapter() {
@@ -80,7 +45,7 @@ public class ContextTest {
 
     @Test
     public void addRemoveChildGetParent() {
-        SpatialContext spatialContext = new SpatialContext("TestWorld", Context.getGlobal());
+        SpatialContext spatialContext = new SpatialContext(RandomValues.random8LengthString(), Context.getGlobal());
         Assert.assertEquals(spatialContext.getParent(), Context.getGlobal());
         Context.getGlobal().addChild(spatialContext);
         Assert.assertTrue(Context.getGlobal().children.containsValue(spatialContext));
@@ -90,7 +55,7 @@ public class ContextTest {
 
     @Test
     public void getContext() {
-        ContextID contextId = new ContextID("Global.World.Room.Hotel.Bank_12.Seat_24");
+        ContextID contextId = ContextParameters.SEAT_ID;
         try {
             Assert.assertEquals(Context.getGlobal().
                     getContext(contextId).contextId, contextId);
@@ -101,12 +66,12 @@ public class ContextTest {
 
     @Test(expected = ContextNotFoundException.class)
     public void  getContextException() throws ContextNotFoundException {
-        ContextID contextId = new ContextID("keinContext");
+        ContextID contextId = new ContextID(RandomValues.randomString(2));
         Context.getGlobal().getContext(contextId);
     }
 
     @Test
     public void getGlobal() {
-        Assert.assertEquals(Context.getGlobal().contextId.toString(), "Global");
+        Assert.assertEquals(Context.getGlobal().contextId.toString(), ContextParameters.GLOBAL_NAME);
     }
 }

@@ -1,35 +1,36 @@
 package model.context;
 
+import model.ContextParameters;
+import model.RandomValues;
 import model.context.spatial.SpatialContext;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class IContextTest {
 
     IContextView iSpatialContext;
+    String contextName;
 
     @Before
-    public void setUp() throws Exception {
-        Context spatialContext = new SpatialContext("TestContext", Context.getGlobal());
-        iSpatialContext = spatialContext;
+    public void setUp() {
+        contextName = RandomValues.random8LengthString();
+        iSpatialContext = new SpatialContext(contextName, Context.getGlobal());
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         iSpatialContext = null;
     }
 
     @Test
     public void getContextId() {
-        Assert.assertEquals(iSpatialContext.getContextId().toString(), "Global.TestContext");
+        Assert.assertEquals(iSpatialContext.getContextId().toString(), ContextParameters.GLOBAL_NAME + "." + contextName);
     }
 
     @Test
     public void getContextName() {
-        Assert.assertEquals(iSpatialContext.getContextName().toString(), "TestContext");
+        Assert.assertEquals(iSpatialContext.getContextName(), contextName);
     }
 }

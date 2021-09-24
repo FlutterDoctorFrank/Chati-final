@@ -1,12 +1,8 @@
 package model;
 
-import model.user.Status;
-import net.bytebuddy.utility.RandomString;
-
 import java.security.SecureRandom;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomValues {
 
