@@ -78,7 +78,8 @@ public class InternUserTest {
     @Test
     public void setGetMusic() throws ContextNotFoundException {
         ContextMusic contextMusic = ContextMusic.COUNTRYBODY;
-        internUserController.setMusic(ContextParameters.DISCO_ID, contextMusic);
+        internUserController.setMusic(ContextParameters.DISCO_ID, contextMusic, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean());
         float posX = ContextParameters.DISCO_LOCATION_X;
         float posY = ContextParameters.DISCO_LOCATION_Y;
         internUserController.setLocation(posX, posY, RandomValues.randomBoolean(), RandomValues.randomBoolean(),
