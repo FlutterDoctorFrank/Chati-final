@@ -16,7 +16,7 @@ public abstract class AudioProducer {
      * Sekunden vorhanden sind. Dies führt zu einer kleinen Verzögerung, verhindert aber, dass sich bei einem
      * verspäteten Paket der Puffer direkt leert und das Abspielen der Daten unterbrochen wird.
      */
-    private static final float STARTING_DELAY = 0.2f;
+    protected static final float STARTING_DELAY = 0.2f;
     protected static final int MIN_BLOCKS = (int) (STARTING_DELAY * AudioManager.SEND_RATE);
 
     protected final Queue<Short> audioDataQueue;
@@ -49,7 +49,8 @@ public abstract class AudioProducer {
     public short[] getAudioDataBlock() {
         short[] block = new short[AudioManager.BLOCK_SIZE];
         for (int i = 0; i < block.length; i++) {
-            block[i] = !audioDataQueue.isEmpty() ? audioDataQueue.poll() : 0;
+            Short data = audioDataQueue.poll();
+            block[i] = data != null ? data : 0;
         }
         if (!hasData()) {
             ready = false;

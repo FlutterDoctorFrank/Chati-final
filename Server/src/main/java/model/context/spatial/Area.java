@@ -40,6 +40,12 @@ public class Area extends Context implements IArea {
     /** Die in diesem Kontext laufende Musik.*/
     private ContextMusic music;
 
+    /** Die Information, ob eine laufende Musik gerade wiederholt abgespielt wird. */
+    private boolean looping;
+
+    /** Die Information, ob nach dem Beenden einer Musik ein zufälliges Musikstück abgespielt wird. */
+    private boolean random;
+
     /**
      * Erzeugt eine Instanz eines Bereichs.
      * @param areaName Name des Bereichs..
@@ -60,6 +66,8 @@ public class Area extends Context implements IArea {
         this.areaReservations = new HashSet<>();
         this.interactables = new HashMap<>();
         this.music = null;
+        this.looping = false;
+        this.random = false;
         if (communicationRegion != null) {
             communicationRegion.setArea(this);
         }
@@ -70,6 +78,16 @@ public class Area extends Context implements IArea {
         return music;
     }
 
+    @Override
+    public boolean isLooping() {
+        return looping;
+    }
+
+    @Override
+    public boolean isRandom() {
+        return random;
+    }
+
     /**
      * Setzt die momentan abzuspielende Musik in diesem Kontext.
      * @param music Abzuspielende Musik.
@@ -77,6 +95,24 @@ public class Area extends Context implements IArea {
     public void setMusic(@Nullable final ContextMusic music) {
         this.music = music;
         // Sende Information über geänderte Musik an alle Benutzer im Kontext.
+        this.containedUsers.values().forEach(user -> user.send(SendAction.CONTEXT_INFO, this));
+    }
+
+    /**
+     * Setzt die Information, ob eine laufende Musik wiederholt abgespielt wird.
+     * @param looping Information, ob eine laufende Musik wiederholt abgespielt wird.
+     */
+    public void setLooping(boolean looping) {
+        this.looping = looping;
+        this.containedUsers.values().forEach(user -> user.send(SendAction.CONTEXT_INFO, this));
+    }
+
+    /**
+     * Setzt die Information, ob nach Abschluss eines Musikstücks ein zufälliges nächstes abgespielt wird.
+     * @param random Information, ob nach Abschluss eines Musikstücks ein zufälliges nächstes abgespielt wird.
+     */
+    public void setRandom(boolean random) {
+        this.random = random;
         this.containedUsers.values().forEach(user -> user.send(SendAction.CONTEXT_INFO, this));
     }
 

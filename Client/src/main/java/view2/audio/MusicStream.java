@@ -41,11 +41,23 @@ public class MusicStream extends AudioProducer {
         this.currentSeconds = 0;
     }
 
+    /**
+     * Fügt abzuspielende Daten in die Warteschlange des AudioProducer hinzu.
+     * @param timestamp Zeitstempel der abzuspielenden Daten.
+     * @param musicDataBlock Abzuspielende Daten.
+     * @param position Aktuelle Position in zusammenhängenden Daten.
+     * @param seconds Aktuelle Sekunde in zusammenhängenden Daten.
+     */
     public void addAudioDataBlock(@NotNull final LocalDateTime timestamp, final short[] musicDataBlock, final float position,
                                   final int seconds) {
+        int sizeBefore = queueSizeInBlocks();
         this.addAudioDataBlock(timestamp, musicDataBlock);
-        this.positionQueue.add(position);
-        this.secondsQueue.add(seconds);
+        int sizeAfter = queueSizeInBlocks();
+        int difference = sizeAfter - sizeBefore;
+        for (int i = 0; i < difference; i++) {
+            this.positionQueue.add(position);
+            this.secondsQueue.add(seconds);
+        }
     }
 
     @Override
@@ -73,7 +85,7 @@ public class MusicStream extends AudioProducer {
 
     @Override
     public short[] getAudioDataBlock() {
-        this.currentPosition = !positionQueue.isEmpty() ? positionQueue.poll(): 0;
+        this.currentPosition = !positionQueue.isEmpty() ? positionQueue.poll() : 0;
         this.currentSeconds = !secondsQueue.isEmpty() ? secondsQueue.poll() : 0;
         return super.getAudioDataBlock();
     }
@@ -97,7 +109,7 @@ public class MusicStream extends AudioProducer {
     /**
      * Leert den Queue der Musikdaten.
      */
-    public void clear() {
+    public void stop() {
         audioDataQueue.clear();
         positionQueue.clear();
         secondsQueue.clear();

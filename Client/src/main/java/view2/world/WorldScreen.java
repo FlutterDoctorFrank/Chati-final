@@ -72,7 +72,6 @@ public class WorldScreen extends ChatiScreen {
         this.viewport = new FitViewport(WorldCamera.scaleToUnit(Gdx.graphics.getWidth()),
                 WorldCamera.scaleToUnit(Gdx.graphics.getHeight()), camera);
         this.tiledMapRenderer = new OrthogonalTiledMapRenderer(null, WorldCamera.scaleToUnit(1));
-        // this.debugRenderer = new Box2DDebugRenderer();
         this.world = new World(new Vector2(0, 0), true);
         this.world.setContactListener(new WorldContactListener());
         this.externUserAvatars = new HashMap<>();
@@ -274,6 +273,9 @@ public class WorldScreen extends ChatiScreen {
         bodies.forEach(world::destroyBody);
         internUserAvatar = null;
         externUserAvatars.clear();
+        if (tiledMapRenderer.getMap() != null) {
+            tiledMapRenderer.getMap().dispose();
+        }
         tiledMapRenderer.setMap(null);
     }
 

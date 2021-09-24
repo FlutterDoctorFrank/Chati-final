@@ -159,8 +159,8 @@ public class MusicStreamerWindow extends InteractableWindow {
         titleNameLabel = new Label("", Chati.CHATI.getSkin());
         setCurrentTitle();
 
-        musicProgressLabel = new Label("0:00", Chati.CHATI.getSkin()); // TODO
-        musicProgressBar = new ProgressBar(0, 1, 0.01f, false, Chati.CHATI.getSkin());
+        musicProgressLabel = new Label("00:00", Chati.CHATI.getSkin());
+        musicProgressBar = new ProgressBar(0, 1, 0.00001f, false, Chati.CHATI.getSkin());
 
         Label creditsLabel = new Label("Music by https://www.bensound.com", Chati.CHATI.getSkin());
 
@@ -223,9 +223,6 @@ public class MusicStreamerWindow extends InteractableWindow {
 
     @Override
     public void act(final float delta) {
-        if (Chati.CHATI.isMusicChanged()) {
-            Chati.CHATI.getAudioManager().stopMusic();
-        }
         musicProgressBar.setValue(Chati.CHATI.getAudioManager().getCurrentPosition());
         Date currentSeconds = new Date(Chati.CHATI.getAudioManager().getCurrentSeconds() * 1000L);
         musicProgressLabel.setText(new SimpleDateFormat("mm:ss").format(currentSeconds));

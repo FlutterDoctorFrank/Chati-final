@@ -161,6 +161,7 @@ public class ChatWindow extends Window implements Translatable {
         setHeight(DEFAULT_HEIGHT);
 
         messageLabelContainer.top();
+        messageLabelContainer.defaults().top().left().padLeft(SPACE).padBottom(SPACE).growX();
         emojiScrollPaneContainer = new Table();
         emojiScrollPaneContainer.add(emojiScrollPane).height(MINIMUM_HEIGHT - 4 * SPACE).bottom().pad(2 * SPACE).growX();
         emojiScrollPaneContainer.bottom();
@@ -318,7 +319,7 @@ public class ChatWindow extends Window implements Translatable {
         messageLabel.setWrap(true);
 
         boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
-        messageLabelContainer.add(messageLabel).top().left().padLeft(SPACE).padBottom(SPACE).growX().row();
+        messageLabelContainer.add(messageLabel).row();
 
         // Scrolle beim Erhalten einer neuen Nachricht nur bis nach unten, wenn die Scrollleiste bereits ganz unten war.
         // Ansonsten wird ein Durchscrollen des Verlaufs durch das Erhalten neuer Nachrichten gestört.

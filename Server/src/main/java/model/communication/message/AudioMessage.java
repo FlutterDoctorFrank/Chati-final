@@ -19,17 +19,13 @@ public class AudioMessage extends Message implements IAudioMessage {
     private final int seconds;
 
     /**
-     * Erzeugt eine neue Instanz der Audionachricht.
-     * @param sender Der Sender dieser Nachricht.
-     * @param audioData Die Audiodaten der Nachricht.
-     * @param position Aktuelle Position einer zusammenhängenden Audionachricht.
-     * @param seconds Aktuelle Sekunde einer zusammenhängenden Audionachricht.
+     * Erzeugt eine neue Instanz der Audionachricht. Wird für das Senden von Musikdaten verwendet.
+     * @param musicData Die Musikdaten der Nachricht.
+     * @param position Die aktuelle Position im Musikstück.
+     * @param seconds Die aktuelle Sekunde im Musikstück.
      */
-    public AudioMessage(@Nullable final User sender, final byte[] audioData, final float position, final int seconds) {
-        super(sender);
-        this.audioData = audioData;
-        this.position = position;
-        this.seconds = seconds;
+    public AudioMessage(final byte[] musicData, final float position, final int seconds) {
+        this(null, musicData, position, seconds);
     }
 
     /**
@@ -39,6 +35,20 @@ public class AudioMessage extends Message implements IAudioMessage {
      */
     public AudioMessage(@NotNull final User sender, final byte[] voiceData) {
         this(sender, voiceData, 0, 0);
+    }
+
+    /**
+     * Erzeugt eine neue Instanz der Audionachricht.
+     * @param sender Der Sender dieser Nachricht.
+     * @param audioData Die Audiodaten der Nachricht.
+     * @param position Aktuelle Position einer zusammenhängenden Audionachricht.
+     * @param seconds Aktuelle Sekunde einer zusammenhängenden Audionachricht.
+     */
+    private AudioMessage(@Nullable final User sender, final byte[] audioData, final float position, final int seconds) {
+        super(sender);
+        this.audioData = audioData;
+        this.position = position;
+        this.seconds = seconds;
     }
 
     @Override

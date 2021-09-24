@@ -254,7 +254,8 @@ public interface ClientSender {
                         mutes.add(mute.getUserId());
                     }
 
-                    return new PacketOutContextInfo(area.getContextId(), mutes, area.getMusic(), false, false);
+                    return new PacketOutContextInfo(area.getContextId(), mutes, area.getMusic(), area.isLooping(),
+                            area.isRandom());
                 } else {
                     throw new IllegalArgumentException("Expected IArea, got " + object.getClass());
                 }

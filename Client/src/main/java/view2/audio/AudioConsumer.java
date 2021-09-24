@@ -97,7 +97,7 @@ public class AudioConsumer implements Disposable, Runnable {
         }
 
         this.voiceDataBuffer.clear();
-        this.musicStream.clear();
+        this.musicStream.stop();
     }
 
     /**
@@ -152,7 +152,7 @@ public class AudioConsumer implements Disposable, Runnable {
      * Stoppt das Abspielen von Musik.
      */
     public void stopMusic() {
-        musicStream.clear();
+        musicStream.stop();
     }
 
     /**

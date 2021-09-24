@@ -78,6 +78,10 @@ public class AudioManager implements Disposable {
                     voiceRecorder.stopRecording();
                 }
             }
+
+            if (Chati.CHATI.isMusicChanged()) {
+                audioConsumer.stopMusic();
+            }
         }
     }
 
@@ -95,14 +99,9 @@ public class AudioManager implements Disposable {
      * Setzt die in den Einstellungen hinterlegte Lautstärke.
      */
     public void setVolume() {
-        float totalVolume = (float) (-Math.pow(Chati.CHATI.getPreferences().getTotalVolume() - 1, 2) + 1);
-        float voiceVolume = (float) (-Math.pow(Chati.CHATI.getPreferences().getVoiceVolume() - 1, 2) + 1);
-        float musicVolume = 0.1f * (float) (-Math.pow(Chati.CHATI.getPreferences().getMusicVolume() - 1, 2) + 1);
-        float soundVolume = 0.1f * (float) (-Math.pow(Chati.CHATI.getPreferences().getSoundVolume() - 1, 2) + 1);
-
-        audioConsumer.setTotalVolume(totalVolume);
-        audioConsumer.setVoiceVolume(voiceVolume);
-        audioConsumer.setMusicVolume(musicVolume);
+        audioConsumer.setTotalVolume(Chati.CHATI.getPreferences().getTotalVolume());
+        audioConsumer.setVoiceVolume(Chati.CHATI.getPreferences().getVoiceVolume());
+        audioConsumer.setMusicVolume(0.1f * Chati.CHATI.getPreferences().getMusicVolume());
     }
 
     /**
@@ -155,13 +154,6 @@ public class AudioManager implements Disposable {
      */
     public boolean isPlayingMusic() {
         return audioConsumer.isPlayingMusic();
-    }
-
-    /**
-     * Stoppt das Abspielen von Musik.
-     */
-    public void stopMusic() {
-        audioConsumer.stopMusic();
     }
 
     /**
