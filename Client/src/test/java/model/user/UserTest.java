@@ -3,7 +3,10 @@ package model.user;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
+import model.ContextParameters;
 import model.MockGL20;
+import model.RandomValues;
+import model.SetUp;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.ContextMap;
@@ -12,16 +15,8 @@ import model.context.spatial.SpatialContext;
 import model.exception.ContextNotFoundException;
 import model.role.Permission;
 import model.role.Role;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.w3c.dom.ls.LSOutput;
-import view2.IModelObserver;
+import org.junit.*;
 
-import javax.print.DocFlavor;
 import java.util.*;
 
 public class UserTest {
@@ -29,65 +24,41 @@ public class UserTest {
     SpatialContext world;
     SpatialContext room;
     ContextMap map;
+    UserManager userManager;
+    InternUser internUser;
     User testUser;
     UUID userId;
     IUserController testUserController;
     IUserView testUserView;
 
+
     @Before
     public void setUp() throws Exception {
-        UserManager.getInstance().setModelObserver(new IModelObserver() {
-            @Override
-            public void setUserInfoChanged() {
-            }
+        SetUp.setUpModelObserver();
+        userManager = UserManager.getInstance();
 
-            @Override
-            public void setUserNotificationChanged() {
-            }
-
-            @Override
-            public void setWorldListChanged() {
-
-            }
-
-            @Override
-            public void setRoomListChanged() {
-
-            }
-
-            @Override
-            public void setNewNotificationReceived() {
-
-            }
-
-            @Override
-            public void setWorldChanged() {
-            }
-
-            @Override
-            public void setRoomChanged() {
-            }
-
-            @Override
-            public void setMusicChanged() {
-            }
-        });
-        world = new SpatialContext("World", Context.getGlobal());
+        world = new SpatialContext(ContextParameters.WORLD_NAME, Context.getGlobal());
         UserManager.getInstance().updateWorlds(Collections.singletonMap(world.getContextId(), world.getContextName()));
-        room = new SpatialContext("Room", world);
-        UserManager.getInstance().login(UUID.randomUUID(), "internUser", Status.ONLINE, Avatar.ADAM);
+
+        room = new SpatialContext(ContextParameters.ROOM_NAME, world);
+        UserManager.getInstance().login(RandomValues.randomUUID(), RandomValues.random8LengthString(),
+                Status.ONLINE, RandomValues.randomEnum(Avatar.class));
+
+        internUser = userManager.getInternUser();
         map = ContextMap.PUBLIC_ROOM_MAP;
-        UserManager.getInstance().getInternUser().joinWorld(world.getContextId());
-        UserManager.getInstance().updatePublicRoom(world.getContextId(), room.getContextId(), room.getContextName());
-        UserManager.getInstance().getInternUser().joinRoom(room.getContextId(), room.getContextName(), map);
-        userId = UUID.randomUUID();
-        testUser = new User(userId, "initialName", Status.ONLINE, Avatar.ADAM);
+        internUser.joinWorld(world.getContextId());
+        userManager.updatePublicRoom(world.getContextId(), room.getContextId(), room.getContextName());
+        internUser.joinRoom(room.getContextId(), room.getContextName(), map);
+
+        userId = RandomValues.randomUUID();
+        testUser = new User(userId, RandomValues.random8LengthString(),
+                Status.ONLINE, RandomValues.randomEnum(Avatar.class));
         testUserController = testUser;
         testUserView = testUser;
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         world = null;
         room = null;
         map = null;
@@ -130,8 +101,6 @@ public class UserTest {
         Assert.assertEquals(username, testUserView.getUsername());
     }
 
-
-
     @Test
     public void setGetStatus() {
         Status status = Status.AWAY;
@@ -156,138 +125,129 @@ public class UserTest {
     public void setIsInCurrentRoom() throws ContextNotFoundException {
         testUserController.joinWorld(world.getContextId());
         testUserController.joinRoom(room.getContextId());
-        testUserController.setLocation(1200.0f, 1500.0f, true, false, Direction.DOWN);
+        testUserController.setLocation(ContextParameters.DISCO_LOCATION_X, ContextParameters.DISCO_LOCATION_Y,
+                RandomValues.randomBoolean(), RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
         Assert.assertTrue(testUserView.isInCurrentRoom());
     }
 
     @Test
     public void setIsFriend() {
-        boolean isFriend = new Random().nextBoolean();
+        boolean isFriend = RandomValues.randomBoolean();
         testUserController.setFriend(isFriend);
         Assert.assertEquals(isFriend, testUserView.isFriend());
     }
 
     @Test
     public void setIsIgnored() {
-        boolean isIgnored = new Random().nextBoolean();
+        boolean isIgnored = RandomValues.randomBoolean();
         testUserController.setIgnored(isIgnored);
         Assert.assertEquals(isIgnored, testUserView.isIgnored());
     }
 
     @Test
-    public void setIsReport() {
-        int posX = 500;
-        int posY = 1500;
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false, Direction.DOWN);
-        try {
-            testUserController.setReport(new ContextID("Global.World.Room.Disco"), true);
-        } catch (ContextNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void setIsReport() throws ContextNotFoundException {
+        float posX = ContextParameters.DISCO_LOCATION_X;
+        float posY = ContextParameters.DISCO_LOCATION_Y;
+        internUser.setLocation(posX, posY, RandomValues.randomBoolean(), RandomValues.randomBoolean(),
+                RandomValues.randomEnum(Direction.class));
+
+        testUserController.setReport(ContextParameters.DISCO_ID, true);
         Assert.assertTrue(testUserView.isReported());
-        try {
-            testUserController.setReport(new ContextID("Global.World.Room.Disco"), false);
-        } catch (ContextNotFoundException e) {
-            e.printStackTrace();
-        }
+
+        testUserController.setReport(ContextParameters.DISCO_ID, false);
         Assert.assertFalse(testUserView.isReported());
     }
 
     @Test
-    public void setIsMute() {
-        int posX = 500;
-        int posY = 1500;
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false, Direction.DOWN);
-        try {
-            testUserController.setMute(new ContextID("Global.World.Room.Disco"), true);
-        } catch (ContextNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void setIsMute() throws ContextNotFoundException {
+        float posX = ContextParameters.DISCO_LOCATION_X;
+        float posY = ContextParameters.DISCO_LOCATION_Y;
+        internUser.setLocation(posX, posY, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
+
+        testUserController.setMute(ContextParameters.DISCO_ID, true);
         Assert.assertTrue(testUserView.isMuted());
-        try {
-            testUserController.setMute(new ContextID("Global.World.Room.Disco"), false);
-        } catch (ContextNotFoundException e) {
-            e.printStackTrace();
-        }
+
+        testUserController.setMute(ContextParameters.DISCO_ID, false);
         Assert.assertFalse(testUserView.isMuted());
     }
 
     @Test
-    public void setIsBan() {
-        int posX = 500;
-        int posY = 1500;
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false, Direction.DOWN);
-        UserManager.getInstance().addExternUser(testUser.getUserId(), testUser.getUsername(), testUser.getStatus(),
+    public void setIsBan() throws ContextNotFoundException {
+        float posX = ContextParameters.DISCO_LOCATION_X;
+        float posY = ContextParameters.DISCO_LOCATION_Y;
+        internUser.setLocation(posX, posY, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
+        userManager.addExternUser(testUser.getUserId(), testUser.getUsername(), testUser.getStatus(),
                 testUser.getAvatar());
-        try {
-            testUserController.setBan(new ContextID("Global.World.Room.Disco"), true);
-        } catch (ContextNotFoundException e) {
-            e.printStackTrace();
-        }
+
+        testUserController.setBan(ContextParameters.DISCO_ID, true);
         Assert.assertTrue(testUserView.isBanned());
-        UserManager.getInstance().addExternUser(testUser.getUserId(), testUser.getUsername(), testUser.getStatus(),
+
+        userManager.addExternUser(testUser.getUserId(), testUser.getUsername(), testUser.getStatus(),
                 testUser.getAvatar());
-        try {
-            testUserController.setBan(new ContextID("Global.World.Room.Disco"), false);
-        } catch (ContextNotFoundException e) {
-            e.printStackTrace();
-        }
+
+        testUserController.setBan(ContextParameters.DISCO_ID, false);
         Assert.assertFalse(testUserView.isBanned());
     }
 
     @Test
-    public void setRoles_HasRoleGet_HighestRole() {
-        int posX = 1200;
-        int posY = 80;
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false, Direction.DOWN);
-        testUser.setLocation(posX, posY, false, false, Direction.DOWN);
+    public void setRoles_HasRoleGet_HighestRole() throws ContextNotFoundException {
+        float posX = ContextParameters.PARK_LOCATION_X;
+        float posY = ContextParameters.PARK_LOCATION_Y;
+        internUser.setLocation(posX, posY, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
+        testUserController.setLocation(posX, posY, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
 
-        try {
-            testUserController.setRoles(Context.getGlobal().getContextId(), Set.of(Role.ADMINISTRATOR));
-            testUserController.setRoles(new ContextID("Global.World.Room.Park"), Set.of(Role.AREA_MANAGER));
-        } catch (ContextNotFoundException e) {
-            e.printStackTrace();
-        }
+        testUserController.setRoles(Context.getGlobal().getContextId(), Set.of(Role.ADMINISTRATOR));
+        testUserController.setRoles(ContextParameters.PARK_Id, Set.of(Role.AREA_MANAGER));
         Assert.assertTrue(testUserView.hasRole(Role.ADMINISTRATOR));
         Assert.assertTrue(testUserView.hasRole(Role.AREA_MANAGER));
-        posX = 500;
-        posY = 1500;
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false, Direction.DOWN);
+
+        posX = ContextParameters.DISCO_LOCATION_X;
+        posY = ContextParameters.DISCO_LOCATION_Y;
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
+
         Assert.assertFalse(testUserView.hasRole(Role.AREA_MANAGER));
         Assert.assertEquals(testUserView.getHighestRole(), Role.ADMINISTRATOR);
     }
 
     @Test
-    public void hasPermission() {
-        int posX = 1200;
-        int posY = 1500;
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false, Direction.DOWN);
-        testUser.setLocation(posX, posY, false, false, Direction.DOWN);
-        try {
-            testUserController.setRoles(new ContextID("Global.World.Room.Park"), Set.of(Role.AREA_MANAGER));
-        } catch (ContextNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void hasPermission() throws ContextNotFoundException {
+        float posX = ContextParameters.DISCO_LOCATION_X;
+        float posY = ContextParameters.DISCO_LOCATION_Y;
+        internUser.setLocation(posX, posY, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
+        testUserController.setLocation(posX, posY, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
+        internUser.setStatus(Status.ONLINE);
+
+        testUserController.setRoles(ContextParameters.PARK_Id, Set.of(Role.AREA_MANAGER));
+
         Assert.assertFalse(testUserView.hasPermission(Permission.ASSIGN_ADMINISTRATOR));
         Assert.assertFalse(testUserView.hasPermission(Permission.MUTE));
-        posY = 80;
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false, Direction.DOWN);
-        testUser.setLocation(posX, posY, false, false, Direction.DOWN);
+
+        posX = ContextParameters.PARK_LOCATION_X;
+        posY = ContextParameters.PARK_LOCATION_Y;
+        internUser.setLocation(posX, posY, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
+        testUserController.setLocation(posX, posY, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
         Assert.assertTrue(testUserView.hasPermission(Permission.MUTE));
-        try {
-            testUserController.setRoles(Context.getGlobal().getContextId(), Set.of(Role.OWNER));
-        } catch (ContextNotFoundException e) {
-            e.printStackTrace();
-        }
+
+        testUserController.setRoles(Context.getGlobal().getContextId(), Set.of(Role.OWNER));
         Assert.assertTrue(testUserView.hasPermission(Permission.ASSIGN_ADMINISTRATOR));
     }
 
     @Test
     public void setPosition_getCurrentLocation() {
-        float posX = 1200.0f;
-        float posY = 1500.0f;
-        testUserController.setLocation(posX, posY, false, false, Direction.DOWN);
-        Assert.assertEquals(posX, testUserView.getLocation().getPosX(), 0.0f);
+        float posX = ContextParameters.DISCO_LOCATION_X;
+        float posY = ContextParameters.DISCO_LOCATION_Y;
+        testUserController.setLocation(posX, posY, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
+        Assert.assertEquals(posX, Objects.requireNonNull(testUserView.getLocation()).getPosX(), 0.0f);
         Assert.assertEquals(posY, testUserView.getLocation().getPosY(), 0.0f);
     }
 
@@ -295,114 +255,135 @@ public class UserTest {
     public void canBeTeleported() throws ContextNotFoundException {
         testUserController.setFriend(true);
         testUserController.setStatus(Status.ONLINE);
-        float posX = 1800.0f;
-        float posY = 1500.0f;
-        testUserController.setLocation(posX, posY, false, false, Direction.DOWN);
+        float posX = ContextParameters.DISCO_LOCATION_X;
+        float posY = ContextParameters.DISCO_LOCATION_Y;
+        testUserController.setLocation(posX, posY, RandomValues.randomBoolean(),
+                RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
         Assert.assertTrue(testUserView.canTeleportTo());
+
         testUserController.setStatus(Status.BUSY);
+        internUser.setStatus(Status.ONLINE);
         Assert.assertFalse(testUserView.canTeleportTo());
-        Set<Role> moderator = new HashSet<Role>();
+
+        Set<Role> moderator = new HashSet<>();
         moderator.add(Role.MODERATOR);
-        UserManager.getInstance().getInternUser().setRoles(UserManager.getInstance().getInternUser().getCurrentWorld().getContextId(),
+        assert internUser.getCurrentWorld() != null;
+        internUser.setRoles(internUser.getCurrentWorld().getContextId(),
                 moderator);
         Assert.assertTrue(testUserView.canTeleportTo());
     }
 
     @Test
     public void canBeInvited_canBeKicked() throws ContextNotFoundException {
-        ContextID privateRoomId =  new ContextID("Global.World.PrivateRoom");
-        UserManager.getInstance().getInternUser().joinWorld(world.getContextId());
-        UserManager.getInstance().getInternUser().joinRoom(room.getContextId(),
-                "Room", ContextMap.PUBLIC_ROOM_MAP);
-        testUser.joinWorld(world.getContextId());
-        testUser.joinRoom(room.getContextId());
+        internUser.joinWorld(world.getContextId());
+        internUser.joinRoom(room.getContextId(), ContextParameters.ROOM_NAME, ContextMap.PUBLIC_ROOM_MAP);
+        testUserController.joinWorld(world.getContextId());
+        testUserController.joinRoom(room.getContextId());
+
+        ContextID privateRoomId =  ContextParameters.PRIVATE_ROOM_ID;
         Map<ContextID,String> privateRooms = new HashMap<>();
-        privateRooms.put(privateRoomId, "PrivateRoom");
-        testUser.setStatus(Status.ONLINE);
-        UserManager.getInstance().updatePrivateRooms(world.getContextId(), privateRooms);
-        UserManager.getInstance().getInternUser().joinRoom(privateRoomId,
-                "PrivateRoom", ContextMap.PRIVATE_ROOM_MAP);
-        UserManager.getInstance().getInternUser().setInPrivateRoom(true);
-        UserManager.getInstance().getInternUser().setLocation(40, 40, true, false, Direction.DOWN);
+        privateRooms.put(privateRoomId, ContextParameters.PRIVATE_ROOM_NAME);
+        testUserController.setStatus(Status.ONLINE);
+
+        userManager.updatePrivateRooms(world.getContextId(), privateRooms);
+        userManager.getInternUser().joinRoom(privateRoomId,
+                ContextParameters.PRIVATE_ROOM_NAME, ContextMap.PRIVATE_ROOM_MAP);
+        internUser.setInPrivateRoom(true);
+        internUser.setLocation(ContextParameters.PRIVATE_ROOM_LOCATION_X, ContextParameters.PRIVATE_ROOM_LOCATION_Y,
+                RandomValues.randomBoolean(), RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
+
         Set<Role> owner = new HashSet<>();
         owner.add(Role.ROOM_OWNER);
-        UserManager.getInstance().getInternUser().setRoles(privateRoomId, owner);
-        Assert.assertTrue(testUser.canBeInvited());
-        testUser.leaveRoom();
-        testUser.joinRoom(privateRoomId);
-        testUser.setInPrivateRoom(true);
-        testUser.setLocation(40, 40, true, false, Direction.DOWN);
-        Assert.assertFalse(testUser.canBeInvited());
-        Assert.assertTrue(testUser.canBeKicked());
-        UserManager.getInstance().getInternUser().leaveWorld();
-        Assert.assertFalse(testUser.canBeKicked());
+        internUser.setRoles(privateRoomId, owner);
+        Assert.assertTrue(testUserView.canBeInvited());
 
+        testUserController.leaveRoom();
+        testUserController.joinRoom(privateRoomId);
+        testUserController.setInPrivateRoom(true);
+        testUserController.setLocation(ContextParameters.PRIVATE_ROOM_LOCATION_X, ContextParameters.PRIVATE_ROOM_LOCATION_Y,
+                RandomValues.randomBoolean(), RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
+        Assert.assertFalse(testUserView.canBeInvited());
+        Assert.assertTrue(testUserView.canBeKicked());
+
+        internUser.leaveWorld();
+        Assert.assertFalse(testUserView.canBeKicked());
     }
 
     @Test
     public void canBeReported() throws ContextNotFoundException {
-        testUser.joinWorld(world.getContextId());
-        Assert.assertTrue(testUser.canBeReported());
+        testUserController.joinWorld(world.getContextId());
+        Assert.assertTrue(testUserView.canBeReported());
+
         Set<Role> administrator = new HashSet<>();
         administrator.add(Role.ADMINISTRATOR);
-        UserManager.getInstance().getInternUser().setRoles(Context.getGlobal().getContextId(), administrator);
-        Assert.assertFalse(testUser.canBeReported());
+        internUser.setRoles(Context.getGlobal().getContextId(), administrator);
+        Assert.assertFalse(testUserView.canBeReported());
     }
 
     @Test
     public void canBeBanned() throws ContextNotFoundException {
         Set<Role> administrator = new HashSet<>();
         administrator.add(Role.ADMINISTRATOR);
+
         Set<Role> moderator = new HashSet<>();
         moderator.add(Role.MODERATOR);
-        UserManager.getInstance().getInternUser().setRoles(Context.getGlobal().getContextId(), moderator);
-        Assert.assertTrue(testUser.canBeBanned());
-        testUser.setRoles(Context.getGlobal().getContextId(), moderator);
-        Assert.assertFalse(testUser.canBeBanned());
+
+        internUser.setRoles(Context.getGlobal().getContextId(), moderator);
+        Assert.assertTrue(testUserView.canBeBanned());
+
+        testUserController.setRoles(Context.getGlobal().getContextId(), moderator);
+        Assert.assertFalse(testUserView.canBeBanned());
+
         UserManager.getInstance().getInternUser().setRoles(Context.getGlobal().getContextId(), administrator);
-        Assert.assertTrue(testUser.canBeBanned());
+        Assert.assertTrue(testUserView.canBeBanned());
     }
 
     @Test
     public void canAssignModerator() throws ContextNotFoundException {
         Set<Role> administrator = new HashSet<>();
         administrator.add(Role.ADMINISTRATOR);
-        UserManager.getInstance().getInternUser().setRoles(Context.getGlobal().getContextId(), administrator);
+
+        internUser.setRoles(Context.getGlobal().getContextId(), administrator);
         Assert.assertTrue(testUser.canAssignModerator());
-        testUser.setRoles(Context.getGlobal().getContextId(), administrator);
-        Assert.assertFalse(testUser.canAssignModerator());
+
+        testUserController.setRoles(Context.getGlobal().getContextId(), administrator);
+        Assert.assertFalse(testUserView.canAssignModerator());
     }
 
     @Test
     public void canBeMuted() throws ContextNotFoundException {
-        UserManager.getInstance().getInternUser().joinWorld(world.getContextId());
-        UserManager.getInstance().getInternUser().joinRoom(room.getContextId(),
-                "Room", ContextMap.PUBLIC_ROOM_MAP);
-        testUser.joinWorld(world.getContextId());
-        testUser.joinRoom(room.getContextId());
+        internUser.joinWorld(world.getContextId());
+        internUser.joinRoom(room.getContextId(), ContextParameters.ROOM_NAME, ContextMap.PUBLIC_ROOM_MAP);
+        testUserController.joinWorld(world.getContextId());
+        testUserController.joinRoom(room.getContextId());
+
         Set<Role> administrator = new HashSet<>();
         administrator.add(Role.ADMINISTRATOR);
-        testUser.setStatus(Status.ONLINE);
-        UserManager.getInstance().getInternUser().setRoles(Context.getGlobal().getContextId(), administrator);
+        testUserController.setStatus(Status.ONLINE);
+        internUser.setRoles(Context.getGlobal().getContextId(), administrator);
         Assert.assertTrue(testUser.canBeMuted());
-        testUser.setRoles(Context.getGlobal().getContextId(), administrator);
+
+        testUserController.setRoles(Context.getGlobal().getContextId(), administrator);
         Assert.assertFalse(testUser.canBeMuted());
     }
 
     @Test
     public void isTeleportingIsSprinting() throws ContextNotFoundException {
-        boolean isTeleporting = true;
-        boolean isSprinting = true;
-        testUser.joinWorld(world.getContextId());
-        testUser.joinRoom(room.getContextId());
-        testUserController.setLocation(40, 40, isTeleporting, isSprinting, Direction.DOWN);
+        boolean isTeleporting = RandomValues.randomBoolean();
+        boolean isSprinting = RandomValues.randomBoolean();
+
+        testUserController.joinWorld(world.getContextId());
+        testUserController.joinRoom(room.getContextId());
+        testUserController.setLocation(ContextParameters.DISCO_LOCATION_X, ContextParameters.DISCO_LOCATION_Y,
+                isTeleporting, isSprinting, RandomValues.randomEnum(Direction.class));
+
         Assert.assertEquals(testUserView.isTeleporting(), isTeleporting);
         Assert.assertEquals(testUserView.isSprinting(), isSprinting);
     }
 
     @Test
     public void isMoveable(){
-        boolean moveable = true;
+        boolean moveable = RandomValues.randomBoolean();
         testUserController.setMovable(moveable);
         Assert.assertEquals(testUserView.isMovable(), moveable);
     }
