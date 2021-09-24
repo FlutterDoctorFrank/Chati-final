@@ -85,8 +85,8 @@ public class MusicStream extends AudioProducer {
 
     @Override
     public short[] getAudioDataBlock() {
-        this.currentPosition = !positionQueue.isEmpty() ? positionQueue.poll() : 0;
-        this.currentSeconds = !secondsQueue.isEmpty() ? secondsQueue.poll() : 0;
+        this.currentPosition = !positionQueue.isEmpty() ? positionQueue.poll() : (hasData() ? currentPosition : 0);
+        this.currentSeconds = !secondsQueue.isEmpty() ? secondsQueue.poll() : (hasData() ? currentSeconds : 0);
         return super.getAudioDataBlock();
     }
 

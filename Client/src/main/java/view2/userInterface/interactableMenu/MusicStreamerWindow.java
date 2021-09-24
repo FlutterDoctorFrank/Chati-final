@@ -160,15 +160,11 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         ChatiLabel currentTitleLabel = new ChatiLabel("window.entry.current-title");
         titleNameLabel = new Label("", Chati.CHATI.getSkin());
-        setCurrentTitle();
 
         musicProgressLabel = new Label("00:00", Chati.CHATI.getSkin());
         musicProgressBar = new ProgressBar(0, 1, 0.00001f, false, Chati.CHATI.getSkin());
 
         Label creditsLabel = new Label("Music by https://www.bensound.com", Chati.CHATI.getSkin());
-
-        setCurrentTitle();
-        setButtonImages();
 
         // Layout
         setModal(true);
@@ -228,6 +224,37 @@ public class MusicStreamerWindow extends InteractableWindow {
     public void act(final float delta) {
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser != null) {
+            String currentTitle = "";
+
+            if (internUser.getMusic() != null) {
+                currentTitle = internUser.getMusic().getName();
+
+                playButton.setDisabled(false);
+                playButton.setTouchable(Touchable.enabled);
+                stopButton.setDisabled(false);
+                stopButton.setTouchable(Touchable.enabled);
+                backButton.setDisabled(false);
+                backButton.setTouchable(Touchable.enabled);
+                skipButton.setDisabled(false);
+                skipButton.setTouchable(Touchable.enabled);
+                if (Chati.CHATI.getAudioManager().isPlayingMusic()) {
+                    playButton.getStyle().imageUp = Chati.CHATI.getDrawable("music_pause");
+                } else {
+                    playButton.getStyle().imageUp = Chati.CHATI.getDrawable("music_play");
+                }
+            } else {
+                playButton.setDisabled(true);
+                playButton.setTouchable(Touchable.disabled);
+                stopButton.setDisabled(true);
+                stopButton.setTouchable(Touchable.disabled);
+                backButton.setDisabled(true);
+                backButton.setTouchable(Touchable.disabled);
+                skipButton.setDisabled(true);
+                skipButton.setTouchable(Touchable.disabled);
+            }
+
+            titleNameLabel.setText(currentTitle);
+
             if (loopingButton.isDisabled() && internUser.isLooping()) {
                 loopingButton.setDisabled(false);
             } else if (!loopingButton.isDisabled() && !internUser.isLooping()) {
@@ -239,11 +266,10 @@ public class MusicStreamerWindow extends InteractableWindow {
                 randomButton.setDisabled(true);
             }
         }
+
         musicProgressBar.setValue(Chati.CHATI.getAudioManager().getCurrentPosition());
         Date currentSeconds = new Date(Chati.CHATI.getAudioManager().getCurrentSeconds() * 1000L);
         musicProgressLabel.setText(new SimpleDateFormat("mm:ss").format(currentSeconds));
-        setCurrentTitle();
-        setButtonImages();
         super.act(delta);
     }
 
@@ -254,38 +280,6 @@ public class MusicStreamerWindow extends InteractableWindow {
         }
     }
 
-    /**
-     * Setzt das aktuell abgespielte Musikstück in der Anzeige des aktuellen Titels.
-     */
-    private void setCurrentTitle() {
-        String currentTitle = "";
-        IInternUserView internUser = Chati.CHATI.getInternUser();
-        if (internUser != null && internUser.getMusic() != null) {
-            currentTitle = internUser.getMusic().getName();
-        }
-        titleNameLabel.setText(currentTitle);
-    }
-
-    /**
-     * Setzt die korrekte Anzeige der ImageButtons.
-     */
-    private void setButtonImages() {
-        IInternUserView internUser = Chati.CHATI.getInternUser();
-
-        if (internUser != null && internUser.getMusic() != null) {
-            playButton.setTouchable(Touchable.enabled);
-            stopButton.setTouchable(Touchable.enabled);
-            backButton.setTouchable(Touchable.enabled);
-            skipButton.setTouchable(Touchable.enabled);
-            playButton.getStyle().imageUp = Chati.CHATI.getDrawable("music_pause");
-        } else {
-            playButton.setTouchable(Touchable.disabled);
-            stopButton.setTouchable(Touchable.disabled);
-            backButton.setTouchable(Touchable.disabled);
-            skipButton.setTouchable(Touchable.disabled);
-            playButton.getStyle().imageUp = Chati.CHATI.getDrawable("music_play");
-        }
-    }
 
     @Override
     public void open() {

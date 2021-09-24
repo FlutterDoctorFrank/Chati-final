@@ -139,13 +139,13 @@ public class MusicStreamer extends Interactable implements Runnable {
                 if (musicStreamBuffer == null || !isRunning || getMusic() == null) {
                     throw new IllegalMenuActionException("", "object.music-player.previous-not-possible");
                 }
-                if (getCurrentPlaytime() < 5) {
-                    musicStreamBuffer.position(0);
-                } else {
+                if (getCurrentPlaytime() < 10) {
                     setMusic(ContextMusic.values()[(getMusic().ordinal() - 1) % ContextMusic.values().length]);
-                    loadBuffer();
-                    play();
+                } else {
+                    musicStreamBuffer.clear();
                 }
+                loadBuffer();
+                play();
                 break;
             case MENU_OPTION_NEXT: // Spiele das nächste Musikstück ab.
                 if (musicStreamBuffer == null || !isRunning || getMusic() == null) {
@@ -299,9 +299,8 @@ public class MusicStreamer extends Interactable implements Runnable {
 
     @Override
     public void setMusic(@Nullable final ContextMusic music) {
-        if (musicStreamBuffer != null) {
-            musicStreamBuffer.clear();
-        }
+        isPaused = true;
+        musicStreamBuffer = ByteBuffer.allocate(0);
         parent.setMusic(music);
     }
 
