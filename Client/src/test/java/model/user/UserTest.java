@@ -38,10 +38,10 @@ public class UserTest {
         userManager = UserManager.getInstance();
 
         world = new SpatialContext(ContextParameters.WORLD_NAME, Context.getGlobal());
-        UserManager.getInstance().updateWorlds(Collections.singletonMap(world.getContextId(), world.getContextName()));
+        userManager.updateWorlds(Collections.singletonMap(world.getContextId(), world.getContextName()));
 
         room = new SpatialContext(ContextParameters.ROOM_NAME, world);
-        UserManager.getInstance().login(RandomValues.randomUUID(), RandomValues.random8LengthString(),
+        userManager.login(RandomValues.randomUUID(), RandomValues.random8LengthString(),
                 Status.ONLINE, RandomValues.randomEnum(Avatar.class));
 
         internUser = userManager.getInternUser();

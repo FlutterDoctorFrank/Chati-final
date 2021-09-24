@@ -3,10 +3,8 @@ package model.user;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
-import model.MessageBundle;
-import model.MockGL20;
+import model.*;
 import model.context.Context;
-import model.context.ContextID;
 import model.context.spatial.ContextMap;
 import model.context.spatial.ContextMusic;
 import model.context.spatial.Direction;
@@ -19,61 +17,37 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import view2.IModelObserver;
+
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Objects;
 import java.util.UUID;
 
 public class InternUserTest {
 
+    UserManager userManager;
     InternUser internUser;
     IInternUserController internUserController;
     IInternUserView internUserView;
 
     @Before
     public void setUp() throws Exception {
-        UserManager.getInstance().setModelObserver(new IModelObserver() {
-            @Override
-            public void setUserInfoChanged() {
-            }
-
-            @Override
-            public void setUserNotificationChanged() {
-            }
-
-            @Override
-            public void setWorldListChanged() {
-
-            }
-
-            @Override
-            public void setRoomListChanged() {
-
-            }
-
-            @Override
-            public void setNewNotificationReceived() {
-            }
-
-            @Override
-            public void setWorldChanged() {
-            }
-
-            @Override
-            public void setRoomChanged() {
-            }
-
-            @Override
-            public void setMusicChanged() {
-            }
-        });
-
+        SetUp.setUpModelObserver();
+        userManager = UserManager.getInstance();
         Status status = Status.ONLINE;
-        UserManager.getInstance().login(UUID.randomUUID(), "internUser", status, Avatar.ADAM);
+
+        userManager.login(RandomValues.randomUUID(), RandomValues.random8LengthString(),
+                status, RandomValues.randomEnum(Avatar.class));
+        SpatialContext world = new SpatialContext(ContextParameters.WORLD_NAME, Context.getGlobal());
         internUser = UserManager.getInstance().getInternUser();
-        internUser.joinWorld(new ContextID("Global.World"));
-        SpatialContext room = new SpatialContext("Room", internUser.getCurrentWorld());
+        userManager.updateWorlds(Collections.singletonMap(world.getContextId(), world.getContextName()));
+        internUser.joinWorld(world.getContextId());
+
+        assert internUser.getCurrentWorld() != null;
+        SpatialContext room = new SpatialContext(ContextParameters.ROOM_NAME, internUser.getCurrentWorld());
         internUser.getCurrentWorld().addChild(room);
         internUser.setCurrentRoom(room);
+
         new HeadlessApplication(new ApplicationAdapter() {
             @Override
             public void create() {
@@ -92,7 +66,7 @@ public class InternUserTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         internUser.leaveWorld();
         internUser = null;
         UserManager.getInstance().logout();
@@ -104,46 +78,51 @@ public class InternUserTest {
     @Test
     public void setGetMusic() throws ContextNotFoundException {
         ContextMusic contextMusic = ContextMusic.COUNTRYBODY;
-        internUserController.setMusic(new ContextID("Global.World.Room.Disco"), contextMusic, false, false);
-        int posX = 500;
-        int posY = 1500;
-        internUserController.setLocation(posX, posY, false, false, Direction.DOWN);
+        internUserController.setMusic(ContextParameters.DISCO_ID, contextMusic);
+        float posX = ContextParameters.DISCO_LOCATION_X;
+        float posY = ContextParameters.DISCO_LOCATION_Y;
+        internUserController.setLocation(posX, posY, RandomValues.randomBoolean(), RandomValues.randomBoolean(),
+                RandomValues.randomEnum(Direction.class));
         Assert.assertEquals(internUserView.getMusic(), contextMusic);
     }
 
     @Test
     public void add_update_remove_Notification() throws ContextNotFoundException, NotificationNotFoundException {
-        UUID notificationId = UUID.randomUUID();
+        UUID notificationId = RandomValues.randomUUID();
+        assert internUser.getCurrentWorld() != null;
         internUserController.addNotification(internUser.getCurrentWorld().getContextId(), notificationId,
-                new MessageBundle("testMessage"), LocalDateTime.now(), NotificationType.FRIEND_REQUEST,
-                false, true, true);
+                new MessageBundle(RandomValues.random8LengthString()), LocalDateTime.now(),
+                NotificationType.FRIEND_REQUEST, false, RandomValues.randomBoolean(), RandomValues.randomBoolean());
         Assert.assertTrue(internUserView.getWorldNotifications().containsKey(notificationId));
         Assert.assertFalse(internUserView.getWorldNotifications().get(notificationId).isRead());
-        internUserController.updateNotification(notificationId,true, true, true);
+
+        internUserController.updateNotification(notificationId,true,
+                RandomValues.randomBoolean(), RandomValues.randomBoolean());
         Assert.assertTrue(internUserView.getWorldNotifications().get(notificationId).isRead());
+
         internUserController.removeNotification(notificationId);
         Assert.assertFalse(internUserView.getWorldNotifications().containsKey(notificationId));
     }
 
     @Test
     public void getCurrentWorld() {
-        Assert.assertEquals(internUserView.getCurrentWorld().getContextId(), new ContextID("Global.World"));
+        Assert.assertEquals(Objects.requireNonNull(internUserView.getCurrentWorld()).getContextId(), ContextParameters.WORLD_ID);
     }
 
     @Test
     public void getCurrentRoom() {
-        Assert.assertEquals(internUserView.getCurrentRoom().getContextId(), new ContextID("Global.World.Room"));
+        Assert.assertEquals(Objects.requireNonNull(internUserView.getCurrentRoom()).getContextId(), ContextParameters.ROOM_ID);
     }
 
     @Test
     public void getGlobal_getWorld_Notifications() throws ContextNotFoundException {
-        UUID worldNotificationId = UUID.randomUUID();
-        UUID globalNotificationId = UUID.randomUUID();
-        internUserController.addNotification(internUserView.getCurrentWorld().getContextId(), worldNotificationId,
-                new MessageBundle("testMessage"), LocalDateTime.now(), NotificationType.FRIEND_REQUEST,
+        UUID worldNotificationId = RandomValues.randomUUID();
+        UUID globalNotificationId = RandomValues.randomUUID();
+        internUserController.addNotification(Objects.requireNonNull(internUserView.getCurrentWorld()).getContextId(), worldNotificationId,
+                new MessageBundle(RandomValues.random8LengthString()), LocalDateTime.now(), NotificationType.FRIEND_REQUEST,
                 true, true, true);
         internUserController.addNotification(Context.getGlobal().getContextId(), globalNotificationId,
-                new MessageBundle("testMessage"), LocalDateTime.now(), NotificationType.FRIEND_REQUEST,
+                new MessageBundle(RandomValues.random8LengthString()), LocalDateTime.now(), NotificationType.FRIEND_REQUEST,
                 true, true, true);
         Assert.assertTrue(internUserView.getWorldNotifications().containsKey(worldNotificationId));
         Assert.assertTrue(internUserView.getGlobalNotifications().containsKey(globalNotificationId));
@@ -151,34 +130,41 @@ public class InternUserTest {
 
     @Test
     public void canTalk() throws ContextNotFoundException, UserNotFoundException {
-        UUID externUserId = UUID.randomUUID();
-        UserManager.getInstance().addExternUser(externUserId, "user1", Status.ONLINE, Avatar.ADAM);
-        UserManager.getInstance().getExternUserController(externUserId).setCommunicable(true);
-        internUserController.setMute(new ContextID("Global.World.Room.Disco"), false);
-        int posX = 500;
-        int posY = 1500;
-        internUserController.setLocation(posX, posY, false, false, Direction.DOWN);
+        UUID externUserId = RandomValues.randomUUID();
+        userManager.addExternUser(externUserId, RandomValues.random8LengthString(), Status.ONLINE,
+                RandomValues.randomEnum(Avatar.class));
+        userManager.getExternUserController(externUserId).setCommunicable(true);
+
+        internUserController.setMute(ContextParameters.DISCO_ID, false);
+        float posX = ContextParameters.DISCO_LOCATION_X;
+        float posY = ContextParameters.DISCO_LOCATION_Y;
+        internUserController.setLocation(posX, posY, RandomValues.randomBoolean(), RandomValues.randomBoolean(),
+                RandomValues.randomEnum(Direction.class));
         Assert.assertTrue(internUserView.canTalk());
-        UserManager.getInstance().getExternUserController(externUserId).setCommunicable(false);
+        userManager.getExternUserController(externUserId).setCommunicable(false);
         Assert.assertFalse(internUserView.canTalk());
-        UserManager.getInstance().getExternUserController(externUserId).setCommunicable(true);
-        posX = 1200;
-        posY = 80;
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false, Direction.DOWN);
+
+        userManager.getExternUserController(externUserId).setCommunicable(true);
+        posX = ContextParameters.PARK_LOCATION_X;
+        posY = ContextParameters.PARK_LOCATION_Y;
+        internUserController.setLocation(posX, posY,RandomValues.randomBoolean(), RandomValues.randomBoolean(),
+                RandomValues.randomEnum(Direction.class));
         Assert.assertFalse(internUserView.canTalk());
     }
 
     @Test
     public void getCurrentInteractable() {
-        int posX = 930;
-        int posY = 1806;
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false, Direction.UP);
-        Assert.assertEquals(internUserView.getCurrentInteractable().getContextId(), new ContextID("Global.World.Room.Disco.Jukebox"));
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false, Direction.DOWN);
+        float posX = ContextParameters.DISCO_LOCATION_JUKEBOX_INTERACT_X;
+        float posY = ContextParameters.DISCO_LOCATION_JUKEBOX_INTERACT_Y;
+        internUserController.setLocation(posX, posY, RandomValues.randomBoolean(), RandomValues.randomBoolean(), Direction.UP);
+        Assert.assertEquals(Objects.requireNonNull(internUserView.getCurrentInteractable()).getContextId(), ContextParameters.DISCO_Jukebox_ID);
+
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, RandomValues.randomBoolean(), RandomValues.randomBoolean(), Direction.DOWN);
         Assert.assertNull(internUserView.getCurrentInteractable());
-        posX = 930;
-        posY = 1606;
-        UserManager.getInstance().getInternUser().setLocation(posX, posY, false, false, Direction.UP);
+
+        posX = ContextParameters.DISCO_LOCATION_JUKEBOX_INTERACT_X;
+        posY = ContextParameters.DISCO_LOCATION_JUKEBOX_INTERACT_Y - ContextParameters.TILE_LENGTH;
+        UserManager.getInstance().getInternUser().setLocation(posX, posY, RandomValues.randomBoolean(), RandomValues.randomBoolean(), Direction.UP);
         Assert.assertNull(internUserView.getCurrentInteractable());
     }
 }
