@@ -1,6 +1,5 @@
 package view2.userInterface.interactableMenu;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -28,7 +27,7 @@ public class PortalWindow extends InteractableWindow {
      * @param portalId ID des zugehörigen Portals.
      */
     public PortalWindow(@NotNull final ContextID portalId) {
-        super("window.title.portal", portalId, ContextMenu.PORTAL_MENU);
+        super("window.title.portal", portalId, ContextMenu.PORTAL_MENU, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         infoLabel = new ChatiLabel("window.entry.portal");
 
@@ -51,9 +50,6 @@ public class PortalWindow extends InteractableWindow {
         // Layout
         setModal(true);
         setMovable(false);
-        setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
-        setWidth(WINDOW_WIDTH);
-        setHeight(WINDOW_HEIGHT);
 
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();

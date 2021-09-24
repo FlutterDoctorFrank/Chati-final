@@ -1,6 +1,5 @@
 package view2.userInterface.hud.settings;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -26,7 +25,7 @@ public class LanguageSelectWindow extends ChatiWindow {
      * Erzeugt eine neue Instanz des LanguageSelectWindow.
      */
     public LanguageSelectWindow() {
-        super("window.title.select-language");
+        super("window.title.select-language", WINDOW_WIDTH, WINDOW_HEIGHT);
 
         ChatiLabel infoLabel = new ChatiLabel("window.entry.select-language");
         ChatiSelectBox<Locale> languageSelectBox = new ChatiSelectBox<>(locale ->
@@ -55,9 +54,6 @@ public class LanguageSelectWindow extends ChatiWindow {
         // Layout
         setModal(true);
         setMovable(false);
-        setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
-        setWidth(WINDOW_WIDTH);
-        setHeight(WINDOW_HEIGHT);
 
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();

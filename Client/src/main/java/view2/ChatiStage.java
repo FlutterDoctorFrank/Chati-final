@@ -3,11 +3,10 @@ package view2;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.jetbrains.annotations.NotNull;
 import view2.userInterface.ChatiWindow;
 import view2.userInterface.hud.ChatWindow;
-import view2.userInterface.hud.HeadUpDisplay;
 import java.util.Stack;
 
 /**
@@ -22,7 +21,7 @@ public class ChatiStage extends Stage {
      * Erzeugt eine neue Instanz der ChatiStage.
      */
     public ChatiStage() {
-        super(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()), Chati.CHATI.getSpriteBatch());
+        super(new ScreenViewport(), Chati.CHATI.getSpriteBatch());
         this.openWindows = new Stack<>();
     }
 
@@ -94,6 +93,14 @@ public class ChatiStage extends Stage {
             }
         }
         return super.touchDown(screenX, screenY, pointer, button);
+    }
+
+    /**
+     * Gibt die Fenster zurück, die gerade geöffnet sind.
+     * @return die geöffneten Fenster.
+     */
+    public @NotNull Stack<ChatiWindow> getOpenWindows() {
+        return this.openWindows;
     }
 
     /**

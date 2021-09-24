@@ -1,6 +1,5 @@
 package view2.userInterface.hud.userList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -40,7 +39,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
      * Erzeugt eine neue Instanz des UserListEntry.
      * @param user Zum Eintrag zugehöriger Benutzer.
      */
-    public UserListEntry(IUserView user) {
+    public UserListEntry(@NotNull final IUserView user) {
         this.user = user;
 
         UserInfoContainer userInfoContainer = new UserInfoContainer(user);
@@ -323,7 +322,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
          * @param action Durchzuführende administrative Aktion.
          */
         protected MessageWindow(@NotNull final AdministrativeAction action) {
-            super("");
+            super("", WINDOW_WIDTH, WINDOW_HEIGHT);
 
             switch(action) {
                 case INVITE_FRIEND:
@@ -379,9 +378,6 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             // Layout
             setModal(true);
             setMovable(false);
-            setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
-            setWidth(WINDOW_WIDTH);
-            setHeight(WINDOW_HEIGHT);
 
             Table container = new Table();
             container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();

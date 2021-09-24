@@ -80,13 +80,18 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     /**
      * Startet die View.
+     * @param fullscreen true, wenn die Anwendung im Vollbild gestartet werden soll.
      */
-    public void start() {
+    public void start(final boolean fullscreen) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
         config.setWindowIcon("logos/logo_big.bmp", "logos/logo_medium.bmp", "logos/logo_small.bmp", "logos/logo_tiny.bmp");
         config.setForegroundFPS(60);
         config.setTitle("Chati");
+        if (fullscreen) {
+            config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+        } else {
+            config.setWindowSizeLimits(1280, 720, -1, -1);
+        }
         new Lwjgl3Application(this, config);
     }
 
@@ -116,6 +121,12 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         audioManager.update();
         super.render();
         resetModelChangedFlags();
+    }
+
+    @Override
+    public void resize(final int width, final int height) {
+        menuScreen.resize(width, height);
+        worldScreen.resize(width, height);
     }
 
     @Override

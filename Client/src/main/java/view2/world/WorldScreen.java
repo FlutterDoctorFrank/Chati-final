@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import model.MessageBundle;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
@@ -55,7 +55,7 @@ public class WorldScreen extends ChatiScreen {
 
     private final WorldInputProcessor worldInputProcessor;
     private final WorldCamera camera;
-    private final FitViewport viewport;
+    private final ExtendViewport viewport;
     private final OrthogonalTiledMapRenderer tiledMapRenderer;
     private final World world;
 
@@ -69,7 +69,7 @@ public class WorldScreen extends ChatiScreen {
     public WorldScreen() {
         this.worldInputProcessor = new WorldInputProcessor();
         this.camera = new WorldCamera();
-        this.viewport = new FitViewport(WorldCamera.scaleToUnit(Gdx.graphics.getWidth()),
+        this.viewport = new ExtendViewport(WorldCamera.scaleToUnit(Gdx.graphics.getWidth()),
                 WorldCamera.scaleToUnit(Gdx.graphics.getHeight()), camera);
         this.tiledMapRenderer = new OrthogonalTiledMapRenderer(null, WorldCamera.scaleToUnit(1));
         this.world = new World(new Vector2(0, 0), true);
@@ -111,6 +111,7 @@ public class WorldScreen extends ChatiScreen {
             world.step(1 / WORLD_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 
             internUserAvatar.sendPosition();
+            viewport.apply();
             camera.update();
             tiledMapRenderer.setView(camera);
         }
@@ -139,7 +140,10 @@ public class WorldScreen extends ChatiScreen {
 
     @Override
     public void resize(final int width, final int height) {
-        viewport.update(width, height);
+        viewport.setMinWorldWidth(WorldCamera.scaleToUnit(width));
+        viewport.setMinWorldHeight(WorldCamera.scaleToUnit(height));
+        viewport.update(width, height, true);
+        super.resize(width, height);
     }
 
     @Override

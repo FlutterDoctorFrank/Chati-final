@@ -2,7 +2,7 @@ package view2;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import org.jetbrains.annotations.NotNull;
 import view2.ChatiLocalization.Translatable;
 
@@ -25,10 +25,19 @@ public abstract class ChatiScreen extends ScreenAdapter implements Translatable 
 
     @Override
     public void render(final float delta) {
+        stage.getViewport().apply();
         stage.act(delta);
         stage.draw();
 
         super.render(delta);
+    }
+
+    @Override
+    public void resize(final int width, final int height) {
+        Chati.CHATI.getHeadUpDisplay().invalidate();
+        stage.getViewport().update(width, height, true);
+        stage.getOpenWindows().forEach(Window::invalidate);
+        super.resize(width, height);
     }
 
     @Override

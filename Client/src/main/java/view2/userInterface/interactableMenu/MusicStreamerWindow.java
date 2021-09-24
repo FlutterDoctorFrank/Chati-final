@@ -1,9 +1,12 @@
 package view2.userInterface.interactableMenu;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
@@ -17,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import view2.Chati;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.ChatiLabel;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.EnumSet;
@@ -70,7 +72,7 @@ public class MusicStreamerWindow extends InteractableWindow {
      * @param musicPlayerId ID des zugehörigen MusicStreamer.
      */
     public MusicStreamerWindow(@NotNull final ContextID musicPlayerId) {
-        super("window.title.music-player", musicPlayerId, ContextMenu.MUSIC_STREAMER_MENU);
+        super("window.title.music-player", musicPlayerId, ContextMenu.MUSIC_STREAMER_MENU, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         infoLabel = new ChatiLabel("window.entry.music-player");
         musicList = new List<>(Chati.CHATI.getSkin(), "dimmed");
@@ -169,9 +171,6 @@ public class MusicStreamerWindow extends InteractableWindow {
         // Layout
         setModal(true);
         setMovable(false);
-        setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
-        setWidth(WINDOW_WIDTH);
-        setHeight(WINDOW_HEIGHT);
 
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).padBottom(SPACING).center().growX();

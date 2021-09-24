@@ -1,6 +1,5 @@
 package view2.userInterface.hud.settings;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -35,7 +34,7 @@ public class AdministratorManageWindow extends ChatiWindow {
      * Erzeugt eine neue Instanz des AdministratorManageWindow.
      */
     public AdministratorManageWindow() {
-        super("window.title.manage-administrator");
+        super("window.title.manage-administrator", WINDOW_WIDTH, WINDOW_HEIGHT);
 
         infoLabel = new ChatiLabel("window.entry.manage-administrator");
         usernameField = new ChatiTextField("menu.text-field.username", false);
@@ -133,9 +132,6 @@ public class AdministratorManageWindow extends ChatiWindow {
         // Layout
         setModal(true);
         setMovable(false);
-        setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
-        setWidth(WINDOW_WIDTH);
-        setHeight(WINDOW_HEIGHT);
 
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();

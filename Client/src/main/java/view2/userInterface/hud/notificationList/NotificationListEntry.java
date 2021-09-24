@@ -1,6 +1,5 @@
 package view2.userInterface.hud.notificationList;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -179,7 +178,7 @@ public class NotificationListEntry extends Table implements Translatable, Compar
          * Erzeugt eine neue Instanz des NotificationTextWindow.
          */
         public NotificationTextWindow(@NotNull final INotificationView notification) {
-            super(notification.getType().getMessageKey());
+            super(notification.getType().getMessageKey(), WINDOW_WIDTH, WINDOW_HEIGHT);
             this.notification = notification;
 
             ChatiLabel dateLabel = new ChatiLabel("pattern.notification.time", Timestamp.valueOf(notification.getTimestamp()));
@@ -243,9 +242,6 @@ public class NotificationListEntry extends Table implements Translatable, Compar
             // Layout
             setModal(true);
             setMovable(false);
-            setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
-            setWidth(WINDOW_WIDTH);
-            setHeight(WINDOW_HEIGHT);
             left().defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).padTop(VERTICAL_SPACING);
 
             Table container = new Table();
@@ -294,7 +290,7 @@ public class NotificationListEntry extends Table implements Translatable, Compar
          * @param action Durchzuführende Benachrichtigungsaktion.
          */
         public ConfirmWindow(@NotNull final NotificationAction action) {
-            super("window.title.confirm");
+            super("window.title.confirm", WINDOW_WIDTH, WINDOW_HEIGHT);
 
             MessageBundle message;
             switch (action) {
@@ -350,9 +346,6 @@ public class NotificationListEntry extends Table implements Translatable, Compar
             // Layout
             setModal(true);
             setMovable(false);
-            setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
-            setWidth(WINDOW_WIDTH);
-            setHeight(WINDOW_HEIGHT);
 
             Table container = new Table();
             container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();

@@ -1,5 +1,6 @@
 package view2.userInterface;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -21,14 +22,29 @@ public abstract class ChatiWindow extends Window implements Translatable {
     protected ChatiLabel infoLabel;
     protected String titleKey;
 
+    protected float width;
+    protected float height;
+
     /**
      * Erzeugt eine neue Instanz eines ChatiWindow.
      * @param titleKey Kennung des anzuzeigenden Titels.
      */
     protected ChatiWindow(@NotNull final String titleKey) {
+        this(titleKey, -1f, -1f);
+    }
+
+    /**
+     * Erzeugt eine neue Instanz eines ChatiWindow.
+     * @param titleKey Kennung des anzuzeigenden Titels.
+     * @param width Die Breite des Windows.
+     * @param height Die Höhe des Windows.
+     */
+    protected ChatiWindow(@NotNull final String titleKey, final float width, final float height) {
         super(!titleKey.isBlank() ? Chati.CHATI.getLocalization().translate(titleKey) : "", Chati.CHATI.getSkin());
         this.translates = new ArrayList<>();
         this.titleKey = titleKey;
+        this.width = width;
+        this.height = height;
 
         TextButton closeButton = new TextButton("X", Chati.CHATI.getSkin());
         closeButton.setDisabled(true);
@@ -41,6 +57,18 @@ public abstract class ChatiWindow extends Window implements Translatable {
         });
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
+
+        if (width > 0 && height > 0) {
+            setWidth(width);
+            setHeight(height);
+        }
+    }
+
+    @Override
+    public void invalidate() {
+        if (width > 0 && height > 0) {
+            setPosition((Gdx.graphics.getWidth() - width) / 2f, (Gdx.graphics.getHeight() - height) / 2f);
+        }
     }
 
     /**

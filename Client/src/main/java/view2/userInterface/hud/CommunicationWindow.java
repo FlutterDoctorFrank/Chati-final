@@ -27,7 +27,7 @@ public class CommunicationWindow extends ChatiWindow {
      * Erzeugt eine neue Instanz des CommunicationWindow.
      */
     public CommunicationWindow() {
-        super("window.title.communication");
+        super("window.title.communication", HUD_WINDOW_WIDTH, HUD_WINDOW_HEIGHT);
         this.communicableUserEntries = new TreeSet<>();
         List<Image> communicationMediaImages = new ArrayList<>(); // TODO
 
@@ -41,8 +41,6 @@ public class CommunicationWindow extends ChatiWindow {
 
         // Layout
         setMovable(false);
-        setSize(HUD_WINDOW_WIDTH, HUD_WINDOW_HEIGHT);
-        setPosition(0, HeadUpDisplay.BUTTON_SIZE);
 
         userListContainer.top();
         add(userListScrollPane).grow();
@@ -65,6 +63,12 @@ public class CommunicationWindow extends ChatiWindow {
     public void close() {
         Chati.CHATI.getHeadUpDisplay().removeCommunicationWindow();
         super.close();
+    }
+
+    @Override
+    public void invalidate() {
+        setPosition(0, HeadUpDisplay.BUTTON_SIZE);
+        super.invalidate();
     }
 
     /**

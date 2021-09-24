@@ -1,6 +1,5 @@
 package view2.userInterface.interactableMenu;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -43,15 +42,12 @@ public class RoomReceptionWindow extends InteractableWindow {
      * @param roomReceptionId ID des zugehörigen RoomReceptionWindow.
      */
     public RoomReceptionWindow(@NotNull final ContextID roomReceptionId) {
-        super("window.title.room-reception", roomReceptionId, ContextMenu.ROOM_RECEPTION_MENU);
+        super("window.title.room-reception", roomReceptionId, ContextMenu.ROOM_RECEPTION_MENU, WINDOW_WIDTH, WINDOW_HEIGHT);
         setCurrentTable(new RoomSelectTable());
 
         // Layout
         setModal(true);
         setMovable(false);
-        setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
-        setWidth(WINDOW_WIDTH);
-        setHeight(WINDOW_HEIGHT);
     }
 
     /**

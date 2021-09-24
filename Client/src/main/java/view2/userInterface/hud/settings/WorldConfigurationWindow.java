@@ -1,6 +1,5 @@
 package view2.userInterface.hud.settings;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -31,7 +30,7 @@ public class WorldConfigurationWindow extends ChatiWindow {
      * Erzeugt eine neue Instanz des WorldConfigurationWindow.
      */
     public WorldConfigurationWindow() {
-        super("window.title.world-settings");
+        super("window.title.world-settings", WINDOW_WIDTH, WINDOW_HEIGHT);
 
         infoLabel = new ChatiLabel("window.entry.world-settings");
 
@@ -88,9 +87,6 @@ public class WorldConfigurationWindow extends ChatiWindow {
 
         setModal(true);
         setMovable(false);
-        setPosition((Gdx.graphics.getWidth() - WINDOW_WIDTH) / 2f, (Gdx.graphics.getHeight() - WINDOW_HEIGHT) / 2f);
-        setWidth(WINDOW_WIDTH);
-        setHeight(WINDOW_HEIGHT);
 
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING / 2).center().growX();

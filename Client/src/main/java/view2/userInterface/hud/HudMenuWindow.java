@@ -24,8 +24,6 @@ public abstract class HudMenuWindow extends ChatiWindow {
         super(titleKey);
         setMovable(false);
         setSize(HUD_WINDOW_WIDTH, HUD_WINDOW_HEIGHT);
-        setPosition(Gdx.graphics.getWidth() - HUD_WINDOW_WIDTH,
-                Gdx.graphics.getHeight() - HUD_WINDOW_HEIGHT - HeadUpDisplay.BUTTON_SIZE);
     }
 
     /**
@@ -52,5 +50,12 @@ public abstract class HudMenuWindow extends ChatiWindow {
     public void close() {
         Chati.CHATI.getHeadUpDisplay().removeCurrentMenu();
         super.close();
+    }
+
+    @Override
+    public void invalidate() {
+        setPosition(Gdx.graphics.getWidth() - HUD_WINDOW_WIDTH,
+                Gdx.graphics.getHeight() - HUD_WINDOW_HEIGHT - HeadUpDisplay.BUTTON_SIZE);
+        super.invalidate();
     }
 }
