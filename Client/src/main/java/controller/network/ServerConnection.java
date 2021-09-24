@@ -118,8 +118,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         if (this.userId != null) {
-            this.manager.getUserManager().logout();
             this.manager.getView().logout();
+            this.manager.getUserManager().logout();
         }
     }
 
@@ -391,8 +391,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                 case LOGOUT:
                     if (packet.isSuccess()) {
-                        this.manager.getUserManager().logout();
                         this.manager.getView().logout();
+                        this.manager.getUserManager().logout();
                         this.worldId = null;
                         this.userId = null;
                     }
