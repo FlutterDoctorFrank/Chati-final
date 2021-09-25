@@ -34,9 +34,9 @@ public abstract class ChatiScreen extends ScreenAdapter implements Translatable 
 
     @Override
     public void resize(final int width, final int height) {
-        Chati.CHATI.getHeadUpDisplay().invalidate();
-        stage.getViewport().update(width, height, true);
+        Chati.CHATI.getHeadUpDisplay().resize(width, height);
         stage.getOpenWindows().forEach(Window::invalidate);
+        stage.getViewport().update(width, height, true);
         super.resize(width, height);
     }
 

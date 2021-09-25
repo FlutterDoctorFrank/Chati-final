@@ -21,7 +21,6 @@ import view2.userInterface.ChatiImageButton;
 import view2.userInterface.hud.notificationList.NotificationListWindow;
 import view2.userInterface.hud.settings.SettingsWindow;
 import view2.userInterface.hud.userList.UserListWindow;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -46,6 +45,8 @@ public class HeadUpDisplay extends Table implements Translatable {
     private HudMenuWindow currentMenuWindow;
     private CommunicationWindow communicationWindow;
     private Table internUserDisplay;
+
+    private boolean restoreChat;
 
     /**
      * Erzeugt eine neue Instanz des HeadUpDisplay.
@@ -215,6 +216,20 @@ public class HeadUpDisplay extends Table implements Translatable {
             notificationListButton.startAnimation();
         }
         super.act(delta);
+    }
+
+    public void resize(final int width, final int height) {
+        if (width <= 0 && height <= 0) {
+            if (chatWindow.isVisible()) {
+                chatWindow.hide();
+                restoreChat = true;
+            }
+        } else if (restoreChat) {
+            restoreChat = false;
+            chatWindow.show();
+        }
+
+        invalidate();
     }
 
     /**

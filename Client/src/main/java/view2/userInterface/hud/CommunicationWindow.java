@@ -68,7 +68,6 @@ public class CommunicationWindow extends ChatiWindow {
     @Override
     public void invalidate() {
         setPosition(0, HeadUpDisplay.BUTTON_SIZE);
-        super.invalidate();
     }
 
     /**

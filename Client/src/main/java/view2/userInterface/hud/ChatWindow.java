@@ -5,8 +5,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
@@ -18,14 +23,19 @@ import model.user.IInternUserView;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.KeyCommand;
 import view2.ChatiLocalization.Translatable;
-import view2.userInterface.*;
+import view2.KeyCommand;
+import view2.userInterface.ChatiImageButton;
+import view2.userInterface.ChatiTextArea;
+import view2.userInterface.ChatiTextButton;
+import view2.userInterface.ChatiTooltip;
 import view2.world.component.InternUserAvatar;
-
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
 /**
  * Eine Klasse, welche das Chatfenster der Anwendung repräsentiert.
@@ -43,8 +53,6 @@ public class ChatWindow extends Window implements Translatable {
     private static final float SEND_BUTTON_HEIGHT = 60;
 
     private final Map<IUserView, Long> typingUsers;
-    private long lastTimeTypingSent;
-
     private final Stack chatStack;
     private final Table messageLabelContainer;
     private final ScrollPane historyScrollPane;
@@ -53,6 +61,8 @@ public class ChatWindow extends Window implements Translatable {
     private final ChatiTextArea typeMessageArea;
     private final ChatiTextButton sendButton;
     private final Label typingUsersLabel;
+
+    private long lastTimeTypingSent;
 
     /**
      * Erzeugt eine neue Instanz des ChatWindow.
