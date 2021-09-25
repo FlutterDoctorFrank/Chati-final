@@ -1,5 +1,6 @@
 package view2;
 
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
@@ -85,6 +86,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public void start(final boolean fullscreen) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setWindowIcon("logos/logo_big.bmp", "logos/logo_medium.bmp", "logos/logo_small.bmp", "logos/logo_tiny.bmp");
+        config.setPreferencesConfig("Documents/Chati", FileType.External);
         config.setForegroundFPS(60);
         config.setTitle("Chati");
         if (fullscreen) {

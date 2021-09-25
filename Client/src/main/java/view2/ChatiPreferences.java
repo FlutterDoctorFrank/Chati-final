@@ -32,7 +32,7 @@ public class ChatiPreferences {
      * Erzeugt eine neue Instanz der ChatiPreferences.
      */
     public ChatiPreferences() {
-        this.preferences = Gdx.app.getPreferences("/chati/preferences");
+        this.preferences = Gdx.app.getPreferences("preferences");
         addKeyBindings();
     }
 
