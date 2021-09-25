@@ -6,12 +6,15 @@ import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.mock.graphics.MockGL20;
 import controller.network.ClientSender;
 import model.communication.message.AudioMessage;
-import model.communication.message.Message;
 import model.communication.message.MessageType;
 import model.communication.message.TextMessage;
 import model.context.ContextID;
 import model.context.global.GlobalContext;
-import model.context.spatial.*;
+import model.context.spatial.ContextMap;
+import model.context.spatial.Direction;
+import model.context.spatial.Location;
+import model.context.spatial.Room;
+import model.context.spatial.World;
 import model.database.Database;
 import model.database.IContextDatabase;
 import model.database.IUserAccountManagerDatabase;
@@ -22,10 +25,13 @@ import model.exception.IllegalWorldActionException;
 import model.role.Role;
 import model.user.AdministrativeAction;
 import model.user.User;
-import model.user.UserTesten;
 import model.user.account.UserAccountManager;
-import org.junit.*;
-
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -260,7 +266,7 @@ public class CommunicationHandlerTest {
     }
 
     // Receiver ist nicht in einer Welt
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void whisperNotAvailableChatTest() {
         setTestWorld("forfwhisper");
         TypeClientSender typeClientSender = new TypeClientSender();
@@ -273,7 +279,7 @@ public class CommunicationHandlerTest {
             user.joinWorld(test_world.getContextId());
 
             CommunicationHandler.handleTextMessage(user, "\\\\fwlistener hi");
-
+            Assert.assertEquals(MessageType.INFO, textMessage.getMessageType());
         } catch (IllegalAccountActionException | ContextNotFoundException | IllegalWorldActionException e) {
             e.printStackTrace();
 
