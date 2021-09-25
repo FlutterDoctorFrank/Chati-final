@@ -507,8 +507,8 @@ public interface ClientSender {
                                 message.getAudioData());
                     }
 
-                    return new PacketAudioMessage(message.getTimestamp(), message.getAudioData(), message.getPosition(),
-                            message.getSeconds());
+                    return new PacketAudioMessage(message.getTimestamp(), message.getMusic(), message.getAudioData(),
+                            message.getPosition(), message.getSeconds());
                 } else {
                     throw new IllegalArgumentException("Expected IAudioMessage, got " + object.getClass());
                 }

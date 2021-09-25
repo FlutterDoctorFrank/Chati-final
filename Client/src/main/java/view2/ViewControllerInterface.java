@@ -2,6 +2,7 @@ package view2;
 
 import controller.network.ServerSender;
 import model.MessageBundle;
+import model.context.spatial.ContextMusic;
 import model.exception.ContextNotFoundException;
 import model.communication.message.MessageType;
 import model.context.ContextID;
@@ -118,11 +119,12 @@ public interface ViewControllerInterface {
      * Benachrichtigt die View, dass ein neues Musikdaten-Paket erhalten wurde.
      * @param timestamp Zeitpunkt, an dem dieses Paket gesendet wurde.
      * @param musicData Musikdaten, die abgespielt werden sollen.
+     * @param music Zugehörige Musik der Musikdaten.
      * @param position Aktuelle Position im Musikstück.
      * @param seconds Aktuelle Sekunde im Musikstück.
      */
-    void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData, final float position,
-                       final int seconds);
+    void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData, @NotNull final ContextMusic music,
+                       final float position, final int seconds);
 
     /**
      * Benachrichtigt die View, dass das Menü eines Interaktionsobjekts geöffnet werden soll.

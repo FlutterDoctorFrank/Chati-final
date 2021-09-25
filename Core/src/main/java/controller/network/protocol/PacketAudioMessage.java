@@ -3,6 +3,7 @@ package controller.network.protocol;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import model.context.spatial.ContextMusic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class PacketAudioMessage implements Packet<PacketListener> {
     private UUID senderId;
     private LocalDateTime timestamp;
     private byte[] audioData;
+    private ContextMusic music;
     private float position;
     private int seconds;
 
@@ -46,13 +48,15 @@ public class PacketAudioMessage implements Packet<PacketListener> {
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Server-Anwendung.
      * @param timestamp der Zeitpunkt, an dem die Audiodaten versendet wurden.
      * @param audioData die Audiodaten des Musikstückes.
+     * @param music die zugehörige Musik der Audiodaten.
      * @param position die Position im Musikstück.
      * @param seconds die Sekunde im Musikstück.
      */
-    public PacketAudioMessage(@NotNull final LocalDateTime timestamp, final byte[] audioData, final float position,
-                              final int seconds) {
+    public PacketAudioMessage(@NotNull final LocalDateTime timestamp, @Nullable final ContextMusic music,
+                              final byte[] audioData, final float position, final int seconds) {
         this.timestamp = timestamp;
         this.audioData = audioData;
+        this.music = music;
         this.position = position;
         this.seconds = seconds;
     }
@@ -78,6 +82,7 @@ public class PacketAudioMessage implements Packet<PacketListener> {
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeNullableUniqueId(output, this.senderId);
+        PacketUtils.writeNullableEnum(output, this.music);
         kryo.writeObjectOrNull(output, this.timestamp, LocalDateTime.class);
         output.writeFloat(this.position);
         output.writeVarInt(this.seconds, true);
@@ -88,6 +93,7 @@ public class PacketAudioMessage implements Packet<PacketListener> {
     @Override
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.senderId = PacketUtils.readNullableUniqueId(input);
+        this.music = PacketUtils.readNullableEnum(input, ContextMusic.class);
         this.timestamp = kryo.readObjectOrNull(input, LocalDateTime.class);
         this.position = input.readFloat();
         this.seconds = input.readVarInt(true);
@@ -96,9 +102,9 @@ public class PacketAudioMessage implements Packet<PacketListener> {
 
     @Override
     public @NotNull String toString() {
-        return this.getClass().getSimpleName() + "{senderId=" + this.senderId + ", timestamp=" + this.timestamp
-                + ",position=" + this.position + ",seconds=" + this.seconds + ", audioData="
-                + Arrays.toString(this.audioData) + "}";
+        return this.getClass().getSimpleName() + "{senderId=" + this.senderId + ", music=" + this.music +
+                ", timestamp=" + this.timestamp + ",position=" + this.position + ",seconds="
+                + this.seconds + ", audioData=" + Arrays.toString(this.audioData) + "}";
     }
 
     /**
@@ -107,6 +113,14 @@ public class PacketAudioMessage implements Packet<PacketListener> {
      */
     public @Nullable UUID getSenderId() {
         return this.senderId;
+    }
+
+    /**
+     * Gibt die zugehörige Musik der Audiodaten zurück.
+     * @return Musik der Audiodaten, oder null.
+     */
+    public @Nullable ContextMusic getMusic() {
+        return this.music;
     }
 
     /**

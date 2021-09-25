@@ -303,7 +303,12 @@ public class WorldScreen extends ChatiScreen {
      * Lädt die Avatare aller externen Benutzer.
      */
     private void loadExternUserAvatars() {
-        Map<UUID, IUserView> usersInRoom = Chati.CHATI.getUserManager().getUsersInRoom();
+        Map<UUID, IUserView> usersInRoom;
+        try {
+            usersInRoom = Chati.CHATI.getUserManager().getUsersInRoom();
+        } catch (IllegalStateException e) {
+            return; // Benutzer ist nicht in der Welt
+        }
         usersInRoom.values().forEach(externUser -> {
             if (!externUserAvatars.containsKey(externUser)) {
                 UserAvatar newUserAvatar = new UserAvatar(externUser);

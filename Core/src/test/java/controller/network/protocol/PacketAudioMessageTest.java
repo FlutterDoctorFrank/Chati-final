@@ -1,6 +1,7 @@
 package controller.network.protocol;
 
 import controller.network.protocol.mock.MockPacketListener;
+import model.context.spatial.ContextMusic;
 import org.junit.Assert;
 import org.junit.Test;
 import java.time.LocalDateTime;
@@ -31,7 +32,8 @@ public class PacketAudioMessageTest extends PacketTest<PacketAudioMessage> {
 
     @Test
     public void serverAudioSerializationTest() {
-        this.before = new PacketAudioMessage(LocalDateTime.now(), randomBytes(), randomFloat(), randomInt());
+        this.before = new PacketAudioMessage(LocalDateTime.now(), randomEnum(ContextMusic.class), randomBytes(),
+                randomFloat(), randomInt());
 
         this.serialize();
         this.equals();
