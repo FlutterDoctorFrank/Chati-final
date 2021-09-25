@@ -292,6 +292,22 @@ public class ChatWindow extends Window implements Translatable {
     }
 
     /**
+     * Setzt den Text im Textfeld.
+     * @param text Anzuzeigender Text.
+     */
+    public void setText(String text) {
+        typeMessageArea.setText("");
+        typeMessageArea.setText(text);
+        if (text.length() > 0 && Character.isWhitespace(text.charAt(text.length() - 1))) {
+            typeMessageArea.appendText(" ");
+        }
+        typeMessageArea.setCursorPosition(typeMessageArea.getText().length());
+        if (getStage() != null) {
+            getStage().setKeyboardFocus(typeMessageArea);
+        }
+    }
+
+    /**
      * Sendet eine eingegebene Nachricht.
      */
     private void sendMessage() {

@@ -70,6 +70,9 @@ public class MusicStreamer extends Interactable implements Runnable {
     /** Die Information, ob das Senden von Musikdaten gerade pausiert ist. */
     private boolean isPaused;
 
+    /** Dient dazu, dem Streamingthread die Information zu vermitteln, dass sich das Musikstück geändert hat. */
+    private volatile boolean songChanged;
+
     /**
      * Erzeugt eine neue Instanz des MusicStreamer.
      * @param objectName Name des Objekts.
@@ -145,7 +148,7 @@ public class MusicStreamer extends Interactable implements Runnable {
                 if (getCurrentPlaytime() < RESTART_SECONDS) {
                     setMusic(ContextMusic.values()[(getMusic().ordinal() - 1) % ContextMusic.values().length]);
                 } else {
-                    musicStreamBuffer.clear();
+                    setMusic(getMusic());
                 }
                 loadBuffer();
                 play();
@@ -228,60 +231,58 @@ public class MusicStreamer extends Interactable implements Runnable {
 
         outer:
         while (isRunning) {
-            synchronized (this) {
-                // Warte, solange die Musik pausiert ist oder keine Daten verfügbar sind.
-                while (isPaused || !musicStreamBuffer.hasRemaining()) {
-                    if (!isRunning) {
-                        break outer;
-                    }
-                    try {
+            try {
+                synchronized (this) {
+                    // Warte, solange die Musik pausiert ist oder keine Daten verfügbar sind.
+                    while (isPaused || !musicStreamBuffer.hasRemaining()) {
+                        if (!isRunning) {
+                            break outer;
+                        }
                         wait();
-                    } catch (InterruptedException e) {
+                    }
+                }
+
+                // Wenn sich die Musik geändert hat, warte eine gewisse Zeit um Empfängern die Möglichkeit zu geben
+                // ihre Puffer zu entleeren.
+                if (songChanged) {
+                    songChanged = false;
+                    Thread.sleep(250);
+                }
+
+                // Sende Daten des laufenden Musikstücks, solange diese vorhanden sind.
+                if (musicStreamBuffer.remaining() > sendData.length) {
+                    musicStreamBuffer.get(sendData);
+                } else {
+                    // Sende letzten Block des laufenden Musikstücks.
+                    musicStreamBuffer.get(sendData, 0, musicStreamBuffer.remaining());
+                    try {
+                        if (!parent.isLooping()) {
+                            if (parent.isRandom()) { // Starte zufälliges nächstes Lied, wenn Random und nicht Looping eingestellt ist.
+                                setMusic(ContextMusic.values()[new Random().nextInt(ContextMusic.values().length)]);
+                            } else { // Starte nächstes Lied in der Liste, wenn nicht Random und nicht Looping eingestellt ist.
+                                if (getMusic() != null) {
+                                    setMusic(ContextMusic.values()[(getMusic().ordinal() + 1) % ContextMusic.values().length]);
+                                }
+                            }
+                        } else { // Gebe gleiches Lied nochmal wieder, wenn Looping eingestellt ist.
+                            setMusic(getMusic());
+                        }
+                        loadBuffer();
+                    } catch (IllegalMenuActionException e) {
                         e.printStackTrace();
                     }
                 }
-            }
 
-            // Sende Daten des laufenden Musikstücks, solange diese vorhanden sind.
-            if (musicStreamBuffer.remaining() > sendData.length) {
-                musicStreamBuffer.get(sendData);
-            } else {
-                // Sende letzten Block des laufenden Musikstücks.
-                musicStreamBuffer.get(sendData, 0, musicStreamBuffer.remaining());
-                if (!parent.isLooping()) {
-                    if (parent.isRandom()) { // Starte zufälliges nächstes Lied, wenn Random und nicht Looping eingestellt ist.
-                        setMusic(ContextMusic.values()[new Random().nextInt(ContextMusic.values().length)]);
-                        try {
-                            loadBuffer();
-                        } catch (IllegalMenuActionException e) {
-                            e.printStackTrace();
-                        }
-                    } else { // Starte nächstes Lied in der Liste, wenn nicht Random und nicht Looping eingestellt ist.
-                        if (getMusic() != null) {
-                            setMusic(ContextMusic.values()[(getMusic().ordinal() + 1) % ContextMusic.values().length]);
-                            try {
-                                loadBuffer();
-                            } catch (IllegalMenuActionException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                } else { // Gebe gleiches Lied nochmal wieder, wenn Looping eingestellt ist.
-                    musicStreamBuffer.clear();
-                }
-            }
+                // Ermittle die aktuelle Position im laufenden Musikstück und erzeuge die Nachricht.
+                float position = (float) musicStreamBuffer.position() / musicStreamBuffer.capacity();
+                AudioMessage message = new AudioMessage(sendData, position, getCurrentPlaytime());
 
-            // Ermittle die aktuelle Position im laufenden Musikstück und erzeuge die Nachricht.
-            float position = (float) musicStreamBuffer.position() / musicStreamBuffer.capacity();
-            AudioMessage message = new AudioMessage(sendData, position, getCurrentPlaytime());
+                // Sende das Paket mit Musikdaten.
+                getParent().getUsers().values().forEach(receiver -> receiver.send(ClientSender.SendAction.AUDIO, message));
 
-            // Sende das Paket mit Musikdaten.
-            getParent().getUsers().values().forEach(receiver -> receiver.send(ClientSender.SendAction.AUDIO, message));
-
-            // Warte für die ungefähre Abspielzeit eines Pakets. Die genaue Zeitspanne die gewartet werden muss, kann
-            // individuell sein und muss ermittelt werden, da sich die Geschwindigkeit von Server und Client
-            // unterscheiden können.
-            try {
+                // Warte für die ungefähre Abspielzeit eines Pakets. Die genaue Zeitspanne die gewartet werden muss, kann
+                // individuell sein und muss ermittelt werden, da sich die Geschwindigkeit von Server und Client
+                // unterscheiden können.
                 Thread.sleep(955 / SEND_RATE);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -302,6 +303,7 @@ public class MusicStreamer extends Interactable implements Runnable {
 
     @Override
     public void setMusic(@Nullable final ContextMusic music) {
+        songChanged = true;
         musicStreamBuffer = ByteBuffer.allocate(0);
         parent.setMusic(music);
     }

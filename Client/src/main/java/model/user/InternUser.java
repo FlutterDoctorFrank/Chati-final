@@ -94,7 +94,7 @@ public class InternUser extends User implements IInternUserController, IInternUs
         }
         SpatialContext context = currentWorld.getContext(spatialId);
 
-        if (context.getMusic() != music) {
+        if (context.getMusic() != music || context.isLooping() == looping && context.isRandom() == random) {
             context.setMusic(music);
             UserManager.getInstance().getModelObserver().setMusicChanged();
         }

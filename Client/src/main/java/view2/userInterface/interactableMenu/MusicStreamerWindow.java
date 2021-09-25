@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
 import view2.Chati;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.ChatiLabel;
+import view2.userInterface.ChatiTooltip;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.EnumSet;
@@ -98,6 +100,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         playButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_play"), Chati.CHATI.getDrawable("music_play"),
                 Chati.CHATI.getDrawable("music_play_disabled"), BUTTON_SCALE_FACTOR);
+        playButton.addListener(new ChatiTooltip("window.music.play"));
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -107,6 +110,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         stopButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_stop"), Chati.CHATI.getDrawable("music_stop"),
                 Chati.CHATI.getDrawable("music_stop_disabled"), BUTTON_SCALE_FACTOR);
+        stopButton.addListener(new ChatiTooltip("window.music.stop"));
         stopButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -116,6 +120,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         backButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_back"), Chati.CHATI.getDrawable("music_back"),
                 Chati.CHATI.getDrawable("music_back_disabled"), BUTTON_SCALE_FACTOR);
+        backButton.addListener(new ChatiTooltip("window.music.back"));
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -125,6 +130,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         skipButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_skip"), Chati.CHATI.getDrawable("music_skip"),
                 Chati.CHATI.getDrawable("music_skip_disabled"), BUTTON_SCALE_FACTOR);
+        skipButton.addListener(new ChatiTooltip("window.music.skip"));
         skipButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -134,6 +140,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         loopingButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_looping_on"),
                 Chati.CHATI.getDrawable("music_looping_on"), Chati.CHATI.getDrawable("music_looping_off"), BUTTON_SCALE_FACTOR);
+        loopingButton.addListener(new ChatiTooltip("window.music.looping"));
         loopingButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -143,7 +150,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         randomButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_random_on"),
                 Chati.CHATI.getDrawable("music_random_on"), Chati.CHATI.getDrawable("music_random_off"), BUTTON_SCALE_FACTOR);
-        randomButton.setDisabled(true);
+        randomButton.addListener(new ChatiTooltip("window.music.random"));
         randomButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -151,22 +158,30 @@ public class MusicStreamerWindow extends InteractableWindow {
             }
         });
 
-        ChatiImageButton volumeButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_sound_on"),
+        ChatiImageButton soundButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_sound_on"),
                 Chati.CHATI.getDrawable("music_sound_off"), Chati.CHATI.getDrawable("music_sound_disabled"), BUTTON_SCALE_FACTOR);
-        volumeButton.addListener(new ClickListener() {
+        soundButton.addListener(new ChatiTooltip("window.music.sound"));
+        soundButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                // TODO
+                Chati.CHATI.getAudioManager().toggleMusic(!soundButton.isChecked());
             }
         });
 
         ChatiLabel currentTitleLabel = new ChatiLabel("window.entry.current-title");
-        titleNameLabel = new Label("", Chati.CHATI.getSkin());
+        String titleName = "";
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+        if (internUser != null && internUser.getMusic() != null) {
+            titleName = internUser.getMusic().getName();
+        }
+        titleNameLabel = new Label(titleName, Chati.CHATI.getSkin());
 
         musicProgressLabel = new Label("00:00", Chati.CHATI.getSkin());
         musicProgressBar = new ProgressBar(0, 1, 0.00001f, false, Chati.CHATI.getSkin());
 
         Label creditsLabel = new Label("Music by https://www.bensound.com", Chati.CHATI.getSkin());
+
+        setState();
 
         // Layout
         setModal(true);
@@ -205,8 +220,8 @@ public class MusicStreamerWindow extends InteractableWindow {
         skipButton.getImage().setOrigin(1 / 2f * BUTTON_SIZE, 1 / 4f * BUTTON_SIZE);
         buttonContainer.add(randomButton).size(1 / 2f * BUTTON_SIZE);
         randomButton.getImage().setOrigin(1 / 4f * BUTTON_SIZE, 1 / 4f * BUTTON_SIZE);
-        buttonContainer.add(volumeButton).size(1 / 2f * BUTTON_SIZE).padLeft(BUTTON_SPACING);
-        volumeButton.getImage().setOrigin(1 / 4f * BUTTON_SIZE, 1 / 4f * BUTTON_SIZE);
+        buttonContainer.add(soundButton).size(1 / 2f * BUTTON_SIZE).padLeft(BUTTON_SPACING);
+        soundButton.getImage().setOrigin(1 / 4f * BUTTON_SIZE, 1 / 4f * BUTTON_SIZE);
         container.add(buttonContainer).row();
 
         creditsLabel.setFontScale(0.67f);
@@ -221,54 +236,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
     @Override
     public void act(final float delta) {
-        IInternUserView internUser = Chati.CHATI.getInternUser();
-        if (internUser != null) {
-            String currentTitle = "";
-
-            if (internUser.getMusic() != null) {
-                currentTitle = internUser.getMusic().getName();
-
-                playButton.setDisabled(false);
-                playButton.setTouchable(Touchable.enabled);
-                stopButton.setDisabled(false);
-                stopButton.setTouchable(Touchable.enabled);
-                backButton.setDisabled(false);
-                backButton.setTouchable(Touchable.enabled);
-                skipButton.setDisabled(false);
-                skipButton.setTouchable(Touchable.enabled);
-                if (Chati.CHATI.getAudioManager().isPlayingMusic()) {
-                    playButton.getStyle().imageUp = Chati.CHATI.getDrawable("music_pause");
-                } else {
-                    playButton.getStyle().imageUp = Chati.CHATI.getDrawable("music_play");
-                }
-            } else {
-                playButton.setDisabled(true);
-                playButton.setTouchable(Touchable.disabled);
-                stopButton.setDisabled(true);
-                stopButton.setTouchable(Touchable.disabled);
-                backButton.setDisabled(true);
-                backButton.setTouchable(Touchable.disabled);
-                skipButton.setDisabled(true);
-                skipButton.setTouchable(Touchable.disabled);
-            }
-
-            titleNameLabel.setText(currentTitle);
-
-            if (loopingButton.isDisabled() && internUser.isLooping()) {
-                loopingButton.setDisabled(false);
-            } else if (!loopingButton.isDisabled() && !internUser.isLooping()) {
-                loopingButton.setDisabled(true);
-            }
-            if (randomButton.isDisabled() && internUser.isRandom()) {
-                randomButton.setDisabled(false);
-            } else if (!randomButton.isDisabled() && !internUser.isRandom()) {
-                randomButton.setDisabled(true);
-            }
-        }
-
-        musicProgressBar.setValue(Chati.CHATI.getAudioManager().getCurrentPosition());
-        Date currentSeconds = new Date(Chati.CHATI.getAudioManager().getCurrentSeconds() * 1000L);
-        musicProgressLabel.setText(new SimpleDateFormat("mm:ss").format(currentSeconds));
+        setState();
         super.act(delta);
     }
 
@@ -286,6 +254,69 @@ public class MusicStreamerWindow extends InteractableWindow {
         if (getStage() != null) {
             getStage().setScrollFocus(musicList);
         }
+    }
+
+    /**
+     * Setzt die sichtbaren Zustände der Komponenten dieses Bildschirms.
+     */
+    private void setState() {
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+        if (internUser != null) {
+            if (internUser.getMusic() != null) {
+                playButton.setDisabled(false);
+                playButton.setTouchable(Touchable.enabled);
+                stopButton.setDisabled(false);
+                stopButton.setTouchable(Touchable.enabled);
+                backButton.setDisabled(false);
+                backButton.setTouchable(Touchable.enabled);
+                skipButton.setDisabled(false);
+                skipButton.setTouchable(Touchable.enabled);
+                if (Chati.CHATI.getAudioManager().isPlayingMusic()) {
+                    playButton.getStyle().imageUp = Chati.CHATI.getDrawable("music_pause");
+                    playButton.getStyle().imageDown = Chati.CHATI.getDrawable("music_pause");
+                    playButton.getStyle().imageChecked = Chati.CHATI.getDrawable("music_pause");
+                } else {
+                    playButton.getStyle().imageUp = Chati.CHATI.getDrawable("music_play");
+                    playButton.getStyle().imageDown = Chati.CHATI.getDrawable("music_play");
+                    playButton.getStyle().imageChecked = Chati.CHATI.getDrawable("music_play");
+                }
+            } else {
+                playButton.setDisabled(true);
+                playButton.setTouchable(Touchable.disabled);
+                stopButton.setDisabled(true);
+                stopButton.setTouchable(Touchable.disabled);
+                backButton.setDisabled(true);
+                backButton.setTouchable(Touchable.disabled);
+                skipButton.setDisabled(true);
+                skipButton.setTouchable(Touchable.disabled);
+            }
+
+            if (loopingButton.isDisabled() && internUser.isLooping()) {
+                loopingButton.setDisabled(false);
+            } else if (!loopingButton.isDisabled() && !internUser.isLooping()) {
+                loopingButton.setDisabled(true);
+            }
+            if (randomButton.isDisabled() && internUser.isRandom()) {
+                randomButton.setDisabled(false);
+            } else if (!randomButton.isDisabled() && !internUser.isRandom()) {
+                randomButton.setDisabled(true);
+            }
+
+            if (Chati.CHATI.isMusicChanged()) {
+                ContextMusic currentMusic = internUser.getMusic();
+                if (currentMusic != null) {
+                    musicList.getItems().forEach(item -> {
+                        if (item.getMusic().equals(currentMusic)) {
+                            musicList.setSelected(item);
+                        }
+                    });
+                    titleNameLabel.setText(currentMusic.getName());
+                }
+            }
+        }
+        musicProgressBar.setValue(Chati.CHATI.getAudioManager().getCurrentPosition());
+        Date currentSeconds = new Date(Chati.CHATI.getAudioManager().getCurrentSeconds() * 1000L);
+        musicProgressLabel.setText(new SimpleDateFormat("mm:ss").format(currentSeconds));
     }
 
     /**

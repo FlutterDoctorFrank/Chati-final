@@ -16,8 +16,8 @@ public class MusicStream extends AudioProducer {
      * abgespielt werden. In diesem Fall wird die Geschwindigkeit des Abspielens von Musikdaten leicht angepasst, um
      * einen leeren oder unendlich steigenden Puffer zu vermeiden.
      */
-    private static final float MAX_SLOW_DOWN_RATE = 1.05f;
-    private static final float MIN_SLOW_DOWN_RATE = 0.95f;
+    private static final float MAX_SLOW_DOWN_RATE = 1.1f;
+    private static final float MIN_SLOW_DOWN_RATE = 0.9f;
     private static final float SLOW_DOWN_STEP = 0.001f;
 
     private final Queue<Float> positionQueue;

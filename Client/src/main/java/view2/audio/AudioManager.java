@@ -79,7 +79,7 @@ public class AudioManager implements Disposable {
                 }
             }
 
-            if (Chati.CHATI.isMusicChanged() && internUser != null && internUser.getMusic() == null) {
+            if (Chati.CHATI.isMusicChanged()) {
                 audioConsumer.stopMusic();
             }
         }
@@ -102,6 +102,18 @@ public class AudioManager implements Disposable {
         audioConsumer.setTotalVolume(Chati.CHATI.getPreferences().getTotalVolume());
         audioConsumer.setVoiceVolume(Chati.CHATI.getPreferences().getVoiceVolume());
         audioConsumer.setMusicVolume(0.1f * Chati.CHATI.getPreferences().getMusicVolume());
+    }
+
+    /**
+     * Setzt, ob Musik zu hören ist.
+     * @param on true, wenn Musik zu hören ist, sonst false.
+     */
+    public void toggleMusic(boolean on) {
+        if (on) {
+            setVolume();
+        } else {
+            audioConsumer.setMusicVolume(0);
+        }
     }
 
     /**

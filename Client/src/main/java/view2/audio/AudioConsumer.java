@@ -27,7 +27,7 @@ public class AudioConsumer implements Disposable, Runnable {
     private float musicVolume;
     private float voiceVolume;
     private boolean isRunning;
-    private volatile boolean isPlayingMusic;
+    private boolean isPlayingMusic;
 
     /**
      * Erzeugt eine neue Instanz des AudioConsumer.
@@ -47,6 +47,7 @@ public class AudioConsumer implements Disposable, Runnable {
             synchronized (this) {
                 // Warte, solange keine Daten vorhanden sind.
                 while (voiceDataBuffer.isEmpty() && !musicStream.isReady()) {
+                    isPlayingMusic = false;
                     if (!isRunning) {
                         break outer;
                     }

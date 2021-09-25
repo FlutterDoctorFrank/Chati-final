@@ -294,6 +294,14 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
+    public boolean canWhisper() {
+        IInternUserView internUser = UserManager.getInstance().getInternUser();
+        return this.isOnline() && (this.status != Status.BUSY && ((this.canCommunicateWith && !this.isIgnored)
+                || this.isFriend) || internUser.hasPermission(Permission.CONTACT_USER)
+                || this.hasPermission(Permission.CONTACT_USER));
+    }
+
+    @Override
     public boolean canBeInvited() {
         InternUser internUser = UserManager.getInstance().getInternUser();
         return this.isOnline() && !this.isInCurrentRoom() && internUser.isInPrivateRoom
@@ -311,8 +319,10 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canTeleportTo() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return this.isOnline() && (!this.isInPrivateRoom || internUser.hasPermission(Permission.ENTER_PRIVATE_ROOM))
-                && ((this.isFriend && this.status != Status.BUSY) || internUser.hasPermission(Permission.TELEPORT_TO_USER));
+        return this.isOnline() && this.getCurrentWorld() != null && (!this.isInPrivateRoom
+                || internUser.hasPermission(Permission.ENTER_PRIVATE_ROOM))
+                && ((this.isFriend && this.status != Status.BUSY)
+                || internUser.hasPermission(Permission.TELEPORT_TO_USER));
     }
 
     @Override

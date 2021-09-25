@@ -322,6 +322,15 @@ public class HeadUpDisplay extends Table implements Translatable {
     }
 
     /**
+     * Zeigt das Chatfenster mit einem Text im Nachrichtenfeld an.
+     * @param text Anzuzeigender Text im Nachrichtenfeld.
+     */
+    public void showChatWindow(String text) {
+        showChatWindow();
+        chatWindow.setText(text);
+    }
+
+    /**
      * Zeigt das Chatfenster nicht mehr an.
      */
     public void hideChatWindow() {

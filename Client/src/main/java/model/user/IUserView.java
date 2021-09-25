@@ -58,6 +58,12 @@ public interface IUserView {
     boolean isIgnored();
 
     /**
+     * Gibt zurück, ob eine Flüsterkommunikation mit diesem Benutzer möglich ist.
+     * @return true, wenn eine Flüsterkommunikation möglich ist, sonst false.
+     */
+    boolean canWhisper();
+
+    /**
      * Gibt zurück, ob der intern angemeldete Benutzer diesen Benutzer in einen privaten Raum einladen kann.
      * @return true, wenn eine Einladung in den Raum möglich ist, sonst false.
      */

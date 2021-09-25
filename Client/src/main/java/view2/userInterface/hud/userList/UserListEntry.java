@@ -82,6 +82,24 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             currentWorldImage.addListener(new ChatiTooltip("hud.tooltip.current-world", user.getCurrentWorld().getContextName()));
         }
 
+        ChatiImageButton whisperButton;
+        if (user.canWhisper()) {
+            whisperButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_whisper_message"));
+            whisperButton.addListener(new ChatiTooltip("hud.tooltip.whisper"));
+        } else {
+            whisperButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_whisper_message_disabled"));
+            whisperButton.setDisabled(true);
+            whisperButton.setTouchable(Touchable.disabled);
+        }
+        whisperButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                if (user.canWhisper()) {
+                    Chati.CHATI.getHeadUpDisplay().showChatWindow("\\\\" + user.getUsername() + " ");
+                }
+            }
+        });
+
         ChatiImageButton friendButton;
         if (!user.isFriend()) {
             friendButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_add_friend"));
@@ -287,8 +305,8 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
         Table buttonContainer = new Table();
         buttonContainer.defaults().size(BUTTON_SIZE).padBottom(VERTICAL_SPACING).growX();
-        buttonContainer.add(friendButton, ignoreButton, roomButton, teleportButton, reportButton, muteButton,
-                banButton, moderatorButton);
+        buttonContainer.add(whisperButton, friendButton, ignoreButton, roomButton, teleportButton, reportButton,
+                muteButton, banButton, moderatorButton);
         add(buttonContainer).center().growX();
     }
 

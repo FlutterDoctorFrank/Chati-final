@@ -154,6 +154,9 @@ public class CommunicationHandler {
         users.values().removeIf(user -> sender.isIgnoring(user) || user.isIgnoring(sender));
     }
 
+    /**
+     * Eine Enumeration, die die verwendbaren Chatbefehle repräsentiert.
+     */
     private enum ChatCommand {
 
         /**
@@ -178,9 +181,6 @@ public class CommunicationHandler {
                 try {
                     receiver = UserAccountManager.getInstance().getUser(username);
 
-                    if (receiver.getWorld() == null || !receiver.getWorld().equals(sender.getWorld())) {
-                        throw new UserNotFoundException("", receiver.getUserId());
-                    }
                     if (receiver.getLocation() == null) {
                         throw new IllegalStateException("Receivers location is not available");
                     }
@@ -207,7 +207,7 @@ public class CommunicationHandler {
                 // an den die Nachricht gerichtet ist, beschäftigt ist.
                 Context commonContext = communicationContext.lastCommonAncestor(receiver.getLocation().getArea());
 
-                if ((((!communicableUsers.containsKey(receiver.getUserId())
+                if (((((receiver.getWorld() == null || !communicableUsers.containsKey(receiver.getUserId()))
                         && !receiver.hasPermission(commonContext, Permission.CONTACT_USER))
                         || receiver.getStatus() == Status.BUSY)
                         && !sender.hasPermission(commonContext, Permission.CONTACT_USER))
