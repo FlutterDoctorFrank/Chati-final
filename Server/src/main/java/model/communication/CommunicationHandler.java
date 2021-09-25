@@ -178,6 +178,9 @@ public class CommunicationHandler {
                 try {
                     receiver = UserAccountManager.getInstance().getUser(username);
 
+                    if (receiver.getWorld() == null || !receiver.getWorld().equals(sender.getWorld())) {
+                        throw new UserNotFoundException("", receiver.getUserId());
+                    }
                     if (receiver.getLocation() == null) {
                         throw new IllegalStateException("Receivers location is not available");
                     }
