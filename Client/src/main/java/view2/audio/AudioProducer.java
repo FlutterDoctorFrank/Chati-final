@@ -16,7 +16,7 @@ public abstract class AudioProducer {
      * Sekunden vorhanden sind. Dies führt zu einer kleinen Verzögerung, verhindert aber, dass sich bei einem
      * verspäteten Paket der Puffer direkt leert und das Abspielen der Daten unterbrochen wird.
      */
-    protected static final float STARTING_DELAY = 0.2f;
+    protected static final float STARTING_DELAY = 0.25f;
     protected static final int MIN_BLOCKS = (int) (STARTING_DELAY * AudioManager.SEND_RATE);
 
     protected final Queue<Short> audioDataQueue;

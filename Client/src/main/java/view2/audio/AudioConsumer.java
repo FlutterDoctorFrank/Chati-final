@@ -146,7 +146,7 @@ public class AudioConsumer implements Disposable, Runnable {
      * @return true, wenn Musikdaten abgespielt werden, sonst false.
      */
     public boolean isPlayingMusic() {
-        return isPlayingMusic;
+        return isPlayingMusic && musicStream.isReady();
     }
 
     /**
@@ -188,8 +188,8 @@ public class AudioConsumer implements Disposable, Runnable {
      * @param position Aktuelle Position im Musikstück.
      * @param seconds Aktuelle Sekunde im Musikstück.
      */
-    public void receiveMusicStream(@NotNull final LocalDateTime timestamp, final byte[] musicData, final float position,
-                                   final int seconds) {
+    public void receiveMusicStream(@NotNull final LocalDateTime timestamp, final byte[] musicData,
+                                   final float position, final int seconds) {
         if (!isRunning) {
             return;
         }

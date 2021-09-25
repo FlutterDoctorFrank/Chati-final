@@ -1,5 +1,6 @@
 package view2.audio;
 
+import model.context.spatial.ContextMusic;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -48,8 +49,8 @@ public class MusicStream extends AudioProducer {
      * @param position Aktuelle Position in zusammenhängenden Daten.
      * @param seconds Aktuelle Sekunde in zusammenhängenden Daten.
      */
-    public void addAudioDataBlock(@NotNull final LocalDateTime timestamp, final short[] musicDataBlock, final float position,
-                                  final int seconds) {
+    public void addAudioDataBlock(@NotNull final LocalDateTime timestamp, final short[] musicDataBlock,
+                                  final float position, final int seconds) {
         int sizeBefore = queueSizeInBlocks();
         this.addAudioDataBlock(timestamp, musicDataBlock);
         int sizeAfter = queueSizeInBlocks();
@@ -110,6 +111,7 @@ public class MusicStream extends AudioProducer {
      * Leert den Queue der Musikdaten.
      */
     public void stop() {
+        ready = false;
         audioDataQueue.clear();
         positionQueue.clear();
         secondsQueue.clear();

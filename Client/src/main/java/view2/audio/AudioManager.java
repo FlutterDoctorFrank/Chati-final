@@ -148,8 +148,12 @@ public class AudioManager implements Disposable {
      */
     public void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData,
                               @NotNull final ContextMusic music, final float position, final int seconds) {
-        IInternUserView internUser = Chati.CHATI.getInternUser();
-        if (audioConsumer != null && audioConsumer.isRunning() && internUser != null && internUser.getMusic() == music) {
+        if (audioConsumer != null && audioConsumer.isRunning()) {
+            IInternUserView internUser = Chati.CHATI.getInternUser();
+            if (internUser == null || internUser.getMusic() != music) {
+                audioConsumer.stopMusic();
+                return;
+            }
             audioConsumer.receiveMusicStream(timestamp, musicData, position, seconds);
         }
     }

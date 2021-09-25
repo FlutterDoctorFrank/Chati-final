@@ -122,7 +122,9 @@ public class MusicStreamer extends Interactable implements Runnable {
                 }
                 setMusic(music);
                 loadBuffer();
-                play();
+                if (!isPaused) {
+                    play();
+                }
                 break;
             case MENU_OPTION_PAUSE: // Pausiere das Abspielen des Musikstücks oder setze es fort, falls es pausiert ist.
                 if (musicStreamBuffer == null || !isRunning) {
@@ -151,7 +153,9 @@ public class MusicStreamer extends Interactable implements Runnable {
                     setMusic(getMusic());
                 }
                 loadBuffer();
-                play();
+                if (!isPaused) {
+                    play();
+                }
                 break;
             case MENU_OPTION_NEXT: // Spiele das nächste Musikstück ab.
                 if (musicStreamBuffer == null || !isRunning || getMusic() == null) {
@@ -159,7 +163,9 @@ public class MusicStreamer extends Interactable implements Runnable {
                 }
                 setMusic(ContextMusic.values()[(getMusic().ordinal() + 1) % ContextMusic.values().length]);
                 loadBuffer();
-                play();
+                if (!isPaused) {
+                    play();
+                }
                 break;
             case MENU_OPTION_LOOPING: // Ein abgespieltes Lied wird immer wiederholt.
                 parent.setLooping(!parent.isLooping());
@@ -275,10 +281,12 @@ public class MusicStreamer extends Interactable implements Runnable {
 
                 // Ermittle die aktuelle Position im laufenden Musikstück und erzeuge die Nachricht.
                 float position = (float) musicStreamBuffer.position() / musicStreamBuffer.capacity();
-                AudioMessage message = new AudioMessage(sendData, getMusic(), position, getCurrentPlaytime());
+                if (getMusic() != null) {
+                    AudioMessage message = new AudioMessage(sendData, getMusic(), position, getCurrentPlaytime());
 
-                // Sende das Paket mit Musikdaten.
-                getParent().getUsers().values().forEach(receiver -> receiver.send(ClientSender.SendAction.AUDIO, message));
+                    // Sende das Paket mit Musikdaten.
+                    getParent().getUsers().values().forEach(receiver -> receiver.send(ClientSender.SendAction.AUDIO, message));
+                }
 
                 // Warte für die ungefähre Abspielzeit eines Pakets. Die genaue Zeitspanne die gewartet werden muss, kann
                 // individuell sein und muss ermittelt werden, da sich die Geschwindigkeit von Server und Client
