@@ -33,7 +33,7 @@ public class ClientNetworkManager extends NetworkManager<Client> implements Runn
     @Override
     public void connected(@NotNull final Connection connection) {
         if (this.connection == null) {
-            LOGGER.info(String.format("Connected to server on ip %s over port: %d", this.host, this.tcp));
+            LOGGER.info(String.format("Connected to server on ip %s over tcp port: %d", this.host, this.tcp));
 
             this.connection = new ServerConnection(this);
             this.endPoint.addListener(this.connection);
