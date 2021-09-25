@@ -108,9 +108,8 @@ public interface ClientSender {
                             info.addFlag(Flag.IGNORED);
                         }
 
-                        if (other.getWorld() != null && other.getLocation() != null) {
+                        if (other.getWorld() != null) {
                             info.setWorld(other.getWorld().getContextId());
-                            info.setRoom(other.getLocation().getRoom().getContextId());
                         }
 
                         if (world.equals(other.getWorld())) {
@@ -118,6 +117,10 @@ public interface ClientSender {
 
                             if (world.getReportedUsers().containsKey(other.getUserId())) {
                                 info.addFlag(Flag.REPORTED);
+                            }
+
+                            if (other.getLocation() != null) {
+                                info.setRoom(other.getLocation().getRoom().getContextId());
                             }
 
                             return new PacketOutUserInfo(world.getContextId(), Action.UPDATE_USER, info);
@@ -144,9 +147,8 @@ public interface ClientSender {
                             info.setStatus(other.getStatus());
                             info.addFlag(Flag.FRIEND);
 
-                            if (other.getWorld() != null && other.getLocation() != null) {
+                            if (other.getWorld() != null) {
                                 info.setWorld(other.getWorld().getContextId());
-                                info.setRoom(other.getLocation().getRoom().getContextId());
                             }
 
                             return new PacketOutUserInfo(null, Action.UPDATE_USER, info);
