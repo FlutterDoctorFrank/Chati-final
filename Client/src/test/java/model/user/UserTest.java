@@ -257,8 +257,10 @@ public class UserTest {
         testUserController.setStatus(Status.ONLINE);
         float posX = ContextParameters.DISCO_LOCATION_X;
         float posY = ContextParameters.DISCO_LOCATION_Y;
+        testUserController.joinWorld(ContextParameters.WORLD_ID);
         testUserController.setLocation(posX, posY, RandomValues.randomBoolean(),
                 RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
+
         Assert.assertTrue(testUserView.canTeleportTo());
 
         testUserController.setStatus(Status.BUSY);
