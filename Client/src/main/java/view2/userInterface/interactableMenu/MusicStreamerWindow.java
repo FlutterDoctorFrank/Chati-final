@@ -23,6 +23,7 @@ import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiTooltip;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 
@@ -77,9 +78,11 @@ public class MusicStreamerWindow extends InteractableWindow {
         super("window.title.music-player", musicPlayerId, ContextMenu.MUSIC_STREAMER_MENU, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         infoLabel = new ChatiLabel("window.entry.music-player");
-        musicList = new List<>(Chati.CHATI.getSkin(), "dimmed");
 
-        musicList.setItems(EnumSet.allOf(ContextMusic.class).stream().map(MusicListItem::new).toArray(MusicListItem[]::new));
+        musicList = new List<>(Chati.CHATI.getSkin(), "dimmed");
+        MusicListItem[] musicListItems = EnumSet.allOf(ContextMusic.class).stream().map(MusicListItem::new).toArray(MusicListItem[]::new);
+        Arrays.sort(musicListItems);
+        musicList.setItems(musicListItems);
         musicList.getStyle().over = Chati.CHATI.getSkin().getDrawable("list-selection");
         musicList.addListener(new ClickListener() {
             @Override
@@ -93,7 +96,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                         new String[] {musicList.getSelected().getMusic().getName()}, MENU_OPTION_PLAY);
             }
         });
-        ScrollPane musicListScrollPane = new ScrollPane(musicList);
+        ScrollPane musicListScrollPane = new ScrollPane(musicList, Chati.CHATI.getSkin());
         musicListScrollPane.setFadeScrollBars(false);
         musicListScrollPane.setOverscroll(false, false);
         musicListScrollPane.setScrollingDisabled(true, false);
@@ -169,19 +172,15 @@ public class MusicStreamerWindow extends InteractableWindow {
         });
 
         ChatiLabel currentTitleLabel = new ChatiLabel("window.entry.current-title");
-        String titleName = "";
-        IInternUserView internUser = Chati.CHATI.getInternUser();
-        if (internUser != null && internUser.getMusic() != null) {
-            titleName = internUser.getMusic().getName();
-        }
-        titleNameLabel = new Label(titleName, Chati.CHATI.getSkin());
+        titleNameLabel = new Label("", Chati.CHATI.getSkin());
 
         musicProgressLabel = new Label("00:00", Chati.CHATI.getSkin());
         musicProgressBar = new ProgressBar(0, 1, 0.00001f, false, Chati.CHATI.getSkin());
 
         Label creditsLabel = new Label("Music by https://www.bensound.com", Chati.CHATI.getSkin());
 
-        setState();
+        setButtonStates();
+        setSelectedTitle();
 
         // Layout
         setModal(true);
@@ -236,7 +235,13 @@ public class MusicStreamerWindow extends InteractableWindow {
 
     @Override
     public void act(final float delta) {
-        setState();
+        setButtonStates();
+        if (Chati.CHATI.isMusicChanged()) {
+            setSelectedTitle();
+        }
+        musicProgressBar.setValue(Chati.CHATI.getAudioManager().getCurrentPosition());
+        Date currentSeconds = new Date(Chati.CHATI.getAudioManager().getCurrentSeconds() * 1000L);
+        musicProgressLabel.setText(new SimpleDateFormat("mm:ss").format(currentSeconds));
         super.act(delta);
     }
 
@@ -257,9 +262,9 @@ public class MusicStreamerWindow extends InteractableWindow {
     }
 
     /**
-     * Setzt die sichtbaren Zustände der Komponenten dieses Bildschirms.
+     * Setzt die sichtbaren Zustände der Buttons dieses Bildschirms.
      */
-    private void setState() {
+    private void setButtonStates() {
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser != null) {
             if (internUser.getMusic() != null) {
@@ -301,28 +306,34 @@ public class MusicStreamerWindow extends InteractableWindow {
             } else if (!randomButton.isDisabled() && !internUser.isRandom()) {
                 randomButton.setDisabled(true);
             }
+        }
+    }
 
-            if (Chati.CHATI.isMusicChanged()) {
-                ContextMusic currentMusic = internUser.getMusic();
-                if (currentMusic != null) {
-                    musicList.getItems().forEach(item -> {
-                        if (item.getMusic().equals(currentMusic)) {
-                            musicList.setSelected(item);
-                        }
-                    });
-                    titleNameLabel.setText(currentMusic.getName());
-                }
+    /**
+     * Setzt den aktuellen Titel in der Anzeige.
+     */
+    private void setSelectedTitle() {
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+        if (internUser != null) {
+            ContextMusic currentMusic = internUser.getMusic();
+            if (currentMusic != null) {
+                musicList.getItems().forEach(item -> {
+                    if (item.getMusic().equals(currentMusic)) {
+                        musicList.setSelected(item);
+                    }
+                });
+                titleNameLabel.setText(currentMusic.getName());
+            } else {
+                musicList.setSelected(null);
+                titleNameLabel.setText("");
             }
         }
-        musicProgressBar.setValue(Chati.CHATI.getAudioManager().getCurrentPosition());
-        Date currentSeconds = new Date(Chati.CHATI.getAudioManager().getCurrentSeconds() * 1000L);
-        musicProgressLabel.setText(new SimpleDateFormat("mm:ss").format(currentSeconds));
     }
 
     /**
      * Eine Klasse, welche die Elemente repräsentiert, die in der Liste aller Musikstücke angezeigt werden.
      */
-    private static class MusicListItem {
+    private static class MusicListItem implements Comparable<MusicListItem> {
 
         private final ContextMusic music;
 
@@ -345,6 +356,11 @@ public class MusicStreamerWindow extends InteractableWindow {
         @Override
         public @NotNull String toString() {
             return music.getName();
+        }
+
+        @Override
+        public int compareTo(@NotNull final MusicListItem other) {
+            return this.music.getName().compareTo(other.music.getName());
         }
     }
 }

@@ -24,6 +24,7 @@
 		"fontColor": { "a": 1, "b": 1, "g": 1, "r": 1 },
 		"downFontColor": { "a": 1, "b": 1, "g": 0.2, "r": 1 },
 		"checkedFontColor": { "a": 1, "b": 1, "g": 0.2, "r": 1 },
+		"overFontColor": { "a": 1, "b": 1, "g": 0.2, "r": 1 },
 		"up": "button",
 		"down": "button-down",
 		"checked": "button-down"

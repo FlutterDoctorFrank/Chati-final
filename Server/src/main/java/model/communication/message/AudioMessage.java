@@ -13,9 +13,6 @@ public class AudioMessage extends Message implements IAudioMessage {
     /** Die Audiodaten der Sprachnachricht. */
     private final byte[] audioData;
 
-    /** Die zugehörige Musik einer zusammenhängenden Audionachricht. */
-    private final ContextMusic music;
-
     /** Die aktuelle Position in einer zusammenhängenden Audionachricht. */
     private final float position;
 
@@ -25,12 +22,11 @@ public class AudioMessage extends Message implements IAudioMessage {
     /**
      * Erzeugt eine neue Instanz der Audionachricht. Wird für das Senden von Musikdaten verwendet.
      * @param musicData Die Musikdaten der Nachricht.
-     * @param music Die Musik.
      * @param position Die aktuelle Position im Musikstück.
      * @param seconds Die aktuelle Sekunde im Musikstück.
      */
-    public AudioMessage(final byte[] musicData, @NotNull final ContextMusic music, final float position, final int seconds) {
-        this(null, musicData, music, position, seconds);
+    public AudioMessage(final byte[] musicData, final float position, final int seconds) {
+        this(null, musicData, position, seconds);
     }
 
     /**
@@ -39,22 +35,19 @@ public class AudioMessage extends Message implements IAudioMessage {
      * @param voiceData die Sprachdaten der Nachricht.
      */
     public AudioMessage(@NotNull final User sender, final byte[] voiceData) {
-        this(sender, voiceData, null, 0, 0);
+        this(sender, voiceData, 0, 0);
     }
 
     /**
      * Erzeugt eine neue Instanz der Audionachricht.
      * @param sender Der Sender dieser Nachricht.
      * @param audioData Die Audiodaten der Nachricht.
-     * @param music Die Musik einer zusammenhängenden Audionachricht.
      * @param position Aktuelle Position einer zusammenhängenden Audionachricht.
      * @param seconds Aktuelle Sekunde einer zusammenhängenden Audionachricht.
      */
-    private AudioMessage(@Nullable final User sender, final byte[] audioData, @Nullable final ContextMusic music,
-                         final float position, final int seconds) {
+    private AudioMessage(@Nullable final User sender, final byte[] audioData, final float position, final int seconds) {
         super(sender);
         this.audioData = audioData;
-        this.music = music;
         this.position = position;
         this.seconds = seconds;
     }
@@ -62,11 +55,6 @@ public class AudioMessage extends Message implements IAudioMessage {
     @Override
     public byte[] getAudioData() {
         return audioData;
-    }
-
-    @Override
-    public @Nullable ContextMusic getMusic() {
-        return music;
     }
 
     @Override

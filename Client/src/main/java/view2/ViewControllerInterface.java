@@ -2,8 +2,6 @@ package view2;
 
 import controller.network.ServerSender;
 import model.MessageBundle;
-import model.context.spatial.ContextMusic;
-import model.exception.ContextNotFoundException;
 import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
@@ -11,7 +9,6 @@ import model.exception.UserNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -119,11 +116,10 @@ public interface ViewControllerInterface {
      * Benachrichtigt die View, dass ein neues Musikdaten-Paket erhalten wurde.
      * @param timestamp Zeitpunkt, an dem dieses Paket gesendet wurde.
      * @param musicData Musikdaten, die abgespielt werden sollen.
-     * @param music Zugehörige Musik der Musikdaten.
      * @param position Aktuelle Position im Musikstück.
      * @param seconds Aktuelle Sekunde im Musikstück.
      */
-    void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData, @NotNull final ContextMusic music,
+    void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData,
                        final float position, final int seconds);
 
     /**

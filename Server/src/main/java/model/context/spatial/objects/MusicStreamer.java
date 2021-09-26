@@ -270,7 +270,7 @@ public class MusicStreamer extends Interactable implements Runnable {
                 // Ermittle die aktuelle Position im laufenden Musikstück und erzeuge die Nachricht.
                 float position = (float) musicStreamBuffer.position() / musicStreamBuffer.capacity();
                 if (getMusic() != null) {
-                    AudioMessage message = new AudioMessage(sendData, getMusic(), position, getCurrentPlaytime());
+                    AudioMessage message = new AudioMessage(sendData, position, getCurrentPlaytime());
 
                     // Sende das Paket mit Musikdaten.
                     getParent().getUsers().values().forEach(receiver -> receiver.send(ClientSender.SendAction.AUDIO, message));

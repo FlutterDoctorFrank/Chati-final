@@ -41,14 +41,23 @@ public class UserInfoContainer extends Table {
 
         add(usernameLabel).space(SPACING);
         roleIconContainer.defaults().size(USER_INFO_ICON_SIZE).space(SPACING / 2);
-        updateInfo();
+        try {
+            updateInfo();
+        } catch (IllegalStateException e) {
+
+        }
         add(roleIconContainer);
     }
 
     @Override
     public void act(final float delta) {
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged() || Chati.CHATI.isRoomChanged()) {
-            updateInfo();
+            try {
+                updateInfo();
+            } catch (IllegalStateException e) {
+
+            }
+
         }
         super.act(delta);
     }
@@ -61,49 +70,44 @@ public class UserInfoContainer extends Table {
         roleIconContainer.clear();
 
         usernameLabel.setText(user.getUsername());
+        if (user.hasRole(Role.OWNER)) {
+            usernameLabel.setColor(Color.GOLD);
+            Image ownerImage = new Image(Chati.CHATI.getDrawable("role_owner"));
+            ownerImage.addListener(new ChatiTooltip("hud.tooltip.owner"));
+            roleIcons.add(ownerImage);
+        } else if (user.hasRole(Role.ADMINISTRATOR)) {
+            usernameLabel.setColor(Color.SKY);
+            Image administratorImage = new Image(Chati.CHATI.getDrawable("role_administrator"));
+            administratorImage.addListener(new ChatiTooltip("hud.tooltip.administrator"));
+            roleIcons.add(administratorImage);
+        } else if (user.hasRole(Role.MODERATOR)) {
+            usernameLabel.setColor(Color.ORANGE);
+            Image moderatorImage = new Image(Chati.CHATI.getDrawable("role_moderator"));
+            moderatorImage.addListener(new ChatiTooltip("hud.tooltip.moderator"));
+            roleIcons.add(moderatorImage);
+        } else {
+            usernameLabel.setColor(Color.WHITE);
+        }
 
-        try {
-            if (user.hasRole(Role.OWNER)) {
-                usernameLabel.setColor(Color.GOLD);
-                Image ownerImage = new Image(Chati.CHATI.getDrawable("role_owner"));
-                ownerImage.addListener(new ChatiTooltip("hud.tooltip.owner"));
-                roleIcons.add(ownerImage);
-            } else if (user.hasRole(Role.ADMINISTRATOR)) {
-                usernameLabel.setColor(Color.SKY);
-                Image administratorImage = new Image(Chati.CHATI.getDrawable("role_administrator"));
-                administratorImage.addListener(new ChatiTooltip("hud.tooltip.administrator"));
-                roleIcons.add(administratorImage);
-            } else if (user.hasRole(Role.MODERATOR)) {
-                usernameLabel.setColor(Color.ORANGE);
-                Image moderatorImage = new Image(Chati.CHATI.getDrawable("role_moderator"));
-                moderatorImage.addListener(new ChatiTooltip("hud.tooltip.moderator"));
-                roleIcons.add(moderatorImage);
-            } else {
-                usernameLabel.setColor(Color.WHITE);
-            }
+        if (user.hasRole(Role.ROOM_OWNER)) {
+            Image roomOwnerImage = new Image(Chati.CHATI.getDrawable("role_room_owner"));
+            roomOwnerImage.addListener(new ChatiTooltip("hud.tooltip.room-owner"));
+            roleIcons.add(roomOwnerImage);
+        }
+        if (user.hasRole(Role.AREA_MANAGER)) {
+            Image areaManagerImage = new Image(Chati.CHATI.getDrawable("role_area_manager"));
+            areaManagerImage.addListener(new ChatiTooltip("hud.tooltip.area-manager"));
+            roleIcons.add(areaManagerImage);
+        }
 
-            if (user.hasRole(Role.ROOM_OWNER)) {
-                Image roomOwnerImage = new Image(Chati.CHATI.getDrawable("role_room_owner"));
-                roomOwnerImage.addListener(new ChatiTooltip("hud.tooltip.room-owner"));
-                roleIcons.add(roomOwnerImage);
-            }
-            if (user.hasRole(Role.AREA_MANAGER)) {
-                Image areaManagerImage = new Image(Chati.CHATI.getDrawable("role_area_manager"));
-                areaManagerImage.addListener(new ChatiTooltip("hud.tooltip.area-manager"));
-                roleIcons.add(areaManagerImage);
-            }
-
-            if (user.getStatus() == Status.OFFLINE) {
-                usernameLabel.setColor(Color.GRAY);
-            } else if (user.isReported() && !user.equals(Chati.CHATI.getUserManager().getInternUserView())
-                    && (Chati.CHATI.getUserManager().getInternUserView().hasPermission(Permission.BAN_MODERATOR)
-                    && !user.hasPermission(Permission.BAN_MODERATOR)
-                    || Chati.CHATI.getUserManager().getInternUserView().hasPermission(Permission.BAN_USER)
-                    && !user.hasPermission(Permission.BAN_USER) && !user.hasPermission(Permission.BAN_MODERATOR))) {
-                usernameLabel.setColor(Color.RED);
-            }
-        } catch (IllegalStateException e) {
-            return;
+        if (user.getStatus() == Status.OFFLINE) {
+            usernameLabel.setColor(Color.GRAY);
+        } else if (user.isReported() && !user.equals(Chati.CHATI.getUserManager().getInternUserView())
+                && (Chati.CHATI.getUserManager().getInternUserView().hasPermission(Permission.BAN_MODERATOR)
+                && !user.hasPermission(Permission.BAN_MODERATOR)
+                || Chati.CHATI.getUserManager().getInternUserView().hasPermission(Permission.BAN_USER)
+                && !user.hasPermission(Permission.BAN_USER) && !user.hasPermission(Permission.BAN_MODERATOR))) {
+            usernameLabel.setColor(Color.RED);
         }
 
         roleIcons.forEach(roleIconContainer::add);

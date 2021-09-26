@@ -9,9 +9,9 @@ import view2.Chati;
 /**
  * Eine Klasse, durch welche das Aufnehmen und Senden von Sprachdaten realisiert wird.
  */
-public class VoiceRecorder implements Disposable, Runnable {
+public class VoiceRecorder implements Runnable, Disposable {
 
-    private static final long STOP_SENDING_DELAY = 250;
+    private static final float STOP_SENDING_DELAY = 0.25f; // in Sekunden
 
     private final AudioRecorder recorder;
     private float sendGate;
@@ -56,7 +56,7 @@ public class VoiceRecorder implements Disposable, Runnable {
                     break;
                 }
             }
-            if (System.currentTimeMillis() - timestamp < STOP_SENDING_DELAY) {
+            if (System.currentTimeMillis() - timestamp < 1000 * STOP_SENDING_DELAY) {
                 Chati.CHATI.send(ServerSender.SendAction.VOICE, AudioManager.toByte(recordedData, true));
             }
         }

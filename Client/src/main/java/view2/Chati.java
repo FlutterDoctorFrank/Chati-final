@@ -15,7 +15,6 @@ import model.MessageBundle;
 import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
-import model.context.spatial.ContextMusic;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import model.user.IUserManagerView;
@@ -452,9 +451,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData,
-                              @NotNull final ContextMusic music, final float position, final int seconds) {
+                              final float position, final int seconds) {
         if (this.screen.equals(worldScreen)) {
-            audioManager.playMusicData(timestamp, musicData, music, position, seconds);
+            audioManager.playMusicData(timestamp, musicData, position, seconds);
         }
     }
 

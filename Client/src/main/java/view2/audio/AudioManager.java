@@ -2,7 +2,6 @@ package view2.audio;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import model.context.spatial.ContextMusic;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import model.user.IUserView;
@@ -80,7 +79,7 @@ public class AudioManager implements Disposable {
                 }
             }
 
-            if (Chati.CHATI.isMusicChanged() && internUser != null && internUser.getMusic() == null) {
+            if (Chati.CHATI.isMusicChanged() && (internUser == null || internUser.getMusic() == null)) {
                 audioConsumer.stopMusic();
             }
         }
@@ -142,18 +141,12 @@ public class AudioManager implements Disposable {
      * Veranlasst das Abspielen erhaltener Musikdaten.
      * @param timestamp Zeitstempel der Sprachdaten.
      * @param musicData Abzuspielende Musikdaten.
-     * @param music Zugehörige Musik der Daten.
      * @param position Aktuelle Position im Musikstück.
      * @param seconds Aktuelle Sekunde im Musikstück.
      */
     public void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData,
-                              @NotNull final ContextMusic music, final float position, final int seconds) {
+                              final float position, final int seconds) {
         if (audioConsumer != null && audioConsumer.isRunning()) {
-            IInternUserView internUser = Chati.CHATI.getInternUser();
-            if (internUser == null || internUser.getMusic() != music) {
-                audioConsumer.stopMusic();
-                return;
-            }
             audioConsumer.receiveMusicStream(timestamp, musicData, position, seconds);
         }
     }

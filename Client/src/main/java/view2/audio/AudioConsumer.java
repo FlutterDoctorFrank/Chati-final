@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Eine Klasse, durch welche das Mischen und Abspielen empfangener Audiodaten realisiert wird.
  */
-public class AudioConsumer implements Disposable, Runnable {
+public class AudioConsumer implements Runnable, Disposable {
 
     private final AudioDevice player;
     private final Map<IUserView, VoiceChatUser> voiceDataBuffer;
@@ -27,7 +27,6 @@ public class AudioConsumer implements Disposable, Runnable {
     private float musicVolume;
     private float voiceVolume;
     private boolean isRunning;
-    private boolean isPlayingMusic;
 
     /**
      * Erzeugt eine neue Instanz des AudioConsumer.
@@ -47,7 +46,6 @@ public class AudioConsumer implements Disposable, Runnable {
             synchronized (this) {
                 // Warte, solange keine Daten vorhanden sind.
                 while (voiceDataBuffer.isEmpty() && !musicStream.isReady()) {
-                    isPlayingMusic = false;
                     if (!isRunning) {
                         break outer;
                     }
@@ -66,27 +64,21 @@ public class AudioConsumer implements Disposable, Runnable {
             short[] musicBlock = new short[AudioManager.BLOCK_SIZE];
             if (musicStream.isReady()) {
                 musicBlock = musicStream.getAudioDataBlock();
-                isPlayingMusic = true;
-            } else {
-                isPlayingMusic = false;
-            }
-
-            // Ton ist aus, beende Iteration ohne Verarbeitung der empfangenen Daten.
-            if (!Chati.CHATI.getPreferences().isSoundOn()) {
-                continue;
             }
 
             int[] temp = new int[AudioManager.BLOCK_SIZE];
             for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
-                // Mische Daten aller Teilnehmer des Voicechats und setze die entsprechende Lautstärke.
-                for (short[] block : blocks) {
-                    temp[i] += block[i];
-                }
-                temp[i] *= voiceVolume;
+                if (Chati.CHATI.getPreferences().isSoundOn()) {
+                    // Mische Daten aller Teilnehmer des Voicechats und setze die entsprechende Lautstärke.
+                    for (short[] block : blocks) {
+                        temp[i] += block[i];
+                    }
+                    temp[i] *= voiceVolume;
 
-                // Mische Daten des Musikstreams dazu und setze die entsprechende Lautstärke.
-                musicBlock[i] *= musicVolume;
-                temp[i] += musicBlock[i];
+                    // Mische Daten des Musikstreams dazu und setze die entsprechende Lautstärke.
+                    musicBlock[i] *= musicVolume;
+                    temp[i] += musicBlock[i];
+                }
 
                 // Verhindere einen Overflow der gemischten Daten.
                 mixedData[i] = (short) (temp[i] > Short.MAX_VALUE ? Short.MAX_VALUE :
@@ -146,7 +138,7 @@ public class AudioConsumer implements Disposable, Runnable {
      * @return true, wenn Musikdaten abgespielt werden, sonst false.
      */
     public boolean isPlayingMusic() {
-        return isPlayingMusic && musicStream.isReady();
+        return musicStream.isReady();
     }
 
     /**
