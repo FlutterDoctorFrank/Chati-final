@@ -77,7 +77,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     public void send(@NotNull final Packet<?> packet) {
         if (this.manager.getEndPoint().isConnected()) {
             this.manager.getEndPoint().sendTCP(packet);
-            this.logSentPacket(packet);
+            this.logPacket(packet, true);
         }
     }
 
@@ -95,7 +95,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
 
         if (object instanceof Packet<?>) {
-            this.logReceivedPacket((Packet<?>) object);
+            this.logPacket((Packet<?>) object, false);
 
             try {
                 call((Packet<?>) object, this);
@@ -754,16 +754,15 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
         }
     }
 
-    private void logReceivedPacket(@NotNull final Packet<?> packet) {
-        final Level level = packet instanceof PacketAvatarMove || packet instanceof PacketAudioMessage ? Level.FINER : Level.FINE;
+    private void logPacket(@NotNull final Packet<?> packet, final boolean sent) {
+        final Level level = packet instanceof PacketAvatarMove ? Level.FINEST
+                : (packet instanceof PacketAudioMessage ? Level.FINER : Level.FINE);
 
-        LOGGER.log(level, String.format("Received packet from server: %s", packet));
-    }
-
-    private void logSentPacket(@NotNull final Packet<?> packet) {
-        final Level level = packet instanceof PacketAvatarMove || packet instanceof PacketAudioMessage ? Level.FINER : Level.FINE;
-
-        LOGGER.log(level, String.format("Sent packet to server: %s", packet));
+        if (sent) {
+            LOGGER.log(level, String.format("Sent packet to server: %s", packet));
+        } else {
+            LOGGER.log(level, String.format("Received packet from server: %s", packet));
+        }
     }
 
     private void logInvalidPacket(@NotNull final Packet<?> packet, @NotNull final String message) {

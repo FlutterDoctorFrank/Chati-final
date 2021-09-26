@@ -107,6 +107,7 @@ public class ClientNetworkManager extends NetworkManager<Client> implements Runn
         if (this.active) {
             try {
                 this.active = false;
+                this.endPoint.stop();
                 this.networkThread.join(5000);
             } catch (InterruptedException ignored) {
 

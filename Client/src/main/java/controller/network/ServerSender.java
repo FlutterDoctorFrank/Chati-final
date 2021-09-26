@@ -212,8 +212,8 @@ public interface ServerSender {
          * Information, dass sich die Position des Avatars geändert hat.
          * <p>
          *     Erwartet als Objekt Array die Klassen:<br>
-         *     - {@code 0}: {@link Integer}, Die X-Koordinate.<br>
-         *     - {@code 1}: {@link Integer}, Die Y-Koordinate.<br>
+         *     - {@code 0}: {@link Float}, Die X-Koordinate.<br>
+         *     - {@code 1}: {@link Float}, Die Y-Koordinate.<br>
          *     - {@code 2}: {@link Boolean}, Die Information, ob sich der Benutzer schnell fortbewegt.<br>
          *     - {@code 3}: {@link Direction}, Die Richtung, in die sich bewegt wird.
          * </p>
