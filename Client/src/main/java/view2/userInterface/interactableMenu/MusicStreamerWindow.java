@@ -79,11 +79,10 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         infoLabel = new ChatiLabel("window.entry.music-player");
 
-        musicList = new List<>(Chati.CHATI.getSkin(), "dimmed");
+        musicList = new List<>(Chati.CHATI.getSkin());
         MusicListItem[] musicListItems = EnumSet.allOf(ContextMusic.class).stream().map(MusicListItem::new).toArray(MusicListItem[]::new);
         Arrays.sort(musicListItems);
         musicList.setItems(musicListItems);
-        musicList.getStyle().over = Chati.CHATI.getSkin().getDrawable("list-selection");
         musicList.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -191,7 +190,7 @@ public class MusicStreamerWindow extends InteractableWindow {
         infoLabel.setAlignment(Align.center, Align.center);
         container.add(infoLabel).padTop(SPACING).row();
 
-        container.add(musicListScrollPane).height(6 * musicList.getItemHeight() + SPACING / 2).grow().row();
+        container.add(musicListScrollPane).height(0).grow().row();
 
         Table currentTitleTable = new Table();
         currentTitleTable.defaults().padRight(SPACING).left();
@@ -252,10 +251,9 @@ public class MusicStreamerWindow extends InteractableWindow {
         }
     }
 
-
     @Override
-    public void open() {
-        super.open();
+    public void focus() {
+        super.focus();
         if (getStage() != null) {
             getStage().setScrollFocus(musicList);
         }

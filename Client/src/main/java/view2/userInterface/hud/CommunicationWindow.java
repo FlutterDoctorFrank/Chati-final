@@ -21,6 +21,7 @@ public class CommunicationWindow extends ChatiWindow {
     private static final float HUD_WINDOW_HEIGHT = 550;
 
     private final Set<UserListEntry> communicableUserEntries;
+    private final ScrollPane userListScrollPane;
     private final Table userListContainer;
 
     /**
@@ -35,7 +36,7 @@ public class CommunicationWindow extends ChatiWindow {
         ChatiLabel communicationMediaLabel = new ChatiLabel("menu.label.communication-media"); // TODO
 
         userListContainer = new Table();
-        ScrollPane userListScrollPane = new ScrollPane(userListContainer, Chati.CHATI.getSkin());
+        userListScrollPane = new ScrollPane(userListContainer, Chati.CHATI.getSkin());
 
         showCommunicableUsers();
 
@@ -44,7 +45,6 @@ public class CommunicationWindow extends ChatiWindow {
 
         userListContainer.top();
         add(userListScrollPane).grow();
-        Chati.CHATI.getScreen().getStage().setScrollFocus(userListScrollPane);
 
         // Translatable register
         translates.add(communicationFormLabel);
@@ -63,6 +63,14 @@ public class CommunicationWindow extends ChatiWindow {
     public void close() {
         Chati.CHATI.getHeadUpDisplay().removeCommunicationWindow();
         super.close();
+    }
+
+    @Override
+    public void focus() {
+        super.focus();
+        if (getStage() != null) {
+            getStage().setScrollFocus(userListScrollPane);
+        }
     }
 
     @Override

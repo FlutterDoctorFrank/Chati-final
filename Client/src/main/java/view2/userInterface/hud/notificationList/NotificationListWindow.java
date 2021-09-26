@@ -25,6 +25,7 @@ public class NotificationListWindow extends HudMenuWindow {
 
     private final ChatiTextButton globalNotificationTabButton;
     private final ChatiTextButton worldNotificationTabButton;
+    private final ScrollPane notificationListScrollPane;
     private final Table notificationListContainer;
 
     /**
@@ -36,7 +37,7 @@ public class NotificationListWindow extends HudMenuWindow {
         this.worldNotificationEntries = new TreeSet<>();
 
         notificationListContainer = new Table();
-        ScrollPane notificationListScrollPane = new ScrollPane(notificationListContainer, Chati.CHATI.getSkin());
+        notificationListScrollPane = new ScrollPane(notificationListContainer, Chati.CHATI.getSkin());
         notificationListScrollPane.setFadeScrollBars(false);
         notificationListScrollPane.setOverscroll(false, false);
         notificationListScrollPane.setScrollingDisabled(true, false);
@@ -104,7 +105,6 @@ public class NotificationListWindow extends HudMenuWindow {
         buttonContainer.add(globalNotificationTabButton, worldNotificationTabButton);
         add(buttonContainer).growX().row();
         add(notificationListScrollPane).grow();
-        Chati.CHATI.getScreen().getStage().setScrollFocus(notificationListScrollPane);
 
         // Translatable register
         translates.add(globalNotificationTabButton);
@@ -139,6 +139,14 @@ public class NotificationListWindow extends HudMenuWindow {
         }
 
         super.act(delta);
+    }
+
+    @Override
+    public void focus() {
+        super.focus();
+        if (getStage() != null) {
+            getStage().setScrollFocus(notificationListScrollPane);
+        }
     }
 
     /**

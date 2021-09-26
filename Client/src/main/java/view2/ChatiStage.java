@@ -110,6 +110,7 @@ public class ChatiStage extends Stage {
     public void openWindow(@NotNull final ChatiWindow window) {
         openWindows.push(window);
         addActor(window);
+        window.focus();
     }
 
     /**
@@ -119,6 +120,9 @@ public class ChatiStage extends Stage {
     public void closeWindow(@NotNull final ChatiWindow window) {
         if (openWindows.remove(window)) {
             window.remove();
+            if (!openWindows.isEmpty()) {
+                openWindows.peek().focus();
+            }
         }
     }
 }

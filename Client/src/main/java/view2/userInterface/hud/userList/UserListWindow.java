@@ -26,6 +26,7 @@ public class UserListWindow extends HudMenuWindow {
     private final ChatiTextButton friendTabButton;
     private final ChatiTextButton activeUserTabButton;
     private final ChatiTextButton bannedUserTabButton;
+    private final ScrollPane userListScrollPane;
     private final Table userListContainer;
 
     /**
@@ -38,7 +39,7 @@ public class UserListWindow extends HudMenuWindow {
         this.bannedUserEntries = new TreeSet<>();
 
         userListContainer = new Table();
-        ScrollPane userListScrollPane = new ScrollPane(userListContainer, Chati.CHATI.getSkin());
+        userListScrollPane = new ScrollPane(userListContainer, Chati.CHATI.getSkin());
         userListScrollPane.setFadeScrollBars(false);
         userListScrollPane.setOverscroll(false, false);
         userListScrollPane.setScrollingDisabled(true, false);
@@ -120,7 +121,6 @@ public class UserListWindow extends HudMenuWindow {
         buttonContainer.add(friendTabButton, activeUserTabButton, bannedUserTabButton);
         add(buttonContainer).growX().row();
         add(userListScrollPane).grow();
-        Chati.CHATI.getScreen().getStage().setScrollFocus(userListScrollPane);
 
         // Translatable register
         translates.add(friendTabButton);
@@ -169,6 +169,14 @@ public class UserListWindow extends HudMenuWindow {
             }
         }
         super.act(delta);
+    }
+
+    @Override
+    public void focus() {
+        super.focus();
+        if (getStage() != null) {
+            getStage().setScrollFocus(userListScrollPane);
+        }
     }
 
     /**

@@ -86,6 +86,16 @@ public abstract class ChatiWindow extends Window implements Translatable {
     }
 
     /**
+     * Fokussiert dieses Fenster.
+     */
+    public void focus() {
+        if (getStage() != null) {
+            getStage().setKeyboardFocus(this);
+            getStage().setScrollFocus(this);
+        }
+    }
+
+    /**
      * Zeigt eine Nachricht auf dem Info-Label an.
      * @param messageKey Kennung der anzuzeigenden Nachricht.
      */
