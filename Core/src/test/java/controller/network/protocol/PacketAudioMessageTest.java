@@ -1,7 +1,6 @@
 package controller.network.protocol;
 
 import controller.network.protocol.mock.MockPacketListener;
-import model.context.spatial.ContextMusic;
 import org.junit.Assert;
 import org.junit.Test;
 import java.time.LocalDateTime;
@@ -67,5 +66,6 @@ public class PacketAudioMessageTest extends PacketTest<PacketAudioMessage> {
         // Vergleiche Sprachdaten
         Assert.assertArrayEquals(this.before.getAudioData(), this.after.getAudioData());
         Assert.assertEquals(this.before.getPosition(), this.after.getPosition(), 0.0f);
+        Assert.assertEquals(this.before.getSeconds(), this.after.getSeconds());
     }
 }
