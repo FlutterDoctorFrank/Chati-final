@@ -214,6 +214,7 @@ public class HeadUpDisplay extends Table implements Translatable {
 
         if (Chati.CHATI.isNewNotificationReceived()) {
             notificationListButton.startAnimation();
+            Chati.CHATI.getAudioManager().playSound("notification_sound.wav");
         }
         super.act(delta);
     }

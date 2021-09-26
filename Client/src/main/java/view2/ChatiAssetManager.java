@@ -3,6 +3,7 @@ package view2;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -33,9 +34,9 @@ public class ChatiAssetManager implements Disposable {
      */
     public ChatiAssetManager() {
         // Definiere Parameter für den TexturePacker.
-        String texturePackerInput = Gdx.files.internal("Client/src/main/resources/textures").path();
-        String texturePackerOutput = Gdx.files.internal("Client/src/main/resources/atlas").path();
-        String texturePackerFileName = "image_atlas";
+        String texturePackerInput = "Client/src/main/resources/textures";
+        String texturePackerOutput = "Client/src/main/resources/atlas";
+        String texturePackerFileName = "texture";
         TexturePacker.Settings texturePackerSettings = new TexturePacker.Settings();
         texturePackerSettings.maxWidth = 2048;
         texturePackerSettings.filterMin = Texture.TextureFilter.Linear;
@@ -52,7 +53,7 @@ public class ChatiAssetManager implements Disposable {
         this.assetManager = new AssetManager();
 
         // TextureAtlas in die Warteschlange des AssetManager.
-        assetManager.load(Gdx.files.internal("atlas/image_atlas.atlas").path(), TextureAtlas.class);
+        assetManager.load("atlas/image_atlas.atlas", TextureAtlas.class);
 
         // Generiere Fonts mit Hilfe eines FreeTypeFontGenerators.
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Roboto/Roboto-Regular.ttf"));
@@ -77,7 +78,11 @@ public class ChatiAssetManager implements Disposable {
         fontMap.put("font-button", fontButton);
 
         // Skin in die Warteschlange des AssetManager mit ObjectMap der generierten Fonts als Parameter.
-        assetManager.load(Gdx.files.internal("shadeui/uiskin.json").path(), Skin.class, new SkinLoader.SkinParameter(fontMap));
+        assetManager.load("shadeui/uiskin.json", Skin.class, new SkinLoader.SkinParameter(fontMap));
+
+        // Sounds in die Warteschlange des AssetManager.
+        assetManager.load("sounds/chat_message_sound.wav", Sound.class);
+        assetManager.load("sounds/notification_sound.wav", Sound.class);
 
         // Lade Ressourcen.
         assetManager.finishLoading();
@@ -88,7 +93,7 @@ public class ChatiAssetManager implements Disposable {
      * @return TextureAtlas
      */
     public @NotNull TextureAtlas getAtlas() {
-        return assetManager.get(Gdx.files.internal("atlas/image_atlas.atlas").path(), TextureAtlas.class);
+        return assetManager.get("atlas/image_atlas.atlas", TextureAtlas.class);
     }
 
     /**
@@ -114,7 +119,16 @@ public class ChatiAssetManager implements Disposable {
      * @return Der verwendete Skin.
      */
     public @NotNull Skin getSkin() {
-        return assetManager.get(Gdx.files.internal("shadeui/uiskin.json").path(), Skin.class);
+        return assetManager.get("shadeui/uiskin.json", Skin.class);
+    }
+
+    /**
+     * Gibt einen Sound zurück.
+     * @param name Name des Sounds.
+     * @return Der angeforderte Sound.
+     */
+    public @NotNull Sound getSound(@NotNull final String name) {
+        return assetManager.get("sounds/" + name, Sound.class);
     }
 
     @Override

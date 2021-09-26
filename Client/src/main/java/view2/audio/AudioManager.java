@@ -100,7 +100,7 @@ public class AudioManager implements Disposable {
      */
     public void setVolume() {
         audioConsumer.setTotalVolume(Chati.CHATI.getPreferences().getTotalVolume());
-        audioConsumer.setVoiceVolume(Chati.CHATI.getPreferences().getVoiceVolume());
+        audioConsumer.setVoiceVolume(1.1f * Chati.CHATI.getPreferences().getVoiceVolume());
         audioConsumer.setMusicVolume(0.1f * Chati.CHATI.getPreferences().getMusicVolume());
     }
 
@@ -149,6 +149,14 @@ public class AudioManager implements Disposable {
         if (audioConsumer != null && audioConsumer.isRunning()) {
             audioConsumer.receiveMusicStream(timestamp, musicData, position, seconds);
         }
+    }
+
+    /**
+     * Spielt einen Ton ab.
+     * @param soundName Name des abzuspielenden Tons.
+     */
+    public void playSound(@NotNull final String soundName) {
+        Chati.CHATI.getSound(soundName).play(0.1f * Chati.CHATI.getPreferences().getSoundVolume());
     }
 
     /**

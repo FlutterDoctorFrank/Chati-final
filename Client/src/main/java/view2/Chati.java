@@ -3,6 +3,7 @@ package view2;
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -242,6 +243,15 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      */
     public @NotNull Array<TextureAtlas.AtlasRegion> getRegions(@NotNull final String name) {
         return assetManager.getRegions(name);
+    }
+
+    /**
+     * Gibt einen Sound zurück.
+     * @param name Name des Sounds.
+     * @return Angeforderter Sound.
+     */
+    public @NotNull Sound getSound(@NotNull final String name) {
+        return assetManager.getSound(name);
     }
 
     /**

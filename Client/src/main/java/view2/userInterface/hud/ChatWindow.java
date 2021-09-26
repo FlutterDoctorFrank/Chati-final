@@ -353,6 +353,12 @@ public class ChatWindow extends Window implements Translatable {
             historyScrollPane.layout();
             historyScrollPane.scrollTo(0, 0, 0, 0);
         }
+
+        // Spiele Ton für den Erhalt einer Nachricht ab, wenn das Chatfenster nicht sichtbar ist, oder nicht ganz nach
+        // unten gescrollt ist.
+        if (!isVisible() || !isAtBottomBefore) {
+            Chati.CHATI.getAudioManager().playSound("chat_message_sound.wav");
+        }
     }
 
     /**
