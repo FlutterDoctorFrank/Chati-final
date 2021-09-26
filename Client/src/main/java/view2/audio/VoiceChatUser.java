@@ -10,6 +10,13 @@ import java.time.LocalDateTime;
  */
 public class VoiceChatUser extends AudioProducer {
 
+    /*
+     * Beginne erst mit dem Abspielen von AudioDaten, wenn mindestens Daten für eine Abspieldauer von STARTING_DELAY in
+     * Sekunden vorhanden sind. Dies führt zu einer kleinen Verzögerung, verhindert aber, dass sich bei einem
+     * verspäteten Paket der Puffer direkt leert und das Abspielen der Daten unterbrochen wird.
+     */
+    private static final float VOICE_STARTING_DELAY = 0.25f;
+
     private final IUserView sender;
 
     /**
@@ -19,6 +26,7 @@ public class VoiceChatUser extends AudioProducer {
      * @param voiceDataBlock Abzuspielende Daten.
      */
     public VoiceChatUser(@NotNull final IUserView sender, @NotNull final LocalDateTime timestamp, final short[] voiceDataBlock) {
+        super(VOICE_STARTING_DELAY);
         this.sender = sender;
         addAudioDataBlock(timestamp, voiceDataBlock);
     }

@@ -13,19 +13,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class MusicStream extends AudioProducer {
 
     /*
-     * Der Server liefert die Streamingdaten ggf. mit einer leicht abweichenden Geschwindigkeit, als sie vom Client
-     * abgespielt werden. In diesem Fall wird die Geschwindigkeit des Abspielens von Musikdaten leicht angepasst, um
-     * einen leeren oder unendlich steigenden Puffer zu vermeiden.
+     * Beginne erst mit dem Abspielen von AudioDaten, wenn mindestens Daten für eine Abspieldauer von STARTING_DELAY in
+     * Sekunden vorhanden sind. Dies führt zu einer kleinen Verzögerung, verhindert aber, dass sich bei einem
+     * verspäteten Paket der Puffer direkt leert und das Abspielen der Daten unterbrochen wird.
      */
-    private static final float MAX_SLOW_DOWN_RATE = 1.1f;
-    private static final float MIN_SLOW_DOWN_RATE = 0.9f;
-    private static final float SLOW_DOWN_STEP = 0.001f;
+    private static final float MUSIC_STARTING_DELAY = 1;
 
     private final Queue<Float> positionQueue;
     private final Queue<Integer> secondsQueue;
 
     private float slowDownRate;
-    private int lastQueueSize;
 
     private float currentPosition;
     private int currentSeconds;
@@ -34,10 +31,10 @@ public class MusicStream extends AudioProducer {
      * Erzeugt eine neue Instanz des MusicStream.
      */
     public MusicStream() {
+        super(MUSIC_STARTING_DELAY);
         this.positionQueue = new LinkedBlockingQueue<>();
         this.secondsQueue = new LinkedBlockingQueue<>();
         this.slowDownRate = 1;
-        this.lastQueueSize = 0;
         this.currentPosition = 0;
         this.currentSeconds = 0;
     }
@@ -63,15 +60,12 @@ public class MusicStream extends AudioProducer {
 
     @Override
     public void addAudioDataBlock(@NotNull final LocalDateTime timestamp, final short[] musicDataBlock) {
-        int currentQueueSize = queueSizeInBlocks();
-        if (ready && (currentQueueSize < MIN_BLOCKS || currentQueueSize < lastQueueSize) && slowDownRate < MAX_SLOW_DOWN_RATE) {
-            // Puffer zu klein oder wird kleiner. Sample runter.
-            slowDownRate += SLOW_DOWN_STEP;
-        } else if (ready && currentQueueSize >= MIN_BLOCKS && currentQueueSize > lastQueueSize && slowDownRate > MIN_SLOW_DOWN_RATE) {
-            // Puffer nicht zu klein und wird größer. Sample hoch.
-            slowDownRate -= SLOW_DOWN_STEP;
-        }
-        lastQueueSize = currentQueueSize;
+        /*
+         * Der Server liefert die Streamingdaten ggf. mit einer leicht abweichenden Geschwindigkeit, als sie vom Client
+         * abgespielt werden. In diesem Fall wird die Geschwindigkeit des Abspielens von Musikdaten leicht angepasst, um
+         * einen leeren oder unendlich steigenden Puffer zu vermeiden.
+         */
+        slowDownRate = -1 / 512f * queueSizeInBlocks() + 1;
 
         float numPlaybackSample = 0;
         for (short musicData : musicDataBlock) {

@@ -80,7 +80,7 @@ public class AudioManager implements Disposable {
                 }
             }
 
-            if (Chati.CHATI.isMusicChanged()) {
+            if (Chati.CHATI.isMusicChanged() && internUser != null && internUser.getMusic() == null) {
                 audioConsumer.stopMusic();
             }
         }

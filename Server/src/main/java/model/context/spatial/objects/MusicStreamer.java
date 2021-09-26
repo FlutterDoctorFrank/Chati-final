@@ -70,9 +70,6 @@ public class MusicStreamer extends Interactable implements Runnable {
     /** Die Information, ob das Senden von Musikdaten gerade pausiert ist. */
     private boolean isPaused;
 
-    /** Dient dazu, dem Streamingthread die Information zu vermitteln, dass sich das Musikstück geändert hat. */
-    private volatile boolean songChanged;
-
     /**
      * Erzeugt eine neue Instanz des MusicStreamer.
      * @param objectName Name des Objekts.
@@ -87,7 +84,7 @@ public class MusicStreamer extends Interactable implements Runnable {
         super(objectName, parent, communicationRegion, communicationMedia, expanse, ContextMenu.MUSIC_STREAMER_MENU);
         this.musicStreamBuffer = null;
         this.isRunning = false;
-        this.isPaused = true;
+        this.isPaused = false;
         start();
     }
 
@@ -122,9 +119,7 @@ public class MusicStreamer extends Interactable implements Runnable {
                 }
                 setMusic(music);
                 loadBuffer();
-                if (!isPaused) {
-                    play();
-                }
+                play();
                 break;
             case MENU_OPTION_PAUSE: // Pausiere das Abspielen des Musikstücks oder setze es fort, falls es pausiert ist.
                 if (musicStreamBuffer == null || !isRunning) {
@@ -240,19 +235,12 @@ public class MusicStreamer extends Interactable implements Runnable {
             try {
                 synchronized (this) {
                     // Warte, solange die Musik pausiert ist oder keine Daten verfügbar sind.
-                    while (isPaused || !musicStreamBuffer.hasRemaining()) {
+                    while (isPaused || musicStreamBuffer == null || !musicStreamBuffer.hasRemaining()) {
                         if (!isRunning) {
                             break outer;
                         }
                         wait();
                     }
-                }
-
-                // Wenn sich die Musik geändert hat, warte eine gewisse Zeit um Empfängern die Möglichkeit zu geben
-                // ihre Puffer zu entleeren.
-                if (songChanged) {
-                    songChanged = false;
-                    Thread.sleep(250);
                 }
 
                 // Sende Daten des laufenden Musikstücks, solange diese vorhanden sind.
@@ -311,7 +299,6 @@ public class MusicStreamer extends Interactable implements Runnable {
 
     @Override
     public void setMusic(@Nullable final ContextMusic music) {
-        songChanged = true;
         musicStreamBuffer = ByteBuffer.allocate(0);
         parent.setMusic(music);
     }

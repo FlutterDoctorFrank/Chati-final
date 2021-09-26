@@ -11,23 +11,19 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public abstract class AudioProducer {
 
-    /*
-     * Beginne erst mit dem Abspielen von AudioDaten, wenn mindestens Daten für eine Abspieldauer von STARTING_DELAY in
-     * Sekunden vorhanden sind. Dies führt zu einer kleinen Verzögerung, verhindert aber, dass sich bei einem
-     * verspäteten Paket der Puffer direkt leert und das Abspielen der Daten unterbrochen wird.
-     */
-    protected static final float STARTING_DELAY = 0.25f;
-    protected static final int MIN_BLOCKS = (int) (STARTING_DELAY * AudioManager.SEND_RATE);
-
     protected final Queue<Short> audioDataQueue;
+    protected final int minBlocks;
     protected LocalDateTime lastTimeReceived;
     protected boolean ready;
 
     /**
      * Erzeugt eine neue Instanz des AudioProducer.
+     * @param startingDelay Länge der Daten in Sekunden, die vorhanden sein muss, bevor Daten aus diesem AudioProducer
+     * entnommmen werden können.
      */
-    protected AudioProducer() {
+    protected AudioProducer(final float startingDelay) {
         this.audioDataQueue = new LinkedBlockingQueue<>();
+        this.minBlocks = (int) (startingDelay * AudioManager.SEND_RATE);
     }
 
     /**
@@ -37,7 +33,7 @@ public abstract class AudioProducer {
      */
     public void addAudioDataBlock(@NotNull LocalDateTime timestamp, final short[] audioBlock) {
         this.lastTimeReceived = timestamp;
-        if (!ready && queueSizeInBlocks() > MIN_BLOCKS) {
+        if (!ready && queueSizeInBlocks() > minBlocks) {
             ready = true;
         }
     }
