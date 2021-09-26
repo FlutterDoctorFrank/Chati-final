@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import model.user.IInternUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.userInterface.ChatiWindow;
 import view2.userInterface.hud.ChatWindow;
@@ -31,18 +32,21 @@ public class ChatiStage extends Stage {
             if (KeyCommand.OPEN_CHAT.matches(keycode)) {
                 Chati.CHATI.getHeadUpDisplay().showChatWindow();
             }
-            if (KeyCommand.OPEN_COMMUNICATION_MENU.matches(keycode)) {
-                if (Chati.CHATI.getHeadUpDisplay().isCommunicationWindowOpen()) {
-                    Chati.CHATI.getHeadUpDisplay().closeCommunicationWindow();
-                } else {
-                    Chati.CHATI.getHeadUpDisplay().openCommunicationWindow();
+            IInternUserView internUser = Chati.CHATI.getInternUser();
+            if (internUser != null && internUser.getCurrentWorld() != null) {
+                if (KeyCommand.OPEN_COMMUNICATION_MENU.matches(keycode)) {
+                    if (Chati.CHATI.getHeadUpDisplay().isCommunicationWindowOpen()) {
+                        Chati.CHATI.getHeadUpDisplay().closeCommunicationWindow();
+                    } else {
+                        Chati.CHATI.getHeadUpDisplay().openCommunicationWindow();
+                    }
                 }
-            }
-            if (KeyCommand.TOGGLE_MICROPHONE.matches(keycode)) {
-                Chati.CHATI.getHeadUpDisplay().toggleMicrophone();
-            }
-            if (KeyCommand.TOGGLE_SOUND.matches(keycode)) {
-                Chati.CHATI.getHeadUpDisplay().toggleSound();
+                if (KeyCommand.TOGGLE_MICROPHONE.matches(keycode)) {
+                    Chati.CHATI.getHeadUpDisplay().toggleMicrophone();
+                }
+                if (KeyCommand.TOGGLE_SOUND.matches(keycode)) {
+                    Chati.CHATI.getHeadUpDisplay().toggleSound();
+                }
             }
             if (KeyCommand.OPEN_USER_MENU.matches(keycode)) {
                 if (Chati.CHATI.getHeadUpDisplay().isUserMenuOpen()) {

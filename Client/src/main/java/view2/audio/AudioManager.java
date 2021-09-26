@@ -100,7 +100,7 @@ public class AudioManager implements Disposable {
      */
     public void setVolume() {
         audioConsumer.setTotalVolume(Chati.CHATI.getPreferences().getTotalVolume());
-        audioConsumer.setVoiceVolume(1.1f * Chati.CHATI.getPreferences().getVoiceVolume());
+        audioConsumer.setVoiceVolume(Chati.CHATI.getPreferences().getVoiceVolume());
         audioConsumer.setMusicVolume(0.1f * Chati.CHATI.getPreferences().getMusicVolume());
     }
 
