@@ -4,6 +4,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import controller.network.protocol.Packet;
 import controller.network.protocol.PacketAvatarMove;
+import controller.network.protocol.PacketAvatarMove.AvatarAction;
 import controller.network.protocol.PacketChatMessage;
 import controller.network.protocol.PacketListener;
 import controller.network.protocol.PacketListenerOut;
@@ -749,8 +750,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     }
 
     private void logPacket(@NotNull final Packet<?> packet, final boolean sent) {
-        final Level level = packet instanceof PacketAvatarMove ? Level.FINEST
-                : (packet instanceof PacketAudioMessage ? Level.FINER : Level.FINE);
+        final Level level = (packet instanceof PacketAvatarMove && ((PacketAvatarMove) packet).getAction() == AvatarAction.MOVE_AVATAR)
+                || packet instanceof PacketAudioMessage ? Level.FINER : Level.FINE;
 
         if (sent) {
             LOGGER.log(level, String.format("Sent packet to server: %s", packet));

@@ -68,10 +68,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
     public void send(@NotNull final Packet<?> packet) {
         if (this.connection.isConnected()) {
             this.connection.sendTCP(packet);
-
-            if (!(packet instanceof PacketAvatarMove || packet instanceof PacketAudioMessage)) {
-                LOGGER.info(String.format("Sent packet to connection %s: %s", this.connection.getID(), packet));
-            }
+            this.logPacket(packet, true);
         }
     }
 
@@ -89,9 +86,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         }
 
         if (object instanceof Packet<?>) {
-            if (!(object instanceof PacketAvatarMove || object instanceof PacketAudioMessage)) {
-                LOGGER.info(String.format("Received packet from connection %s: %s", connection.getID(), object));
-            }
+            this.logPacket((Packet<?>) object, false);
 
             try {
                 call((Packet<?>) object, this);
@@ -546,6 +541,17 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
         }
 
         return this.connection.toString();
+    }
+
+    private void logPacket(@NotNull final Packet<?> packet, final boolean sent) {
+        final Level level = (packet instanceof PacketAvatarMove && ((PacketAvatarMove) packet).getAction() == AvatarAction.MOVE_AVATAR)
+                || packet instanceof PacketAudioMessage ? Level.FINER : Level.FINE;
+
+        if (sent) {
+            LOGGER.log(level, String.format("Sent packet to connection %s: %s", this.connection.getID(), packet));
+        } else {
+            LOGGER.log(level, String.format("Received packet from connection %s: %s", this.connection.getID(), packet));
+        }
     }
 
     private void logInvalidPacket(@NotNull final Packet<?> packet, @NotNull final String message) {

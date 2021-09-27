@@ -16,12 +16,17 @@ import model.user.User;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class Launcher implements Runnable {
@@ -135,14 +140,26 @@ public class Launcher implements Runnable {
                     launcher.network.setPorts(-1, udpPort);
                 }
 
-                System.out.println("Starting Server...");
+                try {
+                    final InputStream properties = Launcher.class.getClassLoader().getResourceAsStream("logging.properties");
+                    final File home = new File(System.getProperty("user.dir"), "logs");
+
+                    if (home.mkdirs()) {
+                        System.out.println("Created logs directory for Chati");
+                    }
+
+                    LogManager.getLogManager().readConfiguration(properties);
+                } catch (IOException | NullPointerException ex) {
+                    System.err.println("Failed to load logging properties. Using default configuration.");
+                }
+
+                Logger.getLogger("chati").info("Starting Server...");
                 launcher.launch();
             }
         } catch (OptionException ex) {
             System.err.println("Failed to parse arguments: " + ex.getMessage());
         } catch (Exception ex) {
-            System.err.println("Exception while launching/running application: " + ex.getMessage());
-            ex.printStackTrace();
+            Logger.getLogger("chati").log(Level.SEVERE, "Exception while launching/running application", ex);
         }
     }
 

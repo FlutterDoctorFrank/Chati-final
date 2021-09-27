@@ -124,7 +124,7 @@ public class Launcher {
                     System.err.println("Failed to load logging properties. Using default configuration.");
                 }
 
-                System.out.println("Starting Client...");
+                Logger.getLogger("chati").info("Starting Client...");
                 launcher.launch((boolean) options.valueOf("fullscreen"));
             }
         } catch (OptionException ex) {
