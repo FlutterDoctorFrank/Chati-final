@@ -227,7 +227,11 @@ public class HeadUpDisplay extends Table implements Translatable {
             }
         } else if (restoreChat) {
             restoreChat = false;
-            chatWindow.show();
+
+            // Öffne das Chatfenster nur, wenn der WorldScreen aktiv ist.
+            if (Chati.CHATI.getScreen().equals(Chati.CHATI.getWorldScreen())) {
+                chatWindow.show();
+            }
         }
 
         invalidate();
