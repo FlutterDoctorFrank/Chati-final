@@ -5,6 +5,8 @@ import controller.network.protocol.PacketMenuOption;
 import model.context.ContextID;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
+import java.util.logging.Level;
 
 public class PacketMenuOptionTest extends PacketClientTest {
 
@@ -34,5 +36,40 @@ public class PacketMenuOptionTest extends PacketClientTest {
         Assert.assertEquals(arguments.length, packet.getArguments().length);
         Assert.assertArrayEquals(arguments, packet.getArguments());
         Assert.assertEquals(option, packet.getOption());
+    }
+
+    @Test
+    public void handleUnexpectedPacketTest() {
+        final PacketMenuOption packet = Mockito.mock(PacketMenuOption.class);
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Can not receive menu option while user is not logged in"));
+
+        this.login();
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Can not receive menu option while user is not in a world"));
+    }
+
+    @Test
+    public void handleCorrectPacketTest() {
+        final PacketMenuOption packet = Mockito.mock(PacketMenuOption.class);
+
+        Mockito.when(packet.getContextId()).thenReturn(randomContextId());
+        Mockito.when(packet.getArguments()).thenReturn(new String[]{randomString()});
+        Mockito.when(packet.getOption()).thenReturn(randomInt(5));
+
+        this.login();
+        this.joinWorld();
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertFalse(this.handler.logged());
+        Assert.assertTrue(this.view.called("menu-action-response"));
     }
 }

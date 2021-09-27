@@ -7,6 +7,8 @@ import model.context.ContextID;
 import model.context.spatial.ContextMap;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
+import java.util.logging.Level;
 
 public class PacketWorldActionTest extends PacketClientTest {
 
@@ -89,5 +91,125 @@ public class PacketWorldActionTest extends PacketClientTest {
         Assert.assertEquals(Action.DELETE, packet.getAction());
         Assert.assertNotNull(packet.getContextId());
         Assert.assertEquals(worldId, packet.getContextId());
+    }
+
+    @Test
+    public void handleUnexpectedPacketTest() {
+        final PacketWorldAction packet = Mockito.mock(PacketWorldAction.class);
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Can not receive world action while user is not logged in"));
+        Mockito.when(packet.getAction()).thenReturn(Action.LEAVE);
+
+        this.login();
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "user is not in a world"));
+        Assert.assertFalse(this.intern.called("leave-world"));
+        Assert.assertFalse(this.view.called("leave-world"));
+        Mockito.when(packet.getAction()).thenReturn(Action.JOIN);
+
+        this.joinWorld();
+        this.view.reset();
+        this.intern.reset();
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "user is already in a world"));
+        Assert.assertFalse(this.intern.called("join-world"));
+        Assert.assertFalse(this.view.called("join-world-response"));
+        Mockito.when(packet.getAction()).thenReturn(Action.LEAVE);
+        Mockito.when(packet.getContextId()).thenReturn(randomContextId());
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Can not leave a world that has not been entered"));
+        Assert.assertFalse(this.intern.called("leave-world"));
+        Assert.assertFalse(this.view.called("leave-world"));
+    }
+
+    @Test
+    public void handleInvalidPacketTest() {
+        final PacketWorldAction packet = Mockito.mock(PacketWorldAction.class);
+
+        Mockito.when(packet.getAction()).thenReturn(Action.JOIN);
+
+        this.login();
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Context-ID of the joining world can not be null"));
+        Assert.assertFalse(this.intern.called("join-world"));
+        Mockito.when(packet.getContextId()).thenReturn(randomContextId());
+        Mockito.when(packet.isSuccess()).thenReturn(true);
+
+        this.intern.joinWorld(true);
+        this.handler.reset();
+        this.connection.handle(packet);
+        this.intern.joinWorld(false);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Server tried to send world join for unknown world"));
+        Assert.assertTrue(this.intern.called("join-world"));
+        Assert.assertFalse(this.view.called("join-world-response"));
+        Mockito.when(packet.getAction()).thenReturn(Action.LEAVE);
+        Mockito.when(packet.getContextId()).thenReturn(null);
+
+        this.joinWorld();
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Context-ID of the leaving world can not be null"));
+        Assert.assertFalse(this.intern.called("leave-world"));
+        Assert.assertFalse(this.view.called("leave-world"));
+    }
+
+    @Test
+    public void handleCorrectActionTest() {
+        final PacketWorldAction packet = Mockito.mock(PacketWorldAction.class);
+
+        Mockito.when(packet.isSuccess()).thenReturn(true);
+        Mockito.when(packet.getAction()).thenReturn(Action.CREATE);
+
+        this.login();
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertFalse(this.handler.logged());
+        Assert.assertTrue(this.view.called("create-world-response"));
+        Mockito.when(packet.getAction()).thenReturn(Action.DELETE);
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertFalse(this.handler.logged());
+        Assert.assertTrue(this.view.called("delete-world-response"));
+        Mockito.when(packet.getAction()).thenReturn(Action.JOIN);
+        Mockito.when(packet.getContextId()).thenReturn(randomContextId());
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertFalse(this.handler.logged());
+        Assert.assertTrue(this.intern.called("join-world"));
+        Assert.assertTrue(this.view.called("join-world-response"));
+        Mockito.when(packet.getAction()).thenReturn(Action.LEAVE);
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertFalse(this.handler.logged());
+        Assert.assertTrue(this.intern.called("leave-world"));
+        Assert.assertTrue(this.view.called("leave-world"));
     }
 }

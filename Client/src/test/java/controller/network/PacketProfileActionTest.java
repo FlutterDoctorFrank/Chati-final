@@ -7,6 +7,8 @@ import model.user.Avatar;
 import model.user.Status;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
+import java.util.logging.Level;
 
 public class PacketProfileActionTest extends PacketClientTest {
 
@@ -131,5 +133,115 @@ public class PacketProfileActionTest extends PacketClientTest {
         Assert.assertEquals(Action.LOGOUT, packet.getAction());
         Assert.assertNotNull(packet.getPassword());
         Assert.assertTrue(packet.getPassword().isEmpty());
+    }
+
+    @Test
+    public void handleUnexpectedPacketTest() {
+        final PacketProfileAction packet = Mockito.mock(PacketProfileAction.class);
+
+        Mockito.when(packet.getAction()).thenReturn(Action.LOGOUT);
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Can not change/logout/delete user while user is not logged in"));
+        Mockito.when(packet.getAction()).thenReturn(Action.LOGIN);
+
+        this.login();
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Can not login/register user while user is already logged in"));
+    }
+
+    @Test
+    public void handleInvalidPacketTest() {
+        final PacketProfileAction packet = Mockito.mock(PacketProfileAction.class);
+
+        Mockito.when(packet.getAction()).thenReturn(Action.LOGIN);
+        Mockito.when(packet.isSuccess()).thenReturn(true);
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "User-ID of logged in user can not be null"));
+        Mockito.when(packet.getUserId()).thenReturn(randomUniqueId());
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Name of logged in user can not be null"));
+        Mockito.when(packet.getName()).thenReturn(randomString());
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Avatar of logged in user can not be null"));
+        Mockito.when(packet.getAction()).thenReturn(Action.CHANGE_AVATAR);
+
+        this.login();
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "New Avatar of changed user can not be null"));
+    }
+
+    @Test
+    public void handleCorrectActionTest() {
+        final PacketProfileAction packet = Mockito.mock(PacketProfileAction.class);
+
+        Mockito.when(packet.getAction()).thenReturn(Action.REGISTER);
+        Mockito.when(packet.isSuccess()).thenReturn(true);
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertFalse(this.handler.logged());
+        Assert.assertTrue(this.view.called("registration-response"));
+
+        this.login();
+
+        Assert.assertFalse(this.handler.logged());
+        Assert.assertTrue(this.view.called("login-response"));
+        Mockito.when(packet.getAction()).thenReturn(Action.CHANGE_AVATAR);
+        Mockito.when(packet.getAvatar()).thenReturn(randomEnum(Avatar.class));
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertFalse(this.handler.logged());
+        Assert.assertTrue(this.intern.called("set-avatar"));
+        Assert.assertTrue(this.view.called("avatar-change-response"));
+        Mockito.when(packet.getAction()).thenReturn(Action.CHANGE_PASSWORD);
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertFalse(this.handler.logged());
+        Assert.assertTrue(this.view.called("password-change-response"));
+        Mockito.when(packet.getAction()).thenReturn(Action.LOGOUT);
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertFalse(this.handler.logged());
+        Assert.assertTrue(this.manager.called("logout"));
+        Assert.assertTrue(this.view.called("logout"));
+        Mockito.when(packet.getAction()).thenReturn(Action.DELETE);
+
+        this.login();
+        this.handler.reset();
+        this.manager.reset();
+        this.connection.handle(packet);
+
+        Assert.assertFalse(this.handler.logged());
+        Assert.assertTrue(this.manager.called("logout"));
+        Assert.assertTrue(this.view.called("delete-account-response"));
     }
 }

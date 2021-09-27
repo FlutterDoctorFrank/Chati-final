@@ -153,7 +153,6 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             return;
                         }
 
-                        //user.setInCurrentRoom(true);
                         user.setMovable(packet.isMovable());
                         user.setLocation(packet.getPosX(), packet.getPosY(), true, false, packet.getDirection());
                         break;
@@ -169,7 +168,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         break;
 
                     case REMOVE_AVATAR:
-                        //user.setInCurrentRoom(false);
+                        user.leaveRoom();
                         break;
                 }
             } catch (UserNotFoundException ex) {
@@ -450,11 +449,6 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                     }
 
                     if (packet.isSuccess()) {
-                        if (packet.getName() == null) {
-                            this.logInvalidPacket(packet, "Name of the joining world can not be null");
-                            return;
-                        }
-
                         try {
                             this.getIntern().joinWorld(packet.getContextId());
                             this.worldId = packet.getContextId();
@@ -566,7 +560,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                     this.getIntern().joinRoom(packet.getContextId(), packet.getName(), packet.getMap());
                 } catch (ContextNotFoundException ex) {
                     // Der zu betretende Raum ist dem Model nicht bekannt.
-                    LOGGER.warning("Server tried to send context join unknown room: " + packet.getContextId());
+                    LOGGER.warning("Server tried to send context join unknown room with id: " + packet.getContextId());
                 }
             }
         } else {
@@ -736,7 +730,6 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                         }
 
                         user.setReport(packet.getContextId(), info.getFlags().contains(Flag.REPORTED));
-
                     }
                     break;
 

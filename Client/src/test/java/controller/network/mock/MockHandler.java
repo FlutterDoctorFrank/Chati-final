@@ -16,7 +16,7 @@ public class MockHandler extends Handler {
         final Logger logger = Logger.getLogger(identifier);
 
         logger.setLevel(Level.ALL);
-        logger.setUseParentHandlers(false);
+        //logger.setUseParentHandlers(false);
         logger.addHandler(this);
 
         this.records = new ArrayList<>();
