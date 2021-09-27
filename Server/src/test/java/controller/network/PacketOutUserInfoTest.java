@@ -33,6 +33,7 @@ public class PacketOutUserInfoTest extends PacketServerTest {
     public void globalFriendPackagingTest() {
         final IUser target = Mockito.mock(IUser.class);
         final IWorld world = Mockito.mock(IWorld.class);
+        final IRoom room = Mockito.mock(IRoom.class);
         final ILocation location = Mockito.mock(ILocation.class);
         final Map<UUID, IUser> friends = new HashMap<>();
 
@@ -41,6 +42,8 @@ public class PacketOutUserInfoTest extends PacketServerTest {
         Mockito.when(target.getStatus()).thenReturn(randomEnum(Status.class));
         Mockito.when(target.getWorld()).thenReturn(world);
         Mockito.when(target.getLocation()).thenReturn(location);
+        Mockito.when(location.getRoom()).thenReturn(room);
+        Mockito.when(room.isPrivate()).thenReturn(randomBoolean());
         Mockito.when(world.getContextId()).thenReturn(randomContextId());
         friends.put(target.getUserId(), target);
         Mockito.when(this.user.getFriends()).thenReturn(friends);
@@ -54,6 +57,7 @@ public class PacketOutUserInfoTest extends PacketServerTest {
         Assert.assertNotNull(packet.getInfo().getName());
         Assert.assertEquals(target.getUsername(), packet.getInfo().getName());
         Assert.assertEquals(world.getContextId(), packet.getInfo().getWorld());
+        Assert.assertEquals(room.isPrivate(), packet.getInfo().getInPrivateRoom());
         Assert.assertTrue(packet.getInfo().getFlags().contains(Flag.FRIEND));
     }
 
@@ -106,6 +110,7 @@ public class PacketOutUserInfoTest extends PacketServerTest {
         Mockito.when(target.getLocation()).thenReturn(location);
         Mockito.when(location.getRoom()).thenReturn(room);
         Mockito.when(room.getContextId()).thenReturn(randomContextId());
+        Mockito.when(room.isPrivate()).thenReturn(randomBoolean());
         Mockito.when(world.getContextId()).thenReturn(randomContextId());
         Mockito.when(world.getBannedUsers()).thenReturn(Collections.emptyMap());
         Mockito.when(world.getReportedUsers()).thenReturn(collection);
@@ -127,6 +132,7 @@ public class PacketOutUserInfoTest extends PacketServerTest {
         Assert.assertEquals(target.getAvatar(), packet.getInfo().getAvatar());
         Assert.assertEquals(world.getContextId(), packet.getInfo().getWorld());
         Assert.assertEquals(room.getContextId(), packet.getInfo().getRoom());
+        Assert.assertEquals(room.isPrivate(), packet.getInfo().getInPrivateRoom());
         Assert.assertTrue(packet.getInfo().getFlags().contains(Flag.FRIEND));
         Assert.assertTrue(packet.getInfo().getFlags().contains(Flag.IGNORED));
         Assert.assertTrue(packet.getInfo().getFlags().contains(Flag.REPORTED));

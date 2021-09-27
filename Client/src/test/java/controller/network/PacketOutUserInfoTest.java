@@ -124,6 +124,7 @@ public class PacketOutUserInfoTest extends PacketClientTest {
         Assert.assertFalse(this.handler.logged());
         Assert.assertTrue(this.intern.called("set-status"));
         Assert.assertTrue(this.intern.called("set-avatar"));
+        Assert.assertTrue(this.intern.called("set-in-private-room"));
         Assert.assertTrue(this.intern.called("join-world"));
         Assert.assertTrue(this.intern.called("join-room"));
         Assert.assertTrue(this.intern.called("set-report"));

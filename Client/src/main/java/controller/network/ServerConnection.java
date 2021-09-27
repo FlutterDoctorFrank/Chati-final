@@ -710,6 +710,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                     user.setFriend(info.getFlags().contains(Flag.FRIEND));
                     user.setIgnored(info.getFlags().contains(Flag.IGNORED));
+                    user.setInPrivateRoom(info.getInPrivateRoom());
 
                     if (info.getWorld() != null) {
                         user.joinWorld(info.getWorld());

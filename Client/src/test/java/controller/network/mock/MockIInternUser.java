@@ -24,18 +24,11 @@ public class MockIInternUser implements IInternUserController {
     private final Set<String> calls;
 
     private final UUID userId;
-    private final String username;
-    private Avatar avatar;
-    private Status status;
     private ContextID world;
 
-    public MockIInternUser(@NotNull final UUID userId, @NotNull final String username,
-                           @NotNull final Status status, @NotNull final Avatar avatar) {
+    public MockIInternUser(@NotNull final UUID userId) {
         this.calls = new HashSet<>();
         this.userId = userId;
-        this.username = username;
-        this.avatar = avatar;
-        this.status = status;
     }
 
     public @NotNull UUID getUserId() {
@@ -104,19 +97,17 @@ public class MockIInternUser implements IInternUserController {
 
     @Override
     public void setUsername(@NotNull final String username) {
-
+        this.calls.add("set-username");
     }
 
     @Override
     public void setStatus(@NotNull final Status status) {
         this.calls.add("set-status");
-        this.status = status;
     }
 
     @Override
     public void setAvatar(@NotNull final Avatar avatar) {
         this.calls.add("set-avatar");
-        this.avatar = avatar;
     }
 
     private boolean unknownWorld;
@@ -142,7 +133,7 @@ public class MockIInternUser implements IInternUserController {
     }
 
     @Override
-    public void joinRoom(@NotNull final ContextID roomId) throws ContextNotFoundException {
+    public void joinRoom(@NotNull final ContextID roomId) {
         this.calls.add("join-room");
     }
 
@@ -153,7 +144,7 @@ public class MockIInternUser implements IInternUserController {
 
     @Override
     public void setInPrivateRoom(boolean isInPrivateRoom) {
-
+        this.calls.add("set-in-private-room");
     }
 
     @Override

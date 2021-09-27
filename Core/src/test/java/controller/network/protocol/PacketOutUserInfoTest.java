@@ -105,6 +105,7 @@ public class PacketOutUserInfoTest extends PacketTest<PacketOutUserInfo> {
             Assert.assertNull(this.after.getInfo().getRoom());
         }
 
+        Assert.assertEquals(this.before.getInfo().getInPrivateRoom(), this.after.getInfo().getInPrivateRoom());
         Assert.assertEquals(this.before.getInfo().getStatus(), this.after.getInfo().getStatus());
         Assert.assertEquals(this.before.getInfo().getFlags(), this.after.getInfo().getFlags());
     }

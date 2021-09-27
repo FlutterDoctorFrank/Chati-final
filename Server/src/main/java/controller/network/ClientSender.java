@@ -110,6 +110,10 @@ public interface ClientSender {
 
                         if (other.getWorld() != null) {
                             info.setWorld(other.getWorld().getContextId());
+
+                            if (other.getLocation() != null) {
+                                info.setInPrivateRoom(other.getLocation().getRoom().isPrivate());
+                            }
                         }
 
                         if (world.equals(other.getWorld())) {
@@ -149,6 +153,10 @@ public interface ClientSender {
 
                             if (other.getWorld() != null) {
                                 info.setWorld(other.getWorld().getContextId());
+
+                                if (other.getLocation() != null) {
+                                    info.setInPrivateRoom(other.getLocation().getRoom().isPrivate());
+                                }
                             }
 
                             return new PacketOutUserInfo(null, Action.UPDATE_USER, info);

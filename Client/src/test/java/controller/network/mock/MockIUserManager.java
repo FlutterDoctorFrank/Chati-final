@@ -31,7 +31,7 @@ public class MockIUserManager implements IUserManagerController {
     public void login(@NotNull final UUID userId, @NotNull final String username,
                       @NotNull final Status status, @NotNull final Avatar avatar) {
         this.calls.add("login");
-        this.intern = new MockIInternUser(userId, username, status, avatar);
+        this.intern = new MockIInternUser(userId);
     }
 
     @Override

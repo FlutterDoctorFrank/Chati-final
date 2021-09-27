@@ -68,6 +68,7 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         PacketUtils.writeNullableEnum(output, this.info.status);
         PacketUtils.writeNullableContextId(output, this.info.world);
         PacketUtils.writeNullableContextId(output, this.info.room);
+        output.writeBoolean(this.info.privateRoom);
 
         /*
          * Um die gesetzten Flags der Benutzerinformation in serialisierter Form kompakt zu halten, werden die Flags
@@ -94,6 +95,7 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         this.info.status = PacketUtils.readNullableEnum(input, Status.class);
         this.info.world = PacketUtils.readNullableContextId(input);
         this.info.room = PacketUtils.readNullableContextId(input);
+        this.info.privateRoom = input.readBoolean();
 
         /*
          * Wie in der #write()-Methode beschrieben, werden die gesetzten Flags in ein Bitfeld geschrieben und
@@ -151,6 +153,7 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         private Status status;
         private ContextID world;
         private ContextID room;
+        private boolean privateRoom;
 
         private Set<Flag> flags;
 
@@ -237,6 +240,22 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         }
 
         /**
+         * Gibt zurück, ob sich der Benutzer in einem privaten Raum befindet.
+         * @return true, wenn der Benutzer in einem privaten Raum ist, ansonsten false.
+         */
+        public boolean getInPrivateRoom() {
+            return this.privateRoom;
+        }
+
+        /**
+         * Setzt, ob sich der Benutzer in einem privaten Raum befindet.
+         * @param privateRoom true, wenn der Benutzer in einem privaten Raum ist, ansonsten false.
+         */
+        public void setInPrivateRoom(final boolean privateRoom) {
+            this.privateRoom = privateRoom;
+        }
+
+        /**
          * Gibt zurück, in welcher Welt sich der Benutzer befindet.
          * @return die Welt des Benutzers oder null.
          */
@@ -271,7 +290,8 @@ public class PacketOutUserInfo implements Packet<PacketListenerOut> {
         @Override
         public @NotNull String toString() {
             return "{userId=" + this.userId + ", name='" + this.name + "', avatar=" + this.avatar + ", status="
-                    + this.status + ", world=" + this.world + ", room=" + this.room + ", flags=" + this.flags + "}";
+                    + this.status + ", world=" + this.world + ", room=" + this.room  + ", private="
+                    + this.privateRoom + ", flags=" + this.flags + "}";
         }
 
         @Override
