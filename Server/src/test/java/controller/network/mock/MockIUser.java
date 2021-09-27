@@ -1,5 +1,6 @@
 package controller.network.mock;
 
+import com.badlogic.gdx.utils.Null;
 import model.context.ContextID;
 import model.context.global.IGlobalContext;
 import model.context.spatial.Direction;
@@ -104,7 +105,7 @@ public class MockIUser implements IUser {
     }
 
     @Override
-    public void chat(@NotNull final String message) {
+    public void chat(@NotNull final String message, final byte[] imageData, @Nullable final String imageName) {
         this.calls.add("chat");
     }
 

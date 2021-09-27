@@ -6,6 +6,7 @@ import model.exception.NotificationNotFoundException;
 import model.user.User;
 import model.user.UserTesten;
 import model.user.account.UserAccountManager;
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -59,7 +60,7 @@ public class FriendRequestTest {
     }
 
     class TestClientSender implements ClientSender {
-        public void send(SendAction sendAction, Object object) {
+        public void send(@NotNull SendAction sendAction, @NotNull Object object) {
 
         }
     }

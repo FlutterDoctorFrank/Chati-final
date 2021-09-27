@@ -9,6 +9,7 @@ import model.exception.UserNotFoundException;
 import model.role.Permission;
 import model.role.Role;
 import model.user.User;
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,7 +32,7 @@ public class UserAccountManagerTest {
 
     //um login und andere Methoden, die login als Voraussetzung nehmen, zu testen
     class TestClientSender implements ClientSender {
-        public void send(SendAction sendAction, Object object) {
+        public void send(@NotNull SendAction sendAction, @NotNull Object object) {
 
         }
     }

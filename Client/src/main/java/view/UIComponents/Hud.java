@@ -343,7 +343,8 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
     }
 
     @Override
-    public void showChatMessage(@NotNull UUID userID, @NotNull LocalDateTime timestamp, @NotNull MessageType messageType, @NotNull String message) throws UserNotFoundException {
+    public void showChatMessage(@NotNull UUID userID, @NotNull LocalDateTime timestamp, @NotNull MessageType messageType,
+                                @NotNull String message, byte[] imageData, @Nullable String imageName) throws UserNotFoundException {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {

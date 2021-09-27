@@ -156,7 +156,7 @@ public class AudioManager implements Disposable {
      * @param soundName Name des abzuspielenden Tons.
      */
     public void playSound(@NotNull final String soundName) {
-        Chati.CHATI.getSound(soundName).play(0.1f * Chati.CHATI.getPreferences().getSoundVolume());
+        Chati.CHATI.getSound(soundName).play(0.05f * Chati.CHATI.getPreferences().getSoundVolume());
     }
 
     /**
@@ -227,7 +227,7 @@ public class AudioManager implements Disposable {
     }
 
     /**
-     * Gibt die aktuelle Sekunde im laufenden Musikstück.
+     * Gibt die aktuelle Sekunde im laufenden Musikstück zurück.
      * @return Aktuelle Sekunde im Musikstück.
      */
     public int getCurrentSeconds() {

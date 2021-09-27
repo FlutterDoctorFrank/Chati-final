@@ -103,7 +103,9 @@ public class WorldInputProcessor implements InputProcessor {
 
     @Override
     public boolean scrolled(final float amountX, final float amountY) {
-        Chati.CHATI.getWorldScreen().getCamera().zoom(amountY > 0);
+        if (Chati.CHATI.getScreen().getStage().getScrollFocus() == null) {
+            Chati.CHATI.getWorldScreen().getCamera().zoom(amountY > 0);
+        }
         return true;
     }
 

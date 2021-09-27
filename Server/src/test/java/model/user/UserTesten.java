@@ -19,6 +19,7 @@ import model.exception.*;
 import model.notification.*;
 import model.role.Role;
 import model.user.account.UserAccountManager;
+import org.jetbrains.annotations.NotNull;
 import org.junit.*;
 
 import java.sql.Connection;
@@ -116,7 +117,7 @@ public class UserTesten {
 
 
     class TestClientSender implements ClientSender {
-        public void send(SendAction sendAction, Object object) {
+        public void send(@NotNull SendAction sendAction, @NotNull Object object) {
 
         }
     }
@@ -211,7 +212,7 @@ public class UserTesten {
     private TextMessage textMessage;
     private AudioMessage audioMessage;
     class TypeClientSender implements ClientSender {
-        public void send(SendAction sendAction, Object object) {
+        public void send(@NotNull SendAction sendAction, @NotNull Object object) {
             if (sendAction == SendAction.TYPING) {
                 actionUser = (User) object;
             } else if (sendAction == SendAction.MESSAGE) {
@@ -263,7 +264,7 @@ public class UserTesten {
             user.joinWorld(test_world.getContextId());
             Assert.assertEquals(test_world.getPublicRoom().getSpawnLocation(), user.getLocation());
 
-            user.chat("hallo");
+            user.chat("hallo", new byte[0], null);
             Assert.assertNotNull(actionUser);
             Assert.assertEquals(user.getUserId(), actionUser.getUserId());
 

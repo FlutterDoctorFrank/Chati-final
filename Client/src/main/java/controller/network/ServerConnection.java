@@ -243,7 +243,12 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             return;
                         }
 
-                        this.manager.getView().showChatMessage(packet.getSenderId(), packet.getTimestamp(), packet.getMessageType(), packet.getMessage());
+                        if (packet.getImageData().length != 0 && packet.getImageName() == null) {
+                            this.logInvalidPacket(packet, "Image-Name can not be null if an image was sent");
+                        }
+
+                        this.manager.getView().showChatMessage(packet.getSenderId(), packet.getTimestamp(),
+                                packet.getMessageType(), packet.getMessage(), packet.getImageData(), packet.getImageName());
                         break;
 
                     case INFO:

@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class ClientNetworkManager extends NetworkManager<Client> implements Runnable {
 
-    private static final int BUFFER_SIZE = (int) Math.pow(2, 20);
+    private static final int BUFFER_SIZE = (int) Math.pow(2, 24);
 
     private static final Logger LOGGER = Logger.getLogger("chati.network");
 

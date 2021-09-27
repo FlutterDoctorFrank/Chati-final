@@ -431,11 +431,12 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void showChatMessage(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
-                                @NotNull final MessageType messageType, @NotNull final String message) {
+                                @NotNull final MessageType messageType, @NotNull final String message,
+                                byte[] imageData, @Nullable String imageName) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(worldScreen)) {
                 try {
-                    headUpDisplay.showChatMessage(userId, timestamp, messageType, message);
+                    headUpDisplay.showChatMessage(userId, timestamp, messageType, message, imageData, imageName);
                 } catch (UserNotFoundException e) {
                     e.printStackTrace();
                 }

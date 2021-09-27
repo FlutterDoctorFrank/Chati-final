@@ -36,7 +36,7 @@ public class ChatiAssetManager implements Disposable {
         // Definiere Parameter für den TexturePacker.
         String texturePackerInput = "Client/src/main/resources/textures";
         String texturePackerOutput = "Client/src/main/resources/atlas";
-        String texturePackerFileName = "texture";
+        String texturePackerFileName = "textures";
         TexturePacker.Settings texturePackerSettings = new TexturePacker.Settings();
         texturePackerSettings.maxWidth = 2048;
         texturePackerSettings.filterMin = Texture.TextureFilter.Linear;
@@ -53,7 +53,7 @@ public class ChatiAssetManager implements Disposable {
         this.assetManager = new AssetManager();
 
         // TextureAtlas in die Warteschlange des AssetManager.
-        assetManager.load("atlas/image_atlas.atlas", TextureAtlas.class);
+        assetManager.load("atlas/textures.atlas", TextureAtlas.class);
 
         // Generiere Fonts mit Hilfe eines FreeTypeFontGenerators.
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Roboto/Roboto-Regular.ttf"));
@@ -93,7 +93,7 @@ public class ChatiAssetManager implements Disposable {
      * @return TextureAtlas
      */
     public @NotNull TextureAtlas getAtlas() {
-        return assetManager.get("atlas/image_atlas.atlas", TextureAtlas.class);
+        return assetManager.get("atlas/textures.atlas", TextureAtlas.class);
     }
 
     /**
@@ -128,7 +128,7 @@ public class ChatiAssetManager implements Disposable {
      * @return Der angeforderte Sound.
      */
     public @NotNull Sound getSound(@NotNull final String name) {
-        return assetManager.get("sounds/" + name, Sound.class);
+        return assetManager.get("sounds/" + name + ".wav", Sound.class);
     }
 
     @Override

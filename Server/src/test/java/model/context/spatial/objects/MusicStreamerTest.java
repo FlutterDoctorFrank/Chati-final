@@ -13,6 +13,7 @@ import model.database.IUserDatabase;
 import model.role.Role;
 import model.user.User;
 import model.user.account.UserAccountManager;
+import org.jetbrains.annotations.NotNull;
 import org.junit.*;
 
 import java.sql.Connection;
@@ -104,7 +105,7 @@ public class MusicStreamerTest {
     }
 
     class TestClientSender implements ClientSender {
-        public void send(SendAction sendAction, Object object) {
+        public void send(@NotNull SendAction sendAction, @NotNull Object object) {
 
         }
     }

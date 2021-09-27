@@ -207,11 +207,12 @@ public class User implements IUser {
     }
 
     @Override
-    public void chat(@NotNull final String message) throws IllegalStateException {
+    public void chat(@NotNull final String message, final byte[] imageData, @Nullable final String imageName)
+            throws IllegalStateException {
         throwIfNotOnline();
         throwIfNotInWorld();
         updateLastActivity();
-        CommunicationHandler.handleTextMessage(this, message);
+        CommunicationHandler.handleTextMessage(this, message, imageData, imageName);
     }
 
     @Override

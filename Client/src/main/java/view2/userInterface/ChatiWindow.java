@@ -71,6 +71,18 @@ public abstract class ChatiWindow extends Window implements Translatable {
         }
     }
 
+    @Override
+    public void setWidth(final float width) {
+        this.width = width;
+        super.setWidth(width);
+    }
+
+    @Override
+    public void setHeight(final float height) {
+        this.height = height;
+        super.setHeight(height);
+    }
+
     /**
      * Veranlasst das Öffnen des Fensters.
      */
@@ -102,6 +114,17 @@ public abstract class ChatiWindow extends Window implements Translatable {
     public void showMessage(@NotNull final String messageKey) {
         if (infoLabel != null) {
             infoLabel.setText(Chati.CHATI.getLocalization().translate(messageKey));
+        }
+    }
+
+    /**
+     * Zeigt eine Nachricht auf dem Info-Label an.
+     * @param messageKey Kennung der anzuzeigenden Nachricht.
+     * @param arguments Argumente der anzuzeigenden Nachricht.
+     */
+    public void showMessage(@NotNull final String messageKey, @NotNull final Object... arguments) {
+        if (infoLabel != null) {
+            infoLabel.setText(Chati.CHATI.getLocalization().format(messageKey, arguments));
         }
     }
 

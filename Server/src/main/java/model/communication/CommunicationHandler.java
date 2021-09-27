@@ -14,6 +14,8 @@ import model.user.Status;
 import model.user.User;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -56,16 +58,19 @@ public class CommunicationHandler {
      * darüber informiert.
      * @param sender Sender der Nachricht.
      * @param receivedMessage Erhaltene Nachricht.
+     * @param imageData Daten eines Bildanhangs.
+     * @param imageName Name des Bildanhangs
      * @see TextMessage
      * @see MessageType
      */
-    public static void handleTextMessage(@NotNull final User sender, @NotNull final String receivedMessage) {
+    public static void handleTextMessage(@NotNull final User sender, @NotNull final String receivedMessage,
+                                         final byte[] imageData, @Nullable final String imageName) {
         if (receivedMessage.matches(CHAT_COMMAND)) {
             String commandMessage = receivedMessage.substring(1);
 
             for (ChatCommand command : ChatCommand.values()) {
                 if (commandMessage.matches(command.commandPattern)) {
-                    command.handle(sender, commandMessage);
+                    command.handle(sender, commandMessage, imageData, imageName);
                     return;
                 }
             }
@@ -74,7 +79,7 @@ public class CommunicationHandler {
             TextMessage infoMessage = new TextMessage("chat.command.not-found", commandMessage.split("\\s")[0]);
             sender.send(SendAction.MESSAGE, infoMessage);
         } else {
-            handleStandardMessage(sender, receivedMessage);
+            handleStandardMessage(sender, receivedMessage, imageData, imageName);
         }
     }
 
@@ -83,9 +88,12 @@ public class CommunicationHandler {
      * Kommunikationsform empfangen sollen und leitet sie an diese weiter.
      * @param sender Kommunizierender Benutzer.
      * @param message Zu versendende Nachricht.
+     * @param imageData Daten des Bildanhangs.
+     * @param imageName Name des Bildanhangs.
      * @see MessageType#STANDARD
      */
-    private static void handleStandardMessage(@NotNull final User sender, @NotNull final String message) {
+    private static void handleStandardMessage(@NotNull final User sender, @NotNull final String message,
+                                              final byte[] imageData, @Nullable final String imageName) {
         if (sender.getLocation() == null) {
             throw new IllegalStateException("Communicators location is not available");
         }
@@ -111,7 +119,7 @@ public class CommunicationHandler {
         Map<UUID, User> receivers = sender.getCommunicableUsers();
 
         // Versende die Textnachricht.
-        TextMessage textMessage = new TextMessage(sender, message, MessageType.STANDARD);
+        TextMessage textMessage = new TextMessage(sender, message, imageData, imageName, MessageType.STANDARD);
         receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
     }
 
@@ -166,7 +174,8 @@ public class CommunicationHandler {
          */
         WHISPER_MESSAGE_COMMAND("\\\\[a-zA-Z0-9]+\\s.*") {
             @Override
-            protected void handle(@NotNull final User sender, @NotNull final String message) {
+            protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
+                                  @Nullable final String imageName) {
                 // Extrahiere den Benutzernamen aus dem Befehl der Flüsternachricht.
                 String[] usernameMessage = message.substring(1).split("\\s", 2);
                 String username = usernameMessage[0];
@@ -226,7 +235,7 @@ public class CommunicationHandler {
                 }
 
                 // Versende die Textnachricht an den Benutzer.
-                TextMessage textMessage = new TextMessage(sender, sendMessage, MessageType.WHISPER);
+                TextMessage textMessage = new TextMessage(sender, sendMessage, imageData, imageName, MessageType.WHISPER);
                 sender.send(SendAction.MESSAGE, textMessage);
                 receiver.send(SendAction.MESSAGE, textMessage);
             }
@@ -239,7 +248,8 @@ public class CommunicationHandler {
          */
         ROOM_MESSAGE_COMMAND("(?i)room\\s.*") {
             @Override
-            protected void handle(@NotNull final User sender, @NotNull final String message) {
+            protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
+                                  @Nullable final String imageName) {
                 String sendMessage = message.split("\\s", 2)[1];
 
                 if (sender.getLocation() == null) {
@@ -271,7 +281,7 @@ public class CommunicationHandler {
                 filterIgnoredUsers(sender, receivers);
 
                 // Versende die Textnachricht.
-                TextMessage textMessage = new TextMessage(sender, sendMessage, MessageType.ROOM);
+                TextMessage textMessage = new TextMessage(sender, sendMessage, imageData, imageName, MessageType.ROOM);
                 receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
             }
         },
@@ -283,7 +293,8 @@ public class CommunicationHandler {
          */
         WORLD_MESSAGE_COMMAND("(?i)world\\s.*"){
             @Override
-            protected void handle(@NotNull final User sender, @NotNull final String message) {
+            protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
+                                  @Nullable final String imageName) {
                 String sendMessage = message.split("\\s", 2)[1];
 
                 if (sender.getLocation() == null) {
@@ -319,7 +330,7 @@ public class CommunicationHandler {
                 filterIgnoredUsers(sender, receivers);
 
                 // Versende die Textnachricht.
-                TextMessage textMessage = new TextMessage(sender, sendMessage, MessageType.WORLD);
+                TextMessage textMessage = new TextMessage(sender, sendMessage, imageData, imageName, MessageType.WORLD);
                 receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
             }
         };
@@ -331,8 +342,11 @@ public class CommunicationHandler {
          * Verarbeitet die Nachricht gemäß dem Chatbefehl.
          * @param sender Sender der Nachricht.
          * @param message Erhaltene Nachricht.
+         * @param imageData Daten des Bildanhangs.
+         * @param imageName Name des Bildanhangs
          */
-        protected abstract void handle(@NotNull final User sender, @NotNull final String message);
+        protected abstract void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
+                                       @Nullable final String imageName);
 
         /**
          * Erzeugt eine Instanz eines Chatbefehls.

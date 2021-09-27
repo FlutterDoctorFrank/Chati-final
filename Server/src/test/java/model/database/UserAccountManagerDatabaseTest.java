@@ -448,7 +448,7 @@ public class UserAccountManagerDatabaseTest {
     }
 
     class TestClientSender implements ClientSender {
-        public void send(SendAction sendAction, Object object) {
+        public void send(@NotNull SendAction sendAction, @NotNull Object object) {
 
         }
     }

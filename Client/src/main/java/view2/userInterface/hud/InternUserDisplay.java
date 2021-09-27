@@ -135,14 +135,14 @@ public class InternUserDisplay extends Table {
 
         if (internUser.getCurrentRoom() != null) {
             currentRoomImage.setDrawable(Chati.CHATI.getDrawable("current_room"));
-            roomTooltip.setMessage("hud.tooltip.current-room", internUser.getCurrentRoom().getContextName());
+            roomTooltip.setText("hud.tooltip.current-room", internUser.getCurrentRoom().getContextName());
         } else {
             currentRoomImage.setDrawable(null);
         }
 
         if (internUser.getCurrentWorld() != null) {
             currentWorldImage.setDrawable(Chati.CHATI.getDrawable("current_world"));
-            worldTooltip.setMessage("hud.tooltip.current-world", internUser.getCurrentWorld().getContextName());
+            worldTooltip.setText("hud.tooltip.current-world", internUser.getCurrentWorld().getContextName());
         } else {
             currentWorldImage.setDrawable(null);
         }

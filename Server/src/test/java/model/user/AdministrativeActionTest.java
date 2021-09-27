@@ -21,6 +21,7 @@ import model.notification.NotificationAction;
 import model.notification.NotificationType;
 import model.role.Role;
 import model.user.account.UserAccountManager;
+import org.jetbrains.annotations.NotNull;
 import org.junit.*;
 
 import java.sql.Connection;
@@ -102,7 +103,7 @@ public class AdministrativeActionTest {
 
 
     class TestClientSender implements ClientSender {
-        public void send(SendAction sendAction, Object object) {
+        public void send(@NotNull SendAction sendAction, @NotNull Object object) {
 
         }
     }

@@ -51,7 +51,7 @@ public class ChatiTooltip extends TextTooltip {
      * @param tooltipKey Kennung des anzuzeigenden Textes.
      * @param tooltipArguments Argumente des anzuzeigenden Textes.
      */
-    public void setMessage(@NotNull final String tooltipKey, @NotNull final Object... tooltipArguments) {
+    public void setText(@NotNull final String tooltipKey, @NotNull final Object... tooltipArguments) {
         this.tooltipBundle = new MessageBundle(tooltipKey, tooltipArguments);
     }
 

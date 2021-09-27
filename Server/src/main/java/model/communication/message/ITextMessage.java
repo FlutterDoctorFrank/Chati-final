@@ -17,6 +17,18 @@ public interface ITextMessage extends IMessage {
     @Nullable String getTextMessage();
 
     /**
+     * Gibt die Daten des Bildanhangs zurück.
+     * @return Daten des Bildanhangs.
+     */
+    byte[] getImageData();
+
+    /**
+     * Gibt den Namen des Bildanhangs zurück.
+     * @return Name des Bildanhangs.
+     */
+    @Nullable String getImageName();
+
+    /**
      * Gibt den Nachrichtentyp der Nachricht zurück.
      * @return Nachrichtentyp der Textnachricht.
      */

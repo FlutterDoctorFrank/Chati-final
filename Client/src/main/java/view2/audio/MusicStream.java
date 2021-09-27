@@ -1,6 +1,5 @@
 package view2.audio;
 
-import model.context.spatial.ContextMusic;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -40,7 +39,7 @@ public class MusicStream extends AudioProducer {
     }
 
     /**
-     * Fügt abzuspielende Daten in die Warteschlange des AudioProducer hinzu.
+     * Fügt abzuspielende Daten in die Warteschlange des MusicStream hinzu.
      * @param timestamp Zeitstempel der abzuspielenden Daten.
      * @param musicDataBlock Abzuspielende Daten.
      * @param position Aktuelle Position in zusammenhängenden Daten.
@@ -65,7 +64,8 @@ public class MusicStream extends AudioProducer {
          * abgespielt werden. In diesem Fall wird die Geschwindigkeit des Abspielens von Musikdaten leicht angepasst, um
          * einen leeren oder unendlich steigenden Puffer zu vermeiden.
          */
-        slowDownRate = -1 / 512f * queueSizeInBlocks() + 1;
+        System.out.println(queueSizeInBlocks());
+        slowDownRate = -queueSizeInBlocks() / 448f + 1;
 
         float numPlaybackSample = 0;
         for (short musicData : musicDataBlock) {

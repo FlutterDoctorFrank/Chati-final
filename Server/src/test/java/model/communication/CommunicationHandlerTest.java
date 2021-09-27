@@ -26,6 +26,7 @@ import model.role.Role;
 import model.user.AdministrativeAction;
 import model.user.User;
 import model.user.account.UserAccountManager;
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -113,7 +114,7 @@ public class CommunicationHandlerTest {
     }
 
     class TypeClientSender implements ClientSender {
-        public void send(SendAction sendAction, Object object) {
+        public void send(@NotNull SendAction sendAction, @NotNull Object object) {
             if (sendAction == SendAction.TYPING) {
                 actionUser = (User) object;
             } else if (sendAction == SendAction.MESSAGE) {
@@ -181,7 +182,7 @@ public class CommunicationHandlerTest {
             user.joinWorld(test_world.getContextId());
             Assert.assertEquals(test_world.getPublicRoom().getSpawnLocation(), user.getLocation());
 
-            CommunicationHandler.handleTextMessage(user, "hallo");
+            CommunicationHandler.handleTextMessage(user, "hallo", new byte[0], null);
             Assert.assertEquals(user, actionUser);
             Assert.assertEquals("hallo", textMessage.getTextMessage());
 
@@ -201,7 +202,7 @@ public class CommunicationHandlerTest {
             user.joinWorld(test_world.getContextId());
             Assert.assertEquals(test_world.getPublicRoom().getSpawnLocation(), user.getLocation());
 
-            CommunicationHandler.handleTextMessage(user, "\\area hallo");
+            CommunicationHandler.handleTextMessage(user, "\\area hallo", new byte[0], null);
             // Fehlerfall Sender auf null gesetzt
             Assert.assertNull(actionUser);
             Assert.assertEquals("chat.command.not-found", textMessage.getMessageBundle().getMessageKey());
@@ -231,7 +232,7 @@ public class CommunicationHandlerTest {
             shut.executeAdministrativeAction(user.getUserId(), AdministrativeAction.MUTE_USER, args);
 
 
-            CommunicationHandler.handleTextMessage(user, "hallo");
+            CommunicationHandler.handleTextMessage(user, "hallo", new byte[0], null);
             Assert.assertNull(actionUser);
             Assert.assertEquals("chat.standard.muted", textMessage.getMessageBundle().getMessageKey());
 
@@ -255,7 +256,7 @@ public class CommunicationHandlerTest {
             listener.joinWorld(test_world.getContextId());
             Assert.assertEquals(test_world.getPublicRoom().getSpawnLocation(), user.getLocation());
 
-            CommunicationHandler.handleTextMessage(user, "\\\\wlistener hi");
+            CommunicationHandler.handleTextMessage(user, "\\\\wlistener hi", new byte[0], null);
             Assert.assertEquals(user, actionUser);
             Assert.assertEquals(MessageType.WHISPER, textMessage.getMessageType());
 
@@ -278,7 +279,7 @@ public class CommunicationHandlerTest {
                     typeClientSender);
             user.joinWorld(test_world.getContextId());
 
-            CommunicationHandler.handleTextMessage(user, "\\\\fwlistener hi");
+            CommunicationHandler.handleTextMessage(user, "\\\\fwlistener hi", new byte[0], null);
             Assert.assertEquals(MessageType.INFO, textMessage.getMessageType());
         } catch (IllegalAccountActionException | ContextNotFoundException | IllegalWorldActionException e) {
             e.printStackTrace();
@@ -295,7 +296,7 @@ public class CommunicationHandlerTest {
             user = UserAccountManager.getInstance().loginUser("fuwhisper", "11111", typeClientSender);
             user.joinWorld(test_world.getContextId());
 
-            CommunicationHandler.handleTextMessage(user, "\\\\fuwlistener hi");
+            CommunicationHandler.handleTextMessage(user, "\\\\fuwlistener hi", new byte[0], null);
             Assert.assertNull(actionUser);
             Assert.assertEquals("chat.command.whisper.user-not-found",
                     textMessage.getMessageBundle().getMessageKey());
@@ -315,7 +316,7 @@ public class CommunicationHandlerTest {
             user = UserAccountManager.getInstance().loginUser("mywhisper", "11111", typeClientSender);
             user.joinWorld(test_world.getContextId());
 
-            CommunicationHandler.handleTextMessage(user, "\\\\mywhisper hi");
+            CommunicationHandler.handleTextMessage(user, "\\\\mywhisper hi", new byte[0], null);
             Assert.assertNull(actionUser);
             Assert.assertEquals("chat.command.whisper.illegal-user",
                     textMessage.getMessageBundle().getMessageKey());
@@ -341,7 +342,7 @@ public class CommunicationHandlerTest {
             listener.joinWorld(test_world.getContextId());
             Assert.assertEquals(test_world.getPublicRoom().getSpawnLocation(), user.getLocation());
 
-            CommunicationHandler.handleTextMessage(user, "\\world hi");
+            CommunicationHandler.handleTextMessage(user, "\\world hi", new byte[0], null);
             Assert.assertEquals(user, actionUser);
             Assert.assertEquals(MessageType.WORLD, textMessage.getMessageType());
 
@@ -366,7 +367,7 @@ public class CommunicationHandlerTest {
             listener.joinWorld(test_world.getContextId());
             Assert.assertEquals(test_world.getPublicRoom().getSpawnLocation(), user.getLocation());
 
-            CommunicationHandler.handleTextMessage(user, "\\world hi");
+            CommunicationHandler.handleTextMessage(user, "\\world hi", new byte[0], null);
             Assert.assertNull(actionUser);
             Assert.assertEquals("chat.command.world.not-permitted",
                     textMessage.getMessageBundle().getMessageKey());
@@ -398,7 +399,7 @@ public class CommunicationHandlerTest {
             user.teleport(test_room.getSpawnLocation());
             listener.teleport(test_room.getSpawnLocation());
 
-            CommunicationHandler.handleTextMessage(user, "\\room hi");
+            CommunicationHandler.handleTextMessage(user, "\\room hi", new byte[0], null);
             Assert.assertEquals(user, actionUser);
             Assert.assertEquals(MessageType.ROOM, textMessage.getMessageType());
 
@@ -429,7 +430,7 @@ public class CommunicationHandlerTest {
             user.teleport(test_room.getSpawnLocation());
             listener.teleport(test_room.getSpawnLocation());
 
-            CommunicationHandler.handleTextMessage(listener, "\\room hi");
+            CommunicationHandler.handleTextMessage(listener, "\\room hi", new byte[0], null);
             Assert.assertNull(actionUser);
             Assert.assertEquals("chat.command.room.not-permitted",
                     textMessage.getMessageBundle().getMessageKey());

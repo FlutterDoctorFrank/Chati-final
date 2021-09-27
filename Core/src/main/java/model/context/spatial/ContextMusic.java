@@ -8,16 +8,22 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum ContextMusic implements Resource {
 
+    ALLTHAT("Allthat", "bensound-allthat"),
     COUNTRYBODY("Countrybody", "bensound-countryboy"),
     CREATIVEMINDS("Creativeminds", "bensound-creativeminds"),
+    CREEPY("Creepy", "bensound-creepy"),
     DREAMS("Dreams", "bensound-dreams"),
+    ENDLESSMOTION("Endlessmotion", "bensound-endlessmotion"),
     EPIC("Epic", "bensound-epic"),
+    EVOLUTION("Evolution", "bensound-evolution"),
     FUNNYSONG("Funnysong", "bensound-funnysong"),
+    GROOVYHIPHOP("Groovyhiphop", "bensound-groovyhiphop"),
     HAPPYROCK("Happyrock", "bensound-happyrock"),
     HIGHOCTANE("Highoctane", "bensound-highoctane"),
     HIPJAZZ("Hipjazz", "bensound-hipjazz"),
     PUNKY("Punky", "bensound-punky"),
-    RETROSOUL("Retrosoul", "bensound-retrosoul");
+    RETROSOUL("Retrosoul", "bensound-retrosoul"),
+    SEXY("Sexy", "bensound-sexy");
 
     private static final String MUSIC_PATH = "music/";
 

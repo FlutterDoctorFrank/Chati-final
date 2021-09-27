@@ -15,6 +15,7 @@ import model.communication.message.MessageType;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import view2.Chati;
 import view2.ChatiLocalization.Translatable;
 import view2.userInterface.ChatiImageButton;
@@ -214,7 +215,7 @@ public class HeadUpDisplay extends Table implements Translatable {
 
         if (Chati.CHATI.isNewNotificationReceived()) {
             notificationListButton.startAnimation();
-            Chati.CHATI.getAudioManager().playSound("notification_sound.wav");
+            Chati.CHATI.getAudioManager().playSound("notification_sound");
         }
         super.act(delta);
     }
@@ -372,14 +373,17 @@ public class HeadUpDisplay extends Table implements Translatable {
      * @param timestamp Zeitstempel der Nachricht.
      * @param messageType Typ der Nachricht.
      * @param message Anzuzeigende Nachricht.
+     * @param imageData Daten des Bildanhangs.
+     * @param imageName Name des Bildanhangs.
      * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
      */
     public void showChatMessage(@NotNull final UUID senderId, @NotNull final LocalDateTime timestamp,
-                                @NotNull final MessageType messageType, @NotNull final String message) throws UserNotFoundException {
+                                @NotNull final MessageType messageType, @NotNull final String message,
+                                final byte[] imageData, @Nullable final String imageName) throws UserNotFoundException {
         if (!isChatOpen()) {
             chatButton.startBlinking();
         }
-        chatWindow.showUserMessage(senderId, timestamp, messageType, message);
+        chatWindow.showUserMessage(senderId, timestamp, messageType, message, imageData, imageName);
     }
 
     /**

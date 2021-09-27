@@ -91,10 +91,13 @@ public interface ViewControllerInterface {
      * @param timestamp Zeitpunkt, an dem diese Nachricht gesendet wurde.
      * @param messageType Typ der Nachricht. Spezifiziert, wie die Nachricht angezeigt werden soll.
      * @param message Nachricht, die angezeigt werden soll.
+     * @param imageData Daten des Bildanhangs.
+     * @param imageName Name des Bildanhangs.
      * @throws UserNotFoundException wenn kein Benutzer mit der ID gefunden werden konnte.
      */
     void showChatMessage(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
-                         @NotNull final MessageType messageType, @NotNull final String message) throws UserNotFoundException;
+                         @NotNull final MessageType messageType, @NotNull final String message,
+                         final byte[] imageData, @Nullable final String imageName) throws UserNotFoundException;
 
     /**
      * Benachrichtigt die View, dass eine neue Informationsnachricht erhalten wurde.

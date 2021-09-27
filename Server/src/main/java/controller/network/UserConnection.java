@@ -206,12 +206,17 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 return;
             }
 
+            if (packet.getImageData().length != 0 && packet.getImageName() == null) {
+                this.logInvalidPacket(packet, "Image-Name can not be null if an image is sent");
+                return;
+            }
+
             if (packet.getSenderId() != null && !packet.getSenderId().equals(this.user.getUserId())) {
                 this.logInvalidPacket(packet, "User-ID must be the own or null");
                 return;
             }
 
-            this.user.chat(packet.getMessage());
+            this.user.chat(packet.getMessage(), packet.getImageData(), packet.getImageName());
         } else {
             this.logUnexpectedPacket(packet, "Can not chat while not in a world");
         }

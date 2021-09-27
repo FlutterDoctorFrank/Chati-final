@@ -1,18 +1,17 @@
 package view2.userInterface.hud;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import controller.network.ServerSender;
@@ -22,6 +21,7 @@ import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import view2.Chati;
 import view2.ChatiLocalization.Translatable;
 import view2.KeyCommand;
@@ -30,6 +30,7 @@ import view2.userInterface.ChatiTextArea;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTooltip;
 import view2.world.component.InternUserAvatar;
+
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -51,6 +52,8 @@ public class ChatWindow extends Window implements Translatable {
     private static final float SPACE = 5;
     private static final float SEND_BUTTON_WIDTH = 120;
     private static final float SEND_BUTTON_HEIGHT = 60;
+    private static final float MAX_IMAGE_SIZE = 120;
+    private static final float IMAGE_SCALE_FACTOR = 0.025f;
 
     private final Map<IUserView, Long> typingUsers;
     private final Stack chatStack;
@@ -61,8 +64,10 @@ public class ChatWindow extends Window implements Translatable {
     private final ChatiTextArea typeMessageArea;
     private final ChatiTextButton sendButton;
     private final Label typingUsersLabel;
+    private final Table attachedImageLabelContainer;
 
     private long lastTimeTypingSent;
+    private FileHandle attachedImage;
 
     /**
      * Erzeugt eine neue Instanz des ChatWindow.
@@ -116,17 +121,15 @@ public class ChatWindow extends Window implements Translatable {
                     lastTimeTypingSent = now;
                     Chati.CHATI.send(ServerSender.SendAction.TYPING);
                 }
-                if (typeMessageArea.isBlank() && sendButton.isTouchable()) {
-                    disableSendButton();
-                } else if (!typeMessageArea.isBlank() && !sendButton.isTouchable()) {
-                    enableSendButton();
-                }
+                setSendButtonState();
                 return true;
             }
         });
 
         typingUsersLabel = new Label("", Chati.CHATI.getSkin());
         typingUsersLabel.setFontScale(0.67f);
+
+        attachedImageLabelContainer = new Table();
 
         sendButton = new ChatiTextButton("menu.button.send", true);
         sendButton.addListener(new ClickListener() {
@@ -146,6 +149,15 @@ public class ChatWindow extends Window implements Translatable {
                 } else {
                     openEmojiMenu();
                 }
+            }
+        });
+
+        ChatiImageButton attachmentButton = new ChatiImageButton(Chati.CHATI.getDrawable("attachment"));
+        attachmentButton.addListener(new ChatiTooltip("hud.tooltip.attachment"));
+        attachmentButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                new ImageFileChooserWindow().open();
             }
         });
 
@@ -178,14 +190,18 @@ public class ChatWindow extends Window implements Translatable {
         chatStack = new Stack();
         chatStack.add(historyScrollPane);
         add(chatStack).top().minWidth(MINIMUM_WIDTH).minHeight(MINIMUM_HEIGHT).grow().row();
+        Table labelContainer = new Table();
         typingUsersLabel.setAlignment(Align.left, Align.left);
-        add(typingUsersLabel).left().padLeft(SPACE).padTop(-1.5f * SPACE).row();
+        labelContainer.add(typingUsersLabel).left().padLeft(SPACE).growX();
+        labelContainer.add(attachedImageLabelContainer).right().padRight(SPACE).growX();
+        add(labelContainer).padTop(-1.5f * SPACE).growX().row();
         Table sendContainer = new Table();
         sendContainer.defaults().height(SEND_BUTTON_HEIGHT).padLeft(SPACE / 2).padRight(SPACE / 2);
         Table buttonContainer = new Table();
         buttonContainer.defaults().width(SEND_BUTTON_HEIGHT / 2).height(SEND_BUTTON_HEIGHT / 2);
         emojiButton.getImage().setOrigin(SEND_BUTTON_HEIGHT / 4, SEND_BUTTON_HEIGHT / 4);
-        buttonContainer.add(emojiButton);
+        buttonContainer.add(emojiButton).row();
+        buttonContainer.add(attachmentButton);
         sendContainer.add(buttonContainer).width(SEND_BUTTON_HEIGHT / 2).padLeft(SPACE);
         sendContainer.add(typeMessageArea).growX();
         sendContainer.add(sendButton).width(SEND_BUTTON_WIDTH).padRight(SPACE);
@@ -218,15 +234,41 @@ public class ChatWindow extends Window implements Translatable {
     }
 
     /**
+     * Fügt einen Bildanhang hinzu, der mit der nächsten Nachricht gesendet wird.
+     * @param image Angehangenes Bild.
+     */
+    public void attachImage(@NotNull final FileHandle image) {
+        Label attachedImageLabel = new Label(image.name(), Chati.CHATI.getSkin());
+        attachedImageLabel.setAlignment(Align.right, Align.right);
+        attachedImageLabel.setFontScale(0.67f);
+        TextButton removeAttachedImageButton = new TextButton("X", Chati.CHATI.getSkin());
+        removeAttachedImageButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                removeAttachedImage();
+            }
+        });
+        removeAttachedImageButton.getLabel().setFontScale(0.67f);
+        attachedImageLabelContainer.clear();
+        attachedImageLabelContainer.add(attachedImageLabel).right().padRight(SPACE).growX();
+        attachedImageLabelContainer.add(removeAttachedImageButton).size(4 * SPACE).right();
+        this.attachedImage = image;
+        setSendButtonState();
+    }
+
+    /**
      * Zeigt eine von einem anderen Benutzer erhalten Nachricht an.
      * @param senderId ID des Senders.
      * @param timestamp Zeitstempel der Nachricht.
      * @param messageType Typ der Nachricht.
      * @param userMessage Anzuzeigende Nachricht.
+     * @param imageData Daten des Bildanhangs.
+     * @param imageName Name des Bildanhangs.
      * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
      */
     public void showUserMessage(@NotNull final UUID senderId, @NotNull final LocalDateTime timestamp,
-                                @NotNull final MessageType messageType, @NotNull final String userMessage) throws UserNotFoundException {
+                                @NotNull final MessageType messageType, @NotNull final String userMessage,
+                                final byte[] imageData, @Nullable final String imageName) throws UserNotFoundException {
         String username;
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser != null && internUser.getUserId().equals(senderId)) {
@@ -253,7 +295,26 @@ public class ChatWindow extends Window implements Translatable {
             default:
                 throw new IllegalArgumentException("No valid message type.");
         }
-        showMessage(timestamp, Chati.CHATI.getLocalization().format("pattern.chat.message", username, userMessage), messageColor);
+
+        boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
+        showMessage(timestamp, Chati.CHATI.getLocalization()
+                .format("pattern.chat.message", username, userMessage), messageColor);
+
+        if (imageData.length != 0 && imageName != null) {
+            showImage(imageData, imageName);
+        }
+
+        // Scrolle beim Erhalten einer neuen Nachricht nur bis nach unten, wenn die Scrollleiste bereits ganz unten war.
+        // Ansonsten wird ein Durchscrollen des Verlaufs durch das Erhalten neuer Nachrichten gestört.
+        if (isAtBottomBefore) {
+            historyScrollPane.layout();
+            historyScrollPane.scrollTo(0, 0, 0, 0);
+        }
+        // Spiele Ton für den Erhalt einer Nachricht ab, wenn das Chatfenster nicht sichtbar ist, oder nicht ganz nach
+        // unten gescrollt ist.
+        if (!isVisible() || !isAtBottomBefore) {
+            Chati.CHATI.getAudioManager().playSound("chat_message_sound");
+        }
     }
 
     /**
@@ -263,7 +324,21 @@ public class ChatWindow extends Window implements Translatable {
      */
     public void showInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle) {
         String message = Chati.CHATI.getLocalization().format(messageBundle.getMessageKey(), messageBundle.getArguments());
+
+        boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
         showMessage(timestamp, Chati.CHATI.getLocalization().format("pattern.chat.info", message), Color.RED);
+
+        // Scrolle beim Erhalten einer neuen Nachricht nur bis nach unten, wenn die Scrollleiste bereits ganz unten war.
+        // Ansonsten wird ein Durchscrollen des Verlaufs durch das Erhalten neuer Nachrichten gestört.
+        if (isAtBottomBefore) {
+            historyScrollPane.layout();
+            historyScrollPane.scrollTo(0, 0, 0, 0);
+        }
+        // Spiele Ton für den Erhalt einer Nachricht ab, wenn das Chatfenster nicht sichtbar ist, oder nicht ganz nach
+        // unten gescrollt ist.
+        if (!isVisible() || !isAtBottomBefore) {
+            Chati.CHATI.getAudioManager().playSound("chat_message_sound");
+        }
     }
 
     /**
@@ -272,7 +347,8 @@ public class ChatWindow extends Window implements Translatable {
     public void clearChat() {
         typeMessageArea.reset();
         messageLabelContainer.clearChildren();
-        disableSendButton();
+        removeAttachedImage();
+        setSendButtonState();
     }
 
     /**
@@ -321,14 +397,20 @@ public class ChatWindow extends Window implements Translatable {
      * Sendet eine eingegebene Nachricht.
      */
     private void sendMessage() {
-        if (typeMessageArea.isBlank()) {
+        if (typeMessageArea.isBlank() && attachedImage == null) {
             return;
         }
-        Chati.CHATI.send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());
+        if (attachedImage != null) {
+            Chati.CHATI.send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim(),
+                    attachedImage.readBytes(), attachedImage.name());
+            removeAttachedImage();
+        } else {
+            Chati.CHATI.send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());
+        }
         typeMessageArea.setText("");
         typeMessageArea.translate();
         closeEmojiMenu();
-        disableSendButton();
+        setSendButtonState();
     }
 
     /**
@@ -344,21 +426,55 @@ public class ChatWindow extends Window implements Translatable {
         Label messageLabel = new Label(colorizedMessage, Chati.CHATI.getSkin());
         messageLabel.setWrap(true);
 
-        boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
         messageLabelContainer.add(messageLabel).row();
+    }
 
-        // Scrolle beim Erhalten einer neuen Nachricht nur bis nach unten, wenn die Scrollleiste bereits ganz unten war.
-        // Ansonsten wird ein Durchscrollen des Verlaufs durch das Erhalten neuer Nachrichten gestört.
-        if (isAtBottomBefore) {
-            historyScrollPane.layout();
-            historyScrollPane.scrollTo(0, 0, 0, 0);
-        }
+    private void showImage(final byte[] imageData, @NotNull final String imageName) {
+        Pixmap image = new Pixmap(imageData, 0, imageData.length);
+        Drawable imageDrawable = new TextureRegionDrawable(new Texture(image));
 
-        // Spiele Ton für den Erhalt einer Nachricht ab, wenn das Chatfenster nicht sichtbar ist, oder nicht ganz nach
-        // unten gescrollt ist.
-        if (!isVisible() || !isAtBottomBefore) {
-            Chati.CHATI.getAudioManager().playSound("chat_message_sound.wav");
+        Label imageNameLabel = new Label(imageName, Chati.CHATI.getSkin());
+        imageNameLabel.setAlignment(Align.center, Align.center);
+        imageNameLabel.setFontScale(0.67f);
+
+        ChatiImageButton imageButton = new ChatiImageButton(imageDrawable, imageDrawable, imageDrawable, IMAGE_SCALE_FACTOR);
+        imageButton.addListener(new InputListener() {
+            public boolean touchDown(@NotNull final InputEvent event, final float x, final float y, final int pointer,
+                                     final int button) {
+                return true;
+            }
+            public void touchUp(@NotNull final InputEvent event, final float x, final float y, final int pointer,
+                                     final int button) {
+                new ImageWindow(imageName, image).open();
+            }
+            public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
+                              @Nullable final Actor fromActor) {
+                if (pointer == -1) {
+                    imageNameLabel.setColor(Color.MAGENTA);
+                }
+            }
+            public void exit(@NotNull final InputEvent event, final float x, final float y, final int pointer,
+                              @Nullable final Actor fromActor) {
+                if (pointer == -1) {
+                    imageNameLabel.setColor(Color.WHITE);
+                }
+            }
+        });
+
+        Table imageContainer = new Table();
+        imageContainer.left();
+        float ratio = 1;
+        float largerSide = Math.max(image.getWidth(), image.getHeight());
+        if (largerSide > MAX_IMAGE_SIZE) {
+            ratio = MAX_IMAGE_SIZE / largerSide;
         }
+        float imageWidth = ratio * image.getWidth();
+        float imageHeight = ratio * image.getHeight();
+        imageButton.getImage().setOrigin(imageWidth / 2f, imageHeight / 2f);
+        imageContainer.add(imageButton).width(imageWidth).height(imageHeight).row();
+        imageContainer.add(imageNameLabel);
+
+        messageLabelContainer.add(imageContainer).row();
     }
 
     /**
@@ -413,19 +529,28 @@ public class ChatWindow extends Window implements Translatable {
     }
 
     /**
-     * Zeigt die Sendetaste als aktiviert an.
+     * Entfernt den Anhang.
      */
-    private void enableSendButton() {
-        sendButton.getLabel().setColor(Color.WHITE);
-        sendButton.setTouchable(Touchable.enabled);
+    private void removeAttachedImage() {
+        attachedImageLabelContainer.clear();
+        if (attachedImage == null) {
+            return;
+        }
+        attachedImage = null;
+        setSendButtonState();
     }
 
     /**
-     * Zeigt die Sendetaste als deaktiviert an.
+     * Legt fest, ob die Sendetaste als aktiviert oder deaktiviert angezeigt werden soll.
      */
-    private void disableSendButton() {
-        sendButton.getLabel().setColor(Color.GRAY);
-        sendButton.setTouchable(Touchable.disabled);
+    private void setSendButtonState() {
+        if (typeMessageArea.isBlank() && attachedImage == null && sendButton.isTouchable()) {
+            sendButton.getLabel().setColor(Color.GRAY);
+            sendButton.setTouchable(Touchable.disabled);
+        } else if ((!typeMessageArea.isBlank() || attachedImage != null) && !sendButton.isTouchable()) {
+            sendButton.getLabel().setColor(Color.WHITE);
+            sendButton.setTouchable(Touchable.enabled);
+        }
     }
 
     /**

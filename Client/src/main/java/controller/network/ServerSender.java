@@ -422,8 +422,15 @@ public interface ServerSender {
                     } else {
                         throw new IllegalArgumentException("Expected String, got " + objects[0].getClass());
                     }
+                } else if (objects.length == 3) {
+                    if (objects[0] instanceof String && objects[1] instanceof byte[] && objects[2] instanceof String) {
+                        return new PacketChatMessage((String) objects[0], (byte[]) objects[1], (String) objects[2]);
+                    } else {
+                        throw new IllegalArgumentException("Expected String, byte[] and String, got" +
+                                objects[0].getClass() + ", " + objects[1].getClass() + " and " + objects[2].getClass());
+                    }
                 } else {
-                    throw new IllegalArgumentException("Expected Array size of 1, got " + objects.length);
+                    throw new IllegalArgumentException("Expected Array size of 1 or 3, got " + objects.length);
                 }
             }
         },

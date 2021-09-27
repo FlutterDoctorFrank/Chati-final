@@ -24,7 +24,8 @@ public class PacketChatMessageTest extends PacketTest<PacketChatMessage> {
 
     @Test(expected = IllegalArgumentException.class)
     public void illegalCreationTest() {
-        new PacketChatMessage(MessageType.INFO, randomUniqueId(), randomString(), LocalDateTime.now());
+        new PacketChatMessage(MessageType.INFO, randomUniqueId(), randomString(), randomBytes(),
+                randomString(), LocalDateTime.now());
     }
 
     @Test
@@ -46,7 +47,7 @@ public class PacketChatMessageTest extends PacketTest<PacketChatMessage> {
     @Test
     public void messageSerializationTest() {
         this.before = new PacketChatMessage(randomEnum(MessageType.class, MessageType.INFO), randomUniqueId(),
-                randomString(), LocalDateTime.now());
+                randomString(), randomBytes(), randomString(), LocalDateTime.now());
 
         this.serialize();
         this.equals();

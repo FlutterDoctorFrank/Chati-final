@@ -68,11 +68,13 @@ public interface IUser {
      * Sendet eine Nachricht im Namen des Benutzers, von dem sie erhalten wurde gemäß des entsprechenden Nachrichtentyps
      * und der geltenden Kommunikationsform an andere Benutzer.
      * @param message Die vom Benutzer erhaltene Nachricht.
+     * @param imageData Die vom Benutzer erhaltenen Bilddaten.
+     * @param imageName Der Name des vom Benutzer erhaltenen Bildes.
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      * @see model.communication.message.TextMessage
      * @see model.communication.CommunicationRegion
      */
-    void chat(@NotNull final String message);
+    void chat(@NotNull final String message, final byte[] imageData, @Nullable final String imageName);
 
     /**
      * Sendet eine Sprachnachricht im Namen des Benutzers, von dem sie erhalten wurde gemäß der geltenden
