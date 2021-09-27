@@ -32,6 +32,14 @@ public class SettingsWindow extends HudMenuWindow {
 
         IInternUserView internUser = Chati.CHATI.getInternUser();
 
+        ChatiTextButton informationButton = new ChatiTextButton("menu.button.information", true);
+        informationButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                new InformationWindow().open();
+            }
+        });
+
         ChatiTextButton languageSelectMenuButton = new ChatiTextButton("menu.button.select-language", true);
         languageSelectMenuButton.addListener(new ClickListener() {
             @Override
@@ -109,6 +117,7 @@ public class SettingsWindow extends HudMenuWindow {
 
         // Layout
         defaults().pad(SPACING / 2, 3 * SPACING / 4, SPACING / 2, 3 * SPACING / 4).grow();
+        add(informationButton).row();
         add(languageSelectMenuButton).row();
         add(volumeChangeMenuButton).row();
         add(worldSettingsButton).row();
@@ -118,6 +127,7 @@ public class SettingsWindow extends HudMenuWindow {
         add(quitButton);
 
         // Translatable register
+        translates.add(informationButton);
         translates.add(languageSelectMenuButton);
         translates.add(volumeChangeMenuButton);
         translates.add(worldSettingsButton);
