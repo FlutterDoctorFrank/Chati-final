@@ -181,6 +181,13 @@ public class CommunicationHandler {
                 try {
                     receiver = UserAccountManager.getInstance().getUser(username);
 
+                    if (receiver.getWorld() == null) {
+                        // Informiere den kommunizierenden Benutzer darüber, dass die Flüsterkommunikation nicht möglich ist.
+                        TextMessage infoMessage = new TextMessage("chat.command.whisper.not-possible", receiver.getUsername());
+                        sender.send(SendAction.MESSAGE, infoMessage);
+                        return;
+                    }
+
                     if (receiver.getLocation() == null) {
                         throw new IllegalStateException("Receivers location is not available");
                     }
@@ -207,7 +214,7 @@ public class CommunicationHandler {
                 // an den die Nachricht gerichtet ist, beschäftigt ist.
                 Context commonContext = communicationContext.lastCommonAncestor(receiver.getLocation().getArea());
 
-                if (((((receiver.getWorld() == null || !communicableUsers.containsKey(receiver.getUserId()))
+                if ((((!communicableUsers.containsKey(receiver.getUserId())
                         && !receiver.hasPermission(commonContext, Permission.CONTACT_USER))
                         || receiver.getStatus() == Status.BUSY)
                         && !sender.hasPermission(commonContext, Permission.CONTACT_USER))

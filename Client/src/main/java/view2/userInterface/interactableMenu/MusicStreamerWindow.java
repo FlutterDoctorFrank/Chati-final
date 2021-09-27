@@ -21,7 +21,6 @@ import view2.Chati;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiTooltip;
-
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -102,7 +101,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         playButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_play"), Chati.CHATI.getDrawable("music_play"),
                 Chati.CHATI.getDrawable("music_play_disabled"), BUTTON_SCALE_FACTOR);
-        playButton.addListener(new ChatiTooltip("window.music.play"));
+        playButton.addListener(new ChatiTooltip("hud.tooltip.play"));
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -112,7 +111,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         stopButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_stop"), Chati.CHATI.getDrawable("music_stop"),
                 Chati.CHATI.getDrawable("music_stop_disabled"), BUTTON_SCALE_FACTOR);
-        stopButton.addListener(new ChatiTooltip("window.music.stop"));
+        stopButton.addListener(new ChatiTooltip("hud.tooltip.stop"));
         stopButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -122,7 +121,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         backButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_back"), Chati.CHATI.getDrawable("music_back"),
                 Chati.CHATI.getDrawable("music_back_disabled"), BUTTON_SCALE_FACTOR);
-        backButton.addListener(new ChatiTooltip("window.music.back"));
+        backButton.addListener(new ChatiTooltip("hud.tooltip.back"));
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -132,7 +131,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         skipButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_skip"), Chati.CHATI.getDrawable("music_skip"),
                 Chati.CHATI.getDrawable("music_skip_disabled"), BUTTON_SCALE_FACTOR);
-        skipButton.addListener(new ChatiTooltip("window.music.skip"));
+        skipButton.addListener(new ChatiTooltip("hud.tooltip.skip"));
         skipButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -142,7 +141,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         loopingButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_looping_on"),
                 Chati.CHATI.getDrawable("music_looping_on"), Chati.CHATI.getDrawable("music_looping_off"), BUTTON_SCALE_FACTOR);
-        loopingButton.addListener(new ChatiTooltip("window.music.looping"));
+        loopingButton.addListener(new ChatiTooltip("hud.tooltip.looping"));
         loopingButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -152,7 +151,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         randomButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_random_on"),
                 Chati.CHATI.getDrawable("music_random_on"), Chati.CHATI.getDrawable("music_random_off"), BUTTON_SCALE_FACTOR);
-        randomButton.addListener(new ChatiTooltip("window.music.random"));
+        randomButton.addListener(new ChatiTooltip("hud.tooltip.random"));
         randomButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -162,7 +161,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         ChatiImageButton soundButton = new ChatiImageButton(Chati.CHATI.getDrawable("music_sound_on"),
                 Chati.CHATI.getDrawable("music_sound_off"), Chati.CHATI.getDrawable("music_sound_disabled"), BUTTON_SCALE_FACTOR);
-        soundButton.addListener(new ChatiTooltip("window.music.sound"));
+        soundButton.addListener(new ChatiTooltip("hud.tooltip.sound"));
         soundButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
