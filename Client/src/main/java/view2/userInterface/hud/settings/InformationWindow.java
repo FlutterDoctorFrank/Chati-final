@@ -26,7 +26,7 @@ public class InformationWindow extends ChatiWindow {
         InformationWindowLabel moveUpLabel = new InformationWindowLabel("menu.label.movement-up");
         InformationWindowLabel moveUpKeyLabel = new InformationWindowLabel("menu.label.movement-up-key");
         InformationWindowLabel moveDownLabel = new InformationWindowLabel("menu.label.movement-down");
-        InformationWindowLabel moveDownKesLabel = new InformationWindowLabel("menu.label.movement-down-key");
+        InformationWindowLabel moveDownKeyLabel = new InformationWindowLabel("menu.label.movement-down-key");
         InformationWindowLabel moveLeftLabel = new InformationWindowLabel("menu.label.movement-left");
         InformationWindowLabel moveLeftKeyLabel = new InformationWindowLabel("menu.label.movement-left-key");
         InformationWindowLabel moveRightLabel = new InformationWindowLabel("menu.label.movement-right");
@@ -68,7 +68,7 @@ public class InformationWindow extends ChatiWindow {
         Table container = new Table();
         ScrollPane informationScrollPane = new ScrollPane(container, Chati.CHATI.getSkin());
         informationScrollPane.setFadeScrollBars(false);
-        container.defaults().padLeft(SPACING / 2).padBottom(SPACING).padRight(SPACING / 2).center().growX();
+        container.defaults().pad(SPACING / 2).center().growX();
         container.add(infoLabel).row();
 
         Table keyBindingsContainer = new Table();
@@ -85,7 +85,7 @@ public class InformationWindow extends ChatiWindow {
         Table moveDownContainer = new Table();
         moveDownContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
         moveDownContainer.add(moveDownLabel);
-        moveDownContainer.add(moveDownKesLabel);
+        moveDownContainer.add(moveDownKeyLabel);
         Table moveLeftContainer = new Table();
         moveLeftContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
         moveLeftContainer.add(moveLeftLabel);
@@ -104,6 +104,7 @@ public class InformationWindow extends ChatiWindow {
         movementKeysContainer.add(moveRightContainer).row();
         movementKeysContainer.add(sprintContainer).row();
         keyBindingsContainer.add(movementKeysContainer).row();
+
         //Funktionstasten
         Table functionKeysContainer = new Table();
         functionKeysContainer.defaults().colspan(2).padLeft(2 * SPACING).padBottom(SPACING).growX();
@@ -151,7 +152,7 @@ public class InformationWindow extends ChatiWindow {
         commandsContainer.defaults().colspan(2).padLeft(SPACING).padBottom(SPACING).growX();
         commandsContainer.add(commandsLabel).row();
         Table chatCommandsContainer = new Table();
-        chatCommandsContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        chatCommandsContainer.defaults().colspan(2).padLeft(2 * SPACING).padBottom(SPACING).growX();
         chatCommandsContainer.add(chatCommandsLabel).row();
         Table worldMessageContainer = new Table();
         worldMessageContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
@@ -176,9 +177,40 @@ public class InformationWindow extends ChatiWindow {
         // Translatable register
         translates.add(infoLabel);
         translates.add(keyBindingsLabel);
-        translates.add(functionKeysLable);
         translates.add(movementKeysLable);
+        translates.add(moveUpLabel);
+        translates.add(moveUpKeyLabel);
+        translates.add(moveDownLabel);
+        translates.add(moveDownKeyLabel);
+        translates.add(moveLeftLabel);
+        translates.add(moveLeftKeyLabel);
+        translates.add(moveRightLabel);
+        translates.add(moveRightKeyLabel);
+        translates.add(sprintLabel);
+        translates.add(sprintKeyLabel);
+        translates.add(functionKeysLable);
+        translates.add(interactionLabel);
+        translates.add(interactionKeyLabel);
+        translates.add(openUsersListLabel);
+        translates.add(openUsersListKeyLabel);
+        translates.add(openNotificationsListLabel);
+        translates.add(openNotificationsKeyLabel);
+        translates.add(openSettingsLabel);
+        translates.add(openSettingsKeyLabel);
+        translates.add(openCommunicationWindowLabel);
+        translates.add(openCommunicationWindowKeyLabel);
+        translates.add(muteMicrophoneLabel);
+        translates.add(muteMicrophoneKeyLabel);
+        translates.add(muteSoundsLabel);
+        translates.add(muteSoundsKeyLabel);
+        translates.add(commandsLabel);
         translates.add(chatCommandsLabel);
+        translates.add(chatWorldMessageLabel);
+        translates.add(chatWorldMessageCommandLabel);
+        translates.add(chatRoomMessageLable);
+        translates.add(chatRoomMessageCommandLable);
+        translates.add(chatUserMessageLable);
+        translates.add(chatUserMessageCommandLable);
         translates.trimToSize();
     }
 
