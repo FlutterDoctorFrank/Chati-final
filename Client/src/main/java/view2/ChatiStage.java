@@ -129,4 +129,13 @@ public class ChatiStage extends Stage {
             }
         }
     }
+
+    /**
+     * Fokussiert das aktuell geöffnete Fenster.
+     */
+    public void focus() {
+        if (!openWindows.isEmpty()) {
+            openWindows.peek().focus();
+        }
+    }
 }

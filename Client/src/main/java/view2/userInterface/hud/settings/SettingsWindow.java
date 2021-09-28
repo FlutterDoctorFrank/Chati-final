@@ -116,7 +116,7 @@ public class SettingsWindow extends HudMenuWindow {
         });
 
         // Layout
-        defaults().pad(SPACING / 2, 3 * SPACING / 4, SPACING / 2, 3 * SPACING / 4).grow();
+        defaults().pad(SPACE / 2, 3 * SPACE / 4, SPACE / 2, 3 * SPACE / 4).grow();
         add(informationButton).row();
         add(languageSelectMenuButton).row();
         add(volumeChangeMenuButton).row();

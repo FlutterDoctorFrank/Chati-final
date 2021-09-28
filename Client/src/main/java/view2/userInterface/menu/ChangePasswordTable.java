@@ -25,9 +25,9 @@ public class ChangePasswordTable extends MenuTable {
     public ChangePasswordTable() {
         super("table.entry.change-password");
 
-        passwordField = new ChatiTextField("menu.text-field.password-current", true);
-        newPasswordField = new ChatiTextField("menu.text-field.password-new", true);
-        confirmNewPasswordField = new ChatiTextField("menu.text-field.password-new-confirm", true);
+        passwordField = new ChatiTextField("menu.text-field.password-current", ChatiTextField.TextFieldType.PASSWORD);
+        newPasswordField = new ChatiTextField("menu.text-field.password-new", ChatiTextField.TextFieldType.PASSWORD);
+        confirmNewPasswordField = new ChatiTextField("menu.text-field.password-new-confirm", ChatiTextField.TextFieldType.PASSWORD);
 
         ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
         confirmButton.addListener(new ClickListener() {

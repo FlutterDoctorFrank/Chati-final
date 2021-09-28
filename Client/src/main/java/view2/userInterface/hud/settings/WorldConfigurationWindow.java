@@ -89,28 +89,28 @@ public class WorldConfigurationWindow extends ChatiWindow {
         setMovable(false);
 
         Table container = new Table();
-        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING / 2).center().growX();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACE / 2).center().growX();
         infoLabel.setAlignment(Align.center, Align.center);
         container.add(infoLabel).row();
         Table alwaysSprintTable = new Table();
-        alwaysSprintTable.defaults().colspan(16).height(ROW_HEIGHT).space(SPACING).growX();
+        alwaysSprintTable.defaults().colspan(16).height(ROW_HEIGHT).space(SPACE).growX();
         alwaysSprintTable.add(alwaysSprintLabel).colspan(15);
         alwaysSprintTable.add(alwaysSprintCheckBox).colspan(1);
         alwaysSprintCheckBox.getImage().scaleBy(0.25f);
         container.add(alwaysSprintTable).row();
         Table showNameContainer = new Table();
-        showNameContainer.defaults().colspan(16).height(ROW_HEIGHT).space(SPACING).growX();
+        showNameContainer.defaults().colspan(16).height(ROW_HEIGHT).space(SPACE).growX();
         showNameContainer.add(showNameLabel).colspan(15);
         showNameContainer.add(showNameCheckBox).colspan(1);
         showNameCheckBox.getImage().scaleBy(0.25f);
         container.add(showNameContainer).row();
         Table buttonContainer = new Table();
         buttonContainer.defaults().colspan(3).bottom().height(ROW_HEIGHT).growX();
-        buttonContainer.add(confirmButton).padRight(SPACING / 2);
-        buttonContainer.add(defaultButton).padLeft(SPACING / 2).padRight(SPACING / 2);
-        buttonContainer.add(cancelButton).padLeft(SPACING / 2);
-        container.add(buttonContainer).padTop(SPACING);
-        add(container).padLeft(SPACING).padRight(SPACING).grow();
+        buttonContainer.add(confirmButton).padRight(SPACE / 2);
+        buttonContainer.add(defaultButton).padLeft(SPACE / 2).padRight(SPACE / 2);
+        buttonContainer.add(cancelButton).padLeft(SPACE / 2);
+        container.add(buttonContainer).padTop(SPACE);
+        add(container).padLeft(SPACE).padRight(SPACE).grow();
 
         // Translatable register
         translates.add(infoLabel);

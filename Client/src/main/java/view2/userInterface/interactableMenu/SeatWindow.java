@@ -54,15 +54,15 @@ public class SeatWindow extends InteractableWindow {
         setMovable(false);
 
         Table container = new Table();
-        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACE).center().growX();
         infoLabel.setAlignment(Align.center, Align.center);
         container.add(infoLabel).row();
         Table buttonContainer = new Table();
         buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
-        buttonContainer.add(confirmButton).padRight(SPACING / 2);
-        buttonContainer.add(cancelButton).padLeft(SPACING / 2);
+        buttonContainer.add(confirmButton).padRight(SPACE / 2);
+        buttonContainer.add(cancelButton).padLeft(SPACE / 2);
         container.add(buttonContainer);
-        add(container).padLeft(SPACING).padRight(SPACING).grow();
+        add(container).padLeft(SPACE).padRight(SPACE).grow();
 
         // Translatable register
         translates.add(infoLabel);

@@ -10,33 +10,24 @@ import view2.ChatiLocalization.Translatable;
  */
 public class ChatiTextField extends TextField implements Translatable {
 
-    private static final int TEXT_FIELD_MAX_LENGTH = 32;
-    private static final int PASSWORD_FIELD_MAX_LENGTH = 48;
-
     private final String messageTextKey;
-
-    public ChatiTextField(@NotNull final String messageTextKey, final int fieldLength) {
-        super("", Chati.CHATI.getSkin());
-        this.messageTextKey = messageTextKey;
-        this.translate();
-
-        setMaxLength(fieldLength > 0 ? fieldLength : TEXT_FIELD_MAX_LENGTH);
-        setTextFieldFilter((textField, c) -> !isBlank() || !Character.toString(c).matches("\\s"));
-    }
 
     /**
      * Erzeugt eine neue Instanz der ChatiTextArea.
      * @param messageTextKey Kennung der anzuzeigenden Nachricht, wenn der Text leer ist.
-     * @param passwordField Information, ob dieses TextFields für Passwörter genutzt wird.
+     * @param textFieldType Typ des Textfeldes.
      */
-    public ChatiTextField(@NotNull final String messageTextKey, final boolean passwordField) {
-        this(messageTextKey, -1);
+    public ChatiTextField(@NotNull final String messageTextKey, @NotNull final TextFieldType textFieldType) {
+        super("", Chati.CHATI.getSkin());
+        this.messageTextKey = messageTextKey;
+        this.translate();
 
-        if (passwordField) {
-            setMaxLength(PASSWORD_FIELD_MAX_LENGTH);
+        setMaxLength(textFieldType.getMaxFieldLength());
+        if (textFieldType == TextFieldType.PASSWORD) {
             setPasswordMode(true);
             setPasswordCharacter('*');
         }
+        setTextFieldFilter((textField, c) -> !isBlank() || !Character.toString(c).matches("\\s"));
     }
 
     /**
@@ -61,5 +52,39 @@ public class ChatiTextField extends TextField implements Translatable {
     @Override
     public void translate() {
         setMessageText(Chati.CHATI.getLocalization().translate(messageTextKey));
+    }
+
+    /**
+     * Ein Enum, welches die maximale Länge des Textes festlegt, die in ein Textfeld von diesem Typ eingegeben werden
+     * kann.
+     */
+    public enum TextFieldType {
+
+        /** Repräsentiert ein Standard-Textfeld. */
+        STANDARD(32),
+
+        /** Repräsentiert ein Passwort-Textfeld. */
+        PASSWORD(48),
+
+        /** Repräsentiert ein Dateinamen-Textfeld. */
+        FILE(128);
+
+        private final int maxFieldLength;
+
+        /**
+         * Erzeugt eine neue Instanz eines TextFieldType
+         * @param maxFieldLength Maximale Länge des Textes, die in ein Textfeld von diesem Typ eingegeben werden kann.
+         */
+        TextFieldType(final int maxFieldLength) {
+            this.maxFieldLength = maxFieldLength;
+        }
+
+        /**
+         * Gibt die maximale Länge des Textes zurück, die in ein Textfeld von diesem Typ eingegeben werden kann.
+         * @return Maximale Länge.
+         */
+        public int getMaxFieldLength() {
+            return maxFieldLength;
+        }
     }
 }

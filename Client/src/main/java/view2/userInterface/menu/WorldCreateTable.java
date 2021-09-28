@@ -33,7 +33,7 @@ public class WorldCreateTable extends MenuTable {
         mapSelectBox.setItems(EnumSet.allOf(ContextMap.class)
                 .stream().filter(ContextMap::isPublicRoomMap).toArray(ContextMap[]::new));
 
-        worldNameField = new ChatiTextField("menu.text-field.world-name", false);
+        worldNameField = new ChatiTextField("menu.text-field.world-name", ChatiTextField.TextFieldType.STANDARD);
 
         ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
         confirmButton.addListener(new ClickListener() {

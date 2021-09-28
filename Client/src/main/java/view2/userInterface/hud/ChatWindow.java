@@ -295,26 +295,8 @@ public class ChatWindow extends Window implements Translatable {
             default:
                 throw new IllegalArgumentException("No valid message type.");
         }
-
-        boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
         showMessage(timestamp, Chati.CHATI.getLocalization()
-                .format("pattern.chat.message", username, userMessage), messageColor);
-
-        if (imageData.length != 0 && imageName != null) {
-            showImage(imageData, imageName);
-        }
-
-        // Scrolle beim Erhalten einer neuen Nachricht nur bis nach unten, wenn die Scrollleiste bereits ganz unten war.
-        // Ansonsten wird ein Durchscrollen des Verlaufs durch das Erhalten neuer Nachrichten gestört.
-        if (isAtBottomBefore) {
-            historyScrollPane.layout();
-            historyScrollPane.scrollTo(0, 0, 0, 0);
-        }
-        // Spiele Ton für den Erhalt einer Nachricht ab, wenn das Chatfenster nicht sichtbar ist, oder nicht ganz nach
-        // unten gescrollt ist.
-        if (!isVisible() || !isAtBottomBefore) {
-            Chati.CHATI.getAudioManager().playSound("chat_message_sound");
-        }
+                .format("pattern.chat.message", username, userMessage), messageColor, imageName, imageData);
     }
 
     /**
@@ -324,21 +306,8 @@ public class ChatWindow extends Window implements Translatable {
      */
     public void showInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle) {
         String message = Chati.CHATI.getLocalization().format(messageBundle.getMessageKey(), messageBundle.getArguments());
-
-        boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
-        showMessage(timestamp, Chati.CHATI.getLocalization().format("pattern.chat.info", message), Color.RED);
-
-        // Scrolle beim Erhalten einer neuen Nachricht nur bis nach unten, wenn die Scrollleiste bereits ganz unten war.
-        // Ansonsten wird ein Durchscrollen des Verlaufs durch das Erhalten neuer Nachrichten gestört.
-        if (isAtBottomBefore) {
-            historyScrollPane.layout();
-            historyScrollPane.scrollTo(0, 0, 0, 0);
-        }
-        // Spiele Ton für den Erhalt einer Nachricht ab, wenn das Chatfenster nicht sichtbar ist, oder nicht ganz nach
-        // unten gescrollt ist.
-        if (!isVisible() || !isAtBottomBefore) {
-            Chati.CHATI.getAudioManager().playSound("chat_message_sound");
-        }
+        showMessage(timestamp, Chati.CHATI.getLocalization().format("pattern.chat.info", message), Color.RED,
+                null, new byte[0]);
     }
 
     /**
@@ -418,17 +387,40 @@ public class ChatWindow extends Window implements Translatable {
      * @param timestamp Zeitstempel der anzuzeigenden Nachricht.
      * @param message Anzuzeigende Nachricht.
      * @param messageColor Farbe, in der die Nachricht angezeigt werden soll.
+     * @param imageName Name eines Bildanhangs.
+     * @param imageData Daten eines Bildanhangs.
      */
     private void showMessage(@NotNull final LocalDateTime timestamp, @NotNull final String message,
-                             @NotNull final Color messageColor) {
+                             @NotNull final Color messageColor, @Nullable final String imageName,
+                             final byte[] imageData) {
         String datedMessage = Chati.CHATI.getLocalization().format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
         String colorizedMessage = getColorizedMessage(datedMessage, messageColor);
         Label messageLabel = new Label(colorizedMessage, Chati.CHATI.getSkin());
         messageLabel.setWrap(true);
 
+        boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
         messageLabelContainer.add(messageLabel).row();
+        if (imageData.length != 0 && imageName != null) {
+            showImage(imageData, imageName);
+        }
+        // Scrolle beim Erhalten einer neuen Nachricht nur bis nach unten, wenn die Scrollleiste bereits ganz unten war.
+        // Ansonsten wird ein Durchscrollen des Verlaufs durch das Erhalten neuer Nachrichten gestört.
+        if (isAtBottomBefore) {
+            historyScrollPane.layout();
+            historyScrollPane.scrollTo(0, 0, 0, 0);
+        }
+        // Spiele Ton für den Erhalt einer Nachricht ab, wenn das Chatfenster nicht sichtbar ist, oder nicht ganz nach
+        // unten gescrollt ist.
+        if (!isVisible() || !isAtBottomBefore) {
+            Chati.CHATI.getAudioManager().playSound("chat_message_sound");
+        }
     }
 
+    /**
+     * Zeigt einen Bildanhang an.
+     * @param imageData Daten des Bildanhangs.
+     * @param imageName Name des Bildanhangs.
+     */
     private void showImage(final byte[] imageData, @NotNull final String imageName) {
         Pixmap image = new Pixmap(imageData, 0, imageData.length);
         Drawable imageDrawable = new TextureRegionDrawable(new Texture(image));

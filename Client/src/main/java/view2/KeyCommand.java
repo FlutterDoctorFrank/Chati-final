@@ -28,6 +28,9 @@ public enum KeyCommand {
     /** Repräsentiert das Anzeigen der Namen aller Benutzer über deren Avatar. */
     SHOW_NAMES,
 
+    /** Repräsentiert eine Taste, die gedrückt sein muss damit mit dem Mausrad gezoomt werden kann. */
+    ZOOM,
+
     /** Repräsentiert das Interagieren mit einem Interaktionsobjekt. */
     INTERACT,
 

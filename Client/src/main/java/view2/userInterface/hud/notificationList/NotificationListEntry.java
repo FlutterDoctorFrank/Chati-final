@@ -245,17 +245,17 @@ public class NotificationListEntry extends Table implements Translatable, Compar
             left().defaults().padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING).padTop(VERTICAL_SPACING);
 
             Table container = new Table();
-            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACE).center().growX();
             dateLabel.setAlignment(Align.right, Align.right);
-            container.add(dateLabel).spaceBottom(SPACING / 2).row();
+            container.add(dateLabel).spaceBottom(SPACE / 2).row();
             textLabel.setAlignment(Align.left, Align.left);
             container.add(textLabel).row();
             Table buttonContainer = new Table();
-            buttonContainer.defaults().bottom().right().size(BUTTON_SIZE).space(SPACING);
+            buttonContainer.defaults().bottom().right().size(BUTTON_SIZE).space(SPACE);
             buttonContainer.add(okButton).left().height(BUTTON_SIZE).width(SHOW_BUTTON_WIDTH).growX();
             buttonContainer.add(acceptButton, declineButton, deleteButton);
             container.add(buttonContainer).bottom().padBottom(VERTICAL_SPACING).grow().row();
-            add(container).padLeft(SPACING).padRight(SPACING).grow();
+            add(container).padLeft(SPACE).padRight(SPACE).grow();
 
             // Translatable register
             translates.add(dateLabel);
@@ -348,16 +348,16 @@ public class NotificationListEntry extends Table implements Translatable, Compar
             setMovable(false);
 
             Table container = new Table();
-            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACE).center().growX();
             infoLabel.setAlignment(Align.center, Align.center);
             infoLabel.setWrap(true);
-            container.add(infoLabel).spaceBottom(2 * SPACING).row();
+            container.add(infoLabel).spaceBottom(2 * SPACE).row();
             Table buttonContainer = new Table();
             buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
-            buttonContainer.add(confirmButton).padRight(SPACING / 2);
-            buttonContainer.add(cancelButton).padLeft(SPACING / 2);
+            buttonContainer.add(confirmButton).padRight(SPACE / 2);
+            buttonContainer.add(cancelButton).padLeft(SPACE / 2);
             container.add(buttonContainer);
-            add(container).padLeft(SPACING).padRight(SPACING).grow();
+            add(container).padLeft(SPACE).padRight(SPACE).grow();
 
             // Translatable register
             translates.add(infoLabel);

@@ -68,34 +68,34 @@ public class InformationWindow extends ChatiWindow {
         Table container = new Table();
         informationScrollPane = new ScrollPane(container, Chati.CHATI.getSkin());
         informationScrollPane.setFadeScrollBars(false);
-        container.defaults().pad(SPACING / 2).center().growX();
+        container.defaults().pad(SPACE / 2).center().growX();
         container.add(infoLabel).row();
 
         Table keyBindingsContainer = new Table();
-        keyBindingsContainer.defaults().colspan(2).padLeft(SPACING).padBottom(SPACING).growX();
+        keyBindingsContainer.defaults().colspan(2).padLeft(SPACE).padBottom(SPACE).growX();
         keyBindingsContainer.add(keyBindingsLabel).row();
         //Bewegungstasten
         Table movementKeysContainer = new Table();
-        movementKeysContainer.defaults().colspan(2).padLeft(2 * SPACING).padBottom(SPACING).growX();
+        movementKeysContainer.defaults().colspan(2).padLeft(2 * SPACE).padBottom(SPACE).growX();
         movementKeysContainer.add(movementKeysLable).row();
         Table moveUpContainer = new Table();
-        moveUpContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        moveUpContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         moveUpContainer.add(moveUpLabel);
         moveUpContainer.add(moveUpKeyLabel);
         Table moveDownContainer = new Table();
-        moveDownContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        moveDownContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         moveDownContainer.add(moveDownLabel);
         moveDownContainer.add(moveDownKeyLabel);
         Table moveLeftContainer = new Table();
-        moveLeftContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        moveLeftContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         moveLeftContainer.add(moveLeftLabel);
         moveLeftContainer.add(moveLeftKeyLabel);
         Table moveRightContainer = new Table();
-        moveRightContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        moveRightContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         moveRightContainer.add(moveRightLabel);
         moveRightContainer.add(moveRightKeyLabel);
         Table sprintContainer = new Table();
-        sprintContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        sprintContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         sprintContainer.add(sprintLabel);
         sprintContainer.add(sprintKeyLabel);
         movementKeysContainer.add(moveUpContainer).row();
@@ -107,34 +107,34 @@ public class InformationWindow extends ChatiWindow {
 
         //Funktionstasten
         Table functionKeysContainer = new Table();
-        functionKeysContainer.defaults().colspan(2).padLeft(2 * SPACING).padBottom(SPACING).growX();
+        functionKeysContainer.defaults().colspan(2).padLeft(2 * SPACE).padBottom(SPACE).growX();
         functionKeysContainer.add(functionKeysLable).row();
         Table interactContainer = new Table();
-        interactContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        interactContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         interactContainer.add(interactionLabel);
         interactContainer.add(interactionKeyLabel);
         Table openUsersListContainer = new Table();
-        openUsersListContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        openUsersListContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         openUsersListContainer.add(openUsersListLabel);
         openUsersListContainer.add(openUsersListKeyLabel);
         Table openNotificationsListContainer = new Table();
-        openNotificationsListContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        openNotificationsListContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         openNotificationsListContainer.add(openNotificationsListLabel);
         openNotificationsListContainer.add(openNotificationsKeyLabel);
         Table openSettingsContainer = new Table();
-        openSettingsContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        openSettingsContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         openSettingsContainer.add(openSettingsLabel);
         openSettingsContainer.add(openSettingsKeyLabel);
         Table openCommunicationWindowContainer = new Table();
-        openCommunicationWindowContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        openCommunicationWindowContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         openCommunicationWindowContainer.add(openCommunicationWindowLabel);
         openCommunicationWindowContainer.add(openCommunicationWindowKeyLabel);
         Table muteMicrophoneContainer = new Table();
-        muteMicrophoneContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        muteMicrophoneContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         muteMicrophoneContainer.add(muteMicrophoneLabel);
         muteMicrophoneContainer.add(muteMicrophoneKeyLabel);
         Table muteSoundContainer = new Table();
-        muteSoundContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        muteSoundContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         muteSoundContainer.add(muteSoundsLabel);
         muteSoundContainer.add(muteSoundsKeyLabel);
         functionKeysContainer.add(interactContainer).row();
@@ -149,21 +149,21 @@ public class InformationWindow extends ChatiWindow {
         container.add(keyBindingsContainer).row();
 
         Table commandsContainer = new Table();
-        commandsContainer.defaults().colspan(2).padLeft(SPACING).padBottom(SPACING).growX();
+        commandsContainer.defaults().colspan(2).padLeft(SPACE).padBottom(SPACE).growX();
         commandsContainer.add(commandsLabel).row();
         Table chatCommandsContainer = new Table();
-        chatCommandsContainer.defaults().colspan(2).padLeft(2 * SPACING).padBottom(SPACING).growX();
+        chatCommandsContainer.defaults().colspan(2).padLeft(2 * SPACE).padBottom(SPACE).growX();
         chatCommandsContainer.add(chatCommandsLabel).row();
         Table worldMessageContainer = new Table();
-        worldMessageContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        worldMessageContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         worldMessageContainer.add(chatWorldMessageLabel);
         worldMessageContainer.add(chatWorldMessageCommandLabel);
         Table roomMessageContainer = new Table();
-        roomMessageContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        roomMessageContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         roomMessageContainer.add(chatRoomMessageLable);
         roomMessageContainer.add(chatRoomMessageCommandLable);
         Table userMessageContainer = new Table();
-        userMessageContainer.defaults().colspan(2).padLeft(2 * SPACING).growX();
+        userMessageContainer.defaults().colspan(2).padLeft(2 * SPACE).growX();
         userMessageContainer.add(chatUserMessageLable);
         userMessageContainer.add(chatUserMessageCommandLable);
         chatCommandsContainer.add(worldMessageContainer).row();
@@ -172,7 +172,7 @@ public class InformationWindow extends ChatiWindow {
         commandsContainer.add(chatCommandsContainer).row();
         container.add(commandsContainer).row();
 
-        add(informationScrollPane).padLeft(SPACING).padRight(SPACING).grow();
+        add(informationScrollPane).padLeft(SPACE).padRight(SPACE).grow();
 
         // Translatable register
         translates.add(infoLabel);

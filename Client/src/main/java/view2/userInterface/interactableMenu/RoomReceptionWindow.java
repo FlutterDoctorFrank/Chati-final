@@ -201,8 +201,8 @@ public class RoomReceptionWindow extends InteractableWindow {
         public RoomCreateTable() {
             super("table.entry.create-room");
 
-            roomnameField = new ChatiTextField("menu.text-field.room-name", false);
-            passwordField = new ChatiTextField("menu.text-field.password", true);
+            roomnameField = new ChatiTextField("menu.text-field.room-name", ChatiTextField.TextFieldType.STANDARD);
+            passwordField = new ChatiTextField("menu.text-field.password", ChatiTextField.TextFieldType.PASSWORD);
 
             ChatiLabel mapSelectLabel = new ChatiLabel("menu.label.map");
             ChatiSelectBox<ContextMap> mapSelectBox = new ChatiSelectBox<>(ContextMap::getName);
@@ -283,7 +283,7 @@ public class RoomReceptionWindow extends InteractableWindow {
         public RoomJoinTable(@NotNull final ContextEntry roomEntry) {
             super("table.entry.join-room");
 
-            passwordField = new ChatiTextField("menu.text-field.password", true);
+            passwordField = new ChatiTextField("menu.text-field.password", ChatiTextField.TextFieldType.PASSWORD);
 
             ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
             confirmButton.addListener(new ClickListener() {

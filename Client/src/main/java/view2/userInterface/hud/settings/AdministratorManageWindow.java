@@ -37,7 +37,7 @@ public class AdministratorManageWindow extends ChatiWindow {
         super("window.title.manage-administrator", WINDOW_WIDTH, WINDOW_HEIGHT);
 
         infoLabel = new ChatiLabel("window.entry.manage-administrator");
-        usernameField = new ChatiTextField("menu.text-field.username", false);
+        usernameField = new ChatiTextField("menu.text-field.username", ChatiTextField.TextFieldType.STANDARD);
         messageArea = new ChatiTextArea("menu.text-field.message", true);
 
         ChatiTextButton assignButton = new ChatiTextButton("menu.button.role-add", true);

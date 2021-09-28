@@ -25,8 +25,8 @@ public class LoginTable extends MenuTable {
     public LoginTable() {
         super("table.entry.login");
 
-        usernameField = new ChatiTextField("menu.text-field.username", false);
-        passwordField = new ChatiTextField("menu.text-field.password", true);
+        usernameField = new ChatiTextField("menu.text-field.username", ChatiTextField.TextFieldType.STANDARD);
+        passwordField = new ChatiTextField("menu.text-field.password", ChatiTextField.TextFieldType.PASSWORD);
 
         ChatiTextButton loginButton = new ChatiTextButton("menu.button.login", true);
         loginButton.addListener(new ClickListener() {

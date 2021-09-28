@@ -5,10 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3FileHandle;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -90,9 +87,9 @@ public abstract class FileChooserWindow extends ChatiWindow {
         setMovable(false);
 
         Table container = new Table();
-        container.defaults().height(ROW_HEIGHT).padBottom(SPACING).center().growX();
+        container.defaults().height(ROW_HEIGHT).padBottom(SPACE).center().growX();
         infoLabel.setAlignment(Align.center, Align.center);
-        container.add(infoLabel).padTop(SPACING).row();
+        container.add(infoLabel).padTop(SPACE).row();
 
         currentDirectoryLabel.setAlignment(Align.left, Align.left);
         container.add(currentDirectoryLabel).row();
@@ -106,7 +103,7 @@ public abstract class FileChooserWindow extends ChatiWindow {
         }
 
         translates.trimToSize();
-        add(container).padLeft(SPACING).padRight(SPACING).grow();
+        add(container).padLeft(SPACE).padRight(SPACE).grow();
     }
 
     /**
@@ -140,9 +137,9 @@ public abstract class FileChooserWindow extends ChatiWindow {
 
         Table buttonContainer = new Table();
         buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
-        buttonContainer.add(saveButton).padRight(SPACING / 2);
-        buttonContainer.add(newDirectoryButton).padLeft(SPACING / 2).padRight(SPACING / 2);
-        buttonContainer.add(cancelButton).padLeft(SPACING / 2);
+        buttonContainer.add(saveButton).padRight(SPACE / 2);
+        buttonContainer.add(newDirectoryButton).padLeft(SPACE / 2).padRight(SPACE / 2);
+        buttonContainer.add(cancelButton).padLeft(SPACE / 2);
 
         container.add(buttonContainer).row();
 
@@ -184,8 +181,8 @@ public abstract class FileChooserWindow extends ChatiWindow {
 
         Table buttonContainer = new Table();
         buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
-        buttonContainer.add(chooseButton).padRight(SPACING / 2);
-        buttonContainer.add(cancelButton).padLeft(SPACING / 2);
+        buttonContainer.add(chooseButton).padRight(SPACE / 2);
+        buttonContainer.add(cancelButton).padLeft(SPACE / 2);
 
         container.add(buttonContainer).row();
 
@@ -224,9 +221,9 @@ public abstract class FileChooserWindow extends ChatiWindow {
         if (!directoryHandle.isDirectory()) {
             return;
         }
-        Array<FileListItem> currentFileListItems = new Array<>();
         currentDirectory = directoryHandle;
 
+        Array<FileListItem> currentFileListItems = new Array<>();
         if (directoryHandle.path().isBlank() || directoryHandle.path().equals("/")) {
             /*
              * Ist der Pfadname leer oder besteht nur aus einem Slash, so handelt es sich um das UNIX Root Directory,
@@ -235,7 +232,7 @@ public abstract class FileChooserWindow extends ChatiWindow {
              */
             currentDirectoryLabel.setText(Chati.CHATI.getLocalization().translate("window.file-chooser.root"));
             for (File drive : File.listRoots()) {
-                currentFileListItems.add(new FileListItem(drive));
+                currentFileListItems.add(new FileListItem(new Lwjgl3FileHandle(drive, FileType.Absolute), false));
             }
         } else {
             currentDirectoryLabel.setText(directoryHandle.file().getAbsolutePath());
@@ -251,6 +248,7 @@ public abstract class FileChooserWindow extends ChatiWindow {
             }
         }
         currentFileListItems.sort();
+
         fileList.setItems(currentFileListItems);
         fileList.setSelected(null);
     }
@@ -262,14 +260,6 @@ public abstract class FileChooserWindow extends ChatiWindow {
 
         private final FileHandle fileHandle;
         private final boolean parent;
-
-        /**
-         * Erzeugt eine neue Instanz eines FileListItem.
-         * @param file Zugehörige Datei.
-         */
-        public FileListItem(@NotNull final File file) {
-            this(new Lwjgl3FileHandle(file, FileType.Absolute), false);
-        }
 
         /**
          * Erzeugt eine neue Instanz eines FileListItem.
@@ -313,6 +303,8 @@ public abstract class FileChooserWindow extends ChatiWindow {
         private static final float WINDOW_WIDTH = 550;
         private static final float WINDOW_HEIGHT = 325;
 
+        private final ChatiTextField nameField;
+
         /**
          * Erzeugt eine Instanz eines NewDirectoryWindow.
          * @param titleKey Kennung des Titels.
@@ -322,13 +314,13 @@ public abstract class FileChooserWindow extends ChatiWindow {
         protected ConfirmWindow(@NotNull final String titleKey, final boolean save) {
             super(titleKey, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-            ChatiTextField nameField;
             ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
             if (save) {
                 infoLabel = new ChatiLabel("window.entry.enter-filename");
-                nameField = new ChatiTextField("menu.text-field.filename", 128);
+                nameField = new ChatiTextField("menu.text-field.filename", ChatiTextField.TextFieldType.FILE);
                 if (fileName != null) {
                     nameField.setText(fileName);
+                    nameField.setCursorPosition(fileName.length());
                 }
                 confirmButton.addListener(new ClickListener() {
                     @Override
@@ -344,7 +336,7 @@ public abstract class FileChooserWindow extends ChatiWindow {
                             showMessage("window.file-chooser.file-already-exists");
                             return;
                         }
-                        FileHandle newFile = Gdx.files.absolute(currentDirectory.path() + "/" + nameField.getText().trim());
+                        FileHandle newFile = Gdx.files.absolute(currentDirectory.path().concat("/").concat(nameField.getText().trim()));
                         if (!fileFilter.accept(newFile.file())) {
                             infoLabel.setText(Chati.CHATI.getLocalization().translate(""));
                         }
@@ -359,7 +351,7 @@ public abstract class FileChooserWindow extends ChatiWindow {
                 });
             } else {
                 infoLabel = new ChatiLabel("window.entry.enter-directory");
-                nameField = new ChatiTextField("menu.text-field.directory", 128);
+                nameField = new ChatiTextField("menu.text-field.directory", ChatiTextField.TextFieldType.FILE);
                 confirmButton.addListener(new ClickListener() {
                     @Override
                     public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -371,7 +363,7 @@ public abstract class FileChooserWindow extends ChatiWindow {
                             showMessage("window.file-chooser.directory-already-exists");
                             return;
                         }
-                        FileHandle newDirectory = Gdx.files.absolute(currentDirectory.path() + "/" + nameField.getText().trim());
+                        FileHandle newDirectory = Gdx.files.absolute(currentDirectory.path().concat("/").concat(nameField.getText().trim()));
                         newDirectory.mkdirs();
                         changeDirectory(currentDirectory);
                         close();
@@ -387,24 +379,36 @@ public abstract class FileChooserWindow extends ChatiWindow {
                 }
             });
 
+            // Layout
+            setModal(true);
+            setMovable(false);
+
             Table container = new Table();
-            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
+            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACE).center().growX();
             infoLabel.setAlignment(Align.center, Align.center);
             infoLabel.setWrap(true);
-            container.add(infoLabel).spaceBottom(2 * SPACING).row();
+            container.add(infoLabel).spaceBottom(2 * SPACE).row();
             container.add(nameField).row();
             Table buttonContainer = new Table();
             buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
-            buttonContainer.add(confirmButton).padRight(SPACING / 2);
-            buttonContainer.add(cancelButton).padLeft(SPACING / 2);
+            buttonContainer.add(confirmButton).padRight(SPACE / 2);
+            buttonContainer.add(cancelButton).padLeft(SPACE / 2);
             container.add(buttonContainer);
-            add(container).padLeft(SPACING).padRight(SPACING).grow();
+            add(container).padLeft(SPACE).padRight(SPACE).grow();
 
             // Translatable register
             translates.add(infoLabel);
             translates.add(confirmButton);
             translates.add(cancelButton);
             translates.trimToSize();
+        }
+
+        @Override
+        public void focus() {
+            super.focus();
+            if (getStage() != null) {
+                getStage().setKeyboardFocus(nameField);
+            }
         }
     }
 }

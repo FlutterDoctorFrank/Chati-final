@@ -270,6 +270,7 @@ public class ChatiPreferences {
         KeyCommand.MOVE_RIGHT.addKeyBindings(List.of(Input.Keys.RIGHT, Input.Keys.D));
         KeyCommand.SPRINT.addKeyBindings(List.of(Input.Keys.SHIFT_LEFT, Input.Keys.SHIFT_RIGHT));
         KeyCommand.SHOW_NAMES.addKeyBindings(List.of(Input.Keys.TAB));
+        KeyCommand.ZOOM.addKeyBindings(List.of(Input.Keys.CONTROL_LEFT, Input.Keys.CONTROL_RIGHT));
         KeyCommand.INTERACT.addKeyBindings(List.of(Input.Keys.E));
         KeyCommand.OPEN_CHAT.addKeyBindings(List.of(Input.Keys.SPACE));
         KeyCommand.SEND_CHAT_MESSAGE.addKeyBindings(List.of(Input.Keys.ENTER, Input.Keys.NUMPAD_ENTER));

@@ -64,7 +64,6 @@ public class MusicStream extends AudioProducer {
          * abgespielt werden. In diesem Fall wird die Geschwindigkeit des Abspielens von Musikdaten leicht angepasst, um
          * einen leeren oder unendlich steigenden Puffer zu vermeiden.
          */
-        //System.out.println(queueSizeInBlocks());
         slowDownRate = -queueSizeInBlocks() / 448f + 1;
 
         float numPlaybackSample = 0;

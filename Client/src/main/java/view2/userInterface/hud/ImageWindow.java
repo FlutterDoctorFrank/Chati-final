@@ -61,11 +61,12 @@ public class ImageWindow extends ChatiWindow {
         imageTable.add(image).width(imageWidth).height(imageHeight);
         imageScrollPane = new ScrollPane(imageTable, Chati.CHATI.getSkin());
         imageScrollPane.setOverscroll(false, false);
-        add(saveButton).width(SAVE_BUTTON_WIDTH).height(ROW_HEIGHT).row();
+        add(saveButton).width(SAVE_BUTTON_WIDTH).height(ROW_HEIGHT).padTop(SPACE / 2).row();
         add(imageScrollPane).grow();
 
         setWidth(Math.min(Gdx.graphics.getWidth(), Math.max(SAVE_BUTTON_WIDTH, imageWidth) + EDGE_SPACE));
-        setHeight(Math.min(Gdx.graphics.getHeight(), Math.max(SAVE_BUTTON_WIDTH, imageHeight) + EDGE_SPACE + ROW_HEIGHT));
+        setHeight(Math.min(Gdx.graphics.getHeight(),
+                Math.max(SAVE_BUTTON_WIDTH, imageHeight) + EDGE_SPACE + SPACE / 2 + ROW_HEIGHT));
 
         // Translatable register
         translates.add(saveButton);

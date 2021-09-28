@@ -17,6 +17,7 @@ public class WorldInputProcessor implements InputProcessor {
     private boolean moveRightPressed;
     private boolean sprintPressed;
     private boolean showNamesPressed;
+    private boolean zoomPressed;
     private boolean pushToTalkPressed;
 
     @Override
@@ -38,6 +39,9 @@ public class WorldInputProcessor implements InputProcessor {
         }
         if (KeyCommand.SHOW_NAMES.matches(keycode)) {
             showNamesPressed = true;
+        }
+        if (KeyCommand.ZOOM.matches(keycode)) {
+            zoomPressed = true;
         }
         if (KeyCommand.PUSH_TO_TALK.matches(keycode)) {
             pushToTalkPressed = true;
@@ -69,6 +73,9 @@ public class WorldInputProcessor implements InputProcessor {
         }
         if (KeyCommand.SHOW_NAMES.matches(keycode)) {
             showNamesPressed = false;
+        }
+        if (KeyCommand.ZOOM.matches(keycode)) {
+            zoomPressed = false;
         }
         if (KeyCommand.PUSH_TO_TALK.matches(keycode)) {
             pushToTalkPressed = false;
@@ -143,6 +150,14 @@ public class WorldInputProcessor implements InputProcessor {
      */
     public boolean isShowNamesPressed() {
         return showNamesPressed && KeyCommand.SHOW_NAMES.isPressed();
+    }
+
+    /**
+     * Gibt zurück, ob die Taste für das Zoomen mit dem Mausrad gedrückt ist.
+     * @return true, wenn die Taste gedrückt ist, sonst false.
+     */
+    public boolean isZoomPressed() {
+        return zoomPressed && KeyCommand.ZOOM.isPressed();
     }
 
     /**

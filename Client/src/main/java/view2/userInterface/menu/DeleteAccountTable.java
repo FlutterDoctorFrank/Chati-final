@@ -24,8 +24,8 @@ public class DeleteAccountTable extends MenuTable {
     public DeleteAccountTable() {
         super("table.entry.delete-account");
 
-        passwordField = new ChatiTextField("menu.text-field.password", true);
-        confirmPasswordField = new ChatiTextField("menu.text-field.password-confirm", true);
+        passwordField = new ChatiTextField("menu.text-field.password", ChatiTextField.TextFieldType.PASSWORD);
+        confirmPasswordField = new ChatiTextField("menu.text-field.password-confirm", ChatiTextField.TextFieldType.PASSWORD);
 
         ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
         confirmButton.addListener(new ClickListener() {

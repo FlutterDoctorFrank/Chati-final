@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public abstract class ChatiWindow extends Window implements Translatable {
 
     protected static final float ROW_HEIGHT = 60;
-    protected static final float SPACING = 15;
+    protected static final float SPACE = 15;
 
     protected final ArrayList<Translatable> translates;
     protected ChatiLabel infoLabel;

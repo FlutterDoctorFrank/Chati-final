@@ -69,10 +69,12 @@ public class WorldCamera extends OrthographicCamera {
      * @param in Falls true, wird hereingezoomt, sonst herausgezoomt.
      */
     public void zoom(final boolean in) {
-        if (in && zoom <= MAX_ZOOM) {
-            zoom += ZOOM_STEP;
-        } else if (!in && zoom >= MIN_ZOOM) {
-            zoom -= ZOOM_STEP;
+        if (Chati.CHATI.getWorldScreen().getWorldInputProcessor().isZoomPressed()) {
+            if (in && zoom <= MAX_ZOOM) {
+                zoom += ZOOM_STEP;
+            } else if (!in && zoom >= MIN_ZOOM) {
+                zoom -= ZOOM_STEP;
+            }
         }
     }
 

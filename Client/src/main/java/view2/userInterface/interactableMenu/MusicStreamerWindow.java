@@ -1,5 +1,8 @@
 package view2.userInterface.interactableMenu;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -176,6 +179,26 @@ public class MusicStreamerWindow extends InteractableWindow {
         musicProgressBar = new ProgressBar(0, 1, 0.00001f, false, Chati.CHATI.getSkin());
 
         Label creditsLabel = new Label("Music by https://www.bensound.com", Chati.CHATI.getSkin());
+        creditsLabel.addListener(new ClickListener() {
+            @Override
+            public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
+                              @Nullable final Actor fromActor) {
+                if (pointer == -1) {
+                    creditsLabel.setColor(Color.MAGENTA);
+                }
+            }
+            @Override
+            public void exit(@NotNull final InputEvent event, final float x, final float y, final int pointer,
+                             @Nullable final Actor fromActor) {
+                if (pointer == -1) {
+                    creditsLabel.setColor(Color.WHITE);
+                }
+            }
+            @Override
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                Gdx.net.openURI("https://www.bensound.com");
+            }
+        });
 
         setButtonStates();
         setSelectedTitle();
@@ -185,21 +208,21 @@ public class MusicStreamerWindow extends InteractableWindow {
         setMovable(false);
 
         Table container = new Table();
-        container.defaults().height(ROW_HEIGHT).padBottom(SPACING).center().growX();
+        container.defaults().height(ROW_HEIGHT).padBottom(SPACE).center().growX();
         infoLabel.setAlignment(Align.center, Align.center);
-        container.add(infoLabel).padTop(SPACING).row();
+        container.add(infoLabel).padTop(SPACE).row();
 
         container.add(musicListScrollPane).height(0).grow().row();
 
         Table currentTitleTable = new Table();
-        currentTitleTable.defaults().padRight(SPACING).left();
+        currentTitleTable.defaults().padRight(SPACE).left();
         currentTitleLabel.setAlignment(Align.left, Align.left);
         titleNameLabel.setAlignment(Align.left, Align.left);
         currentTitleTable.add(currentTitleLabel, titleNameLabel).left();
         container.add(currentTitleTable).height(ROW_HEIGHT / 2).left().growX().row();
 
         Table musicProgressContainer = new Table();
-        musicProgressContainer.add(musicProgressLabel).width(WINDOW_WIDTH / 16).padRight(SPACING);
+        musicProgressContainer.add(musicProgressLabel).width(WINDOW_WIDTH / 16).padRight(SPACE);
         musicProgressContainer.add(musicProgressBar).growX();
         container.add(musicProgressContainer).growX().row();
 
@@ -224,7 +247,7 @@ public class MusicStreamerWindow extends InteractableWindow {
         creditsLabel.setFontScale(0.67f);
         creditsLabel.setAlignment(Align.center, Align.center);
         container.add(creditsLabel).padBottom(0);
-        add(container).padLeft(SPACING).padRight(SPACING).grow();
+        add(container).padLeft(SPACE).padRight(SPACE).grow();
 
         // Translatable Register
         translates.add(currentTitleLabel);
