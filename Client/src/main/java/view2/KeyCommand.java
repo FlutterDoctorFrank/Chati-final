@@ -1,6 +1,7 @@
 package view2;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +35,14 @@ public enum KeyCommand {
     /** Repräsentiert das Interagieren mit einem Interaktionsobjekt. */
     INTERACT,
 
-    /** Repräsentiert das Öffnen des Chats. */
-    OPEN_CHAT,
-
     /** Repräsentiert das Senden einer Chatnachricht. */
     SEND_CHAT_MESSAGE,
 
     /** Repräsentiert das Aufnahmen mit dem Mikrofon. */
     PUSH_TO_TALK,
+
+    /** Repräsentiert das Öffnen des Chats. */
+    OPEN_CHAT,
 
     /** Repräsentiert das Öffnen des Benutzermenüs. */
     OPEN_USER_MENU,
@@ -97,5 +98,17 @@ public enum KeyCommand {
      */
     public boolean isPressed() {
         return keyBindings.stream().anyMatch(Gdx.input::isKeyPressed);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < keyBindings.size(); i++) {
+            stringBuilder.append(Input.Keys.toString(keyBindings.get(i)));
+            if (i < keyBindings.size() - 1) {
+                stringBuilder.append(", ");
+            }
+        }
+        return stringBuilder.toString();
     }
 }
