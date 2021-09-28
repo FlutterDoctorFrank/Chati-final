@@ -42,6 +42,9 @@ public class ChatiTooltip extends TextTooltip {
     @Override
     public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
                       @Nullable final Actor fromActor) {
+        if (tooltipBundle == null) {
+            return;
+        }
         super.getActor().setText(Chati.CHATI.getLocalization().format(tooltipBundle.getMessageKey(), tooltipBundle.getArguments()));
         super.enter(event, x, y, pointer, fromActor);
     }
