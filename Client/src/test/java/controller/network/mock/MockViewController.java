@@ -76,7 +76,8 @@ public class MockViewController implements ViewControllerInterface {
 
     @Override
     public void showChatMessage(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
-                                @NotNull final MessageType messageType, @NotNull final String message) throws UserNotFoundException {
+                                @NotNull final MessageType messageType, @NotNull final String message,
+                                final byte[] imageData, @Nullable final String imageName) throws UserNotFoundException {
         this.calls.add("show-chat-message");
 
         if (this.unknownSender) {

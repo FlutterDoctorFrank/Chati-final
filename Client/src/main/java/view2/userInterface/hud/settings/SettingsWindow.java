@@ -35,7 +35,7 @@ public class SettingsWindow extends HudMenuWindow {
         ChatiTextButton informationButton = new ChatiTextButton("menu.button.information", true);
         informationButton.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 new InformationWindow().open();
             }
         });

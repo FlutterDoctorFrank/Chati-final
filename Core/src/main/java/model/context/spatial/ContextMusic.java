@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public enum ContextMusic implements Resource {
 
     ALLTHAT("Allthat", "bensound-allthat"),
-    COUNTRYBODY("Countrybody", "bensound-countryboy"),
+    COUNTRYBODY("Countryboy", "bensound-countryboy"),
     CREATIVEMINDS("Creativeminds", "bensound-creativeminds"),
     CREEPY("Creepy", "bensound-creepy"),
     DREAMS("Dreams", "bensound-dreams"),
