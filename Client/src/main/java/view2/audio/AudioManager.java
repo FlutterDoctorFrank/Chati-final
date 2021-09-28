@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Eine Klasse, welche den VoiceChat sowie das Abspielen von Soundeffekten koordiniert.
@@ -34,11 +36,8 @@ public class AudioManager implements Disposable {
             this.voiceRecorder = new VoiceRecorder();
             setMicrophoneSensitivity();
         } catch (GdxRuntimeException e) {
-            e.printStackTrace(); // Line is not available
+            Logger.getLogger("chati.view").log(Level.WARNING, "Exception during audio setup", e);
         }
-        //this.chatMessageSound = Gdx.audio.newSound(Gdx.files.internal(CHAT_MESSAGE_SOUND_PATH));
-        //this.notificationSound = Gdx.audio.newSound(Gdx.files.internal(NOTIFICATION_SOUND_PATH));
-        //this.roomEnterSound = Gdx.audio.newSound(Gdx.files.internal(ROOM_ENTER_SOUND_PATH));
     }
 
     /**

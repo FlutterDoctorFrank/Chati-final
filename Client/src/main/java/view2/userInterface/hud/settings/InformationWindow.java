@@ -1,9 +1,7 @@
 package view2.userInterface.hud.settings;
 
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
@@ -14,6 +12,8 @@ public class InformationWindow extends ChatiWindow {
 
     private static final float WINDOW_WIDTH = 750;
     private static final float WINDOW_HEIGHT = 650;
+
+    private final ScrollPane informationScrollPane;
 
     protected InformationWindow() {
         super("window.title.information", WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -66,7 +66,7 @@ public class InformationWindow extends ChatiWindow {
         setMovable(false);
 
         Table container = new Table();
-        ScrollPane informationScrollPane = new ScrollPane(container, Chati.CHATI.getSkin());
+        informationScrollPane = new ScrollPane(container, Chati.CHATI.getSkin());
         informationScrollPane.setFadeScrollBars(false);
         container.defaults().pad(SPACING / 2).center().growX();
         container.add(infoLabel).row();
@@ -214,11 +214,18 @@ public class InformationWindow extends ChatiWindow {
         translates.trimToSize();
     }
 
-    private class InformationWindowLabel extends ChatiLabel{
+    @Override
+    public void open() {
+        super.open();
+
+        Chati.CHATI.getScreen().getStage().setScrollFocus(informationScrollPane);
+    }
+
+    private static class InformationWindowLabel extends ChatiLabel {
 
         private static final float LABEL_WIDTH = 450;
 
-        public InformationWindowLabel(@NotNull String messageKey) {
+        public InformationWindowLabel(@NotNull final String messageKey) {
             super(messageKey);
             setWidth(LABEL_WIDTH);
             setWrap(true);
