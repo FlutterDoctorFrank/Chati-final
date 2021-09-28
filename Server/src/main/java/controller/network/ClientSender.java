@@ -484,8 +484,7 @@ public interface ClientSender {
                         }
 
                         return new PacketChatMessage(message.getMessageType(), message.getSender().getUserId(),
-                                message.getTextMessage(), message.getImageData(), message.getImageName(),
-                                message.getTimestamp());
+                                message.getTextMessage(), message.getTimestamp(), message.getImageName(), message.getImageData());
                     }
 
                     if (message.getMessageBundle() == null) {

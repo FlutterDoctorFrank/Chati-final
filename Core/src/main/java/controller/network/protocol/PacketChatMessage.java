@@ -8,7 +8,6 @@ import model.communication.message.MessageType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -26,9 +25,10 @@ public class PacketChatMessage implements Packet<PacketListener> {
 
     private UUID senderId;
     private String message;
-    private byte[] imageData;
-    private String imageName;
     private LocalDateTime timestamp;
+
+    private String imageName;
+    private byte[] imageData;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -50,13 +50,13 @@ public class PacketChatMessage implements Packet<PacketListener> {
     /**
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Client-Anwendung.
      * @param message die eingegebene Nachricht des Benutzers.
-     * @param imageData die Daten der beigefügten Bilddatei der Nachricht.
      * @param imageName der Name der beigefügten Bilddatei.
+     * @param imageData die Daten der beigefügten Bilddatei der Nachricht.
      */
-    public PacketChatMessage(@NotNull final String message, final byte[] imageData, @NotNull final String imageName) {
+    public PacketChatMessage(@NotNull final String message, @NotNull final String imageName, final byte[] imageData) {
         this.message = message;
-        this.imageData = imageData;
         this.imageName = imageName;
+        this.imageData = imageData;
     }
 
     /**
@@ -69,6 +69,7 @@ public class PacketChatMessage implements Packet<PacketListener> {
         this.bundle = bundle;
         this.type = MessageType.INFO;
         this.timestamp = timestamp;
+        this.imageData = new byte[0];
     }
 
     /**
@@ -80,13 +81,13 @@ public class PacketChatMessage implements Packet<PacketListener> {
      * @param type der Nachrichten-Typ der zur übermittelten Nachricht.
      * @param senderId die Benutzer-ID des Senders der Nachricht.
      * @param message die Nachricht des Senders.
-     * @param imageData die Daten der beigefügten Bilddatei der Nachricht.
-     * @param imageName der Name der beigefügten Bilddatei.
      * @param timestamp der Zeitpunkt, an dem der Server die Nachricht gesendet hat.
+     * @param imageName der Name der beigefügten Bilddatei.
+     * @param imageData die Daten der beigefügten Bilddatei der Nachricht.
      */
     public PacketChatMessage(@NotNull final MessageType type, @NotNull final UUID senderId,
-                             @NotNull final String message, final byte[] imageData, @Nullable final String imageName,
-                             @NotNull final LocalDateTime timestamp) {
+                             @NotNull final String message, @NotNull final LocalDateTime timestamp,
+                             @Nullable final String imageName, final byte[] imageData) {
         if (type == MessageType.INFO) {
             throw new IllegalArgumentException("Invalid Constructor for creating InfoMessage-Packets");
         }
@@ -94,9 +95,9 @@ public class PacketChatMessage implements Packet<PacketListener> {
         this.type = type;
         this.senderId = senderId;
         this.message = message;
+        this.timestamp = timestamp;
         this.imageData = imageData;
         this.imageName = imageName;
-        this.timestamp = timestamp;
     }
 
     @Override
@@ -110,10 +111,10 @@ public class PacketChatMessage implements Packet<PacketListener> {
         PacketUtils.writeNullableBundle(kryo, output, this.bundle);
         PacketUtils.writeNullableUniqueId(output, this.senderId);
         output.writeString(this.message);
+        kryo.writeObjectOrNull(output, this.timestamp, LocalDateTime.class);
+        output.writeString(this.imageName);
         output.writeInt(this.imageData.length);
         output.writeBytes(this.imageData);
-        kryo.writeObjectOrNull(output, this.imageName, String.class);
-        kryo.writeObjectOrNull(output, this.timestamp, LocalDateTime.class);
     }
 
     @Override
@@ -122,16 +123,16 @@ public class PacketChatMessage implements Packet<PacketListener> {
         this.bundle = PacketUtils.readNullableBundle(kryo, input);
         this.senderId = PacketUtils.readNullableUniqueId(input);
         this.message = input.readString();
-        this.imageData = input.readBytes(input.readInt());
-        this.imageName = input.readString();
         this.timestamp = kryo.readObjectOrNull(input, LocalDateTime.class);
+        this.imageName = input.readString();
+        this.imageData = input.readBytes(input.readInt());
     }
 
     @Override
     public @NotNull String toString() {
         return this.getClass().getSimpleName() + "{type=" + this.type + ", senderId=" + this.senderId + ", message='"
-                + this.message + ", imageName=" + this.imageName
-                + "', timestamp=" + this.timestamp + ", bundle=" + this.bundle + "}";
+                + this.message + "', timestamp=" + this.timestamp + ", imageName=" + this.imageName + ", bundle="
+                + this.bundle + "}";
     }
 
     /**
@@ -167,11 +168,11 @@ public class PacketChatMessage implements Packet<PacketListener> {
     }
 
     /**
-     * Gibt die Daten der vom Sender angehängten Bilddatei zurück.
-     * @return die Daten der Bilddatei.
+     * Gibt den Zeitpunkt, an dem die Nachricht gesendet wurde, zurück.
+     * @return der Zeitstempel der Nachricht.
      */
-    public byte[] getImageData() {
-        return this.imageData;
+    public @Nullable LocalDateTime getTimestamp() {
+        return this.timestamp;
     }
 
     /**
@@ -183,10 +184,10 @@ public class PacketChatMessage implements Packet<PacketListener> {
     }
 
     /**
-     * Gibt den Zeitpunkt, an dem die Nachricht gesendet wurde, zurück.
-     * @return der Zeitstempel der Nachricht.
+     * Gibt die Daten der vom Sender angehängten Bilddatei zurück.
+     * @return die Daten der Bilddatei.
      */
-    public @Nullable LocalDateTime getTimestamp() {
-        return this.timestamp;
+    public byte[] getImageData() {
+        return this.imageData;
     }
 }

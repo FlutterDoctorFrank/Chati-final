@@ -87,6 +87,14 @@ public class PacketChatMessageTest extends PacketClientTest {
         Assert.assertTrue(this.handler.logged());
         Assert.assertTrue(this.handler.logged(Level.WARNING, "Message can not be null"));
         Mockito.when(packet.getMessage()).thenReturn(randomString());
+        Mockito.when(packet.getImageData()).thenReturn(randomBytes());
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Image-Name can not be null if an image was sent"));
+        Mockito.when(packet.getImageName()).thenReturn(randomString());
 
         this.view.showChatMessage(true);
         this.handler.reset();
@@ -111,6 +119,7 @@ public class PacketChatMessageTest extends PacketClientTest {
         Mockito.when(packet.getMessageType()).thenReturn(MessageType.STANDARD);
         Mockito.when(packet.getSenderId()).thenReturn(randomUniqueId());
         Mockito.when(packet.getMessage()).thenReturn(randomString());
+        Mockito.when(packet.getImageData()).thenReturn(new byte[0]);
 
         this.login();
         this.joinWorld();

@@ -99,9 +99,11 @@ public class AudioManager implements Disposable {
      * Setzt die in den Einstellungen hinterlegte Lautstärke.
      */
     public void setVolume() {
-        audioConsumer.setTotalVolume(Chati.CHATI.getPreferences().getTotalVolume());
-        audioConsumer.setVoiceVolume(Chati.CHATI.getPreferences().getVoiceVolume());
-        audioConsumer.setMusicVolume(0.1f * Chati.CHATI.getPreferences().getMusicVolume());
+        if (audioConsumer != null) {
+            audioConsumer.setTotalVolume(Chati.CHATI.getPreferences().getTotalVolume());
+            audioConsumer.setVoiceVolume(Chati.CHATI.getPreferences().getVoiceVolume());
+            audioConsumer.setMusicVolume(0.1f * Chati.CHATI.getPreferences().getMusicVolume());
+        }
     }
 
     /**
@@ -111,7 +113,7 @@ public class AudioManager implements Disposable {
     public void toggleMusic(boolean on) {
         if (on) {
             setVolume();
-        } else {
+        } else if (audioConsumer != null) {
             audioConsumer.setMusicVolume(0);
         }
     }
@@ -120,7 +122,9 @@ public class AudioManager implements Disposable {
      * Setzt die in den Einstellungen hinterlegte Mikrofonempfindlichkeit.
      */
     public void setMicrophoneSensitivity() {
-        voiceRecorder.setMicrophoneSensitivity(Chati.CHATI.getPreferences().getMicrophoneSensitivity());
+        if (voiceRecorder != null) {
+            voiceRecorder.setMicrophoneSensitivity(Chati.CHATI.getPreferences().getMicrophoneSensitivity());
+        }
     }
 
     /**
@@ -165,7 +169,7 @@ public class AudioManager implements Disposable {
      * @return true, wenn Sprachdaten von diesem Benutzer abgespielt werden, sonst false.
      */
     public boolean isTalking(@NotNull final IUserView user) {
-        return audioConsumer.isTalking(user);
+        return audioConsumer != null && audioConsumer.isTalking(user);
     }
 
     /**
@@ -173,7 +177,7 @@ public class AudioManager implements Disposable {
      * @return true, wenn Musikdaten abgespielt werden, sonst false.
      */
     public boolean isPlayingMusic() {
-        return audioConsumer.isPlayingMusic();
+        return audioConsumer != null && audioConsumer.isPlayingMusic();
     }
 
     /**

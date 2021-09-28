@@ -24,8 +24,7 @@ public class PacketChatMessageTest extends PacketTest<PacketChatMessage> {
 
     @Test(expected = IllegalArgumentException.class)
     public void illegalCreationTest() {
-        new PacketChatMessage(MessageType.INFO, randomUniqueId(), randomString(), randomBytes(),
-                randomString(), LocalDateTime.now());
+        new PacketChatMessage(MessageType.INFO, randomUniqueId(), randomString(), LocalDateTime.now(), randomString(), randomBytes());
     }
 
     @Test
@@ -47,7 +46,7 @@ public class PacketChatMessageTest extends PacketTest<PacketChatMessage> {
     @Test
     public void messageSerializationTest() {
         this.before = new PacketChatMessage(randomEnum(MessageType.class, MessageType.INFO), randomUniqueId(),
-                randomString(), randomBytes(), randomString(), LocalDateTime.now());
+                randomString(),  LocalDateTime.now(), randomString(), randomBytes());
 
         this.serialize();
         this.equals();
@@ -94,5 +93,16 @@ public class PacketChatMessageTest extends PacketTest<PacketChatMessage> {
         } else {
             Assert.assertNull(this.after.getBundle());
         }
+
+        // Vergleiche Bildname und Bilddaten
+        if (this.before.getImageName() != null) {
+            Assert.assertNotNull(this.after.getImageData());
+            Assert.assertEquals(this.before.getImageName(), this.after.getImageName());
+        } else {
+            Assert.assertNull(this.after.getImageName());
+        }
+
+        Assert.assertEquals(this.before.getImageData().length, this.after.getImageData().length);
+        Assert.assertArrayEquals(this.before.getImageData(), this.after.getImageData());
     }
 }

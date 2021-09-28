@@ -37,15 +37,15 @@ public class ImageFileChooserWindow extends FileChooserWindow {
     @Override
     protected boolean loadFile(@NotNull final FileHandle imageFileHandle) {
         if (!imageFileHandle.exists()) {
-            showMessage("window.choose-image.file-not-exist");
+            showMessage("window.file-chooser.file-not-exist");
             return false;
         }
         if (!imageFileHandle.extension().matches(IMAGE_FILE_EXTENSIONS)) {
-            showMessage("window.choose-image.file-no-image");
+            showMessage("window.file-chooser.file-no-image");
             return false;
         }
         if (imageFileHandle.length() >= MAX_FILE_SIZE) {
-            showMessage("window.choose-image.file-too-big", MAX_FILE_SIZE / 1024);
+            showMessage("window.file-chooser.file-too-big", MAX_FILE_SIZE / 1024);
             return false;
         }
 

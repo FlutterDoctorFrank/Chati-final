@@ -1,6 +1,8 @@
 package view2.userInterface.hud;
 
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3FileHandle;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -17,8 +19,8 @@ import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
 import view2.userInterface.ChatiWindow;
-
 import javax.swing.filechooser.FileSystemView;
+import java.io.File;
 import java.io.FileFilter;
 
 /**
@@ -164,10 +166,10 @@ public abstract class FileChooserWindow extends ChatiWindow {
                 }
                 if (fileList.getSelected().getFileHandle().isDirectory()) {
                     changeDirectory(fileList.getSelected().getFileHandle());
-                } else if (loadFile(fileList.getSelected().getFileHandle())) {
-                    close();
                 } else {
-                    infoLabel.setText(Chati.CHATI.getLocalization().translate("window.entry.loading-failed"));
+                    if (loadFile(fileList.getSelected().getFileHandle())) {
+                        close();
+                    }
                 }
             }
         });
@@ -218,25 +220,37 @@ public abstract class FileChooserWindow extends ChatiWindow {
      * Wechselt den angezeigten Ordner.
      * @param directoryHandle Datei des neu anzuzeigenden Ordners.
      */
-    private void changeDirectory(FileHandle directoryHandle) {
+    private void changeDirectory(@NotNull final FileHandle directoryHandle) {
         if (!directoryHandle.isDirectory()) {
             return;
         }
-        currentDirectory = directoryHandle;
-        currentDirectoryLabel.setText(directoryHandle.file().getAbsolutePath());
-
-        FileHandle[] currentFileHandles =
-                directoryHandle.list(file -> (file.isDirectory() || fileFilter.accept(file)) && !file.isHidden());
         Array<FileListItem> currentFileListItems = new Array<>();
-        for (FileHandle fileHandle : currentFileHandles) {
-            currentFileListItems.add(new FileListItem(fileHandle, false));
-        }
-        if (directoryHandle.parent() != null
-                && !directoryHandle.file().getAbsolutePath().equals(directoryHandle.parent().file().getAbsolutePath())) {
-            currentFileListItems.add(new FileListItem(directoryHandle.parent(), true));
+        currentDirectory = directoryHandle;
+
+        if (directoryHandle.path().isBlank() || directoryHandle.path().equals("/")) {
+            /*
+             * Ist der Pfadname leer oder besteht nur aus einem Slash, so handelt es sich um das UNIX Root Directory,
+             * das von LibGDX gesetzt wurde. Da dies unter Windows-Systemen zu Fehlern führt, wird dieser Fall extra
+             * gehandhabt.
+             */
+            currentDirectoryLabel.setText(Chati.CHATI.getLocalization().translate("window.file-chooser.root"));
+            for (File drive : File.listRoots()) {
+                currentFileListItems.add(new FileListItem(drive));
+            }
+        } else {
+            currentDirectoryLabel.setText(directoryHandle.file().getAbsolutePath());
+
+            FileHandle[] currentFileHandles =
+                    directoryHandle.list(file -> (file.isDirectory() || fileFilter.accept(file)) && !file.isHidden());
+
+            for (FileHandle fileHandle : currentFileHandles) {
+                currentFileListItems.add(new FileListItem(fileHandle, false));
+            }
+            if (directoryHandle.parent() != null) {
+                currentFileListItems.add(new FileListItem(directoryHandle.parent(), true));
+            }
         }
         currentFileListItems.sort();
-
         fileList.setItems(currentFileListItems);
         fileList.setSelected(null);
     }
@@ -248,6 +262,14 @@ public abstract class FileChooserWindow extends ChatiWindow {
 
         private final FileHandle fileHandle;
         private final boolean parent;
+
+        /**
+         * Erzeugt eine neue Instanz eines FileListItem.
+         * @param file Zugehörige Datei.
+         */
+        public FileListItem(@NotNull final File file) {
+            this(new Lwjgl3FileHandle(file, FileType.Absolute), false);
+        }
 
         /**
          * Erzeugt eine neue Instanz eines FileListItem.
@@ -277,7 +299,9 @@ public abstract class FileChooserWindow extends ChatiWindow {
 
         @Override
         public String toString() {
-            return parent ? ".." : fileHandle.isDirectory() ? fileHandle.name() + "/" : fileHandle.name();
+            return parent ? ".." : fileHandle.isDirectory() ? (fileHandle.name().isBlank()
+                    ? FileSystemView.getFileSystemView().getSystemDisplayName(fileHandle.file())
+                    : fileHandle.name().concat("/")) : fileHandle.name();
         }
     }
 
@@ -301,8 +325,8 @@ public abstract class FileChooserWindow extends ChatiWindow {
             ChatiTextField nameField;
             ChatiTextButton confirmButton = new ChatiTextButton("menu.button.confirm", true);
             if (save) {
-                infoLabel = new ChatiLabel("window.entry.enter-file-name");
-                nameField = new ChatiTextField("window.entry.file-name", false);
+                infoLabel = new ChatiLabel("window.entry.enter-filename");
+                nameField = new ChatiTextField("menu.text-field.filename", 128);
                 if (fileName != null) {
                     nameField.setText(fileName);
                 }
@@ -313,48 +337,45 @@ public abstract class FileChooserWindow extends ChatiWindow {
                             return;
                         }
                         if (nameField.isBlank()) {
-                            infoLabel.setText(Chati.CHATI.getLocalization().translate("window.entry.enter-file-name"));
+                            showMessage("window.entry.enter-filename");
                             return;
                         }
                         if (currentDirectory.child(nameField.getText()).exists()) {
-                            infoLabel.setText(Chati.CHATI.getLocalization().translate("window.entry.file-already-exists"));
+                            showMessage("window.file-chooser.file-already-exists");
                             return;
                         }
-                        FileHandle newFile = new FileHandle(currentDirectory.path() + "/" + nameField.getText().trim());
+                        FileHandle newFile = Gdx.files.absolute(currentDirectory.path() + "/" + nameField.getText().trim());
                         if (!fileFilter.accept(newFile.file())) {
                             infoLabel.setText(Chati.CHATI.getLocalization().translate(""));
                         }
                         if (saveFile(newFile)) {
                             close();
-                            FileChooserWindow.this.infoLabel
-                                    .setText(Chati.CHATI.getLocalization().translate("window.entry.save-success"));
+                            FileChooserWindow.this.showMessage("window.file-chooser.save-success");
                         } else {
                             close();
-                            FileChooserWindow.this.infoLabel
-                                    .setText(Chati.CHATI.getLocalization().translate("window.entry.save-failed"));
+                            FileChooserWindow.this.showMessage("window.file-chooser.save-failed");
                         }
                     }
                 });
             } else {
-                infoLabel = new ChatiLabel("window.entry.enter-directory-name");
-                nameField = new ChatiTextField("window.entry.directory-name", false);
+                infoLabel = new ChatiLabel("window.entry.enter-directory");
+                nameField = new ChatiTextField("menu.text-field.directory", 128);
                 confirmButton.addListener(new ClickListener() {
                     @Override
                     public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                         if (nameField.isBlank()) {
-                            infoLabel.setText(Chati.CHATI.getLocalization().translate("window.entry.enter-directory-name"));
+                            showMessage("window.entry.enter-directory");
                             return;
                         }
                         if (currentDirectory.child(nameField.getText()).exists()) {
-                            infoLabel.setText(Chati.CHATI.getLocalization().translate("window.entry.directory-already-exists"));
+                            showMessage("window.file-chooser.directory-already-exists");
                             return;
                         }
-                        FileHandle newDirectory = new FileHandle(currentDirectory.path() + "/" + nameField.getText().trim());
+                        FileHandle newDirectory = Gdx.files.absolute(currentDirectory.path() + "/" + nameField.getText().trim());
                         newDirectory.mkdirs();
                         changeDirectory(currentDirectory);
                         close();
-                        FileChooserWindow.this.infoLabel
-                                .setText(Chati.CHATI.getLocalization().translate("window.entry.directory-success"));
+                        FileChooserWindow.this.showMessage("window.file-chooser.directory-created");
                     }
                 });
             }

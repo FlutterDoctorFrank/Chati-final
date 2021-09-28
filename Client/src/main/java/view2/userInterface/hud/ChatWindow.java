@@ -402,7 +402,7 @@ public class ChatWindow extends Window implements Translatable {
         }
         if (attachedImage != null) {
             Chati.CHATI.send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim(),
-                    attachedImage.readBytes(), attachedImage.name());
+                    attachedImage.name(), attachedImage.readBytes());
             removeAttachedImage();
         } else {
             Chati.CHATI.send(ServerSender.SendAction.MESSAGE, typeMessageArea.getText().trim());

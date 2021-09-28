@@ -140,6 +140,15 @@ public class PacketChatMessageTest extends PacketServerTest {
         Assert.assertTrue(this.handler.logged());
         Assert.assertTrue(this.handler.logged(Level.WARNING, "User-ID must be the own or null"));
         Assert.assertFalse(user.called("chat"));
+        Mockito.when(packet.getSenderId()).thenReturn(user.getUserId());
+        Mockito.when(packet.getImageData()).thenReturn(randomBytes());
+
+        this.handler.reset();
+        this.connection.handle(packet);
+
+        Assert.assertTrue(this.handler.logged());
+        Assert.assertTrue(this.handler.logged(Level.WARNING, "Image-Name can not be null if an image is sent"));
+        Assert.assertFalse(user.called("chat"));
     }
 
     @Test

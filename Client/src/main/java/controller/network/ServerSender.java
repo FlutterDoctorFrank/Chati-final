@@ -409,8 +409,14 @@ public interface ServerSender {
         /**
          * Information, dass eine Chat-Nachricht gesendet werden soll.
          * <p>
-         *     Erwartet als Objekt Array die Klassen:<br>
-         *     - {@code 0}: {@link String}, Die im Chat eingegebene Nachricht
+         *     Zum Versenden einer Nachricht wird folgendes Objekt Array erwartet:<br>
+         *     - {@code 0}: {@link String}, die im Chat eingegebene Nachricht
+         * </p>
+         * <p>
+         *     Zum Versenden eines Bildes wird folgendes Objekt Array erwartet:<br>
+         *     - {@code 0}: {@link String}, die im Chat eingegebene Nachricht<br>
+         *     - {@code 1}: {@link String}, der Name des Bildes<br>
+         *     - {@code 2}: {@code byte[]}, die Bilddaten des Bildes
          * </p>
          */
         MESSAGE {
@@ -423,10 +429,10 @@ public interface ServerSender {
                         throw new IllegalArgumentException("Expected String, got " + objects[0].getClass());
                     }
                 } else if (objects.length == 3) {
-                    if (objects[0] instanceof String && objects[1] instanceof byte[] && objects[2] instanceof String) {
-                        return new PacketChatMessage((String) objects[0], (byte[]) objects[1], (String) objects[2]);
+                    if (objects[0] instanceof String && objects[1] instanceof String && objects[2] instanceof byte[]) {
+                        return new PacketChatMessage((String) objects[0], (String) objects[1], (byte[]) objects[2]);
                     } else {
-                        throw new IllegalArgumentException("Expected String, byte[] and String, got" +
+                        throw new IllegalArgumentException("Expected String, String and byte[], got" +
                                 objects[0].getClass() + ", " + objects[1].getClass() + " and " + objects[2].getClass());
                     }
                 } else {

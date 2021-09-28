@@ -245,6 +245,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
                         if (packet.getImageData().length != 0 && packet.getImageName() == null) {
                             this.logInvalidPacket(packet, "Image-Name can not be null if an image was sent");
+                            return;
                         }
 
                         this.manager.getView().showChatMessage(packet.getSenderId(), packet.getTimestamp(),

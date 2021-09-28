@@ -29,14 +29,14 @@ public class ImageWindow extends ChatiWindow {
      * @param fileName Name der Bilddatei.
      * @param imagePixmap Anzuzeigendes Bild.
      */
-    protected ImageWindow(String fileName, Pixmap imagePixmap) {
+    protected ImageWindow(@NotNull final String fileName, @NotNull final Pixmap imagePixmap) {
         super("", 1, 1);
         getTitleLabel().setText(fileName);
 
         setModal(true);
         setMovable(false);
 
-        ChatiTextButton saveButton = new ChatiTextButton("window.image.save", true);
+        ChatiTextButton saveButton = new ChatiTextButton("menu.button.save", true);
         saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -66,6 +66,10 @@ public class ImageWindow extends ChatiWindow {
 
         setWidth(Math.min(Gdx.graphics.getWidth(), Math.max(SAVE_BUTTON_WIDTH, imageWidth) + EDGE_SPACE));
         setHeight(Math.min(Gdx.graphics.getHeight(), Math.max(SAVE_BUTTON_WIDTH, imageHeight) + EDGE_SPACE + ROW_HEIGHT));
+
+        // Translatable register
+        translates.add(saveButton);
+        translates.trimToSize();
     }
 
     @Override

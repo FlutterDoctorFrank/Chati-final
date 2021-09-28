@@ -15,25 +15,28 @@ public class ChatiTextField extends TextField implements Translatable {
 
     private final String messageTextKey;
 
+    public ChatiTextField(@NotNull final String messageTextKey, final int fieldLength) {
+        super("", Chati.CHATI.getSkin());
+        this.messageTextKey = messageTextKey;
+        this.translate();
+
+        setMaxLength(fieldLength > 0 ? fieldLength : TEXT_FIELD_MAX_LENGTH);
+        setTextFieldFilter((textField, c) -> !isBlank() || !Character.toString(c).matches("\\s"));
+    }
+
     /**
      * Erzeugt eine neue Instanz der ChatiTextArea.
      * @param messageTextKey Kennung der anzuzeigenden Nachricht, wenn der Text leer ist.
      * @param passwordField Information, ob dieses TextFields für Passwörter genutzt wird.
      */
     public ChatiTextField(@NotNull final String messageTextKey, final boolean passwordField) {
-        super("", Chati.CHATI.getSkin());
-        this.messageTextKey = messageTextKey;
-        this.translate();
+        this(messageTextKey, -1);
 
         if (passwordField) {
             setMaxLength(PASSWORD_FIELD_MAX_LENGTH);
             setPasswordMode(true);
             setPasswordCharacter('*');
-        } else {
-            setMaxLength(TEXT_FIELD_MAX_LENGTH);
         }
-
-        setTextFieldFilter((textField, c) -> !isBlank() || !Character.toString(c).matches("\\s"));
     }
 
     /**

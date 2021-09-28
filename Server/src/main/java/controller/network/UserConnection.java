@@ -206,13 +206,13 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 return;
             }
 
-            if (packet.getImageData().length != 0 && packet.getImageName() == null) {
-                this.logInvalidPacket(packet, "Image-Name can not be null if an image is sent");
+            if (packet.getSenderId() != null && !packet.getSenderId().equals(this.user.getUserId())) {
+                this.logInvalidPacket(packet, "User-ID must be the own or null");
                 return;
             }
 
-            if (packet.getSenderId() != null && !packet.getSenderId().equals(this.user.getUserId())) {
-                this.logInvalidPacket(packet, "User-ID must be the own or null");
+            if (packet.getImageData().length != 0 && packet.getImageName() == null) {
+                this.logInvalidPacket(packet, "Image-Name can not be null if an image is sent");
                 return;
             }
 

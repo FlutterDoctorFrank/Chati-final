@@ -103,7 +103,6 @@ public class InternUser extends User implements IInternUserController, IInternUs
         context.setRandom(random);
     }
 
-
     @Override
     public void addNotification(@NotNull final ContextID contextId, @NotNull final UUID notificationId,
                                 @NotNull final MessageBundle messageBundle, @NotNull final LocalDateTime timestamp,
@@ -170,7 +169,18 @@ public class InternUser extends User implements IInternUserController, IInternUs
 
     @Override
     public @Nullable ContextMusic getMusic() {
-        return currentLocation != null ? currentLocation.getArea().getMusic() : null;
+        if (currentLocation != null) {
+            SpatialContext area = currentLocation.getArea();
+
+            while (area != null) {
+                if (area.getMusic() != null) {
+                    return area.getMusic();
+                }
+                area = area.getParent() instanceof SpatialContext ? (SpatialContext) area.getParent() : null;
+            }
+        }
+
+        return null;
     }
 
     @Override
