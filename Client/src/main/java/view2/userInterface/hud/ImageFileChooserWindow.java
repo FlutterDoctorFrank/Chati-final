@@ -3,8 +3,12 @@ package view2.userInterface.hud;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Eine Klasse, welche ein Fenster zum Auswählen einer Bilddatei repräsentiert.
@@ -43,6 +47,19 @@ public class ImageFileChooserWindow extends FileChooserWindow {
         if (!imageFileHandle.extension().matches(IMAGE_FILE_EXTENSIONS)) {
             showMessage("window.file-chooser.file-no-image");
             return false;
+        } else {
+            Pixmap image = null;
+            try {
+                image = new Pixmap(imageFileHandle);
+            } catch (GdxRuntimeException e) {
+                Logger.getLogger("chati.view").log(Level.WARNING, "Exception during loading file", e);
+                showMessage("window.file-chooser.file-no-image");
+                return false;
+            } finally {
+                if (image != null) {
+                    image.dispose();
+                }
+            }
         }
         if (imageFileHandle.length() >= MAX_FILE_SIZE) {
             showMessage("window.file-chooser.file-too-big", MAX_FILE_SIZE / 1024);
@@ -56,9 +73,17 @@ public class ImageFileChooserWindow extends FileChooserWindow {
     @Override
     protected boolean saveFile(@NotNull final FileHandle imageFileHandle) {
         if (image == null) {
+            showMessage("window.file-chooser.save-failed");
             return false;
         }
-        PixmapIO.writePNG(imageFileHandle, image);
+        try {
+            PixmapIO.writePNG(imageFileHandle, image);
+        } catch (GdxRuntimeException e) {
+            Logger.getLogger("chati.view").log(Level.WARNING, "Exception during saving file", e);
+            showMessage("window.file-chooser.save-failed");
+            return false;
+        }
+
         return true;
     }
 }

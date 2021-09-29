@@ -380,10 +380,11 @@ public class HeadUpDisplay extends Table implements Translatable {
     public void showChatMessage(@NotNull final UUID senderId, @NotNull final LocalDateTime timestamp,
                                 @NotNull final MessageType messageType, @NotNull final String message,
                                 final byte[] imageData, @Nullable final String imageName) throws UserNotFoundException {
+        chatWindow.showUserMessage(senderId, timestamp, messageType, message, imageData, imageName);
         if (!isChatOpen()) {
             chatButton.startBlinking();
         }
-        chatWindow.showUserMessage(senderId, timestamp, messageType, message, imageData, imageName);
+        Chati.CHATI.getAudioManager().playSound("chat_message_sound");
     }
 
     /**
@@ -392,10 +393,11 @@ public class HeadUpDisplay extends Table implements Translatable {
      * @param messageBundle Übersetzbare Nachricht mit deren benötigten Argumenten.
      */
     public void showInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle) {
+        chatWindow.showInfoMessage(timestamp, messageBundle);
         if (!isChatOpen()) {
             chatButton.startBlinking();
         }
-        chatWindow.showInfoMessage(timestamp, messageBundle);
+        Chati.CHATI.getAudioManager().playSound("chat_message_sound");
     }
 
     /**
@@ -443,7 +445,7 @@ public class HeadUpDisplay extends Table implements Translatable {
      * @return true, wenn das Chatfenster sichtbar ist, sonst false.
      */
     public boolean isChatOpen() {
-        return chatButton.isVisible() && chatWindow.isVisible();
+        return chatButton.isVisible() && chatWindow.isVisible() || restoreChat;
     }
 
     /**

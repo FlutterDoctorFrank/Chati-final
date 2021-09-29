@@ -341,11 +341,7 @@ public abstract class FileChooserWindow extends ChatiWindow {
                             infoLabel.setText(Chati.CHATI.getLocalization().translate(""));
                         }
                         if (saveFile(newFile)) {
-                            close();
                             FileChooserWindow.this.showMessage("window.file-chooser.save-success");
-                        } else {
-                            close();
-                            FileChooserWindow.this.showMessage("window.file-chooser.save-failed");
                         }
                     }
                 });

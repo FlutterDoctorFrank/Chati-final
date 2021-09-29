@@ -49,8 +49,8 @@ public class InternUserAvatar extends UserAvatar {
     }
 
     @Override
-    public void draw(@NotNull final Batch batch, final float alpha) {
-        super.draw(batch, alpha);
+    public void drawHead(@NotNull final Batch batch) {
+        super.drawHead(batch);
         if (canInteract()) {
             interactionAnimationSprite.draw(batch);
         }
@@ -65,8 +65,10 @@ public class InternUserAvatar extends UserAvatar {
         }
         isTeleporting = false;
 
-        if (!user.isMovable()) {
-            return;
+        if (!user.isMovable() || Chati.CHATI.getScreen().getStage().getKeyboardFocus() instanceof TextField) {
+            currentDirection = null;
+        } else {
+            currentDirection = getCurrentDirectionalInput();
         }
 
         float velocity = DEFAULT_VELOCITY;
@@ -80,12 +82,6 @@ public class InternUserAvatar extends UserAvatar {
             setFrameDuration(FRAME_DURATION);
         }
         oldPosition = body.getPosition().cpy();
-
-        if (Chati.CHATI.getScreen().getStage().getKeyboardFocus() instanceof TextField) {
-            currentDirection = null;
-        } else {
-            currentDirection = getCurrentDirectionalInput();
-        }
 
         if (currentDirection == null) {
             body.setLinearVelocity(0, 0);

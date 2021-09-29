@@ -168,7 +168,12 @@ public class AudioManager implements Disposable {
      * @return true, wenn Sprachdaten von diesem Benutzer abgespielt werden, sonst false.
      */
     public boolean isTalking(@NotNull final IUserView user) {
-        return audioConsumer != null && audioConsumer.isTalking(user);
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+        if (internUser != null && internUser.equals(user)) {
+            return voiceRecorder != null && voiceRecorder.isSending();
+        } else {
+            return audioConsumer != null && audioConsumer.isTalking(user);
+        }
     }
 
     /**

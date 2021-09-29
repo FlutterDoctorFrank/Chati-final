@@ -41,6 +41,7 @@ public class UserAvatar extends Sprite {
     public static final float DEFAULT_VELOCITY = 10f;
     public static final float SPRINT_VELOCITY_FACTOR = 1.67f;
     protected static final float AVATAR_SIZE = 32;
+    protected static final float TALK_BORDER_SIZE = 3.2f;
     protected static final float FRAME_DURATION = 0.15f;
 
     protected final IUserView user;
@@ -79,8 +80,8 @@ public class UserAvatar extends Sprite {
         shape.setAsBox(WorldCamera.scaleToUnit(AVATAR_SIZE - 1) / 2,
                 WorldCamera.scaleToUnit(AVATAR_SIZE - 1) / 2);
         fixtureDef.shape = shape;
-        body.createFixture(fixtureDef);
-        body.setUserData(ContactType.USER);
+        this.body.createFixture(fixtureDef);
+        this.body.setUserData(ContactType.USER);
 
         this.shaderProgram = new ShaderProgram(VERTEX_SHADER, FRAGMENT_SHADER);
 
@@ -97,6 +98,9 @@ public class UserAvatar extends Sprite {
         setSize(WorldCamera.scaleToUnit(AVATAR_SIZE), WorldCamera.scaleToUnit(AVATAR_SIZE));
         setRegion(avatarStandDown);
         this.stateTime = 0;
+
+        this.currentDirection = Direction.DOWN;
+        this.previousDirection = Direction.DOWN;
     }
 
     @Override
@@ -105,12 +109,14 @@ public class UserAvatar extends Sprite {
         setRegion(getKeyFrame());
 
         if (Chati.CHATI.getAudioManager().isTalking(user)) {
-            setSize(WorldCamera.scaleToUnit(AVATAR_SIZE + 3), WorldCamera.scaleToUnit(AVATAR_SIZE + 3));
+            setSize(WorldCamera.scaleToUnit(AVATAR_SIZE + TALK_BORDER_SIZE),
+                    WorldCamera.scaleToUnit(AVATAR_SIZE + TALK_BORDER_SIZE));
             setPosition(getPosition().x - getWidth() / 2, getPosition().y - getHeight() / 2);
             setColor(Color.GREEN);
             batch.setShader(shaderProgram);
             super.draw(batch, this.alpha);
         }
+
         setSize(WorldCamera.scaleToUnit(AVATAR_SIZE), WorldCamera.scaleToUnit(AVATAR_SIZE));
         setPosition(getPosition().x - getWidth() / 2, getPosition().y - getHeight() / 2);
         setColor(Color.WHITE);
@@ -124,6 +130,16 @@ public class UserAvatar extends Sprite {
      */
     public void drawHead(@NotNull final Batch batch) {
         head.draw(batch, 1);
+    }
+
+    /**
+     * Zeichnet einen Rand um den Avatar um anzuzeigenden dass gerade Sprachdaten von dem entsprechenden Benutzer
+     * abgespielt werden.
+     * @param batch Verwendeter Batch.
+     * @param alpha Alpha-Wert.
+     */
+    protected void drawTalkingBorder(@NotNull final Batch batch, final float alpha) {
+
     }
 
     /**

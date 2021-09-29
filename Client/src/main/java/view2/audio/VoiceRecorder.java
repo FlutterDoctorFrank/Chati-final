@@ -17,6 +17,7 @@ public class VoiceRecorder implements Runnable, Disposable {
     private float sendGate;
     private boolean isRunning;
     private boolean isRecording;
+    private boolean isSending;
 
     /**
      * Erzeugt eine neue Instanz des VoiceRecorder.
@@ -58,6 +59,9 @@ public class VoiceRecorder implements Runnable, Disposable {
             }
             if (System.currentTimeMillis() - timestamp < 1000 * STOP_SENDING_DELAY) {
                 Chati.CHATI.send(ServerSender.SendAction.VOICE, AudioManager.toByte(recordedData, true));
+                isSending = true;
+            } else {
+                isSending = false;
             }
         }
     }
@@ -113,6 +117,14 @@ public class VoiceRecorder implements Runnable, Disposable {
      */
     public boolean isRecording() {
         return isRecording;
+    }
+
+    /**
+     * Gibt zurück, ob gerade Sprachdaten gesendet werden.
+     * @return true, wenn Sprachdaten gesendet werden, sonst false.
+     */
+    public boolean isSending() {
+        return isSending;
     }
 
     @Override

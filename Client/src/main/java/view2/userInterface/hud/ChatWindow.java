@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import controller.network.ServerSender;
 import model.MessageBundle;
 import model.communication.message.MessageType;
@@ -37,6 +38,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Eine Klasse, welche das Chatfenster der Anwendung repräsentiert.
@@ -409,11 +412,6 @@ public class ChatWindow extends Window implements Translatable {
             historyScrollPane.layout();
             historyScrollPane.scrollTo(0, 0, 0, 0);
         }
-        // Spiele Ton für den Erhalt einer Nachricht ab, wenn das Chatfenster nicht sichtbar ist, oder nicht ganz nach
-        // unten gescrollt ist.
-        if (!isVisible() || !isAtBottomBefore) {
-            Chati.CHATI.getAudioManager().playSound("chat_message_sound");
-        }
     }
 
     /**
@@ -422,7 +420,14 @@ public class ChatWindow extends Window implements Translatable {
      * @param imageName Name des Bildanhangs.
      */
     private void showImage(final byte[] imageData, @NotNull final String imageName) {
-        Pixmap image = new Pixmap(imageData, 0, imageData.length);
+        Pixmap image;
+        try {
+            image = new Pixmap(imageData, 0, imageData.length);
+        } catch (GdxRuntimeException e) {
+            Logger.getLogger("chati.view").log(Level.WARNING, "Could not show received image", e);
+            return;
+        }
+
         Drawable imageDrawable = new TextureRegionDrawable(new Texture(image));
 
         Label imageNameLabel = new Label(imageName, Chati.CHATI.getSkin());
