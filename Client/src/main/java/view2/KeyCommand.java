@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Ein Enum, welches die durch das Drücken von Tasten durchführbaren Aktionen repräsentiert.
@@ -102,13 +104,6 @@ public enum KeyCommand {
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < keyBindings.size(); i++) {
-            stringBuilder.append(Input.Keys.toString(keyBindings.get(i)));
-            if (i < keyBindings.size() - 1) {
-                stringBuilder.append(", ");
-            }
-        }
-        return stringBuilder.toString();
+        return keyBindings.stream().map(Input.Keys::toString).collect(Collectors.toList()).toString();
     }
 }
