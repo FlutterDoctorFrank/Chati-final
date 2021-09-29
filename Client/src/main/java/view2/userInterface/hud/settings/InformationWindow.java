@@ -214,11 +214,6 @@ public class InformationWindow extends ChatiWindow {
     }
 
     @Override
-    public void open() {
-        super.open();
-    }
-
-    @Override
     public void focus() {
         super.focus();
         if (getStage() != null) {
