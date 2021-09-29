@@ -13,7 +13,6 @@ import model.exception.IllegalMenuActionException;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -23,8 +22,12 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MusicStreamer extends Interactable implements Runnable {
+
+    private static final Logger LOGGER = Logger.getLogger("chati.stream");
 
     /** Sample-Rate der gestreamten Musik. */
     private static final int SAMPLING_RATE = 44100;
@@ -208,7 +211,9 @@ public class MusicStreamer extends Interactable implements Runnable {
             musicStreamBuffer = ByteBuffer.allocate(musicStreamData.length);
             musicStreamBuffer.put(musicStreamData);
             musicStreamBuffer.position(0);
+            LOGGER.info("Loaded music file from path: " + getMusic().getPath());
         } catch (UnsupportedAudioFileException | IOException e) {
+            LOGGER.log(Level.WARNING, "Exception during music loading", e);
             throw new IllegalMenuActionException("", e, "object.music-player.failed-loading");
         }
     }
@@ -225,6 +230,7 @@ public class MusicStreamer extends Interactable implements Runnable {
         Thread streamingThread = new Thread(this);
         streamingThread.setDaemon(true);
         streamingThread.start();
+        LOGGER.info("Started music thread for jukebox " + getContextId());
     }
 
     @Override
@@ -264,7 +270,7 @@ public class MusicStreamer extends Interactable implements Runnable {
                         }
                         loadBuffer();
                     } catch (IllegalMenuActionException e) {
-                        e.printStackTrace();
+                        LOGGER.log(Level.WARNING, "Exception during music change", e);
                     }
                 }
 
@@ -282,7 +288,7 @@ public class MusicStreamer extends Interactable implements Runnable {
                 // unterscheiden können.
                 Thread.sleep(955 / SEND_RATE);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, "Exception during music streaming", e);
             }
         }
     }
