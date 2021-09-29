@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -201,7 +202,7 @@ public class MusicStreamer extends Interactable implements Runnable {
             if (file == null) {
                 throw new IllegalMenuActionException("", "object.music-player.failed-loading");
             }
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(file));
             byte[] inputData = audioInputStream.readAllBytes();
             byte[] musicStreamData = MONO ? toMono(inputData) : inputData;
             musicStreamBuffer = ByteBuffer.allocate(musicStreamData.length);

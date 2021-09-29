@@ -732,11 +732,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                     }
 
                     if (packet.getContextId() != null) {
-                        if (info.getFlags().contains(Flag.BANNED)) {
-                            user.setBan(packet.getContextId(), true);
-                            return;
-                        }
-
+                        user.setBan(packet.getContextId(), info.getFlags().contains(Flag.BANNED));
                         user.setReport(packet.getContextId(), info.getFlags().contains(Flag.REPORTED));
                     }
                     break;

@@ -47,7 +47,7 @@ public class RoomInvitation extends Notification {
                           @NotNull final Room invitedRoom) {
         super(NotificationType.ROOM_INVITATION, owner, Objects.requireNonNull(invitingUser.getWorld()),
                 new MessageBundle("request.room-invite.notification", invitingUser.getUsername(),
-                        invitedRoom.getContextName()));
+                        invitedRoom.getContextName(), ""));
         this.invitingUser = invitingUser;
         this.invitedRoom = invitedRoom;
     }

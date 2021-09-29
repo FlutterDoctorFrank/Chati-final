@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class ServerNetworkManager extends NetworkManager<Server> {
 
-    private static final int BUFFER_SIZE = (int) Math.pow(2, 24);
+    private static final int BUFFER_SIZE = (int) Math.pow(2, 20);
 
     private static final Logger LOGGER = Logger.getLogger("chati.network");
     private final Map<Integer, UserConnection> connections;

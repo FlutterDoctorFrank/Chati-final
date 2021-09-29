@@ -4,8 +4,10 @@ import model.MessageBundle;
 import model.context.Context;
 import model.context.global.GlobalContext;
 import model.context.spatial.Area;
+import model.context.spatial.Location;
 import model.context.spatial.Room;
 import model.context.spatial.World;
+import model.context.spatial.objects.Interactable;
 import model.exception.IllegalAdministrativeActionException;
 import model.exception.NoPermissionException;
 import model.notification.FriendRequest;
@@ -189,7 +191,7 @@ public enum AdministrativeAction {
     TELEPORT_TO_USER {
         @Override
         protected void execute(@NotNull final User performer, @NotNull final User target,
-                               @NotNull final String[] args) throws NoPermissionException {
+                               @NotNull final String[] args) throws IllegalAdministrativeActionException, NoPermissionException {
             if (target.getLocation() == null) {
                 throw new IllegalStateException("Targets location is not available");
             }
@@ -222,8 +224,17 @@ public enum AdministrativeAction {
                         "action.room-join.not-permitted", performer, Permission.ENTER_PRIVATE_ROOM);
             }
 
+            if (!performer.isMovable()) {
+                throw new IllegalAdministrativeActionException("Can not teleport while performer is not movable", performer, target, TELEPORT_TO_USER);
+            }
+
             // Teleportiere zu dem Benutzer.
-            performer.teleport(target.getLocation());
+            // Ist die Position des Zielbenutzers illegal, so wird die nächste legale Position ermittelt.
+            Location targetLocation = target.getLocation();
+            if (!targetRoom.isLegal(targetLocation.getPosX(), targetLocation.getPosY())) {
+                targetLocation = Interactable.getLegalPosition(targetLocation);
+            }
+            performer.teleport(targetLocation);
         }
     },
 

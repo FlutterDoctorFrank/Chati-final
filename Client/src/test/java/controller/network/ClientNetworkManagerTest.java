@@ -71,7 +71,7 @@ public class ClientNetworkManagerTest extends RandomTest {
         this.network.start();
 
         try {
-            TimeUnit.MILLISECONDS.sleep(1000);
+            TimeUnit.MILLISECONDS.sleep(5000);
 
             Assert.assertTrue(this.network.isActive());
             Assert.assertTrue(this.handler.logged());

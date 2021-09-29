@@ -85,7 +85,10 @@ public class Room extends Area implements IRoom {
      * @return true, wenn die Position erlaubt ist, sonst false.
      */
     public boolean isLegal(final float posX, final float posY) {
-        return !this.collisionsMap.get(Math.round(posY) * this.expanse.getWidth() + Math.round(posX));
+        if (0 <= posX && posX <= this.expanse.getWidth() && 0 <= posY && posY <= this.expanse.getHeight()) {
+            return !this.collisionsMap.get(Math.round(posY) * this.expanse.getWidth() + Math.round(posX));
+        }
+        return false;
     }
 
     /**
@@ -132,18 +135,18 @@ public class Room extends Area implements IRoom {
 
             containedUsers.values().forEach(receiver -> receiver.send(SendAction.AVATAR_REMOVE, user));
 
-            if (isPrivate && user.hasRole(this, Role.ROOM_OWNER)) {
-                user.removeRole(this, Role.ROOM_OWNER);
-
+            if (isPrivate) {
                 if (!containedUsers.isEmpty()) {
                     final TextMessage info = new TextMessage("context.room.left", user.getUsername());
 
                     containedUsers.values().forEach(receiver -> receiver.send(SendAction.MESSAGE, info));
 
-                    try {
-                        containedUsers.values().stream().findAny().orElseThrow().addRole(this, Role.ROOM_OWNER);
-                    } catch (NoSuchElementException ex) {
-                        throw new IllegalStateException("Unable to find new room owner", ex);
+                    if (user.hasRole(this, Role.ROOM_OWNER)) {
+                        try {
+                            containedUsers.values().stream().findAny().orElseThrow().addRole(this, Role.ROOM_OWNER);
+                        } catch (NoSuchElementException ex) {
+                            throw new IllegalStateException("Unable to find new room owner", ex);
+                        }
                     }
                 } else {
                     world.removePrivateRoom(this);

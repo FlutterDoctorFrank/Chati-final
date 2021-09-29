@@ -6,8 +6,10 @@ import model.communication.CommunicationRegion;
 import model.context.ContextID;
 import model.context.spatial.Area;
 import model.context.spatial.ContextMenu;
+import model.context.spatial.Direction;
 import model.context.spatial.Expanse;
 import model.context.spatial.Location;
+import model.context.spatial.Room;
 import model.exception.ContextNotFoundException;
 import model.exception.IllegalInteractionException;
 import model.exception.IllegalMenuActionException;
@@ -121,5 +123,56 @@ public abstract class Interactable extends Area implements IInteractable {
     @Override
     public @NotNull Area getParent() {
         return parent;
+    }
+
+    public static @NotNull Location getLegalPosition(@NotNull final Location location) {
+        int searchedDirections = 0;
+        int ordinal = location.getDirection().ordinal();
+        float posX = location.getPosX();
+        float posY = location.getPosY();
+        Room room = location.getRoom();
+
+        while (searchedDirections < Direction.values().length) {
+            Direction direction = Direction.values()[ordinal];
+
+            switch (direction) {
+                case UP:
+                    for (int range = 0; range < INTERACTION_DISTANCE; range++) {
+                        if (room.isLegal(posX, posY + range)) {
+                            return new Location(room, direction, posX, posY + range);
+                        }
+                    }
+                    break;
+
+                case RIGHT:
+                    for (int range = 0; range < INTERACTION_DISTANCE; range++) {
+                        if (room.isLegal(posX + range, posY)) {
+                            return new Location(room, direction, posX + range, posY);
+                        }
+                    }
+                    break;
+
+                case DOWN:
+                    for (int range = 0; range < INTERACTION_DISTANCE; range++) {
+                        if (room.isLegal(posX, posY - range)) {
+                            return new Location(room, direction, posX, posY - range);
+                        }
+                    }
+                    break;
+
+                case LEFT:
+                    for (int range = 0; range < INTERACTION_DISTANCE; range++) {
+                        if (room.isLegal(posX - range, posY)) {
+                            return new Location(room, direction, posX - range, posY);
+                        }
+                    }
+                    break;
+            }
+
+            ordinal = (ordinal + 1) % Direction.values().length;
+            searchedDirections++;
+        }
+
+        throw new IllegalStateException("No space in all directions available");
     }
 }
