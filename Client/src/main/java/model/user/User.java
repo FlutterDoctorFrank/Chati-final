@@ -107,20 +107,26 @@ public class User implements IUserController, IUserView {
 
     @Override
     public void setUsername(@NotNull final String username) {
-        this.username = username;
-        UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        if (!this.username.equals(username)) {
+            this.username = username;
+            UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        }
     }
 
     @Override
     public void setStatus(@NotNull final Status status) {
-        this.status = status;
-        UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        if (this.status != status) {
+            this.status = status;
+            UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        }
     }
 
     @Override
     public void setAvatar(@NotNull final Avatar avatar) {
-        this.avatar = avatar;
-        UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        if (this.avatar != avatar) {
+            this.avatar = avatar;
+            UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        }
     }
 
     @Override
@@ -161,39 +167,49 @@ public class User implements IUserController, IUserView {
 
     @Override
     public void setInPrivateRoom(final boolean isInPrivateRoom) {
-        this.isInPrivateRoom = isInPrivateRoom;
-        UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        if (this.isInPrivateRoom != isInPrivateRoom) {
+            this.isInPrivateRoom = isInPrivateRoom;
+            UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        }
     }
 
     @Override
     public void setFriend(final boolean isFriend) {
-        boolean wasFriend = this.isFriend;
-        this.isFriend = isFriend;
-        if (wasFriend && !isFriend && !isKnown()) {
-            try {
-                UserManager.getInstance().removeExternUser(userId);
-            } catch (UserNotFoundException e) {
-                e.printStackTrace();
+        if (this.isFriend != isFriend) {
+            this.isFriend = isFriend;
+            if (!isFriend && !isKnown()) {
+                try {
+                    UserManager.getInstance().removeExternUser(userId);
+                } catch (UserNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
+            UserManager.getInstance().getModelObserver().setUserInfoChanged();
         }
-        UserManager.getInstance().getModelObserver().setUserInfoChanged();
     }
 
     @Override
     public void setIgnored(final boolean isIgnored) {
-        this.isIgnored = isIgnored;
-        UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        if (this.isIgnored != isIgnored) {
+            this.isIgnored = isIgnored;
+            UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        }
     }
 
     @Override
     public void setCommunicable(final boolean canCommunicateWith) {
-        this.canCommunicateWith = canCommunicateWith;
-        UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        if (this.canCommunicateWith != canCommunicateWith) {
+            this.canCommunicateWith = canCommunicateWith;
+            UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        }
     }
 
     @Override
     public void setMovable(final boolean isMovable) {
-        this.isMovable = isMovable;
+        if (this.isMovable != isMovable) {
+            this.isMovable = isMovable;
+            UserManager.getInstance().getModelObserver().setUserInfoChanged();
+        }
     }
 
     @Override
