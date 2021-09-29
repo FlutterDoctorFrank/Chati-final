@@ -1,6 +1,7 @@
 package view2.userInterface;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.ModifiedTextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,7 @@ import view2.ChatiLocalization.Translatable;
 /**
  * Eine Klasse, welche die in der Anwendung verwendeten TextAreas repräsentiert.
  */
-public class ChatiTextArea extends TextArea implements Translatable {
+public class ChatiTextArea extends ModifiedTextArea implements Translatable {
 
     private static final int TEXT_AREA_MAX_LENGTH = 512;
 

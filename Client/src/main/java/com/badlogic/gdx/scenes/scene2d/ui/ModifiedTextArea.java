@@ -25,6 +25,8 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.*;
 import view2.Chati;
@@ -33,7 +35,7 @@ import view2.Chati;
  *  Dies ist zur Korrekten Darstellung von Emojis in der TextArea nötig, da das dafür notwendige Verhalten nicht
  *  durch einfaches Überschreiben der Methode erzeugt werden kann, sondern den Zugriff auf private Felder bedarf. */
 
-public class TextArea extends TextField {
+public class ModifiedTextArea extends TextField {
     /** Array storing lines breaks positions **/
     IntArray linesBreak;
 
@@ -54,15 +56,15 @@ public class TextArea extends TextField {
 
     private float prefRows;
 
-    public TextArea (String text, Skin skin) {
+    public ModifiedTextArea (String text, Skin skin) {
         super(text, skin);
     }
 
-    public TextArea (String text, Skin skin, String styleName) {
+    public ModifiedTextArea (String text, Skin skin, String styleName) {
         super(text, skin, styleName);
     }
 
-    public TextArea (String text, TextFieldStyle style) {
+    public ModifiedTextArea (String text, TextFieldStyle style) {
         super(text, style);
     }
 
