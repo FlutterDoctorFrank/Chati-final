@@ -16,7 +16,7 @@ import view2.userInterface.ChatiWindow;
  */
 public class InformationWindow extends ChatiWindow {
 
-    private static final float WINDOW_WIDTH = 900;
+    private static final float WINDOW_WIDTH = 925;
     private static final float WINDOW_HEIGHT = 650;
 
     private final ScrollPane informationScrollPane;
@@ -163,7 +163,7 @@ public class InformationWindow extends ChatiWindow {
         Table chatCommandsContainer = new Table();
         chatCommandsContainer.top();
         chatCommandsContainer.defaults().pad(SPACE).padLeft(2 * SPACE).growX();
-        chatCommandsContainer.add(commandsLabel).row();
+        chatCommandsContainer.add(chatCommandsLabel).row();
         Table chatCommandsTableContainer = new Table();
         chatCommandsTableContainer.top();
         chatCommandsTableContainer.defaults().pad(SPACE).padLeft(2 * SPACE).growX();
@@ -175,7 +175,7 @@ public class InformationWindow extends ChatiWindow {
         commandsContainer.add(chatCommandsContainer);
 
         informationContainer.add(keyBindingsContainer).row();
-        informationContainer.add(chatCommandsContainer);
+        informationContainer.add(commandsContainer);
 
         add(informationScrollPane).grow();
 
