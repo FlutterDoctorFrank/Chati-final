@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.userInterface.ChatiTable;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
 import view2.Response;
@@ -14,7 +15,7 @@ import view2.Response;
 /**
  * Eine Klasse, welche das Menü zum Anmelden repräsentiert.
  */
-public class LoginTable extends MenuTable {
+public class LoginTable extends ChatiTable {
 
     private final ChatiTextField usernameField;
     private final ChatiTextField passwordField;
@@ -77,12 +78,12 @@ public class LoginTable extends MenuTable {
         add(container).width(ROW_WIDTH);
 
         // Translatable register
-        translates.add(usernameField);
-        translates.add(passwordField);
-        translates.add(loginButton);
-        translates.add(registerButton);
-        translates.add(exitButton);
-        translates.trimToSize();
+        translatables.add(usernameField);
+        translatables.add(passwordField);
+        translatables.add(loginButton);
+        translatables.add(registerButton);
+        translatables.add(exitButton);
+        translatables.trimToSize();
     }
 
     @Override

@@ -113,13 +113,13 @@ public class WorldConfigurationWindow extends ChatiWindow {
         add(container).padLeft(SPACE).padRight(SPACE).grow();
 
         // Translatable register
-        translates.add(infoLabel);
-        translates.add(alwaysSprintLabel);
-        translates.add(showNameLabel);
-        translates.add(confirmButton);
-        translates.add(defaultButton);
-        translates.add(cancelButton);
-        translates.trimToSize();
+        translatables.add(infoLabel);
+        translatables.add(alwaysSprintLabel);
+        translatables.add(showNameLabel);
+        translatables.add(confirmButton);
+        translatables.add(defaultButton);
+        translatables.add(cancelButton);
+        translatables.trimToSize();
     }
 
     /**

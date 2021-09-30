@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.userInterface.ChatiTable;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
 import view2.Response;
@@ -13,7 +14,7 @@ import view2.Response;
 /**
  * Eine Klasse, welche das Menü zum Ändern des Passworts repräsentiert.
  */
-public class ChangePasswordTable extends MenuTable {
+public class ChangePasswordTable extends ChatiTable {
 
     private final ChatiTextField passwordField;
     private final ChatiTextField newPasswordField;
@@ -78,12 +79,12 @@ public class ChangePasswordTable extends MenuTable {
         add(container).width(ROW_WIDTH);
 
         // Translatable register
-        translates.add(passwordField);
-        translates.add(newPasswordField);
-        translates.add(confirmNewPasswordField);
-        translates.add(confirmButton);
-        translates.add(cancelButton);
-        translates.trimToSize();
+        translatables.add(passwordField);
+        translatables.add(newPasswordField);
+        translatables.add(confirmNewPasswordField);
+        translatables.add(confirmButton);
+        translatables.add(cancelButton);
+        translatables.trimToSize();
     }
 
     @Override

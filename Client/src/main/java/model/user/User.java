@@ -335,10 +335,9 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canTeleportTo() {
         InternUser internUser = UserManager.getInstance().getInternUser();
-        return internUser.isMovable() && this.isMovable && this.isOnline() && this.getCurrentWorld() != null
-                && (!this.isInPrivateRoom || internUser.hasPermission(Permission.ENTER_PRIVATE_ROOM))
-                && ((this.isFriend && this.status != Status.BUSY)
-                || internUser.hasPermission(Permission.TELEPORT_TO_USER));
+        return internUser.isMovable() && this.isOnline() && this.getCurrentWorld() != null && (!this.isInPrivateRoom
+                || internUser.hasPermission(Permission.ENTER_PRIVATE_ROOM)) && ((this.isFriend
+                && this.status != Status.BUSY) || internUser.hasPermission(Permission.TELEPORT_TO_USER));
     }
 
     @Override

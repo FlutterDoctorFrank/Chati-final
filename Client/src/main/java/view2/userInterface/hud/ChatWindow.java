@@ -3,17 +3,21 @@ package view2.userInterface.hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import controller.network.ServerSender;
 import model.MessageBundle;
@@ -24,6 +28,7 @@ import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view2.Chati;
+import view2.ChatiEmojiManager;
 import view2.ChatiLocalization.Translatable;
 import view2.KeyCommand;
 import view2.userInterface.ChatiImageButton;
@@ -34,18 +39,19 @@ import view2.world.component.InternUserAvatar;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Eine Klasse, welche das Chatfenster der Anwendung repräsentiert.
  */
 public class ChatWindow extends Window implements Translatable {
 
+    private static final int MAX_CHAT_MESSAGES = 256;
     private static final long SHOW_TYPING_DURATION = 1; // in Sekunden
 
     private static final float DEFAULT_WIDTH = 700;
@@ -55,12 +61,13 @@ public class ChatWindow extends Window implements Translatable {
     private static final float SPACE = 5;
     private static final float SEND_BUTTON_WIDTH = 120;
     private static final float SEND_BUTTON_HEIGHT = 60;
-    private static final float MAX_IMAGE_SIZE = 120;
+    private static final float MAX_IMAGE_SIZE = 180;
     private static final float IMAGE_SCALE_FACTOR = 0.025f;
 
+    private final List<ChatMessage> chatMessages;
     private final Map<IUserView, Long> typingUsers;
     private final Stack chatStack;
-    private final Table messageLabelContainer;
+    private final Table messageContainer;
     private final ScrollPane historyScrollPane;
     private final ScrollPane emojiScrollPane;
     private final Table emojiScrollPaneContainer;
@@ -77,10 +84,11 @@ public class ChatWindow extends Window implements Translatable {
      */
     public ChatWindow() {
         super(Chati.CHATI.getLocalization().translate("window.title.chat"), Chati.CHATI.getSkin());
+        this.chatMessages = new LinkedList<>();
         this.typingUsers = new HashMap<>();
 
-        messageLabelContainer = new Table();
-        historyScrollPane = new ScrollPane(messageLabelContainer, Chati.CHATI.getSkin());
+        messageContainer = new Table();
+        historyScrollPane = new ScrollPane(messageContainer, Chati.CHATI.getSkin());
         historyScrollPane.setOverscroll(false, false);
         historyScrollPane.setScrollingDisabled(true, false);
 
@@ -143,6 +151,7 @@ public class ChatWindow extends Window implements Translatable {
         });
 
         ChatiImageButton emojiButton = new ChatiImageButton(new TextureRegionDrawable(Chati.CHATI.getRegions("emoji").get(1)));
+        emojiButton.getImage().setScale(ChatiEmojiManager.EMOJI_SCALE);
         emojiButton.addListener(new ChatiTooltip("hud.tooltip.emoji"));
         emojiButton.addListener(new ClickListener() {
             @Override
@@ -185,8 +194,8 @@ public class ChatWindow extends Window implements Translatable {
         setWidth(DEFAULT_WIDTH);
         setHeight(DEFAULT_HEIGHT);
 
-        messageLabelContainer.top();
-        messageLabelContainer.defaults().top().left().padLeft(SPACE).padBottom(SPACE).growX();
+        messageContainer.top();
+        messageContainer.defaults().top().left().padLeft(SPACE).padBottom(SPACE).growX();
         emojiScrollPaneContainer = new Table();
         emojiScrollPaneContainer.add(emojiScrollPane).height(MINIMUM_HEIGHT - 4 * SPACE).bottom().pad(2 * SPACE).growX();
         emojiScrollPaneContainer.bottom();
@@ -298,8 +307,12 @@ public class ChatWindow extends Window implements Translatable {
             default:
                 throw new IllegalArgumentException("No valid message type.");
         }
-        showMessage(timestamp, Chati.CHATI.getLocalization()
-                .format("pattern.chat.message", username, userMessage), messageColor, imageName, imageData);
+        ChatMessage chatMessage = new ChatMessage(timestamp, Chati.CHATI.getLocalization().format("pattern.chat.message",
+                username, userMessage), messageColor);
+        if (imageData.length != 0 && imageName != null) {
+            chatMessage.setImage(imageName, imageData);
+        }
+        showChatMessage(chatMessage);
     }
 
     /**
@@ -309,16 +322,19 @@ public class ChatWindow extends Window implements Translatable {
      */
     public void showInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle) {
         String message = Chati.CHATI.getLocalization().format(messageBundle.getMessageKey(), messageBundle.getArguments());
-        showMessage(timestamp, Chati.CHATI.getLocalization().format("pattern.chat.info", message), Color.RED,
-                null, new byte[0]);
+        ChatMessage chatMessage = new ChatMessage(timestamp, Chati.CHATI.getLocalization().format("pattern.chat.info",
+                message), Color.RED);
+        showChatMessage(chatMessage);
     }
 
     /**
      * Leert den Nachrichtenverlauf und das Nachrichtenfeld.
      */
     public void clearChat() {
+        chatMessages.clear();
+        typingUsers.clear();
         typeMessageArea.reset();
-        messageLabelContainer.clearChildren();
+        messageContainer.clearChildren();
         removeAttachedImage();
         setSendButtonState();
     }
@@ -386,92 +402,23 @@ public class ChatWindow extends Window implements Translatable {
     }
 
     /**
-     * Zeigt eine Nachricht an.
-     * @param timestamp Zeitstempel der anzuzeigenden Nachricht.
-     * @param message Anzuzeigende Nachricht.
-     * @param messageColor Farbe, in der die Nachricht angezeigt werden soll.
-     * @param imageName Name eines Bildanhangs.
-     * @param imageData Daten eines Bildanhangs.
+     * Zeigt eine erhaltene Chatnachricht an.
+     * @param chatMessage Anzuzeigende Chatnachricht.
      */
-    private void showMessage(@NotNull final LocalDateTime timestamp, @NotNull final String message,
-                             @NotNull final Color messageColor, @Nullable final String imageName,
-                             final byte[] imageData) {
-        String datedMessage = Chati.CHATI.getLocalization().format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
-        String colorizedMessage = getColorizedMessage(datedMessage, messageColor);
-        Label messageLabel = new Label(colorizedMessage, Chati.CHATI.getSkin());
-        messageLabel.setWrap(true);
-
+    private void showChatMessage(@NotNull final ChatMessage chatMessage) {
         boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
-        messageLabelContainer.add(messageLabel).row();
-        if (imageData.length != 0 && imageName != null) {
-            showImage(imageData, imageName);
+        if (chatMessages.size() >= MAX_CHAT_MESSAGES) {
+            chatMessages.remove(0);
+            messageContainer.removeActorAt(0, false);
         }
+        chatMessages.add(chatMessage);
+        messageContainer.add(chatMessage).row();
         // Scrolle beim Erhalten einer neuen Nachricht nur bis nach unten, wenn die Scrollleiste bereits ganz unten war.
         // Ansonsten wird ein Durchscrollen des Verlaufs durch das Erhalten neuer Nachrichten gestört.
         if (isAtBottomBefore) {
             historyScrollPane.layout();
             historyScrollPane.scrollTo(0, 0, 0, 0);
         }
-    }
-
-    /**
-     * Zeigt einen Bildanhang an.
-     * @param imageData Daten des Bildanhangs.
-     * @param imageName Name des Bildanhangs.
-     */
-    private void showImage(final byte[] imageData, @NotNull final String imageName) {
-        Pixmap image;
-        try {
-            image = new Pixmap(imageData, 0, imageData.length);
-        } catch (GdxRuntimeException e) {
-            Logger.getLogger("chati.view").log(Level.WARNING, "Could not show received image", e);
-            return;
-        }
-
-        Drawable imageDrawable = new TextureRegionDrawable(new Texture(image));
-
-        Label imageNameLabel = new Label(imageName, Chati.CHATI.getSkin());
-        imageNameLabel.setAlignment(Align.center, Align.center);
-        imageNameLabel.setFontScale(0.67f);
-
-        ChatiImageButton imageButton = new ChatiImageButton(imageDrawable, imageDrawable, imageDrawable, IMAGE_SCALE_FACTOR);
-        imageButton.addListener(new InputListener() {
-            public boolean touchDown(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                                     final int button) {
-                return true;
-            }
-            public void touchUp(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                                     final int button) {
-                new ImageWindow(imageName, image).open();
-            }
-            public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                              @Nullable final Actor fromActor) {
-                if (pointer == -1) {
-                    imageNameLabel.setColor(Color.MAGENTA);
-                }
-            }
-            public void exit(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                              @Nullable final Actor fromActor) {
-                if (pointer == -1) {
-                    imageNameLabel.setColor(Color.WHITE);
-                }
-            }
-        });
-
-        Table imageContainer = new Table();
-        imageContainer.left();
-        float ratio = 1;
-        float largerSide = Math.max(image.getWidth(), image.getHeight());
-        if (largerSide > MAX_IMAGE_SIZE) {
-            ratio = MAX_IMAGE_SIZE / largerSide;
-        }
-        float imageWidth = ratio * image.getWidth();
-        float imageHeight = ratio * image.getHeight();
-        imageButton.getImage().setOrigin(imageWidth / 2f, imageHeight / 2f);
-        imageContainer.add(imageButton).width(imageWidth).height(imageHeight).row();
-        imageContainer.add(imageNameLabel);
-
-        messageLabelContainer.add(imageContainer).row();
     }
 
     /**
@@ -491,38 +438,6 @@ public class ChatWindow extends Window implements Translatable {
         } else {
             typingUsersLabel.setText(Chati.CHATI.getLocalization().format("window.chat.typing-multiple", typingUsers.size()));
         }
-    }
-
-    /**
-     * Färbe die Nachricht mithilfe der Color-Markup-Language ein. Glyphen von Emojis bleiben hierbei weiß, um korrekt
-     * dargestellt zu werden.
-     * @param message Nachricht, die eingefärbt werden soll.
-     * @param color Farbe, in die die Nachricht eingefärbt werden soll.
-     * @return Eingefärbte Nachricht.
-     */
-    private String getColorizedMessage(@NotNull final String message, @NotNull final Color color) {
-        if (color == Color.WHITE) {
-            return message;
-        }
-        StringBuilder stringBuilder = new StringBuilder();
-        boolean white = true;
-        for (int i = 0; i < message.length(); i++) {
-            char c = message.charAt(i);
-            boolean isEmoji = Chati.CHATI.getEmojiManager().isEmoji(c);
-            if (isEmoji && !white) {
-                stringBuilder.append("[WHITE]");
-                white = true;
-            } else if (!isEmoji && !Character.isWhitespace(c) && white) {
-                stringBuilder.append("[#").append(color).append("]");
-                white = false;
-            }
-            if (c == '[') {
-                stringBuilder.append("[[");
-            } else {
-                stringBuilder.append(c);
-            }
-        }
-        return stringBuilder.toString();
     }
 
     /**
@@ -574,7 +489,205 @@ public class ChatWindow extends Window implements Translatable {
     @Override
     public void translate() {
         getTitleLabel().setText(Chati.CHATI.getLocalization().translate("window.title.chat"));
+        chatMessages.forEach(ChatMessage::translate);
         typeMessageArea.translate();
         sendButton.translate();
+    }
+
+    /**
+     * Eine Klasse, welche erhaltene Chatnachrichten repräsentiert.
+     */
+    private static class ChatMessage extends Table implements Translatable {
+
+        private static final String URL_REGEX = "(https?:\\/\\/)?(www.)?([\\w]+\\.)+[\\w]{2,63}\\/?";
+
+        private final LocalDateTime timestamp;
+        private final String message;
+        private final Color messageColor;
+        private final Label messageLabel;
+
+        /**
+         * Erzeugt eine neue Instanz einer ChatMessage.
+         * @param timestamp Zeitstempel der Nachricht.
+         * @param message Anzuzeigende Textnachricht.
+         * @param messageColor Farbe, in die der Text angezeigt werden soll.
+         */
+        public ChatMessage(@NotNull final LocalDateTime timestamp, @NotNull final String message,
+                           @NotNull final Color messageColor) {
+            this.timestamp = timestamp;
+            this.message = message;
+            this.messageColor = messageColor;
+
+            defaults().left().growX();
+
+            String datedMessage = Chati.CHATI.getLocalization().format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
+            String colorizedMessage = getColorizedMessage(datedMessage, messageColor);
+            messageLabel = new Label(colorizedMessage, Chati.CHATI.getSkin());
+            messageLabel.setWrap(true);
+            messageLabel.addListener(new ClickListener() {
+                @Override
+                public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
+                                  @Nullable final Actor fromActor) {
+                    if (pointer == -1) {
+                        messageLabel.getGlyphLayout().runs.forEach(run -> {
+                            if (run.color.equals(Color.ROYAL)) {
+                                Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
+                            }
+                        });
+
+                    }
+                }
+                @Override
+                public void exit(@NotNull final InputEvent event, final float x, final float y, final int pointer,
+                                  @Nullable final Actor fromActor) {
+                    if (pointer == -1) {
+                        messageLabel.getGlyphLayout().runs.forEach(run -> {
+                            if (run.color.equals(Color.ROYAL)) {
+                                Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+                            }
+                        });
+
+                    }
+                }
+                @Override
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                    Array<GlyphLayout.GlyphRun> runs = messageLabel.getGlyphLayout().runs;
+                    for (int i = 0; i < runs.size; i++) {
+                        float textHeight = messageLabel.getHeight() - 3;
+                        float lineHeight = messageLabel.getStyle().font.getLineHeight();
+                        if (x > runs.get(i).x && x < runs.get(i).x + runs.get(i).width && y > runs.get(i).y + textHeight
+                                - lineHeight && y < runs.get(i).y + textHeight && runs.get(i).color.equals(Color.ROYAL)) {
+                            StringBuilder urlBuilder = new StringBuilder();
+                            urlBuilder.append(runs.get(i).glyphs.toString(""));
+                            for (int j = i - 1; j > 0; j--) {
+                                if (runs.get(j).color.equals(Color.ROYAL)) {
+                                    urlBuilder.insert(0, runs.get(j).glyphs.toString(""));
+                                } else {
+                                    break;
+                                }
+                            }
+                            for (int j = i + 1; j < runs.size; j++) {
+                                if (runs.get(j).color.equals(Color.ROYAL)) {
+                                    urlBuilder.append(runs.get(j).glyphs.toString(""));
+                                } else {
+                                    break;
+                                }
+                            }
+                            Gdx.net.openURI(urlBuilder.toString());
+                        }
+                    }
+                }
+            });
+
+            add(messageLabel).row();
+        }
+
+        /**
+         * Fügt der Textnachricht ein anzuzeigendes Bild hinzu.
+         * @param imageName Name des anzuzeigenden Bildes.
+         * @param imageData Daten des anzuzeigenden Bildes.
+         */
+        public void setImage(@NotNull final String imageName, final byte[] imageData) {
+            Pixmap image;
+            try {
+                image = new Pixmap(imageData, 0, imageData.length);
+            } catch (GdxRuntimeException e) {
+                Logger.getLogger("chati.view").log(Level.WARNING, "Could not show received image", e);
+                return;
+            }
+
+            Texture imageTexture = new Texture(image);
+            Drawable imageDrawable = new TextureRegionDrawable(imageTexture);
+            image.dispose();
+
+            Label imageNameLabel = new Label(imageName, Chati.CHATI.getSkin());
+            imageNameLabel.setAlignment(Align.center, Align.center);
+            imageNameLabel.setFontScale(0.67f);
+
+            ChatiImageButton imageButton = new ChatiImageButton(imageDrawable, imageDrawable, imageDrawable, IMAGE_SCALE_FACTOR);
+            imageButton.addListener(new ClickListener() {
+                @Override
+                public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
+                                  @Nullable final Actor fromActor) {
+                    if (pointer == -1) {
+                        imageNameLabel.setColor(Color.MAGENTA);
+                    }
+                }
+                @Override
+                public void exit(@NotNull final InputEvent event, final float x, final float y, final int pointer,
+                                 @Nullable final Actor fromActor) {
+                    if (pointer == -1) {
+                        imageNameLabel.setColor(Color.WHITE);
+                    }
+                }
+                @Override
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                    new ImageWindow(imageName, imageData).open();
+                }
+            });
+
+            Table imageContainer = new Table();
+            imageContainer.left();
+            float ratio = 1;
+            float largerSide = Math.max(image.getWidth(), image.getHeight());
+            if (largerSide > MAX_IMAGE_SIZE) {
+                ratio = MAX_IMAGE_SIZE / largerSide;
+            }
+            float imageWidth = ratio * image.getWidth();
+            float imageHeight = ratio * image.getHeight();
+            imageButton.getImage().setOrigin(imageWidth / 2f, imageHeight / 2f);
+            imageContainer.add(imageButton).width(imageWidth).height(imageHeight).row();
+            imageContainer.add(imageNameLabel);
+
+            add(imageContainer);
+        }
+
+        @Override
+        public void translate() {
+            String datedMessage = Chati.CHATI.getLocalization().format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
+            String colorizedMessage = getColorizedMessage(datedMessage, messageColor);
+            messageLabel.setText(colorizedMessage);
+        }
+
+        /**
+         * Färbe die Nachricht mithilfe der Color-Markup-Language ein. Glyphen von Emojis bleiben hierbei weiß, um korrekt
+         * dargestellt zu werden. Weblinks werden unabhängig von der verwendeten Farbe in blau eingefärbt.
+         * @param message Nachricht, die eingefärbt werden soll.
+         * @param messageColor Farbe, in die die Nachricht eingefärbt werden soll.
+         * @return Eingefärbte Nachricht.
+         */
+        private String getColorizedMessage(@NotNull final String message, @NotNull final Color messageColor) {
+            Matcher urlMatcher = Pattern.compile(URL_REGEX).matcher(message);
+            boolean hasUrl = urlMatcher.find();
+
+            StringBuilder stringBuilder = new StringBuilder();
+            Color currentColor = null;
+            for (int i = 0; i < message.length(); i++) {
+                char c = message.charAt(i);
+                boolean isEmoji = Chati.CHATI.getEmojiManager().isEmoji(c);
+                if (hasUrl && i >= urlMatcher.end()) {
+                    hasUrl = urlMatcher.find();
+                }
+                boolean isUrl = hasUrl && i >= urlMatcher.start() && i < urlMatcher.end();
+
+                if (isEmoji && currentColor != Color.WHITE) {
+                    currentColor = Color.WHITE;
+                    stringBuilder.append("[#").append(currentColor).append("]");
+                } else if (!isEmoji && isUrl && !Character.isWhitespace(c) && currentColor != Color.ROYAL) {
+                    currentColor = Color.ROYAL;
+                    stringBuilder.append("[#").append(currentColor).append("]");
+                } else if (!isEmoji && !isUrl && !Character.isWhitespace(c) && messageColor != Color.WHITE &&
+                        currentColor != messageColor) {
+                    currentColor = messageColor;
+                    stringBuilder.append("[#").append(currentColor).append("]");
+                }
+                if (c == '[') {
+                    stringBuilder.append("[[");
+                } else {
+                    stringBuilder.append(c);
+                }
+            }
+            return stringBuilder.toString();
+        }
     }
 }

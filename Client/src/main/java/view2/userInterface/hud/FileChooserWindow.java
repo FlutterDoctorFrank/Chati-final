@@ -102,7 +102,7 @@ public abstract class FileChooserWindow extends ChatiWindow {
             layoutLoadWindow(container);
         }
 
-        translates.trimToSize();
+        translatables.trimToSize();
         add(container).padLeft(SPACE).padRight(SPACE).grow();
     }
 
@@ -144,9 +144,9 @@ public abstract class FileChooserWindow extends ChatiWindow {
         container.add(buttonContainer).row();
 
         // Translatable Register
-        translates.add(saveButton);
-        translates.add(newDirectoryButton);
-        translates.add(cancelButton);
+        translatables.add(saveButton);
+        translatables.add(newDirectoryButton);
+        translatables.add(cancelButton);
     }
 
     /**
@@ -187,8 +187,8 @@ public abstract class FileChooserWindow extends ChatiWindow {
         container.add(buttonContainer).row();
 
         // Translatable Register
-        translates.add(chooseButton);
-        translates.add(cancelButton);
+        translatables.add(chooseButton);
+        translatables.add(cancelButton);
     }
 
     @Override
@@ -275,7 +275,7 @@ public abstract class FileChooserWindow extends ChatiWindow {
          * Gibt die Datei des Listeneintrags zurück.
          * @return Datei
          */
-        public FileHandle getFileHandle() {
+        public @NotNull FileHandle getFileHandle() {
             return fileHandle;
         }
 
@@ -343,6 +343,7 @@ public abstract class FileChooserWindow extends ChatiWindow {
                         if (saveFile(newFile)) {
                             FileChooserWindow.this.showMessage("window.file-chooser.save-success");
                         }
+                        close();
                     }
                 });
             } else {
@@ -393,10 +394,10 @@ public abstract class FileChooserWindow extends ChatiWindow {
             add(container).padLeft(SPACE).padRight(SPACE).grow();
 
             // Translatable register
-            translates.add(infoLabel);
-            translates.add(confirmButton);
-            translates.add(cancelButton);
-            translates.trimToSize();
+            translatables.add(infoLabel);
+            translatables.add(confirmButton);
+            translatables.add(cancelButton);
+            translatables.trimToSize();
         }
 
         @Override

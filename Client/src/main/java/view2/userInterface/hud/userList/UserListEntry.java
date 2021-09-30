@@ -411,11 +411,11 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             add(container).padLeft(SPACE).padRight(SPACE).grow();
 
             // Translatable register
-            translates.add(infoLabel);
-            translates.add(userMessageArea);
-            translates.add(confirmButton);
-            translates.add(cancelButton);
-            translates.trimToSize();
+            translatables.add(infoLabel);
+            translatables.add(userMessageArea);
+            translatables.add(confirmButton);
+            translatables.add(cancelButton);
+            translatables.trimToSize();
         }
 
         public void resetTextFields() {

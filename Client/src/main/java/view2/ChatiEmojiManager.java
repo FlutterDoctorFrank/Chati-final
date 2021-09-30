@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class ChatiEmojiManager {
 
+    public static final float EMOJI_SCALE = 1.25f;
     private static final char START_CHAR = 0xB000; // Selten genutzter Character-Bereich
 
     private final Map<Integer, Emoji> emojis;
@@ -62,22 +63,22 @@ public class ChatiEmojiManager {
         Texture texture = Chati.CHATI.getAtlas().getRegions().get(0).getTexture();
         fontRegions.add(new TextureAtlas.AtlasRegion(texture, 0, 0, texture.getWidth(), texture.getHeight()));
 
-        int size = (int) (font.getData().lineHeight / font.getData().scaleY);
+        int size = (int) (font.getLineHeight() / font.getScaleY());
         for (Emoji emoji : emojis.values()) {
             if (font.getData().getGlyph(emoji.getChar()) == null) {
                 BitmapFont.Glyph emojiGlyph = new BitmapFont.Glyph();
                 emojiGlyph.id = emoji.getChar();
                 emojiGlyph.srcX = 0;
                 emojiGlyph.srcY = 0;
-                emojiGlyph.width = size;
-                emojiGlyph.height = size;
+                emojiGlyph.width = (int) (EMOJI_SCALE * size);
+                emojiGlyph.height = (int) (EMOJI_SCALE * size);
                 emojiGlyph.u = emoji.getRegion().getU();
                 emojiGlyph.v = emoji.getRegion().getV2();
                 emojiGlyph.u2 = emoji.getRegion().getU2();
                 emojiGlyph.v2 = emoji.getRegion().getV();
                 emojiGlyph.xoffset = 0;
-                emojiGlyph.yoffset = -size;
-                emojiGlyph.xadvance = size;
+                emojiGlyph.yoffset = -(int) (EMOJI_SCALE * size);
+                emojiGlyph.xadvance = (int) (EMOJI_SCALE * size);
                 emojiGlyph.kerning = null;
                 emojiGlyph.fixedWidth = true;
                 emojiGlyph.page = page;

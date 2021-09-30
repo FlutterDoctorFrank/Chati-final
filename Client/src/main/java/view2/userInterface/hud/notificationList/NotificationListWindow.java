@@ -107,9 +107,9 @@ public class NotificationListWindow extends HudMenuWindow {
         add(notificationListScrollPane).grow();
 
         // Translatable register
-        translates.add(globalNotificationTabButton);
-        translates.add(worldNotificationTabButton);
-        translates.trimToSize();
+        translatables.add(globalNotificationTabButton);
+        translatables.add(worldNotificationTabButton);
+        translatables.trimToSize();
     }
 
     @Override

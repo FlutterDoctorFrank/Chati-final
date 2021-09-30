@@ -148,13 +148,13 @@ public class AdministratorManageWindow extends ChatiWindow {
         add(container).padLeft(SPACING).padRight(SPACING).grow();
 
         // Translatable register
-        translates.add(infoLabel);
-        translates.add(usernameField);
-        translates.add(messageArea);
-        translates.add(assignButton);
-        translates.add(withdrawButton);
-        translates.add(cancelButton);
-        translates.trimToSize();
+        translatables.add(infoLabel);
+        translatables.add(usernameField);
+        translatables.add(messageArea);
+        translatables.add(assignButton);
+        translatables.add(withdrawButton);
+        translatables.add(cancelButton);
+        translatables.trimToSize();
     }
 
     /**

@@ -18,7 +18,7 @@ public abstract class ChatiWindow extends Window implements Translatable {
     protected static final float ROW_HEIGHT = 60;
     protected static final float SPACE = 15;
 
-    protected final ArrayList<Translatable> translates;
+    protected final ArrayList<Translatable> translatables;
     protected ChatiLabel infoLabel;
     protected String titleKey;
 
@@ -41,7 +41,7 @@ public abstract class ChatiWindow extends Window implements Translatable {
      */
     protected ChatiWindow(@NotNull final String titleKey, final float width, final float height) {
         super(!titleKey.isBlank() ? Chati.CHATI.getLocalization().translate(titleKey) : "", Chati.CHATI.getSkin());
-        this.translates = new ArrayList<>();
+        this.translatables = new ArrayList<>();
         this.titleKey = titleKey;
         this.width = width;
         this.height = height;
@@ -131,6 +131,6 @@ public abstract class ChatiWindow extends Window implements Translatable {
     @Override
     public void translate() {
         getTitleLabel().setText(!titleKey.isBlank() ? Chati.CHATI.getLocalization().translate(titleKey) : "");
-        translates.forEach(Translatable::translate);
+        translatables.forEach(Translatable::translate);
     }
 }

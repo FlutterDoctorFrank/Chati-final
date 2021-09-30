@@ -5,12 +5,10 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import org.jetbrains.annotations.NotNull;
-import view2.Chati;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiWindow;
 
@@ -20,64 +18,64 @@ import view2.userInterface.ChatiWindow;
 public class ImageWindow extends ChatiWindow {
 
     private static final float SAVE_BUTTON_WIDTH = 180;
-    private static final float EDGE_SPACE = 75;
 
-    private final ScrollPane imageScrollPane;
+    private final Pixmap imagePixmap;
 
     /**
      * Erzeugt eine neue Instanz des ImageWindow.
-     * @param fileName Name der Bilddatei.
-     * @param imagePixmap Anzuzeigendes Bild.
+     * @param imageName Name der Bilddatei.
+     * @param imageData Anzuzeigendes Bild.
      */
-    protected ImageWindow(@NotNull final String fileName, @NotNull final Pixmap imagePixmap) {
+    protected ImageWindow(@NotNull final String imageName, final byte[] imageData) {
         super("", 1, 1);
-        getTitleLabel().setText(fileName);
+        getTitleLabel().setText(imageName);
 
         setModal(true);
         setMovable(false);
+
+        this.imagePixmap = new Pixmap(imageData, 0, imageData.length);
 
         ChatiTextButton saveButton = new ChatiTextButton("menu.button.save", true);
         saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                new ImageFileChooserWindow(fileName, imagePixmap).open();
+                new ImageFileChooserWindow(imageName, imagePixmap).open();
             }
         });
 
         Table imageTable = new Table();
-        Image image = new Image(new TextureRegionDrawable(new Texture(imagePixmap)));
+        Texture imageTexture = new Texture(imagePixmap);
+        Image image = new Image(new TextureRegionDrawable(imageTexture));
 
         float widthRatio = 1;
         float heightRatio = 1;
-        if (imagePixmap.getWidth() > Gdx.graphics.getWidth()) {
-            widthRatio = (float) Gdx.graphics.getWidth() / imagePixmap.getWidth();
+        float maxImageWidth = Gdx.graphics.getWidth() - getPadX();
+        float maxImageHeight = Gdx.graphics.getHeight() - ROW_HEIGHT - SPACE - getPadY();
+        if (imagePixmap.getWidth() > maxImageWidth) {
+            widthRatio = maxImageWidth / imagePixmap.getWidth();
         }
-        if (imagePixmap.getHeight() > Gdx.graphics.getHeight()) {
-            heightRatio = (float) Gdx.graphics.getHeight() / imagePixmap.getHeight();
+        if (imagePixmap.getHeight() > maxImageHeight) {
+            heightRatio = maxImageHeight / imagePixmap.getHeight();
         }
         float ratio = Math.min(widthRatio, heightRatio);
-        float imageWidth = ratio * image.getWidth();
-        float imageHeight = ratio * image.getHeight();
-        imageTable.add(image).width(imageWidth).height(imageHeight);
-        imageScrollPane = new ScrollPane(imageTable, Chati.CHATI.getSkin());
-        imageScrollPane.setOverscroll(false, false);
-        add(saveButton).width(SAVE_BUTTON_WIDTH).height(ROW_HEIGHT).padTop(SPACE / 2).row();
-        add(imageScrollPane).grow();
+        float imageWidth = ratio * imagePixmap.getWidth();
+        float imageHeight = ratio * imagePixmap.getHeight();
+        imageTable.add(image).size(imageWidth, imageHeight);
 
-        setWidth(Math.min(Gdx.graphics.getWidth(), Math.max(SAVE_BUTTON_WIDTH, imageWidth) + EDGE_SPACE));
-        setHeight(Math.min(Gdx.graphics.getHeight(),
-                Math.max(SAVE_BUTTON_WIDTH, imageHeight) + EDGE_SPACE + SPACE / 2 + ROW_HEIGHT));
+        add(saveButton).width(SAVE_BUTTON_WIDTH).height(ROW_HEIGHT).padTop(SPACE / 2).padBottom(SPACE / 2).row();
+        add(imageTable).grow();
+
+        setWidth(Math.max(SAVE_BUTTON_WIDTH, imageWidth) + getPadX());
+        setHeight(Math.max(ROW_HEIGHT, imageHeight) + ROW_HEIGHT + SPACE + getPadY());
 
         // Translatable register
-        translates.add(saveButton);
-        translates.trimToSize();
+        translatables.add(saveButton);
+        translatables.trimToSize();
     }
 
     @Override
-    public void focus() {
-        super.focus();
-        if (getStage() != null) {
-            getStage().setScrollFocus(imageScrollPane);
-        }
+    public void close() {
+        imagePixmap.dispose();
+        super.close();
     }
 }

@@ -5,12 +5,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.userInterface.ChatiTable;
 import view2.userInterface.ChatiTextButton;
 
 /**
  * Eine Klasse, welche das Menü zum Vornehmen von Einstellungen am Benutzerkonto repräsentiert.
  */
-public class ProfileSettingsTable extends MenuTable {
+public class ProfileSettingsTable extends ChatiTable {
 
     /**
      * Erzeugt eine neue Instanz des ProfileSettingsTable.
@@ -55,10 +56,10 @@ public class ProfileSettingsTable extends MenuTable {
         add(container).width(ROW_WIDTH);
 
         // Translatable register
-        translates.add(changePasswordButton);
-        translates.add(deleteAccountButton);
-        translates.add(cancelButton);
-        translates.trimToSize();
+        translatables.add(changePasswordButton);
+        translatables.add(deleteAccountButton);
+        translatables.add(cancelButton);
+        translatables.trimToSize();
     }
 
     @Override

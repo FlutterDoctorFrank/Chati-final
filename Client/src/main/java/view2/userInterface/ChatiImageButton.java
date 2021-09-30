@@ -1,5 +1,7 @@
 package view2.userInterface;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -46,6 +48,7 @@ public class ChatiImageButton extends ImageButton {
                               final int pointer, @Nullable final Actor fromActor) {
                 if (pointer == -1) {
                     getImage().scaleBy(imageScaleFactor);
+                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
                 }
             }
             @Override
@@ -53,6 +56,7 @@ public class ChatiImageButton extends ImageButton {
                              final int pointer, @Nullable final Actor fromActor) {
                 if (pointer == -1) {
                     getImage().scaleBy(-imageScaleFactor);
+                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
                 }
             }
         });

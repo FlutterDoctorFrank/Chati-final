@@ -2,6 +2,7 @@ package view2.userInterface.interactableMenu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -185,6 +186,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                               @Nullable final Actor fromActor) {
                 if (pointer == -1) {
                     creditsLabel.setColor(Color.MAGENTA);
+                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
                 }
             }
             @Override
@@ -192,6 +194,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                              @Nullable final Actor fromActor) {
                 if (pointer == -1) {
                     creditsLabel.setColor(Color.WHITE);
+                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
                 }
             }
             @Override
@@ -250,8 +253,8 @@ public class MusicStreamerWindow extends InteractableWindow {
         add(container).padLeft(SPACE).padRight(SPACE).grow();
 
         // Translatable Register
-        translates.add(currentTitleLabel);
-        translates.trimToSize();
+        translatables.add(currentTitleLabel);
+        translatables.trimToSize();
     }
 
     @Override

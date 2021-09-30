@@ -127,15 +127,15 @@ public class SettingsWindow extends HudMenuWindow {
         add(quitButton);
 
         // Translatable register
-        translates.add(informationButton);
-        translates.add(languageSelectMenuButton);
-        translates.add(volumeChangeMenuButton);
-        translates.add(worldSettingsButton);
-        translates.add(administratorManageMenuButton);
-        translates.add(leaveWorldButton);
-        translates.add(logoutButton);
-        translates.add(quitButton);
-        translates.trimToSize();
+        translatables.add(informationButton);
+        translatables.add(languageSelectMenuButton);
+        translatables.add(volumeChangeMenuButton);
+        translatables.add(worldSettingsButton);
+        translatables.add(administratorManageMenuButton);
+        translatables.add(leaveWorldButton);
+        translatables.add(logoutButton);
+        translatables.add(quitButton);
+        translatables.trimToSize();
     }
 
     @Override

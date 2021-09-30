@@ -9,13 +9,14 @@ import org.jetbrains.annotations.Nullable;
 import view2.Chati;
 import view2.ChatiScreen;
 import view2.Response;
+import view2.userInterface.ChatiTable;
 
 /**
  * Eine Klasse, welche den Menübildschirm der Anwendung repräsentiert.
  */
 public class MenuScreen extends ChatiScreen {
 
-    private MenuTable currentMenuTable;
+    private ChatiTable currentMenuTable;
 
     /**
      * Erzeugt eine neue Instanz des MenuScreen.
@@ -211,7 +212,7 @@ public class MenuScreen extends ChatiScreen {
      * Setzt den momentan anzuzeigenden Inhalt.
      * @param table Container des anzuzeigenden Inhalts.
      */
-    public void setMenuTable(@NotNull final MenuTable table) {
+    public void setMenuTable(@NotNull final ChatiTable table) {
         if (currentMenuTable != null) {
             currentMenuTable.remove();
         }

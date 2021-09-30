@@ -9,6 +9,7 @@ import controller.network.ServerSender;
 import model.user.Avatar;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.userInterface.ChatiTable;
 import view2.userInterface.ChatiTextButton;
 import view2.Response;
 import java.util.EnumSet;
@@ -18,7 +19,7 @@ import java.util.TreeSet;
 /**
  * Eine Klasse, welche das Menü zum Wechseln des Avatars repräsentiert.
  */
-public class AvatarSelectTable extends MenuTable {
+public class AvatarSelectTable extends ChatiTable {
 
     private static final int AVATARS_PER_ROW = 3;
     private static final float AVATAR_BUTTON_MAX_SIZE = ROW_WIDTH / AVATARS_PER_ROW;
@@ -99,9 +100,9 @@ public class AvatarSelectTable extends MenuTable {
         Chati.CHATI.getScreen().getStage().setScrollFocus(avatarScrollPane);
 
         // Translatable register
-        translates.add(confirmButton);
-        translates.add(cancelButton);
-        translates.trimToSize();
+        translatables.add(confirmButton);
+        translatables.add(cancelButton);
+        translatables.trimToSize();
     }
 
     @Override

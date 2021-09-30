@@ -123,10 +123,10 @@ public class UserListWindow extends HudMenuWindow {
         add(userListScrollPane).grow();
 
         // Translatable register
-        translates.add(friendTabButton);
-        translates.add(activeUserTabButton);
-        translates.add(bannedUserTabButton);
-        translates.trimToSize();
+        translatables.add(friendTabButton);
+        translatables.add(activeUserTabButton);
+        translatables.add(bannedUserTabButton);
+        translatables.trimToSize();
     }
 
     @Override

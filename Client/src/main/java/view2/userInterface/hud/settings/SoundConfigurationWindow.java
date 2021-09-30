@@ -204,17 +204,17 @@ public class SoundConfigurationWindow extends ChatiWindow {
         add(container).padLeft(SPACE).padRight(SPACE).grow();
 
         // Translatable register
-        translates.add(infoLabel);
-        translates.add(totalVolumeLabel);
-        translates.add(voiceVolumeLabel);
-        translates.add(musicVolumeLabel);
-        translates.add(soundVolumeLabel);
-        translates.add(microphoneSensitivityLabel);
-        translates.add(pushToTalkLabel);
-        translates.add(confirmButton);
-        translates.add(defaultButton);
-        translates.add(cancelButton);
-        translates.trimToSize();
+        translatables.add(infoLabel);
+        translatables.add(totalVolumeLabel);
+        translatables.add(voiceVolumeLabel);
+        translatables.add(musicVolumeLabel);
+        translatables.add(soundVolumeLabel);
+        translatables.add(microphoneSensitivityLabel);
+        translatables.add(pushToTalkLabel);
+        translatables.add(confirmButton);
+        translatables.add(defaultButton);
+        translatables.add(cancelButton);
+        translatables.trimToSize();
     }
 
     /**

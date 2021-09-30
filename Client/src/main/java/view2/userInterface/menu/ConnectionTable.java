@@ -8,11 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.userInterface.ChatiTable;
 
 /**
  * Eine Klasse, welche das Menü zum Verbinden repräsentiert.
  */
-public class ConnectionTable extends MenuTable {
+public class ConnectionTable extends ChatiTable {
 
     private static final float FRAME_DURATION = 0.1f;
 

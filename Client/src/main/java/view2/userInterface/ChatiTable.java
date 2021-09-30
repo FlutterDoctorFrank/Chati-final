@@ -1,4 +1,4 @@
-package view2.userInterface.menu;
+package view2.userInterface;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
@@ -12,21 +12,21 @@ import java.util.ArrayList;
 /**
  * Eine abstrakte Klasse, welche ein Menü im Menübildschirm repräsentiert.
  */
-public abstract class MenuTable extends Table implements Translatable {
+public abstract class ChatiTable extends Table implements Translatable {
 
     protected static final int MAX_LIST_COUNT = 10;
     protected static final float ROW_WIDTH = 600;
     protected static final float ROW_HEIGHT = 60;
     protected static final float SPACING = 15;
 
-    protected final ArrayList<Translatable> translates;
+    protected final ArrayList<Translatable> translatables;
     protected final ChatiLabel infoLabel;
 
     /**
      * Erzeugt eine neue Instanz des MenuTable.
      */
-    public MenuTable(@NotNull final String infoKey) {
-        this.translates = new ArrayList<>();
+    public ChatiTable(@NotNull final String infoKey) {
+        this.translatables = new ArrayList<>();
         this.infoLabel = new ChatiLabel(infoKey);
         infoLabel.setAlignment(Align.center, Align.center);
         infoLabel.setWrap(true);
@@ -53,7 +53,7 @@ public abstract class MenuTable extends Table implements Translatable {
     @Override
     public void translate() {
         infoLabel.translate();
-        translates.forEach(Translatable::translate);
+        translatables.forEach(Translatable::translate);
     }
 
     /**

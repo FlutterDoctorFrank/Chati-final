@@ -7,17 +7,14 @@ import controller.network.ServerSender;
 import model.context.spatial.ContextMap;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.userInterface.ChatiLabel;
-import view2.userInterface.ChatiSelectBox;
-import view2.userInterface.ChatiTextButton;
-import view2.userInterface.ChatiTextField;
+import view2.userInterface.*;
 import view2.Response;
 import java.util.EnumSet;
 
 /**
  * Eine Klasse, welche das Menü zum Erstellen eine Welt repräsentiert.
  */
-public class WorldCreateTable extends MenuTable {
+public class WorldCreateTable extends ChatiTable {
 
     private final ChatiTextField worldNameField;
 
@@ -77,11 +74,11 @@ public class WorldCreateTable extends MenuTable {
         add(container).width(ROW_WIDTH);
 
         // Translatable register
-        translates.add(mapSelectLabel);
-        translates.add(worldNameField);
-        translates.add(confirmButton);
-        translates.add(cancelButton);
-        translates.trimToSize();
+        translatables.add(mapSelectLabel);
+        translatables.add(worldNameField);
+        translatables.add(confirmButton);
+        translatables.add(cancelButton);
+        translatables.trimToSize();
     }
 
     @Override

@@ -70,9 +70,9 @@ public class LanguageSelectWindow extends ChatiWindow {
         add(container).padLeft(SPACE).padRight(SPACE).grow();
 
         // Translatable register
-        translates.add(infoLabel);
-        translates.add(confirmButton);
-        translates.add(cancelButton);
-        translates.trimToSize();
+        translatables.add(infoLabel);
+        translatables.add(confirmButton);
+        translatables.add(cancelButton);
+        translatables.trimToSize();
     }
 }

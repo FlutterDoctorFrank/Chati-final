@@ -18,7 +18,7 @@ import view2.userInterface.ChatiTextArea;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
 import view2.userInterface.ContextEntry;
-import view2.userInterface.menu.MenuTable;
+import view2.userInterface.ChatiTable;
 import java.util.EnumSet;
 import java.util.function.Predicate;
 
@@ -35,7 +35,7 @@ public class RoomReceptionWindow extends InteractableWindow {
     private static final float WINDOW_HEIGHT = 450;
     private static final float MESSAGE_AREA_HEIGHT = 120;
 
-    private MenuTable currentTable;
+    private ChatiTable currentTable;
 
     /**
      * Erzeugt eine neue Instanz des RoomReceptionWindow.
@@ -54,7 +54,7 @@ public class RoomReceptionWindow extends InteractableWindow {
      * Setzt den momentan anzuzeigenden Inhalt.
      * @param table Container des anzuzeigenden Inhalts.
      */
-    public void setCurrentTable(@NotNull final MenuTable table) {
+    public void setCurrentTable(@NotNull final ChatiTable table) {
         removeActor(currentTable);
         currentTable = table;
         addActor(currentTable);
@@ -76,7 +76,7 @@ public class RoomReceptionWindow extends InteractableWindow {
     /**
      * Eine Klasse, welche das Menü zur Auswahl eines Raums repräsentiert.
      */
-    private class RoomSelectTable extends MenuTable {
+    private class RoomSelectTable extends ChatiTable {
 
         private final ChatiSelectBox<ContextEntry> roomSelectBox;
 
@@ -157,12 +157,12 @@ public class RoomReceptionWindow extends InteractableWindow {
             add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
 
             // Translatable register
-            translates.add(roomSelectLabel);
-            translates.add(createButton);
-            translates.add(joinButton);
-            translates.add(requestButton);
-            translates.add(cancelButton);
-            translates.trimToSize();
+            translatables.add(roomSelectLabel);
+            translatables.add(createButton);
+            translatables.add(joinButton);
+            translatables.add(requestButton);
+            translatables.add(cancelButton);
+            translatables.trimToSize();
         }
 
         @Override
@@ -190,7 +190,7 @@ public class RoomReceptionWindow extends InteractableWindow {
     /**
      * Eine Klasse, welche das Menü zur Erstellung eines Raums repräsentiert.
      */
-    private class RoomCreateTable extends MenuTable {
+    private class RoomCreateTable extends ChatiTable {
 
         private final ChatiTextField roomnameField;
         private final ChatiTextField passwordField;
@@ -254,12 +254,12 @@ public class RoomReceptionWindow extends InteractableWindow {
             add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
 
             // Translatable register
-            translates.add(roomnameField);
-            translates.add(passwordField);
-            translates.add(mapSelectLabel);
-            translates.add(confirmButton);
-            translates.add(cancelButton);
-            translates.trimToSize();
+            translatables.add(roomnameField);
+            translatables.add(passwordField);
+            translatables.add(mapSelectLabel);
+            translatables.add(confirmButton);
+            translatables.add(cancelButton);
+            translatables.trimToSize();
         }
 
         @Override
@@ -272,7 +272,7 @@ public class RoomReceptionWindow extends InteractableWindow {
     /**
      * Eine Klasse, welche das Menü zum Betreten eines Raums repräsentiert.
      */
-    private class RoomJoinTable extends MenuTable {
+    private class RoomJoinTable extends ChatiTable {
 
         private final ChatiTextField passwordField;
 
@@ -318,10 +318,10 @@ public class RoomReceptionWindow extends InteractableWindow {
             add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
 
             // Translatable register
-            translates.add(passwordField);
-            translates.add(confirmButton);
-            translates.add(cancelButton);
-            translates.trimToSize();
+            translatables.add(passwordField);
+            translatables.add(confirmButton);
+            translatables.add(cancelButton);
+            translatables.trimToSize();
         }
 
         @Override
@@ -333,7 +333,7 @@ public class RoomReceptionWindow extends InteractableWindow {
     /**
      * Eine Klasse, welche das Menü zur Anfrage zum Beitritt eines Raums repräsentiert.
      */
-    private class RoomRequestTable extends MenuTable {
+    private class RoomRequestTable extends ChatiTable {
 
         private final ChatiTextArea messageArea;
 
@@ -386,10 +386,10 @@ public class RoomReceptionWindow extends InteractableWindow {
             add(container).width(WINDOW_WIDTH - 2 * SPACING - RoomReceptionWindow.this.getPadX());
 
             // Translatable register
-            translates.add(messageArea);
-            translates.add(confirmButton);
-            translates.add(cancelButton);
-            translates.trimToSize();
+            translatables.add(messageArea);
+            translatables.add(confirmButton);
+            translatables.add(cancelButton);
+            translatables.trimToSize();
         }
 
         @Override

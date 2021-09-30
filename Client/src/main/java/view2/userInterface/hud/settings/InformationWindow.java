@@ -180,37 +180,37 @@ public class InformationWindow extends ChatiWindow {
         add(informationScrollPane).grow();
 
         // Translatable register
-        translates.add(infoLabel);
-        translates.add(movementKeysLable);
-        translates.add(moveUpLabel);
-        translates.add(moveLeftLabel);
-        translates.add(moveDownLabel);
-        translates.add(moveRightLabel);
-        translates.add(sprintLabel);
-        translates.add(worldKeysLabel);
-        translates.add(showNamesLabel);
-        translates.add(zoomLabel);
-        translates.add(interactLabel);
-        translates.add(sendChatMessageLabel);
-        translates.add(pushToTalkLabel);
-        translates.add(menuKeysLabel);
-        translates.add(openChatLabel);
-        translates.add(openUserMenuLabel);
-        translates.add(openNotificationMenuLabel);
-        translates.add(openSettingsMenuLabel);
-        translates.add(openCommunicationMenuLabel);
-        translates.add(toggleMicrophoneLabel);
-        translates.add(toggleSoundLabel);
-        translates.add(closeLabel);
-        translates.add(commandsLabel);
-        translates.add(chatCommandsLabel);
-        translates.add(chatWhisperMessageLable);
-        translates.add(chatWhisperMessageCommandLable);
-        translates.add(chatRoomMessageLable);
-        translates.add(chatRoomMessageCommandLable);
-        translates.add(chatWorldMessageLabel);
-        translates.add(chatWorldMessageCommandLabel);
-        translates.trimToSize();
+        translatables.add(infoLabel);
+        translatables.add(movementKeysLable);
+        translatables.add(moveUpLabel);
+        translatables.add(moveLeftLabel);
+        translatables.add(moveDownLabel);
+        translatables.add(moveRightLabel);
+        translatables.add(sprintLabel);
+        translatables.add(worldKeysLabel);
+        translatables.add(showNamesLabel);
+        translatables.add(zoomLabel);
+        translatables.add(interactLabel);
+        translatables.add(sendChatMessageLabel);
+        translatables.add(pushToTalkLabel);
+        translatables.add(menuKeysLabel);
+        translatables.add(openChatLabel);
+        translatables.add(openUserMenuLabel);
+        translatables.add(openNotificationMenuLabel);
+        translatables.add(openSettingsMenuLabel);
+        translatables.add(openCommunicationMenuLabel);
+        translatables.add(toggleMicrophoneLabel);
+        translatables.add(toggleSoundLabel);
+        translatables.add(closeLabel);
+        translatables.add(commandsLabel);
+        translatables.add(chatCommandsLabel);
+        translatables.add(chatWhisperMessageLable);
+        translatables.add(chatWhisperMessageCommandLable);
+        translatables.add(chatRoomMessageLable);
+        translatables.add(chatRoomMessageCommandLable);
+        translatables.add(chatWorldMessageLabel);
+        translatables.add(chatWorldMessageCommandLabel);
+        translatables.trimToSize();
     }
 
     @Override

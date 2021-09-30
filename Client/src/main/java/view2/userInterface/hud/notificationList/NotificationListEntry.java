@@ -258,10 +258,10 @@ public class NotificationListEntry extends Table implements Translatable, Compar
             add(container).padLeft(SPACE).padRight(SPACE).grow();
 
             // Translatable register
-            translates.add(dateLabel);
-            translates.add(textLabel);
-            translates.add(okButton);
-            translates.trimToSize();
+            translatables.add(dateLabel);
+            translatables.add(textLabel);
+            translatables.add(okButton);
+            translatables.trimToSize();
         }
 
         @Override
@@ -360,10 +360,10 @@ public class NotificationListEntry extends Table implements Translatable, Compar
             add(container).padLeft(SPACE).padRight(SPACE).grow();
 
             // Translatable register
-            translates.add(infoLabel);
-            translates.add(confirmButton);
-            translates.add(cancelButton);
-            translates.trimToSize();
+            translatables.add(infoLabel);
+            translatables.add(confirmButton);
+            translatables.add(cancelButton);
+            translatables.trimToSize();
         }
     }
 }

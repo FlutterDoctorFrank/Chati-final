@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.userInterface.ChatiTable;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTextField;
 import view2.Response;
@@ -13,7 +14,7 @@ import view2.Response;
 /**
  * Eine Klasse, welche das Menü zum Löschen eines Kontos repräsentiert.
  */
-public class DeleteAccountTable extends MenuTable {
+public class DeleteAccountTable extends ChatiTable {
 
     private final ChatiTextField passwordField;
     private final ChatiTextField confirmPasswordField;
@@ -66,11 +67,11 @@ public class DeleteAccountTable extends MenuTable {
         add(container).width(ROW_WIDTH);
 
         // Translatable register
-        translates.add(passwordField);
-        translates.add(confirmPasswordField);
-        translates.add(confirmButton);
-        translates.add(cancelButton);
-        translates.trimToSize();
+        translatables.add(passwordField);
+        translatables.add(confirmPasswordField);
+        translatables.add(confirmButton);
+        translatables.add(cancelButton);
+        translatables.trimToSize();
     }
 
     @Override
@@ -82,7 +83,7 @@ public class DeleteAccountTable extends MenuTable {
     /**
      * Eine Klasse, welche das Menü zum Bestätigen der Kontolöschung repräsentiert.
      */
-    private class ConfirmDeletionTable extends MenuTable {
+    private class ConfirmDeletionTable extends ChatiTable {
 
         /**
          * Erzeugt eine neue Instanz des ConfirmDeletionTable.
@@ -119,9 +120,9 @@ public class DeleteAccountTable extends MenuTable {
             add(container).width(ROW_WIDTH);
 
             // Translatable register
-            translates.add(confirmButton);
-            translates.add(cancelButton);
-            translates.trimToSize();
+            translatables.add(confirmButton);
+            translatables.add(cancelButton);
+            translatables.trimToSize();
         }
 
         @Override

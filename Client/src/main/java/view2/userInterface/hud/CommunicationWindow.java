@@ -47,9 +47,9 @@ public class CommunicationWindow extends ChatiWindow {
         add(userListScrollPane).grow();
 
         // Translatable register
-        translates.add(communicationFormLabel);
-        translates.add(communicationMediaLabel);
-        translates.trimToSize();
+        translatables.add(communicationFormLabel);
+        translatables.add(communicationMediaLabel);
+        translatables.trimToSize();
     }
 
     @Override

@@ -4,13 +4,11 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import controller.network.ServerSender;
 import model.MessageBundle;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import view2.Chati;
 import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiTextButton;
 
@@ -53,9 +51,9 @@ public class AreaPlannerWindow extends InteractableWindow {
         add(container).padLeft(SPACE).padRight(SPACE).grow();
 
         // Translatable register
-        translates.add(infoLabel);
-        translates.add(confirmButton);
-        translates.trimToSize();
+        translatables.add(infoLabel);
+        translatables.add(confirmButton);
+        translatables.trimToSize();
     }
 
     @Override

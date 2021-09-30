@@ -6,16 +6,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.userInterface.ChatiLabel;
-import view2.userInterface.ChatiSelectBox;
-import view2.userInterface.ChatiTextButton;
-import view2.userInterface.ContextEntry;
+import view2.userInterface.*;
 import view2.Response;
 
 /**
  * Eine Klasse, welche das Menü zum Auswählen eines zu betretenden Welt oder weiteren Menüs repräsentiert.
  */
-public class StartTable extends MenuTable {
+public class StartTable extends ChatiTable {
 
     private final ChatiSelectBox<ContextEntry> worldSelectBox;
 
@@ -112,14 +109,14 @@ public class StartTable extends MenuTable {
         add(container).width(ROW_WIDTH);
 
         // Translatable register
-        translates.add(worldSelectLabel);
-        translates.add(joinWorldButton);
-        translates.add(createWorldButton);
-        translates.add(deleteWorldButton);
-        translates.add(changeAvatarButton);
-        translates.add(profileSettingsButton);
-        translates.add(logoutButton);
-        translates.trimToSize();
+        translatables.add(worldSelectLabel);
+        translatables.add(joinWorldButton);
+        translatables.add(createWorldButton);
+        translatables.add(deleteWorldButton);
+        translatables.add(changeAvatarButton);
+        translatables.add(profileSettingsButton);
+        translatables.add(logoutButton);
+        translatables.trimToSize();
     }
 
     @Override
