@@ -153,6 +153,11 @@ public class PacketInUserManage implements Packet<PacketListenerIn> {
         REPORT_USER,
 
         /**
+         * Führt dazu, dass der Benutzer in der aktuellen Welt gewarnt wird.
+         */
+        WARN_USER,
+
+        /**
          * Führt dazu, dass sich der eigene Benutzer zum anderen Benutzer teleportiert.
          */
         TELEPORT_TO_USER,

@@ -85,7 +85,7 @@ public class InformationWindow extends ChatiWindow {
         chatWhisperMessageCommandLable.setColor(Color.GRAY);
         InformationLabel chatRoomMessageLable = new InformationLabel("menu.label.chat-room-message");
         InformationLabel chatRoomMessageCommandLable = new InformationLabel("menu.label.chat-room-message-command");
-        chatRoomMessageCommandLable.setColor(Color.CORAL);
+        chatRoomMessageCommandLable.setColor(Color.ORANGE);
         InformationLabel chatWorldMessageLabel = new InformationLabel("menu.label.chat-world-message");
         InformationLabel chatWorldMessageCommandLabel = new InformationLabel("menu.label.chat-world-message-command");
         chatWorldMessageCommandLabel.setColor(Color.SKY);
@@ -172,7 +172,7 @@ public class InformationWindow extends ChatiWindow {
         chatCommandsTableContainer.defaults().pad(SPACE).padLeft(2 * SPACE).growX();
         chatCommandsTableContainer.add(chatWhisperMessageLable, chatWhisperMessageCommandLable).row();
         chatCommandsTableContainer.add(chatRoomMessageLable, chatRoomMessageCommandLable).row();
-        chatCommandsTableContainer.add(chatWorldMessageLabel, chatWorldMessageCommandLabel);
+        chatCommandsTableContainer.add(chatWorldMessageLabel, chatWorldMessageCommandLabel).row();
         chatCommandsTableContainer.add(chatGlobalMessageLabel, chatGlobalMessageCommandLabel);
         chatCommandsContainer.add(chatCommandsTableContainer);
 

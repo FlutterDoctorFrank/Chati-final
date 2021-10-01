@@ -229,6 +229,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
             try {
                 switch (packet.getMessageType()) {
+                    case GLOBAL:
                     case WORLD:
                     case ROOM:
                     case WHISPER:

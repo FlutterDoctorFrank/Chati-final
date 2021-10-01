@@ -298,13 +298,14 @@ public class ChatWindow extends Window implements Translatable {
                 messageColor = Color.GRAY;
                 break;
             case ROOM:
-                messageColor = Color.CORAL;
+                messageColor = Color.ORANGE;
                 break;
             case WORLD:
                 messageColor = Color.SKY;
                 break;
             case GLOBAL:
                 messageColor = Color.GOLD;
+                break;
             case INFO:
                 throw new IllegalArgumentException("Users cannot send info messages.");
             default:
@@ -710,13 +711,15 @@ public class ChatWindow extends Window implements Translatable {
                         - lineHeight && y < runs.get(i).y + textHeight && runs.get(i).color.equals(webLinkColor)) {
                     StringBuilder urlBuilder = new StringBuilder();
                     urlBuilder.append(runs.get(i).glyphs.toString(""));
+                    urlBuilder.reverse();
                     for (int j = i - 1; j > 0; j--) {
                         if (runs.get(j).color.equals(webLinkColor)) {
-                            urlBuilder.insert(0, runs.get(j).glyphs.toString(""));
+                            urlBuilder.append(new StringBuilder().append(runs.get(j).glyphs.toString("")).reverse());
                         } else {
                             break;
                         }
                     }
+                    urlBuilder.reverse();
                     for (int j = i + 1; j < runs.size; j++) {
                         if (runs.get(j).color.equals(webLinkColor)) {
                             urlBuilder.append(runs.get(j).glyphs.toString(""));

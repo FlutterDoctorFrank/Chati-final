@@ -365,6 +365,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 case WARN_USER:
                     titleKey = "window.title.warn";
                     infoLabel = new ChatiLabel("window.entry.warn");
+                    break;
                 case BAN_USER:
                     titleKey = "window.title.ban";
                     infoLabel = new ChatiLabel("window.entry.ban");
