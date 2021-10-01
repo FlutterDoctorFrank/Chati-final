@@ -111,6 +111,34 @@ public class ChatWindow extends Window implements Translatable {
         emojiScrollPane.setOverscroll(false, false);
         emojiScrollPane.setScrollingDisabled(true, false);
 
+        ChatiImageButton emojiButton = new ChatiImageButton(new TextureRegionDrawable(Chati.CHATI.getRegions("emoji").get(1)));
+        emojiButton.getImage().setScale(ChatiEmojiManager.EMOJI_SCALE);
+        emojiButton.addListener(new ChatiTooltip("hud.tooltip.emoji"));
+        emojiButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                if (emojiScrollPaneContainer.hasParent()) {
+                    closeEmojiMenu();
+                } else {
+                    openEmojiMenu();
+                }
+            }
+        });
+
+        ChatiImageButton attachmentButton = new ChatiImageButton(Chati.CHATI.getDrawable("attachment"));
+        attachmentButton.addListener(new ChatiTooltip("hud.tooltip.attachment"));
+        attachmentButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                new ImageFileChooserWindow().open();
+            }
+        });
+
+        typingUsersLabel = new Label("", Chati.CHATI.getSkin());
+        typingUsersLabel.setFontScale(0.67f);
+
+        attachedImageLabelContainer = new Table();
+
         typeMessageArea = new ChatiTextArea("menu.text-field.message", false);
         typeMessageArea.addListener(new InputListener() {
             @Override
@@ -137,39 +165,11 @@ public class ChatWindow extends Window implements Translatable {
             }
         });
 
-        typingUsersLabel = new Label("", Chati.CHATI.getSkin());
-        typingUsersLabel.setFontScale(0.67f);
-
-        attachedImageLabelContainer = new Table();
-
         sendButton = new ChatiTextButton("menu.button.send", true);
         sendButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 sendMessage();
-            }
-        });
-
-        ChatiImageButton emojiButton = new ChatiImageButton(new TextureRegionDrawable(Chati.CHATI.getRegions("emoji").get(1)));
-        emojiButton.getImage().setScale(ChatiEmojiManager.EMOJI_SCALE);
-        emojiButton.addListener(new ChatiTooltip("hud.tooltip.emoji"));
-        emojiButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                if (emojiScrollPaneContainer.hasParent()) {
-                    closeEmojiMenu();
-                } else {
-                    openEmojiMenu();
-                }
-            }
-        });
-
-        ChatiImageButton attachmentButton = new ChatiImageButton(Chati.CHATI.getDrawable("attachment"));
-        attachmentButton.addListener(new ChatiTooltip("hud.tooltip.attachment"));
-        attachmentButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                new ImageFileChooserWindow().open();
             }
         });
 
@@ -213,6 +213,7 @@ public class ChatWindow extends Window implements Translatable {
         buttonContainer.defaults().width(SEND_BUTTON_HEIGHT / 2).height(SEND_BUTTON_HEIGHT / 2);
         emojiButton.getImage().setOrigin(SEND_BUTTON_HEIGHT / 4, SEND_BUTTON_HEIGHT / 4);
         buttonContainer.add(emojiButton).row();
+        attachmentButton.getImage().setOrigin(SEND_BUTTON_HEIGHT / 4, SEND_BUTTON_HEIGHT / 4);
         buttonContainer.add(attachmentButton);
         sendContainer.add(buttonContainer).width(SEND_BUTTON_HEIGHT / 2).padLeft(SPACE);
         sendContainer.add(typeMessageArea).growX();
@@ -499,7 +500,9 @@ public class ChatWindow extends Window implements Translatable {
      */
     private static class ChatMessage extends Table implements Translatable {
 
-        private static final String URL_REGEX = "(https?:\\/\\/)?(www.)?([\\w]+\\.)+[\\w]{2,63}\\/?";
+        private static final String URL_REGEX = "(((http|https)://)?(www.)|((http|https)://)((www.)?)|((http|https)://www.))" +
+                "[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+        private static final Color WEB_LINK_COLOR = Color.ROYAL;
 
         private final LocalDateTime timestamp;
         private final String message;
@@ -520,64 +523,12 @@ public class ChatWindow extends Window implements Translatable {
 
             defaults().left().growX();
 
-            String datedMessage = Chati.CHATI.getLocalization().format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
-            String colorizedMessage = getColorizedMessage(datedMessage, messageColor);
-            messageLabel = new Label(colorizedMessage, Chati.CHATI.getSkin());
+            String datedMessage = Chati.CHATI.getLocalization().format("pattern.chat.time",
+                    Timestamp.valueOf(timestamp), message);
+            String markedUpMessage = getMarkedUpMessage(datedMessage, messageColor);
+            messageLabel = new Label(markedUpMessage, Chati.CHATI.getSkin());
             messageLabel.setWrap(true);
-            messageLabel.addListener(new ClickListener() {
-                @Override
-                public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                                  @Nullable final Actor fromActor) {
-                    if (pointer == -1) {
-                        messageLabel.getGlyphLayout().runs.forEach(run -> {
-                            if (run.color.equals(Color.ROYAL)) {
-                                Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
-                            }
-                        });
-
-                    }
-                }
-                @Override
-                public void exit(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                                  @Nullable final Actor fromActor) {
-                    if (pointer == -1) {
-                        messageLabel.getGlyphLayout().runs.forEach(run -> {
-                            if (run.color.equals(Color.ROYAL)) {
-                                Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
-                            }
-                        });
-
-                    }
-                }
-                @Override
-                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                    Array<GlyphLayout.GlyphRun> runs = messageLabel.getGlyphLayout().runs;
-                    for (int i = 0; i < runs.size; i++) {
-                        float textHeight = messageLabel.getHeight() - 3;
-                        float lineHeight = messageLabel.getStyle().font.getLineHeight();
-                        if (x > runs.get(i).x && x < runs.get(i).x + runs.get(i).width && y > runs.get(i).y + textHeight
-                                - lineHeight && y < runs.get(i).y + textHeight && runs.get(i).color.equals(Color.ROYAL)) {
-                            StringBuilder urlBuilder = new StringBuilder();
-                            urlBuilder.append(runs.get(i).glyphs.toString(""));
-                            for (int j = i - 1; j > 0; j--) {
-                                if (runs.get(j).color.equals(Color.ROYAL)) {
-                                    urlBuilder.insert(0, runs.get(j).glyphs.toString(""));
-                                } else {
-                                    break;
-                                }
-                            }
-                            for (int j = i + 1; j < runs.size; j++) {
-                                if (runs.get(j).color.equals(Color.ROYAL)) {
-                                    urlBuilder.append(runs.get(j).glyphs.toString(""));
-                                } else {
-                                    break;
-                                }
-                            }
-                            Gdx.net.openURI(urlBuilder.toString());
-                        }
-                    }
-                }
-            });
+            messageLabel.addListener(new WeblinkClickListener(messageLabel, WEB_LINK_COLOR));
 
             add(messageLabel).row();
         }
@@ -645,39 +596,50 @@ public class ChatWindow extends Window implements Translatable {
         @Override
         public void translate() {
             String datedMessage = Chati.CHATI.getLocalization().format("pattern.chat.time", Timestamp.valueOf(timestamp), message);
-            String colorizedMessage = getColorizedMessage(datedMessage, messageColor);
+            String colorizedMessage = getMarkedUpMessage(datedMessage, messageColor);
             messageLabel.setText(colorizedMessage);
         }
 
         /**
-         * Färbe die Nachricht mithilfe der Color-Markup-Language ein. Glyphen von Emojis bleiben hierbei weiß, um korrekt
-         * dargestellt zu werden. Weblinks werden unabhängig von der verwendeten Farbe in blau eingefärbt.
+         * Markiere die Nachricht mithilfe der Color-Markup-Language. Glyphen von Emojis bleiben hierbei weiß, um korrekt
+         * dargestellt zu werden. Weblinks werden unabhängig von der verwendeten Farbe in die dafür vorgesehene Farbe
+         * eingefärbt.
          * @param message Nachricht, die eingefärbt werden soll.
          * @param messageColor Farbe, in die die Nachricht eingefärbt werden soll.
          * @return Eingefärbte Nachricht.
          */
-        private String getColorizedMessage(@NotNull final String message, @NotNull final Color messageColor) {
+        private String getMarkedUpMessage(@NotNull final String message, @NotNull final Color messageColor) {
             Matcher urlMatcher = Pattern.compile(URL_REGEX).matcher(message);
-            boolean hasUrl = urlMatcher.find();
+            boolean hasWeblink = urlMatcher.find();
+
+            if (messageColor == Color.WHITE && !hasWeblink) {
+                return message;
+            }
 
             StringBuilder stringBuilder = new StringBuilder();
-            Color currentColor = null;
+            Color currentColor = messageColor == Color.WHITE ? messageColor : null;
             for (int i = 0; i < message.length(); i++) {
                 char c = message.charAt(i);
                 boolean isEmoji = Chati.CHATI.getEmojiManager().isEmoji(c);
-                if (hasUrl && i >= urlMatcher.end()) {
-                    hasUrl = urlMatcher.find();
+                if (hasWeblink && i > urlMatcher.end()) {
+                    hasWeblink = urlMatcher.find();
                 }
-                boolean isUrl = hasUrl && i >= urlMatcher.start() && i < urlMatcher.end();
+                boolean isWeblink = hasWeblink && i >= urlMatcher.start() && i < urlMatcher.end();
 
                 if (isEmoji && currentColor != Color.WHITE) {
                     currentColor = Color.WHITE;
                     stringBuilder.append("[#").append(currentColor).append("]");
-                } else if (!isEmoji && isUrl && !Character.isWhitespace(c) && currentColor != Color.ROYAL) {
-                    currentColor = Color.ROYAL;
+                } else if (!isEmoji && isWeblink && currentColor != WEB_LINK_COLOR) {
+                    currentColor = WEB_LINK_COLOR;
                     stringBuilder.append("[#").append(currentColor).append("]");
-                } else if (!isEmoji && !isUrl && !Character.isWhitespace(c) && messageColor != Color.WHITE &&
-                        currentColor != messageColor) {
+                } else if (!isEmoji && !isWeblink && hasWeblink && i == urlMatcher.end()) {
+                    if (i + 1 < message.length() && Chati.CHATI.getEmojiManager().isEmoji(message.charAt(i + 1))) {
+                        currentColor = Color.WHITE;
+                    } else {
+                        currentColor = messageColor;
+                    }
+                    stringBuilder.append("[#").append(currentColor).append("]");
+                } else if (!isEmoji && !isWeblink && !Character.isWhitespace(c) && currentColor != messageColor) {
                     currentColor = messageColor;
                     stringBuilder.append("[#").append(currentColor).append("]");
                 }
@@ -688,6 +650,83 @@ public class ChatWindow extends Window implements Translatable {
                 }
             }
             return stringBuilder.toString();
+        }
+    }
+
+    /**
+     * Eine Klasse, welche einen ClickListener repräsentiert, der einen in einem Label enthaltenen Weblink durch einen
+     * Klick öffnet.
+     */
+    private static class WeblinkClickListener extends ClickListener {
+
+        private final Label label;
+        private final Color webLinkColor;
+
+        /**
+         * Erzeugt eine neue Instanz des WeblinkClickListener.
+         * @param label Label, in dem Weblinks durch einen Klick geöffnet werden sollen.
+         * @param webLinkColor Farbe der Weblinks in dem Label.
+         */
+        public WeblinkClickListener(@NotNull final Label label, @NotNull final Color webLinkColor) {
+            this.label = label;
+            this.webLinkColor = webLinkColor;
+        }
+
+        @Override
+        public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
+                          @Nullable final Actor fromActor) {
+            if (pointer == -1) {
+                label.getGlyphLayout().runs.forEach(run -> {
+                    if (run.color.equals(webLinkColor)) {
+                        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
+                    }
+                });
+
+            }
+        }
+
+        @Override
+        public void exit(@NotNull final InputEvent event, final float x, final float y, final int pointer,
+                         @Nullable final Actor fromActor) {
+            if (pointer == -1) {
+                label.getGlyphLayout().runs.forEach(run -> {
+                    if (run.color.equals(webLinkColor)) {
+                        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+                    }
+                });
+
+            }
+        }
+
+        @Override
+        public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+            Array<GlyphLayout.GlyphRun> runs = label.getGlyphLayout().runs;
+            for (int i = 0; i < runs.size; i++) {
+                float textHeight = label.getHeight() - 3;
+                float lineHeight = label.getStyle().font.getLineHeight();
+                if (x > runs.get(i).x && x < runs.get(i).x + runs.get(i).width && y > runs.get(i).y + textHeight
+                        - lineHeight && y < runs.get(i).y + textHeight && runs.get(i).color.equals(webLinkColor)) {
+                    StringBuilder urlBuilder = new StringBuilder();
+                    urlBuilder.append(runs.get(i).glyphs.toString(""));
+                    for (int j = i - 1; j > 0; j--) {
+                        if (runs.get(j).color.equals(webLinkColor)) {
+                            urlBuilder.insert(0, runs.get(j).glyphs.toString(""));
+                        } else {
+                            break;
+                        }
+                    }
+                    for (int j = i + 1; j < runs.size; j++) {
+                        if (runs.get(j).color.equals(webLinkColor)) {
+                            urlBuilder.append(runs.get(j).glyphs.toString(""));
+                        } else {
+                            break;
+                        }
+                    }
+                    if (!Gdx.net.openURI(urlBuilder.toString())) {
+                        Gdx.net.openURI("https://www.google.de/search?q=" + urlBuilder);
+                    }
+                }
+            }
         }
     }
 }
