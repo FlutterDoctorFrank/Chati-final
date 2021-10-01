@@ -281,6 +281,55 @@ public enum AdministrativeAction {
     },
 
     /**
+     * Warnt einen Benutzer. Benutzer, mit der Berechtigung Benutzer sperren zu können, können Benutzer warnen. Ist
+     * der Benutzer, der gewarnt wird gemeldet, so ist dieser nach der Warnung nicht mehr gemeldet. Benutzer, mit der
+     * Berechtigung Benutzer zu sperren, können nur von Benutzern mit der Berechtigung Moderatoren zu sperren gewarnt
+     * werden. Benutzer, mit der Berechtigung Moderatoren zu sperren, können nicht gewarnt werden.
+     */
+    WARN_USER {
+        @Override
+        protected void execute(@NotNull final User performer, @NotNull final User target,
+                               @NotNull final String[] args) throws IllegalAdministrativeActionException,
+                NoPermissionException {
+            World performerWorld = performer.getWorld();
+
+            if (performerWorld == null) {
+                throw new IllegalStateException("Performers world is not available");
+            }
+
+            // Überprüfe, ob der Benutzer die Berechtigung zum Sperren des Benutzers hat.
+            if (!performer.hasPermission(performerWorld, Permission.BAN_USER)
+                    || (!performer.hasPermission(performerWorld, Permission.BAN_MODERATOR)
+                    && target.hasPermission(performerWorld, Permission.BAN_USER))) {
+                throw new NoPermissionException("Performer has not the required permission to warn.",
+                        "action.user-warn.not-permitted", performer, Permission.BAN_USER);
+            }
+
+            // Überprüfe, ob der zu sperrende Benutzer ein Administrator oder Besitzer ist.
+            if (target.hasPermission(performerWorld, Permission.BAN_MODERATOR)) {
+                throw new IllegalAdministrativeActionException("Users with permission to ban moderators cannot be warned.",
+                        performer, target, BAN_USER);
+            }
+
+            // Überprüfe, ob der Benutzer in Welt bereits gesperrt ist.
+            if (performerWorld.isBanned(target)) {
+                throw new IllegalAdministrativeActionException("User is banned in this world.",
+                        performer, target, BAN_USER);
+            }
+
+            // Warne den Benutzer.
+            performerWorld.removeReportedUser(target);
+
+            // Sende eine Benachrichtigung an den gewarnten Benutzer.
+            MessageBundle targetMessageBundle = new MessageBundle("action.user-warn.info-user",
+                    performer.getUsername(), performerWorld.getContextName(), args[0]);
+
+            Notification warnNotification = new Notification(target, performerWorld, targetMessageBundle);
+            target.addNotification(warnNotification);
+        }
+    },
+
+    /**
      * Stellt einen Benutzer im innersten räumlichen Kontext stumm, in dem sich sowohl der ausführende, als auch der
      * stummzuschaltende Benutzer befinden, sofern der ausführende Benutzer die Berechtigung für diesen Kontext besitzt.
      * Ein stummgeschalteter Benutzer kann im entsprechenden Kontext nicht mehr aktiv kommunizieren, außer per

@@ -85,10 +85,13 @@ public class InformationWindow extends ChatiWindow {
         chatWhisperMessageCommandLable.setColor(Color.GRAY);
         InformationLabel chatRoomMessageLable = new InformationLabel("menu.label.chat-room-message");
         InformationLabel chatRoomMessageCommandLable = new InformationLabel("menu.label.chat-room-message-command");
-        chatRoomMessageCommandLable.setColor(Color.ORANGE);
+        chatRoomMessageCommandLable.setColor(Color.CORAL);
         InformationLabel chatWorldMessageLabel = new InformationLabel("menu.label.chat-world-message");
         InformationLabel chatWorldMessageCommandLabel = new InformationLabel("menu.label.chat-world-message-command");
         chatWorldMessageCommandLabel.setColor(Color.SKY);
+        InformationLabel chatGlobalMessageLabel = new InformationLabel("menu.label.chat-global-message");
+        InformationLabel chatGlobalMessageCommandLabel = new InformationLabel("menu.label.chat-global-message-command");
+        chatGlobalMessageCommandLabel.setColor(Color.GOLD);
 
         // Layout
         setModal(true);
@@ -170,6 +173,7 @@ public class InformationWindow extends ChatiWindow {
         chatCommandsTableContainer.add(chatWhisperMessageLable, chatWhisperMessageCommandLable).row();
         chatCommandsTableContainer.add(chatRoomMessageLable, chatRoomMessageCommandLable).row();
         chatCommandsTableContainer.add(chatWorldMessageLabel, chatWorldMessageCommandLabel);
+        chatCommandsTableContainer.add(chatGlobalMessageLabel, chatGlobalMessageCommandLabel);
         chatCommandsContainer.add(chatCommandsTableContainer);
 
         commandsContainer.add(chatCommandsContainer);

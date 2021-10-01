@@ -82,15 +82,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             currentWorldImage.addListener(new ChatiTooltip("hud.tooltip.current-world", user.getCurrentWorld().getContextName()));
         }
 
-        ChatiImageButton whisperButton;
-        if (user.canWhisper()) {
-            whisperButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_whisper_message"));
-            whisperButton.addListener(new ChatiTooltip("hud.tooltip.whisper"));
-        } else {
-            whisperButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_whisper_message_disabled"));
-            whisperButton.setDisabled(true);
-            whisperButton.setTouchable(Touchable.disabled);
-        }
+        ChatiImageButton whisperButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_whisper_message"),
+                Chati.CHATI.getDrawable("action_whisper_message"),
+                Chati.CHATI.getDrawable("action_whisper_message_disabled"));
+        whisperButton.addListener(new ChatiTooltip("hud.tooltip.whisper"));
         whisperButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -99,6 +94,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 }
             }
         });
+        if (!user.canWhisper()) {
+            whisperButton.setDisabled(true);
+            whisperButton.setTouchable(Touchable.disabled);
+        }
 
         ChatiImageButton friendButton;
         if (!user.isFriend()) {
@@ -165,15 +164,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             }
         });
 
-        ChatiImageButton teleportButton;
-        if (user.canTeleportTo()) {
-            teleportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_teleport_to_user"));
-            teleportButton.addListener(new ChatiTooltip("hud.tooltip.teleport-to"));
-        } else {
-            teleportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_teleport_to_user_disabled"));
-            teleportButton.setDisabled(true);
-            teleportButton.setTouchable(Touchable.disabled);
-        }
+        ChatiImageButton teleportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_teleport_to_user"),
+                Chati.CHATI.getDrawable("action_teleport_to_user"),
+                Chati.CHATI.getDrawable("action_teleport_to_user_disabled"));
+        teleportButton.addListener(new ChatiTooltip("hud.tooltip.teleport-to"));
         teleportButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -186,11 +180,18 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 }
             }
         });
+        if (!user.canTeleportTo()) {
+            teleportButton.setDisabled(true);
+            teleportButton.setTouchable(Touchable.disabled);
+        }
 
         ChatiImageButton reportButton;
         if (user.canBeReported()) {
             reportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_report_user"));
             reportButton.addListener(new ChatiTooltip("hud.tooltip.report"));
+        } else if (user.canBeBanned()) {
+            reportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_report_user"));
+            reportButton.addListener(new ChatiTooltip("hud.tooltip.warn"));
         } else {
             reportButton = new ChatiImageButton(Chati.CHATI.getDrawable("action_report_user_disabled"));
             reportButton.setDisabled(true);
@@ -201,6 +202,8 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 if (user.canBeReported()) {
                     new MessageWindow(AdministrativeAction.REPORT_USER).open();
+                } else if (user.canBeBanned()) {
+                    new MessageWindow(AdministrativeAction.WARN_USER).open();
                 }
             }
         });
@@ -310,6 +313,14 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         add(buttonContainer).center().growX();
     }
 
+    /**
+     * Gibt den Benutzer dieses Eintrags zurück.
+     * @return Benutzer dieses Eintrags.
+     */
+    public @NotNull IUserView getUser() {
+        return user;
+    }
+
     @Override
     public int compareTo(@NotNull final UserListEntry other) {
         int statusComp = this.user.getStatus().compareTo(other.user.getStatus());
@@ -351,6 +362,9 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                     titleKey = "window.title.report";
                     infoLabel = new ChatiLabel("window.entry.report");
                     break;
+                case WARN_USER:
+                    titleKey = "window.title.warn";
+                    infoLabel = new ChatiLabel("window.entry.warn");
                 case BAN_USER:
                     titleKey = "window.title.ban";
                     infoLabel = new ChatiLabel("window.entry.ban");

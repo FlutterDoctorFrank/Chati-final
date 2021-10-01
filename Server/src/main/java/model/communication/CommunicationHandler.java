@@ -5,6 +5,7 @@ import model.communication.message.MessageType;
 import model.communication.message.TextMessage;
 import model.communication.message.AudioMessage;
 import model.context.Context;
+import model.context.global.GlobalContext;
 import model.context.spatial.Area;
 import model.context.spatial.Room;
 import model.context.spatial.World;
@@ -331,6 +332,45 @@ public class CommunicationHandler {
 
                 // Versende die Textnachricht.
                 TextMessage textMessage = new TextMessage(sender, sendMessage, imageData, imageName, MessageType.WORLD);
+                receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
+            }
+        },
+
+        /**
+         * Wird zur Verarbeitung einer globalen Nachricht verwendet. Überprüft, ob diese Nachricht versendet werden
+         * kann und versendet diese.
+         * @see MessageType#GLOBAL
+         */
+        GLOBAL_MESSAGE_COMMAND("(?i)global\\s.*"){
+            @Override
+            protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
+            @Nullable final String imageName) {
+                String sendMessage = message.split("\\s", 2)[1];
+
+                if (sender.getLocation() == null) {
+                    throw new IllegalStateException("Users location is not available");
+                }
+                // Überprüfe, ob sich der kommunizierende Benutzer in einer Welt befindet.
+                World communicationWorld = sender.getWorld();
+
+                if (communicationWorld == null) {
+                    throw new IllegalStateException("Users world is not available");
+                }
+
+                if (!sender.hasPermission(GlobalContext.getInstance(), Permission.CONTACT_CONTEXT)) {
+                    // Informiere den kommunizierenden Benutzer darüber, dass er nicht die Berechtigung besitzt, um diesen
+                    // Chatbefehl zu verwenden.
+                    TextMessage infoMessage = new TextMessage("chat.command.global.not-permitted",
+                            communicationWorld.getContextName(), Permission.CONTACT_CONTEXT);
+                    sender.send(SendAction.MESSAGE, infoMessage);
+                    return;
+                }
+
+                // Ermittle die empfangsberechtigten Benutzer.
+                Map<UUID, User> receivers = GlobalContext.getInstance().getUsers();
+
+                // Versende die Textnachricht.
+                TextMessage textMessage = new TextMessage(sender, sendMessage, imageData, imageName, MessageType.GLOBAL);
                 receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
             }
         };

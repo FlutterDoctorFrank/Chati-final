@@ -1,40 +1,49 @@
 package view2.userInterface.hud.notificationList;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
+import controller.network.ServerSender;
+import model.MessageBundle;
+import model.notification.INotificationView;
+import model.notification.NotificationAction;
 import model.user.IInternUserView;
 import model.user.IUserManagerView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.userInterface.ChatiTextButton;
+import view2.userInterface.*;
 import view2.userInterface.hud.HudMenuWindow;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 
 /**
  * Eine Klasse, welche das Benachrichtigungsmenü des HeadUpDisplay repräsentiert.
  */
 public class NotificationListWindow extends HudMenuWindow {
 
-    private final Set<NotificationListEntry> globalNotificationEntries;
-    private final Set<NotificationListEntry> worldNotificationEntries;
+    private static final float BUTTON_SIZE = 30;
 
+    private final Set<NotificationListEntry> currentEntries;
     private final ChatiTextButton globalNotificationTabButton;
     private final ChatiTextButton worldNotificationTabButton;
     private final ScrollPane notificationListScrollPane;
     private final Table notificationListContainer;
+    private final ChatiImageButton readAllButton;
+    private final ChatiImageButton deleteAllButton;
+    private final ChatiLabel newNotificationsCountLabel;
 
     /**
      * Erzeugt eine neue Instanz des NotificationListWindow.
      */
     public NotificationListWindow() {
         super("window.title.notifications");
-        this.globalNotificationEntries = new TreeSet<>();
-        this.worldNotificationEntries = new TreeSet<>();
+        this.currentEntries = new TreeSet<>();
 
         notificationListContainer = new Table();
         notificationListScrollPane = new ScrollPane(notificationListContainer, Chati.CHATI.getSkin());
@@ -85,6 +94,34 @@ public class NotificationListWindow extends HudMenuWindow {
         tabButtonGroup.add(globalNotificationTabButton);
         tabButtonGroup.add(worldNotificationTabButton);
 
+        newNotificationsCountLabel = new ChatiLabel("du.benennst.es.eh.um.also.mach.ichs.mal.so", 0, 0);
+
+        readAllButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_read"),
+                Chati.CHATI.getDrawable("notification_action_read"),
+                Chati.CHATI.getDrawable("notification_action_read_disabled"));
+        readAllButton.addListener(new ChatiTooltip("hud.tooltip.read-all"));
+        readAllButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                new ConfirmWindow(NotificationAction.READ).open();
+            }
+        });
+        readAllButton.setDisabled(true);
+        readAllButton.setTouchable(Touchable.disabled);
+
+        deleteAllButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_delete"),
+                Chati.CHATI.getDrawable("notification_action_delete"),
+                Chati.CHATI.getDrawable("notification_action_delete_disabled"));
+        deleteAllButton.addListener(new ChatiTooltip("hud.tooltip.delete-all"));
+        deleteAllButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                new ConfirmWindow(NotificationAction.DELETE).open();
+            }
+        });
+        deleteAllButton.setDisabled(true);
+        deleteAllButton.setTouchable(Touchable.disabled);
+
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser == null) {
             disableGlobalNotificationTab();
@@ -94,21 +131,29 @@ public class NotificationListWindow extends HudMenuWindow {
             if (!internUser.isInCurrentWorld()) {
                 disableWorldNotificationTab();
             }
-
             showGlobalNotifications();
         }
 
         // Layout
         notificationListContainer.top();
+        Table tabContainer = new Table();
+        tabContainer.defaults().growX();
+        tabContainer.add(globalNotificationTabButton, worldNotificationTabButton);
+        add(tabContainer).growX().row();
         Table buttonContainer = new Table();
-        buttonContainer.defaults().growX();
-        buttonContainer.add(globalNotificationTabButton, worldNotificationTabButton);
+        buttonContainer.right();
+        buttonContainer.defaults().size(BUTTON_SIZE).right().padLeft(SPACE / 2).padRight(SPACE / 2)
+                .padBottom(SPACE / 4).padTop(SPACE / 4);
+        newNotificationsCountLabel.setAlignment(Align.left, Align.left);
+        buttonContainer.add(newNotificationsCountLabel).left().growX();
+        buttonContainer.add(readAllButton, deleteAllButton);
         add(buttonContainer).growX().row();
         add(notificationListScrollPane).grow();
 
         // Translatable register
         translatables.add(globalNotificationTabButton);
         translatables.add(worldNotificationTabButton);
+        translatables.add(newNotificationsCountLabel);
         translatables.trimToSize();
     }
 
@@ -137,7 +182,6 @@ public class NotificationListWindow extends HudMenuWindow {
                 showWorldNotifications();
             }
         }
-
         super.act(delta);
     }
 
@@ -153,12 +197,12 @@ public class NotificationListWindow extends HudMenuWindow {
      * Zeigt die Liste aller globalen Benachrichtigungen an.
      */
     private void showGlobalNotifications() {
-        globalNotificationEntries.clear();
+        currentEntries.clear();
         IUserManagerView userManager = Chati.CHATI.getUserManager();
         if (userManager.isLoggedIn() && userManager.getInternUserView() != null) {
             userManager.getInternUserView().getGlobalNotifications().values()
-                    .forEach(notification -> globalNotificationEntries.add(new NotificationListEntry(notification)));
-            layoutEntries(globalNotificationEntries);
+                    .forEach(notification -> currentEntries.add(new NotificationListEntry(notification)));
+            layoutEntries();
         }
     }
 
@@ -166,12 +210,12 @@ public class NotificationListWindow extends HudMenuWindow {
      * Zeigt die Liste aller Benachrichtigungen in der aktuellen Welt an.
      */
     private void showWorldNotifications() {
-        worldNotificationEntries.clear();
+        currentEntries.clear();
         IInternUserView internUser = Chati.CHATI.getUserManager().getInternUserView();
         if (internUser != null && internUser.isInCurrentWorld()) {
             internUser.getWorldNotifications().values()
-                    .forEach(notification -> worldNotificationEntries.add(new NotificationListEntry(notification)));
-            layoutEntries(worldNotificationEntries);
+                    .forEach(notification -> currentEntries.add(new NotificationListEntry(notification)));
+            layoutEntries();
         }
     }
 
@@ -180,7 +224,7 @@ public class NotificationListWindow extends HudMenuWindow {
      */
     private void disableGlobalNotificationTab() {
         disableButton(globalNotificationTabButton);
-        globalNotificationEntries.clear();
+        currentEntries.clear();
         notificationListContainer.clearChildren();
     }
 
@@ -188,21 +232,122 @@ public class NotificationListWindow extends HudMenuWindow {
      * Deaktiviert den Tab zur Anzeige aller Benachrichtigungen der aktuellen Welt.
      */
     private void disableWorldNotificationTab() {
+        disableButton(worldNotificationTabButton);
+        currentEntries.clear();
         if (worldNotificationTabButton.isChecked() && !globalNotificationTabButton.isDisabled()) {
             worldNotificationTabButton.setChecked(false);
             globalNotificationTabButton.setChecked(true);
             showGlobalNotifications();
         }
-        disableButton(worldNotificationTabButton);
-        worldNotificationEntries.clear();
     }
 
     /**
      * Zeigt die übergebenen Einträge in der Liste an.
-     * @param entries Anzuzeigende Einträge.
      */
-    private void layoutEntries(@NotNull final Set<NotificationListEntry> entries) {
+    private void layoutEntries() {
         notificationListContainer.clearChildren();
-        entries.forEach(entry -> notificationListContainer.add(entry).growX().row());
+        currentEntries.forEach(entry -> notificationListContainer.add(entry).growX().row());
+
+        int newNotificationsCount = (int) currentEntries.stream().map(NotificationListEntry::getNotification)
+                .filter(Predicate.not(INotificationView::isRead)).count();
+        if (currentEntries.size() == 0) {
+            deleteAllButton.setDisabled(true);
+            deleteAllButton.setTouchable(Touchable.disabled);
+        } else {
+            deleteAllButton.setDisabled(false);
+            deleteAllButton.setTouchable(Touchable.enabled);
+        }
+        if (newNotificationsCount == 0) {
+            readAllButton.setDisabled(true);
+            readAllButton.setTouchable(Touchable.disabled);
+        } else {
+            readAllButton.setDisabled(false);
+            readAllButton.setTouchable(Touchable.enabled);
+        }
+        newNotificationsCountLabel.setText(Chati.CHATI.getLocalization().format("du.benennst.es.eh.um.also.mach.ichs.mal.so",
+                currentEntries.size(), newNotificationsCount));
+    }
+
+    /**
+     * Eine Klasse, welche das Menü zum Bestätigen einer durchgeführten Benachrichtigungsaktion für alle
+     * Benachrichtigungen repräsentiert.
+     */
+    private class ConfirmWindow extends ChatiWindow {
+
+        private static final float WINDOW_WIDTH = 550;
+        private static final float WINDOW_HEIGHT = 275;
+
+        /**
+         * Erzeugt eine neue Instanz des ConfirmWindow.
+         * @param action Durchzuführende Benachrichtigungsaktion.
+         */
+        public ConfirmWindow(@NotNull final NotificationAction action) {
+            super("window.title.confirm", WINDOW_WIDTH, WINDOW_HEIGHT);
+
+            MessageBundle message;
+            switch (action) {
+                case READ:
+                    message = new MessageBundle("window.notification.confirm-read-all");
+                    break;
+                case DELETE:
+                    message = new MessageBundle("window.notification.confirm-delete-all");
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + action);
+            }
+
+            ChatiLabel infoLabel = new ChatiLabel(message);
+            ChatiTextButton confirmButton = new ChatiTextButton("menu.button.yes", true);
+            confirmButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                    switch (action) {
+                        case READ:
+                            currentEntries.stream().map(NotificationListEntry::getNotification)
+                                    .forEach(notification -> Chati.CHATI.send(ServerSender.SendAction.NOTIFICATION_READ,
+                                            notification.getNotificationId()));
+                            break;
+                        case DELETE:
+                            currentEntries.stream().map(NotificationListEntry::getNotification)
+                                    .forEach(notification -> Chati.CHATI.send(ServerSender.SendAction.NOTIFICATION_DELETE,
+                                            notification.getNotificationId()));
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Unexpected notification action.");
+                    }
+                    close();
+                }
+            });
+
+            ChatiTextButton cancelButton = new ChatiTextButton("menu.button.no", true);
+            cancelButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                    close();
+                }
+            });
+
+            // Layout
+            setModal(true);
+            setMovable(false);
+
+            Table container = new Table();
+            container.defaults().height(ROW_HEIGHT).spaceBottom(SPACE).center().growX();
+            infoLabel.setAlignment(Align.center, Align.center);
+            infoLabel.setWrap(true);
+            container.add(infoLabel).spaceBottom(2 * SPACE).row();
+            Table buttonContainer = new Table();
+            buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
+            buttonContainer.add(confirmButton).padRight(SPACE / 2);
+            buttonContainer.add(cancelButton).padLeft(SPACE / 2);
+            container.add(buttonContainer);
+            add(container).padLeft(SPACE).padRight(SPACE).grow();
+
+            // Translatable register
+            translatables.add(infoLabel);
+            translatables.add(confirmButton);
+            translatables.add(cancelButton);
+            translatables.trimToSize();
+        }
     }
 }

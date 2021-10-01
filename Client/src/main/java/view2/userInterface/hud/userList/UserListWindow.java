@@ -1,16 +1,23 @@
 package view2.userInterface.hud.userList;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import model.role.Permission;
 import model.user.IInternUserView;
+import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.userInterface.ChatiImageButton;
+import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiTextButton;
+import view2.userInterface.ChatiTooltip;
 import view2.userInterface.hud.HudMenuWindow;
+
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,24 +26,24 @@ import java.util.TreeSet;
  */
 public class UserListWindow extends HudMenuWindow {
 
-    private final Set<UserListEntry> friendEntries;
-    private final Set<UserListEntry> activeUserEntries;
-    private final Set<UserListEntry> bannedUserEntries;
+    private static final float BUTTON_SIZE = 30;
 
+    private final Set<UserListEntry> currentEntries;
     private final ChatiTextButton friendTabButton;
     private final ChatiTextButton activeUserTabButton;
     private final ChatiTextButton bannedUserTabButton;
     private final ScrollPane userListScrollPane;
     private final Table userListContainer;
+    private final ChatiLabel onlineUsersCountLabel;
+    private final ChatiImageButton roomMessageButton;
+    private final ChatiImageButton worldMessageButton;
 
     /**
      * Erzeugt eine neue Instanz des UserListWindow.
      */
     public UserListWindow() {
         super("window.title.users");
-        this.friendEntries = new TreeSet<>();
-        this.activeUserEntries = new TreeSet<>();
-        this.bannedUserEntries = new TreeSet<>();
+        this.currentEntries = new TreeSet<>();
 
         userListContainer = new Table();
         userListScrollPane = new ScrollPane(userListContainer, Chati.CHATI.getSkin());
@@ -97,6 +104,32 @@ public class UserListWindow extends HudMenuWindow {
         tabButtonGroup.add(activeUserTabButton);
         tabButtonGroup.add(bannedUserTabButton);
 
+        onlineUsersCountLabel = new ChatiLabel("du.benennst.es.eh.um.also.mach.ichs.mal.so2", 0, 0);
+
+        roomMessageButton = new ChatiImageButton(Chati.CHATI.getDrawable("current_room"),
+                Chati.CHATI.getDrawable("current_room"), Chati.CHATI.getDrawable("current_room_disabled"));
+        roomMessageButton.addListener(new ChatiTooltip("hud.tooltip.room-message"));
+        roomMessageButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                Chati.CHATI.getHeadUpDisplay().showChatWindow("\\room ");
+            }
+        });
+        roomMessageButton.setDisabled(true);
+        roomMessageButton.setTouchable(Touchable.disabled);
+
+        worldMessageButton = new ChatiImageButton(Chati.CHATI.getDrawable("current_world"),
+                Chati.CHATI.getDrawable("current_world"), Chati.CHATI.getDrawable("current_world_disabled"));
+        worldMessageButton.addListener(new ChatiTooltip("hud.tooltip.world-message"));
+        worldMessageButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                Chati.CHATI.getHeadUpDisplay().showChatWindow("\\world ");
+            }
+        });
+        worldMessageButton.setDisabled(true);
+        worldMessageButton.setTouchable(Touchable.disabled);
+
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser == null) {
             disableFriendsTab();
@@ -116,9 +149,16 @@ public class UserListWindow extends HudMenuWindow {
 
         // Layout
         userListContainer.top();
+        Table tabContainer = new Table();
+        tabContainer.defaults().colspan(3).growX();
+        tabContainer.add(friendTabButton, activeUserTabButton, bannedUserTabButton);
+        add(tabContainer).growX().row();
         Table buttonContainer = new Table();
-        buttonContainer.defaults().colspan(3).growX();
-        buttonContainer.add(friendTabButton, activeUserTabButton, bannedUserTabButton);
+        buttonContainer.defaults().size(BUTTON_SIZE).right().padLeft(SPACE / 2).padRight(SPACE / 2)
+                .padBottom(SPACE / 4).padTop(SPACE / 4);
+        onlineUsersCountLabel.setAlignment(Align.left, Align.left);
+        buttonContainer.add(onlineUsersCountLabel).left().growX();
+        buttonContainer.add(roomMessageButton, worldMessageButton);
         add(buttonContainer).growX().row();
         add(userListScrollPane).grow();
 
@@ -183,11 +223,11 @@ public class UserListWindow extends HudMenuWindow {
      * Zeigt die Liste alle befreundeten Benutzer an.
      */
     private void showFriends() {
-        friendEntries.clear();
+        currentEntries.clear();
         if (Chati.CHATI.getInternUser() != null) {
             Chati.CHATI.getUserManager().getFriends().values()
-                    .forEach(friend -> friendEntries.add(new UserListEntry(friend)));
-            layoutEntries(friendEntries);
+                    .forEach(friend -> currentEntries.add(new UserListEntry(friend)));
+            layoutEntries();
         }
     }
 
@@ -195,12 +235,12 @@ public class UserListWindow extends HudMenuWindow {
      * Zeigt die Liste aller in der momentanen Welt aktiven Benutzer an.
      */
     private void showActiveUsers() {
-        activeUserEntries.clear();
+        currentEntries.clear();
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser != null && internUser.isInCurrentWorld()) {
             Chati.CHATI.getUserManager().getActiveUsers().values()
-                    .forEach(activeUser -> activeUserEntries.add(new UserListEntry(activeUser)));
-            layoutEntries(activeUserEntries);
+                    .forEach(activeUser -> currentEntries.add(new UserListEntry(activeUser)));
+            layoutEntries();
         }
     }
 
@@ -208,13 +248,13 @@ public class UserListWindow extends HudMenuWindow {
      * Zeigt die Liste aller in der momentanen Welt gesperrten Benutzer an.
      */
     private void showBannedUsers() {
-        bannedUserEntries.clear();
+        currentEntries.clear();
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser != null && internUser.isInCurrentWorld()
                 && (internUser.hasPermission(Permission.BAN_USER) || internUser.hasPermission(Permission.BAN_MODERATOR))) {
             Chati.CHATI.getUserManager().getBannedUsers().values()
-                    .forEach(bannedUser -> bannedUserEntries.add(new UserListEntry(bannedUser)));
-            layoutEntries(bannedUserEntries);
+                    .forEach(bannedUser -> currentEntries.add(new UserListEntry(bannedUser)));
+            layoutEntries();
         }
     }
 
@@ -223,7 +263,7 @@ public class UserListWindow extends HudMenuWindow {
      */
     private void disableFriendsTab() {
         disableButton(friendTabButton);
-        friendEntries.clear();
+        currentEntries.clear();
         userListContainer.clearChildren();
     }
 
@@ -231,34 +271,53 @@ public class UserListWindow extends HudMenuWindow {
      * Deaktiviert den Tab zur Anzeige der Liste der in der Welt aktiven Benutzer.
      */
     private void disableActiveUsersTab() {
+        disableButton(activeUserTabButton);
+        currentEntries.clear();
         if (activeUserTabButton.isChecked() && !friendTabButton.isDisabled()) {
             activeUserTabButton.setChecked(false);
             friendTabButton.setChecked(true);
             showFriends();
         }
-        disableButton(activeUserTabButton);
-        activeUserEntries.clear();
     }
 
     /**
      * Deaktiviert den Tab zur Anzeige der Liste der in der Welt gesperrten Benutzer.
      */
     private void disableBannedUsersTab() {
+        disableButton(bannedUserTabButton);
+        currentEntries.clear();
         if (bannedUserTabButton.isChecked() && !friendTabButton.isDisabled()) {
             bannedUserTabButton.setChecked(false);
             friendTabButton.setChecked(true);
             showFriends();
         }
-        disableButton(bannedUserTabButton);
-        bannedUserEntries.clear();
     }
 
     /**
      * Zeigt die übergebenen Einträge in der Liste an.
-     * @param entries Anzuzeigende Einträge.
      */
-    private void layoutEntries(@NotNull final Set<UserListEntry> entries) {
+    private void layoutEntries() {
         userListContainer.clearChildren();
-        entries.forEach(entry -> userListContainer.add(entry).growX().row());
+        currentEntries.forEach(entry -> userListContainer.add(entry).growX().row());
+
+        int onlineUsersCount = (int) currentEntries.stream().map(UserListEntry::getUser).filter(IUserView::isOnline).count();
+        onlineUsersCountLabel.setText(Chati.CHATI.getLocalization().format("du.benennst.es.eh.um.also.mach.ichs.mal.so2",
+                currentEntries.size(), onlineUsersCount));
+
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+        if (internUser == null || internUser.getCurrentRoom() == null) {
+            roomMessageButton.setDisabled(true);
+            roomMessageButton.setTouchable(Touchable.disabled);
+        } else {
+            roomMessageButton.setDisabled(false);
+            roomMessageButton.setTouchable(Touchable.enabled);
+        }
+        if (internUser == null || internUser.getCurrentWorld() == null) {
+            worldMessageButton.setDisabled(true);
+            worldMessageButton.setTouchable(Touchable.disabled);
+        } else {
+            worldMessageButton.setDisabled(false);
+            worldMessageButton.setTouchable(Touchable.enabled);
+        }
     }
 }

@@ -40,6 +40,14 @@ public enum AdministrativeAction {
     REPORT_USER,
 
     /**
+     * Warnt einen Benutzer. Benutzer, mit der Berechtigung Benutzer sperren zu können, können Benutzer warnen. Ist
+     * der Benutzer, der gewarnt wird gemeldet, so ist dieser nach der Warnung nicht mehr gemeldet. Benutzer, mit der
+     * Berechtigung Benutzer zu sperren, können nur von Benutzern mit der Berechtigung Moderatoren zu sperren gewarnt
+     * werden. Benutzer, mit der Berechtigung Moderatoren zu sperren, können nicht gewarnt werden.
+     */
+    WARN_USER,
+
+    /**
      * Lädt einen Benutzer in einen privaten Raum ein, in dem sich der ausführende Benutzer befindet und für den er die
      * nötige Berechtigung besitzt.
      */

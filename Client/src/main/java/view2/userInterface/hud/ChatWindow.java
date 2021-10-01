@@ -298,11 +298,13 @@ public class ChatWindow extends Window implements Translatable {
                 messageColor = Color.GRAY;
                 break;
             case ROOM:
-                messageColor = Color.ORANGE;
+                messageColor = Color.CORAL;
                 break;
             case WORLD:
                 messageColor = Color.SKY;
                 break;
+            case GLOBAL:
+                messageColor = Color.GOLD;
             case INFO:
                 throw new IllegalArgumentException("Users cannot send info messages.");
             default:

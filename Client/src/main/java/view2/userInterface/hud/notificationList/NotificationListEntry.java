@@ -75,39 +75,37 @@ public class NotificationListEntry extends Table implements Translatable, Compar
             }
         });
 
-        ChatiImageButton acceptButton;
-        if (notification.getType() != NotificationType.INFORMATION
-                && !notification.isAccepted() && !notification.isDeclined()) {
-            acceptButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_accept"));
-            acceptButton.addListener(new ChatiTooltip("hud.tooltip.accept"));
-        } else {
-            acceptButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_accept_disabled"));
-            acceptButton.setDisabled(true);
-            acceptButton.setTouchable(Touchable.disabled);
-        }
+        ChatiImageButton acceptButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_accept"),
+                Chati.CHATI.getDrawable("notification_action_accept"),
+                Chati.CHATI.getDrawable("notification_action_accept_disabled"));
+        acceptButton.addListener(new ChatiTooltip("hud.tooltip.accept"));
         acceptButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 new ConfirmWindow(NotificationAction.ACCEPT).open();
             }
         });
-
-        ChatiImageButton declineButton;
-        if (notification.getType() != NotificationType.INFORMATION
-                && !notification.isAccepted() && !notification.isDeclined()) {
-            declineButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_decline"));
-            declineButton.addListener(new ChatiTooltip("hud.tooltip.decline"));
-        } else {
-            declineButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_decline_disabled"));
-            declineButton.setDisabled(true);
-            declineButton.setTouchable(Touchable.disabled);
+        if (notification.getType() == NotificationType.INFORMATION
+                || notification.isAccepted() || notification.isDeclined()) {
+            acceptButton.setDisabled(true);
+            acceptButton.setTouchable(Touchable.disabled);
         }
+
+        ChatiImageButton declineButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_decline"),
+                Chati.CHATI.getDrawable("notification_action_decline"),
+                Chati.CHATI.getDrawable("notification_action_decline_disabled"));
+        declineButton.addListener(new ChatiTooltip("hud.tooltip.decline"));
         declineButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                 new ConfirmWindow(NotificationAction.DECLINE).open();
             }
         });
+        if (notification.getType() == NotificationType.INFORMATION
+                || notification.isAccepted() || notification.isDeclined()) {
+            declineButton.setDisabled(true);
+            declineButton.setTouchable(Touchable.disabled);
+        }
 
         ChatiImageButton deleteButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_delete"));
         deleteButton.addListener(new ChatiTooltip("hud.tooltip.delete"));
@@ -132,11 +130,19 @@ public class NotificationListEntry extends Table implements Translatable, Compar
         add(labelContainer).spaceBottom(VERTICAL_SPACING).height(BUTTON_SIZE).growX().row();
 
         Table buttonContainer = new Table();
-        buttonContainer.defaults().size(BUTTON_SIZE).padRight(HORIZONTAL_SPACING).padBottom(VERTICAL_SPACING)
-                .space(HORIZONTAL_SPACING);
+        buttonContainer.defaults().size(BUTTON_SIZE).padLeft(HORIZONTAL_SPACING).padRight(HORIZONTAL_SPACING)
+                .padBottom(VERTICAL_SPACING);
         buttonContainer.add(showButton).left().width(SHOW_BUTTON_WIDTH).growX();
         buttonContainer.add(acceptButton, declineButton, deleteButton);
         add(buttonContainer).growX();
+    }
+
+    /**
+     * Gibt die Benachrichtigung dieses Eintrags zurück.
+     * @return Benachrichtigungs dieses Eintrags.
+     */
+    public @NotNull INotificationView getNotification() {
+        return notification;
     }
 
     @Override
@@ -194,41 +200,38 @@ public class NotificationListEntry extends Table implements Translatable, Compar
                 }
             });
 
-            if (notification.getType() != NotificationType.INFORMATION
-                    && !notification.isAccepted() && !notification.isDeclined()) {
-                acceptButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_accept"),
-                        Chati.CHATI.getDrawable("notification_action_accept"),
-                        Chati.CHATI.getDrawable("notification_action_accept_disabled"));
-                acceptButton.addListener(new ChatiTooltip("hud.tooltip.accept"));
-            } else {
-                acceptButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_accept_disabled"));
-                acceptButton.setDisabled(true);
-                acceptButton.setTouchable(Touchable.disabled);
-            }
+            acceptButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_accept"),
+                    Chati.CHATI.getDrawable("notification_action_accept"),
+                    Chati.CHATI.getDrawable("notification_action_accept_disabled"));
+            acceptButton.addListener(new ChatiTooltip("hud.tooltip.accept"));
             acceptButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     new ConfirmWindow(NotificationAction.ACCEPT).open();
                 }
             });
-
-            if (notification.getType() != NotificationType.INFORMATION
-                    && !notification.isAccepted() && !notification.isDeclined()) {
-                declineButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_decline"),
-                        Chati.CHATI.getDrawable("notification_action_decline"),
-                        Chati.CHATI.getDrawable("notification_action_decline_disabled"));
-                declineButton.addListener(new ChatiTooltip("hud.tooltip.decline"));
-            } else {
-                declineButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_decline_disabled"));
-                declineButton.setDisabled(true);
-                declineButton.setTouchable(Touchable.disabled);
+            if (notification.getType() == NotificationType.INFORMATION
+                    || notification.isAccepted() || notification.isDeclined()) {
+                acceptButton.setDisabled(true);
+                acceptButton.setTouchable(Touchable.disabled);
             }
+
+            declineButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_decline"),
+                    Chati.CHATI.getDrawable("notification_action_decline"),
+                    Chati.CHATI.getDrawable("notification_action_decline_disabled"));
+            declineButton.addListener(new ChatiTooltip("hud.tooltip.decline"));
             declineButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     new ConfirmWindow(NotificationAction.DECLINE).open();
                 }
             });
+            if (notification.getType() == NotificationType.INFORMATION
+                    || notification.isAccepted() || notification.isDeclined()) {
+                declineButton.setDisabled(true);
+                declineButton.setTouchable(Touchable.disabled);
+            }
+
 
             ChatiImageButton deleteButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_delete"));
             deleteButton.addListener(new ChatiTooltip("hud.tooltip.delete"));

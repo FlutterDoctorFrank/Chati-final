@@ -34,6 +34,12 @@ public enum MessageType {
     WORLD,
 
     /**
+     * Kann durch die Eingabe eines Chatbefehls am Anfang der Nachricht verwendet werden. Nachricht an alle Benutzer
+     * in der Anwendung.
+     */
+    GLOBAL,
+
+    /**
      * Nachricht, welche nicht von einem Benutzer gesendet werden kann, sondern in bestimmten Situationen von der
      * Anwendung generiert wird und für informative Zwecke verwendet wird.
      */

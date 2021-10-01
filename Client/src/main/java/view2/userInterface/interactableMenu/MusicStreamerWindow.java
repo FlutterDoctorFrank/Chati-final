@@ -230,7 +230,6 @@ public class MusicStreamerWindow extends InteractableWindow {
         container.add(musicProgressContainer).growX().row();
 
         Table buttonContainer = new Table();
-        buttonContainer.defaults();
         buttonContainer.add(loopingButton).size(1 / 2f * BUTTON_SIZE).padRight(BUTTON_SPACING);
         loopingButton.getImage().setOrigin(1 / 4f * BUTTON_SIZE, 1 / 4f * BUTTON_SIZE);
         buttonContainer.add(stopButton).size(1 / 2f * BUTTON_SIZE);
