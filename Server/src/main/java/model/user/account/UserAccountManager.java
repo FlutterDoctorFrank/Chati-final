@@ -62,21 +62,21 @@ public class UserAccountManager implements IUserAccountManager {
     public void registerUser(@NotNull final String username, @NotNull final String password) throws IllegalAccountActionException {
         // Überprüfe, ob der übergebene Benutzername dem vorgegebenen Format entspricht.
         if (!username.matches(USERNAME_FORMAT))  {
-            throw new IllegalAccountActionException("errorMsg console", "account.register.illegal-name");
+            throw new IllegalAccountActionException("", "account.register.illegal-name");
         }
         // Überprüfe, ob das übergebene Passwort dem vorgegebenen Format entspricht.
         if (!password.matches(PASSWORD_FORMAT)) {
-            throw new IllegalAccountActionException("errorMsg console", "account.register.illegal-password");
+            throw new IllegalAccountActionException("", "account.register.illegal-password");
         }
         // Überprüfe, ob bereits ein Konto mit diesem Benutzernamen existiert.
         if (isRegistered(username)) {
-            throw new IllegalAccountActionException("errorMsg console", "account.register.already-taken", username);
+            throw new IllegalAccountActionException("", "account.register.already-taken", username);
         }
         // Erzeuge Benutzer und füge ihn zu den registrierten Benutzern hinzu.
         User createdUser = database.createAccount(username, password);
 
         if (createdUser == null) {
-            throw new IllegalAccountActionException("errorMsg console", "account.register.failed");
+            throw new IllegalAccountActionException("", "account.register.failed");
         }
 
         // Der erste registrierte Benutzer eines Servers bekommt die Rolle des Besitzers. Sollen mehrere Benutzer diese

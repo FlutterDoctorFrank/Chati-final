@@ -61,6 +61,10 @@ public class UserInfoContainer extends Table {
         roleIcons.clear();
         roleIconContainer.clear();
 
+        if (Chati.CHATI.getInternUser() == null) {
+            return;
+        }
+
         usernameLabel.setText(user.getUsername());
         if (user.hasRole(Role.OWNER)) {
             usernameLabel.setColor(Color.GOLD);
