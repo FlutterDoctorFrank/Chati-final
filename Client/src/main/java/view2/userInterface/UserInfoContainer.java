@@ -41,23 +41,15 @@ public class UserInfoContainer extends Table {
 
         add(usernameLabel).space(SPACING);
         roleIconContainer.defaults().size(USER_INFO_ICON_SIZE).space(SPACING / 2);
-        try {
-            updateInfo();
-        } catch (IllegalStateException e) {
 
-        }
+        updateInfo();
         add(roleIconContainer);
     }
 
     @Override
     public void act(final float delta) {
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged() || Chati.CHATI.isRoomChanged()) {
-            try {
-                updateInfo();
-            } catch (IllegalStateException e) {
-
-            }
-
+            updateInfo();
         }
         super.act(delta);
     }
@@ -81,7 +73,7 @@ public class UserInfoContainer extends Table {
             administratorImage.addListener(new ChatiTooltip("hud.tooltip.administrator"));
             roleIcons.add(administratorImage);
         } else if (user.hasRole(Role.MODERATOR)) {
-            usernameLabel.setColor(Color.ORANGE);
+            usernameLabel.setColor(Color.CORAL);
             Image moderatorImage = new Image(Chati.CHATI.getDrawable("role_moderator"));
             moderatorImage.addListener(new ChatiTooltip("hud.tooltip.moderator"));
             roleIcons.add(moderatorImage);

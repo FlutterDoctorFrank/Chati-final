@@ -1,16 +1,15 @@
 package view2.userInterface;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.ModifiedTextArea;
-import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view2.Chati;
+import view2.ChatiCursor;
 import view2.ChatiLocalization.Translatable;
 
 /**
@@ -49,14 +48,14 @@ public class ChatiTextArea extends ModifiedTextArea implements Translatable {
             public void enter(@NotNull InputEvent event, final float x, final float y, final int pointer,
                               @Nullable final Actor fromActor) {
                 if (pointer == -1) {
-                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Ibeam);
+                    Gdx.graphics.setCursor(ChatiCursor.IBEAM.getCursor());
                 }
             }
             @Override
             public void exit(@NotNull InputEvent event, final float x, final float y, final int pointer,
                              @Nullable final Actor fromActor) {
                 if (pointer == -1) {
-                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+                    Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
                 }
             }
         });

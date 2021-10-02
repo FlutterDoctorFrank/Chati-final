@@ -3,10 +3,8 @@ package view2.userInterface.hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -17,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import controller.network.ServerSender;
 import model.MessageBundle;
@@ -31,10 +28,7 @@ import view2.Chati;
 import view2.ChatiEmojiManager;
 import view2.ChatiLocalization.Translatable;
 import view2.KeyCommand;
-import view2.userInterface.ChatiImageButton;
-import view2.userInterface.ChatiTextArea;
-import view2.userInterface.ChatiTextButton;
-import view2.userInterface.ChatiTooltip;
+import view2.userInterface.*;
 import view2.world.component.InternUserAvatar;
 
 import java.sql.Timestamp;
@@ -184,29 +178,7 @@ public class ChatWindow extends Window implements Translatable {
         });
 
         int resizeBorder = (int) getPadBottom();
-
-        addListener(new InputListener() {
-            @Override
-            public void exit(@NotNull InputEvent event, final float x, final float y, final int pointer,
-                              @Nullable final Actor fromActor) {
-                if (pointer == -1) {
-                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
-                }
-            }
-            @Override
-            public boolean mouseMoved(@NotNull final InputEvent event, final float x, final float y) {
-                if (x >= 0 && x < resizeBorder || x > getWidth() - resizeBorder && x <= getWidth()) {
-                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.HorizontalResize);
-                } else if (y >= 0 && y < resizeBorder) {
-                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.VerticalResize);
-                } else if (y > getHeight() - getTitleTable().getHeight() && y <= getHeight()) {
-                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
-                } else {
-                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
-                }
-                return true;
-            }
-        });
+        addListener(new ResizeWindowListener(this, resizeBorder));
 
         // Layout
         setVisible(false);
@@ -323,7 +295,7 @@ public class ChatWindow extends Window implements Translatable {
                 messageColor = Color.GRAY;
                 break;
             case ROOM:
-                messageColor = Color.ORANGE;
+                messageColor = Color.CORAL;
                 break;
             case WORLD:
                 messageColor = Color.SKY;
@@ -678,83 +650,6 @@ public class ChatWindow extends Window implements Translatable {
                 }
             }
             return stringBuilder.toString();
-        }
-    }
-
-    /**
-     * Eine Klasse, welche einen ClickListener repräsentiert, der einen in einem Label enthaltenen Weblink durch einen
-     * Klick öffnet.
-     */
-    private static class WeblinkClickListener extends ClickListener {
-
-        private final Label label;
-        private final Color webLinkColor;
-
-        /**
-         * Erzeugt eine neue Instanz des WeblinkClickListener.
-         * @param label Label, in dem Weblinks durch einen Klick geöffnet werden sollen.
-         * @param webLinkColor Farbe der Weblinks in dem Label.
-         */
-        public WeblinkClickListener(@NotNull final Label label, @NotNull final Color webLinkColor) {
-            this.label = label;
-            this.webLinkColor = webLinkColor;
-        }
-
-        @Override
-        public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                          @Nullable final Actor fromActor) {
-            if (pointer == -1) {
-                label.getGlyphLayout().runs.forEach(run -> {
-                    if (run.color.equals(webLinkColor)) {
-                        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void exit(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                         @Nullable final Actor fromActor) {
-            if (pointer == -1) {
-                label.getGlyphLayout().runs.forEach(run -> {
-                    if (run.color.equals(webLinkColor)) {
-                        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
-                    }
-                });
-            }
-        }
-
-        @Override
-        public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-            Array<GlyphLayout.GlyphRun> runs = label.getGlyphLayout().runs;
-            for (int i = 0; i < runs.size; i++) {
-                float textHeight = label.getHeight() - 3;
-                float lineHeight = label.getStyle().font.getLineHeight();
-                if (x > runs.get(i).x && x < runs.get(i).x + runs.get(i).width && y > runs.get(i).y + textHeight
-                        - lineHeight && y < runs.get(i).y + textHeight && runs.get(i).color.equals(webLinkColor)) {
-                    StringBuilder urlBuilder = new StringBuilder();
-                    urlBuilder.append(runs.get(i).glyphs.toString(""));
-                    urlBuilder.reverse();
-                    for (int j = i - 1; j > 0; j--) {
-                        if (runs.get(j).color.equals(webLinkColor)) {
-                            urlBuilder.append(new StringBuilder().append(runs.get(j).glyphs.toString("")).reverse());
-                        } else {
-                            break;
-                        }
-                    }
-                    urlBuilder.reverse();
-                    for (int j = i + 1; j < runs.size; j++) {
-                        if (runs.get(j).color.equals(webLinkColor)) {
-                            urlBuilder.append(runs.get(j).glyphs.toString(""));
-                        } else {
-                            break;
-                        }
-                    }
-                    if (!Gdx.net.openURI(urlBuilder.toString())) {
-                        Gdx.net.openURI("https://www.google.de/search?q=" + urlBuilder);
-                    }
-                }
-            }
         }
     }
 }

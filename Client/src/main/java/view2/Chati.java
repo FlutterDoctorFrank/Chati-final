@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -130,6 +131,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public void resize(final int width, final int height) {
         menuScreen.resize(width, height);
         worldScreen.resize(width, height);
+        Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
     }
 
     @Override
@@ -243,6 +245,15 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      */
     public @NotNull Array<TextureAtlas.AtlasRegion> getRegions(@NotNull final String name) {
         return assetManager.getRegions(name);
+    }
+
+    /**
+     * Gibt eine Pixmap zurück.
+     * @param name Name der Pixmap.
+     * @return Angeforderte Pixmap.
+     */
+    public @NotNull Pixmap getPixmap(@NotNull final String name) {
+        return assetManager.getPixmap(name);
     }
 
     /**

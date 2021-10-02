@@ -5,6 +5,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -80,6 +82,15 @@ public class ChatiAssetManager implements Disposable {
         // Skin in die Warteschlange des AssetManager mit ObjectMap der generierten Fonts als Parameter.
         assetManager.load("shadeui/uiskin.json", Skin.class, new SkinLoader.SkinParameter(fontMap));
 
+        // Cursor Bilder als Pixmaps in die Warteschlange des AssetManager.
+        assetManager.load("cursor/arrow.png", Pixmap.class);
+        assetManager.load("cursor/hand.png", Pixmap.class);
+        assetManager.load("cursor/ibeam.png", Pixmap.class);
+        assetManager.load("cursor/vertical_resize.png", Pixmap.class);
+        assetManager.load("cursor/horizontal_resize.png", Pixmap.class);
+        assetManager.load("cursor/rising_diagonal_resize.png", Pixmap.class);
+        assetManager.load("cursor/falling_diagonal_resize.png", Pixmap.class);
+
         // Sounds in die Warteschlange des AssetManager.
         assetManager.load("sounds/chat_message_sound.wav", Sound.class);
         assetManager.load("sounds/notification_sound.wav", Sound.class);
@@ -112,6 +123,15 @@ public class ChatiAssetManager implements Disposable {
      */
     public @NotNull Array<TextureAtlas.AtlasRegion> getRegions(@NotNull final String name) {
         return getAtlas().findRegions(name);
+    }
+
+    /**
+     * Gibt eine Pixmap zurück.
+     * @param name Name der Pixmap.
+     * @return Die angeforderte Pixmap.
+     */
+    public @NotNull Pixmap getPixmap(@NotNull final String name) {
+        return assetManager.get("cursor/" + name + ".png", Pixmap.class);
     }
 
     /**

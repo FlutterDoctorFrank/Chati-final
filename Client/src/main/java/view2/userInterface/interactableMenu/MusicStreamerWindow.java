@@ -25,6 +25,8 @@ import view2.Chati;
 import view2.userInterface.ChatiImageButton;
 import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiTooltip;
+import view2.userInterface.WeblinkClickListener;
+
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -35,25 +37,12 @@ import java.util.EnumSet;
  */
 public class MusicStreamerWindow extends InteractableWindow {
 
-    /** Menü-Option zum Auswählen eines abzuspielenden Musikstücks. */
     private static final int MENU_OPTION_PLAY = 1;
-
-    /** Menü-Option zum Pausieren oder Fortsetzen des gerade ausgewählten Musikstücks. */
     private static final int MENU_OPTION_PAUSE = 2;
-
-    /** Menü-Option zum Stoppen des gerade ausgewählten Musikstücks. */
     private static final int MENU_OPTION_STOP = 3;
-
-    /** Menü-Option zur Wiedergabe des nächsten Musikstücks in der Liste. */
     private static final int MENU_OPTION_PREVIOUS = 4;
-
-    /** Menü-Option zur Wiedergabe des vorherigen Musikstücks in der Liste. */
     private static final int MENU_OPTION_NEXT = 5;
-
-    /** Menü-Option zum Ein- und Ausschalten der wiederholten Wiedergabe eines ausgewählten Musikstücks. */
     private static final int MENU_OPTION_LOOPING = 6;
-
-    /** Menü-Option zum Ein- und Ausschalten von zufällig abzuspielenden Musikstücken. */
     private static final int MENU_OPTION_RANDOM = 7;
 
     private static final float WINDOW_WIDTH = 750;
@@ -179,29 +168,9 @@ public class MusicStreamerWindow extends InteractableWindow {
         musicProgressLabel = new Label("00:00", Chati.CHATI.getSkin());
         musicProgressBar = new ProgressBar(0, 1, 0.00001f, false, Chati.CHATI.getSkin());
 
-        Label creditsLabel = new Label("Music by https://www.bensound.com", Chati.CHATI.getSkin());
-        creditsLabel.addListener(new ClickListener() {
-            @Override
-            public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                              @Nullable final Actor fromActor) {
-                if (pointer == -1) {
-                    creditsLabel.setColor(Color.MAGENTA);
-                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
-                }
-            }
-            @Override
-            public void exit(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                             @Nullable final Actor fromActor) {
-                if (pointer == -1) {
-                    creditsLabel.setColor(Color.WHITE);
-                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
-                }
-            }
-            @Override
-            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                Gdx.net.openURI("https://www.bensound.com");
-            }
-        });
+        Color weblinkColor = Color.ROYAL;
+        Label creditsLabel = new Label("Music by [#" + weblinkColor + "]https://www.bensound.com", Chati.CHATI.getSkin());
+        creditsLabel.addListener(new WeblinkClickListener(creditsLabel, weblinkColor));
 
         setButtonStates();
         setSelectedTitle();

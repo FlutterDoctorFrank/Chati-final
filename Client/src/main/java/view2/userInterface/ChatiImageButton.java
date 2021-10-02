@@ -1,7 +1,6 @@
 package view2.userInterface;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -9,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import view2.ChatiCursor;
 
 /**
  * Eine Klasse, welche die in der Anwendung verwendeten ImageButtons repräsentiert.
@@ -48,7 +48,7 @@ public class ChatiImageButton extends ImageButton {
                               final int pointer, @Nullable final Actor fromActor) {
                 if (pointer == -1) {
                     getImage().scaleBy(imageScaleFactor);
-                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
+                    Gdx.graphics.setCursor(ChatiCursor.HAND.getCursor());
                 }
             }
             @Override
@@ -56,7 +56,7 @@ public class ChatiImageButton extends ImageButton {
                              final int pointer, @Nullable final Actor fromActor) {
                 if (pointer == -1) {
                     getImage().scaleBy(-imageScaleFactor);
-                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+                    Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
                 }
             }
         });

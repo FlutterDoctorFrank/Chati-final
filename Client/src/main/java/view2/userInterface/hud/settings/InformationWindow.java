@@ -85,7 +85,7 @@ public class InformationWindow extends ChatiWindow {
         chatWhisperMessageCommandLable.setColor(Color.GRAY);
         InformationLabel chatRoomMessageLable = new InformationLabel("menu.label.chat-room-message");
         InformationLabel chatRoomMessageCommandLable = new InformationLabel("menu.label.chat-room-message-command");
-        chatRoomMessageCommandLable.setColor(Color.ORANGE);
+        chatRoomMessageCommandLable.setColor(Color.CORAL);
         InformationLabel chatWorldMessageLabel = new InformationLabel("menu.label.chat-world-message");
         InformationLabel chatWorldMessageCommandLabel = new InformationLabel("menu.label.chat-world-message-command");
         chatWorldMessageCommandLabel.setColor(Color.SKY);
