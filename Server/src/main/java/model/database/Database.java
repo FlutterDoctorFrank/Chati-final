@@ -297,7 +297,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
             Connection con = this.getConnection();
             PreparedStatement ps = con.prepareStatement(SQL_UPDATE_ONLINE_TIME);
 
-            ps.setTimestamp(1, Timestamp.valueOf(user.getLastLogoutTime()));
+            ps.setTimestamp(1, Timestamp.valueOf(user.getLastLogout()));
             ps.setString(2, user.getUserId().toString());
             ps.executeUpdate();
             ps.close();

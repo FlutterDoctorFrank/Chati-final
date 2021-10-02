@@ -21,6 +21,7 @@ import model.role.Role;
 import model.timedEvents.AccountDeletion;
 import model.timedEvents.TimedEventScheduler;
 import model.timedEvents.AbsentUser;
+import model.timedEvents.UnreportUser;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +37,10 @@ import java.util.stream.Collectors;
  */
 public class User implements IUser {
 
+    /** Zeit in Tagen, nach dem ein gemeldeter Benutzer nach der letzten Meldung nicht mehr als gemeldet angezeigt
+     *  wird. */
+    public static final int UNREPORT_TIME = 3;
+
     /** Wird zur eindeutigen Identifikation eines Benutzers verwendet. */
     private final UUID userId;
 
@@ -49,10 +54,13 @@ public class User implements IUser {
     private Avatar avatar;
 
     /** Zeitpunkt des letzten Ausloggen eines Benutzers. */
-    private LocalDateTime lastLogoutTime;
+    private LocalDateTime lastLogout;
 
     /** Zeitpunkt der letzten Aktivität des Benutzers. */
     private LocalDateTime lastActivity;
+
+    /** Zeitpunkt, an dem der Benutzer das letzte mal in einem Kontext gemeldet wurde. */
+    private LocalDateTime lastReported;
 
     /** Die aktuelle Welt des Benutzers. */
     private World currentWorld;
@@ -99,7 +107,7 @@ public class User implements IUser {
         this.username = username;
         this.status = Status.OFFLINE;
         this.avatar = Avatar.values()[new Random().nextInt(Avatar.values().length)];
-        this.lastLogoutTime = LocalDateTime.now();
+        this.lastLogout = LocalDateTime.now();
         this.lastActivity = LocalDateTime.now();
         this.currentWorld = null;
         this.currentLocation = null;
@@ -118,15 +126,15 @@ public class User implements IUser {
      * @param userId ID des Benutzers.
      * @param username Benutzername des Benutzers.
      * @param avatar Avatar des Benutzers.
-     * @param lastLogoutTime Zeitpunkt, an dem sich der Benutzer das letzte Mal ausgeloggt hat.
+     * @param lastLogout Zeitpunkt, an dem sich der Benutzer das letzte Mal ausgeloggt hat.
      */
     public User(@NotNull final UUID userId, @NotNull final String username, @NotNull final Avatar avatar,
-                @NotNull final LocalDateTime lastLogoutTime) {
+                @NotNull final LocalDateTime lastLogout) {
         this.userId = userId;
         this.username = username;
         this.status = Status.OFFLINE;
         this.avatar = avatar;
-        this.lastLogoutTime = lastLogoutTime;
+        this.lastLogout = lastLogout;
         this.lastActivity = LocalDateTime.now();
         this.currentWorld = null;
         this.currentLocation = null;
@@ -684,8 +692,8 @@ public class User implements IUser {
     /**
      * Aktualisiert den Zeitpunkt, an dem der Benutzer sich das letzte Mal ausgeloggt hat.
      */
-    public void updateLastLogoutTime() {
-        this.lastLogoutTime = LocalDateTime.now();
+    public void updateLastLogout() {
+        this.lastLogout = LocalDateTime.now();
         TimedEventScheduler.getInstance().put(new AccountDeletion(this));
     }
 
@@ -702,6 +710,14 @@ public class User implements IUser {
             this.lastActivity = now;
             TimedEventScheduler.getInstance().put(new AbsentUser(this));
         }
+    }
+
+    /**
+     * Aktualisiert den Zeitpunkt, an dem der Benutzer das letzte mal in einem Kontext gemeldet wurde.
+     */
+    public void updateLastReported() {
+        this.lastReported = LocalDateTime.now();
+        TimedEventScheduler.getInstance().put(new UnreportUser(this));
     }
 
     /**
@@ -791,8 +807,8 @@ public class User implements IUser {
      * Gibt den Zeitpunkt zurück, an dem sich der Benutzer das letzte mal abgemeldet hat.
      * @return Letzter Zeitpunkt, an dem der Benutzer sich abgemeldet hat.
      */
-    public @NotNull LocalDateTime getLastLogoutTime() {
-        return lastLogoutTime;
+    public @NotNull LocalDateTime getLastLogout() {
+        return lastLogout;
     }
 
     /**
@@ -801,6 +817,14 @@ public class User implements IUser {
      */
     public @NotNull LocalDateTime getLastActivity() {
         return lastActivity;
+    }
+
+    /**
+     * Gibt den Zeitpunkt zurück, an dem der Benutzer das letzte mal in einem Kontext gemeldet wurde.
+     * @return Letzter Zeitpunkt, an dem der Benutzer in einem Kontext gemeldet wurde.
+     */
+    public @NotNull LocalDateTime getLastReported() {
+        return lastReported;
     }
 
     /**
@@ -887,7 +911,7 @@ public class User implements IUser {
         this.status = Status.OFFLINE;
 
         updateUserInfo(false);
-        updateLastLogoutTime();
+        updateLastLogout();
     }
 
     /**

@@ -172,6 +172,7 @@ public abstract class Context implements IContext {
         if (reportedUsers.containsKey(user.getUserId())) {
             return;
         }
+        user.updateLastReported();
 
         reportedUsers.put(user.getUserId(), user);
         children.values().forEach(child -> child.addReportedUser(user));

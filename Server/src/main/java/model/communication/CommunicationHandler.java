@@ -19,6 +19,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class CommunicationHandler {
 
@@ -367,7 +369,8 @@ public class CommunicationHandler {
                 }
 
                 // Ermittle die empfangsberechtigten Benutzer.
-                Map<UUID, User> receivers = GlobalContext.getInstance().getUsers();
+                Map<UUID, User> receivers = GlobalContext.getInstance().getUsers().values().stream()
+                        .filter(User::isInWorld).collect(Collectors.toMap(User::getUserId, Function.identity()));
 
                 // Versende die Textnachricht.
                 TextMessage textMessage = new TextMessage(sender, sendMessage, imageData, imageName, MessageType.GLOBAL);
