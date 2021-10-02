@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Ein Enum, welche die verwendbaren Cursor der Anwendung repräsentiert.
+ */
 public enum ChatiCursor {
 
     ARROW("arrow"),
@@ -17,6 +20,10 @@ public enum ChatiCursor {
 
     private final Cursor cursor;
 
+    /**
+     * Erzeugt eine neue Instanz eines ChatiCursor.
+     * @param cursorImageName Name der Cursor-Textur.
+     */
     ChatiCursor(@NotNull final String cursorImageName) {
         Pixmap cursorImage = Chati.CHATI.getPixmap(cursorImageName);
         this.cursor = Gdx.graphics.newCursor(cursorImage, cursorImage.getWidth() / 2, cursorImage.getHeight() / 2);

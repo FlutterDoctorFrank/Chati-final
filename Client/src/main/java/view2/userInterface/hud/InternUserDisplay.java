@@ -31,6 +31,7 @@ public class InternUserDisplay extends Table {
     private final Image currentWorldImage;
     private final ChatiTooltip roomTooltip;
     private final ChatiTooltip worldTooltip;
+    private final ChatiTooltip statusTooltip;
 
     /**
      * Erzeugt eine neue Instanz des InternUserDisplay.
@@ -58,7 +59,9 @@ public class InternUserDisplay extends Table {
             }
         });
 
+        statusTooltip = new ChatiTooltip();
         statusImage = new Image();
+        statusImage.addListener(statusTooltip);
         roomTooltip = new ChatiTooltip();
         currentRoomImage = new Image();
         currentRoomImage.addListener(roomTooltip);
@@ -109,23 +112,22 @@ public class InternUserDisplay extends Table {
             return;
         }
 
-        statusImage.getListeners().forEach(statusImage::removeListener);
         switch (internUser.getStatus()) {
             case ONLINE:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_online"));
-                statusImage.addListener(new ChatiTooltip("hud.tooltip.online"));
+                statusTooltip.setText("hud.tooltip.online");
                 break;
             case AWAY:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_away"));
-                statusImage.addListener(new ChatiTooltip("hud.tooltip.away"));
+                statusTooltip.setText("hud.tooltip.away");
                 break;
             case BUSY:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_busy"));
-                statusImage.addListener(new ChatiTooltip("hud.tooltip.busy"));
+                statusTooltip.setText("hud.tooltip.busy");
                 break;
             case INVISIBLE:
                 statusImage.setDrawable(Chati.CHATI.getDrawable("status_invisible"));
-                statusImage.addListener(new ChatiTooltip("hud.tooltip.invisible"));
+                statusTooltip.setText("hud.tooltip.invisible");
                 break;
             case OFFLINE:
                 throw new IllegalArgumentException("Intern user cannot be offline");

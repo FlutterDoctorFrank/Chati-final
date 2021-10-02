@@ -20,6 +20,7 @@ public class ChatiTextArea extends ModifiedTextArea implements Translatable {
     private static final int TEXT_AREA_MAX_LENGTH = 512;
 
     private final String messageTextKey;
+    private boolean underCursor;
 
     /**
      * Erzeugt eine neue Instanz der ChatiTextArea.
@@ -33,6 +34,7 @@ public class ChatiTextArea extends ModifiedTextArea implements Translatable {
         this.writeEnters = false;
         translate();
 
+        underCursor = false;
         setMaxLength(TEXT_AREA_MAX_LENGTH);
         addListener(new ChangeListener() {
             @Override
@@ -48,15 +50,23 @@ public class ChatiTextArea extends ModifiedTextArea implements Translatable {
             public void enter(@NotNull InputEvent event, final float x, final float y, final int pointer,
                               @Nullable final Actor fromActor) {
                 if (pointer == -1) {
-                    Gdx.graphics.setCursor(ChatiCursor.IBEAM.getCursor());
+                    underCursor = true;
                 }
             }
             @Override
             public void exit(@NotNull InputEvent event, final float x, final float y, final int pointer,
                              @Nullable final Actor fromActor) {
                 if (pointer == -1) {
+                    underCursor = false;
                     Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
                 }
+            }
+            @Override
+            public boolean mouseMoved(@NotNull final InputEvent event, final float x, final float y) {
+                if (underCursor) {
+                    Gdx.graphics.setCursor(ChatiCursor.IBEAM.getCursor());
+                }
+                return true;
             }
         });
     }

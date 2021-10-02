@@ -16,6 +16,7 @@ import view2.ChatiCursor;
 public class ChatiImageButton extends ImageButton {
 
     private static final float DEFAULT_IMAGE_SCALE_FACTOR = 0.1f;
+    private boolean underCursor;
 
     /**
      * Erzeugt eine neue Instanz eines ChatiImageButton.
@@ -31,6 +32,7 @@ public class ChatiImageButton extends ImageButton {
         getStyle().imageDisabled = imageDisabled;
         getImage().scaleBy(-imageScaleFactor);
 
+        underCursor = false;
         addListener(new ClickListener() {
             @Override
             public boolean touchDown(@NotNull final InputEvent event, final float x, final float y,
@@ -48,7 +50,7 @@ public class ChatiImageButton extends ImageButton {
                               final int pointer, @Nullable final Actor fromActor) {
                 if (pointer == -1) {
                     getImage().scaleBy(imageScaleFactor);
-                    Gdx.graphics.setCursor(ChatiCursor.HAND.getCursor());
+                    underCursor = true;
                 }
             }
             @Override
@@ -56,8 +58,16 @@ public class ChatiImageButton extends ImageButton {
                              final int pointer, @Nullable final Actor fromActor) {
                 if (pointer == -1) {
                     getImage().scaleBy(-imageScaleFactor);
+                    underCursor = false;
                     Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
                 }
+            }
+            @Override
+            public boolean mouseMoved(@NotNull final InputEvent event, final float x, final float y) {
+                if (underCursor) {
+                    Gdx.graphics.setCursor(ChatiCursor.HAND.getCursor());
+                }
+                return true;
             }
         });
     }

@@ -17,6 +17,7 @@ import view2.ChatiLocalization.Translatable;
 public class ChatiTextField extends TextField implements Translatable {
 
     private final String messageTextKey;
+    private boolean underCursor;
 
     /**
      * Erzeugt eine neue Instanz der ChatiTextArea.
@@ -35,20 +36,29 @@ public class ChatiTextField extends TextField implements Translatable {
         }
         setTextFieldFilter((textField, c) -> !isBlank() || !Character.toString(c).matches("\\s"));
 
+        underCursor = false;
         addListener(new InputListener() {
             @Override
             public void enter(@NotNull InputEvent event, final float x, final float y, final int pointer,
                               @Nullable final Actor fromActor) {
                 if (pointer == -1) {
-                    Gdx.graphics.setCursor(ChatiCursor.IBEAM.getCursor());
+                    underCursor = true;
                 }
             }
             @Override
             public void exit(@NotNull InputEvent event, final float x, final float y, final int pointer,
                              @Nullable final Actor fromActor) {
                 if (pointer == -1) {
+                    underCursor = false;
                     Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
                 }
+            }
+            @Override
+            public boolean mouseMoved(@NotNull final InputEvent event, final float x, final float y) {
+                if (underCursor) {
+                    Gdx.graphics.setCursor(ChatiCursor.IBEAM.getCursor());
+                }
+                return true;
             }
         });
     }

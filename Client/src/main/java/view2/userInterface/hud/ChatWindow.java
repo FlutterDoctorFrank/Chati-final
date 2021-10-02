@@ -57,6 +57,7 @@ public class ChatWindow extends Window implements Translatable {
     private static final float SEND_BUTTON_HEIGHT = 60;
     private static final float MAX_IMAGE_SIZE = 180;
     private static final float IMAGE_SCALE_FACTOR = 0.025f;
+    private static final int RESIZE_BORDER = 8;
 
     private final List<ChatMessage> chatMessages;
     private final Map<IUserView, Long> typingUsers;
@@ -177,15 +178,14 @@ public class ChatWindow extends Window implements Translatable {
             }
         });
 
-        int resizeBorder = (int) getPadBottom();
-        addListener(new ResizeWindowListener(this, resizeBorder));
+        addListener(new ResizeWindowListener(this, RESIZE_BORDER));
 
         // Layout
         setVisible(false);
         setModal(false);
         setMovable(true);
         setResizable(true);
-        setResizeBorder(resizeBorder);
+        setResizeBorder(RESIZE_BORDER);
         setKeepWithinStage(true);
         setPosition(Gdx.graphics.getWidth(), 0);
         setWidth(DEFAULT_WIDTH);
@@ -557,20 +557,6 @@ public class ChatWindow extends Window implements Translatable {
 
             ChatiImageButton imageButton = new ChatiImageButton(imageDrawable, imageDrawable, imageDrawable, IMAGE_SCALE_FACTOR);
             imageButton.addListener(new ClickListener() {
-                @Override
-                public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                                  @Nullable final Actor fromActor) {
-                    if (pointer == -1) {
-                        imageNameLabel.setColor(Color.MAGENTA);
-                    }
-                }
-                @Override
-                public void exit(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                                 @Nullable final Actor fromActor) {
-                    if (pointer == -1) {
-                        imageNameLabel.setColor(Color.WHITE);
-                    }
-                }
                 @Override
                 public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     new ImageWindow(imageName, imageData).open();
