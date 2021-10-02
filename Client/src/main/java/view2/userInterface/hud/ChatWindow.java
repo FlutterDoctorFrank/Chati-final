@@ -183,12 +183,37 @@ public class ChatWindow extends Window implements Translatable {
             }
         });
 
+        int resizeBorder = (int) getPadBottom();
+
+        addListener(new InputListener() {
+            @Override
+            public void exit(@NotNull InputEvent event, final float x, final float y, final int pointer,
+                              @Nullable final Actor fromActor) {
+                if (pointer == -1) {
+                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+                }
+            }
+            @Override
+            public boolean mouseMoved(@NotNull final InputEvent event, final float x, final float y) {
+                if (x >= 0 && x < resizeBorder || x > getWidth() - resizeBorder && x <= getWidth()) {
+                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.HorizontalResize);
+                } else if (y >= 0 && y < resizeBorder) {
+                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.VerticalResize);
+                } else if (y > getHeight() - getTitleTable().getHeight() && y <= getHeight()) {
+                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
+                } else {
+                    Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+                }
+                return true;
+            }
+        });
+
         // Layout
         setVisible(false);
         setModal(false);
         setMovable(true);
         setResizable(true);
-        setResizeBorder((int) getPadBottom());
+        setResizeBorder(resizeBorder);
         setKeepWithinStage(true);
         setPosition(Gdx.graphics.getWidth(), 0);
         setWidth(DEFAULT_WIDTH);
@@ -684,7 +709,6 @@ public class ChatWindow extends Window implements Translatable {
                         Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
                     }
                 });
-
             }
         }
 
@@ -697,7 +721,6 @@ public class ChatWindow extends Window implements Translatable {
                         Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
                     }
                 });
-
             }
         }
 
