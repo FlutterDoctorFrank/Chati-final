@@ -94,7 +94,7 @@ public class NotificationListWindow extends HudMenuWindow {
         tabButtonGroup.add(globalNotificationTabButton);
         tabButtonGroup.add(worldNotificationTabButton);
 
-        newNotificationsCountLabel = new ChatiLabel("du.benennst.es.eh.um.also.mach.ichs.mal.so", 0, 0);
+        newNotificationsCountLabel = new ChatiLabel("window.notification.info", 0, 0);
 
         readAllButton = new ChatiImageButton(Chati.CHATI.getDrawable("notification_action_read"),
                 Chati.CHATI.getDrawable("notification_action_read"),
@@ -264,8 +264,21 @@ public class NotificationListWindow extends HudMenuWindow {
             readAllButton.setDisabled(false);
             readAllButton.setTouchable(Touchable.enabled);
         }
-        newNotificationsCountLabel.setText(Chati.CHATI.getLocalization().format("du.benennst.es.eh.um.also.mach.ichs.mal.so",
+        newNotificationsCountLabel.setText(Chati.CHATI.getLocalization().format("window.notification.info",
                 currentEntries.size(), newNotificationsCount));
+    }
+
+    public void updateNotificationCount() {
+        int newNotificationsCount = (int) currentEntries.stream().map(NotificationListEntry::getNotification)
+                .filter(Predicate.not(INotificationView::isRead)).count();
+        newNotificationsCountLabel.setText(Chati.CHATI.getLocalization().format("window.notification.info",
+                currentEntries.size(), newNotificationsCount));
+    }
+
+    @Override
+    public void translate() {
+        super.translate();
+        updateNotificationCount();
     }
 
     /**

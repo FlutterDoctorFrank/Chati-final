@@ -17,7 +17,6 @@ import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTooltip;
 import view2.userInterface.hud.HudMenuWindow;
-
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -104,7 +103,7 @@ public class UserListWindow extends HudMenuWindow {
         tabButtonGroup.add(activeUserTabButton);
         tabButtonGroup.add(bannedUserTabButton);
 
-        onlineUsersCountLabel = new ChatiLabel("du.benennst.es.eh.um.also.mach.ichs.mal.so2", 0, 0);
+        onlineUsersCountLabel = new ChatiLabel("window.user.info", 0, 0);
 
         roomMessageButton = new ChatiImageButton(Chati.CHATI.getDrawable("current_room"),
                 Chati.CHATI.getDrawable("current_room"), Chati.CHATI.getDrawable("current_room_disabled"));
@@ -166,6 +165,7 @@ public class UserListWindow extends HudMenuWindow {
         translatables.add(friendTabButton);
         translatables.add(activeUserTabButton);
         translatables.add(bannedUserTabButton);
+        translatables.add(onlineUsersCountLabel);
         translatables.trimToSize();
     }
 
@@ -300,9 +300,7 @@ public class UserListWindow extends HudMenuWindow {
         userListContainer.clearChildren();
         currentEntries.forEach(entry -> userListContainer.add(entry).growX().row());
 
-        int onlineUsersCount = (int) currentEntries.stream().map(UserListEntry::getUser).filter(IUserView::isOnline).count();
-        onlineUsersCountLabel.setText(Chati.CHATI.getLocalization().format("du.benennst.es.eh.um.also.mach.ichs.mal.so2",
-                currentEntries.size(), onlineUsersCount));
+        updateUserCount();
 
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser == null || internUser.getCurrentRoom() == null) {
@@ -319,5 +317,17 @@ public class UserListWindow extends HudMenuWindow {
             worldMessageButton.setDisabled(false);
             worldMessageButton.setTouchable(Touchable.enabled);
         }
+    }
+
+    public void updateUserCount() {
+        int onlineUsersCount = (int) currentEntries.stream().map(UserListEntry::getUser).filter(IUserView::isOnline).count();
+        onlineUsersCountLabel.setText(Chati.CHATI.getLocalization().format("window.user,info",
+                currentEntries.size(), onlineUsersCount));
+    }
+
+    @Override
+    public void translate() {
+        super.translate();
+        updateUserCount();
     }
 }
