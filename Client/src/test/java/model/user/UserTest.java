@@ -49,6 +49,7 @@ public class UserTest {
         internUser.joinWorld(world.getContextId());
         userManager.updatePublicRoom(world.getContextId(), room.getContextId(), room.getContextName());
         internUser.joinRoom(room.getContextId(), room.getContextName(), map);
+        internUser.setMovable(true);
 
         userId = RandomValues.randomUUID();
         testUser = new User(userId, RandomValues.random8LengthString(),
