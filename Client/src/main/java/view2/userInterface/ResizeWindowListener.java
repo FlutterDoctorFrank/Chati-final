@@ -85,7 +85,6 @@ public class ResizeWindowListener extends InputListener {
             Gdx.graphics.setCursor(ChatiCursor.VERTICAL_RESIZE.getCursor());
             resizeCursor = true;
         } else if (resizeCursor) {
-            System.out.println("hi");
             Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
             resizeCursor = false;
         }
