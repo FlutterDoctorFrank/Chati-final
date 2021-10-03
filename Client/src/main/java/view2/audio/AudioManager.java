@@ -33,10 +33,14 @@ public class AudioManager implements Disposable {
             this.audioConsumer = new AudioConsumer();
             setVolume();
 
-            this.voiceRecorder = new VoiceRecorder();
-            setMicrophoneSensitivity();
+            try {
+                this.voiceRecorder = new VoiceRecorder();
+                setMicrophoneSensitivity();
+            } catch (GdxRuntimeException e) {
+                Logger.getLogger("chati.view").log(Level.WARNING, "Microphone not available", e);
+            }
         } catch (GdxRuntimeException e) {
-            Logger.getLogger("chati.view").log(Level.WARNING, "Exception during audio setup", e);
+            Logger.getLogger("chati.view").log(Level.WARNING, "Speaker not available", e);
         }
     }
 

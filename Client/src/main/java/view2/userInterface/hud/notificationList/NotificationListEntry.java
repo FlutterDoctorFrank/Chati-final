@@ -22,6 +22,8 @@ import view2.userInterface.ChatiTextButton;
 import view2.userInterface.ChatiTooltip;
 import view2.userInterface.ChatiWindow;
 import java.sql.Timestamp;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Eine Klasse, welche einen Eintrag in der Benachrichtigungsliste des HeadUpDisplay repräsentiert.
@@ -307,7 +309,9 @@ public class NotificationListEntry extends Table implements Translatable, Compar
                     message = new MessageBundle("window.notification.confirm-delete", typeLabel.getText());
                     break;
                 default:
-                    throw new IllegalStateException("Unexpected value: " + action);
+                    Logger.getLogger("chati.view").log(Level.WARNING, "Tried to open the confirm window for a single" +
+                            "notification with an invalid action: " + action);
+                    return;
             }
 
             ChatiLabel infoLabel = new ChatiLabel(message);
@@ -332,7 +336,8 @@ public class NotificationListEntry extends Table implements Translatable, Compar
                             Chati.CHATI.send(ServerSender.SendAction.NOTIFICATION_DELETE, notification.getNotificationId());
                             break;
                         default:
-                            throw new IllegalArgumentException("Unexpected notification action.");
+                            Logger.getLogger("chati.view").log(Level.WARNING, "Tried to confirm an invalid action " +
+                                    "for a single notification: " + action);
                     }
                     close();
                 }

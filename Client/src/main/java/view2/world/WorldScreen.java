@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Eine Klasse, welche den Bildschirm innerhalb der Welt in der Anwendung repräsentiert.
@@ -198,7 +200,9 @@ public class WorldScreen extends ChatiScreen {
      */
     public void openMenu(@NotNull final ContextID contextId, @NotNull final ContextMenu menu) {
         if (isMenuOpen()) {
-            throw new IllegalStateException("Cannot open a menu while another menu is open.");
+            Logger.getLogger("chati.view").log(Level.WARNING, "Tried to open a second interactable menu: " + contextId
+                    + ", " + menu);
+            return;
         }
         switch (menu) {
             case ROOM_RECEPTION_MENU:
@@ -220,7 +224,9 @@ public class WorldScreen extends ChatiScreen {
                 currentInteractableWindow = new PortalWindow(contextId);
                 break;
             default:
-                throw new IllegalArgumentException("Tried to open an unknown menu.");
+                Logger.getLogger("chati.client").log(Level.WARNING, "Tried to open an unknown menu: " + contextId
+                        + ", " + menu);
+                return;
         }
         currentInteractableWindow.open();
     }
@@ -233,7 +239,9 @@ public class WorldScreen extends ChatiScreen {
     public void closeMenu(@NotNull final ContextID contextId, @NotNull final ContextMenu menu) {
         if (!isMenuOpen() || !currentInteractableWindow.getInteractableId().equals(contextId)
                 || currentInteractableWindow.getInteractableMenu() != menu) {
-            throw new IllegalArgumentException("Tried to close a menu that is not open.");
+            Logger.getLogger("chati.view").log(Level.WARNING, "Tried to close an interactable menu that is not open: "
+                    + contextId + ", " + menu);
+            return;
         }
         stage.closeWindow(currentInteractableWindow);
         currentInteractableWindow = null;
@@ -246,7 +254,7 @@ public class WorldScreen extends ChatiScreen {
      */
     public void menuActionResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (!isMenuOpen()) {
-            // throw new IllegalStateException("Got a menu-action-response while no menu is open.");
+            Logger.getLogger("chati.client").log(Level.WARNING, "Got a response for an interactable menu that is not open");
             return;
         }
         currentInteractableWindow.receiveResponse(success, messageBundle);

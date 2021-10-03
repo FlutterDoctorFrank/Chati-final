@@ -71,7 +71,6 @@ public abstract class InteractableWindow extends ChatiWindow {
 
     @Override
     public void close() {
-        Chati.CHATI.getWorldScreen().setPendingResponse(Response.CLOSE_MENU);
         Chati.CHATI.send(ServerSender.SendAction.MENU_OPTION, interactableId, new String[0], MENU_OPTION_CLOSE);
     }
 }

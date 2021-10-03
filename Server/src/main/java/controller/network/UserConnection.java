@@ -233,8 +233,11 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
             try {
                 this.user.executeOption(packet.getContextId(), packet.getOption(), packet.getArguments());
 
-                // Die Menü-Option war erfolgreich. Sende Bestätigung.
-                this.send(new PacketMenuOption(packet, null, true));
+                // Die Menü-Option war erfolgreich. Sende Bestätigung, falls die Menü-Option nicht die zum Schließen
+                // des Menüs ist.
+                if (packet.getOption() != 0) {
+                    this.send(new PacketMenuOption(packet, null, true));
+                }
             } catch (IllegalMenuActionException ex) {
                 // Die erhaltenen Argumente enthalten ungültige Daten. Sende Fehlernachricht.
                 this.send(new PacketMenuOption(packet, ex.getMessageBundle(), false));

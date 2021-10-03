@@ -5,7 +5,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -233,14 +232,13 @@ public class ChatWindow extends Window implements Translatable {
      * @param userId ID des hinzuzufügenden Benutzers.
      */
     public void addTypingUser(@NotNull final UUID userId) {
-        IUserView user;
         try {
-            user = Chati.CHATI.getUserManager().getExternUserView(userId);
+            IUserView user = Chati.CHATI.getUserManager().getExternUserView(userId);
+            typingUsers.put(user, System.currentTimeMillis());
+            showTypingUsers();
         } catch (UserNotFoundException e) {
-            throw new IllegalArgumentException("Received typing information from an unknown user", e);
+            Logger.getLogger("chati.view").log(Level.WARNING, "Received typing information from an unknown user", e);
         }
-        typingUsers.put(user, System.currentTimeMillis());
-        showTypingUsers();
     }
 
     /**
@@ -304,9 +302,11 @@ public class ChatWindow extends Window implements Translatable {
                 messageColor = Color.GOLD;
                 break;
             case INFO:
-                throw new IllegalArgumentException("Users cannot send info messages.");
+                Logger.getLogger("chati.view").log(Level.WARNING, "Received info message from a user");
+                return;
             default:
-                throw new IllegalArgumentException("No valid message type.");
+                Logger.getLogger("chati.view").log(Level.WARNING, "Received message with no valid type");
+                return;
         }
         ChatMessage chatMessage = new ChatMessage(timestamp, Chati.CHATI.getLocalization().format("pattern.chat.message",
                 username, userMessage), messageColor);
@@ -555,7 +555,8 @@ public class ChatWindow extends Window implements Translatable {
             imageNameLabel.setAlignment(Align.center, Align.center);
             imageNameLabel.setFontScale(0.67f);
 
-            ChatiImageButton imageButton = new ChatiImageButton(imageDrawable, imageDrawable, imageDrawable, IMAGE_SCALE_FACTOR);
+            ChatiImageButton imageButton = new ChatiImageButton(imageDrawable, imageDrawable, imageDrawable,
+                    IMAGE_SCALE_FACTOR);
             imageButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -594,7 +595,7 @@ public class ChatWindow extends Window implements Translatable {
          * @param messageColor Farbe, in die die Nachricht eingefärbt werden soll.
          * @return Eingefärbte Nachricht.
          */
-        private String getMarkedUpMessage(@NotNull final String message, @NotNull final Color messageColor) {
+        private @NotNull String getMarkedUpMessage(@NotNull final String message, @NotNull final Color messageColor) {
             Matcher urlMatcher = Pattern.compile(URL_REGEX).matcher(message);
             boolean hasWeblink = urlMatcher.find();
 

@@ -16,6 +16,9 @@ import view2.Chati;
 import view2.userInterface.ChatiTooltip;
 import view2.userInterface.UserInfoContainer;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Eine Klasse, welche die Anzeige der Informationen des intern angemeldeten Benutzers repräsentiert.
  */
@@ -26,12 +29,12 @@ public class InternUserDisplay extends Table {
     private static final float HORIZONTAL_SPACING = 10;
 
     private StatusSelectTable statusSelectTable;
-    private final Image statusImage;
-    private final Image currentRoomImage;
-    private final Image currentWorldImage;
-    private final ChatiTooltip roomTooltip;
-    private final ChatiTooltip worldTooltip;
-    private final ChatiTooltip statusTooltip;
+    private Image statusImage;
+    private Image currentRoomImage;
+    private Image currentWorldImage;
+    private ChatiTooltip roomTooltip;
+    private ChatiTooltip worldTooltip;
+    private ChatiTooltip statusTooltip;
 
     /**
      * Erzeugt eine neue Instanz des InternUserDisplay.
@@ -39,7 +42,8 @@ public class InternUserDisplay extends Table {
     public InternUserDisplay() {
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser == null) {
-            throw new IllegalStateException("Cannot show internUserDisplay when internUser is null.");
+            Logger.getLogger("chati.view").log(Level.WARNING, "Tried to show the intern-user-display while not logged in");
+            return;
         }
 
         UserInfoContainer userInfoContainer = new UserInfoContainer(internUser);
@@ -130,9 +134,11 @@ public class InternUserDisplay extends Table {
                 statusTooltip.setText("hud.tooltip.invisible");
                 break;
             case OFFLINE:
-                throw new IllegalArgumentException("Intern user cannot be offline");
+                Logger.getLogger("chati.view").log(Level.WARNING, "Tried to set the status of the intern user to offline");
+                break;
             default:
-                throw new IllegalArgumentException("There is no icon for this user status.");
+                Logger.getLogger("chati.view").log(Level.WARNING, "Tried to set an invalid user status: "
+                        + internUser.getStatus());
         }
 
         if (internUser.getCurrentRoom() != null) {

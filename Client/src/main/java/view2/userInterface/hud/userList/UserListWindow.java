@@ -319,15 +319,18 @@ public class UserListWindow extends HudMenuWindow {
         }
     }
 
-    public void updateUserCount() {
-        int onlineUsersCount = (int) currentEntries.stream().map(UserListEntry::getUser).filter(IUserView::isOnline).count();
-        onlineUsersCountLabel.setText(Chati.CHATI.getLocalization().format("window.user,info",
-                currentEntries.size(), onlineUsersCount));
-    }
-
     @Override
     public void translate() {
         super.translate();
         updateUserCount();
+    }
+
+    /**
+     * Aktualisiert die Anzeige der Benutzeranzahl.
+     */
+    private void updateUserCount() {
+        int onlineUsersCount = (int) currentEntries.stream().map(UserListEntry::getUser).filter(IUserView::isOnline).count();
+        onlineUsersCountLabel.setText(Chati.CHATI.getLocalization().format("window.user,info",
+                currentEntries.size(), onlineUsersCount));
     }
 }

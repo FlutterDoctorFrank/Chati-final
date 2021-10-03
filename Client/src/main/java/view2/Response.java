@@ -32,13 +32,4 @@ public enum Response {
 
     /** Signalisiert, dass die Antwort für das Betreten einer Welt erwartet wird. */
     JOIN_WORLD,
-
-    /** Signalisiert, dass die Antwort für das Interagieren mit einem Interaktionsobjekt erwartet wird. */
-    INTERACT,
-
-    /** Signalisiert, dass die Antwort für das Schließen eines Menüs erwartet wird. */
-    CLOSE_MENU,
-
-    /** Signalisiert, dass die Antwort auf eine durchgeführte Menüaktion eines Interaktionsobjekts erwartet wird. */
-    MENU_ACTION
 }

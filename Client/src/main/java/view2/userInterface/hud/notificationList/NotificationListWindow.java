@@ -21,6 +21,8 @@ import view2.userInterface.hud.HudMenuWindow;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Eine Klasse, welche das Benachrichtigungsmenü des HeadUpDisplay repräsentiert.
@@ -268,17 +270,20 @@ public class NotificationListWindow extends HudMenuWindow {
                 currentEntries.size(), newNotificationsCount));
     }
 
-    public void updateNotificationCount() {
-        int newNotificationsCount = (int) currentEntries.stream().map(NotificationListEntry::getNotification)
-                .filter(Predicate.not(INotificationView::isRead)).count();
-        newNotificationsCountLabel.setText(Chati.CHATI.getLocalization().format("window.notification.info",
-                currentEntries.size(), newNotificationsCount));
-    }
-
     @Override
     public void translate() {
         super.translate();
         updateNotificationCount();
+    }
+
+    /**
+     * Aktualisiert die Anzeige der Benachrichtigungsanzahl.
+     */
+    private void updateNotificationCount() {
+        int newNotificationsCount = (int) currentEntries.stream().map(NotificationListEntry::getNotification)
+                .filter(Predicate.not(INotificationView::isRead)).count();
+        newNotificationsCountLabel.setText(Chati.CHATI.getLocalization().format("window.notification.info",
+                currentEntries.size(), newNotificationsCount));
     }
 
     /**
@@ -306,7 +311,9 @@ public class NotificationListWindow extends HudMenuWindow {
                     message = new MessageBundle("window.notification.confirm-delete-all");
                     break;
                 default:
-                    throw new IllegalStateException("Unexpected value: " + action);
+                    Logger.getLogger("chati.view").log(Level.WARNING, "Tried to open the confirm window for all" +
+                            "notifications with an invalid action: " + action);
+                    return;
             }
 
             ChatiLabel infoLabel = new ChatiLabel(message);
@@ -326,7 +333,9 @@ public class NotificationListWindow extends HudMenuWindow {
                                             notification.getNotificationId()));
                             break;
                         default:
-                            throw new IllegalArgumentException("Unexpected notification action.");
+                            Logger.getLogger("chati.view").log(Level.WARNING, "Tried to confirm an invalid action for" +
+                                    "all notifications: " + action);
+                            return;
                     }
                     close();
                 }

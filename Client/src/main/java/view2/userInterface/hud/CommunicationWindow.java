@@ -4,11 +4,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import model.user.IInternUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.userInterface.ChatiLabel;
 import view2.userInterface.ChatiWindow;
 import view2.userInterface.hud.userList.UserListEntry;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -30,10 +27,6 @@ public class CommunicationWindow extends ChatiWindow {
     public CommunicationWindow() {
         super("window.title.communication", HUD_WINDOW_WIDTH, HUD_WINDOW_HEIGHT);
         this.communicableUserEntries = new TreeSet<>();
-        List<Image> communicationMediaImages = new ArrayList<>(); // TODO
-
-        ChatiLabel communicationFormLabel = new ChatiLabel("menu.label.communication-form"); // TODO
-        ChatiLabel communicationMediaLabel = new ChatiLabel("menu.label.communication-media"); // TODO
 
         userListContainer = new Table();
         userListScrollPane = new ScrollPane(userListContainer, Chati.CHATI.getSkin());
@@ -45,11 +38,6 @@ public class CommunicationWindow extends ChatiWindow {
 
         userListContainer.top();
         add(userListScrollPane).grow();
-
-        // Translatable register
-        translatables.add(communicationFormLabel);
-        translatables.add(communicationMediaLabel);
-        translatables.trimToSize();
     }
 
     @Override

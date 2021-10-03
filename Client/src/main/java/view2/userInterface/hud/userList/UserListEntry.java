@@ -23,6 +23,9 @@ import view2.userInterface.ChatiTooltip;
 import view2.userInterface.ChatiWindow;
 import view2.userInterface.UserInfoContainer;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Eine Klasse, welche einen Eintrag in der Benutzerliste des HeadUpDisplay repräsentiert.
  */
@@ -67,7 +70,7 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
                 statusImage.addListener(new ChatiTooltip("hud.tooltip.offline"));
                 break;
             default:
-                throw new IllegalArgumentException("Invalid user status");
+                Logger.getLogger("chati.view").log(Level.WARNING, "Tried to set an invalid user status " + user.getStatus());
         }
 
         Image currentRoomImage = new Image();
