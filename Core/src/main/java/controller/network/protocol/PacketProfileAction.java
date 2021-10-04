@@ -134,7 +134,7 @@ public class PacketProfileAction implements Packet<PacketListener> {
     @Override
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeNullableUniqueId(output, this.userId);
-        output.writeAscii(this.name);
+        output.writeString(this.name);
         output.writeString(this.password);
         output.writeString(this.newPassword);
         PacketUtils.writeNullableEnum(output, this.avatar);

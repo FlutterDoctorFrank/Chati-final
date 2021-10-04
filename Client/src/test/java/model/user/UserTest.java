@@ -259,8 +259,10 @@ public class UserTest {
         float posX = ContextParameters.DISCO_LOCATION_X;
         float posY = ContextParameters.DISCO_LOCATION_Y;
         testUserController.joinWorld(ContextParameters.WORLD_ID);
+        testUserController.setMovable(true);
         testUserController.setLocation(posX, posY, RandomValues.randomBoolean(),
                 RandomValues.randomBoolean(), RandomValues.randomEnum(Direction.class));
+        internUser.setMovable(true);
 
         Assert.assertTrue(testUserView.canTeleportTo());
 

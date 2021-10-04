@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import view2.ViewControllerInterface;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -96,8 +97,8 @@ public class ClientNetworkManager extends NetworkManager<Client> implements Runn
                 this.endPoint.connect(60000, this.host, this.tcp);
             } catch (IOException ex) {
                 LOGGER.warning(String.format("Failed to connect to server on ip: %s", this.host));
-            } catch (InterruptedException ignored) {
-
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, "Unhandled exception in network thread", ex);
             }
         }
     }

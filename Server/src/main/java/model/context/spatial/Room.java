@@ -107,6 +107,7 @@ public class Room extends Area implements IRoom {
             user.send(SendAction.CONTEXT_JOIN, this);
             super.addUser(user);
             user.updateUserInfo(true);
+            user.updateCommunicableUsers();
             user.getRoomRoles().values().forEach(role -> user.send(SendAction.CONTEXT_ROLE, role));
 
             // Sende die Positionen der anderen Benutzer an den beitretenden Benutzer.

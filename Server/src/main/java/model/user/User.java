@@ -929,7 +929,7 @@ public class User implements IUser {
     /**
      * Aktualisiert die Menge der Benutzer, mit denen gerade kommuniziert werden kann.
      */
-    private void updateCommunicableUsers() {
+    public void updateCommunicableUsers() {
         if (currentLocation == null) {
             return;
         }
