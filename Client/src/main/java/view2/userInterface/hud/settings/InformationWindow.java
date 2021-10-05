@@ -75,6 +75,8 @@ public class InformationWindow extends ChatiWindow {
         Label toggleMicrophoneKeyLabel = new Label(KeyCommand.TOGGLE_MICROPHONE.toString(), Chati.CHATI.getSkin());
         InformationLabel toggleSoundLabel = new InformationLabel("menu.label.toggle-sound");
         Label toggleSoundKeyLabel = new Label(KeyCommand.TOGGLE_SOUND.toString(), Chati.CHATI.getSkin());
+        InformationLabel toggleFullscreenLabel = new InformationLabel("menu.label.toggle-fullscreen");
+        Label toggleFullscreenKeyLabel = new Label(KeyCommand.TOGGLE_FULLSCREEN.toString(), Chati.CHATI.getSkin());
         InformationLabel closeLabel = new InformationLabel("menu.label.close-window");
         Label closeKeyLabel = new Label(KeyCommand.CLOSE.toString(), Chati.CHATI.getSkin());
 
@@ -154,6 +156,7 @@ public class InformationWindow extends ChatiWindow {
         menuKeysTableContainer.add(openCommunicationMenuLabel, openCommunicationMenuKeyLabel).row();
         menuKeysTableContainer.add(toggleMicrophoneLabel, toggleMicrophoneKeyLabel).row();
         menuKeysTableContainer.add(toggleSoundLabel, toggleSoundKeyLabel).row();
+        menuKeysTableContainer.add(toggleFullscreenLabel, toggleFullscreenKeyLabel).row();
         menuKeysTableContainer.add(closeLabel, closeKeyLabel);
         menuKeyBindingsContainer.add(menuKeysTableContainer);
 
@@ -209,6 +212,7 @@ public class InformationWindow extends ChatiWindow {
         translatables.add(openCommunicationMenuLabel);
         translatables.add(toggleMicrophoneLabel);
         translatables.add(toggleSoundLabel);
+        translatables.add(toggleFullscreenLabel);
         translatables.add(closeLabel);
         translatables.add(commandsLabel);
         translatables.add(chatCommandsLabel);

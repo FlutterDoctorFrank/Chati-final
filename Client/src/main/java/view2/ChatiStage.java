@@ -69,6 +69,12 @@ public class ChatiStage extends Stage {
                     Chati.CHATI.getHeadUpDisplay().openSettingsMenu();
                 }
             }
+            if (KeyCommand.TOGGLE_FULLSCREEN.matches(keycode)) {
+                if (Gdx.graphics.supportsDisplayModeChange()) {
+                    Chati.CHATI.getPreferences().setFullscreen(!Gdx.graphics.isFullscreen());
+                    Chati.CHATI.updateDisplay();
+                }
+            }
         }
 
         if (KeyCommand.CLOSE.matches(keycode)) {

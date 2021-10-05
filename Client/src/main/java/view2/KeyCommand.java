@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +39,7 @@ public enum KeyCommand {
     /** Repräsentiert das Senden einer Chatnachricht. */
     SEND_CHAT_MESSAGE,
 
-    /** Repräsentiert das Aufnahmen mit dem Mikrofon. */
+    /** Repräsentiert das Aufnehmen mit dem Mikrofon. */
     PUSH_TO_TALK,
 
     /** Repräsentiert das Öffnen des Chats. */
@@ -63,6 +62,9 @@ public enum KeyCommand {
 
     /** Repräsentiert das Ein- beziehungsweise Ausschalten des Tons. */
     TOGGLE_SOUND,
+
+    /** Repräsentiert die Taste, zum Wechseln des Bildschirmmodus.  */
+    TOGGLE_FULLSCREEN,
 
     /** Repräsentiert das Schließen eines aktuell geöffneten Menüs oder Fenster beziehungsweise das Öffnen des
      * Einstellungsmenüs, wenn kein anderes Menü oder Fenster geöffnet ist. */

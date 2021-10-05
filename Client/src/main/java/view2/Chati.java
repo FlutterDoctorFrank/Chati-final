@@ -25,18 +25,21 @@ import org.jetbrains.annotations.Nullable;
 import view2.audio.AudioManager;
 import view2.userInterface.hud.HeadUpDisplay;
 import view2.userInterface.menu.ConnectionTable;
-import view2.userInterface.menu.MenuScreen;
 import view2.userInterface.menu.LoginTable;
+import view2.userInterface.menu.MenuScreen;
 import view2.userInterface.menu.StartTable;
 import view2.world.WorldScreen;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.UUID;
+import java.util.logging.Logger;
 
 /**
  * Eine Klasse, welche die für die gesamte View relevanten Komponenten beinhaltet und deren Zusammenspiel koordiniert.
  */
 public class Chati extends Game implements ViewControllerInterface, IModelObserver, ChatiLocalization.Translatable {
 
+    public static final int MINIMUM_HEIGHT = 720;
+    public static final int MINIMUM_WIDTH = 1280;
     public static Chati CHATI;
 
     private final IUserManagerView userManager;
@@ -83,19 +86,14 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     /**
      * Startet die View.
-     * @param fullscreen true, wenn die Anwendung im Vollbild gestartet werden soll.
      */
-    public void start(final boolean fullscreen) {
+    public void start() {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setWindowIcon("logos/logo_big.bmp", "logos/logo_medium.bmp", "logos/logo_small.bmp", "logos/logo_tiny.bmp");
         config.setPreferencesConfig("Documents/Chati", FileType.External);
+        config.setWindowSizeLimits(MINIMUM_WIDTH, MINIMUM_HEIGHT, -1, -1);
         config.setForegroundFPS(60);
         config.setTitle("Chati");
-        if (fullscreen) {
-            config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
-        } else {
-            config.setWindowSizeLimits(1280, 720, -1, -1);
-        }
         new Lwjgl3Application(this, config);
     }
 
@@ -114,6 +112,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
             menuScreen.setMenuTable(new ConnectionTable("table.connection.connect"));
         }
         setScreen(menuScreen);
+        updateDisplay();
     }
 
     @Override
@@ -535,6 +534,22 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         menuScreen.translate();
         worldScreen.translate();
         headUpDisplay.translate();
+    }
+
+    /**
+     * Aktualisiert den Displaymodus der Anwendung.
+     * Schaltet zwischen Vollbildmodus und Fenstermodus, abhängig von der Einstellung in den Präferenzen, um.
+     */
+    public void updateDisplay() {
+        if (Gdx.graphics.supportsDisplayModeChange()) {
+            if (preferences.isFullscreen() && !Gdx.graphics.isFullscreen()) {
+                Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+            } else if (Gdx.graphics.isFullscreen()) {
+                Gdx.graphics.setWindowedMode(MINIMUM_WIDTH, MINIMUM_HEIGHT);
+            }
+        } else {
+            Logger.getLogger("chati-view").info("Changing the displaymode is not supported");
+        }
     }
 
     /**

@@ -15,6 +15,7 @@ import java.util.Locale.Builder;
 public class ChatiPreferences {
 
     public static final Locale DEFAULT_LANGUAGE = Locale.GERMAN;
+    public static final boolean DEFAULT_FULLSCREEN = false;
     public static final boolean DEFAULT_ALWAYS_SPRINTING = false;
     public static final boolean DEFAULT_SHOW_NAMES_IN_WORLD = true;
     public static final boolean DEFAULT_MICROPHONE_ON = false;
@@ -42,6 +43,15 @@ public class ChatiPreferences {
      */
     public void setLanguage(@NotNull final Locale language) {
         preferences.putString("language", language.toString());
+        preferences.flush();
+    }
+
+    /**
+     * Setzt die Einstellung, ob die Anwendung im Vollbildmodus ausgeführt wird.
+     * @param fullscreen true, wenn die Anwendung im Vollbildmodus ausgeführt wird, sonst false.
+     */
+    public void setFullscreen(final boolean fullscreen) {
+        preferences.putBoolean("fullscreen", fullscreen);
         preferences.flush();
     }
 
@@ -178,6 +188,14 @@ public class ChatiPreferences {
     }
 
     /**
+     * Gibt zurück, ob die Anwendung im Vollbildmodus ausgeführt wird.
+     * @return true, wenn die Anwendung im Vollbildmodus ausgeführt wird, sonst false.
+     */
+    public boolean isFullscreen() {
+        return preferences.getBoolean("fullscreen", DEFAULT_FULLSCREEN);
+    }
+
+    /**
      * Gibt zurück, ob sich der Avatar momentan dauerhaft schnell fortbewegt.
      * @return true, falls sich der Avatar dauerhaft schnell fortbewegt, sonst false.
      */
@@ -281,6 +299,7 @@ public class ChatiPreferences {
         KeyCommand.OPEN_COMMUNICATION_MENU.addKeyBindings(List.of(Input.Keys.NUM_4, Input.Keys.NUMPAD_4));
         KeyCommand.TOGGLE_MICROPHONE.addKeyBindings(List.of(Input.Keys.NUM_5, Input.Keys.NUMPAD_5));
         KeyCommand.TOGGLE_SOUND.addKeyBindings(List.of(Input.Keys.NUM_6, Input.Keys.NUMPAD_6));
+        KeyCommand.TOGGLE_FULLSCREEN.addKeyBindings(List.of(Input.Keys.F11));
         KeyCommand.CLOSE.addKeyBindings(List.of(Input.Keys.ESCAPE));
     }
 }

@@ -28,14 +28,14 @@ public class Launcher {
     /**
      * Startet die Client-Anwendung.
      */
-    public void launch(final boolean fullscreen) {
+    public void launch() {
         final Chati view = new Chati(this.manager);
 
         this.manager.setModelObserver(view);
         this.network.setView(view);
         this.network.start();
 
-        view.start(fullscreen);
+        view.start();
     }
 
     public static void main(@NotNull final String[] args) {
@@ -57,12 +57,6 @@ public class Launcher {
                         .withRequiredArg()
                         .ofType(Integer.class)
                         .describedAs("UDP-Port");
-
-                this.acceptsAll(List.of("f", "fullscreen"), "Whether the application should be in fullscreen")
-                        .withRequiredArg()
-                        .ofType(Boolean.class)
-                        .defaultsTo(true)
-                        .describedAs("Enable Fullscreen");
             }
         };
 
@@ -125,7 +119,7 @@ public class Launcher {
                 }
 
                 Logger.getLogger("chati").info("Starting Client...");
-                launcher.launch((boolean) options.valueOf("fullscreen"));
+                launcher.launch();
             }
         } catch (OptionException ex) {
             System.err.println("Failed to parse arguments: " + ex.getMessage());
