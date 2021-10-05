@@ -36,7 +36,7 @@ public class InformationWindow extends ChatiWindow {
 
         InformationLabel keyBindingsLabel = new InformationLabel("menu.label.key-bindings");
 
-        InformationLabel movementKeysLable = new InformationLabel("menu.label.movement-keys");
+        InformationLabel movementKeysLabel = new InformationLabel("menu.label.movement-keys");
         InformationLabel moveUpLabel = new InformationLabel("menu.label.movement-up");
         Label moveUpKeyLabel = new Label(KeyCommand.MOVE_UP.toString(), Chati.CHATI.getSkin());
         InformationLabel moveLeftLabel = new InformationLabel("menu.label.movement-left");
@@ -80,12 +80,15 @@ public class InformationWindow extends ChatiWindow {
 
         InformationLabel commandsLabel = new InformationLabel("menu.label.commands");
         InformationLabel chatCommandsLabel = new InformationLabel("menu.label.chat-commands");
-        InformationLabel chatWhisperMessageLable = new InformationLabel("menu.label.chat-whisper-message");
-        InformationLabel chatWhisperMessageCommandLable = new InformationLabel("menu.label.chat-whisper-message-command");
-        chatWhisperMessageCommandLable.setColor(Color.GRAY);
-        InformationLabel chatRoomMessageLable = new InformationLabel("menu.label.chat-room-message");
-        InformationLabel chatRoomMessageCommandLable = new InformationLabel("menu.label.chat-room-message-command");
-        chatRoomMessageCommandLable.setColor(Color.CORAL);
+        InformationLabel chatWhisperMessageLabel = new InformationLabel("menu.label.chat-whisper-message");
+        InformationLabel chatWhisperMessageCommandLabel = new InformationLabel("menu.label.chat-whisper-message-command");
+        chatWhisperMessageCommandLabel.setColor(Color.GRAY);
+        InformationLabel chatAreaMessageLabel = new InformationLabel("menu.label.chat-area-message");
+        InformationLabel chatAreaMessageCommandLabel = new InformationLabel("menu.label.chat-area-message-command");
+        chatAreaMessageCommandLabel.setColor(Color.LIME);
+        InformationLabel chatRoomMessageLabel = new InformationLabel("menu.label.chat-room-message");
+        InformationLabel chatRoomMessageCommandLabel = new InformationLabel("menu.label.chat-room-message-command");
+        chatRoomMessageCommandLabel.setColor(Color.CORAL);
         InformationLabel chatWorldMessageLabel = new InformationLabel("menu.label.chat-world-message");
         InformationLabel chatWorldMessageCommandLabel = new InformationLabel("menu.label.chat-world-message-command");
         chatWorldMessageCommandLabel.setColor(Color.SKY);
@@ -112,7 +115,7 @@ public class InformationWindow extends ChatiWindow {
         Table movementKeyBindingsContainer = new Table();
         movementKeyBindingsContainer.top();
         movementKeyBindingsContainer.defaults().pad(SPACE).padLeft(2 * SPACE).growX();
-        movementKeyBindingsContainer.add(movementKeysLable).row();
+        movementKeyBindingsContainer.add(movementKeysLabel).row();
         Table movementKeysTableContainer = new Table();
         movementKeysTableContainer.top();
         movementKeysTableContainer.defaults().colspan(2).pad(SPACE).padLeft(2 * SPACE).growX();
@@ -170,8 +173,9 @@ public class InformationWindow extends ChatiWindow {
         Table chatCommandsTableContainer = new Table();
         chatCommandsTableContainer.top();
         chatCommandsTableContainer.defaults().pad(SPACE).padLeft(2 * SPACE).growX();
-        chatCommandsTableContainer.add(chatWhisperMessageLable, chatWhisperMessageCommandLable).row();
-        chatCommandsTableContainer.add(chatRoomMessageLable, chatRoomMessageCommandLable).row();
+        chatCommandsTableContainer.add(chatWhisperMessageLabel, chatWhisperMessageCommandLabel).row();
+        chatCommandsTableContainer.add(chatAreaMessageLabel, chatAreaMessageCommandLabel).row();
+        chatCommandsTableContainer.add(chatRoomMessageLabel, chatRoomMessageCommandLabel).row();
         chatCommandsTableContainer.add(chatWorldMessageLabel, chatWorldMessageCommandLabel).row();
         chatCommandsTableContainer.add(chatGlobalMessageLabel, chatGlobalMessageCommandLabel);
         chatCommandsContainer.add(chatCommandsTableContainer);
@@ -185,7 +189,7 @@ public class InformationWindow extends ChatiWindow {
 
         // Translatable register
         translatables.add(infoLabel);
-        translatables.add(movementKeysLable);
+        translatables.add(movementKeysLabel);
         translatables.add(moveUpLabel);
         translatables.add(moveLeftLabel);
         translatables.add(moveDownLabel);
@@ -208,10 +212,10 @@ public class InformationWindow extends ChatiWindow {
         translatables.add(closeLabel);
         translatables.add(commandsLabel);
         translatables.add(chatCommandsLabel);
-        translatables.add(chatWhisperMessageLable);
-        translatables.add(chatWhisperMessageCommandLable);
-        translatables.add(chatRoomMessageLable);
-        translatables.add(chatRoomMessageCommandLable);
+        translatables.add(chatWhisperMessageLabel);
+        translatables.add(chatWhisperMessageCommandLabel);
+        translatables.add(chatRoomMessageLabel);
+        translatables.add(chatRoomMessageCommandLabel);
         translatables.add(chatWorldMessageLabel);
         translatables.add(chatWorldMessageCommandLabel);
         translatables.trimToSize();
@@ -219,7 +223,6 @@ public class InformationWindow extends ChatiWindow {
 
     @Override
     public void focus() {
-        super.focus();
         if (getStage() != null) {
             getStage().setScrollFocus(informationScrollPane);
         }

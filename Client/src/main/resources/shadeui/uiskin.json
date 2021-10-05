@@ -86,12 +86,12 @@
 },
 "TextFieldStyle": {
 	"default": {
-		"font": "font-label",
+		"font": "font-textfield",
 		"fontColor": { "a": 1 },
 		"background": "textfield",
 		"cursor": "cursor",
 		"selection": "text-selection",
-		"messageFont": "font-label",
+		"messageFont": "font-textfield",
 		"messageFontColor": { "a": 1, "b": 0.5, "g": 0.5, "r": 0.5}
 	}
 },

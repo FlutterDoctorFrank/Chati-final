@@ -83,7 +83,6 @@ public class ImageFileChooserWindow extends FileChooserWindow {
             showMessage("window.file-chooser.save-failed");
             return false;
         }
-
         return true;
     }
 }

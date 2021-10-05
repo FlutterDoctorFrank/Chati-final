@@ -189,7 +189,6 @@ public class NotificationListWindow extends HudMenuWindow {
 
     @Override
     public void focus() {
-        super.focus();
         if (getStage() != null) {
             getStage().setScrollFocus(notificationListScrollPane);
         }
@@ -370,6 +369,10 @@ public class NotificationListWindow extends HudMenuWindow {
             translatables.add(confirmButton);
             translatables.add(cancelButton);
             translatables.trimToSize();
+        }
+
+        @Override
+        public void focus() {
         }
     }
 }

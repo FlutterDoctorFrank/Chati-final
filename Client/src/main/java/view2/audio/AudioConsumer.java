@@ -2,6 +2,7 @@ package view2.audio;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioDevice;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Disposable;
 import model.exception.UserNotFoundException;
 import model.user.IUserView;
@@ -19,6 +20,11 @@ import java.util.stream.Collectors;
  * Eine Klasse, durch welche das Mischen und Abspielen empfangener Audiodaten realisiert wird.
  */
 public class AudioConsumer implements Runnable, Disposable {
+
+    /*
+     * Musik und Sounds sind lauter als der VoiceChat und müssen heruntergeregelt werden.
+     */
+    private static final float MIX_DOWN_FACTOR = 1 / 30f;
 
     private final AudioDevice player;
     private final Map<IUserView, VoiceChatUser> voiceDataBuffer;
@@ -81,14 +87,13 @@ public class AudioConsumer implements Runnable, Disposable {
                 }
 
                 // Verhindere einen Overflow der gemischten Daten.
-                mixedData[i] = (short) (temp[i] > Short.MAX_VALUE ? Short.MAX_VALUE :
-                        (temp[i] < Short.MIN_VALUE ? Short.MIN_VALUE : temp[i]));
+                mixedData[i] = (short) (temp[i] > Short.MAX_VALUE ? Short.MAX_VALUE
+                        : (temp[i] < Short.MIN_VALUE ? Short.MIN_VALUE : temp[i]));
             }
 
             // Spiele die gemischten Daten ab.
             player.writeSamples(mixedData, 0, mixedData.length);
         }
-
         this.voiceDataBuffer.clear();
         this.musicStream.stop();
     }
@@ -199,27 +204,48 @@ public class AudioConsumer implements Runnable, Disposable {
     }
 
     /**
-     * Setzt die Gesamtlautstärke.
-     * @param totalVolume Gesamtlautstärke
+     * Spielt einen Sound ab.
+     * @param sound Abzuspielender Sound.
+     * @param volume Position des Lautstärkereglers für Soundlautstärke zwischen 0 und 1.
      */
-    public void setTotalVolume(final float totalVolume) {
-        player.setVolume(totalVolume);
+    public void playSound(@NotNull final Sound sound, final float volume) {
+        if (volume < 0 || volume > 1) {
+            return;
+        }
+        sound.play(getVolume(MIX_DOWN_FACTOR * volume));
+    }
+
+    /**
+     * Setzt die Gesamtlautstärke.
+     * @param volume Position des Lautstärkereglers für Gesamtlautstärke zwischen 0 und 1.
+     */
+    public void setTotalVolume(final float volume) {
+        if (volume < 0 || volume > 1) {
+            return;
+        }
+        player.setVolume(volume);
     }
 
     /**
      * Setzt die Lautstärke des Sprachchats.
-     * @param voiceVolume Lautstärke des Sprachchats.
+     * @param volume Position des Lautstärkereglers für Sprachlautstärke zwischen 0 und 1.
      */
-    public void setVoiceVolume(final float voiceVolume) {
-        this.voiceVolume = voiceVolume;
+    public void setVoiceVolume(final float volume) {
+        if (volume < 0 || volume > 1) {
+            return;
+        }
+        this.voiceVolume = getVolume(volume);
     }
 
     /**
      * Setzt die Lautstärke der Musik.
-     * @param musicVolume Lautstärke der Musik.
+     * @param volume Position des Lautstärkereglers für Musiklautstärke zwischen 0 und 1.
      */
-    public void setMusicVolume(final float musicVolume) {
-        this.musicVolume = musicVolume;
+    public void setMusicVolume(final float volume) {
+        if (volume < 0 || volume > 1) {
+            return;
+        }
+        this.musicVolume = getVolume(MIX_DOWN_FACTOR * volume);
     }
 
     /**
@@ -236,5 +262,17 @@ public class AudioConsumer implements Runnable, Disposable {
      */
     public int getCurrentSeconds() {
         return musicStream.getCurrentSeconds();
+    }
+
+    /**
+     * Berechnet zu gegebener Größe des Lautstärkereglers auf Basis einer Exponentialfunktion den Faktor, der mit den
+     * PCM-Samples multipliziert werden muss um das Sample in gewünschter Lautstärke wiederzugeben.
+     * @param value Wert des Lautstärkereglers zwischen 0 und 1.
+     * @return Faktor zur Multiplikation mit den PCM-Daten zwischen 0 und 1.
+     */
+    private float getVolume(final float value) {
+        float midValue = 0.9f;
+        double a = Math.pow(1 / midValue - 1, 2);
+        return (float) ((Math.pow(a, value) - 1) / (a - 1));
     }
 }

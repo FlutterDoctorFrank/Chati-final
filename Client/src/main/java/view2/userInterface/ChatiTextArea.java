@@ -55,7 +55,7 @@ public class ChatiTextArea extends ModifiedTextArea implements Translatable {
             }
             @Override
             public void exit(@NotNull InputEvent event, final float x, final float y, final int pointer,
-                             @Nullable final Actor fromActor) {
+                             @Nullable final Actor toActor) {
                 if (pointer == -1) {
                     underCursor = false;
                     Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());

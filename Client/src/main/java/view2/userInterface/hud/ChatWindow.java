@@ -72,6 +72,7 @@ public class ChatWindow extends Window implements Translatable {
 
     private long lastTimeTypingSent;
     private FileHandle attachedImage;
+    private boolean isAtBottom;
 
     /**
      * Erzeugt eine neue Instanz des ChatWindow.
@@ -86,7 +87,13 @@ public class ChatWindow extends Window implements Translatable {
         historyScrollPane.setOverscroll(false, false);
         historyScrollPane.setScrollingDisabled(true, false);
 
-        HorizontalGroup emojiContainer = new HorizontalGroup().wrap().rowAlign(Align.left).padLeft(SPACE);
+        Table emojiContainer = new Table();
+        Color weblinkColor = Color.ROYAL;
+        Label creditsLabel = new Label("Emojis by [#" + weblinkColor + "]https://openmoji.org", Chati.CHATI.getSkin());
+        creditsLabel.addListener(new WeblinkClickListener(creditsLabel, weblinkColor, 0));
+        creditsLabel.setFontScale(0.67f);
+        emojiContainer.add(creditsLabel).left().padLeft(SPACE).row();
+        HorizontalGroup emojiGroup = new HorizontalGroup().wrap().rowAlign(Align.left).padLeft(SPACE);
         Chati.CHATI.getEmojiManager().getEmojis().values().forEach(emoji -> {
             ChatiImageButton emojiButton = new ChatiImageButton(new TextureRegionDrawable(emoji.getRegion()));
             emojiButton.addListener(new ClickListener() {
@@ -98,8 +105,9 @@ public class ChatWindow extends Window implements Translatable {
                     typeMessageArea.fire(typingEvent);
                 }
             });
-            emojiContainer.addActor(emojiButton);
+            emojiGroup.addActor(emojiButton);
         });
+        emojiContainer.add(emojiGroup).grow();
         emojiScrollPane = new ScrollPane(emojiContainer, Chati.CHATI.getSkin());
         emojiScrollPane.setFadeScrollBars(false);
         emojiScrollPane.setOverscroll(false, false);
@@ -224,6 +232,13 @@ public class ChatWindow extends Window implements Translatable {
         long now = System.currentTimeMillis();
         typingUsers.values().removeIf(lastTypingTime -> now - lastTypingTime >= 1000 * SHOW_TYPING_DURATION);
         showTypingUsers();
+
+        if (dragging && isAtBottom) {
+            historyScrollPane.scrollTo(0, 0, 0, 0);
+            layout();
+        } else {
+            isAtBottom = historyScrollPane.isBottomEdge();
+        }
         super.act(delta);
     }
 
@@ -291,6 +306,9 @@ public class ChatWindow extends Window implements Translatable {
                 break;
             case WHISPER:
                 messageColor = Color.GRAY;
+                break;
+            case AREA:
+                messageColor = Color.LIME;
                 break;
             case ROOM:
                 messageColor = Color.CORAL;
@@ -407,7 +425,6 @@ public class ChatWindow extends Window implements Translatable {
      * @param chatMessage Anzuzeigende Chatnachricht.
      */
     private void showChatMessage(@NotNull final ChatMessage chatMessage) {
-        boolean isAtBottomBefore = historyScrollPane.isBottomEdge();
         if (chatMessages.size() >= MAX_CHAT_MESSAGES) {
             chatMessages.remove(0);
             messageContainer.removeActorAt(0, false);
@@ -416,7 +433,7 @@ public class ChatWindow extends Window implements Translatable {
         messageContainer.add(chatMessage).row();
         // Scrolle beim Erhalten einer neuen Nachricht nur bis nach unten, wenn die Scrollleiste bereits ganz unten war.
         // Ansonsten wird ein Durchscrollen des Verlaufs durch das Erhalten neuer Nachrichten gestört.
-        if (isAtBottomBefore) {
+        if (isAtBottom) {
             historyScrollPane.layout();
             historyScrollPane.scrollTo(0, 0, 0, 0);
         }
@@ -528,7 +545,7 @@ public class ChatWindow extends Window implements Translatable {
             String markedUpMessage = getMarkedUpMessage(datedMessage, messageColor);
             messageLabel = new Label(markedUpMessage, Chati.CHATI.getSkin());
             messageLabel.setWrap(true);
-            messageLabel.addListener(new WeblinkClickListener(messageLabel, WEB_LINK_COLOR));
+            messageLabel.addListener(new WeblinkClickListener(messageLabel, WEB_LINK_COLOR, 0));
 
             add(messageLabel).row();
         }
@@ -554,6 +571,7 @@ public class ChatWindow extends Window implements Translatable {
             Label imageNameLabel = new Label(imageName, Chati.CHATI.getSkin());
             imageNameLabel.setAlignment(Align.center, Align.center);
             imageNameLabel.setFontScale(0.67f);
+            imageNameLabel.setWrap(true);
 
             ChatiImageButton imageButton = new ChatiImageButton(imageDrawable, imageDrawable, imageDrawable,
                     IMAGE_SCALE_FACTOR);
@@ -575,7 +593,7 @@ public class ChatWindow extends Window implements Translatable {
             float imageHeight = ratio * image.getHeight();
             imageButton.getImage().setOrigin(imageWidth / 2f, imageHeight / 2f);
             imageContainer.add(imageButton).width(imageWidth).height(imageHeight).row();
-            imageContainer.add(imageNameLabel);
+            imageContainer.add(imageNameLabel).width(MAX_IMAGE_SIZE);
 
             add(imageContainer);
         }
@@ -588,49 +606,67 @@ public class ChatWindow extends Window implements Translatable {
         }
 
         /**
-         * Markiere die Nachricht mithilfe der Color-Markup-Language. Glyphen von Emojis bleiben hierbei weiß, um korrekt
-         * dargestellt zu werden. Weblinks werden unabhängig von der verwendeten Farbe in die dafür vorgesehene Farbe
-         * eingefärbt.
+         * Markiere die Nachricht mithilfe der Color-Markup-Language. Glyphen von Emojis bleiben hierbei weiß, um
+         * korrekt dargestellt zu werden. Weblinks werden unabhängig von der verwendeten Farbe in die dafür vorgesehene
+         * Farbe eingefärbt.
          * @param message Nachricht, die eingefärbt werden soll.
          * @param messageColor Farbe, in die die Nachricht eingefärbt werden soll.
          * @return Eingefärbte Nachricht.
          */
         private @NotNull String getMarkedUpMessage(@NotNull final String message, @NotNull final Color messageColor) {
+            // Anmerkung: Die Verwendung der Color-Markup-Language führt dazu, dass die Breite des Textes nichtmehr
+            // exakt berechnet wird und die Labels ab einer bestimmten Anzahl von Markierungen in einer Zeile nichtmehr
+            // korrekt wrappen. Dies ist ein Fehler von LibGDX. Um das möglichst zu umgehen, müssen die verwendeten
+            // Markierungen zum Umfärben minimiert werden.
+
             Matcher urlMatcher = Pattern.compile(URL_REGEX).matcher(message);
             boolean hasWeblink = urlMatcher.find();
 
+            // Ist die Schriftfarbe weiß und enthält die Nachricht keinen Link, muss nicht umgefärbt werden.
             if (messageColor == Color.WHITE && !hasWeblink) {
                 return message;
             }
 
             StringBuilder stringBuilder = new StringBuilder();
-            Color currentColor = messageColor == Color.WHITE ? messageColor : null;
+            Color currentColor = Color.WHITE;
             for (int i = 0; i < message.length(); i++) {
+                Color previousColor = currentColor;
                 char c = message.charAt(i);
-                boolean isEmoji = Chati.CHATI.getEmojiManager().isEmoji(c);
                 if (hasWeblink && i > urlMatcher.end()) {
                     hasWeblink = urlMatcher.find();
                 }
-                boolean isWeblink = hasWeblink && i >= urlMatcher.start() && i < urlMatcher.end();
 
-                if (isEmoji && currentColor != Color.WHITE) {
+                if (Chati.CHATI.getEmojiManager().isEmoji(c)) {
+                    // Emojis müssen weiß eingefärbt sein um korrekt dargestellt zu werden.
                     currentColor = Color.WHITE;
-                    stringBuilder.append("[#").append(currentColor).append("]");
-                } else if (!isEmoji && isWeblink && currentColor != WEB_LINK_COLOR) {
+                } else if (hasWeblink && i >= urlMatcher.start() && i < urlMatcher.end()) {
+                    // Beginn eines Weblinks. Färbe auf die Farbe für Weblinks um.
                     currentColor = WEB_LINK_COLOR;
-                    stringBuilder.append("[#").append(currentColor).append("]");
-                } else if (!isEmoji && !isWeblink && hasWeblink && i == urlMatcher.end()) {
-                    if (i + 1 < message.length() && Chati.CHATI.getEmojiManager().isEmoji(message.charAt(i + 1))) {
-                        currentColor = Color.WHITE;
-                    } else {
-                        currentColor = messageColor;
+                } else if (hasWeblink && i == urlMatcher.end()) {
+                    // Ende eines Weblinks. Damit zwei Weblinks, die durch Whitespace-Character getrennt werden,
+                    // voneinander unterschieden werden können, muss am Ende eines Weblinks mindestens einmal umgefärbt
+                    // werden. Vermeide im Fall von einem folgenden normalen Text oder Emoji ein zweites Umfärben, indem
+                    // direkt auf die entsprechende Farbe des nächsten Nicht-Whitespace-Characters umgefärbt wird.
+                    for (int j = i + 1; j < message.length(); j++) {
+                        if (!Character.isWhitespace(message.charAt(j))) {
+                            if (Chati.CHATI.getEmojiManager().isEmoji(message.charAt(j))) {
+                                currentColor = Color.WHITE;
+                            } else {
+                                currentColor = messageColor;
+                            }
+                            break;
+                        }
                     }
-                    stringBuilder.append("[#").append(currentColor).append("]");
-                } else if (!isEmoji && !isWeblink && !Character.isWhitespace(c) && currentColor != messageColor) {
+                } else if (!Character.isWhitespace(c)) {
+                    // Färbe auf die Nachrichtenfarbe um. Im Falle von Whitespace-Character muss nicht umgefärbt werden.
                     currentColor = messageColor;
+                }
+                if (currentColor != previousColor) {
                     stringBuilder.append("[#").append(currentColor).append("]");
                 }
                 if (c == '[') {
+                    // Escape den Anfang eines Color-Markups, sonst können Benutzer theoretisch durch die Eingabe der
+                    // Codes in beliebigen Farben schreiben.
                     stringBuilder.append("[[");
                 } else {
                     stringBuilder.append(c);

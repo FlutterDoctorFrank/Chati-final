@@ -34,7 +34,7 @@ public class VoiceChatUser extends AudioProducer {
     @Override
     public void addAudioDataBlock(@NotNull final LocalDateTime timestamp, final short[] voiceDataBlock) {
         for (short sample : voiceDataBlock) {
-            audioDataQueue.add(sample);
+            receivedDataQueue.add(sample);
         }
         super.addAudioDataBlock(timestamp, voiceDataBlock);
     }

@@ -42,7 +42,7 @@ public enum Role {
     /**
      * Repräsentiert die Rolle eines Bereichsberechtigten.
      */
-    AREA_MANAGER(Permission.CONTACT_USER, Permission.MUTE);
+    AREA_MANAGER(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.MUTE);
 
     private final Set<Permission> permissions;
 

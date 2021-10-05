@@ -32,62 +32,71 @@ public class ResizeWindowListener extends InputListener {
     }
 
     @Override
-    public void enter(@NotNull InputEvent event, final float x, final float y, final int pointer,
-                     @Nullable final Actor fromActor) {
-        if (pointer == -1 && !resizeCursor) {
-            boolean leftResizeBorder = x > window.getPadLeft() - resizeBorder + 3 && x <= window.getPadLeft() + 3;
-            boolean rightResizeBorder = x >= window.getWidth() - window.getPadRight() - 6
-                    && x < window.getWidth() - resizeBorder - 6;
-            boolean bottomResizeBorder = y > resizeBorder + 9 && y <= window.getPadBottom() + 6;
-            if (leftResizeBorder && bottomResizeBorder) {
-                Gdx.graphics.setCursor(ChatiCursor.RISING_DIAGONAL_RESIZE.getCursor());
-                resizeCursor = true;
-            } else if (rightResizeBorder && bottomResizeBorder) {
-                Gdx.graphics.setCursor(ChatiCursor.FALLING_DIAGONAL_RESIZE.getCursor());
-                resizeCursor = true;
-            } else if (leftResizeBorder || rightResizeBorder) {
-                Gdx.graphics.setCursor(ChatiCursor.HORIZONTAL_RESIZE.getCursor());
-                resizeCursor = true;
-            } else if (bottomResizeBorder) {
-                Gdx.graphics.setCursor(ChatiCursor.VERTICAL_RESIZE.getCursor());
-                resizeCursor = true;
-            }
+    public boolean touchDown(@NotNull final InputEvent event, float x, float y, int pointer, int button) {
+        return true;
+    }
+
+    @Override
+    public void touchUp(@NotNull final InputEvent event, float x, float y, int pointer, int button) {
+        if (x < 0 || x >= window.getWidth() || y < 0 || y >= window.getHeight()) {
+            Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
+            resizeCursor = false;
         }
     }
 
     @Override
-    public void exit(@NotNull InputEvent event, final float x, final float y, final int pointer,
+    public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
                      @Nullable final Actor fromActor) {
-        if (pointer == -1 && resizeCursor && !window.isDragging()) {
-            if (!window.isVisible() || x < 0) {
-                resizeCursor = false;
-                Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
-            }
+        if (pointer == -1) {
+            setCursor(x, y);
+        }
+    }
+
+    @Override
+    public void exit(@NotNull final InputEvent event, final float x, final float y, final int pointer,
+                     @Nullable final Actor toActor) {
+        if (pointer == -1) {
+            setCursor(x, y);
         }
     }
 
     @Override
     public boolean mouseMoved(@NotNull final InputEvent event, final float x, final float y) {
-        boolean leftResizeBorder = x > window.getPadLeft() - resizeBorder + 3 && x <= window.getPadLeft() + 3;
-        boolean rightResizeBorder = x >= window.getWidth() - window.getPadRight() - 6
-                && x < window.getWidth() - resizeBorder - 6;
-        boolean bottomResizeBorder = y > resizeBorder + 9 && y <= window.getPadBottom() + 6;
-        if (leftResizeBorder && bottomResizeBorder) {
+        setCursor(x, y);
+        return true;
+    }
+
+    /**
+     * Setzt die Cursor zur Anzeige der Größenskalierbarkeit.
+     * @param x X-Koordinate des Cursors.
+     * @param y Y-Koordinate des Cursors.
+     */
+    private void setCursor(final float x, final float y) {
+        if (!window.isResizable() || !window.isVisible()) {
+            Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
+            resizeCursor = false;
+            return;
+        }
+        float border = resizeBorder / 2f;
+        boolean resizeLeft = x >= window.getPadLeft() - border && x < window.getPadLeft() + border;
+        boolean resizeRight = x > window.getWidth() - window.getPadRight() - border
+                && x <= window.getWidth() - window.getPadRight() + border;
+        boolean resizeBottom = y >= window.getPadBottom() - border && y < window.getPadBottom() + border;
+        if (resizeLeft && resizeBottom) {
             Gdx.graphics.setCursor(ChatiCursor.RISING_DIAGONAL_RESIZE.getCursor());
             resizeCursor = true;
-        } else if (rightResizeBorder && bottomResizeBorder) {
+        } else if (resizeRight && resizeBottom) {
             Gdx.graphics.setCursor(ChatiCursor.FALLING_DIAGONAL_RESIZE.getCursor());
             resizeCursor = true;
-        } else if (leftResizeBorder || rightResizeBorder) {
+        } else if (resizeLeft || resizeRight) {
             Gdx.graphics.setCursor(ChatiCursor.HORIZONTAL_RESIZE.getCursor());
             resizeCursor = true;
-        } else if (bottomResizeBorder) {
+        } else if (resizeBottom) {
             Gdx.graphics.setCursor(ChatiCursor.VERTICAL_RESIZE.getCursor());
             resizeCursor = true;
         } else if (resizeCursor) {
             Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
             resizeCursor = false;
         }
-        return true;
     }
 }

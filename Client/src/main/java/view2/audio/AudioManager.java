@@ -105,7 +105,7 @@ public class AudioManager implements Disposable {
         if (audioConsumer != null) {
             audioConsumer.setTotalVolume(Chati.CHATI.getPreferences().getTotalVolume());
             audioConsumer.setVoiceVolume(Chati.CHATI.getPreferences().getVoiceVolume());
-            audioConsumer.setMusicVolume(0.1f * Chati.CHATI.getPreferences().getMusicVolume());
+            audioConsumer.setMusicVolume(Chati.CHATI.getPreferences().getMusicVolume());
         }
     }
 
@@ -163,13 +163,15 @@ public class AudioManager implements Disposable {
      * @param soundName Name des abzuspielenden Tons.
      */
     public void playSound(@NotNull final String soundName) {
-        Chati.CHATI.getSound(soundName).play(0.05f * Chati.CHATI.getPreferences().getSoundVolume());
+        if (audioConsumer != null) {
+            audioConsumer.playSound(Chati.CHATI.getSound(soundName), Chati.CHATI.getPreferences().getSoundVolume());
+        }
     }
 
     /**
-     * Gibt zurück, ob im gerade Sprachdaten von einem Benutzer abgespielt werden.
+     * Gibt zurück, ob ein Benutzer gerade spricht.
      * @param user Zu überprüfender Benutzer.
-     * @return true, wenn Sprachdaten von diesem Benutzer abgespielt werden, sonst false.
+     * @return true, wenn der Benutzer gerade spricht, sonst false.
      */
     public boolean isTalking(@NotNull final IUserView user) {
         IInternUserView internUser = Chati.CHATI.getInternUser();

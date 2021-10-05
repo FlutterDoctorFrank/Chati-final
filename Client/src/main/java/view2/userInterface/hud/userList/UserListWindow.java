@@ -213,7 +213,6 @@ public class UserListWindow extends HudMenuWindow {
 
     @Override
     public void focus() {
-        super.focus();
         if (getStage() != null) {
             getStage().setScrollFocus(userListScrollPane);
         }
@@ -303,14 +302,14 @@ public class UserListWindow extends HudMenuWindow {
         updateUserCount();
 
         IInternUserView internUser = Chati.CHATI.getInternUser();
-        if (internUser == null || internUser.getCurrentRoom() == null) {
+        if (internUser == null || !internUser.canContactRoom()) {
             roomMessageButton.setDisabled(true);
             roomMessageButton.setTouchable(Touchable.disabled);
         } else {
             roomMessageButton.setDisabled(false);
             roomMessageButton.setTouchable(Touchable.enabled);
         }
-        if (internUser == null || internUser.getCurrentWorld() == null) {
+        if (internUser == null || !internUser.canContactWorld()) {
             worldMessageButton.setDisabled(true);
             worldMessageButton.setTouchable(Touchable.disabled);
         } else {
@@ -329,7 +328,8 @@ public class UserListWindow extends HudMenuWindow {
      * Aktualisiert die Anzeige der Benutzeranzahl.
      */
     private void updateUserCount() {
-        int onlineUsersCount = (int) currentEntries.stream().map(UserListEntry::getUser).filter(IUserView::isOnline).count();
+        int onlineUsersCount = (int) currentEntries.stream().map(UserListEntry::getUser)
+                .filter(IUserView::isOnline).count();
         onlineUsersCountLabel.setText(Chati.CHATI.getLocalization().format("window.user.info",
                 currentEntries.size(), onlineUsersCount));
     }

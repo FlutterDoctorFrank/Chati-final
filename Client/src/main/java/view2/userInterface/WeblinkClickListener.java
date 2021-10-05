@@ -20,49 +20,66 @@ public class WeblinkClickListener extends ClickListener {
 
     private final Label label;
     private final Color webLinkColor;
+    private final float offsetY;
+
+    private boolean cursorOverLink;
 
     /**
      * Erzeugt eine neue Instanz des WeblinkClickListener.
      * @param label Label, in dem Weblinks durch einen Klick geöffnet werden sollen.
      * @param webLinkColor Farbe der Weblinks in dem Label.
      */
-    public WeblinkClickListener(@NotNull final Label label, @NotNull final Color webLinkColor) {
+    public WeblinkClickListener(@NotNull final Label label, @NotNull final Color webLinkColor, final float offsetY) {
         this.label = label;
         this.webLinkColor = webLinkColor;
-    }
-
-    @Override
-    public void enter(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                      @Nullable final Actor fromActor) {
-        if (pointer == -1) {
-            label.getGlyphLayout().runs.forEach(run -> {
-                if (run.color.equals(webLinkColor)) {
-                    Gdx.graphics.setCursor(ChatiCursor.HAND.getCursor());
-                }
-            });
-        }
+        this.offsetY = offsetY;
+        this.cursorOverLink = false;
     }
 
     @Override
     public void exit(@NotNull final InputEvent event, final float x, final float y, final int pointer,
-                     @Nullable final Actor fromActor) {
+                     @Nullable final Actor toActor) {
         if (pointer == -1) {
-            label.getGlyphLayout().runs.forEach(run -> {
-                if (run.color.equals(webLinkColor)) {
-                    Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
-                }
-            });
+            Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
+            cursorOverLink = false;
         }
     }
 
     @Override
-    public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+    public boolean mouseMoved(@NotNull final InputEvent event, final float x, final float y) {
+        float lineHeight = label.getStyle().font.getLineHeight() * label.getFontScaleY();
         Array<GlyphLayout.GlyphRun> runs = label.getGlyphLayout().runs;
+        float offsetRunY = runs.get(runs.size - 1).y + offsetY;
         for (int i = 0; i < runs.size; i++) {
-            float textHeight = label.getHeight() - 3;
-            float lineHeight = label.getStyle().font.getLineHeight();
-            if (x > runs.get(i).x && x < runs.get(i).x + runs.get(i).width && y > runs.get(i).y + textHeight
-                    - lineHeight && y < runs.get(i).y + textHeight && runs.get(i).color.equals(webLinkColor)) {
+            if (x >= runs.get(i).x && x < runs.get(i).x + runs.get(i).width && y >= runs.get(i).y - offsetRunY
+                    &&  y < runs.get(i).y - offsetRunY + lineHeight) {
+                if (runs.get(i).color.equals(webLinkColor)) {
+                    Gdx.graphics.setCursor(ChatiCursor.HAND.getCursor());
+                    cursorOverLink = true;
+                } else {
+                    Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
+                    cursorOverLink = false;
+                }
+                return true;
+            }
+        }
+        Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
+        cursorOverLink = false;
+        return true;
+    }
+
+    @Override
+    public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+        if (!cursorOverLink) {
+            return;
+        }
+        float lineHeight = label.getStyle().font.getLineHeight() * label.getFontScaleY();
+        Array<GlyphLayout.GlyphRun> runs = label.getGlyphLayout().runs;
+        float offsetRunY = runs.get(runs.size - 1).y + offsetY;
+        for (int i = 0; i < runs.size; i++) {
+            if (cursorOverLink && x >= runs.get(i).x && x < runs.get(i).x + runs.get(i).width
+                    && y >= runs.get(i).y - offsetRunY && y < runs.get(i).y - offsetRunY + lineHeight
+                    && runs.get(i).color.equals(webLinkColor)) {
                 StringBuilder urlBuilder = new StringBuilder();
                 urlBuilder.append(runs.get(i).glyphs.toString(""));
                 urlBuilder.reverse();
@@ -81,9 +98,7 @@ public class WeblinkClickListener extends ClickListener {
                         break;
                     }
                 }
-                if (!Gdx.net.openURI(urlBuilder.toString())) {
-                    Gdx.net.openURI("https://www.google.de/search?q=" + urlBuilder);
-                }
+                Gdx.net.openURI(urlBuilder.toString());
             }
         }
     }

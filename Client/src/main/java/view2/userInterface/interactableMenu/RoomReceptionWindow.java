@@ -68,6 +68,10 @@ public class RoomReceptionWindow extends InteractableWindow {
     }
 
     @Override
+    public void focus() {
+    }
+
+    @Override
     public void translate() {
         super.translate();
         currentTable.translate();
@@ -183,7 +187,7 @@ public class RoomReceptionWindow extends InteractableWindow {
         private void updateRoomList() {
             roomSelectBox.setItems(Chati.CHATI.getUserManager().getPrivateRooms().values().stream()
                     .map(room -> new ContextEntry(room.getContextId(), room.getContextName()))
-                    .distinct().toArray(ContextEntry[]::new));
+                    .distinct().sorted().toArray(ContextEntry[]::new));
         }
     }
 

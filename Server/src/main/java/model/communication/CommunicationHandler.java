@@ -245,6 +245,51 @@ public class CommunicationHandler {
         },
 
         /**
+         * Wird zur Verarbeitung einer Bereichsnachricht verwendet. Überprüft, ob diese Bereichsnachricht versendet
+         * werden kann und versendet diese.
+         * @see MessageType#AREA
+         */
+        AREA_MESSAGE_COMMAND("(?i)area\\s.*") {
+            @Override
+            protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
+                                  @Nullable final String imageName) {
+                String sendMessage = message.split("\\s", 2)[1];
+
+                if (sender.getLocation() == null) {
+                    throw new IllegalStateException("Users location is not available");
+                }
+
+                // Überprüfe, ob sich der kommunizierende Benutzer in einem Bereich befindet, für den er die nötige
+                // Berechtigung besitzt.
+                Area communicationArea = sender.getLocation().getArea();
+                if (!sender.hasPermission(communicationArea, Permission.CONTACT_CONTEXT)) {
+                    // Informiere den kommunizierenden Benutzer darüber, dass er nicht die Berechtigung besitzt, um diesen
+                    // Chatbefehl zu verwenden.
+                    TextMessage infoMessage = new TextMessage("chat.command.area.not-permitted", communicationArea.getContextName(),
+                            Permission.CONTACT_CONTEXT);
+                    sender.send(SendAction.MESSAGE, infoMessage);
+                    return;
+                }
+
+                // Überprüfe, ob der kommunizierende Benutzer in dem Raum oder einem übergeordneten Kontext stummgeschaltet ist.
+                if (communicationArea.isMuted(sender)) {
+                    // Informiere den kommunizierenden Benutzer darüber, dass er in dem Kontext stummgeschaltet ist.
+                    TextMessage infoMessage = new TextMessage("chat.standard.muted", communicationArea.getContextName());
+                    sender.send(SendAction.MESSAGE, infoMessage);
+                    return;
+                }
+
+                // Ermittle die empfangsberechtigten Benutzer.
+                Map<UUID, User> receivers = communicationArea.getUsers();
+                filterIgnoredUsers(sender, receivers);
+
+                // Versende die Textnachricht.
+                TextMessage textMessage = new TextMessage(sender, sendMessage, imageData, imageName, MessageType.AREA);
+                receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
+            }
+        },
+
+        /**
          * Wird zur Verarbeitung einer Raumnachricht verwendet. Überprüft, ob diese Raumnachricht versendet werden
          * kann und versendet diese.
          * @see MessageType#ROOM

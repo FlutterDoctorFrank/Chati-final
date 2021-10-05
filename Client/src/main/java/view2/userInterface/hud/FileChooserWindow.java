@@ -193,7 +193,6 @@ public abstract class FileChooserWindow extends ChatiWindow {
 
     @Override
     public void focus() {
-        super.focus();
         if (getStage() != null) {
             getStage().setScrollFocus(fileList);
         }
@@ -402,7 +401,6 @@ public abstract class FileChooserWindow extends ChatiWindow {
 
         @Override
         public void focus() {
-            super.focus();
             if (getStage() != null) {
                 getStage().setKeyboardFocus(nameField);
             }

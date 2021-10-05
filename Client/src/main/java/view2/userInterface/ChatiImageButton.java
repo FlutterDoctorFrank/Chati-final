@@ -55,7 +55,7 @@ public class ChatiImageButton extends ImageButton {
             }
             @Override
             public void exit(@NotNull final InputEvent event, final float x, final float y,
-                             final int pointer, @Nullable final Actor fromActor) {
+                             final int pointer, @Nullable final Actor toActor) {
                 if (pointer == -1) {
                     getImage().scaleBy(-imageScaleFactor);
                     underCursor = false;

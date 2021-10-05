@@ -22,6 +22,12 @@ public enum MessageType {
     WHISPER,
 
     /**
+     * Kann durch die Eingabe eines Chatbefehls am Anfang der Nachricht verwendet werden. Nachricht im innersten Bereich
+     * des Senders.
+     */
+    AREA,
+
+    /**
      * Kann durch die Eingabe eines Chatbefehls am Anfang der Nachricht verwendet werden. Nachricht im gesamten Raum
      * des Senders.
      */
@@ -34,8 +40,8 @@ public enum MessageType {
     WORLD,
 
     /**
-     * Kann durch die Eingabe eines Chatbefehls am Anfang der Nachricht verwendet werden. Nachricht an alle Benutzer
-     * in der Anwendung.
+     * Kann durch die Eingabe eines Chatbefehls am Anfang der Nachricht verwendet werden. Nachricht an alle Benutzer,
+     * die sich in einer beliebigen Welt befinden.
      */
     GLOBAL,
 

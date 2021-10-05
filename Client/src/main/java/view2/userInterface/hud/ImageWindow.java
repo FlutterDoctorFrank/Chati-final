@@ -78,4 +78,8 @@ public class ImageWindow extends ChatiWindow {
         imagePixmap.dispose();
         super.close();
     }
+
+    @Override
+    public void focus() {
+    }
 }

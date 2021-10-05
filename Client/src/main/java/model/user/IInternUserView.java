@@ -2,6 +2,7 @@ package model.user;
 
 import model.context.Context;
 import model.context.ContextID;
+import model.context.IContextView;
 import model.context.spatial.ISpatialContextView;
 import model.context.spatial.ContextMusic;
 import model.context.spatial.SpatialContext;
@@ -69,6 +70,18 @@ public interface IInternUserView extends IUserView {
      * @return true, wenn er Sprachnachrichten versenden darf, sonst false.
      */
     boolean canTalk();
+
+    /**
+     * Gibt zurück, ob der Benutzer den Chatbefehl zum Kontaktieren der Welt verwenden darf.
+     * @return true, wenn er den Chatbefehl verwenden darf, sonst false.
+     */
+    boolean canContactWorld();
+
+    /**
+     * Gibt zurück, ob der Benutzer den Chatbefehl zum Kontaktieren des Raums verwenden darf.
+     * @return true, wenn er den Chatbefehl verwenden darf, sonst false.
+     */
+    boolean canContactRoom();
 
     /**
      * Gibt den Kontexte zurück, mit dem der Benutzer gerade interagieren kann, falls vorhanden.

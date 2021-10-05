@@ -170,7 +170,7 @@ public class MusicStreamerWindow extends InteractableWindow {
 
         Color weblinkColor = Color.ROYAL;
         Label creditsLabel = new Label("Music by [#" + weblinkColor + "]https://www.bensound.com", Chati.CHATI.getSkin());
-        creditsLabel.addListener(new WeblinkClickListener(creditsLabel, weblinkColor));
+        creditsLabel.addListener(new WeblinkClickListener(creditsLabel, weblinkColor, -SPACE / 0.67f));
 
         setButtonStates();
         setSelectedTitle();
@@ -246,7 +246,6 @@ public class MusicStreamerWindow extends InteractableWindow {
 
     @Override
     public void focus() {
-        super.focus();
         if (getStage() != null) {
             getStage().setScrollFocus(musicList);
         }

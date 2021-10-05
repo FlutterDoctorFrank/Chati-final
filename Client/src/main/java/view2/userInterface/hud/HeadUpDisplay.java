@@ -293,7 +293,8 @@ public class HeadUpDisplay extends Table implements Translatable {
      */
     public void openCommunicationWindow() {
         communicationButton.setChecked(true);
-        (communicationWindow = new CommunicationWindow()).open();
+        communicationWindow = new CommunicationWindow();
+        communicationWindow.open();
     }
 
     /**
@@ -384,7 +385,10 @@ public class HeadUpDisplay extends Table implements Translatable {
         if (!isChatOpen()) {
             chatButton.startBlinking();
         }
-        Chati.CHATI.getAudioManager().playSound("chat_message_sound");
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+        if (internUser != null && !internUser.getUserId().equals(senderId)) {
+            Chati.CHATI.getAudioManager().playSound("chat_message_sound");
+        }
     }
 
     /**

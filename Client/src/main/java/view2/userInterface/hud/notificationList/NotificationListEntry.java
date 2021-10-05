@@ -280,6 +280,10 @@ public class NotificationListEntry extends Table implements Translatable, Compar
                 }
             }
         }
+
+        @Override
+        public void focus() {
+        }
     }
 
     /**
@@ -372,6 +376,10 @@ public class NotificationListEntry extends Table implements Translatable, Compar
             translatables.add(confirmButton);
             translatables.add(cancelButton);
             translatables.trimToSize();
+        }
+
+        @Override
+        public void focus() {
         }
     }
 }

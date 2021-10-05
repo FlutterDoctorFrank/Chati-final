@@ -70,7 +70,7 @@ public class MusicStream extends AudioProducer {
         for (short musicData : musicDataBlock) {
             numPlaybackSample += slowDownRate;
             for (int i = (int) numPlaybackSample; i > 0; i--) {
-                audioDataQueue.add(musicData);
+                receivedDataQueue.add(musicData);
                 numPlaybackSample--;
             }
         }
@@ -105,7 +105,7 @@ public class MusicStream extends AudioProducer {
      */
     public void stop() {
         ready = false;
-        audioDataQueue.clear();
+        receivedDataQueue.clear();
         positionQueue.clear();
         secondsQueue.clear();
         currentPosition = 0;

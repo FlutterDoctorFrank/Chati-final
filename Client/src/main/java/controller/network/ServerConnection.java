@@ -232,6 +232,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                     case GLOBAL:
                     case WORLD:
                     case ROOM:
+                    case AREA:
                     case WHISPER:
                     case STANDARD:
                         if (packet.getSenderId() == null) {

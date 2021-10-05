@@ -137,6 +137,6 @@ public class StartTable extends ChatiTable {
     private void updateWorldList() {
         worldSelectBox.setItems(Chati.CHATI.getUserManager().getWorlds().values().stream()
                 .map(world -> new ContextEntry(world.getContextId(), world.getContextName()))
-                .distinct().toArray(ContextEntry[]::new));
+                .distinct().sorted().toArray(ContextEntry[]::new));
     }
 }

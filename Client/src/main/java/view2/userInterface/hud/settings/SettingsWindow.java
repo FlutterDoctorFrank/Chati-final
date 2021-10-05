@@ -174,4 +174,9 @@ public class SettingsWindow extends HudMenuWindow {
         button.setTouchable(Touchable.disabled);
         button.getLabel().setColor(Color.DARK_GRAY);
     }
+
+    @Override
+    public void focus() {
+        getStage().setKeyboardFocus(this);
+    }
 }

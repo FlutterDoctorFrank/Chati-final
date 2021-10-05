@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public abstract class AudioProducer {
 
-    protected final Queue<Short> audioDataQueue;
+    protected final Queue<Short> receivedDataQueue;
     protected final int minBlocks;
     protected LocalDateTime lastTimeReceived;
     protected boolean ready;
@@ -22,7 +22,7 @@ public abstract class AudioProducer {
      * entnommmen werden können.
      */
     protected AudioProducer(final float startingDelay) {
-        this.audioDataQueue = new LinkedBlockingQueue<>();
+        this.receivedDataQueue = new LinkedBlockingQueue<>();
         this.minBlocks = (int) (startingDelay * AudioManager.SEND_RATE);
     }
 
@@ -45,7 +45,7 @@ public abstract class AudioProducer {
     public short[] getAudioDataBlock() {
         short[] block = new short[AudioManager.BLOCK_SIZE];
         for (int i = 0; i < block.length; i++) {
-            Short data = audioDataQueue.poll();
+            Short data = receivedDataQueue.poll();
             block[i] = data != null ? data : 0;
         }
         if (!hasData()) {
@@ -83,6 +83,6 @@ public abstract class AudioProducer {
      * @return Größe der Warteschlange in der Anzahl abspielbarer Blöcke.
      */
     protected int queueSizeInBlocks() {
-        return audioDataQueue.size() / AudioManager.BLOCK_SIZE;
+        return receivedDataQueue.size() / AudioManager.BLOCK_SIZE;
     }
 }

@@ -6,14 +6,20 @@ import com.badlogic.gdx.utils.Disposable;
 import controller.network.ServerSender;
 import view2.Chati;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * Eine Klasse, durch welche das Aufnehmen und Senden von Sprachdaten realisiert wird.
  */
 public class VoiceRecorder implements Runnable, Disposable {
 
+    private static final float LOOK_AHEAD = 0.25f; // in Sekunden
+    private static final int MAX_BLOCKS = (int) (LOOK_AHEAD * AudioManager.SEND_RATE);
     private static final float STOP_SENDING_DELAY = 0.25f; // in Sekunden
 
     private final AudioRecorder recorder;
+    private final Queue<short[]> sendDataQueue;
     private float sendGate;
     private boolean isRunning;
     private boolean isRecording;
@@ -24,11 +30,11 @@ public class VoiceRecorder implements Runnable, Disposable {
      */
     public VoiceRecorder() {
         this.recorder = Gdx.audio.newAudioRecorder(AudioManager.SAMPLING_RATE, AudioManager.MONO);
+        this.sendDataQueue = new LinkedList<>();
     }
 
     @Override
     public void run() {
-        short[] recordedData = new short[AudioManager.BLOCK_SIZE];
         long timestamp = System.currentTimeMillis();
 
         outer:
@@ -36,6 +42,7 @@ public class VoiceRecorder implements Runnable, Disposable {
             synchronized (this) {
                 // Warte, solange nicht gesendet werden soll.
                 while (!isRecording) {
+                    isSending = false;
                     if (!isRunning) {
                         break outer;
                     }
@@ -47,10 +54,16 @@ public class VoiceRecorder implements Runnable, Disposable {
                 }
             }
 
-            // Überprüfe ob Lautstärke eines Samples gewissen Wert überschreitet, fange dann an zu senden und setze
-            // Zeitstempel. Sende ab diesem Zeitpunkt mindestens für eine gewisse Dauer weiter, bevor das Senden
-            // gestoppt wird. Dadurch wird ein Dauersenden verhindert, ohne am Ende "abgehackt" zu werden.
+            short[] recordedData = new short[AudioManager.BLOCK_SIZE];
             recorder.read(recordedData, 0, recordedData.length);
+            sendDataQueue.add(recordedData);
+            if (sendDataQueue.size() > MAX_BLOCKS) {
+                sendDataQueue.poll();
+            }
+
+            // Überprüfe ob Lautstärke eines Samples gewissen Wert überschreitet, sende dann alle Pakete im Sendepuffer
+            // und setze Zeitstempel. Sende ab diesem Zeitpunkt mindestens für eine gewisse Dauer weiter, bevor das
+            // Senden gestoppt wird. Dadurch wird ein Dauersenden verhindert, ohne am Ende "abgehackt" zu werden.
             for (short sample : recordedData) {
                 if (Math.abs(sample) >= sendGate) {
                     timestamp = System.currentTimeMillis();
@@ -58,12 +71,17 @@ public class VoiceRecorder implements Runnable, Disposable {
                 }
             }
             if (System.currentTimeMillis() - timestamp < 1000 * STOP_SENDING_DELAY) {
-                Chati.CHATI.send(ServerSender.SendAction.VOICE, AudioManager.toByte(recordedData, true));
+                short[] sendData = sendDataQueue.poll();
+                while (sendData != null) {
+                    Chati.CHATI.send(ServerSender.SendAction.VOICE, AudioManager.toByte(sendData, true));
+                    sendData = sendDataQueue.poll();
+                }
                 isSending = true;
             } else {
                 isSending = false;
             }
         }
+        isSending = false;
     }
 
     /**
@@ -134,11 +152,20 @@ public class VoiceRecorder implements Runnable, Disposable {
 
     /**
      * Setzt das Gate zum Senden von Sprachdaten anhand der Mikrofonempfindlichkeit.
-     * @param microphoneSensitivity Mikrofonempfindlichkeit
+     * @param microphoneSensitivity Mikrofonempfindlichkeit zwischen 0 und 1.
      */
     public void setMicrophoneSensitivity(final float microphoneSensitivity) {
-        // Verwendet Polynom zweiten Grades mit Werten an den Stellen 0, 0.5 und 1, die sich durch Erproben als geeignet
-        // herausgestellt haben.
-        sendGate = 4608 * microphoneSensitivity * microphoneSensitivity - 8448 * microphoneSensitivity + 4096;
+        if (microphoneSensitivity < 0 || microphoneSensitivity > 1) {
+            return;
+        }
+        /*
+         * Verwendung einer Exponentialfunktion. Wert für a wurde rechnerisch ermittelt, sodass:
+         * - Bei maximaler Mikrophonempfindlichkeit alles aufgezeichnet wird. (SendGate = 0)
+         * - Bei minimaler Mikrophonempfindlichkeit nichts aufgezeichnet wird. (SendGate = Short.MAX_VALUE)
+         * - Bei mittlerer Mikrophonempfindlichkeit das SendGate auf 2048 gesetzt wird. Dieser Wert hat sich als
+         *   geeignet herausgestellt, um normale Gesprächslautstärke aufzunehmen.
+         */
+        double a = 943656961d / 28671;
+        this.sendGate = (float) (a * Math.pow((a - Short.MAX_VALUE) / a, microphoneSensitivity) + Short.MAX_VALUE - a);
     }
 }

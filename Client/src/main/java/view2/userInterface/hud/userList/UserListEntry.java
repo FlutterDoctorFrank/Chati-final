@@ -329,9 +329,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
         int statusComp = this.user.getStatus().compareTo(other.user.getStatus());
         Role thisHighestRole = this.user.getHighestRole();
         Role otherHighestRole = other.user.getHighestRole();
-        int roleComp = thisHighestRole == null ? 1
+        int roleComp = thisHighestRole == otherHighestRole ? 0
+                : (thisHighestRole == null ? 1
                 : (otherHighestRole == null ? -1
-                : thisHighestRole.compareTo(otherHighestRole));
+                : thisHighestRole.compareTo(otherHighestRole)));
         int nameComp = this.user.getUsername().compareTo(other.user.getUsername());
 
         return statusComp != 0 ? statusComp
@@ -438,6 +439,10 @@ public class UserListEntry extends Table implements Comparable<UserListEntry> {
 
         public void resetTextFields() {
             userMessageArea.reset();
+        }
+
+        @Override
+        public void focus() {
         }
     }
 }

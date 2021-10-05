@@ -232,4 +232,8 @@ public class SoundConfigurationWindow extends ChatiWindow {
         confirmButton.setTouchable(Touchable.disabled);
         confirmButton.getLabel().setColor(Color.DARK_GRAY);
     }
+
+    @Override
+    public void focus() {
+    }
 }

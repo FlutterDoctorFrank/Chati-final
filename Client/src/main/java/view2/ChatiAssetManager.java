@@ -70,6 +70,8 @@ public class ChatiAssetManager implements Disposable {
         BitmapFont fontLabel = fontGenerator.generateFont(parameter);
         fontLabel.getData().markupEnabled = true;
         fontLabel.setUseIntegerPositions(false);
+        BitmapFont fontTextfield = fontGenerator.generateFont(parameter);
+        fontTextfield.setUseIntegerPositions(false);
         parameter.size = BUTTON_FONT_SIZE;
         BitmapFont fontButton = fontGenerator.generateFont(parameter);
         fontButton.setUseIntegerPositions(false);
@@ -77,6 +79,7 @@ public class ChatiAssetManager implements Disposable {
         ObjectMap<String, Object> fontMap = new ObjectMap<>();
         fontMap.put("font-title", fontTitle);
         fontMap.put("font-label", fontLabel);
+        fontMap.put("font-textfield", fontTextfield);
         fontMap.put("font-button", fontButton);
 
         // Skin in die Warteschlange des AssetManager mit ObjectMap der generierten Fonts als Parameter.

@@ -164,4 +164,8 @@ public class AdministratorManageWindow extends ChatiWindow {
         usernameField.reset();
         messageArea.reset();
     }
+
+    @Override
+    public void focus() {
+    }
 }

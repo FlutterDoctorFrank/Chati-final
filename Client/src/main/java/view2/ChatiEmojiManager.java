@@ -33,6 +33,7 @@ public class ChatiEmojiManager {
         // Füge Glyphen der Emojis zu den Fonts hinzu.
         addEmojisToFont(Chati.CHATI.getSkin().getFont("font-title"));
         addEmojisToFont(Chati.CHATI.getSkin().getFont("font-label"));
+        addEmojisToFont(Chati.CHATI.getSkin().getFont("font-textfield"));
         addEmojisToFont(Chati.CHATI.getSkin().getFont("font-button"));
     }
 
@@ -76,9 +77,9 @@ public class ChatiEmojiManager {
                 emojiGlyph.v = emoji.getRegion().getV2();
                 emojiGlyph.u2 = emoji.getRegion().getU2();
                 emojiGlyph.v2 = emoji.getRegion().getV();
-                emojiGlyph.xoffset = 0;
-                emojiGlyph.yoffset = -(int) (EMOJI_SCALE * size);
-                emojiGlyph.xadvance = (int) (EMOJI_SCALE * size);
+                emojiGlyph.xoffset = -(int) (((EMOJI_SCALE - 1) / 2 + 1));
+                emojiGlyph.yoffset = -(int) (((EMOJI_SCALE - 1) / 2 + 1) * size);
+                emojiGlyph.xadvance = (int) (((EMOJI_SCALE - 1) / 2 + 1) * size);
                 emojiGlyph.kerning = null;
                 emojiGlyph.fixedWidth = true;
                 emojiGlyph.page = page;

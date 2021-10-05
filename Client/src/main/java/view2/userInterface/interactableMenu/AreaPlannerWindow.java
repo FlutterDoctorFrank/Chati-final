@@ -59,4 +59,8 @@ public class AreaPlannerWindow extends InteractableWindow {
     @Override
     public void receiveResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
     }
+
+    @Override
+    public void focus() {
+    }
 }

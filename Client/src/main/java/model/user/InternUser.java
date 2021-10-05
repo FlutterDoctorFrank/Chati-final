@@ -10,6 +10,7 @@ import model.exception.NotificationNotFoundException;
 import model.notification.INotificationView;
 import model.notification.Notification;
 import model.notification.NotificationType;
+import model.role.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
@@ -198,6 +199,16 @@ public class InternUser extends User implements IInternUserController, IInternUs
         return currentWorld != null && currentRoom != null && currentLocation != null
                 && currentLocation.getArea().getCommunicationMedia().contains(CommunicationMedium.VOICE)
                 && !isMuted() && !UserManager.getInstance().getCommunicableUsers().isEmpty();
+    }
+
+    @Override
+    public boolean canContactWorld() {
+        return currentWorld != null && hasPermission(currentWorld, Permission.CONTACT_CONTEXT);
+    }
+
+    @Override
+    public boolean canContactRoom() {
+        return currentRoom != null && hasPermission(currentRoom, Permission.CONTACT_CONTEXT);
     }
 
     /**

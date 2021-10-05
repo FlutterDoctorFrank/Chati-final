@@ -550,6 +550,18 @@ public class User implements IUserController, IUserView {
     }
 
     /**
+     * Überprüft, ob der Benutzer eine Berechtigung in einem Kontext besitzt.
+     * @param context Zu überprüfender Kontext.
+     * @param permission Zu überprüfende Berechtigung.
+     * @return true, wenn der Benutzer die Berechtigung in dem Kontext besitzt, sonst false.
+     */
+    protected boolean hasPermission(@NotNull final Context context, @NotNull final Permission permission) {
+        return contextRoles.containsKey(context)
+                && contextRoles.get(context).stream().anyMatch(role -> role.hasPermission(permission))
+                || context.getParent() != null && hasPermission(context.getParent(), permission);
+    }
+
+    /**
      * Überprüft, ob der Benutzer eine Rolle in einem Kontext besitzt.
      * @param context Zu überprüfender Kontext.
      * @param role Zu überprüfende Rolle.
@@ -558,17 +570,5 @@ public class User implements IUserController, IUserView {
     private boolean hasRole(@NotNull final Context context, @NotNull final Role role) {
         return contextRoles.containsKey(context) && contextRoles.get(context).contains(role)
                 || context.getParent() != null && hasRole(context.getParent(), role);
-    }
-
-    /**
-     * Überprüft, ob der Benutzer eine Berechtigung in einem Kontext besitzt.
-     * @param context Zu überprüfender Kontext.
-     * @param permission Zu überprüfende Berechtigung.
-     * @return true, wenn der Benutzer die Berechtigung in dem Kontext besitzt, sonst false.
-     */
-    private boolean hasPermission(@NotNull final Context context, @NotNull final Permission permission) {
-        return contextRoles.containsKey(context)
-                && contextRoles.get(context).stream().anyMatch(role -> role.hasPermission(permission))
-                || context.getParent() != null && hasPermission(context.getParent(), permission);
     }
 }

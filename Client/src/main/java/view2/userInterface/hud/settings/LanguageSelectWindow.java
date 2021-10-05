@@ -75,4 +75,8 @@ public class LanguageSelectWindow extends ChatiWindow {
         translatables.add(cancelButton);
         translatables.trimToSize();
     }
+
+    @Override
+    public void focus() {
+    }
 }
