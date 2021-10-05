@@ -16,7 +16,6 @@ import model.user.User;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -175,14 +174,21 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#WHISPER
          */
-        WHISPER_MESSAGE_COMMAND("\\\\[a-zA-Z0-9]+\\s.*") {
+        WHISPER_MESSAGE_COMMAND("\\\\\\w+(\\s.*|$)") {
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
                                   @Nullable final String imageName) {
                 // Extrahiere den Benutzernamen aus dem Befehl der Flüsternachricht.
                 String[] usernameMessage = message.substring(1).split("\\s", 2);
                 String username = usernameMessage[0];
-                String sendMessage = usernameMessage[1];
+
+                if (usernameMessage.length < 2) {
+                    // Informiere den kommunizierenden Benutzer darüber, dass der Befehl ungültig ist.
+                    TextMessage infoMessage = new TextMessage("chat.command.whisper.usage");
+                    sender.send(SendAction.MESSAGE, infoMessage);
+                    return;
+                }
+
                 // Verarbeite die Flüsternachricht.
                 if (sender.getLocation() == null) {
                     throw new IllegalStateException("Communicators location is not available");
@@ -238,7 +244,7 @@ public class CommunicationHandler {
                 }
 
                 // Versende die Textnachricht an den Benutzer.
-                TextMessage textMessage = new TextMessage(sender, sendMessage, imageData, imageName, MessageType.WHISPER);
+                TextMessage textMessage = new TextMessage(sender, usernameMessage[1], imageData, imageName, MessageType.WHISPER);
                 sender.send(SendAction.MESSAGE, textMessage);
                 receiver.send(SendAction.MESSAGE, textMessage);
             }
@@ -249,12 +255,10 @@ public class CommunicationHandler {
          * werden kann und versendet diese.
          * @see MessageType#AREA
          */
-        AREA_MESSAGE_COMMAND("(?i)area\\s.*") {
+        AREA_MESSAGE_COMMAND("(?i)area(\\s.*|$)") {
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
                                   @Nullable final String imageName) {
-                String sendMessage = message.split("\\s", 2)[1];
-
                 if (sender.getLocation() == null) {
                     throw new IllegalStateException("Users location is not available");
                 }
@@ -267,6 +271,15 @@ public class CommunicationHandler {
                     // Chatbefehl zu verwenden.
                     TextMessage infoMessage = new TextMessage("chat.command.area.not-permitted", communicationArea.getContextName(),
                             Permission.CONTACT_CONTEXT);
+                    sender.send(SendAction.MESSAGE, infoMessage);
+                    return;
+                }
+
+                String[] commandParts = message.split("\\s", 2);
+
+                if (commandParts.length < 2) {
+                    // Informiere den kommunizierenden Benutzer darüber, dass der Befehl ungültig ist.
+                    TextMessage infoMessage = new TextMessage("chat.command.area.usage");
                     sender.send(SendAction.MESSAGE, infoMessage);
                     return;
                 }
@@ -284,7 +297,7 @@ public class CommunicationHandler {
                 filterIgnoredUsers(sender, receivers);
 
                 // Versende die Textnachricht.
-                TextMessage textMessage = new TextMessage(sender, sendMessage, imageData, imageName, MessageType.AREA);
+                TextMessage textMessage = new TextMessage(sender, commandParts[1], imageData, imageName, MessageType.AREA);
                 receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
             }
         },
@@ -294,12 +307,10 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#ROOM
          */
-        ROOM_MESSAGE_COMMAND("(?i)room\\s.*") {
+        ROOM_MESSAGE_COMMAND("(?i)room(\\s.*|$)") {
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
                                   @Nullable final String imageName) {
-                String sendMessage = message.split("\\s", 2)[1];
-
                 if (sender.getLocation() == null) {
                     throw new IllegalStateException("Users location is not available");
                 }
@@ -312,6 +323,15 @@ public class CommunicationHandler {
                     // Chatbefehl zu verwenden.
                     TextMessage infoMessage = new TextMessage("chat.command.room.not-permitted", communicationRoom.getContextName(),
                             Permission.CONTACT_CONTEXT);
+                    sender.send(SendAction.MESSAGE, infoMessage);
+                    return;
+                }
+
+                String[] commandParts = message.split("\\s", 2);
+
+                if (commandParts.length < 2) {
+                    // Informiere den kommunizierenden Benutzer darüber, dass der Befehl ungültig ist.
+                    TextMessage infoMessage = new TextMessage("chat.command.room.usage");
                     sender.send(SendAction.MESSAGE, infoMessage);
                     return;
                 }
@@ -329,7 +349,7 @@ public class CommunicationHandler {
                 filterIgnoredUsers(sender, receivers);
 
                 // Versende die Textnachricht.
-                TextMessage textMessage = new TextMessage(sender, sendMessage, imageData, imageName, MessageType.ROOM);
+                TextMessage textMessage = new TextMessage(sender, commandParts[1], imageData, imageName, MessageType.ROOM);
                 receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
             }
         },
@@ -339,12 +359,10 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#WORLD
          */
-        WORLD_MESSAGE_COMMAND("(?i)world\\s.*"){
+        WORLD_MESSAGE_COMMAND("(?i)world(\\s.*|$)"){
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
                                   @Nullable final String imageName) {
-                String sendMessage = message.split("\\s", 2)[1];
-
                 if (sender.getLocation() == null) {
                     throw new IllegalStateException("Users location is not available");
                 }
@@ -365,6 +383,15 @@ public class CommunicationHandler {
                     return;
                 }
 
+                String[] commandParts = message.split("\\s", 2);
+
+                if (commandParts.length < 2) {
+                    // Informiere den kommunizierenden Benutzer darüber, dass der Befehl ungültig ist.
+                    TextMessage infoMessage = new TextMessage("chat.command.world.usage");
+                    sender.send(SendAction.MESSAGE, infoMessage);
+                    return;
+                }
+
                 // Überprüfe, ob der kommunizierende Benutzer in dem Raum oder einem übergeordneten Kontext stummgeschaltet ist.
                 if (communicationWorld.isMuted(sender)) {
                     // Informiere den kommunizierenden Benutzer darüber, dass er in dem Kontext stummgeschaltet ist.
@@ -378,7 +405,7 @@ public class CommunicationHandler {
                 filterIgnoredUsers(sender, receivers);
 
                 // Versende die Textnachricht.
-                TextMessage textMessage = new TextMessage(sender, sendMessage, imageData, imageName, MessageType.WORLD);
+                TextMessage textMessage = new TextMessage(sender, commandParts[1], imageData, imageName, MessageType.WORLD);
                 receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
             }
         },
@@ -388,15 +415,14 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#GLOBAL
          */
-        GLOBAL_MESSAGE_COMMAND("(?i)global\\s.*"){
+        GLOBAL_MESSAGE_COMMAND("(?i)global(\\s.*|$)"){
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
-            @Nullable final String imageName) {
-                String sendMessage = message.split("\\s", 2)[1];
-
+                                  @Nullable final String imageName) {
                 if (sender.getLocation() == null) {
                     throw new IllegalStateException("Users location is not available");
                 }
+
                 // Überprüfe, ob sich der kommunizierende Benutzer in einer Welt befindet.
                 World communicationWorld = sender.getWorld();
 
@@ -413,12 +439,21 @@ public class CommunicationHandler {
                     return;
                 }
 
+                String[] commandParts = message.split("\\s", 2);
+
+                if (commandParts.length < 2) {
+                    // Informiere den kommunizierenden Benutzer darüber, dass der Befehl ungültig ist.
+                    TextMessage infoMessage = new TextMessage("chat.command.global.usage");
+                    sender.send(SendAction.MESSAGE, infoMessage);
+                    return;
+                }
+
                 // Ermittle die empfangsberechtigten Benutzer.
                 Map<UUID, User> receivers = GlobalContext.getInstance().getUsers().values().stream()
                         .filter(User::isInWorld).collect(Collectors.toMap(User::getUserId, Function.identity()));
 
                 // Versende die Textnachricht.
-                TextMessage textMessage = new TextMessage(sender, sendMessage, imageData, imageName, MessageType.GLOBAL);
+                TextMessage textMessage = new TextMessage(sender, commandParts[1], imageData, imageName, MessageType.GLOBAL);
                 receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
             }
         };

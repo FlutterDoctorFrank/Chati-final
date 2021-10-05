@@ -202,7 +202,7 @@ public class CommunicationHandlerTest {
             user.joinWorld(test_world.getContextId());
             Assert.assertEquals(test_world.getPublicRoom().getSpawnLocation(), user.getLocation());
 
-            CommunicationHandler.handleTextMessage(user, "\\area hallo", new byte[0], null);
+            CommunicationHandler.handleTextMessage(user, "\\unknown hallo", new byte[0], null);
             // Fehlerfall Sender auf null gesetzt
             Assert.assertNull(actionUser);
             Assert.assertEquals("chat.command.not-found", textMessage.getMessageBundle().getMessageKey());
