@@ -40,6 +40,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     public static final int MINIMUM_HEIGHT = 720;
     public static final int MINIMUM_WIDTH = 1280;
+    public static final Logger LOGGER = Logger.getLogger("chati.view");
     public static Chati CHATI;
 
     private final IUserManagerView userManager;
@@ -548,7 +549,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
                 Gdx.graphics.setWindowedMode(MINIMUM_WIDTH, MINIMUM_HEIGHT);
             }
         } else {
-            Logger.getLogger("chati-view").info("Changing the displaymode is not supported");
+            LOGGER.warning("Changing the displaymode is not supported");
         }
     }
 

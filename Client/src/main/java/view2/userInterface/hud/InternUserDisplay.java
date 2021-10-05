@@ -15,9 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import view2.userInterface.ChatiTooltip;
 import view2.userInterface.UserInfoContainer;
-
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Eine Klasse, welche die Anzeige der Informationen des intern angemeldeten Benutzers repräsentiert.
@@ -42,7 +40,7 @@ public class InternUserDisplay extends Table {
     public InternUserDisplay() {
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser == null) {
-            Logger.getLogger("chati.view").log(Level.WARNING, "Tried to show the intern-user-display while not logged in");
+            Chati.LOGGER.log(Level.WARNING, "Tried to show the intern-user-display while not logged in");
             return;
         }
 
@@ -134,11 +132,10 @@ public class InternUserDisplay extends Table {
                 statusTooltip.setText("hud.tooltip.invisible");
                 break;
             case OFFLINE:
-                Logger.getLogger("chati.view").log(Level.WARNING, "Tried to set the status of the intern user to offline");
+                Chati.LOGGER.log(Level.WARNING, "Tried to set the status of the intern user to offline");
                 break;
             default:
-                Logger.getLogger("chati.view").log(Level.WARNING, "Tried to set an invalid user status: "
-                        + internUser.getStatus());
+                Chati.LOGGER.log(Level.WARNING, "Tried to set an invalid user status: " + internUser.getStatus());
         }
 
         if (internUser.getCurrentRoom() != null) {

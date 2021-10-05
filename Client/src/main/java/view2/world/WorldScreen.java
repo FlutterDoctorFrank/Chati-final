@@ -38,7 +38,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Eine Klasse, welche den Bildschirm innerhalb der Welt in der Anwendung repräsentiert.
@@ -200,8 +199,7 @@ public class WorldScreen extends ChatiScreen {
      */
     public void openMenu(@NotNull final ContextID contextId, @NotNull final ContextMenu menu) {
         if (isMenuOpen()) {
-            Logger.getLogger("chati.view").log(Level.WARNING, "Tried to open a second interactable menu: " + contextId
-                    + ", " + menu);
+            Chati.LOGGER.log(Level.WARNING, "Tried to open a second interactable menu: " + contextId + ", " + menu);
             return;
         }
         switch (menu) {
@@ -224,8 +222,7 @@ public class WorldScreen extends ChatiScreen {
                 currentInteractableWindow = new PortalWindow(contextId);
                 break;
             default:
-                Logger.getLogger("chati.client").log(Level.WARNING, "Tried to open an unknown menu: " + contextId
-                        + ", " + menu);
+                Chati.LOGGER.log(Level.WARNING, "Tried to open an unknown menu: " + contextId + ", " + menu);
                 return;
         }
         currentInteractableWindow.open();
@@ -239,8 +236,7 @@ public class WorldScreen extends ChatiScreen {
     public void closeMenu(@NotNull final ContextID contextId, @NotNull final ContextMenu menu) {
         if (!isMenuOpen() || !currentInteractableWindow.getInteractableId().equals(contextId)
                 || currentInteractableWindow.getInteractableMenu() != menu) {
-            Logger.getLogger("chati.view").log(Level.WARNING, "Tried to close an interactable menu that is not open: "
-                    + contextId + ", " + menu);
+            Chati.LOGGER.log(Level.WARNING, "Tried to close an interactable menu that is not open: " + contextId + ", " + menu);
             return;
         }
         stage.closeWindow(currentInteractableWindow);
@@ -254,7 +250,7 @@ public class WorldScreen extends ChatiScreen {
      */
     public void menuActionResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (!isMenuOpen()) {
-            Logger.getLogger("chati.client").log(Level.WARNING, "Got a response for an interactable menu that is not open");
+            Chati.LOGGER.log(Level.WARNING, "Got a response for an interactable menu that is not open");
             return;
         }
         currentInteractableWindow.receiveResponse(success, messageBundle);

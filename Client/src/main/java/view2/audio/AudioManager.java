@@ -10,7 +10,6 @@ import view2.Chati;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Eine Klasse, welche den VoiceChat sowie das Abspielen von Soundeffekten koordiniert.
@@ -37,10 +36,10 @@ public class AudioManager implements Disposable {
                 this.voiceRecorder = new VoiceRecorder();
                 setMicrophoneSensitivity();
             } catch (GdxRuntimeException e) {
-                Logger.getLogger("chati.view").log(Level.WARNING, "Microphone not available", e);
+               Chati.LOGGER.log(Level.WARNING, "Microphone not available", e);
             }
         } catch (GdxRuntimeException e) {
-            Logger.getLogger("chati.view").log(Level.WARNING, "Speaker not available", e);
+            Chati.LOGGER.log(Level.WARNING, "Speaker not available", e);
         }
     }
 

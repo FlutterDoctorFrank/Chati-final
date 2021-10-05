@@ -16,13 +16,16 @@ import model.user.IInternUserView;
 import model.user.IUserManagerView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
-import view2.userInterface.*;
+import view2.userInterface.ChatiImageButton;
+import view2.userInterface.ChatiLabel;
+import view2.userInterface.ChatiTextButton;
+import view2.userInterface.ChatiTooltip;
+import view2.userInterface.ChatiWindow;
 import view2.userInterface.hud.HudMenuWindow;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Eine Klasse, welche das Benachrichtigungsmenü des HeadUpDisplay repräsentiert.
@@ -310,7 +313,7 @@ public class NotificationListWindow extends HudMenuWindow {
                     message = new MessageBundle("window.notification.confirm-delete-all");
                     break;
                 default:
-                    Logger.getLogger("chati.view").log(Level.WARNING, "Tried to open the confirm window for all" +
+                    Chati.LOGGER.log(Level.WARNING, "Tried to open the confirm window for all" +
                             "notifications with an invalid action: " + action);
                     return;
             }
@@ -332,7 +335,7 @@ public class NotificationListWindow extends HudMenuWindow {
                                             notification.getNotificationId()));
                             break;
                         default:
-                            Logger.getLogger("chati.view").log(Level.WARNING, "Tried to confirm an invalid action for" +
+                            Chati.LOGGER.log(Level.WARNING, "Tried to confirm an invalid action for" +
                                     "all notifications: " + action);
                             return;
                     }

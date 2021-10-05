@@ -8,8 +8,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -27,15 +32,22 @@ import view2.Chati;
 import view2.ChatiEmojiManager;
 import view2.ChatiLocalization.Translatable;
 import view2.KeyCommand;
-import view2.userInterface.*;
+import view2.userInterface.ChatiImageButton;
+import view2.userInterface.ChatiTextArea;
+import view2.userInterface.ChatiTextButton;
+import view2.userInterface.ChatiTooltip;
+import view2.userInterface.ResizeWindowListener;
+import view2.userInterface.WeblinkClickListener;
 import view2.world.component.InternUserAvatar;
-
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -252,7 +264,7 @@ public class ChatWindow extends Window implements Translatable {
             typingUsers.put(user, System.currentTimeMillis());
             showTypingUsers();
         } catch (UserNotFoundException e) {
-            Logger.getLogger("chati.view").log(Level.WARNING, "Received typing information from an unknown user", e);
+            Chati.LOGGER.log(Level.WARNING, "Received typing information from an unknown user", e);
         }
     }
 
@@ -320,10 +332,10 @@ public class ChatWindow extends Window implements Translatable {
                 messageColor = Color.GOLD;
                 break;
             case INFO:
-                Logger.getLogger("chati.view").log(Level.WARNING, "Received info message from a user");
+                Chati.LOGGER.log(Level.WARNING, "Received info message from a user");
                 return;
             default:
-                Logger.getLogger("chati.view").log(Level.WARNING, "Received message with no valid type");
+                Chati.LOGGER.log(Level.WARNING, "Received message with no valid type");
                 return;
         }
         ChatMessage chatMessage = new ChatMessage(timestamp, Chati.CHATI.getLocalization().format("pattern.chat.message",
@@ -560,7 +572,7 @@ public class ChatWindow extends Window implements Translatable {
             try {
                 image = new Pixmap(imageData, 0, imageData.length);
             } catch (GdxRuntimeException e) {
-                Logger.getLogger("chati.view").log(Level.WARNING, "Could not show received image", e);
+                Chati.LOGGER.log(Level.WARNING, "Could not show received image", e);
                 return;
             }
 
