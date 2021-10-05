@@ -57,23 +57,14 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private WorldScreen worldScreen;
     private boolean loggedIn;
 
-    private boolean userInfoChangeReceived;
-    private boolean newNotificationInfoReceived;
-    private boolean userNotificationChangeReceived;
-    private boolean roomChangeReceived;
-    private boolean worldChangeReceived;
-    private boolean musicChangeReceived;
-    private boolean worldListUpdateReceived;
-    private boolean roomListUpdateReceived;
-
-    private boolean changeUserInfo;
-    private boolean receivedNewNotification;
-    private boolean changeNotificationInfo;
-    private boolean changeRoom;
-    private boolean changeWorld;
-    private boolean changeMusic;
-    private boolean changeWorldList;
-    private boolean changeRoomList;
+    private boolean userInfoChanged;
+    private boolean newNotificationReceived;
+    private boolean notificationChanged;
+    private boolean roomChanged;
+    private boolean worldChanged;
+    private boolean musicChanged;
+    private boolean worldListChanged;
+    private boolean roomListChanged;
 
     /**
      * Erzeugt eine neue Instanz der View.
@@ -118,10 +109,6 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void render() {
-        /* Übertrage alle Flags auf eine andere Menge von Flags, welche im nächsten Render-Aufruf abgefragt wird.
-           So werden keine eingehenden Informationen verpasst, wenn diese am Ende eines Render-Durchlaufs eintreffen. */
-        transferFlags();
-        resetModelChangeReceivedFlags();
         audioManager.update();
         super.render();
         resetModelChangedFlags();
@@ -320,42 +307,42 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void setUserInfoChanged() {
-        this.userInfoChangeReceived = true;
+        Gdx.app.postRunnable(() -> this.userInfoChanged = true);
     }
 
     @Override
     public void setNewNotificationReceived() {
-        this.newNotificationInfoReceived = true;
+        Gdx.app.postRunnable(() -> this.newNotificationReceived = true);
     }
 
     @Override
     public void setUserNotificationChanged() {
-        this.userNotificationChangeReceived = true;
+        Gdx.app.postRunnable(() -> this.notificationChanged = true);
     }
 
     @Override
     public void setWorldListChanged() {
-        this.worldListUpdateReceived = true;
+        Gdx.app.postRunnable(() -> this.worldListChanged = true);
     }
 
     @Override
     public void setRoomListChanged() {
-        this.roomListUpdateReceived = true;
+        Gdx.app.postRunnable(() -> this.roomListChanged = true);
     }
 
     @Override
     public void setWorldChanged() {
-        this.worldChangeReceived = true;
+        Gdx.app.postRunnable(() -> this.worldChanged = true);
     }
 
     @Override
     public void setRoomChanged() {
-        this.roomChangeReceived = true;
+        Gdx.app.postRunnable(() -> this.roomChanged = true);
     }
 
     @Override
     public void setMusicChanged() {
-        this.musicChangeReceived = true;
+        Gdx.app.postRunnable(() -> this.musicChanged = true);
     }
 
     @Override
@@ -558,7 +545,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @return true, wenn sich Benutzerinformationen geändert haben, sonst false.
      */
     public boolean isUserInfoChanged() {
-        return changeUserInfo;
+        return userInfoChanged;
     }
 
     /**
@@ -566,7 +553,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @return true, wenn eine neue Benachrichtigung erhalten wurde, sonst false.
      */
     public boolean isNewNotificationReceived() {
-        return receivedNewNotification;
+        return newNotificationReceived;
     }
 
     /**
@@ -574,7 +561,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @return true, wenn sich Benachrichtigungen geändert haben, sonst false.
      */
     public boolean isUserNotificationChanged() {
-        return changeNotificationInfo;
+        return notificationChanged;
     }
 
     /**
@@ -582,7 +569,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @return true, wenn sich die Welt geändert hat, sonst false.
      */
     public boolean isWorldChanged() {
-        return changeWorld;
+        return worldChanged;
     }
 
     /**
@@ -590,7 +577,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @return true, wenn sich der Raum geändert hat, sonst false.
      */
     public boolean isRoomChanged() {
-        return changeRoom;
+        return roomChanged;
     }
 
     /**
@@ -598,7 +585,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @return true, wenn sich die Musik geändert hat, sonst false.
      */
     public boolean isMusicChanged() {
-        return changeMusic;
+        return musicChanged;
     }
 
     /**
@@ -606,7 +593,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @return true, wenn sich die Liste der Welten geändert hat, sonst false.
      */
     public boolean isWorldListChanged() {
-        return changeWorldList;
+        return worldListChanged;
     }
 
     /**
@@ -614,48 +601,20 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @return true, wenn sich die Liste der Räume geändert hat, sonst false.
      */
     public boolean isRoomListChanged() {
-        return changeRoomList;
-    }
-
-    /**
-     * Transferiert die Informationen der Flags.
-     */
-    private void transferFlags() {
-        changeUserInfo = userInfoChangeReceived;
-        receivedNewNotification = newNotificationInfoReceived;
-        changeNotificationInfo = userNotificationChangeReceived;
-        changeRoom = roomChangeReceived;
-        changeWorld = worldChangeReceived;
-        changeMusic = musicChangeReceived;
-        changeWorldList = worldListUpdateReceived;
-        changeRoomList = roomListUpdateReceived;
-    }
-
-    /**
-     * Setzt die Flags über neu erhaltene Änderungen zurück.
-     */
-    private void resetModelChangeReceivedFlags() {
-        userInfoChangeReceived = false;
-        newNotificationInfoReceived = false;
-        userNotificationChangeReceived = false;
-        roomChangeReceived = false;
-        worldChangeReceived = false;
-        musicChangeReceived = false;
-        worldListUpdateReceived = false;
-        roomListUpdateReceived = false;
+        return roomListChanged;
     }
 
     /**
      * Setzt die Flags zurück, ob die Änderungen abgefragt werden können.
      */
     private void resetModelChangedFlags() {
-        changeUserInfo = false;
-        receivedNewNotification = false;
-        changeNotificationInfo = false;
-        changeRoom = false;
-        changeWorld = false;
-        changeMusic = false;
-        changeWorldList = false;
-        changeRoomList = false;
+        userInfoChanged = false;
+        newNotificationReceived = false;
+        notificationChanged = false;
+        roomChanged = false;
+        worldChanged = false;
+        musicChanged = false;
+        worldListChanged = false;
+        roomListChanged = false;
     }
 }

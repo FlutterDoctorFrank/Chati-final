@@ -204,6 +204,7 @@ public class HeadUpDisplay extends Table implements Translatable {
                 if (chatButton.isVisible() || communicationButton.isVisible() || microphoneButton.isVisible()
                     || soundButton.isVisible()) {
                     chatWindow.clearChat();
+                    chatButton.stopBlinking();
                     hideChatWindow();
                     chatButton.setVisible(false);
                     communicationButton.setVisible(false);
