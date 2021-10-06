@@ -66,21 +66,27 @@ public class UserInfoContainer extends Table {
         }
 
         usernameLabel.setText(user.getUsername());
-        if (user.hasRole(Role.OWNER)) {
+        if (user.hasRole(Role.BOT)) {
+            usernameLabel.setColor(Color.ROYAL);
+        } else if (user.hasRole(Role.OWNER)) {
             usernameLabel.setColor(Color.GOLD);
             Image ownerImage = new Image(Chati.CHATI.getDrawable("role_owner"));
             ownerImage.addListener(new ChatiTooltip("hud.tooltip.owner"));
             roleIcons.add(ownerImage);
         } else if (user.hasRole(Role.ADMINISTRATOR)) {
-            usernameLabel.setColor(Color.SKY);
+            usernameLabel.setColor(Color.GOLD);
             Image administratorImage = new Image(Chati.CHATI.getDrawable("role_administrator"));
             administratorImage.addListener(new ChatiTooltip("hud.tooltip.administrator"));
             roleIcons.add(administratorImage);
         } else if (user.hasRole(Role.MODERATOR)) {
-            usernameLabel.setColor(Color.CORAL);
+            usernameLabel.setColor(Color.SKY);
             Image moderatorImage = new Image(Chati.CHATI.getDrawable("role_moderator"));
             moderatorImage.addListener(new ChatiTooltip("hud.tooltip.moderator"));
             roleIcons.add(moderatorImage);
+        } else if (user.hasRole(Role.ROOM_OWNER)) {
+            usernameLabel.setColor(Color.CORAL);
+        } else if (user.hasRole(Role.AREA_MANAGER)) {
+            usernameLabel.setColor(Color.LIME);
         } else {
             usernameLabel.setColor(Color.WHITE);
         }

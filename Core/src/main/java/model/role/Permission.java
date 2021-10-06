@@ -79,5 +79,10 @@ public enum Permission {
     /**
      * Erlaubt das Erstellen und Löschen von Welten.
      */
-    MANAGE_WORLDS
+    MANAGE_WORLDS,
+
+    /**
+     * Erlaubt das Erstellen und Löschen von Bots.
+     */
+    MANAGE_BOTS
 }

@@ -348,7 +348,7 @@ public class Database implements IUserAccountManagerDatabase, IUserDatabase, ICo
                     avatar = Avatar.values()[new Random().nextInt(Avatar.values().length)];
                 }
 
-                user = new User(userId, name, avatar, lastOnline);
+                user = new User(userId, name, avatar, lastOnline, true);
             } else {
                 LOGGER.warning("Unable to query non-existing user with id " + userId);
             }

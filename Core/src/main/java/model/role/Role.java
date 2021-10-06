@@ -18,14 +18,15 @@ public enum Role {
     OWNER(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.SEE_INVISIBLE_USERS,
             Permission.TELEPORT_TO_USER, Permission.ENTER_PRIVATE_ROOM, Permission.MUTE, Permission.BAN_MODERATOR,
             Permission.BAN_USER, Permission.ASSIGN_AREA_MANAGER, Permission.ASSIGN_MODERATOR,
-            Permission.ASSIGN_ADMINISTRATOR, Permission.MANAGE_WORLDS),
+            Permission.ASSIGN_ADMINISTRATOR, Permission.MANAGE_WORLDS, Permission.MANAGE_BOTS),
 
     /**
      * Repräsentiert die Rolle eines Administrators.
      */
     ADMINISTRATOR(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.SEE_INVISIBLE_USERS,
             Permission.TELEPORT_TO_USER, Permission.ENTER_PRIVATE_ROOM, Permission.MUTE, Permission.BAN_MODERATOR,
-            Permission.BAN_USER, Permission.ASSIGN_AREA_MANAGER, Permission.ASSIGN_MODERATOR, Permission.MANAGE_WORLDS),
+            Permission.BAN_USER, Permission.ASSIGN_AREA_MANAGER, Permission.ASSIGN_MODERATOR, Permission.MANAGE_WORLDS,
+            Permission.MANAGE_BOTS),
 
     /**
      * Repräsentiert die Rolle eines Moderators.
@@ -42,7 +43,12 @@ public enum Role {
     /**
      * Repräsentiert die Rolle eines Bereichsberechtigten.
      */
-    AREA_MANAGER(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.MUTE);
+    AREA_MANAGER(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.MUTE),
+
+    /**
+     * Repräsentiert einen Bot.
+     */
+    BOT(Permission.CONTACT_CONTEXT, Permission.MUTE, Permission.BAN_USER, Permission.BAN_MODERATOR);
 
     private final Set<Permission> permissions;
 

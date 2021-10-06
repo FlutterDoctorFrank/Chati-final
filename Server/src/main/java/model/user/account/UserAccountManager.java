@@ -11,6 +11,7 @@ import model.exception.UserNotFoundException;
 import model.notification.Notification;
 import model.role.Permission;
 import model.role.Role;
+import model.user.Bot;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
@@ -26,8 +27,8 @@ import java.util.stream.Collectors;
  */
 public class UserAccountManager implements IUserAccountManager {
 
-    /** Zeit in Monaten, nach deren Ablauf ohne ein Einloggen in das Benutzerkonto dieses gelöscht wird. */
-    public static final int ACCOUNT_DELETION_TIME = 3;
+    /** Zeit in Tagen, nach deren Ablauf ohne ein Einloggen in das Benutzerkonto dieses gelöscht wird. */
+    public static final int ACCOUNT_DELETION_TIME = 90;
 
     /** Regulärer Ausdruck für das Format von Benutzernamen */
     private static final String USERNAME_FORMAT = "^\\w{2,16}$";
@@ -53,6 +54,9 @@ public class UserAccountManager implements IUserAccountManager {
         registeredUsers = new HashMap<>();
     }
 
+    /**
+     * Lädt die registrierten Benutzer in die Datenbank.
+     */
     public void load() {
         this.registeredUsers.clear();
         this.registeredUsers.putAll(this.database.getUsers());
@@ -69,7 +73,7 @@ public class UserAccountManager implements IUserAccountManager {
             throw new IllegalAccountActionException("", "account.register.illegal-password");
         }
         // Überprüfe, ob bereits ein Konto mit diesem Benutzernamen existiert.
-        if (isRegistered(username)) {
+        if (isRegistered(username) || Bot.get(username) != null) {
             throw new IllegalAccountActionException("", "account.register.already-taken", username);
         }
         // Erzeuge Benutzer und füge ihn zu den registrierten Benutzern hinzu.
@@ -85,11 +89,10 @@ public class UserAccountManager implements IUserAccountManager {
             createdUser.addRole(GlobalContext.getInstance(), Role.OWNER);
         }
 
-        // Setze Willkommen-Benachrichtigung für den frisch registrierten Benutzer.
+        // Sende dem neu registrierten Benutzer eine Willkommen-Benachrichtigung.
         createdUser.addNotification(new Notification(createdUser, GlobalContext.getInstance(), new MessageBundle("notification.welcome")));
 
-        //User createdUser = new User(username);
-        registeredUsers.put(createdUser.getUserId(), createdUser);
+        this.registeredUsers.put(createdUser.getUserId(), createdUser);
     }
 
     @Override
@@ -192,12 +195,15 @@ public class UserAccountManager implements IUserAccountManager {
      * Gibt den Benutzer mit der angegebenen ID zurück.
      * @param userId ID des zurückzugebenden Benutzers.
      * @return Benutzer.
-     * @throws UserNotFoundException: wenn kein Benutzer mit der ID existiert.
+     * @throws UserNotFoundException wenn kein Benutzer mit der ID existiert.
      */
     public @NotNull User getUser(@NotNull final UUID userId) throws UserNotFoundException {
         User user = registeredUsers.get(userId);
         if (user == null) {
-            throw new UserNotFoundException("User does not exist.", userId);
+            user = Bot.get(userId);
+            if (user == null) {
+                throw new UserNotFoundException("User does not exist.", userId);
+            }
         }
         return user;
     }
@@ -206,12 +212,24 @@ public class UserAccountManager implements IUserAccountManager {
      * Gibt den Benutzer mit dem angegebenen Benutzernamen zurück.
      * @param username Benutzername des zurückzugebenden Benutzers.
      * @return Benutzer.
-     * @throws UserNotFoundException: wenn kein Benutzer mit dem Benutzernamen existiert.
+     * @throws UserNotFoundException wenn kein Benutzer mit dem Benutzernamen existiert.
      */
     public @NotNull User getUser(@NotNull final String username) throws UserNotFoundException {
-        return this.getUser(username, true);
+        User user = Bot.get(username);
+        if (user == null) {
+            user = getUser(username, true);
+        }
+        return user;
     }
 
+    /**
+     * Gibt den Benutzer mit dem angegebenen Benutzernamen zurück.
+     * @param username Benutzername des zurückzugebenden Benutzers.
+     * @param ignoreCase true, wenn die Groß- und Kleinschreibung des Namens bei der Suche ignoriert werden soll, sonst
+     * false
+     * @return Benutzer.
+     * @throws UserNotFoundException wenn kein Benutzer mit dem Benutzernamen existiert.
+     */
     private @NotNull User getUser(@NotNull final String username, final boolean ignoreCase) throws UserNotFoundException {
         try {
             return this.registeredUsers.values().stream()
@@ -220,6 +238,14 @@ public class UserAccountManager implements IUserAccountManager {
         } catch (NoSuchElementException ex) {
             throw new UserNotFoundException("User does not exist.", username, ex);
         }
+    }
+
+    /**
+     * Gibt die Menge aller registrierter Benutzer zurück.
+     * @return Menge aller registrierter Benutzer.
+     */
+    public @NotNull Map<UUID, User> getUsers() {
+        return Map.copyOf(registeredUsers);
     }
 
     /**

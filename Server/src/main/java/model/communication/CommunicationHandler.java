@@ -9,8 +9,11 @@ import model.context.global.GlobalContext;
 import model.context.spatial.Area;
 import model.context.spatial.Room;
 import model.context.spatial.World;
+import model.exception.IllegalAccountActionException;
 import model.exception.UserNotFoundException;
 import model.role.Permission;
+import model.role.Role;
+import model.user.Bot;
 import model.user.Status;
 import model.user.User;
 import model.user.account.UserAccountManager;
@@ -174,7 +177,7 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#WHISPER
          */
-        WHISPER_MESSAGE_COMMAND("\\\\\\w+(\\s.*|$)") {
+        WHISPER_MESSAGE("\\\\\\w+(\\s.*|$)") {
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
                                   @Nullable final String imageName) {
@@ -255,7 +258,7 @@ public class CommunicationHandler {
          * werden kann und versendet diese.
          * @see MessageType#AREA
          */
-        AREA_MESSAGE_COMMAND("(?i)area(\\s.*|$)") {
+        AREA_MESSAGE("(?i)area(\\s.*|$)") {
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
                                   @Nullable final String imageName) {
@@ -307,7 +310,7 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#ROOM
          */
-        ROOM_MESSAGE_COMMAND("(?i)room(\\s.*|$)") {
+        ROOM_MESSAGE("(?i)room(\\s.*|$)") {
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
                                   @Nullable final String imageName) {
@@ -359,7 +362,7 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#WORLD
          */
-        WORLD_MESSAGE_COMMAND("(?i)world(\\s.*|$)"){
+        WORLD_MESSAGE("(?i)world(\\s.*|$)") {
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
                                   @Nullable final String imageName) {
@@ -415,7 +418,7 @@ public class CommunicationHandler {
          * kann und versendet diese.
          * @see MessageType#GLOBAL
          */
-        GLOBAL_MESSAGE_COMMAND("(?i)global(\\s.*|$)"){
+        GLOBAL_MESSAGE("(?i)global(\\s.*|$)") {
             @Override
             protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
                                   @Nullable final String imageName) {
@@ -455,6 +458,77 @@ public class CommunicationHandler {
                 // Versende die Textnachricht.
                 TextMessage textMessage = new TextMessage(sender, commandParts[1], imageData, imageName, MessageType.GLOBAL);
                 receivers.values().forEach(user -> user.send(SendAction.MESSAGE, textMessage));
+            }
+        },
+
+        CREATE_BOT("(?i)create(\\s.*|$)") {
+            @Override
+            protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
+                                  @Nullable final String imageName) {
+                if (sender.getLocation() == null) {
+                    throw new IllegalStateException("Users location is not available");
+                }
+
+                // Überprüfe, ob sich der kommunizierende Benutzer in einer Welt befindet.
+                World communicationWorld = sender.getWorld();
+
+                if (communicationWorld == null) {
+                    throw new IllegalStateException("Users world is not available");
+                }
+
+                if (!sender.hasPermission(GlobalContext.getInstance(), Permission.MANAGE_BOTS)) {
+                    // Informiere den kommunizierenden Benutzer darüber, dass er nicht die Berechtigung besitzt, um diesen
+                    // Chatbefehl zu verwenden.
+                    TextMessage infoMessage = new TextMessage("chat.command.create-bot.not-permitted",
+                            communicationWorld.getContextName(), Permission.MANAGE_BOTS);
+                    sender.send(SendAction.MESSAGE, infoMessage);
+                    return;
+                }
+
+                String[] commandParts = message.split("\\s", 2);
+
+                if (commandParts.length < 2) {
+                    // Informiere den kommunizierenden Benutzer darüber, dass der Befehl ungültig ist.
+                    TextMessage infoMessage = new TextMessage("chat.command.create-bot.usage");
+                    sender.send(SendAction.MESSAGE, infoMessage);
+                    return;
+                }
+
+                Bot.create(commandParts[1], sender);
+            }
+        },
+
+        DESTROY_BOT("(?i)destroy(\\s.*|$)") {
+            @Override
+            protected void handle(@NotNull final User sender, @NotNull final String message, final byte[] imageData,
+                                  @Nullable final String imageName) {
+                if (sender.getLocation() == null) {
+                    throw new IllegalStateException("Users location is not available");
+                }
+
+                // Überprüfe, ob sich der kommunizierende Benutzer in einer Welt befindet.
+                World communicationWorld = sender.getWorld();
+
+                if (communicationWorld == null) {
+                    throw new IllegalStateException("Users world is not available");
+                }
+
+                if (!sender.hasPermission(GlobalContext.getInstance(), Permission.MANAGE_BOTS)) {
+                    // Informiere den kommunizierenden Benutzer darüber, dass er nicht die Berechtigung besitzt, um diesen
+                    // Chatbefehl zu verwenden.
+                    TextMessage infoMessage = new TextMessage("chat.command.destroy-bot.not-permitted",
+                            communicationWorld.getContextName(), Permission.MANAGE_BOTS);
+                    sender.send(SendAction.MESSAGE, infoMessage);
+                    return;
+                }
+
+                String[] commandParts = message.split("\\s", 2);
+
+                if (commandParts.length < 2) {
+                    Bot.destroyAll(sender);
+                } else {
+                    Bot.destroy(commandParts[1], sender);
+                }
             }
         };
 

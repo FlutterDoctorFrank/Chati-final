@@ -30,7 +30,7 @@ public class PasswordEncryption {
 
             random.nextBytes(salt);
         } catch (NoSuchAlgorithmException ex) {
-            throw new EncryptionException("Failed to find algorithmen for salt generating", ex);
+            throw new EncryptionException("Failed to find algorithm for salt generating", ex);
         }
 
         return encode(salt);
@@ -44,9 +44,9 @@ public class PasswordEncryption {
 
             return encode(factory.generateSecret(spec).getEncoded());
         } catch (NoSuchAlgorithmException ex) {
-            throw new EncryptionException("Failed to find algorithmen for hashing", ex);
+            throw new EncryptionException("Failed to find algorithm for hashing", ex);
         } catch (InvalidKeySpecException ex) {
-            throw new EncryptionException("Failed to deliver valid key spec for the hashing algorithmen", ex);
+            throw new EncryptionException("Failed to deliver valid key spec for the hashing algorithm", ex);
         } finally {
             spec.clearPassword();
         }

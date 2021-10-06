@@ -15,7 +15,7 @@ import java.util.Locale.Builder;
 public class ChatiPreferences {
 
     public static final Locale DEFAULT_LANGUAGE = Locale.GERMAN;
-    public static final boolean DEFAULT_FULLSCREEN = false;
+    public static final boolean DEFAULT_FULLSCREEN = true;
     public static final boolean DEFAULT_ALWAYS_SPRINTING = false;
     public static final boolean DEFAULT_SHOW_NAMES_IN_WORLD = true;
     public static final boolean DEFAULT_MICROPHONE_ON = false;

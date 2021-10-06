@@ -36,6 +36,6 @@ public class AccountDeletion extends TimedEvent {
     @Override
     public boolean isValid() {
         return !user.isOnline()
-                && !user.getLastLogout().plus(UserAccountManager.ACCOUNT_DELETION_TIME, ChronoUnit.MONTHS).isAfter(time);
+                && !user.getLastLogout().plus(UserAccountManager.ACCOUNT_DELETION_TIME, ChronoUnit.DAYS).isAfter(time);
     }
 }

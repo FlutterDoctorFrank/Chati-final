@@ -103,33 +103,29 @@ public class User implements IUser {
      * @param username Benutzername des Benutzers.
      */
     public User(@NotNull final String username) {
-        this.userId = UUID.randomUUID();
-        this.username = username;
-        this.status = Status.OFFLINE;
-        this.avatar = Avatar.values()[new Random().nextInt(Avatar.values().length)];
-        this.lastLogout = LocalDateTime.now();
-        this.lastActivity = LocalDateTime.now();
-        this.currentWorld = null;
-        this.currentLocation = null;
-        this.currentInteractable = null;
-        this.movable = true;
-        this.communicableUsers = new HashMap<>();
-        this.friends = new HashMap<>();
-        this.ignoredUsers = new HashMap<>();
-        this.contextRoles = new HashMap<>();
-        this.notifications = new HashMap<>();
-        this.database = Database.getUserDatabase();
+        this(username, true);
     }
 
     /**
-     * Erzeugt eine Instanz eines Benutzers anhand von Informationen aus der Datenbank.
+     * Erzeugt eine Instanz eines neu registrierten Benutzers.
+     * @param username Benutzername des Benutzers.
+     * @param persistent true, wenn Informationen zu dem Benutzer in der Datenbank hinterlegt werden sollen, sonst false.
+     */
+    protected User(@NotNull final String username, final boolean persistent) {
+        this(UUID.randomUUID(), username, Avatar.values()[new Random().nextInt(Avatar.values().length)],
+                LocalDateTime.now(), persistent);
+    }
+
+    /**
+     * Erzeugt eine Instanz eines Benutzers.
      * @param userId ID des Benutzers.
      * @param username Benutzername des Benutzers.
      * @param avatar Avatar des Benutzers.
      * @param lastLogout Zeitpunkt, an dem sich der Benutzer das letzte Mal ausgeloggt hat.
+     * @param persistent true, wenn Informationen zu dem Benutzer in der Datenbank hinterlegt werden sollen, sonst false.
      */
     public User(@NotNull final UUID userId, @NotNull final String username, @NotNull final Avatar avatar,
-                @NotNull final LocalDateTime lastLogout) {
+                @NotNull final LocalDateTime lastLogout, final boolean persistent) {
         this.userId = userId;
         this.username = username;
         this.status = Status.OFFLINE;
@@ -145,7 +141,7 @@ public class User implements IUser {
         this.ignoredUsers = new HashMap<>();
         this.contextRoles = new HashMap<>();
         this.notifications = new HashMap<>();
-        this.database = Database.getUserDatabase();
+        this.database = persistent ? Database.getUserDatabase() : null;
     }
 
     @Override
@@ -309,7 +305,9 @@ public class User implements IUser {
                 throw new IllegalNotificationActionException("Invalid notification action", this, notification, false);
         }
 
-        database.updateNotification(this, notification);
+        if (database != null) {
+            database.updateNotification(this, notification);
+        }
     }
 
     @Override
@@ -317,7 +315,9 @@ public class User implements IUser {
         throwIfNotOnline();
         updateLastActivity();
         this.avatar = avatar;
-        database.changeAvatar(this, avatar);
+        if (database != null) {
+            database.changeAvatar(this, avatar);
+        }
 
         /*
          * Wird der Avatar geändert, während sich der Benutzer innerhalb einer Welt befindet, so wird allen Benutzern
@@ -451,7 +451,9 @@ public class User implements IUser {
         }
 
         friends.put(user.getUserId(), user);
-        database.addFriendship(this, user);
+        if (database != null && user.database != null) {
+            database.addFriendship(this, user);
+        }
 
         if (!user.isFriend(this)) {
             user.addFriend(this);
@@ -473,7 +475,9 @@ public class User implements IUser {
         }
 
         friends.remove(user.getUserId());
-        database.removeFriendship(this, user);
+        if (database != null && user.database != null) {
+            database.removeFriendship(this, user);
+        }
 
         if (user.isFriend(this)) {
             user.removeFriend(this);
@@ -495,7 +499,9 @@ public class User implements IUser {
 
         ignoredUsers.put(user.getUserId(), user);
         updateCommunicableUsers();
-        database.addIgnoredUser(this, user);
+        if (database != null && user.database != null) {
+            database.addIgnoredUser(this, user);
+        }
 
         send(SendAction.USER_INFO, user);
     }
@@ -511,7 +517,9 @@ public class User implements IUser {
 
         ignoredUsers.remove(user.getUserId());
         updateCommunicableUsers();
-        database.removeIgnoredUser(this, user);
+        if (database != null && user.database != null) {
+            database.removeIgnoredUser(this, user);
+        }
 
         send(SendAction.USER_INFO, user);
     }
@@ -538,7 +546,9 @@ public class User implements IUser {
         } else {
             contextRole.addRole(role);
         }
-        database.addRole(this, context, role);
+        if (database != null) {
+            database.addRole(this, context, role);
+        }
         // Sende geänderte Rolleninformationen an alle relevanten Benutzer.
         updateRoleInfo(contextRole);
     }
@@ -555,7 +565,9 @@ public class User implements IUser {
             if (contextRole.getRoles().isEmpty()) {
                 contextRoles.remove(context);
             }
-            database.removeRole(this, context, role);
+            if (database != null) {
+                database.removeRole(this, context, role);
+            }
             // Sende geänderte Rolleninformationen an alle relevanten Benutzer.
             updateRoleInfo(contextRole);
         }
@@ -575,7 +587,9 @@ public class User implements IUser {
      */
     public void addNotification(@NotNull final Notification notification) {
         notifications.put(notification.getNotificationId(), notification);
-        database.addNotification(this, notification);
+        if (database != null) {
+            database.addNotification(this, notification);
+        }
 
         // Sende Benachrichtigung an Benutzer.
         this.send(SendAction.NOTIFICATION, notification);
@@ -587,7 +601,9 @@ public class User implements IUser {
      */
     public void removeNotification(@NotNull final Notification notification) {
         notifications.remove(notification.getNotificationId());
-        database.removeNotification(this, notification);
+        if (database != null) {
+            database.removeNotification(this, notification);
+        }
 
         // Sende Löschung der Benachrichtigung an Benutzer.
         this.send(SendAction.NOTIFICATION_DELETE, notification);
@@ -881,7 +897,7 @@ public class User implements IUser {
      * Setzt den Status und den ClientSender des Benutzers.
      * @param sender Der zu setzende ClientSender.
      */
-    public void login(@NotNull final ClientSender sender) {
+    public void login(@Nullable final ClientSender sender) {
         if (this.isOnline()) {
             throw new IllegalStateException("User is already logged in");
         }
@@ -903,10 +919,9 @@ public class User implements IUser {
 
         try {
             leaveWorld();
-        } catch(IllegalStateException ignored) {
+        } catch (IllegalStateException ignored) {
             // Benutzer ist nicht in einer Welt
         }
-
         this.clientSender = null;
         this.status = Status.OFFLINE;
 
@@ -921,7 +936,7 @@ public class User implements IUser {
      * @param object Das zu sendende Objekt.
      */
     public void send(@NotNull final SendAction action, @NotNull final Object object) {
-        if (this.isOnline()) {
+        if (this.isOnline() && this.clientSender != null) {
             this.clientSender.send(action, object);
         }
     }

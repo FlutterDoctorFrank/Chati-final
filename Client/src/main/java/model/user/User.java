@@ -367,7 +367,8 @@ public class User implements IUserController, IUserView {
     public boolean canAssignModerator() {
         InternUser internUser = UserManager.getInstance().getInternUser();
         return internUser.getCurrentWorld() != null && internUser.hasPermission(Permission.ASSIGN_MODERATOR)
-                && !this.hasRole(Role.ADMINISTRATOR) && !this.hasRole(Role.OWNER) && !this.isBanned();
+                && !this.hasRole(Role.ADMINISTRATOR) && !this.hasRole(Role.OWNER) && !this.hasRole(Role.BOT)
+                && !this.isBanned();
     }
 
     @Override

@@ -353,6 +353,13 @@ public enum AdministrativeAction {
                 throw new NoPermissionException("Performer has not the required permission.",
                         "action.user-mute.not-permitted", performer, Permission.MUTE);
             }
+
+            // Überprüfe, ob der stummzuschaltende Benutzer stummgeschaltet werden darf.
+            if (target.hasPermission(performerArea, Permission.MUTE)) {
+                throw new IllegalAdministrativeActionException("Users with the Permission to mute cannot be muted.",
+                        performer, target, MUTE_USER);
+            }
+
             // Überprüfe, ob der stummzuschaltende Benutzer in dem Kontext bereits stummgeschaltet ist.
             if (commonContext.isMuted(target)) {
                 throw new IllegalAdministrativeActionException("Target is already muted in this context.",
@@ -550,10 +557,12 @@ public enum AdministrativeAction {
                 throw new NoPermissionException("no permission", "action.assign-moderator.not-permitted",
                         performer, Permission.ASSIGN_MODERATOR);
             }
-            // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt.
+            // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt oder ein Bot ist.
             if (target.hasRole(GlobalContext.getInstance(), Role.ADMINISTRATOR)
-                    || target.hasRole(GlobalContext.getInstance(), Role.OWNER)) {
-                throw new IllegalAdministrativeActionException("Cannot assign the moderator role to an administrator or owner.",
+                    || target.hasRole(GlobalContext.getInstance(), Role.OWNER)
+                    || target.hasRole(GlobalContext.getInstance(), Role.BOT)) {
+                throw new IllegalAdministrativeActionException("Cannot assign the moderator role to an " +
+                        "administrator, owner or bot.",
                         performer, target, ASSIGN_MODERATOR);
             }
             // Überprüfe, ob der Benutzer bereits die Rolle des Moderators in dem Kontext besitzt.
@@ -596,10 +605,12 @@ public enum AdministrativeAction {
                 throw new NoPermissionException("no permission", "action.assign-moderator.not-permitted",
                         performer, Permission.ASSIGN_MODERATOR);
             }
-            // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt.
+            // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt oder ein Bot ist.
             if (target.hasRole(GlobalContext.getInstance(), Role.ADMINISTRATOR)
-                    || target.hasRole(GlobalContext.getInstance(), Role.OWNER)) {
-                throw new IllegalAdministrativeActionException("Cannot withdraw the moderator role from an administrator or owner.",
+                    || target.hasRole(GlobalContext.getInstance(), Role.OWNER)
+                    || target.hasRole(GlobalContext.getInstance(), Role.BOT)) {
+                throw new IllegalAdministrativeActionException("Cannot withdraw the moderator role from an " +
+                        "administrator, owner or bot.",
                         performer, target, ASSIGN_MODERATOR);
             }
             // Überprüfe, ob der Benutzer die Rolle des Moderators in dem Kontext besitzt.
@@ -632,9 +643,10 @@ public enum AdministrativeAction {
                 throw new NoPermissionException("no permission", "action.assign-administrator.not-permitted",
                         performer, Permission.ASSIGN_ADMINISTRATOR);
             }
-            // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt.
-            if (target.hasRole(GlobalContext.getInstance(), Role.OWNER)) {
-                throw new IllegalAdministrativeActionException("Cannot assign the administrator role to an owner.",
+            // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt oder ein Bot ist.
+            if (target.hasRole(GlobalContext.getInstance(), Role.OWNER)
+                    || target.hasRole(GlobalContext.getInstance(), Role.BOT)) {
+                throw new IllegalAdministrativeActionException("Cannot assign the administrator role to an owne or bot.",
                         performer, target, ASSIGN_ADMINISTRATOR);
             }
             // Überprüfe, ob der Benutzer bereits die Rolle des Administrators in dem Kontext besitzt.
@@ -670,9 +682,10 @@ public enum AdministrativeAction {
                 throw new NoPermissionException("no permission", "action.assign-administrator.not-permitted",
                         performer, Permission.ASSIGN_ADMINISTRATOR);
             }
-            // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt.
-            if (target.hasRole(GlobalContext.getInstance(), Role.OWNER)) {
-                throw new IllegalAdministrativeActionException("Cannot withdraw the administrator role from an owner.",
+            // Überprüfe, ob der Benutzer eine übergeordnete Rolle besitzt oder ein Bot ist.
+            if (target.hasRole(GlobalContext.getInstance(), Role.OWNER)
+                    || target.hasRole(GlobalContext.getInstance(), Role.BOT)) {
+                throw new IllegalAdministrativeActionException("Cannot withdraw the administrator role from an owner or bot.",
                         performer, target, ASSIGN_ADMINISTRATOR);
             }
             // Überprüfe, ob der Benutzer die Rolle des Administrators in dem Kontext besitzt.
