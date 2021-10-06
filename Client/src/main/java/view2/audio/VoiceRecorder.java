@@ -161,11 +161,12 @@ public class VoiceRecorder implements Runnable, Disposable {
         /*
          * Verwendung einer Exponentialfunktion. Wert für a wurde rechnerisch ermittelt, sodass:
          * - Bei maximaler Mikrophonempfindlichkeit alles aufgezeichnet wird. (SendGate = 0)
-         * - Bei minimaler Mikrophonempfindlichkeit nichts aufgezeichnet wird. (SendGate = Short.MAX_VALUE)
+         * - Bei minimaler Mikrophonempfindlichkeit nichts aufgezeichnet wird. (SendGate = Short.MAX_VALUE + 1)
          * - Bei mittlerer Mikrophonempfindlichkeit das SendGate auf 2048 gesetzt wird. Dieser Wert hat sich als
          *   geeignet herausgestellt, um normale Gesprächslautstärke aufzunehmen.
          */
         double a = 943656961d / 28671;
-        this.sendGate = (float) (a * Math.pow((a - Short.MAX_VALUE) / a, microphoneSensitivity) + Short.MAX_VALUE - a);
+        this.sendGate = (float) (a * Math.pow((a - Short.MAX_VALUE + 1) / a, microphoneSensitivity)
+                + Short.MAX_VALUE + 1 - a);
     }
 }

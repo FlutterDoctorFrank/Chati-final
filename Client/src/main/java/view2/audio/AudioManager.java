@@ -163,7 +163,8 @@ public class AudioManager implements Disposable {
      */
     public void playSound(@NotNull final String soundName) {
         if (audioConsumer != null) {
-            audioConsumer.playSound(Chati.CHATI.getSound(soundName), Chati.CHATI.getPreferences().getSoundVolume());
+            audioConsumer.playSound(Chati.CHATI.getSound(soundName), Chati.CHATI.getPreferences().getTotalVolume(),
+                    Chati.CHATI.getPreferences().getSoundVolume());
         }
     }
 

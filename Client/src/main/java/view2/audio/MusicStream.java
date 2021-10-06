@@ -21,8 +21,6 @@ public class MusicStream extends AudioProducer {
     private final Queue<Float> positionQueue;
     private final Queue<Integer> secondsQueue;
 
-    private float slowDownRate;
-
     private float currentPosition;
     private int currentSeconds;
 
@@ -33,7 +31,6 @@ public class MusicStream extends AudioProducer {
         super(MUSIC_STARTING_DELAY);
         this.positionQueue = new LinkedBlockingQueue<>();
         this.secondsQueue = new LinkedBlockingQueue<>();
-        this.slowDownRate = 1;
         this.currentPosition = 0;
         this.currentSeconds = 0;
     }
@@ -64,7 +61,7 @@ public class MusicStream extends AudioProducer {
          * abgespielt werden. In diesem Fall wird die Geschwindigkeit des Abspielens von Musikdaten leicht angepasst, um
          * einen leeren oder unendlich steigenden Puffer zu vermeiden.
          */
-        slowDownRate = -queueSizeInBlocks() / 448f + 1;
+        float slowDownRate = -queueSizeInBlocks() / 448f + 1;
 
         float numPlaybackSample = 0;
         for (short musicData : musicDataBlock) {

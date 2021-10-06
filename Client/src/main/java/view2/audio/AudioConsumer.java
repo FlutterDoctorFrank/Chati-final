@@ -206,13 +206,14 @@ public class AudioConsumer implements Runnable, Disposable {
     /**
      * Spielt einen Sound ab.
      * @param sound Abzuspielender Sound.
-     * @param volume Position des Lautstärkereglers für Soundlautstärke zwischen 0 und 1.
+     * @param totalVolume Position des Lautstärkereglers für Gesamtlautstärke zwischen 0 und 1.
+     * @param soundVolume Position des Lautstärkereglers für Soundlautstärke zwischen 0 und 1.
      */
-    public void playSound(@NotNull final Sound sound, final float volume) {
-        if (volume < 0 || volume > 1) {
+    public void playSound(@NotNull final Sound sound, final float totalVolume, final float soundVolume) {
+        if (totalVolume < 0 || totalVolume > 1 || soundVolume < 0 || soundVolume > 1) {
             return;
         }
-        sound.play(getVolume(MIX_DOWN_FACTOR * volume));
+        sound.play(MIX_DOWN_FACTOR * (float) Math.sqrt(totalVolume * soundVolume));
     }
 
     /**
