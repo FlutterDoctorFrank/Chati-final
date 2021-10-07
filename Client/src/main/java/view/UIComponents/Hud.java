@@ -13,7 +13,6 @@ import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.ContextMap;
 import model.context.spatial.ContextMenu;
-import model.context.spatial.ContextMusic;
 import model.exception.UserNotFoundException;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
@@ -149,6 +148,11 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     @Override
     public void setUserNotificationChanged() {
+
+    }
+
+    @Override
+    public void setUserNotificationReceived() {
 
     }
 

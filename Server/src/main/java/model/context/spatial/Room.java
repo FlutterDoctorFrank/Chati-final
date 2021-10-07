@@ -143,6 +143,8 @@ public class Room extends Area implements IRoom {
                     containedUsers.values().forEach(receiver -> receiver.send(SendAction.MESSAGE, info));
 
                     if (user.hasRole(this, Role.ROOM_OWNER)) {
+                        user.removeRole(this, Role.ROOM_OWNER);
+
                         try {
                             containedUsers.values().stream().findAny().orElseThrow().addRole(this, Role.ROOM_OWNER);
                         } catch (NoSuchElementException ex) {

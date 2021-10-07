@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 public class MapUtils {
 
     private static final Logger LOGGER = Logger.getLogger("chati.map-loader");
+    private static final int AVATAR_RADIUS = 15;
 
     private MapUtils() {
 
@@ -57,13 +58,15 @@ public class MapUtils {
      */
     public static @NotNull BitSet createCollisionMap(@NotNull final Room room, @NotNull final MapLayer layer) {
         final Array<RectangleMapObject> rectangles = layer.getObjects().getByType(RectangleMapObject.class);
-        final BitSet collisions = new BitSet(room.expanse.getWidth() * room.expanse.getHeight());
+        final int mapWidth = room.expanse.getWidth();
+        final int mapHeight = room.expanse.getHeight();
+        final BitSet collisions = new BitSet(mapWidth * mapHeight);
 
         for (final RectangleMapObject object : rectangles) {
-            final int posX = Math.round(object.getRectangle().getX());
-            final int posY = Math.round(object.getRectangle().getY());
-            final int width = Math.round(object.getRectangle().getWidth());
-            final int height = Math.round(object.getRectangle().getHeight());
+            final int posX = Math.max(0, Math.round(object.getRectangle().getX()) - AVATAR_RADIUS);
+            final int posY = Math.max(0, Math.round(object.getRectangle().getY()) - AVATAR_RADIUS);
+            final int width = Math.min(mapWidth - posX, Math.round(object.getRectangle().getWidth()) + AVATAR_RADIUS + (posX > 0 ? AVATAR_RADIUS : 0));
+            final int height = Math.min(mapHeight - posY, Math.round(object.getRectangle().getHeight()) + AVATAR_RADIUS + (posY > 0 ? AVATAR_RADIUS : 0));
 
             for (int row = posY; row < posY + height; row++) {
                 final int base = row * room.expanse.getWidth() + posX;

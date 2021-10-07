@@ -3,13 +3,14 @@ package model.user;
 import controller.network.ClientSender.SendAction;
 import model.communication.message.TextMessage;
 import model.context.global.GlobalContext;
+import model.context.spatial.Direction;
 import model.exception.IllegalNotificationActionException;
+import model.exception.IllegalPositionException;
 import model.notification.Notification;
 import model.role.Role;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -17,8 +18,9 @@ import java.util.UUID;
 
 public class Bot extends User implements Runnable {
 
+    private static final float MAXIMUM_MOVEMENT = 3.3334f;
+    private static final float MINIMUM_DISTANCE = 64;
     private static final float FOLLOW_DISTANCE = 128;
-    private static final float UNFOLLOW_DISTANCE = 1024;
 
     private static final Map<String, Bot> bots = new HashMap<>();
 
@@ -140,51 +142,172 @@ public class Bot extends User implements Runnable {
             }
         }
 
-        if (action == SendAction.AVATAR_SPAWN) {
-            if (followUser != null) {
-                return;
-            }
-
-            if (object instanceof User) {
-                User user = (User) object;
-                if (getLocation() != null && user.getLocation() != null
-                        && getLocation().distance(user.getLocation()) <= FOLLOW_DISTANCE) {
-                    followUser = user;
+        switch (action) {
+            case AVATAR_SPAWN:
+                if (object instanceof User && !object.equals(this)) {
+                    if (followUser != null) {
+                        if (followUser.equals(object)) {
+                            if (currentLocation.distance(followUser.currentLocation) > FOLLOW_DISTANCE + MINIMUM_DISTANCE) {
+                                search();
+                            }
+                        }
+                        if (currentLocation.distance(followUser.currentLocation)
+                                < currentLocation.distance(((User) object).currentLocation)) {
+                            return;
+                        }
+                    }
+                    if (currentLocation.distance(((User) object).currentLocation) <= FOLLOW_DISTANCE) {
+                        followUser = (User) object;
+                    }
                 }
-            }
-        }
+                break;
 
-        if (action == SendAction.AVATAR_MOVE) {
-            if (object instanceof User) {
-                User user = (User) object;
-                if (followUser == null && getLocation() != null && user.getLocation() != null
-                        && getLocation().distance(user.getLocation()) <= FOLLOW_DISTANCE) {
-                    followUser = user;
-                } else if (user.equals(followUser) && (getLocation() == null || user.getLocation() == null
-                        || getLocation().distance(user.getLocation()) >= UNFOLLOW_DISTANCE)) {
-                    followUser = null;
+            case AVATAR_MOVE:
+                if (object instanceof User && !object.equals(this)) {
+                    if (followUser != null) {
+                        if (followUser.equals(object)) {
+                            if (currentLocation.distance(followUser.currentLocation) > FOLLOW_DISTANCE + MINIMUM_DISTANCE) {
+                                search();
+                                return;
+                            }
+
+                            for (final User user : currentLocation.getRoom().getUsers().values()) {
+                                if (!user.equals(this) && !user.equals(followUser) && inFront(user)) {
+                                    if (currentLocation.distance(user.currentLocation)
+                                            < currentLocation.distance(followUser.currentLocation)) {
+                                        followUser = (User) object;
+                                        return;
+                                    }
+                                }
+                            }
+
+                            follow();
+                        } else {
+                            if (currentLocation.distance(((User) object).currentLocation)
+                                    < currentLocation.distance(followUser.currentLocation)) {
+                                followUser = (User) object;
+                            }
+                        }
+                    } else {
+                        if (currentLocation.distance(((User) object).currentLocation) <= FOLLOW_DISTANCE) {
+                            followUser = (User) object;
+                        }
+                    }
                 }
-            }
-        }
+                break;
 
-        if (action == SendAction.AVATAR_REMOVE) {
-            if (followUser == null) {
-                return;
-            }
-
-            if (object instanceof User) {
-                User user = (User) object;
-                if (user.equals(followUser)) {
-                    followUser = null;
+            case AVATAR_REMOVE:
+                if (object instanceof User && !object.equals(this)) {
+                    if (followUser != null && followUser.equals(object)) {
+                        search();
+                    }
                 }
-            }
+                break;
         }
     }
 
     private void move() {
     }
 
+    private boolean inFront(@NotNull final User user) {
+        switch (currentLocation.getDirection()) {
+            case UP:
+                return user.currentLocation.getPosY() > currentLocation.getPosY();
+
+            case RIGHT:
+                return user.currentLocation.getPosX() > currentLocation.getPosX();
+
+            case DOWN:
+                return user.currentLocation.getPosY() < currentLocation.getPosY();
+
+            case LEFT:
+                return user.currentLocation.getPosX() < currentLocation.getPosX();
+        }
+
+        return false;
+    }
+
+    private void search() {
+        followUser = null;
+        float minimumDistance = Float.MAX_VALUE;
+
+        // Suche nach dem nächsten Benutzer innerhalb des Folgeradius.
+        for (final User user : currentLocation.getRoom().getUsers().values()) {
+            if (!user.equals(this) && inFront(user)) {
+                float distance = currentLocation.distance(user.currentLocation);
+
+                if (distance <= FOLLOW_DISTANCE && distance < minimumDistance) {
+                    followUser = user;
+                    minimumDistance = distance;
+                }
+            }
+        }
+    }
+
     private void follow() {
+        if (followUser == null) {
+            return;
+        }
+
+        Direction direction = currentLocation.getDirection();
+        float moveX = 0;
+        float moveY = 0;
+
+        switch (followUser.currentLocation.getDirection()) {
+            case UP:
+            case DOWN:
+                moveX = followUser.currentLocation.getPosX() - currentLocation.getPosX();
+
+                if (moveX != 0) {
+                    if (Math.abs(moveX) > MAXIMUM_MOVEMENT) {
+                        moveX = moveX > 0 ? MAXIMUM_MOVEMENT : -MAXIMUM_MOVEMENT;
+                    }
+                } else {
+                    if (followUser.currentLocation.getDirection() == direction) {
+                        moveY = followUser.currentLocation.getPosY() - currentLocation.getPosY();
+
+                        if (Math.abs(moveY) < MINIMUM_DISTANCE) {
+                            moveY = 0;
+                        } else if (Math.abs(moveY) > MAXIMUM_MOVEMENT) {
+                            moveY = moveY > 0 ? MAXIMUM_MOVEMENT : -MAXIMUM_MOVEMENT;
+                        }
+                    } else {
+                        direction = followUser.currentLocation.getDirection();
+                    }
+                }
+                break;
+
+            case RIGHT:
+            case LEFT:
+                moveY = followUser.currentLocation.getPosY() - currentLocation.getPosY();
+
+                if (moveY != 0) {
+                    if (Math.abs(moveY) > MAXIMUM_MOVEMENT) {
+                        moveY = moveY > 0 ? MAXIMUM_MOVEMENT : -MAXIMUM_MOVEMENT;
+                    }
+                } else {
+                    if (followUser.currentLocation.getDirection() == direction) {
+                        moveX = followUser.currentLocation.getPosX() - currentLocation.getPosX();
+
+                        if (Math.abs(moveX) < MINIMUM_DISTANCE) {
+                            moveX = 0;
+                        } else if (Math.abs(moveX) > MAXIMUM_MOVEMENT) {
+                            moveX = moveX > 0 ? MAXIMUM_MOVEMENT : -MAXIMUM_MOVEMENT;
+                        }
+                    } else {
+                        direction = followUser.currentLocation.getDirection();
+                    }
+                }
+                break;
+        }
+
+        if (moveX != 0 || moveY != 0 || direction != currentLocation.getDirection()) {
+            try {
+                move(direction, currentLocation.getPosX() + moveX, currentLocation.getPosY() + moveY, false);
+            } catch (IllegalPositionException ignored) {
+
+            }
+        }
     }
 
     private void chat() {

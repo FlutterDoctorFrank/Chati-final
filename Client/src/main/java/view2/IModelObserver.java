@@ -21,6 +21,11 @@ public interface IModelObserver {
     void setUserNotificationChanged();
 
     /**
+     * Benachrichtigt die View darüber, dass gelesene Benachrichtigungen empfangen wurden.
+     */
+    void setUserNotificationReceived();
+
+    /**
      * Benachrichtigt die View darüber, dass sich die Menge der Welten geändert hat.
      */
     void setWorldListChanged();

@@ -15,6 +15,10 @@ public class SetUp {
             }
 
             @Override
+            public void setUserNotificationReceived() {
+            }
+
+            @Override
             public void setWorldListChanged() {
 
             }

@@ -63,10 +63,10 @@ public class User implements IUser {
     private LocalDateTime lastReported;
 
     /** Die aktuelle Welt des Benutzers. */
-    private World currentWorld;
+    protected World currentWorld;
 
     /** Die aktuelle Position des Benutzers. */
-    private Location currentLocation;
+    protected Location currentLocation;
 
     /** Die Information, ob sich der Benutzer gerade schnell fortbewegt. */
     private boolean isSprinting;

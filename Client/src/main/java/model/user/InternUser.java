@@ -114,7 +114,10 @@ public class InternUser extends User implements IInternUserController, IInternUs
         }
         notifications.put(notificationId, new Notification(notificationId, Context.getGlobal().getContext(contextId),
                 messageBundle, timestamp, type, isRead, isAccepted, isDeclined));
-        UserManager.getInstance().getModelObserver().setNewNotificationReceived();
+        UserManager.getInstance().getModelObserver().setUserNotificationReceived();
+        if (!isRead) {
+            UserManager.getInstance().getModelObserver().setNewNotificationReceived();
+        }
     }
 
     @Override

@@ -145,7 +145,7 @@
 		"fontColorSelected": { "a": 1, "b": 1, "g": 0.2, "r": 1 },
 		"fontColorUnselected": { "a": 1, "b": 1, "g": 1, "r": 1 },
 		"selection": "list-selection",
-		"over" : list-selection,
+		"over": "list-selection",
 		"background": "list"
 	},
 	"dimmed": {
@@ -153,7 +153,7 @@
 		"fontColorSelected": { "a": 1, "b": 1, "g": 0.2, "r": 1 },
 		"fontColorUnselected": { "a": 1, "b": 1, "g": 1, "r": 1 },
 		"selection": "list-selection",
-		"over" : list-selection,
+		"over": "list-selection",
 		"background": "list"
 	}
 },

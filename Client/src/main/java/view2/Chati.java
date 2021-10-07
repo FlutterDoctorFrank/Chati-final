@@ -60,6 +60,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private boolean userInfoChanged;
     private boolean newNotificationReceived;
     private boolean notificationChanged;
+    private boolean notificationReceived;
     private boolean roomChanged;
     private boolean worldChanged;
     private boolean musicChanged;
@@ -321,6 +322,11 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
+    public void setUserNotificationReceived() {
+        Gdx.app.postRunnable(() -> this.notificationReceived = true);
+    }
+
+    @Override
     public void setWorldListChanged() {
         Gdx.app.postRunnable(() -> this.worldListChanged = true);
     }
@@ -565,6 +571,14 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     /**
+     * Gibt die Information zurück, ob eine bereits gelesene Benachrichtigung seit dem letzten Rendern erhalten wurde.
+     * @return true, wenn eine bereits gelesene Benachrichtigung erhalten wurde, sonst false.
+     */
+    public boolean isUserNotificationReceived() {
+        return notificationReceived;
+    }
+
+    /**
      * Gibt die Information zurück, ob sich die Welt seit dem letzten Rendern geändert hat.
      * @return true, wenn sich die Welt geändert hat, sonst false.
      */
@@ -611,6 +625,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         userInfoChanged = false;
         newNotificationReceived = false;
         notificationChanged = false;
+        notificationReceived = false;
         roomChanged = false;
         worldChanged = false;
         musicChanged = false;
