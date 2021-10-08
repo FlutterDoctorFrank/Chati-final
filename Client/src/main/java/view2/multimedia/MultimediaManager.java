@@ -28,6 +28,8 @@ public class MultimediaManager implements Disposable {
     private VideoRecorder videoRecorder;
     private final VideoReceiver videoReceiver;
 
+    private boolean cameraUsable;
+
     /**
      * Erzeugt eine neue Instanz des MultimediaManager.
      */
@@ -48,8 +50,10 @@ public class MultimediaManager implements Disposable {
 
         try {
             this.videoRecorder = new VideoRecorder();
+            cameraUsable = true;
         } catch (WebcamException e) {
             Chati.LOGGER.log(Level.WARNING, "Webcam not available", e);
+            cameraUsable = false;
         }
 
         this.videoReceiver = new VideoReceiver();
@@ -101,7 +105,7 @@ public class MultimediaManager implements Disposable {
         if (videoRecorder != null) {
             if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
                 if (internUser != null && internUser.isInCurrentWorld()) {
-                    if (!videoRecorder.isRunning()) {
+                    if (!videoRecorder.isRunning() && cameraUsable) {
                         videoRecorder.start();
                     }
                 } else if (internUser == null || !internUser.isInCurrentWorld()) {
@@ -111,10 +115,11 @@ public class MultimediaManager implements Disposable {
                 }
             }
 
-            if (videoRecorder.isRunning()) {
+            if (videoRecorder.isRunning() && cameraUsable) {
                 try {
                     videoRecorder.startRecording();
                 } catch (WebcamLockException e) {
+                    cameraUsable = false;
                     Chati.LOGGER.log(Level.WARNING, "Webcam not available", e);
                 }
                 // TODO : Vorerst

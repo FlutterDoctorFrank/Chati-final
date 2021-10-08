@@ -539,7 +539,7 @@ public class Bot extends User {
         /**
          * Lässt den Bot sprinten.
          */
-        SPRINT_ON("(?i)sprint_on.*") {
+        SPRINT_ON("(?i)sprint_on") {
             @Override
             public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
                 bot.sprint = true;
@@ -549,7 +549,7 @@ public class Bot extends User {
         /**
          * Lässt den Bot in normaler Geschwindigkeit fortbewegen.
          */
-        SPRINT_OFF("(?i)sprint_off.*") {
+        SPRINT_OFF("(?i)sprint_off") {
             @Override
             public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
                 bot.sprint = false;
@@ -559,7 +559,7 @@ public class Bot extends User {
         /**
          * Lässt den Bot vorgefertigte Nachrichten schreiben und sprechen.
          */
-        AUTOCHAT_ON("(?i)autochat_on.*") {
+        AUTOCHAT_ON("(?i)autochat_on") {
             @Override
             public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
                 bot.autoChat = true;
@@ -569,7 +569,7 @@ public class Bot extends User {
         /**
          * Stoppt das Schreiben und Sprechen von vorgefertigten Nachrichten.
          */
-        AUTOCHAT_OFF("(?i)autochat_off.*") {
+        AUTOCHAT_OFF("(?i)autochat_off") {
             @Override
             public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
                 bot.autoChat = false;

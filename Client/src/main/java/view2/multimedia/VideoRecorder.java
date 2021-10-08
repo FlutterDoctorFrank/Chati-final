@@ -14,10 +14,10 @@ import java.nio.ByteBuffer;
  */
 public class VideoRecorder implements Runnable {
 
-    private static final int FRAMES_PER_SECOND = 30;
-    private static final int FRAME_WIDTH = 320;
-    private static final int FRAME_HEIGHT = 240;
-    private static final int COLOR_BYTES = 3;
+    public static final int FRAMES_PER_SECOND = 18;
+    public static final int FRAME_WIDTH = 320;
+    public static final int FRAME_HEIGHT = 240;
+    public static final int COLOR_BYTES = 3;
 
     private final Webcam webcam;
     private final ByteBuffer frameBuffer;
