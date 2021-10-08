@@ -44,13 +44,11 @@ public class MultimediaManager implements Disposable {
             Chati.LOGGER.log(Level.WARNING, "Speaker not available", e);
         }
 
-        /*
         try {
             this.videoRecorder = new VideoRecorder();
         } catch (WebcamException e) {
             Chati.LOGGER.log(Level.WARNING, "Webcam not available", e);
         }
-         */
     }
 
     /**
@@ -93,6 +91,24 @@ public class MultimediaManager implements Disposable {
 
             if (Chati.CHATI.isMusicChanged() && (internUser == null || internUser.getMusic() == null)) {
                 audioConsumer.stopMusic();
+            }
+        }
+
+        if (videoRecorder != null) {
+            if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
+                if (internUser != null && internUser.isInCurrentWorld()) {
+                    if (!videoRecorder.isRunning()) {
+                        videoRecorder.start();
+                    }
+                } else if (internUser == null || !internUser.isInCurrentWorld()) {
+                    if (videoRecorder.isRunning()) {
+                        videoRecorder.stop();
+                    }
+                }
+            }
+
+            if (videoRecorder.isRunning()) {
+
             }
         }
     }

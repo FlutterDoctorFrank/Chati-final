@@ -68,6 +68,9 @@ public class UserInfoContainer extends Table {
         usernameLabel.setText(user.getUsername());
         if (user.hasRole(Role.BOT)) {
             usernameLabel.setColor(Color.ROYAL);
+            Image botImage = new Image(Chati.CHATI.getDrawable("role_bot"));
+            botImage.addListener(new ChatiTooltip("hud.tooltip.bot"));
+            roleIcons.add(botImage);
         } else if (user.hasRole(Role.OWNER)) {
             usernameLabel.setColor(Color.GOLD);
             Image ownerImage = new Image(Chati.CHATI.getDrawable("role_owner"));

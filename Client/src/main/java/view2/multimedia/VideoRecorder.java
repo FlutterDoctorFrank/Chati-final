@@ -24,7 +24,6 @@ public class VideoRecorder implements Runnable {
     private final byte[] frameData;
 
     private boolean isRunning;
-    private boolean isRecording;
     private long deltaTime;
 
     /**
@@ -33,7 +32,6 @@ public class VideoRecorder implements Runnable {
     public VideoRecorder() {
         this.webcam = Webcam.getDefault();
         this.webcam.setViewSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
-        this.webcam.open();
         this.frameBuffer = BufferUtils.createByteBuffer(COLOR_BYTES * FRAME_WIDTH * FRAME_HEIGHT);
         this.frameData = new byte[COLOR_BYTES * FRAME_WIDTH * FRAME_HEIGHT];
         this.deltaTime = 0;
@@ -45,7 +43,7 @@ public class VideoRecorder implements Runnable {
         while (isRunning) {
             try {
                 synchronized (this) {
-                    while (!isRecording) {
+                    while (!webcam.isOpen()) {
                         if (!isRunning) {
                             break outer;
                         }
@@ -98,7 +96,7 @@ public class VideoRecorder implements Runnable {
      * Startet das Aufnehmen und Senden von Videoframes.
      */
     public synchronized void startRecording() {
-        isRecording = true;
+        webcam.open();
         notifyAll();
     }
 
@@ -106,7 +104,7 @@ public class VideoRecorder implements Runnable {
      * Stoppt das Aufnehmen und Senden von Videoframes.
      */
     public void stopRecording() {
-        isRecording = false;
+        webcam.close();
     }
 
     /**
@@ -122,6 +120,6 @@ public class VideoRecorder implements Runnable {
      * @return true, wenn Sprachdaten aufgenommen werden, sonst false.
      */
     public boolean isRecording() {
-        return isRecording;
+        return webcam.isOpen();
     }
 }

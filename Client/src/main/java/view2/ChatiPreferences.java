@@ -18,8 +18,9 @@ public class ChatiPreferences {
     public static final boolean DEFAULT_FULLSCREEN = true;
     public static final boolean DEFAULT_ALWAYS_SPRINTING = false;
     public static final boolean DEFAULT_SHOW_NAMES_IN_WORLD = true;
-    public static final boolean DEFAULT_MICROPHONE_ON = false;
     public static final boolean DEFAULT_SOUND_ON = true;
+    public static final boolean DEFAULT_MICROPHONE_ON = false;
+    public static final boolean DEFAULT_CAMERA_ON = false;
     public static final boolean DEFAULT_PUSH_TO_TALK = false;
     public static final float DEFAULT_MICROPHONE_SENSITIVITY = 0.5f;
     public static final float DEFAULT_TOTAL_VOLUME = 0.5f;
@@ -89,6 +90,15 @@ public class ChatiPreferences {
      */
     public void setMicrophoneOn(boolean microphoneOn) {
         preferences.putBoolean("microphone_on", microphoneOn);
+        preferences.flush();
+    }
+
+    /**
+     * Setzt die Einstellung, ob die Kamera aufzeichnen soll.
+     * @param cameraOn true, wenn die Kamera aufzeichnen soll, sonst false.
+     */
+    public void setCameraOn(boolean cameraOn) {
+        preferences.putBoolean("camera_on", cameraOn);
         preferences.flush();
     }
 
@@ -228,6 +238,14 @@ public class ChatiPreferences {
     }
 
     /**
+     * Gibt zurück, ob die Kamera eingeschaltet ist.
+     * @return true, wenn die Kamera eingeschaltet ist, sonst false.
+     */
+    public boolean isCameraOn() {
+        return preferences.getBoolean("camera_on", DEFAULT_CAMERA_ON);
+    }
+
+    /**
      * Gibt zurück, ob zum Aufzeichnen mit dem Mikrofon momentan das Drücken einer Taste notwendig ist.
      * @return true, wenn das Drücken, einer Taste zum Aufzeichnen notwendig ist, sonst false.
      */
@@ -293,12 +311,14 @@ public class ChatiPreferences {
         KeyCommand.SEND_CHAT_MESSAGE.addKeyBindings(List.of(Input.Keys.ENTER, Input.Keys.NUMPAD_ENTER));
         KeyCommand.PUSH_TO_TALK.addKeyBindings(List.of(Input.Keys.P));
         KeyCommand.OPEN_CHAT.addKeyBindings(List.of(Input.Keys.SPACE));
+        KeyCommand.OPEN_VIDEO_CHAT.addKeyBindings(List.of(Input.Keys.ALT_LEFT, Input.Keys.ALT_RIGHT));
         KeyCommand.OPEN_USER_MENU.addKeyBindings(List.of(Input.Keys.NUM_1, Input.Keys.NUMPAD_1));
         KeyCommand.OPEN_NOTIFICATION_MENU.addKeyBindings(List.of(Input.Keys.NUM_2, Input.Keys.NUMPAD_2));
         KeyCommand.OPEN_SETTINGS_MENU.addKeyBindings(List.of(Input.Keys.NUM_3, Input.Keys.NUMPAD_3));
         KeyCommand.OPEN_COMMUNICATION_MENU.addKeyBindings(List.of(Input.Keys.NUM_4, Input.Keys.NUMPAD_4));
-        KeyCommand.TOGGLE_MICROPHONE.addKeyBindings(List.of(Input.Keys.NUM_5, Input.Keys.NUMPAD_5));
-        KeyCommand.TOGGLE_SOUND.addKeyBindings(List.of(Input.Keys.NUM_6, Input.Keys.NUMPAD_6));
+        KeyCommand.TOGGLE_SOUND.addKeyBindings(List.of(Input.Keys.NUM_5, Input.Keys.NUMPAD_5));
+        KeyCommand.TOGGLE_MICROPHONE.addKeyBindings(List.of(Input.Keys.NUM_6, Input.Keys.NUMPAD_6));
+        KeyCommand.TOGGLE_CAMERA.addKeyBindings(List.of(Input.Keys.NUM_7, Input.Keys.NUMPAD_7));
         KeyCommand.TOGGLE_FULLSCREEN.addKeyBindings(List.of(Input.Keys.F11));
         KeyCommand.CLOSE.addKeyBindings(List.of(Input.Keys.ESCAPE));
     }

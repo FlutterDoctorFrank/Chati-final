@@ -45,6 +45,9 @@ public enum KeyCommand {
     /** Repräsentiert das Öffnen des Chats. */
     OPEN_CHAT,
 
+    /** Repräsentiert das Öffnen des Videochats. */
+    OPEN_VIDEO_CHAT,
+
     /** Repräsentiert das Öffnen des Benutzermenüs. */
     OPEN_USER_MENU,
 
@@ -57,11 +60,14 @@ public enum KeyCommand {
     /** Repräsentiert das Öffnen des Kommunikationsmenüs. */
     OPEN_COMMUNICATION_MENU,
 
+    /** Repräsentiert das Ein- beziehungsweise Ausschalten des Tons. */
+    TOGGLE_SOUND,
+
     /** Repräsentiert das Ein- beziehungsweise Ausschalten des Mikrofons. */
     TOGGLE_MICROPHONE,
 
-    /** Repräsentiert das Ein- beziehungsweise Ausschalten des Tons. */
-    TOGGLE_SOUND,
+    /** Repräsentiert das Ein- beziehungsweise Ausschalten der Kamera. */
+    TOGGLE_CAMERA,
 
     /** Repräsentiert die Taste, zum Wechseln des Bildschirmmodus.  */
     TOGGLE_FULLSCREEN,

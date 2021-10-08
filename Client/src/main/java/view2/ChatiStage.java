@@ -3,10 +3,12 @@ package view2;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import model.user.IInternUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.userInterface.ChatiWindow;
+import view2.userInterface.IChatiWindow;
 import view2.userInterface.hud.ChatWindow;
 import java.util.Stack;
 
@@ -32,6 +34,11 @@ public class ChatiStage extends Stage {
             if (KeyCommand.OPEN_CHAT.matches(keycode)) {
                 Chati.CHATI.getHeadUpDisplay().showChatWindow();
             }
+
+            if (KeyCommand.OPEN_VIDEO_CHAT.matches(keycode)) {
+                Chati.CHATI.getHeadUpDisplay().showVideoChatWindow();
+            }
+
             IInternUserView internUser = Chati.CHATI.getInternUser();
             if (internUser != null && internUser.getCurrentWorld() != null) {
                 if (KeyCommand.OPEN_COMMUNICATION_MENU.matches(keycode)) {
@@ -41,13 +48,20 @@ public class ChatiStage extends Stage {
                         Chati.CHATI.getHeadUpDisplay().openCommunicationWindow();
                     }
                 }
-                if (KeyCommand.TOGGLE_MICROPHONE.matches(keycode)) {
-                    Chati.CHATI.getHeadUpDisplay().toggleMicrophone();
-                }
+
                 if (KeyCommand.TOGGLE_SOUND.matches(keycode)) {
                     Chati.CHATI.getHeadUpDisplay().toggleSound();
                 }
+
+                if (KeyCommand.TOGGLE_MICROPHONE.matches(keycode)) {
+                    Chati.CHATI.getHeadUpDisplay().toggleMicrophone();
+                }
+
+                if (KeyCommand.TOGGLE_CAMERA.matches(keycode)) {
+                    Chati.CHATI.getHeadUpDisplay().toggleCamera();
+                }
             }
+
             if (KeyCommand.OPEN_USER_MENU.matches(keycode)) {
                 if (Chati.CHATI.getHeadUpDisplay().isUserMenuOpen()) {
                     Chati.CHATI.getHeadUpDisplay().closeCurrentMenu();
@@ -55,6 +69,7 @@ public class ChatiStage extends Stage {
                     Chati.CHATI.getHeadUpDisplay().openUserMenu();
                 }
             }
+
             if (KeyCommand.OPEN_NOTIFICATION_MENU.matches(keycode)) {
                 if (Chati.CHATI.getHeadUpDisplay().isNotificationMenuOpen()) {
                     Chati.CHATI.getHeadUpDisplay().closeCurrentMenu();
@@ -62,6 +77,7 @@ public class ChatiStage extends Stage {
                     Chati.CHATI.getHeadUpDisplay().openNotificationMenu();
                 }
             }
+
             if (KeyCommand.OPEN_SETTINGS_MENU.matches(keycode)) {
                 if (Chati.CHATI.getHeadUpDisplay().isSettingsMenuOpen()) {
                     Chati.CHATI.getHeadUpDisplay().closeCurrentMenu();
@@ -69,6 +85,7 @@ public class ChatiStage extends Stage {
                     Chati.CHATI.getHeadUpDisplay().openSettingsMenu();
                 }
             }
+
             if (KeyCommand.TOGGLE_FULLSCREEN.matches(keycode)) {
                 if (Gdx.graphics.supportsDisplayModeChange()) {
                     Chati.CHATI.getPreferences().setFullscreen(!Gdx.graphics.isFullscreen());
@@ -83,6 +100,8 @@ public class ChatiStage extends Stage {
                 openWindows.peek().close();
             } else if (Chati.CHATI.getHeadUpDisplay().isChatOpen()) {
                 Chati.CHATI.getHeadUpDisplay().hideChatWindow();
+            } else if (Chati.CHATI.getHeadUpDisplay().isVideoChatOpen()) {
+                Chati.CHATI.getHeadUpDisplay().hideVideoChatWindow();
             } else {
                 Chati.CHATI.getHeadUpDisplay().openSettingsMenu();
             }

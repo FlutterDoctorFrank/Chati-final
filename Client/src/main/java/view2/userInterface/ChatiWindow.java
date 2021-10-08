@@ -13,7 +13,7 @@ import java.util.ArrayList;
 /**
  * Eine Klasse, welche die in der Anwendung verwendeten Windows repräsentiert.
  */
-public abstract class ChatiWindow extends Window implements Translatable {
+public abstract class ChatiWindow extends Window implements IChatiWindow, Translatable {
 
     protected static final float ROW_HEIGHT = 60;
     protected static final float SPACE = 15;
@@ -83,23 +83,17 @@ public abstract class ChatiWindow extends Window implements Translatable {
         super.setHeight(height);
     }
 
-    /**
-     * Veranlasst das Öffnen des Fensters.
-     */
+    @Override
     public void open() {
         Chati.CHATI.getScreen().getStage().openWindow(this);
     }
 
-    /**
-     * Veranlasst das Schließen des Fensters.
-     */
+    @Override
     public void close() {
         Chati.CHATI.getScreen().getStage().closeWindow(this);
     }
 
-    /**
-     * Fokussiert dieses Fenster.
-     */
+    @Override
     public abstract void focus();
 
     /**

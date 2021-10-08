@@ -13,6 +13,7 @@ import model.exception.IllegalNotificationActionException;
 import model.exception.IllegalPositionException;
 import model.exception.UserNotFoundException;
 import model.notification.Notification;
+import model.role.Permission;
 import model.role.Role;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
@@ -92,11 +93,8 @@ public class Bot extends User {
             return;
         }
 
-        Bot bot = bots.remove(botname);
-        if (bot != null) {
-            UserAccountManager.getInstance().getUsers().values().forEach(user -> user.removeFriend(bot));
-            UserAccountManager.getInstance().getUsers().values().forEach(user -> user.unignoreUser(bot));
-            bot.logout();
+        if (destroy(botname)) {
+            bots.remove(botname);
         } else {
             // Informiere den ausführenden Benutzer darüber, dass kein Bot mit diesem Namen existiert.
             TextMessage infoMessage = new TextMessage("chat.command.create-bot.not-exist");
@@ -109,9 +107,24 @@ public class Bot extends User {
      * @param executor Entfernender Benutzer.
      */
     public static void destroyAll(@NotNull final User executor) {
-        for (Bot bot : bots.values()) {
-            destroy(bot.getUsername(), executor);
+        bots.values().forEach(bot -> destroy(bot.getUsername()));
+        bots.clear();
+    }
+
+    /**
+     * Löscht die Informationen über einen Bot.
+     * @param botname Name des Bots, dessen Informationen gelöscht werden soll.
+     * @return true, wenn ein Bot mit dem Namen gefunden wurde, sonst false.
+     */
+    private static boolean destroy(@NotNull final String botname) {
+        Bot bot = bots.get(botname);
+        if (bot != null) {
+            UserAccountManager.getInstance().getUsers().values().forEach(user -> user.removeFriend(bot));
+            UserAccountManager.getInstance().getUsers().values().forEach(user -> user.unignoreUser(bot));
+            bot.logout();
+            return true;
         }
+        return false;
     }
 
     /**
@@ -212,7 +225,8 @@ public class Bot extends User {
                     String message = textMessage.getTextMessage();
                     if (sender != null && !sender.equals(this)) {
                         if (textMessage.getMessageType() == MessageType.WHISPER && message != null
-                                && message.startsWith("\\")) {
+                                && message.startsWith("\\") && getWorld() != null
+                                && sender.hasPermission(getWorld(), Permission.MANAGE_BOTS)) {
                             for (WhisperCommand command : WhisperCommand.values()) {
                                 if (message.substring(1).matches(command.commandPattern)) {
                                     command.handle(sender, this, message.substring(1));

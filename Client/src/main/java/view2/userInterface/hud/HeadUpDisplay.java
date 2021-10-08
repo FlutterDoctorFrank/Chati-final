@@ -35,13 +35,16 @@ public class HeadUpDisplay extends Table implements Translatable {
     public static final float BUTTON_SPACING = 10;
 
     private final ChatWindow chatWindow;
+    private final VideoChatWindow videoChatWindow;
     private final ImageButton userListButton;
     private final NotificationButton notificationListButton;
     private final ImageButton settingsButton;
     private final ChatButton chatButton;
+    private final ChatButton videoChatButton;
     private final ImageButton communicationButton;
-    private final ImageButton microphoneButton;
     private final ImageButton soundButton;
+    private final ImageButton microphoneButton;
+    private final ImageButton cameraButton;
 
     private HudMenuWindow currentMenuWindow;
     private CommunicationWindow communicationWindow;
@@ -54,6 +57,7 @@ public class HeadUpDisplay extends Table implements Translatable {
      */
     public HeadUpDisplay() {
         this.chatWindow = new ChatWindow();
+        this.videoChatWindow = new VideoChatWindow();
 
         userListButton = new ChatiImageButton(Chati.CHATI.getDrawable("user_menu_closed"),
                 Chati.CHATI.getDrawable("user_menu_open"));
@@ -107,6 +111,20 @@ public class HeadUpDisplay extends Table implements Translatable {
             }
         });
 
+        videoChatButton = new ChatButton(Chati.CHATI.getDrawable("videochat_closed"),
+                Chati.CHATI.getDrawable("videochat_open"));
+        videoChatButton.setVisible(false);
+        videoChatButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                if (videoChatButton.isChecked()) {
+                    showVideoChatWindow();
+                } else {
+                    hideVideoChatWindow();
+                }
+            }
+        });
+
         communicationButton = new ChatiImageButton(Chati.CHATI.getDrawable("communicable_list_closed"),
                 Chati.CHATI.getDrawable("communicable_list_open"));
         communicationButton.setVisible(false);
@@ -121,6 +139,16 @@ public class HeadUpDisplay extends Table implements Translatable {
             }
         });
 
+        soundButton = new ChatiImageButton(Chati.CHATI.getDrawable("sound_off"), Chati.CHATI.getDrawable("sound_on"));
+        soundButton.setChecked(Chati.CHATI.getPreferences().isSoundOn());
+        soundButton.setVisible(false);
+        soundButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                Chati.CHATI.getPreferences().setSoundOn(soundButton.isChecked());
+            }
+        });
+
         microphoneButton = new ChatiImageButton(Chati.CHATI.getDrawable("microphone_off"),
                 Chati.CHATI.getDrawable("microphone_on"));
         microphoneButton.setChecked(Chati.CHATI.getPreferences().isMicrophoneOn());
@@ -132,13 +160,13 @@ public class HeadUpDisplay extends Table implements Translatable {
             }
         });
 
-        soundButton = new ChatiImageButton(Chati.CHATI.getDrawable("sound_off"), Chati.CHATI.getDrawable("sound_on"));
-        soundButton.setChecked(Chati.CHATI.getPreferences().isSoundOn());
-        soundButton.setVisible(false);
-        soundButton.addListener(new ClickListener() {
+        cameraButton = new ChatiImageButton(Chati.CHATI.getDrawable("camera_off"), Chati.CHATI.getDrawable("camera_on"));
+        cameraButton.setChecked(Chati.CHATI.getPreferences().isCameraOn());
+        cameraButton.setVisible(false);
+        cameraButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                Chati.CHATI.getPreferences().setSoundOn(soundButton.isChecked());
+                Chati.CHATI.getPreferences().setCameraOn(cameraButton.isChecked());
             }
         });
 
@@ -153,6 +181,7 @@ public class HeadUpDisplay extends Table implements Translatable {
         // Layout
         setFillParent(true);
 
+        // Oben rechts: Benutzerliste, Benachrichtigungen, Einstellungen
         Table topRightButtonContainer = new Table();
         topRightButtonContainer.setFillParent(true);
         topRightButtonContainer.top().right().defaults().size(BUTTON_SIZE).space(BUTTON_SPACING);
@@ -162,21 +191,25 @@ public class HeadUpDisplay extends Table implements Translatable {
         topRightButtonContainer.add(userListButton, notificationListButton, settingsButton);
         addActor(topRightButtonContainer);
 
+        // Unten links: Kommunikation, Ton, Mikrophon, Kamera
         Table bottomLeftButtonContainer = new Table();
         bottomLeftButtonContainer.setFillParent(true);
         bottomLeftButtonContainer.bottom().left().defaults().size(BUTTON_SIZE).spaceBottom(BUTTON_SPACING);
         communicationButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
-        microphoneButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
         soundButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
-        bottomLeftButtonContainer.add(communicationButton, microphoneButton, soundButton);
+        microphoneButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
+        cameraButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
+        bottomLeftButtonContainer.add(communicationButton, soundButton, microphoneButton, cameraButton);
         addActor(bottomLeftButtonContainer);
 
-        Table chatButtonContainer = new Table();
-        chatButtonContainer.setFillParent(true);
-        chatButtonContainer.bottom().right().defaults().size(BUTTON_SIZE);
-        chatButton.getImage().setOrigin(BUTTON_SIZE/ 2, BUTTON_SIZE / 2);
-        chatButtonContainer.add(chatButton);
-        addActor(chatButtonContainer);
+        // Unten rechts: Chat, Videochat
+        Table bottomRightButtonContainer = new Table();
+        bottomRightButtonContainer.setFillParent(true);
+        bottomRightButtonContainer.bottom().right().defaults().size(BUTTON_SIZE);
+        chatButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
+        videoChatButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
+        bottomRightButtonContainer.add(videoChatButton, chatButton);
+        addActor(bottomRightButtonContainer);
     }
 
     @Override
@@ -193,23 +226,27 @@ public class HeadUpDisplay extends Table implements Translatable {
             }
 
             if (internUser != null && internUser.isInCurrentWorld()) {
-                if (!chatButton.isVisible() || !communicationButton.isVisible() || !microphoneButton.isVisible()
-                    || !soundButton.isVisible()) {
+                if (!chatButton.isVisible() || !videoChatButton.isVisible() || !communicationButton.isVisible()
+                        || !soundButton.isVisible() || !microphoneButton.isVisible() || !cameraButton.isVisible()) {
                     chatButton.setVisible(true);
+                    videoChatButton.setVisible(true);
                     communicationButton.setVisible(true);
-                    microphoneButton.setVisible(true);
                     soundButton.setVisible(true);
+                    microphoneButton.setVisible(true);
+                    cameraButton.setVisible(true);
                 }
             } else if ((internUser == null || !internUser.isInCurrentWorld())) {
-                if (chatButton.isVisible() || communicationButton.isVisible() || microphoneButton.isVisible()
-                    || soundButton.isVisible()) {
+                if (chatButton.isVisible() || videoChatButton.isVisible() || communicationButton.isVisible()
+                        || soundButton.isVisible() || microphoneButton.isVisible() || cameraButton.isVisible()) {
                     chatWindow.clearChat();
-                    chatButton.stopBlinking();
+                    // TODO videochatWindow clear
                     hideChatWindow();
+                    hideVideoChatWindow();
                     chatButton.setVisible(false);
                     communicationButton.setVisible(false);
-                    microphoneButton.setVisible(false);
                     soundButton.setVisible(false);
+                    microphoneButton.setVisible(false);
+                    cameraButton.setVisible(false);
                 }
             }
         }
@@ -317,6 +354,14 @@ public class HeadUpDisplay extends Table implements Translatable {
     }
 
     /**
+     * Schaltet den Ton ein oder aus.
+     */
+    public void toggleSound() {
+        soundButton.setChecked(!soundButton.isChecked());
+        Chati.CHATI.getPreferences().setSoundOn(soundButton.isChecked());
+    }
+
+    /**
      * Schaltet das Mikrofon ein oder aus.
      */
     public void toggleMicrophone() {
@@ -325,11 +370,11 @@ public class HeadUpDisplay extends Table implements Translatable {
     }
 
     /**
-     * Schaltet den Ton ein oder aus.
+     * Schaltet die Kamera ein oder aus.
      */
-    public void toggleSound() {
-        soundButton.setChecked(!soundButton.isChecked());
-        Chati.CHATI.getPreferences().setSoundOn(soundButton.isChecked());
+    public void toggleCamera() {
+        cameraButton.setChecked(!cameraButton.isChecked());
+        Chati.CHATI.getPreferences().setCameraOn(cameraButton.isChecked());
     }
 
     /**
@@ -357,8 +402,23 @@ public class HeadUpDisplay extends Table implements Translatable {
      * Zeigt das Chatfenster nicht mehr an.
      */
     public void hideChatWindow() {
+        chatButton.stopBlinking();
         chatButton.setChecked(false);
         chatWindow.hide();
+    }
+
+    /**
+     * Zeigt das Videochat-Fenster an.
+     */
+    public void showVideoChatWindow() {
+        // TODO
+    }
+
+    /**
+     * Zeigt das Videochat-Fenster nichtmehr an.
+     */
+    public void hideVideoChatWindow() {
+        // TODO
     }
 
     /**
@@ -463,6 +523,15 @@ public class HeadUpDisplay extends Table implements Translatable {
      */
     public boolean isChatOpen() {
         return chatButton.isVisible() && chatWindow.isVisible() || restoreChat;
+    }
+
+    /**
+     * Gibt zurück, ob das Videochat-Fenster sichtbar ist.
+     * @return true, wenn das Videochat-Fenster sichtbar ist, sonst false.
+     */
+    public boolean isVideoChatOpen() {
+        // TODO
+        return false;
     }
 
     /**
