@@ -60,6 +60,13 @@
             <artifactId>gdx-tools</artifactId>
             <version>${gdx.version}</version>
         </dependency>
+
+        <!-- Sarxos - Webcam-capture -->
+        <dependency>
+            <groupId>com.github.sarxos</groupId>
+            <artifactId>webcam-capture</artifactId>
+            <version>0.3.12</version>
+        </dependency>
     </dependencies>
 
     <build>

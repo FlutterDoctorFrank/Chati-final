@@ -227,6 +227,13 @@ public class User implements IUser {
     }
 
     @Override
+    public void show(final byte[] frameData) {
+        throwIfNotOnline();
+        throwIfNotInWorld();
+        CommunicationHandler.handleVideoFrame(this, frameData);
+    }
+
+    @Override
     public void executeAdministrativeAction(@NotNull final UUID targetId, @NotNull final AdministrativeAction administrativeAction,
                                             @NotNull final String[] args)
             throws UserNotFoundException, IllegalAdministrativeActionException, NoPermissionException {

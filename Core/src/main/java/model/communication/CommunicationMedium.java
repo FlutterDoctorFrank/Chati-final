@@ -13,5 +13,10 @@ public enum CommunicationMedium {
     /**
      * Repräsentiert sprachbasierte Kommunikation.
      */
-    VOICE
+    VOICE,
+
+    /**
+     * Repräsentiert Kommunikation mit Hilfe von Video.
+     */
+    VIDEO
 }

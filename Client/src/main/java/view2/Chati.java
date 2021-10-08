@@ -22,7 +22,7 @@ import model.user.IInternUserView;
 import model.user.IUserManagerView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import view2.audio.AudioManager;
+import view2.multimedia.MultimediaManager;
 import view2.userInterface.hud.HeadUpDisplay;
 import view2.userInterface.menu.ConnectionTable;
 import view2.userInterface.menu.LoginTable;
@@ -50,7 +50,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     private ChatiEmojiManager emojiManager;
     private ChatiPreferences preferences;
     private ChatiLocalization localization;
-    private AudioManager audioManager;
+    private MultimediaManager multimediaManager;
     private SpriteBatch spriteBatch;
     private HeadUpDisplay headUpDisplay;
     private MenuScreen menuScreen;
@@ -96,7 +96,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
         this.preferences = new ChatiPreferences();
         this.localization = new ChatiLocalization();
         this.emojiManager = new ChatiEmojiManager();
-        this.audioManager = new AudioManager();
+        this.multimediaManager = new MultimediaManager();
         this.spriteBatch = new SpriteBatch();
         this.headUpDisplay = new HeadUpDisplay();
         this.menuScreen = new MenuScreen();
@@ -110,7 +110,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void render() {
-        audioManager.update();
+        multimediaManager.update();
         super.render();
         resetModelChangedFlags();
     }
@@ -125,7 +125,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     @Override
     public void dispose() {
         assetManager.dispose();
-        audioManager.dispose();
+        multimediaManager.dispose();
         spriteBatch.dispose();
         menuScreen.dispose();
         worldScreen.dispose();
@@ -281,8 +281,8 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * Gibt die Instanz des AudioManager zurück.
      * @return AudioManager
      */
-    public @NotNull AudioManager getAudioManager() {
-        return audioManager;
+    public @NotNull MultimediaManager getAudioManager() {
+        return multimediaManager;
     }
 
     /**
@@ -461,7 +461,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public void playVoiceData(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, final byte[] voiceData)
             throws UserNotFoundException {
         if (this.screen.equals(worldScreen)) {
-            audioManager.playVoiceData(userId, timestamp, voiceData);
+            multimediaManager.playVoiceData(userId, timestamp, voiceData);
         }
     }
 
@@ -469,7 +469,15 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData,
                               final float position, final int seconds) {
         if (this.screen.equals(worldScreen)) {
-            audioManager.playMusicData(timestamp, musicData, position, seconds);
+            multimediaManager.playMusicData(timestamp, musicData, position, seconds);
+        }
+    }
+
+    @Override
+    public void showVideoFrame(@NotNull UUID userId, @NotNull LocalDateTime timestamp, byte[] frameData)
+            throws UserNotFoundException {
+        if (this.screen.equals(worldScreen)) {
+            headUpDisplay.showVideoFrame(userId, timestamp, frameData);
         }
     }
 

@@ -375,6 +375,11 @@ public class Hud extends Stage implements IModelObserver, ViewControllerInterfac
 
     }
 
+    @Override
+    public void showVideoFrame(@NotNull UUID userId, @NotNull LocalDateTime timestamp, byte[] frameData) throws UserNotFoundException {
+
+    }
+
 
     @Override
     public void openMenu(@NotNull ContextID contextId, @NotNull ContextMenu menu) {

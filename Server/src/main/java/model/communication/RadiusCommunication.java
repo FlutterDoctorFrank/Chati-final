@@ -1,5 +1,6 @@
 package model.communication;
 
+import model.context.spatial.Area;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
 import java.util.Map;
@@ -11,10 +12,10 @@ import java.util.UUID;
 public class RadiusCommunication extends AreaCommunication {
 
     /** Standardmäßiger Radius, innerhalb dem Benutzer kommunizieren können. */
-    private static final int DEFAULT_RADIUS = 2 * 32;
+    private static final float DEFAULT_RADIUS = 2 * Area.VIEW_TILE_SIZE;
 
     /** Radius, innerhalb dem Benutzer kommunizieren können.*/
-    private final int radius;
+    private final float radius;
 
     /**
      * Erzeugt eine neue Instanz der RadiusCommunication.
@@ -26,7 +27,7 @@ public class RadiusCommunication extends AreaCommunication {
     /**
      * Erzeugt eine neue Instanz der RadiusCommunication.
      */
-    public RadiusCommunication(final boolean exclusive, final int radius) {
+    public RadiusCommunication(final boolean exclusive, final float radius) {
         super(exclusive);
         this.radius = radius;
     }

@@ -113,7 +113,8 @@ public interface ViewControllerInterface {
      * @param voiceData Sprachdaten, die abgespielt werden sollen.
      * @throws UserNotFoundException wenn kein Benutzer mit der ID gefunden werden konnte.
      */
-    void playVoiceData(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, final byte[] voiceData) throws UserNotFoundException;
+    void playVoiceData(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, final byte[] voiceData)
+            throws UserNotFoundException;
 
     /**
      * Benachrichtigt die View, dass ein neues Musikdaten-Paket erhalten wurde.
@@ -124,6 +125,16 @@ public interface ViewControllerInterface {
      */
     void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData,
                        final float position, final int seconds);
+
+    /**
+     * Benachrichtigt die View, dass ein neuer Video-Paket erhalten wurde.
+     * @param userId ID des Benutzers, der dieses Paket gesendet hat.
+     * @param timestamp Zeitpunkt, an dem dieses Paket gesendet wurde.
+     * @param frameData Videodaten des Frames, das gezeigt werden soll.
+     * @throws UserNotFoundException wenn kein Benutzer mit der ID gefunden werden konnte.
+     */
+    void showVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, final byte[] frameData)
+            throws UserNotFoundException;
 
     /**
      * Benachrichtigt die View, dass das Menü eines Interaktionsobjekts geöffnet werden soll.

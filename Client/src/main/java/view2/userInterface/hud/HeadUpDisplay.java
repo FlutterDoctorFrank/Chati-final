@@ -406,6 +406,18 @@ public class HeadUpDisplay extends Table implements Translatable {
     }
 
     /**
+     * Zeigt ein VideoFrame im VideoChatfenster an.
+     * @param userId ID des Benutzers, dessen Frame angezeigt werden soll.
+     * @param timestamp Zeitstempel des Frames.
+     * @param frameData Daten des Frames.
+     * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
+     */
+    public void showVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
+                               final byte[] frameData) throws UserNotFoundException {
+        // TODO morgen
+    }
+
+    /**
      * Gibt zurück, ob das Benutzer-, Benachrichtigungs- oder Einstellungsmenü geöffnet ist.
      * @return true, wenn das Benutzer-, Benachrichtigungs- oder Einstellungsmenü geöffnet ist, sonst false.
      */

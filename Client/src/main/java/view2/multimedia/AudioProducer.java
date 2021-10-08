@@ -1,4 +1,4 @@
-package view2.audio;
+package view2.multimedia;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,7 @@ public abstract class AudioProducer {
      */
     protected AudioProducer(final float startingDelay) {
         this.receivedDataQueue = new LinkedBlockingQueue<>();
-        this.minBlocks = (int) (startingDelay * AudioManager.SEND_RATE);
+        this.minBlocks = (int) (startingDelay * MultimediaManager.SEND_RATE);
     }
 
     /**
@@ -43,7 +43,7 @@ public abstract class AudioProducer {
      * @return Block mit aktuell abzuspielenden Audiodaten.
      */
     public short[] getAudioDataBlock() {
-        short[] block = new short[AudioManager.BLOCK_SIZE];
+        short[] block = new short[MultimediaManager.BLOCK_SIZE];
         for (int i = 0; i < block.length; i++) {
             Short data = receivedDataQueue.poll();
             block[i] = data != null ? data : 0;
@@ -83,6 +83,6 @@ public abstract class AudioProducer {
      * @return Größe der Warteschlange in der Anzahl abspielbarer Blöcke.
      */
     protected int queueSizeInBlocks() {
-        return receivedDataQueue.size() / AudioManager.BLOCK_SIZE;
+        return receivedDataQueue.size() / MultimediaManager.BLOCK_SIZE;
     }
 }

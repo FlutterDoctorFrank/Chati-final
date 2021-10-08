@@ -1,6 +1,5 @@
 package controller.network.mock;
 
-import com.badlogic.gdx.utils.Null;
 import model.context.ContextID;
 import model.context.global.IGlobalContext;
 import model.context.spatial.Direction;
@@ -112,6 +111,11 @@ public class MockIUser implements IUser {
     @Override
     public void talk(final byte[] voiceData) {
         this.calls.add("talk");
+    }
+
+    @Override
+    public void show(byte[] frameData) {
+
     }
 
     private boolean unknownUser;

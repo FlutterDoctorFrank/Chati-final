@@ -1,28 +1,15 @@
 package controller.network;
 
-import controller.network.protocol.Packet;
-import controller.network.protocol.PacketAvatarMove;
+import controller.network.protocol.*;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
-import controller.network.protocol.PacketChatMessage;
-import controller.network.protocol.PacketNotificationResponse;
-import controller.network.protocol.PacketOutCommunicable;
-import controller.network.protocol.PacketOutContextInfo;
-import controller.network.protocol.PacketOutContextJoin;
-import controller.network.protocol.PacketOutContextList;
 import controller.network.protocol.PacketOutContextList.ContextInfo;
-import controller.network.protocol.PacketOutContextRole;
-import controller.network.protocol.PacketOutMenuAction;
-import controller.network.protocol.PacketOutNotification;
 import controller.network.protocol.PacketOutNotification.Notification;
-import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.Action;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo.Flag;
-import controller.network.protocol.PacketUserTyping;
-import controller.network.protocol.PacketAudioMessage;
-import controller.network.protocol.PacketWorldAction;
 import model.communication.message.ITextMessage;
 import model.communication.message.IAudioMessage;
+import model.communication.message.IVideoFrame;
 import model.communication.message.MessageType;
 import model.context.IContext;
 import model.context.global.IGlobalContext;
@@ -519,6 +506,29 @@ public interface ClientSender {
                             message.getSeconds());
                 } else {
                     throw new IllegalArgumentException("Expected IAudioMessage, got " + object.getClass());
+                }
+            }
+        },
+
+        /**
+         * Information, dass ein Video-Frame gesendet werden soll.
+         * <p>
+         *     Erwartet als Objekt die Schnittstelle: {@link IVideoFrame}
+         * </p>
+         */
+        VIDEO {
+            @Override
+            protected @NotNull Packet<?> getPacket(@NotNull final IUser user, @NotNull final Object object) {
+                if (object instanceof IVideoFrame) {
+                    final IVideoFrame frame = (IVideoFrame) object;
+
+                    if (frame.getSender() == null) {
+                        throw new IllegalArgumentException("Expected Sender from IVideoFrame, got null");
+                    }
+
+                    return new PacketVideoFrame(frame.getSender().getUserId(), frame.getTimestamp(), frame.getFrameData());
+                } else {
+                    throw new IllegalArgumentException("Expected IVideoFrame, got " + object.getClass());
                 }
             }
         };

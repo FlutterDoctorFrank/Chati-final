@@ -19,6 +19,9 @@ import java.util.function.Predicate;
 
 public class Area extends Context implements IArea {
 
+    /** Die Größe eines Tiles in der View. */
+    public static final float VIEW_TILE_SIZE = 32;
+
     /** Die diesem Kontext übergeordnete Welt. */
     protected final World world;
 

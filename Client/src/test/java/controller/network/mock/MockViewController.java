@@ -115,6 +115,11 @@ public class MockViewController implements ViewControllerInterface {
     }
 
     @Override
+    public void showVideoFrame(@NotNull UUID userId, @NotNull LocalDateTime timestamp, byte[] frameData) throws UserNotFoundException {
+        this.calls.add("show-video-frame");
+    }
+
+    @Override
     public void openMenu(@NotNull final ContextID contextId, @NotNull final ContextMenu menu) {
         this.calls.add("open-menu");
     }

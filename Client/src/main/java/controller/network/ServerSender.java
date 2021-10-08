@@ -1,16 +1,6 @@
 package controller.network;
 
-import controller.network.protocol.Packet;
-import controller.network.protocol.PacketAvatarMove;
-import controller.network.protocol.PacketChatMessage;
-import controller.network.protocol.PacketInContextInteract;
-import controller.network.protocol.PacketInUserManage;
-import controller.network.protocol.PacketMenuOption;
-import controller.network.protocol.PacketNotificationResponse;
-import controller.network.protocol.PacketProfileAction;
-import controller.network.protocol.PacketUserTyping;
-import controller.network.protocol.PacketAudioMessage;
-import controller.network.protocol.PacketWorldAction;
+import controller.network.protocol.*;
 import model.context.ContextID;
 import model.context.spatial.ContextMap;
 import model.context.spatial.Direction;
@@ -442,7 +432,7 @@ public interface ServerSender {
         },
 
         /**
-         * Information, dass eine Chat-Nachricht gesendet werden soll.
+         * Information, dass eine Sprachnachricht gesendet werden soll.
          * <p>
          *     Erwartet als Objekt Array die Klassen:<br>
          *     - {@code 0}: {@code byte[]}, Die im Sprachdaten der Sprachnachricht
@@ -454,6 +444,28 @@ public interface ServerSender {
                 if (objects.length == 1) {
                     if (objects[0] instanceof byte[]) {
                         return new PacketAudioMessage((byte[]) objects[0]);
+                    } else {
+                        throw new IllegalArgumentException("Expected byte[], got " + objects[0].getClass());
+                    }
+                } else {
+                    throw new IllegalArgumentException("Expected Array size of 1, got " + objects.length);
+                }
+            }
+        },
+
+        /**
+         * Information, dass ein Videoframe gesendet werden soll.
+         * <p>
+         *     Erwartet als Objekt Array die Klassen:<br>
+         *     - {@code 0}: {@code byte[]}, Die Daten des Videoframes
+         * </p>
+         */
+        VIDEO {
+            @Override
+            protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
+                if (objects.length == 1) {
+                    if (objects[0] instanceof byte[]) {
+                        return new PacketVideoFrame((byte[]) objects[0]);
                     } else {
                         throw new IllegalArgumentException("Expected byte[], got " + objects[0].getClass());
                     }

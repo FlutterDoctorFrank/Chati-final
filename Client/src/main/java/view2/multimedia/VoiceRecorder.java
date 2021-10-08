@@ -1,4 +1,4 @@
-package view2.audio;
+package view2.multimedia;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioRecorder;
@@ -15,7 +15,7 @@ import java.util.Queue;
 public class VoiceRecorder implements Runnable, Disposable {
 
     private static final float LOOK_AHEAD = 0.25f; // in Sekunden
-    private static final int MAX_BLOCKS = (int) (LOOK_AHEAD * AudioManager.SEND_RATE);
+    private static final int MAX_BLOCKS = (int) (LOOK_AHEAD * MultimediaManager.SEND_RATE);
     private static final float STOP_SENDING_DELAY = 0.25f; // in Sekunden
 
     private final AudioRecorder recorder;
@@ -29,7 +29,7 @@ public class VoiceRecorder implements Runnable, Disposable {
      * Erzeugt eine neue Instanz des VoiceRecorder.
      */
     public VoiceRecorder() {
-        this.recorder = Gdx.audio.newAudioRecorder(AudioManager.SAMPLING_RATE, AudioManager.MONO);
+        this.recorder = Gdx.audio.newAudioRecorder(MultimediaManager.SAMPLING_RATE, MultimediaManager.MONO);
         this.sendDataQueue = new LinkedList<>();
     }
 
@@ -54,7 +54,7 @@ public class VoiceRecorder implements Runnable, Disposable {
                 }
             }
 
-            short[] recordedData = new short[AudioManager.BLOCK_SIZE];
+            short[] recordedData = new short[MultimediaManager.BLOCK_SIZE];
             recorder.read(recordedData, 0, recordedData.length);
             sendDataQueue.add(recordedData);
             if (sendDataQueue.size() > MAX_BLOCKS) {
@@ -73,7 +73,7 @@ public class VoiceRecorder implements Runnable, Disposable {
             if (System.currentTimeMillis() - timestamp < 1000 * STOP_SENDING_DELAY) {
                 short[] sendData = sendDataQueue.poll();
                 while (sendData != null) {
-                    Chati.CHATI.send(ServerSender.SendAction.VOICE, AudioManager.toByte(sendData, true));
+                    Chati.CHATI.send(ServerSender.SendAction.VOICE, MultimediaManager.toByte(sendData, true));
                     sendData = sendDataQueue.poll();
                 }
                 isSending = true;

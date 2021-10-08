@@ -1,4 +1,4 @@
-package view2.audio;
+package view2.multimedia;
 
 import org.jetbrains.annotations.NotNull;
 

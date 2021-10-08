@@ -2,28 +2,12 @@ package controller.network;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import controller.network.protocol.Packet;
-import controller.network.protocol.PacketAvatarMove;
+import controller.network.protocol.*;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
-import controller.network.protocol.PacketChatMessage;
-import controller.network.protocol.PacketInContextInteract;
-import controller.network.protocol.PacketInUserManage;
-import controller.network.protocol.PacketListener;
-import controller.network.protocol.PacketListenerIn;
-import controller.network.protocol.PacketMenuOption;
-import controller.network.protocol.PacketNotificationResponse;
-import controller.network.protocol.PacketOutContextList;
-import controller.network.protocol.PacketOutContextRole;
-import controller.network.protocol.PacketOutNotification;
 import controller.network.protocol.PacketOutNotification.Notification;
-import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo.Flag;
-import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketProfileAction.Action;
-import controller.network.protocol.PacketUserTyping;
-import controller.network.protocol.PacketAudioMessage;
-import controller.network.protocol.PacketWorldAction;
 import model.context.spatial.Direction;
 import model.context.spatial.IWorld;
 import model.exception.ContextNotFoundException;
@@ -438,6 +422,26 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
     }
 
     @Override
+    public void handle(@NotNull final PacketVideoFrame packet) {
+        if (this.user == null) {
+            this.logUnexpectedPacket(packet, "Can not show video while not logged in");
+            return;
+        }
+
+        if (this.user.getWorld() != null) {
+            // Überprüfung, ob gegebenenfalls eine falsche User-ID versendet wurde.
+            if (packet.getSenderId() != null && !packet.getSenderId().equals(this.user.getUserId())) {
+                this.logInvalidPacket(packet, "User-ID must be the own or null");
+                return;
+            }
+
+            this.user.show(packet.getFrameData());
+        } else {
+            this.logUnexpectedPacket(packet, "Can not show video while not in a world");
+        }
+    }
+
+    @Override
     public void handle(@NotNull final PacketWorldAction packet) {
         if (this.user == null) {
             this.logUnexpectedPacket(packet, "Can not perform world action while not logged in");
@@ -553,7 +557,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
     private void logPacket(@NotNull final Packet<?> packet, final boolean sent) {
         final Level level = (packet instanceof PacketAvatarMove && ((PacketAvatarMove) packet).getAction() == AvatarAction.MOVE_AVATAR)
-                || packet instanceof PacketAudioMessage ? Level.FINER : Level.FINE;
+                || packet instanceof PacketAudioMessage || packet instanceof PacketVideoFrame ? Level.FINER : Level.FINE;
 
         if (sent) {
             LOGGER.log(level, String.format("Sent packet to connection %s: %s", this.connection.getID(), packet));

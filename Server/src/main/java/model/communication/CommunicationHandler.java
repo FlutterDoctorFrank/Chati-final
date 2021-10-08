@@ -4,6 +4,7 @@ import controller.network.ClientSender.SendAction;
 import model.communication.message.MessageType;
 import model.communication.message.TextMessage;
 import model.communication.message.AudioMessage;
+import model.communication.message.VideoFrame;
 import model.context.Context;
 import model.context.global.GlobalContext;
 import model.context.spatial.Area;
@@ -155,6 +156,34 @@ public class CommunicationHandler {
         // Versende die Sprachnachricht.
         AudioMessage audioMessage = new AudioMessage(sender, voiceData);
         receivers.values().forEach(user -> user.send(SendAction.AUDIO, audioMessage));
+    }
+
+    /**
+     * Ermittelt die Nutzer, die dieses Frame gemäß der im räumlichen Kontext des Senders geltenden Kommunikationsform
+     * empfangen sollen und leitet es an diese weiter.
+     * @param sender Kommunizierender Benutzer.
+     * @param frameData Zu versendendes Frame.
+     */
+    public static void handleVideoFrame(@NotNull final User sender, final byte[] frameData) {
+        if (sender.getLocation() == null) {
+            throw new IllegalStateException("Communicators location is not available.");
+        }
+
+        // Überprüfung, ob in dem Bereich des Benutzers Videonachrichten versendet werden können oder der sendende
+        // Benutzer in dem Kontext stummgeschaltet ist.
+        Area communicationContext = sender.getLocation().getArea();
+        if (!communicationContext.canCommunicateWith(CommunicationMedium.VIDEO)
+                || communicationContext.isMuted(sender)) {
+            return;
+        }
+
+        // Ermittle die empfangsberechtigten Benutzer gemäß der Kommunikationsform, ohne den sendenden Benutzer.
+        Map<UUID, User> receivers = sender.getCommunicableUsers();
+        receivers.remove(sender.getUserId());
+
+        // Versende die Sprachnachricht.
+        VideoFrame videoFrame = new VideoFrame(sender, frameData);
+        receivers.values().forEach(user -> user.send(SendAction.VIDEO, videoFrame));
     }
 
     /**

@@ -23,7 +23,7 @@ import java.util.Set;
 public abstract class Interactable extends Area implements IInteractable {
 
     /** Die maximale Distanz, über die eine Interaktion erfolgen darf. */
-    protected static final int INTERACTION_DISTANCE = 1 * 32;
+    protected static final float INTERACTION_DISTANCE = VIEW_TILE_SIZE;
 
     /** Menü-Option zum Schließen des Menüs. */
     protected static final int MENU_OPTION_CLOSE = 0;

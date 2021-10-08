@@ -1,4 +1,4 @@
-package view2.audio;
+package view2.multimedia;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioDevice;
@@ -38,14 +38,14 @@ public class AudioConsumer implements Runnable, Disposable {
      * Erzeugt eine neue Instanz des AudioConsumer.
      */
     public AudioConsumer() {
-        this.player = Gdx.audio.newAudioDevice(AudioManager.SAMPLING_RATE, AudioManager.MONO);
+        this.player = Gdx.audio.newAudioDevice(MultimediaManager.SAMPLING_RATE, MultimediaManager.MONO);
         this.voiceDataBuffer = new ConcurrentHashMap<>();
         this.musicStream = new MusicStream();
     }
 
     @Override
     public void run() {
-        short[] mixedData = new short[AudioManager.BLOCK_SIZE];
+        short[] mixedData = new short[MultimediaManager.BLOCK_SIZE];
 
         outer:
         while (isRunning) {
@@ -67,13 +67,13 @@ public class AudioConsumer implements Runnable, Disposable {
             Set<short[]> blocks = voiceDataBuffer.values().stream().filter(VoiceChatUser::isReady)
                     .map(VoiceChatUser::getAudioDataBlock).collect(Collectors.toSet());
             voiceDataBuffer.values().removeIf(Predicate.not(VoiceChatUser::hasData));
-            short[] musicBlock = new short[AudioManager.BLOCK_SIZE];
+            short[] musicBlock = new short[MultimediaManager.BLOCK_SIZE];
             if (musicStream.isReady()) {
                 musicBlock = musicStream.getAudioDataBlock();
             }
 
-            int[] temp = new int[AudioManager.BLOCK_SIZE];
-            for (int i = 0; i < AudioManager.BLOCK_SIZE; i++) {
+            int[] temp = new int[MultimediaManager.BLOCK_SIZE];
+            for (int i = 0; i < MultimediaManager.BLOCK_SIZE; i++) {
                 if (Chati.CHATI.getPreferences().isSoundOn()) {
                     // Mische Daten aller Teilnehmer des Voicechats und setze die entsprechende Lautstärke.
                     for (short[] block : blocks) {
@@ -166,7 +166,7 @@ public class AudioConsumer implements Runnable, Disposable {
             return;
         }
         IUserView sender = Chati.CHATI.getUserManager().getExternUserView(senderId);
-        short[] receivedData = AudioManager.toShort(voiceData, true);
+        short[] receivedData = MultimediaManager.toShort(voiceData, true);
 
         synchronized (this) {
             if (!voiceDataBuffer.containsKey(sender)) {
@@ -190,7 +190,7 @@ public class AudioConsumer implements Runnable, Disposable {
         if (!isRunning) {
             return;
         }
-        short[] receivedData = AudioManager.toShort(musicData, false);
+        short[] receivedData = MultimediaManager.toShort(musicData, false);
 
         synchronized (this) {
             musicStream.addAudioDataBlock(timestamp, receivedData, position, seconds);

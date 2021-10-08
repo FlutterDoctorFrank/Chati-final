@@ -1,6 +1,5 @@
 package model.communication.message;
 
-import model.context.spatial.ContextMusic;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

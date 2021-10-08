@@ -71,7 +71,7 @@ public class InternUserAvatar extends UserAvatar {
             currentDirection = getCurrentDirectionalInput();
         }
 
-        float velocity = DEFAULT_VELOCITY;
+        float velocity = WorldCamera.scaleToUnit(DEFAULT_VELOCITY);
         if (Chati.CHATI.getPreferences().isAlwaysSprinting()
                 || Chati.CHATI.getWorldScreen().getWorldInputProcessor().isSprintPressed()) {
             isSprinting = true;

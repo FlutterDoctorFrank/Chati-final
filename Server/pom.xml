@@ -41,6 +41,14 @@
             <version>${derby.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- FreeTTS -->
+        <dependency>
+            <groupId>net.sf.sociaal</groupId>
+            <artifactId>freetts</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -38,7 +38,7 @@ public class UserAvatar extends Sprite {
             + "varying LOWP vec4 v_color;\n" + "varying vec2 v_texCoords;\n" + "uniform sampler2D u_texture;\n"
             + "void main()\n" + "{\n" + "  gl_FragColor = v_color * texture2D(u_texture, v_texCoords).a;\n" + "}";
 
-    public static final float DEFAULT_VELOCITY = 10f;
+    public static final float DEFAULT_VELOCITY = 100f;
     public static final float SPRINT_VELOCITY_FACTOR = 1.67f;
     protected static final float AVATAR_SIZE = 32;
     protected static final float TALK_BORDER_SIZE = 3.2f;
@@ -133,16 +133,6 @@ public class UserAvatar extends Sprite {
     }
 
     /**
-     * Zeichnet einen Rand um den Avatar um anzuzeigenden dass gerade Sprachdaten von dem entsprechenden Benutzer
-     * abgespielt werden.
-     * @param batch Verwendeter Batch.
-     * @param alpha Alpha-Wert.
-     */
-    protected void drawTalkingBorder(@NotNull final Batch batch, final float alpha) {
-
-    }
-
-    /**
      * Gibt die momentan anzuzeigende Textur zurück.
      * @return Anzuzeigende Textur.
      */
@@ -207,7 +197,7 @@ public class UserAvatar extends Sprite {
         if (user.isTeleporting()) {
             teleport();
         } else {
-            float velocity = DEFAULT_VELOCITY;
+            float velocity = WorldCamera.scaleToUnit(DEFAULT_VELOCITY);
             if (user.isSprinting()) {
                 velocity *= SPRINT_VELOCITY_FACTOR;
                 setFrameDuration(FRAME_DURATION / SPRINT_VELOCITY_FACTOR);

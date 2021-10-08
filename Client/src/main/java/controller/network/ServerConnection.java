@@ -2,31 +2,13 @@ package controller.network;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import controller.network.protocol.Packet;
-import controller.network.protocol.PacketAvatarMove;
+import controller.network.protocol.*;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
-import controller.network.protocol.PacketChatMessage;
-import controller.network.protocol.PacketListener;
-import controller.network.protocol.PacketListenerOut;
-import controller.network.protocol.PacketMenuOption;
-import controller.network.protocol.PacketNotificationResponse;
-import controller.network.protocol.PacketOutCommunicable;
-import controller.network.protocol.PacketOutContextInfo;
-import controller.network.protocol.PacketOutContextJoin;
-import controller.network.protocol.PacketOutContextList;
 import controller.network.protocol.PacketOutContextList.ContextInfo;
-import controller.network.protocol.PacketOutContextRole;
-import controller.network.protocol.PacketOutMenuAction;
-import controller.network.protocol.PacketOutNotification;
 import controller.network.protocol.PacketOutNotification.Notification;
-import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo.Flag;
-import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketProfileAction.Action;
-import controller.network.protocol.PacketUserTyping;
-import controller.network.protocol.PacketAudioMessage;
-import controller.network.protocol.PacketWorldAction;
 import model.context.ContextID;
 import model.exception.ContextNotFoundException;
 import model.exception.NotificationNotFoundException;
@@ -420,6 +402,35 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     }
 
     @Override
+    public void handle(@NotNull PacketVideoFrame packet) {
+        if (this.userId == null) {
+            this.logUnexpectedPacket(packet, "Can not receive video frame while user is not logged in");
+            return;
+        }
+
+        if (this.worldId != null) {
+            if (packet.getTimestamp() == null) {
+                this.logInvalidPacket(packet, "Timestamp can not be null");
+                return;
+            }
+
+            if (packet.getSenderId() == null) {
+                this.logInvalidPacket(packet, "Sender User-ID can not be null");
+                return;
+            }
+
+            try {
+                this.manager.getView().showVideoFrame(packet.getSenderId(), packet.getTimestamp(), packet.getFrameData());
+            } catch (UserNotFoundException ex) {
+                // Unbekannter Sender.
+                LOGGER.warning("Server tried to send video frame from unknown sender with id: " + ex.getUserID());
+            }
+        } else {
+            this.logUnexpectedPacket(packet, "Can not receive video frame while user is not in a world");
+        }
+    }
+
+    @Override
     public void handle(@NotNull final PacketWorldAction packet) {
         if (this.userId == null) {
             this.logUnexpectedPacket(packet, "Can not receive world action while user is not logged in");
@@ -755,7 +766,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
     private void logPacket(@NotNull final Packet<?> packet, final boolean sent) {
         final Level level = (packet instanceof PacketAvatarMove && ((PacketAvatarMove) packet).getAction() == AvatarAction.MOVE_AVATAR)
-                || packet instanceof PacketAudioMessage ? Level.FINER : Level.FINE;
+                || packet instanceof PacketAudioMessage || packet instanceof PacketVideoFrame ? Level.FINER : Level.FINE;
 
         if (sent) {
             LOGGER.log(level, String.format("Sent packet to server: %s", packet));

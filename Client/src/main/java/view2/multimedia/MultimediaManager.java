@@ -1,7 +1,8 @@
-package view2.audio;
+package view2.multimedia;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.github.sarxos.webcam.WebcamException;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import model.user.IUserView;
@@ -12,9 +13,9 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 /**
- * Eine Klasse, welche den VoiceChat sowie das Abspielen von Soundeffekten koordiniert.
+ * Eine Klasse, welche die in der Anwendung verwendeten Medien verwaltet.
  */
-public class AudioManager implements Disposable {
+public class MultimediaManager implements Disposable {
 
     public static final int SAMPLING_RATE = 44100;
     public static final int SEND_RATE = 30;
@@ -23,11 +24,12 @@ public class AudioManager implements Disposable {
 
     private VoiceRecorder voiceRecorder;
     private AudioConsumer audioConsumer;
+    private VideoRecorder videoRecorder;
 
     /**
-     * Erzeugt eine neue Instanz des AudioManager.
+     * Erzeugt eine neue Instanz des MultimediaManager.
      */
-    public AudioManager() {
+    public MultimediaManager() {
         try {
             this.audioConsumer = new AudioConsumer();
             setVolume();
@@ -41,6 +43,14 @@ public class AudioManager implements Disposable {
         } catch (GdxRuntimeException e) {
             Chati.LOGGER.log(Level.WARNING, "Speaker not available", e);
         }
+
+        /*
+        try {
+            this.videoRecorder = new VideoRecorder();
+        } catch (WebcamException e) {
+            Chati.LOGGER.log(Level.WARNING, "Webcam not available", e);
+        }
+         */
     }
 
     /**
