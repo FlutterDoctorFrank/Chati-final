@@ -108,7 +108,7 @@ public class UserAvatar extends Sprite {
         update();
         setRegion(getKeyFrame());
 
-        if (Chati.CHATI.getAudioManager().isTalking(user)) {
+        if (Chati.CHATI.getMultimediaManager().isTalking(user)) {
             setSize(WorldCamera.scaleToUnit(AVATAR_SIZE + TALK_BORDER_SIZE),
                     WorldCamera.scaleToUnit(AVATAR_SIZE + TALK_BORDER_SIZE));
             setPosition(getPosition().x - getWidth() / 2, getPosition().y - getHeight() / 2);

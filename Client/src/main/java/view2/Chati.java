@@ -281,7 +281,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * Gibt die Instanz des AudioManager zurück.
      * @return AudioManager
      */
-    public @NotNull MultimediaManager getAudioManager() {
+    public @NotNull MultimediaManager getMultimediaManager() {
         return multimediaManager;
     }
 
@@ -477,7 +477,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     public void showVideoFrame(@NotNull UUID userId, @NotNull LocalDateTime timestamp, byte[] frameData)
             throws UserNotFoundException {
         if (this.screen.equals(worldScreen)) {
-            headUpDisplay.showVideoFrame(userId, timestamp, frameData);
+            multimediaManager.receiveVideoFrame(userId, timestamp, frameData);
         }
     }
 

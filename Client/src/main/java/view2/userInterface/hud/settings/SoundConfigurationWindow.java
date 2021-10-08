@@ -129,8 +129,8 @@ public class SoundConfigurationWindow extends ChatiWindow {
                 Chati.CHATI.getPreferences().setSoundVolume(soundVolumeSlider.getValue());
                 Chati.CHATI.getPreferences().setMicrophoneSensitivity(microphoneSensitivitySlider.getValue());
                 Chati.CHATI.getPreferences().setPushToTalk(pushToTalkCheckBox.isChecked());
-                Chati.CHATI.getAudioManager().setMicrophoneSensitivity();
-                Chati.CHATI.getAudioManager().setVolume();
+                Chati.CHATI.getMultimediaManager().setMicrophoneSensitivity();
+                Chati.CHATI.getMultimediaManager().setVolume();
                 showMessage("window.settings.saved");
             }
         });

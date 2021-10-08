@@ -172,7 +172,7 @@ public class CommunicationHandler {
         // Überprüfung, ob in dem Bereich des Benutzers Videonachrichten versendet werden können oder der sendende
         // Benutzer in dem Kontext stummgeschaltet ist.
         Area communicationContext = sender.getLocation().getArea();
-        if (!communicationContext.canCommunicateWith(CommunicationMedium.VIDEO)
+        if (!communicationContext.canCommunicateWith(CommunicationMedium.VOICE) // TODO Ändere zu Video wenn Map aktualisiert
                 || communicationContext.isMuted(sender)) {
             return;
         }

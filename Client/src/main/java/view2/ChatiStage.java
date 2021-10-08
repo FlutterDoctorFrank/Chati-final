@@ -3,12 +3,10 @@ package view2;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import model.user.IInternUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.userInterface.ChatiWindow;
-import view2.userInterface.IChatiWindow;
 import view2.userInterface.hud.ChatWindow;
 import java.util.Stack;
 

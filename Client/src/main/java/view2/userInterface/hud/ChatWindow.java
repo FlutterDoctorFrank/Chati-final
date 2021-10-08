@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -32,12 +31,7 @@ import view2.Chati;
 import view2.ChatiEmojiManager;
 import view2.ChatiLocalization.Translatable;
 import view2.KeyCommand;
-import view2.userInterface.ChatiImageButton;
-import view2.userInterface.ChatiTextArea;
-import view2.userInterface.ChatiTextButton;
-import view2.userInterface.ChatiTooltip;
-import view2.userInterface.ResizeWindowListener;
-import view2.userInterface.WeblinkClickListener;
+import view2.userInterface.*;
 import view2.world.component.InternUserAvatar;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -54,7 +48,7 @@ import java.util.regex.Pattern;
 /**
  * Eine Klasse, welche das Chatfenster der Anwendung repräsentiert.
  */
-public class ChatWindow extends Window implements Translatable {
+public class ChatWindow extends ResizableWindow {
 
     private static final int MAX_CHAT_MESSAGES = 256;
     private static final long SHOW_TYPING_DURATION = 1; // in Sekunden
@@ -68,7 +62,6 @@ public class ChatWindow extends Window implements Translatable {
     private static final float SEND_BUTTON_HEIGHT = 60;
     private static final float MAX_IMAGE_SIZE = 180;
     private static final float IMAGE_SCALE_FACTOR = 0.025f;
-    private static final int RESIZE_BORDER = 8;
 
     private final List<ChatMessage> chatMessages;
     private final Map<IUserView, Long> typingUsers;
@@ -90,7 +83,7 @@ public class ChatWindow extends Window implements Translatable {
      * Erzeugt eine neue Instanz des ChatWindow.
      */
     public ChatWindow() {
-        super(Chati.CHATI.getLocalization().translate("window.title.chat"), Chati.CHATI.getSkin());
+        super("window.title.chat");
         this.chatMessages = new LinkedList<>();
         this.typingUsers = new HashMap<>();
 
@@ -197,15 +190,8 @@ public class ChatWindow extends Window implements Translatable {
             }
         });
 
-        addListener(new ResizeWindowListener(this, RESIZE_BORDER));
-
         // Layout
         setVisible(false);
-        setModal(false);
-        setMovable(true);
-        setResizable(true);
-        setResizeBorder(RESIZE_BORDER);
-        setKeepWithinStage(true);
         setPosition(Gdx.graphics.getWidth(), 0);
         setWidth(DEFAULT_WIDTH);
         setHeight(DEFAULT_HEIGHT);
@@ -518,7 +504,7 @@ public class ChatWindow extends Window implements Translatable {
 
     @Override
     public void translate() {
-        getTitleLabel().setText(Chati.CHATI.getLocalization().translate("window.title.chat"));
+        super.translate();
         chatMessages.forEach(ChatMessage::translate);
         typeMessageArea.translate();
         sendButton.translate();

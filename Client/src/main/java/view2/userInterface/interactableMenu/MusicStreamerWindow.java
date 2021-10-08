@@ -1,9 +1,6 @@
 package view2.userInterface.interactableMenu;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Cursor;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -158,7 +155,7 @@ public class MusicStreamerWindow extends InteractableWindow {
         soundButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                Chati.CHATI.getAudioManager().toggleMusic(!soundButton.isChecked());
+                Chati.CHATI.getMultimediaManager().toggleMusic(!soundButton.isChecked());
             }
         });
 
@@ -231,8 +228,8 @@ public class MusicStreamerWindow extends InteractableWindow {
         if (Chati.CHATI.isMusicChanged()) {
             setSelectedTitle();
         }
-        musicProgressBar.setValue(Chati.CHATI.getAudioManager().getCurrentPosition());
-        Date currentSeconds = new Date(Chati.CHATI.getAudioManager().getCurrentSeconds() * 1000L);
+        musicProgressBar.setValue(Chati.CHATI.getMultimediaManager().getCurrentPosition());
+        Date currentSeconds = new Date(Chati.CHATI.getMultimediaManager().getCurrentSeconds() * 1000L);
         musicProgressLabel.setText(new SimpleDateFormat("mm:ss").format(currentSeconds));
         super.act(delta);
     }
@@ -266,7 +263,7 @@ public class MusicStreamerWindow extends InteractableWindow {
                 backButton.setTouchable(Touchable.enabled);
                 skipButton.setDisabled(false);
                 skipButton.setTouchable(Touchable.enabled);
-                if (Chati.CHATI.getAudioManager().isPlayingMusic()) {
+                if (Chati.CHATI.getMultimediaManager().isPlayingMusic()) {
                     playButton.getStyle().imageUp = Chati.CHATI.getDrawable("music_pause");
                     playButton.getStyle().imageDown = Chati.CHATI.getDrawable("music_pause");
                     playButton.getStyle().imageChecked = Chati.CHATI.getDrawable("music_pause");

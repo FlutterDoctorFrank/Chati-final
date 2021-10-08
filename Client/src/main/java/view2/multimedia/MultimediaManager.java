@@ -3,6 +3,7 @@ package view2.multimedia;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.sarxos.webcam.WebcamException;
+import com.github.sarxos.webcam.WebcamLockException;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import model.user.IUserView;
@@ -25,6 +26,7 @@ public class MultimediaManager implements Disposable {
     private VoiceRecorder voiceRecorder;
     private AudioConsumer audioConsumer;
     private VideoRecorder videoRecorder;
+    private final VideoReceiver videoReceiver;
 
     /**
      * Erzeugt eine neue Instanz des MultimediaManager.
@@ -49,6 +51,8 @@ public class MultimediaManager implements Disposable {
         } catch (WebcamException e) {
             Chati.LOGGER.log(Level.WARNING, "Webcam not available", e);
         }
+
+        this.videoReceiver = new VideoReceiver();
     }
 
     /**
@@ -108,7 +112,12 @@ public class MultimediaManager implements Disposable {
             }
 
             if (videoRecorder.isRunning()) {
-
+                try {
+                    videoRecorder.startRecording();
+                } catch (WebcamLockException e) {
+                    Chati.LOGGER.log(Level.WARNING, "Webcam not available", e);
+                }
+                // TODO : Vorerst
             }
         }
     }
@@ -195,6 +204,18 @@ public class MultimediaManager implements Disposable {
     }
 
     /**
+     * Hinterlegt ein erhaltenes VideoFrame.
+     * @param userId ID des Benutzers, dessen Frame erhalten wurde.
+     * @param timestamp Zeitstempel des Frames.
+     * @param frameData Daten des Frames.
+     * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
+     */
+    public void receiveVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
+                               final byte[] frameData) throws UserNotFoundException {
+        videoReceiver.receiveVideoFrame(userId, timestamp, frameData);
+    }
+
+    /**
      * Gibt zurück, ob ein Benutzer gerade spricht.
      * @param user Zu überprüfender Benutzer.
      * @return true, wenn der Benutzer gerade spricht, sonst false.
@@ -214,6 +235,22 @@ public class MultimediaManager implements Disposable {
      */
     public boolean isPlayingMusic() {
         return audioConsumer != null && audioConsumer.isPlayingMusic();
+    }
+
+    /**
+     * Gibt zurück, ob Frames vorhanden sind.
+     * @return true, wenn Frames vorhanden sind, sonst false.
+     */
+    public boolean hasFrame() {
+        return videoReceiver.hasFrame();
+    }
+
+    /**
+     * Gibt den nächsten anzuzeigenden Frame zurück.
+     * @return Nächster anzuzeigender Frame.
+     */
+    public VideoReceiver.VideoFrame getNextFrame() {
+        return videoReceiver.getNextFrame();
     }
 
     /**

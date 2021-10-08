@@ -51,6 +51,7 @@ public class HeadUpDisplay extends Table implements Translatable {
     private Table internUserDisplay;
 
     private boolean restoreChat;
+    private boolean restoreVideoChat;
 
     /**
      * Erzeugt eine neue Instanz des HeadUpDisplay.
@@ -243,6 +244,7 @@ public class HeadUpDisplay extends Table implements Translatable {
                     hideChatWindow();
                     hideVideoChatWindow();
                     chatButton.setVisible(false);
+                    videoChatButton.setVisible(false);
                     communicationButton.setVisible(false);
                     soundButton.setVisible(false);
                     microphoneButton.setVisible(false);
@@ -253,7 +255,7 @@ public class HeadUpDisplay extends Table implements Translatable {
 
         if (Chati.CHATI.isNewNotificationReceived()) {
             notificationListButton.startAnimation();
-            Chati.CHATI.getAudioManager().playSound("notification_sound");
+            Chati.CHATI.getMultimediaManager().playSound("notification_sound");
         }
         super.act(delta);
     }
@@ -264,12 +266,26 @@ public class HeadUpDisplay extends Table implements Translatable {
                 chatWindow.hide();
                 restoreChat = true;
             }
-        } else if (restoreChat) {
-            restoreChat = false;
 
-            // Öffne das Chatfenster nur, wenn der WorldScreen aktiv ist.
-            if (Chati.CHATI.getScreen().equals(Chati.CHATI.getWorldScreen())) {
-                chatWindow.show();
+            if (videoChatWindow.isVisible()) {
+                videoChatWindow.hide();
+                restoreVideoChat = true;
+            }
+        } else {
+            if (restoreChat) {
+                restoreChat = false;
+
+                if (Chati.CHATI.getScreen().equals(Chati.CHATI.getWorldScreen())) {
+                    chatWindow.show();
+                }
+            }
+
+            if (restoreVideoChat) {
+                restoreVideoChat = false;
+
+                if (Chati.CHATI.getScreen().equals(Chati.CHATI.getWorldScreen())) {
+                    videoChatWindow.show();
+                }
             }
         }
 
@@ -402,6 +418,9 @@ public class HeadUpDisplay extends Table implements Translatable {
      * Zeigt das Chatfenster nicht mehr an.
      */
     public void hideChatWindow() {
+        if (!isChatOpen()) {
+            return;
+        }
         chatButton.stopBlinking();
         chatButton.setChecked(false);
         chatWindow.hide();
@@ -411,14 +430,24 @@ public class HeadUpDisplay extends Table implements Translatable {
      * Zeigt das Videochat-Fenster an.
      */
     public void showVideoChatWindow() {
-        // TODO
+        if (isVideoChatOpen()) {
+            return;
+        }
+        videoChatButton.stopBlinking();
+        videoChatButton.setChecked(true);
+        videoChatWindow.show();
     }
 
     /**
      * Zeigt das Videochat-Fenster nichtmehr an.
      */
     public void hideVideoChatWindow() {
-        // TODO
+        if (!isVideoChatOpen()) {
+            return;
+        }
+        videoChatButton.stopBlinking();
+        videoChatButton.setChecked(false);
+        videoChatWindow.hide();
     }
 
     /**
@@ -448,7 +477,7 @@ public class HeadUpDisplay extends Table implements Translatable {
         }
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser != null && !internUser.getUserId().equals(senderId)) {
-            Chati.CHATI.getAudioManager().playSound("chat_message_sound");
+            Chati.CHATI.getMultimediaManager().playSound("chat_message_sound");
         }
     }
 
@@ -462,19 +491,7 @@ public class HeadUpDisplay extends Table implements Translatable {
         if (!isChatOpen()) {
             chatButton.startBlinking();
         }
-        Chati.CHATI.getAudioManager().playSound("chat_message_sound");
-    }
-
-    /**
-     * Zeigt ein VideoFrame im VideoChatfenster an.
-     * @param userId ID des Benutzers, dessen Frame angezeigt werden soll.
-     * @param timestamp Zeitstempel des Frames.
-     * @param frameData Daten des Frames.
-     * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
-     */
-    public void showVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
-                               final byte[] frameData) throws UserNotFoundException {
-        // TODO morgen
+        Chati.CHATI.getMultimediaManager().playSound("chat_message_sound");
     }
 
     /**
@@ -530,8 +547,7 @@ public class HeadUpDisplay extends Table implements Translatable {
      * @return true, wenn das Videochat-Fenster sichtbar ist, sonst false.
      */
     public boolean isVideoChatOpen() {
-        // TODO
-        return false;
+        return videoChatButton.isVisible() && videoChatWindow.isVisible() || restoreVideoChat;
     }
 
     /**
@@ -540,6 +556,14 @@ public class HeadUpDisplay extends Table implements Translatable {
      */
     public @NotNull ChatWindow getChatWindow() {
         return chatWindow;
+    }
+
+    /**
+     * Gibt das Videochat-Fenster zurück.
+     * @return Videochat-Fenster.
+     */
+    public @NotNull VideoChatWindow getVideoChatWindow() {
+        return videoChatWindow;
     }
 
     @Override
