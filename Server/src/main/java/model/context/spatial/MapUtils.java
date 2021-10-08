@@ -30,7 +30,9 @@ import java.util.logging.Logger;
 public class MapUtils {
 
     private static final Logger LOGGER = Logger.getLogger("chati.map-loader");
-    private static final int AVATAR_RADIUS = 15;
+
+    public static final float INTERACTION_DISTANCE = 32;
+    public static final int AVATAR_RADIUS = 15;
 
     private MapUtils() {
 
@@ -203,9 +205,9 @@ public class MapUtils {
                 case "radius":
                     if (properties.containsKey("radius")) {
                         try {
-                            return new RadiusCommunication(exclusive, properties.get("radius", Integer.class));
+                            return new RadiusCommunication(exclusive, properties.get("radius", Float.class));
                         } catch (ClassCastException ex) {
-                            throw new IllegalArgumentException("Properties communication radius of not of type Integer");
+                            throw new IllegalArgumentException("Properties communication radius of not of type Float");
                         }
                     }
                     return new RadiusCommunication(exclusive);
@@ -240,5 +242,25 @@ public class MapUtils {
         } catch (ArrayIndexOutOfBoundsException ex) {
             throw new IllegalArgumentException("Properties direction contains invalid number", ex);
         }
+    }
+
+    public static float parseInteractionDistance(@NotNull final Room room, @NotNull final TiledMap map) {
+        final TiledMapTileLayer baseLayer = (TiledMapTileLayer) map.getLayers().get(0);
+
+        if (baseLayer.getTileWidth() != baseLayer.getTileHeight()) {
+            if (map.getProperties().containsKey("interaction_distance")) {
+                try {
+                    return map.getProperties().get("interaction_distance", Float.class);
+                } catch (ClassCastException ex) {
+                    LOGGER.warning(String.format("Found invalid interaction distance in map %s: %s", room.getMap(), ex.getMessage()));
+                }
+            } else {
+                LOGGER.warning(String.format("Unable to find required interaction distance in map: %s", room.getMap()));
+            }
+
+            return INTERACTION_DISTANCE;
+        }
+
+        return baseLayer.getTileWidth();
     }
 }

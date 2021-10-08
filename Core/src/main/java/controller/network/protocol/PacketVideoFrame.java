@@ -5,7 +5,6 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
@@ -54,12 +53,12 @@ public class PacketVideoFrame implements Packet<PacketListener> {
     }
 
     @Override
-    public void call(@NotNull PacketListener listener) {
+    public void call(@NotNull final PacketListener listener) {
         listener.handle(this);
     }
 
     @Override
-    public void write(Kryo kryo, Output output) {
+    public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeNullableUniqueId(output, this.senderId);
         kryo.writeObjectOrNull(output, this.timestamp, LocalDateTime.class);
         output.writeVarInt(this.frameData.length, true);
@@ -67,7 +66,7 @@ public class PacketVideoFrame implements Packet<PacketListener> {
     }
 
     @Override
-    public void read(Kryo kryo, Input input) {
+    public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.senderId = PacketUtils.readNullableUniqueId(input);
         this.timestamp = kryo.readObjectOrNull(input, LocalDateTime.class);
         this.frameData = input.readBytes(input.readVarInt(true));

@@ -3,7 +3,25 @@ package controller.network;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 import com.esotericsoftware.kryonet.Listener;
-import controller.network.protocol.*;
+import controller.network.protocol.PacketAudioMessage;
+import controller.network.protocol.PacketAvatarMove;
+import controller.network.protocol.PacketChatMessage;
+import controller.network.protocol.PacketInContextInteract;
+import controller.network.protocol.PacketInUserManage;
+import controller.network.protocol.PacketMenuOption;
+import controller.network.protocol.PacketNotificationResponse;
+import controller.network.protocol.PacketOutCommunicable;
+import controller.network.protocol.PacketOutContextInfo;
+import controller.network.protocol.PacketOutContextJoin;
+import controller.network.protocol.PacketOutContextList;
+import controller.network.protocol.PacketOutContextRole;
+import controller.network.protocol.PacketOutMenuAction;
+import controller.network.protocol.PacketOutNotification;
+import controller.network.protocol.PacketOutUserInfo;
+import controller.network.protocol.PacketProfileAction;
+import controller.network.protocol.PacketUserTyping;
+import controller.network.protocol.PacketVideoFrame;
+import controller.network.protocol.PacketWorldAction;
 import model.role.Permission;
 import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
@@ -16,8 +34,11 @@ import java.time.LocalDateTime;
 public abstract class NetworkManager<T extends EndPoint> extends Listener {
 
     private static final String HOST_IP = "85.215.241.212"; // 81.169.218.151
-    private static final int HOST_TCP_PORT = 54777;
-    private static final int HOST_UDP_PORT = 59001;
+    private static final int HOST_TCP_PORT = 54554;
+    private static final int HOST_UDP_PORT = 56554;
+
+    protected static final int WRITE_SIZE = (int) Math.pow(2, 20);
+    protected static final int READ_SIZE = (int) Math.pow(2, 18) + (int) Math.pow(2, 12);
 
     protected volatile boolean active;
     protected final T endPoint;

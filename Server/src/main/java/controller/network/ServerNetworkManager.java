@@ -17,8 +17,6 @@ import java.util.logging.Logger;
  */
 public class ServerNetworkManager extends NetworkManager<Server> {
 
-    private static final int BUFFER_SIZE = (int) Math.pow(2, 20);
-
     private static final Logger LOGGER = Logger.getLogger("chati.network");
     private final Map<Integer, UserConnection> connections;
 
@@ -27,7 +25,7 @@ public class ServerNetworkManager extends NetworkManager<Server> {
 
     public ServerNetworkManager(@NotNull final IUserAccountManager accountManager,
                                 @NotNull final IGlobalContext global) {
-        super(new Server(BUFFER_SIZE, BUFFER_SIZE));
+        super(new Server(WRITE_SIZE, READ_SIZE));
 
         this.connections = new ConcurrentHashMap<>();
         this.accountManager = accountManager;
@@ -94,14 +92,14 @@ public class ServerNetworkManager extends NetworkManager<Server> {
 
         try {
             this.endPoint.start();
-            this.endPoint.bind(this.tcp);
+            this.endPoint.bind(this.tcp, this.udp);
             this.active = true;
 
-            LOGGER.info(String.format("Hosted Server on tcp port: %d", this.tcp));
+            LOGGER.info(String.format("Hosted Server on tcp and udp port: %d, %d", this.tcp, this.udp));
         } catch (IOException ex) {
             this.active = false;
 
-            LOGGER.warning(String.format("Failed to host Server on tcp port: %d", this.tcp));
+            LOGGER.warning(String.format("Failed to host Server on tcp and udp port: %d, %d", this.tcp, this.udp));
         }
     }
 

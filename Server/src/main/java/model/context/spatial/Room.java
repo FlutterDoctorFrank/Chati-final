@@ -30,6 +30,9 @@ public class Room extends Area implements IRoom {
     /** Passwort des Kontextes, im Falle eines privaten Kontextes. */
     private String password;
 
+    /** Die Größe eines Tiles in der Map definiert die Interaktionsdistanz. */
+    private float interactionDistance;
+
     /**
      * Erzeugt eine Instanz eines (öffentlichen) Raums.
      * @param roomName Name des Raums.
@@ -97,6 +100,14 @@ public class Room extends Area implements IRoom {
      */
     public @NotNull Location getSpawnLocation() {
         return spawnLocation;
+    }
+
+    /**
+     * Gibt die Interaktionsdistanz der Karte zurück.
+     * @return die Interaktionsdistanz der Karte.
+     */
+    public float getInteractionDistance() {
+        return interactionDistance;
     }
 
     @Override
@@ -171,6 +182,7 @@ public class Room extends Area implements IRoom {
             TiledMap tiledMap = new TmxMapLoader().load(map.getPath());
 
             expanse = MapUtils.createMapExpanse(Room.this, tiledMap);
+            interactionDistance = MapUtils.parseInteractionDistance(Room.this, tiledMap);
             spawnLocation = MapUtils.parseLocation(Room.this, tiledMap.getProperties());
             communicationRegion = MapUtils.parseCommunication(tiledMap.getProperties());
             communicationRegion.setArea(Room.this);

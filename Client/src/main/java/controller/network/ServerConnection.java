@@ -2,13 +2,32 @@ package controller.network;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import controller.network.protocol.*;
+import controller.network.protocol.Packet;
+import controller.network.protocol.PacketAudioMessage;
+import controller.network.protocol.PacketAvatarMove;
 import controller.network.protocol.PacketAvatarMove.AvatarAction;
+import controller.network.protocol.PacketChatMessage;
+import controller.network.protocol.PacketListener;
+import controller.network.protocol.PacketListenerOut;
+import controller.network.protocol.PacketMenuOption;
+import controller.network.protocol.PacketNotificationResponse;
+import controller.network.protocol.PacketOutCommunicable;
+import controller.network.protocol.PacketOutContextInfo;
+import controller.network.protocol.PacketOutContextJoin;
+import controller.network.protocol.PacketOutContextList;
 import controller.network.protocol.PacketOutContextList.ContextInfo;
+import controller.network.protocol.PacketOutContextRole;
+import controller.network.protocol.PacketOutMenuAction;
+import controller.network.protocol.PacketOutNotification;
 import controller.network.protocol.PacketOutNotification.Notification;
+import controller.network.protocol.PacketOutUserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo;
 import controller.network.protocol.PacketOutUserInfo.UserInfo.Flag;
+import controller.network.protocol.PacketProfileAction;
 import controller.network.protocol.PacketProfileAction.Action;
+import controller.network.protocol.PacketUserTyping;
+import controller.network.protocol.PacketVideoFrame;
+import controller.network.protocol.PacketWorldAction;
 import model.context.ContextID;
 import model.exception.ContextNotFoundException;
 import model.exception.NotificationNotFoundException;
@@ -59,7 +78,12 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
     public void send(@NotNull final Packet<?> packet) {
         if (this.manager.getEndPoint().isConnected()) {
-            this.manager.getEndPoint().sendTCP(packet);
+            if (packet instanceof PacketVideoFrame) {
+                this.manager.getEndPoint().sendUDP(packet);
+            } else {
+                this.manager.getEndPoint().sendTCP(packet);
+            }
+
             this.logPacket(packet, true);
         }
     }
@@ -402,7 +426,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
     }
 
     @Override
-    public void handle(@NotNull PacketVideoFrame packet) {
+    public void handle(@NotNull final PacketVideoFrame packet) {
         if (this.userId == null) {
             this.logUnexpectedPacket(packet, "Can not receive video frame while user is not logged in");
             return;

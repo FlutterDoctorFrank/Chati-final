@@ -15,8 +15,6 @@ import java.util.logging.Logger;
  */
 public class ClientNetworkManager extends NetworkManager<Client> implements Runnable {
 
-    private static final int BUFFER_SIZE = (int) Math.pow(2, 24);
-
     private static final Logger LOGGER = Logger.getLogger("chati.network");
 
     private final IUserManagerController userManager;
@@ -26,7 +24,7 @@ public class ClientNetworkManager extends NetworkManager<Client> implements Runn
     private Thread networkThread;
 
     public ClientNetworkManager(@NotNull final IUserManagerController userManager) {
-        super(new Client(BUFFER_SIZE, BUFFER_SIZE));
+        super(new Client(WRITE_SIZE, READ_SIZE));
 
         this.userManager = userManager;
     }
@@ -34,7 +32,7 @@ public class ClientNetworkManager extends NetworkManager<Client> implements Runn
     @Override
     public void connected(@NotNull final Connection connection) {
         if (this.connection == null) {
-            LOGGER.info(String.format("Connected to server on ip %s over tcp port: %d", this.host, this.tcp));
+            LOGGER.info(String.format("Connected to server on ip %s over tcp and udp port: %d, %d", this.host, this.tcp, this.udp));
 
             this.connection = new ServerConnection(this);
             this.endPoint.addListener(this.connection);
@@ -94,7 +92,7 @@ public class ClientNetworkManager extends NetworkManager<Client> implements Runn
                     continue;
                 }
 
-                this.endPoint.connect(60000, this.host, this.tcp);
+                this.endPoint.connect(60000, this.host, this.tcp, this.udp);
             } catch (IOException ex) {
                 LOGGER.warning(String.format("Failed to connect to server on ip: %s", this.host));
             } catch (Exception ex) {

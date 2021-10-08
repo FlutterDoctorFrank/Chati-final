@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="24" height="24" tilewidth="32" tileheight="32" infinite="0" nextlayerid="16" nextobjectid="39">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="24" height="24" tilewidth="32" tileheight="32" infinite="0" nextlayerid="16" nextobjectid="40">
  <properties>
   <property name="communication" value="area"/>
   <property name="location_direction" type="int" value="2"/>
   <property name="location_x" type="float" value="384"/>
   <property name="location_y" type="float" value="112"/>
-  <property name="media" value="text;voice"/>
+  <property name="media" value="text;voice;video"/>
  </properties>
  <tileset firstgid="1" source="tilesets/Museum_32x32.tsx"/>
  <tileset firstgid="1953" source="tilesets/Room-Builder_32x32.tsx"/>
@@ -140,7 +140,7 @@
   <object id="33" x="120" y="576" width="40" height="22"/>
   <object id="34" x="708" y="540" width="28" height="64"/>
   <object id="35" x="576" y="238" width="96" height="36"/>
-  <object id="36" x="694" y="180" width="42" height="40"/>
+  <object id="36" x="694" y="180" width="42" height="36"/>
   <object id="38" x="714" y="168" width="22" height="12"/>
  </objectgroup>
  <objectgroup id="13" name="Contexts">

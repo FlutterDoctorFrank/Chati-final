@@ -7,8 +7,10 @@ import controller.network.ClientSender.SendAction;
 import model.communication.message.MessageType;
 import model.communication.message.TextMessage;
 import model.context.global.GlobalContext;
-import model.context.spatial.Area;
 import model.context.spatial.Direction;
+import model.context.spatial.Location;
+import model.context.spatial.MapUtils;
+import model.context.spatial.Room;
 import model.exception.IllegalNotificationActionException;
 import model.exception.IllegalPositionException;
 import model.exception.UserNotFoundException;
@@ -18,9 +20,12 @@ import model.role.Role;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import javax.sound.sampled.AudioFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
 /**
  * Eine Klasse, welche einen automatisierten Benutzer repräsentiert.
@@ -29,8 +34,8 @@ public class Bot extends User {
 
     private static final float DEFAULT_VELOCITY = 100f / 30;
     private static final float SPRINT_SPEED_FACTOR = 1.67f;
-    private static final float MINIMUM_DISTANCE = 2 * Area.VIEW_TILE_SIZE;
-    private static final float FOLLOW_DISTANCE = 4 * Area.VIEW_TILE_SIZE;
+    private static final float MINIMUM_DISTANCE = 2 * MapUtils.INTERACTION_DISTANCE;
+    private static final float FOLLOW_DISTANCE = 4 * MapUtils.INTERACTION_DISTANCE;
 
     private static final Map<String, Bot> bots = new HashMap<>();
 
@@ -39,7 +44,10 @@ public class Bot extends User {
     private User forwardWhisperTo;
     private boolean sprint;
     private boolean follow;
+    private boolean teleport;
     private boolean autoChat;
+    private long nextFollow;
+    private long nextRotate;
 
     /**
      * Erzeugt eine neue Instanz eines Bot.
@@ -205,6 +213,8 @@ public class Bot extends User {
                     } else {
                         if (currentLocation.distance(((User) object).currentLocation) <= FOLLOW_DISTANCE) {
                             followUser = (User) object;
+                        } else {
+                            choose();
                         }
                     }
                 }
@@ -279,6 +289,9 @@ public class Bot extends User {
      */
     private void search() {
         followUser = null;
+        nextFollow = System.currentTimeMillis() + 3000;
+        nextRotate = System.currentTimeMillis() + 250;
+
         if (!follow) {
             return;
         }
@@ -298,6 +311,84 @@ public class Bot extends User {
         }
     }
 
+    public void choose() {
+        if (followUser != null || !follow || !teleport) {
+            return;
+        }
+
+        if (System.currentTimeMillis() > nextFollow) {
+            try {
+                followUser = currentLocation.getRoom().getUsers().values().stream()
+                        .filter(user -> !user.equals(this)).findAny().orElseThrow();
+
+                Room room = currentLocation.getRoom();
+                Direction direction = followUser.currentLocation.getDirection();
+                float posX = followUser.currentLocation.getPosX();
+                float posY = followUser.currentLocation.getPosY();
+
+                switch (direction) {
+                    case UP:
+                        posY -= MINIMUM_DISTANCE;
+
+                        while (!room.isLegal(posX, posY)) {
+                            posY += 1;
+                            if (posY > followUser.currentLocation.getPosY()) {
+                                return;
+                            }
+                        }
+                        break;
+
+                    case RIGHT:
+                        posX -= MINIMUM_DISTANCE;
+
+                        while (!room.isLegal(posX, posY)) {
+                            posX += 1;
+                            if (posX > followUser.currentLocation.getPosX()) {
+                                return;
+                            }
+                        }
+                        break;
+
+                    case DOWN:
+                        posY += MINIMUM_DISTANCE;
+
+                        while (!room.isLegal(posX, posY)) {
+                            posY -= 1;
+                            if (posY < followUser.currentLocation.getPosY()) {
+                                return;
+                            }
+                        }
+                        break;
+
+                    case LEFT:
+                        posX += MINIMUM_DISTANCE;
+
+                        while (!room.isLegal(posX, posY)) {
+                            posX -= 1;
+                            if (posX > followUser.currentLocation.getPosX()) {
+                                return;
+                            }
+                        }
+                        break;
+                }
+
+                teleport(new Location(room, direction, posX, posY));
+            } catch (NoSuchElementException ignored) {
+
+            }
+        } else if (System.currentTimeMillis() > nextRotate) {
+            final int rotate = (currentLocation.getDirection().ordinal() + 1) % Direction.values().length;
+
+            try {
+                move(Direction.values()[rotate], currentLocation.getPosX(), currentLocation.getPosY(), false);
+                nextRotate += 500;
+                System.out.println("Called move method to rotate user to direction: " + Direction.values()[rotate]);
+            } catch (IllegalPositionException ignored) {
+
+            }
+        }
+    }
+
     /**
      * Folgt einem Benutzer.
      */
@@ -309,7 +400,7 @@ public class Bot extends User {
         Direction direction = currentLocation.getDirection();
         float moveX = 0;
         float moveY = 0;
-        float movementSpeed = sprint ? DEFAULT_VELOCITY * SPRINT_SPEED_FACTOR : DEFAULT_VELOCITY;
+        float movementSpeed = sprint && followUser.isSprinting() ? DEFAULT_VELOCITY * SPRINT_SPEED_FACTOR : DEFAULT_VELOCITY;
 
         switch (followUser.currentLocation.getDirection()) {
             case UP:
@@ -318,6 +409,7 @@ public class Bot extends User {
 
                 if (moveX != 0) {
                     if (Math.abs(moveX) > movementSpeed) {
+                        direction = moveX > 0 ? Direction.RIGHT : Direction.LEFT;
                         moveX = moveX > 0 ? movementSpeed : -movementSpeed;
                     }
                 } else {
@@ -341,6 +433,7 @@ public class Bot extends User {
 
                 if (moveY != 0) {
                     if (Math.abs(moveY) > movementSpeed) {
+                        direction = moveY > 0 ? Direction.UP : Direction.DOWN;
                         moveY = moveY > 0 ? movementSpeed : -movementSpeed;
                     }
                 } else {
@@ -382,7 +475,7 @@ public class Bot extends User {
      * Lässt den Bot einen Text vorlesen.
      * @param message Vorzulesender Text.
      */
-    private void talk(@NotNull String message) {
+    private void talk(@NotNull final String message) {
         this.voice.speak(message);
     }
 
@@ -422,6 +515,24 @@ public class Bot extends User {
             public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
                 bot.follow = false;
                 bot.followUser = null;
+            }
+        },
+
+        /**
+         * Lässt den Bot zu einem anderen Benutzer teleportieren, wenn er keinem Benutzer verfolgen kann.
+         */
+        TELEPORT_ON("(?i)teleport_on") {
+            public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
+                bot.teleport = true;
+            }
+        },
+
+        /**
+         * Beendet das Teleportieren zu anderen Benutzern.
+         */
+        TELEPORT_OFF("(?i)teleport_off") {
+            public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
+                bot.teleport = false;
             }
         },
 

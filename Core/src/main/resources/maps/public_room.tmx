@@ -320,25 +320,25 @@
   <object id="46" x="192" y="1922" width="448" height="30"/>
   <object id="47" x="320" y="1890" width="192" height="32"/>
   <object id="48" x="640" y="1890" width="128" height="62"/>
-  <object id="49" x="672" y="1666" width="96" height="224"/>
-  <object id="50" x="736" y="1474" width="32" height="192"/>
+  <object id="49" x="672" y="1666" width="64" height="224"/>
+  <object id="50" x="736" y="1474" width="32" height="416"/>
   <object id="52" x="1184" y="1666" width="32" height="94"/>
   <object id="53" x="1216" y="1698" width="64" height="62"/>
   <object id="54" x="1280" y="1730" width="224" height="30"/>
   <object id="55" x="1408" y="1698" width="96" height="32"/>
   <object id="56" x="1792" y="1698" width="160" height="62"/>
-  <object id="57" x="1856" y="1442" width="96" height="256"/>
-  <object id="59" x="1920" y="1250" width="32" height="192"/>
-  <object id="60" x="1154" y="1826" width="28" height="160"/>
-  <object id="61" x="1154" y="1986" width="508" height="30"/>
-  <object id="62" x="1634" y="1826" width="28" height="160"/>
+  <object id="57" x="1856" y="1442" width="64" height="256"/>
+  <object id="59" x="1920" y="1250" width="32" height="448"/>
+  <object id="60" x="1154" y="1826" width="28" height="190"/>
+  <object id="61" x="1182" y="1986" width="452" height="30"/>
+  <object id="62" x="1634" y="1826" width="28" height="190"/>
   <object id="66" x="1856" y="1250" width="64" height="94"/>
   <object id="67" x="672" y="1474" width="64" height="94"/>
   <object id="162" x="352" y="224" width="320" height="58"/>
   <object id="180" x="258" y="1474" width="316" height="316"/>
   <object id="181" x="1314" y="1186" width="444" height="412"/>
   <object id="200" x="144" y="722" width="96" height="68"/>
-  <object id="209" x="352" y="282" width="32" height="34"/>
+  <object id="209" x="352" y="290" width="32" height="26"/>
   <object id="226" x="1344" y="224" width="384" height="58"/>
   <object id="237" x="1248" y="618" width="96" height="50"/>
   <object id="254" x="210" y="1896" width="92" height="26"/>
@@ -365,9 +365,9 @@
   <object id="330" x="337" y="928" width="26" height="45"/>
   <object id="331" x="497" y="928" width="26" height="45"/>
   <object id="333" x="716" y="1580" width="20" height="86"/>
-  <object id="334" x="448" y="282" width="32" height="34"/>
-  <object id="335" x="544" y="282" width="32" height="34"/>
-  <object id="336" x="640" y="282" width="32" height="34"/>
+  <object id="334" x="448" y="290" width="32" height="26"/>
+  <object id="335" x="544" y="290" width="32" height="26"/>
+  <object id="336" x="640" y="290" width="32" height="26"/>
   <object id="337" x="1568" y="1730" width="224" height="30"/>
   <object id="338" x="1568" y="1698" width="96" height="32"/>
   <object id="339" x="1298" y="1704" width="92" height="26"/>
@@ -410,7 +410,7 @@
     <property name="type" value="area"/>
    </properties>
   </object>
-  <object id="163" name="Spawn" x="1181" y="1824" width="454" height="163">
+  <object id="163" name="Spawn" x="1184" y="1824" width="448" height="160">
    <properties>
     <property name="communication" value="area"/>
     <property name="media" value="text"/>
@@ -421,7 +421,7 @@
    <properties>
     <property name="communication" value="area"/>
     <property name="exclusive" type="bool" value="true"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -431,7 +431,7 @@
     <property name="location_direction" type="int" value="0"/>
     <property name="location_x" type="float" value="240"/>
     <property name="location_y" type="float" value="1904"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -441,7 +441,7 @@
     <property name="location_direction" type="int" value="0"/>
     <property name="location_x" type="float" value="272"/>
     <property name="location_y" type="float" value="1904"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -449,7 +449,7 @@
    <properties>
     <property name="communication" value="area"/>
     <property name="exclusive" type="bool" value="true"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -459,7 +459,7 @@
     <property name="location_direction" type="int" value="0"/>
     <property name="location_x" type="float" value="560"/>
     <property name="location_y" type="float" value="1904"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -469,7 +469,7 @@
     <property name="location_direction" type="int" value="0"/>
     <property name="location_x" type="float" value="592"/>
     <property name="location_y" type="float" value="1904"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -477,7 +477,7 @@
    <properties>
     <property name="communication" value="area"/>
     <property name="exclusive" type="bool" value="true"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -487,7 +487,7 @@
     <property name="location_direction" type="int" value="3"/>
     <property name="location_x" type="float" value="700"/>
     <property name="location_y" type="float" value="1635"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -497,7 +497,7 @@
     <property name="location_direction" type="int" value="3"/>
     <property name="location_x" type="float" value="700"/>
     <property name="location_y" type="float" value="1609"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -505,7 +505,7 @@
    <properties>
     <property name="communication" value="area"/>
     <property name="exclusive" type="bool" value="true"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -515,7 +515,7 @@
     <property name="location_direction" type="int" value="0"/>
     <property name="location_x" type="float" value="1328"/>
     <property name="location_y" type="float" value="1712"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -525,7 +525,7 @@
     <property name="location_direction" type="int" value="0"/>
     <property name="location_x" type="float" value="1360"/>
     <property name="location_y" type="float" value="1712"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -533,7 +533,7 @@
    <properties>
     <property name="communication" value="area"/>
     <property name="exclusive" type="bool" value="true"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -543,7 +543,7 @@
     <property name="location_direction" type="int" value="0"/>
     <property name="location_x" type="float" value="1712"/>
     <property name="location_y" type="float" value="1712"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -553,7 +553,7 @@
     <property name="location_direction" type="int" value="0"/>
     <property name="location_x" type="float" value="1744"/>
     <property name="location_y" type="float" value="1712"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -561,7 +561,7 @@
    <properties>
     <property name="communication" value="area"/>
     <property name="exclusive" type="bool" value="true"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -571,7 +571,7 @@
     <property name="location_direction" type="int" value="3"/>
     <property name="location_x" type="float" value="1884"/>
     <property name="location_y" type="float" value="1411"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -581,14 +581,14 @@
     <property name="location_direction" type="int" value="3"/>
     <property name="location_x" type="float" value="1884"/>
     <property name="location_y" type="float" value="1385"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
   <object id="450" name="Podium" x="608" y="960" width="224" height="320">
    <properties>
     <property name="communication" value="area"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -617,7 +617,7 @@
    <properties>
     <property name="communication" value="area"/>
     <property name="exclusive" type="bool" value="true"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -627,7 +627,7 @@
     <property name="location_direction" type="int" value="1"/>
     <property name="location_x" type="float" value="1218"/>
     <property name="location_y" type="float" value="739"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -637,7 +637,7 @@
     <property name="location_direction" type="int" value="1"/>
     <property name="location_x" type="float" value="1218"/>
     <property name="location_y" type="float" value="713"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -645,7 +645,7 @@
    <properties>
     <property name="communication" value="area"/>
     <property name="exclusive" type="bool" value="true"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -655,7 +655,7 @@
     <property name="location_direction" type="int" value="3"/>
     <property name="location_x" type="float" value="1372"/>
     <property name="location_y" type="float" value="739"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -665,7 +665,7 @@
     <property name="location_direction" type="int" value="3"/>
     <property name="location_x" type="float" value="1372"/>
     <property name="location_y" type="float" value="713"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -673,7 +673,7 @@
    <properties>
     <property name="communication" value="area"/>
     <property name="exclusive" type="bool" value="true"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -683,7 +683,7 @@
     <property name="location_direction" type="int" value="1"/>
     <property name="location_x" type="float" value="1794"/>
     <property name="location_y" type="float" value="739"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -693,7 +693,7 @@
     <property name="location_direction" type="int" value="1"/>
     <property name="location_x" type="float" value="1794"/>
     <property name="location_y" type="float" value="713"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -701,7 +701,7 @@
    <properties>
     <property name="communication" value="area"/>
     <property name="exclusive" type="bool" value="true"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -711,7 +711,7 @@
     <property name="location_direction" type="int" value="3"/>
     <property name="location_x" type="float" value="1948"/>
     <property name="location_y" type="float" value="739"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -721,7 +721,7 @@
     <property name="location_direction" type="int" value="3"/>
     <property name="location_x" type="float" value="1948"/>
     <property name="location_y" type="float" value="713"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -729,7 +729,7 @@
    <properties>
     <property name="communication" value="area"/>
     <property name="exclusive" type="bool" value="true"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -739,7 +739,7 @@
     <property name="location_direction" type="int" value="2"/>
     <property name="location_x" type="float" value="1264"/>
     <property name="location_y" type="float" value="648"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -749,7 +749,7 @@
     <property name="location_direction" type="int" value="2"/>
     <property name="location_x" type="float" value="1296"/>
     <property name="location_y" type="float" value="648"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -759,7 +759,7 @@
     <property name="location_direction" type="int" value="2"/>
     <property name="location_x" type="float" value="1328"/>
     <property name="location_y" type="float" value="648"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -767,7 +767,7 @@
    <properties>
     <property name="communication" value="area"/>
     <property name="exclusive" type="bool" value="true"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -777,7 +777,7 @@
     <property name="location_direction" type="int" value="2"/>
     <property name="location_x" type="float" value="1840"/>
     <property name="location_y" type="float" value="648"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -787,7 +787,7 @@
     <property name="location_direction" type="int" value="2"/>
     <property name="location_x" type="float" value="1872"/>
     <property name="location_y" type="float" value="648"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -797,7 +797,7 @@
     <property name="location_direction" type="int" value="2"/>
     <property name="location_x" type="float" value="1904"/>
     <property name="location_y" type="float" value="648"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -839,7 +839,7 @@
   <object id="137" name="Bar" x="352" y="210" width="320" height="110">
    <properties>
     <property name="communication" value="area"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -849,7 +849,7 @@
     <property name="location_direction" type="int" value="0"/>
     <property name="location_x" type="float" value="368"/>
     <property name="location_y" type="float" value="298"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -859,7 +859,7 @@
     <property name="location_direction" type="int" value="0"/>
     <property name="location_x" type="float" value="464"/>
     <property name="location_y" type="float" value="298"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -869,7 +869,7 @@
     <property name="location_direction" type="int" value="0"/>
     <property name="location_x" type="float" value="560"/>
     <property name="location_y" type="float" value="298"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>
@@ -879,7 +879,7 @@
     <property name="location_direction" type="int" value="0"/>
     <property name="location_x" type="float" value="656"/>
     <property name="location_y" type="float" value="298"/>
-    <property name="media" value="text;voice"/>
+    <property name="media" value="text;voice;video"/>
     <property name="type" value="seat"/>
    </properties>
   </object>

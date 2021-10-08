@@ -22,9 +22,6 @@ import java.util.Set;
  */
 public abstract class Interactable extends Area implements IInteractable {
 
-    /** Die maximale Distanz, über die eine Interaktion erfolgen darf. */
-    protected static final float INTERACTION_DISTANCE = VIEW_TILE_SIZE;
-
     /** Menü-Option zum Schließen des Menüs. */
     protected static final int MENU_OPTION_CLOSE = 0;
 
@@ -87,7 +84,7 @@ public abstract class Interactable extends Area implements IInteractable {
     public boolean canInteract(@NotNull final User user) {
         Location location = user.getLocation();
         return (location != null && (!user.isInteracting() || user.isInteractingWith(this))
-                && expanse.isAround(location.getPosX(), location.getPosY(), INTERACTION_DISTANCE));
+                && expanse.isAround(location.getPosX(), location.getPosY(), location.getRoom().getInteractionDistance()));
     }
 
     protected void throwIfUserNotAvailable(@NotNull final User user) {
@@ -137,7 +134,7 @@ public abstract class Interactable extends Area implements IInteractable {
 
             switch (direction) {
                 case UP:
-                    for (int range = 0; range < INTERACTION_DISTANCE; range++) {
+                    for (int range = 0; range < room.getInteractionDistance(); range++) {
                         if (room.isLegal(posX, posY + range)) {
                             return new Location(room, direction, posX, posY + range);
                         }
@@ -145,7 +142,7 @@ public abstract class Interactable extends Area implements IInteractable {
                     break;
 
                 case RIGHT:
-                    for (int range = 0; range < INTERACTION_DISTANCE; range++) {
+                    for (int range = 0; range < room.getInteractionDistance(); range++) {
                         if (room.isLegal(posX + range, posY)) {
                             return new Location(room, direction, posX + range, posY);
                         }
@@ -153,7 +150,7 @@ public abstract class Interactable extends Area implements IInteractable {
                     break;
 
                 case DOWN:
-                    for (int range = 0; range < INTERACTION_DISTANCE; range++) {
+                    for (int range = 0; range < room.getInteractionDistance(); range++) {
                         if (room.isLegal(posX, posY - range)) {
                             return new Location(room, direction, posX, posY - range);
                         }
@@ -161,7 +158,7 @@ public abstract class Interactable extends Area implements IInteractable {
                     break;
 
                 case LEFT:
-                    for (int range = 0; range < INTERACTION_DISTANCE; range++) {
+                    for (int range = 0; range < room.getInteractionDistance(); range++) {
                         if (room.isLegal(posX - range, posY)) {
                             return new Location(room, direction, posX - range, posY);
                         }

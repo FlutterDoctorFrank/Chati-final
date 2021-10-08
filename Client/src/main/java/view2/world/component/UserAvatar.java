@@ -137,7 +137,7 @@ public class UserAvatar extends Sprite {
      * @return Anzuzeigende Textur.
      */
     private @NotNull TextureRegion getKeyFrame() {
-        currentDirection = getCurrentDirection();
+        currentDirection = currentDirection != null ? currentDirection : previousDirection;
         stateTime = currentDirection == previousDirection ? stateTime + Gdx.graphics.getDeltaTime() : 0;
         if (currentDirection == previousDirection && body.getLinearVelocity().isZero()) {
             switch (previousDirection) {
@@ -197,6 +197,7 @@ public class UserAvatar extends Sprite {
         if (user.isTeleporting()) {
             teleport();
         } else {
+            currentDirection = user.getLocation() != null ? user.getLocation().getDirection() : getCurrentDirection();
             float velocity = WorldCamera.scaleToUnit(DEFAULT_VELOCITY);
             if (user.isSprinting()) {
                 velocity *= SPRINT_VELOCITY_FACTOR;
