@@ -457,7 +457,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 return;
             }
 
-            this.user.show(packet.getFrameData());
+            this.user.show(packet.getFrameData(), packet.getNumber());
         } else {
             this.logUnexpectedPacket(packet, "Can not show video while not in a world");
         }

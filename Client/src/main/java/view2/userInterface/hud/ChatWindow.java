@@ -365,9 +365,9 @@ public class ChatWindow extends ResizableWindow {
         historyScrollPane.scrollTo(0, 0, 0, 0);
 
         InternUserAvatar internUserAvatar = Chati.CHATI.getWorldScreen().getInternUserAvatar();
-        if (internUserAvatar != null && !internUserAvatar.isMoving()) {
-            Chati.CHATI.getScreen().getStage().setKeyboardFocus(typeMessageArea);
-            Chati.CHATI.getScreen().getStage().setScrollFocus(historyScrollPane);
+        if (getStage() != null && internUserAvatar != null && !internUserAvatar.isMoving()) {
+            getStage().setKeyboardFocus(typeMessageArea);
+            getStage().setScrollFocus(historyScrollPane);
         }
     }
 

@@ -541,7 +541,8 @@ public interface ClientSender {
                         throw new IllegalArgumentException("Expected Sender from IVideoFrame, got null");
                     }
 
-                    return new PacketVideoFrame(frame.getSender().getUserId(), frame.getTimestamp(), frame.getFrameData());
+                    return new PacketVideoFrame(frame.getSender().getUserId(), frame.getTimestamp(),
+                            frame.getFrameData(), frame.getNumber());
                 } else {
                     throw new IllegalArgumentException("Expected IVideoFrame, got " + object.getClass());
                 }

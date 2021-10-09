@@ -205,6 +205,13 @@ public class InternUser extends User implements IInternUserController, IInternUs
     }
 
     @Override
+    public boolean canShow() {
+        return currentWorld != null && currentRoom != null && currentLocation != null
+                && currentLocation.getArea().getCommunicationMedia().contains(CommunicationMedium.VOICE) // TODO Vorerst
+                && !UserManager.getInstance().getCommunicableUsers().isEmpty();
+    }
+
+    @Override
     public boolean canContactWorld() {
         return currentWorld != null && hasPermission(currentWorld, Permission.CONTACT_CONTEXT);
     }

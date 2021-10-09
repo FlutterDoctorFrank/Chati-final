@@ -115,7 +115,7 @@ public class MockViewController implements ViewControllerInterface {
     }
 
     @Override
-    public void showVideoFrame(@NotNull UUID userId, @NotNull LocalDateTime timestamp, byte[] frameData) throws UserNotFoundException {
+    public void showVideoFrame(@NotNull UUID userId, @NotNull LocalDateTime timestamp, byte[] frameData, int number) throws UserNotFoundException {
         this.calls.add("show-video-frame");
     }
 

@@ -15,7 +15,7 @@ public class VoiceChatUser extends AudioProducer {
      * Sekunden vorhanden sind. Dies führt zu einer kleinen Verzögerung, verhindert aber, dass sich bei einem
      * verspäteten Paket der Puffer direkt leert und das Abspielen der Daten unterbrochen wird.
      */
-    private static final float VOICE_STARTING_DELAY = 0.25f;
+    private static final float VOICE_STARTING_DELAY = 0.2f;
 
     private final IUserView sender;
 

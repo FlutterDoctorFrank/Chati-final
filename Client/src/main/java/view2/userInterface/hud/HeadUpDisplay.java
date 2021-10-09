@@ -240,7 +240,7 @@ public class HeadUpDisplay extends Table implements Translatable {
                 if (chatButton.isVisible() || videoChatButton.isVisible() || communicationButton.isVisible()
                         || soundButton.isVisible() || microphoneButton.isVisible() || cameraButton.isVisible()) {
                     chatWindow.clearChat();
-                    // TODO videochatWindow clear
+                    videoChatWindow.clearVideochat();
                     hideChatWindow();
                     hideVideoChatWindow();
                     chatButton.setVisible(false);

@@ -72,6 +72,12 @@ public interface IInternUserView extends IUserView {
     boolean canTalk();
 
     /**
+     * Gibt zurück, ob der Benutzer Videoframes senden darf.
+     * @return true, wenn er Videoframes senden darf, sonst false.
+     */
+    boolean canShow();
+
+    /**
      * Gibt zurück, ob der Benutzer den Chatbefehl zum Kontaktieren der Welt verwenden darf.
      * @return true, wenn er den Chatbefehl verwenden darf, sonst false.
      */

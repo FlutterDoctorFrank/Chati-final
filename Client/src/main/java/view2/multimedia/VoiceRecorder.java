@@ -14,9 +14,9 @@ import java.util.Queue;
  */
 public class VoiceRecorder implements Runnable, Disposable {
 
-    private static final float LOOK_AHEAD = 0.25f; // in Sekunden
+    private static final float LOOK_AHEAD = 0.2f; // in Sekunden
     private static final int MAX_BLOCKS = (int) (LOOK_AHEAD * MultimediaManager.SEND_RATE);
-    private static final float STOP_SENDING_DELAY = 0.25f; // in Sekunden
+    private static final float STOP_SENDING_DELAY = 0.2f; // in Sekunden
 
     private final AudioRecorder recorder;
     private final Queue<short[]> sendDataQueue;

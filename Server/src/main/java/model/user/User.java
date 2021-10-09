@@ -227,10 +227,10 @@ public class User implements IUser {
     }
 
     @Override
-    public void show(final byte[] frameData) {
+    public void show(final byte[] frameData, final int number) {
         throwIfNotOnline();
         throwIfNotInWorld();
-        CommunicationHandler.handleVideoFrame(this, frameData);
+        CommunicationHandler.handleVideoFrame(this, frameData, number);
     }
 
     @Override
