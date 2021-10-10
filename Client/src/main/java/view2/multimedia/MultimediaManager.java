@@ -20,11 +20,6 @@ import java.util.logging.Level;
  */
 public class MultimediaManager implements Disposable {
 
-    public static final int SAMPLING_RATE = 44100;
-    public static final int SEND_RATE = 30;
-    public static final int BLOCK_SIZE = SAMPLING_RATE / SEND_RATE;
-    public static final boolean MONO = true;
-
     private VoiceRecorder voiceRecorder;
     private AudioConsumer audioConsumer;
     private VideoRecorder videoRecorder;
@@ -261,48 +256,6 @@ public class MultimediaManager implements Disposable {
      */
     public VideoFrame getNextFrame() {
         return videoReceiver.getNextFrame();
-    }
-
-    /**
-     * Kopiert Daten aus einem Short-Array in einen Byte-Array doppelter Größe.
-     * @param shorts Short-Array der zu kopierenden Daten.
-     * @param bigEndian Endianität der Daten.
-     * @return Byte-Array mit den kopierten Daten.
-     */
-    public static byte[] toByte(final short[] shorts, final boolean bigEndian) {
-        byte[] bytes = new byte[shorts.length * 2];
-        if (bigEndian) {
-            for (int i = 0; i < shorts.length; i++) {
-                bytes[2 * i] = (byte) (shorts[i] >> 8);
-                bytes[2 * i + 1] = (byte) shorts[i];
-            }
-        } else {
-            for (int i = 0; i < shorts.length; i++) {
-                bytes[2 * i] = (byte) shorts[i];
-                bytes[2 * i + 1] = (byte) (shorts[i] >> 8);
-            }
-        }
-        return bytes;
-    }
-
-    /**
-     * Kopiert Daten aus einem Byte-Array in einen Short-Array halber Größe.
-     * @param bytes Byte-Array der zu kopierenden Daten.
-     * @param bigEndian Endianität der Daten.
-     * @return Short-Array mit den kopierten Daten.
-     */
-    public static short[] toShort(final byte[] bytes, final boolean bigEndian) {
-        short[] shorts = new short[bytes.length / 2];
-        if (bigEndian) {
-            for (int i = 0; i < shorts.length; i++) {
-                shorts[i] = (short) ((bytes[2 * i] << 8) | (bytes[2 * i + 1] & 0xff));
-            }
-        } else {
-            for (int i = 0; i < shorts.length; i++) {
-                shorts[i] = (short) ((bytes[2 * i] & 0xff) | (bytes[2 * i + 1] << 8));
-            }
-        }
-        return shorts;
     }
 
     /**

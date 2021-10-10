@@ -53,8 +53,8 @@ public class ChatWindow extends ResizableWindow {
     private static final int MAX_CHAT_MESSAGES = 256;
     private static final long SHOW_TYPING_DURATION = 1; // in Sekunden
 
-    private static final float DEFAULT_WIDTH = 700;
-    private static final float DEFAULT_HEIGHT = 400;
+    public static final float DEFAULT_WIDTH = 700;
+    public static final float DEFAULT_HEIGHT = 400;
     private static final float MINIMUM_WIDTH = 450;
     private static final float MINIMUM_HEIGHT = 200;
     private static final float SPACE = 5;

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Disposable;
+import controller.AudioUtils;
 import model.exception.UserNotFoundException;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
@@ -38,14 +39,14 @@ public class AudioConsumer implements Runnable, Disposable {
      * Erzeugt eine neue Instanz des AudioConsumer.
      */
     public AudioConsumer() {
-        this.player = Gdx.audio.newAudioDevice(MultimediaManager.SAMPLING_RATE, MultimediaManager.MONO);
+        this.player = Gdx.audio.newAudioDevice(AudioUtils.SAMPLING_RATE, AudioUtils.MONO);
         this.voiceDataBuffer = new ConcurrentHashMap<>();
         this.musicStream = new MusicStream();
     }
 
     @Override
     public void run() {
-        short[] mixedData = new short[MultimediaManager.BLOCK_SIZE];
+        short[] mixedData = new short[AudioUtils.FRAME_SIZE];
 
         outer:
         while (isRunning) {
@@ -64,26 +65,26 @@ public class AudioConsumer implements Runnable, Disposable {
             }
 
             // Entferne die obersten Elemente aus den Puffern des Voicechats und des Musikstreams.
-            Set<short[]> blocks = voiceDataBuffer.values().stream().filter(VoiceChatUser::isReady)
+            Set<short[]> frames = voiceDataBuffer.values().stream().filter(VoiceChatUser::isReady)
                     .map(VoiceChatUser::getAudioDataBlock).collect(Collectors.toSet());
             voiceDataBuffer.values().removeIf(Predicate.not(VoiceChatUser::hasData));
-            short[] musicBlock = new short[MultimediaManager.BLOCK_SIZE];
+            short[] musicFrame = new short[AudioUtils.FRAME_SIZE];
             if (musicStream.isReady()) {
-                musicBlock = musicStream.getAudioDataBlock();
+                musicFrame = musicStream.getAudioDataBlock();
             }
 
-            int[] temp = new int[MultimediaManager.BLOCK_SIZE];
-            for (int i = 0; i < MultimediaManager.BLOCK_SIZE; i++) {
+            int[] temp = new int[AudioUtils.FRAME_SIZE];
+            for (int i = 0; i < AudioUtils.FRAME_SIZE; i++) {
                 if (Chati.CHATI.getPreferences().isSoundOn()) {
                     // Mische Daten aller Teilnehmer des Voicechats und setze die entsprechende Lautstärke.
-                    for (short[] block : blocks) {
+                    for (short[] block : frames) {
                         temp[i] += block[i];
                     }
                     temp[i] *= voiceVolume;
 
                     // Mische Daten des Musikstreams dazu und setze die entsprechende Lautstärke.
-                    musicBlock[i] *= musicVolume;
-                    temp[i] += musicBlock[i];
+                    musicFrame[i] *= musicVolume;
+                    temp[i] += musicFrame[i];
                 }
 
                 // Verhindere einen Overflow der gemischten Daten.
@@ -166,7 +167,7 @@ public class AudioConsumer implements Runnable, Disposable {
             return;
         }
         IUserView sender = Chati.CHATI.getUserManager().getExternUserView(senderId);
-        short[] receivedData = MultimediaManager.toShort(voiceData, true);
+        short[] receivedData = AudioUtils.toShort(voiceData, true);
 
         synchronized (this) {
             if (!voiceDataBuffer.containsKey(sender)) {
@@ -190,7 +191,7 @@ public class AudioConsumer implements Runnable, Disposable {
         if (!isRunning) {
             return;
         }
-        short[] receivedData = MultimediaManager.toShort(musicData, false);
+        short[] receivedData = AudioUtils.toShort(musicData, false);
 
         synchronized (this) {
             musicStream.addAudioDataBlock(timestamp, receivedData, position, seconds);

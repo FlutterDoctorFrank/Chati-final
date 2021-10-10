@@ -1,5 +1,6 @@
 package model.context.spatial.objects;
 
+import controller.AudioUtils;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;
@@ -28,18 +29,6 @@ import java.util.logging.Logger;
 public class MusicStreamer extends Interactable implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger("chati.stream");
-
-    /** Sample-Rate der gestreamten Musik. */
-    private static final int SAMPLING_RATE = 44100;
-
-    /** Frequenz der gesendeten Pakete. */
-    private static final int SEND_RATE = 30;
-
-    /** Größe der gesendeten Pakete. */
-    private static final int BLOCK_SIZE = 2 * SAMPLING_RATE / SEND_RATE;
-
-    /** Mono oder Stereo. */
-    private static final boolean MONO = true;
 
     /** Zeit in Sekunden, bis zu dem das aktuelle Musikstück durch die MENU_OPTION_PREVIOUS neugestartet wird. */
     private static final float RESTART_SECONDS = 5;
@@ -179,20 +168,6 @@ public class MusicStreamer extends Interactable implements Runnable {
     }
 
     /**
-     * Wandelt Stereodaten in Monodaten um.
-     * @param stereoData Stereodaten.
-     * @return Monodaten.
-     */
-    private byte[] toMono(byte[] stereoData) {
-        byte[] monoData = new byte[stereoData.length / 2];
-        for (int i = 0; i < monoData.length; i += 2) {
-            monoData[i] = stereoData[2 * i];
-            monoData[i + 1] = stereoData[2 * i + 1];
-        }
-        return monoData;
-    }
-
-    /**
      * Lädt den Buffer mit Daten des aktuell ausgewählten Musikstücks.
      * @throws IllegalMenuActionException falls das Laden der Daten fehlschlägt.
      */
@@ -207,7 +182,7 @@ public class MusicStreamer extends Interactable implements Runnable {
             }
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new BufferedInputStream(file));
             byte[] inputData = audioInputStream.readAllBytes();
-            byte[] musicStreamData = MONO ? toMono(inputData) : inputData;
+            byte[] musicStreamData = AudioUtils.MONO ? AudioUtils.toMono(inputData) : inputData;
             musicStreamBuffer = ByteBuffer.allocate(musicStreamData.length);
             musicStreamBuffer.put(musicStreamData);
             musicStreamBuffer.position(0);
@@ -235,7 +210,7 @@ public class MusicStreamer extends Interactable implements Runnable {
 
     @Override
     public void run() {
-        byte[] sendData = new byte[BLOCK_SIZE];
+        byte[] sendData = new byte[2 * AudioUtils.FRAME_SIZE];
 
         outer:
         while (isRunning) {
@@ -286,7 +261,7 @@ public class MusicStreamer extends Interactable implements Runnable {
                 // Warte für die ungefähre Abspielzeit eines Pakets. Die genaue Zeitspanne die gewartet werden muss, kann
                 // individuell sein und muss ermittelt werden, da sich die Geschwindigkeit von Server und Client
                 // unterscheiden können.
-                Thread.sleep(955 / SEND_RATE);
+                Thread.sleep(955 / AudioUtils.FRAME_RATE);
             } catch (InterruptedException e) {
                 LOGGER.log(Level.WARNING, "Exception during music streaming", e);
             }
@@ -301,7 +276,7 @@ public class MusicStreamer extends Interactable implements Runnable {
         if (getMusic() == null) {
             return 0;
         }
-        return musicStreamBuffer.position() / (2 * SAMPLING_RATE);
+        return musicStreamBuffer.position() / (2 * AudioUtils.SAMPLING_RATE);
     }
 
     @Override

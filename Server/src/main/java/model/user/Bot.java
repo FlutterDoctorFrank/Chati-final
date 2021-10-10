@@ -3,6 +3,7 @@ package model.user;
 import com.sun.speech.freetts.Voice;
 import com.sun.speech.freetts.VoiceManager;
 import com.sun.speech.freetts.audio.AudioPlayer;
+import controller.AudioUtils;
 import controller.network.ClientSender.SendAction;
 import model.communication.message.MessageType;
 import model.communication.message.TextMessage;
@@ -658,10 +659,6 @@ public class Bot extends User {
      */
     private static class BotAudioPlayer implements AudioPlayer {
 
-        private static final int SAMPLING_RATE = 44100;
-        private static final int SEND_RATE = 30;
-        private static final int BLOCK_SIZE = SAMPLING_RATE / SEND_RATE;
-
         private final Bot bot;
         private AudioFormat currentFormat;
 
@@ -671,7 +668,9 @@ public class Bot extends User {
          */
         public BotAudioPlayer(@NotNull final Bot bot) {
             this.bot = bot;
-            setAudioFormat(new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, SAMPLING_RATE, 16, 1, BLOCK_SIZE, SEND_RATE, true));
+            setAudioFormat(new AudioFormat(AudioUtils.ENCODING, AudioUtils.SAMPLING_RATE,
+                    AudioUtils.SAMPLE_SIZE_IN_BITS, AudioUtils.CHANNELS, AudioUtils.FRAME_SIZE,
+                    AudioUtils.FRAME_RATE, true));
         }
 
         @Override
@@ -746,15 +745,15 @@ public class Bot extends User {
 
         @Override
         public boolean write(byte[] bytes, int offset, int size) {
-            short[] shorts = toShort(bytes, true);
+            short[] shorts = AudioUtils.toShort(bytes, true);
             short[] upSampledShorts = new short[2 * shorts.length];
             for (int i = 0; i < shorts.length - 1; i++) {
                 upSampledShorts[2 * i] = shorts[i];
                 upSampledShorts[2 * i + 1] = (short) (1f / 2 * shorts[i] + 1f / 2 * shorts[i + 1]);
             }
-            byte[] upSampledBytes = toByte(upSampledShorts, true);
-            for (int i = 0; i < upSampledBytes.length; i += BLOCK_SIZE) {
-                bot.talk(Arrays.copyOfRange(upSampledBytes, i, i + BLOCK_SIZE));
+            byte[] upSampledBytes = AudioUtils.toByte(upSampledShorts, true);
+            for (int i = 0; i < upSampledBytes.length; i += AudioUtils.FRAME_SIZE) {
+                bot.talk(Arrays.copyOfRange(upSampledBytes, i, i + AudioUtils.FRAME_SIZE));
             }
             return true;
         }
@@ -762,47 +761,5 @@ public class Bot extends User {
         @Override
         public void showMetrics() {
         }
-    }
-
-    /**
-     * Kopiert Daten aus einem Short-Array in einen Byte-Array doppelter Größe.
-     * @param shorts Short-Array der zu kopierenden Daten.
-     * @param bigEndian Endianität der Daten.
-     * @return Byte-Array mit den kopierten Daten.
-     */
-    public static byte[] toByte(final short[] shorts, final boolean bigEndian) {
-        byte[] bytes = new byte[shorts.length * 2];
-        if (bigEndian) {
-            for (int i = 0; i < shorts.length; i++) {
-                bytes[2 * i] = (byte) (shorts[i] >> 8);
-                bytes[2 * i + 1] = (byte) shorts[i];
-            }
-        } else {
-            for (int i = 0; i < shorts.length; i++) {
-                bytes[2 * i] = (byte) shorts[i];
-                bytes[2 * i + 1] = (byte) (shorts[i] >> 8);
-            }
-        }
-        return bytes;
-    }
-
-    /**
-     * Kopiert Daten aus einem Byte-Array in einen Short-Array halber Größe.
-     * @param bytes Byte-Array der zu kopierenden Daten.
-     * @param bigEndian Endianität der Daten.
-     * @return Short-Array mit den kopierten Daten.
-     */
-    public static short[] toShort(final byte[] bytes, final boolean bigEndian) {
-        short[] shorts = new short[bytes.length / 2];
-        if (bigEndian) {
-            for (int i = 0; i < shorts.length; i++) {
-                shorts[i] = (short) ((bytes[2 * i] << 8) | (bytes[2 * i + 1] & 0xff));
-            }
-        } else {
-            for (int i = 0; i < shorts.length; i++) {
-                shorts[i] = (short) ((bytes[2 * i] & 0xff) | (bytes[2 * i + 1] << 8));
-            }
-        }
-        return shorts;
     }
 }

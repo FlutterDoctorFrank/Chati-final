@@ -96,7 +96,9 @@ public class VideoRecorder implements Runnable {
         if (isRunning || webcam.isOpen()) {
             return;
         }
-        webcam.open();
+        if (!webcam.open()) {
+            return;
+        }
         isRunning = true;
 
         Thread captureThread = new Thread(this);

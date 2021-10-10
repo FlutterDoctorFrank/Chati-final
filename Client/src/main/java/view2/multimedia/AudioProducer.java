@@ -1,5 +1,6 @@
 package view2.multimedia;
 
+import controller.AudioUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -23,7 +24,7 @@ public abstract class AudioProducer {
      */
     protected AudioProducer(final float startingDelay) {
         this.receivedDataQueue = new LinkedBlockingQueue<>();
-        this.minBlocks = (int) (startingDelay * MultimediaManager.SEND_RATE);
+        this.minBlocks = (int) (startingDelay * AudioUtils.FRAME_RATE);
     }
 
     /**
@@ -43,7 +44,7 @@ public abstract class AudioProducer {
      * @return Block mit aktuell abzuspielenden Audiodaten.
      */
     public short[] getAudioDataBlock() {
-        short[] block = new short[MultimediaManager.BLOCK_SIZE];
+        short[] block = new short[AudioUtils.FRAME_SIZE];
         for (int i = 0; i < block.length; i++) {
             Short data = receivedDataQueue.poll();
             block[i] = data != null ? data : 0;
@@ -83,6 +84,6 @@ public abstract class AudioProducer {
      * @return Größe der Warteschlange in der Anzahl abspielbarer Blöcke.
      */
     protected int queueSizeInBlocks() {
-        return receivedDataQueue.size() / MultimediaManager.BLOCK_SIZE;
+        return receivedDataQueue.size() / AudioUtils.FRAME_SIZE;
     }
 }

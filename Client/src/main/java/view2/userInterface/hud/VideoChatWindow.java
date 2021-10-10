@@ -75,7 +75,7 @@ public class VideoChatWindow extends ResizableWindow {
         float height = MIN_HEIGHT + getPadY();
         setWidth(width);
         setHeight(height);
-        setPosition(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f);
+        setPosition(Gdx.graphics.getWidth() + ChatWindow.DEFAULT_WIDTH - 2 * width, 0);
 
         add(videoChatScrollPane).minWidth(MIN_WIDTH).minHeight(MIN_HEIGHT).grow();
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
@@ -151,7 +151,7 @@ public class VideoChatWindow extends ResizableWindow {
             return;
         }
         VideoChatUser videoChatUser = new VideoChatUser(user);
-        videoChatUsers.put(user, new VideoChatUser(user));
+        videoChatUsers.put(user, videoChatUser);
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser != null && internUser.equals(user)) {
             videoChatGroup.addActorAt(0, videoChatUser.getContainer());
@@ -165,7 +165,7 @@ public class VideoChatWindow extends ResizableWindow {
      */
     private static class VideoChatUser {
 
-        private static final float MAX_INACTIVE_TIME = 0.5f; // In Sekunden
+        private static final float MAX_INACTIVE_TIME = 1; // In Sekunden
 
         private final IUserView user;
         private final Texture videoTexture;
@@ -190,7 +190,7 @@ public class VideoChatWindow extends ResizableWindow {
             talkingBorderBackground.setVisible(false);
             videochatUserStack.add(talkingBorderBackground);
 
-            videoTexture = new Texture(VideoRecorder.CAMERA_WIDTH, VideoRecorder.FRAME_HEIGHT, RGB888);
+            videoTexture = new Texture(2 * VideoRecorder.FRAME_WIDTH, 2 * VideoRecorder.FRAME_HEIGHT, RGB888);
             Image videoImage = new Image(videoTexture);
             Table videoImageContainer = new Table();
             videoImageContainer.add(videoImage).size(VIDEO_WIDTH, VIDEO_HEIGHT);

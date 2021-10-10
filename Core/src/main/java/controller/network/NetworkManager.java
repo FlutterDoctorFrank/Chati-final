@@ -38,7 +38,7 @@ public abstract class NetworkManager<T extends EndPoint> extends Listener {
     private static final int HOST_UDP_PORT = 59001;
 
     protected static final int WRITE_SIZE = (int) Math.pow(2, 20);
-    protected static final int READ_SIZE = (int) Math.pow(2, 18) + (int) Math.pow(2, 12);
+    protected static final int READ_SIZE = (int) Math.pow(2, 22);// + (int) Math.pow(2, 12);
 
     protected volatile boolean active;
     protected final T endPoint;

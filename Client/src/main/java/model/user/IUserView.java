@@ -205,9 +205,9 @@ public interface IUserView {
      * Gibt die übergeordnetste Rolle des Benutzers zurück, die er im innersten Kontext oder einem übergeordneten
      * Kontext besitzt, in dem sich der intern angemeldete Benutzer befindet. Die Rollen sind wie folgt hierarchisch
      * gegliedert: {@link Role#OWNER}, {@link Role#ADMINISTRATOR}, {@link Role#MODERATOR}, {@link Role#ROOM_OWNER},
-     * {@link Role#AREA_MANAGER}. Diese Gliederung wird für Anzeigezwecke genutzt und spiegelt keine tatsächliche
-     * Hierarchie der Rollen wider, da nicht jede übergeordnete Rolle alle Berechtigungen aller untergeordneter
-     * Rollen enthalten.
+     * {@link Role#AREA_MANAGER}, {@link Role#BOT}. Diese Gliederung wird für Anzeigezwecke genutzt und spiegelt keine
+     * tatsächliche Hierarchie der Rollen wider, da nicht jede übergeordnete Rolle alle Berechtigungen aller
+     * untergeordneter Rollen enthalten muss.
      * @return Übergeordnetste Rolle des Benutzers.
      */
     @Nullable Role getHighestRole();

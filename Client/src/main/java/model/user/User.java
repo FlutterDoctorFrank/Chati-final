@@ -482,7 +482,8 @@ public class User implements IUserController, IUserView {
                 : (hasRole(Role.MODERATOR) ? Role.MODERATOR
                 : (hasRole(Role.ROOM_OWNER) ? Role.ROOM_OWNER
                 : (hasRole(Role.AREA_MANAGER) ? Role.AREA_MANAGER
-                : null))));
+                : (hasRole(Role.BOT) ? Role.BOT
+                : null)))));
     }
 
     /**

@@ -7,6 +7,7 @@ import model.context.spatial.Area;
 import model.database.Database;
 import model.database.IContextDatabase;
 import model.exception.ContextNotFoundException;
+import model.role.Role;
 import model.user.IUser;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
@@ -279,7 +280,9 @@ public abstract class Context implements IContext {
 
         // Sende die Information nur, wenn es sich um eine Welt handelt.
         if (parent != null && parent.equals(GlobalContext.getInstance())) {
-            database.addBannedUser(user, this);
+            if (!user.hasRole(this, Role.BOT)) {
+                database.addBannedUser(user, this);
+            }
             // Die Information über den gesperrten Benutzer ist nur für die Benutzer innerhalb der Welt relevant.
             containedUsers.values().forEach(receiver -> receiver.send(SendAction.USER_INFO, user));
         }
@@ -300,7 +303,9 @@ public abstract class Context implements IContext {
 
         // Sende die Information nur, wenn es sich um eine Welt handelt.
         if (parent != null && parent.equals(GlobalContext.getInstance())) {
-            database.removeBannedUser(user, this);
+            if (!user.hasRole(this, Role.BOT)) {
+                database.removeBannedUser(user, this);
+            }
             // Die Information über den nun nicht mehr gesperrten Benutzer ist nur für die Benutzer innerhalb der Welt relevant.
             containedUsers.values().forEach(receiver -> receiver.send(SendAction.USER_INFO, user));
         }
