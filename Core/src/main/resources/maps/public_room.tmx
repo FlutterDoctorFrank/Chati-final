@@ -588,7 +588,7 @@
   <object id="450" name="Podium" x="608" y="960" width="224" height="320">
    <properties>
     <property name="communication" value="area"/>
-    <property name="media" value="text;voice;video"/>
+    <property name="media" value="text;voice"/>
     <property name="type" value="area"/>
    </properties>
   </object>
@@ -836,14 +836,14 @@
     <property name="type" value="game_board"/>
    </properties>
   </object>
-  <object id="137" name="Bar" x="352" y="210" width="320" height="110">
+  <object id="137" name="Bar" x="352" y="210" width="320" height="106">
    <properties>
     <property name="communication" value="area"/>
     <property name="media" value="text;voice;video"/>
     <property name="type" value="area"/>
    </properties>
   </object>
-  <object id="81" name="Seat_27" x="352" y="288" width="32" height="32">
+  <object id="81" name="Seat_27" x="352" y="290" width="32" height="26">
    <properties>
     <property name="communication" value="parent"/>
     <property name="location_direction" type="int" value="0"/>
@@ -853,7 +853,7 @@
     <property name="type" value="seat"/>
    </properties>
   </object>
-  <object id="421" name="Seat_28" x="448" y="288" width="32" height="32">
+  <object id="421" name="Seat_28" x="448" y="290" width="32" height="26">
    <properties>
     <property name="communication" value="parent"/>
     <property name="location_direction" type="int" value="0"/>
@@ -863,7 +863,7 @@
     <property name="type" value="seat"/>
    </properties>
   </object>
-  <object id="422" name="Seat_29" x="544" y="288" width="32" height="32">
+  <object id="422" name="Seat_29" x="544" y="290" width="32" height="26">
    <properties>
     <property name="communication" value="parent"/>
     <property name="location_direction" type="int" value="0"/>
@@ -873,7 +873,7 @@
     <property name="type" value="seat"/>
    </properties>
   </object>
-  <object id="423" name="Seat_30" x="640" y="288" width="32" height="32">
+  <object id="423" name="Seat_30" x="640" y="290" width="32" height="26">
    <properties>
     <property name="communication" value="parent"/>
     <property name="location_direction" type="int" value="0"/>

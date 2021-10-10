@@ -198,7 +198,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
      * @param objects Zu sendende Informationen.
      */
     public void send(@NotNull final ServerSender.SendAction action, @NotNull final Object... objects) {
-        serverSender.send(action, objects);
+        if (serverSender != null) {
+            serverSender.send(action, objects);
+        }
     }
 
     /**
