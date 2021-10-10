@@ -90,12 +90,11 @@ public interface IUser {
      * Sendet einen Videoframe von der Kamera des Benutzers, von dem es erhalten wurde gemäß der geltenden
      * Kommunikationsform an andere Benutzer.
      * @param frameData Daten des Frames.
-     * @param number Nummer des Frames.
      * @throws IllegalStateException wenn der Benutzer nicht angemeldet oder nicht in einer Welt ist.
      * @see model.communication.message.VideoFrame
      * @see model.communication.CommunicationRegion
      */
-    void show(final byte[] frameData, final int number);
+    void show(final byte[] frameData);
 
     /**
      * Führt im Namen des Benutzers eine administrative Aktion auf einen anderen Benutzer aus.

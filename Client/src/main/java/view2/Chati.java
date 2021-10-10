@@ -475,9 +475,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
 
     @Override
     public void showVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
-                               final byte[] frameData, final int number) throws UserNotFoundException {
+                               final byte[] frameData) throws UserNotFoundException {
         if (this.screen.equals(worldScreen)) {
-            multimediaManager.receiveVideoFrame(userId, timestamp, frameData, number);
+            multimediaManager.receiveVideoFrame(userId, timestamp, frameData);
         }
     }
 

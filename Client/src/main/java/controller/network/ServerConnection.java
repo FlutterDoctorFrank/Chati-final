@@ -445,7 +445,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
             try {
                 this.manager.getView().showVideoFrame(packet.getSenderId(), packet.getTimestamp(),
-                        packet.getFrameData(), packet.getNumber());
+                        packet.getFrameData());
             } catch (UserNotFoundException ex) {
                 // Unbekannter Sender.
                 LOGGER.warning("Server tried to send video frame from unknown sender with id: " + ex.getUserID());

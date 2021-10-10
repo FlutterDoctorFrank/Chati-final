@@ -542,7 +542,7 @@ public interface ClientSender {
                     }
 
                     return new PacketVideoFrame(frame.getSender().getUserId(), frame.getTimestamp(),
-                            frame.getFrameData(), frame.getNumber());
+                            frame.getFrameData());
                 } else {
                     throw new IllegalArgumentException("Expected IVideoFrame, got " + object.getClass());
                 }

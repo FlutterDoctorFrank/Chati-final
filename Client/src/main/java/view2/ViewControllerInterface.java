@@ -131,11 +131,10 @@ public interface ViewControllerInterface {
      * @param userId ID des Benutzers, der dieses Paket gesendet hat.
      * @param timestamp Zeitpunkt, an dem dieses Paket gesendet wurde.
      * @param frameData Videodaten des Frames, das gezeigt werden soll.
-     * @param number Nummer des Frames, das gezeigt werden soll.
      * @throws UserNotFoundException wenn kein Benutzer mit der ID gefunden werden konnte.
      */
-    void showVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, final byte[] frameData,
-                        final int number) throws UserNotFoundException;
+    void showVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, final byte[] frameData)
+            throws UserNotFoundException;
 
     /**
      * Benachrichtigt die View, dass das Menü eines Interaktionsobjekts geöffnet werden soll.

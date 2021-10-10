@@ -9,6 +9,8 @@ import model.user.IInternUserView;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view2.Chati;
+import view2.multimedia.VideoReceiver.VideoFrame;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -216,12 +218,11 @@ public class MultimediaManager implements Disposable {
      * @param userId ID des Benutzers, dessen Frame erhalten wurde.
      * @param timestamp Zeitstempel des Frames.
      * @param frameData Daten des Frames.
-     * @param number Nummer des Frames.
      * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
      */
     public void receiveVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
-                               final byte[] frameData, final int number) throws UserNotFoundException {
-        videoReceiver.receiveVideoFrame(userId, timestamp, frameData, number);
+                               final byte[] frameData) throws UserNotFoundException {
+        videoReceiver.receiveVideoFrame(userId, timestamp, frameData);
     }
 
     /**

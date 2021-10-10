@@ -11,10 +11,4 @@ public interface IVideoFrame extends IMessage {
      * @return Daten des Videoframes.
      */
     byte[] getFrameData();
-
-    /**
-     * Gibt die Nummer des Videoframes zurück.
-     * @return Nummer des Frames.
-     */
-    int getNumber();
 }

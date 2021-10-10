@@ -12,18 +12,18 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 /**
- * Eine Klasse, durch welche das Aufnehmen und Senden von Webkameradaten reaisiert wird.
+ * Eine Klasse, durch welche das Aufnehmen und Senden von Videodaten realisiert wird.
  */
 public class VideoRecorder implements Runnable {
 
     public static final int MAX_FPS = 24;
-    public static final int FRAME_WIDTH = 320;
-    public static final int FRAME_HEIGHT = 240;
+    public static final int CAMERA_WIDTH = 320;
+    public static final int CAMERA_HEIGHT = 240;
+    public static final int FRAME_WIDTH = CAMERA_WIDTH / 2;
+    public static final int FRAME_HEIGHT = CAMERA_HEIGHT / 2;
     public static final int COLOR_BYTES = 3;
-    public static final int PARTS = 4;
 
     private final Webcam webcam;
     private final ByteBuffer frameBuffer;
@@ -36,7 +36,7 @@ public class VideoRecorder implements Runnable {
      */
     public VideoRecorder() {
         this.webcam = Webcam.getDefault();
-        this.webcam.setViewSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
+        this.webcam.setViewSize(new Dimension(CAMERA_WIDTH, CAMERA_HEIGHT));
         this.frameBuffer = BufferUtils.createByteBuffer(COLOR_BYTES * FRAME_WIDTH * FRAME_HEIGHT);
         this.frameData = new byte[COLOR_BYTES * FRAME_WIDTH * FRAME_HEIGHT];
     }
@@ -67,14 +67,19 @@ public class VideoRecorder implements Runnable {
                 e.printStackTrace();
             }
 
-            IInternUserView internUser = Chati.CHATI.getInternUser();
             BufferedImage webcamImage = webcam.getImage();
-            if (internUser != null && webcamImage != null) {
+            if (webcamImage != null) {
+                Image image = webcamImage.getScaledInstance(FRAME_WIDTH, FRAME_HEIGHT, Image.SCALE_SMOOTH);
+                BufferedImage scaledImage = new BufferedImage(FRAME_WIDTH, FRAME_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
+                Graphics2D graphics = scaledImage.createGraphics();
+                graphics.drawImage(image, 0, 0, null);
+                graphics.dispose();
+
                 frameBuffer.position(0);
-                frameBuffer.put(((DataBufferByte) webcamImage.getRaster().getDataBuffer()).getData());
+                frameBuffer.put(((DataBufferByte) scaledImage.getRaster().getDataBuffer()).getData());
                 frameBuffer.position(0);
                 frameBuffer.get(frameData);
-                sendFrameData(frameData);
+                sendFrameData(toRGB(frameData));
             }
         }
         isRecording = false;
@@ -140,8 +145,23 @@ public class VideoRecorder implements Runnable {
     }
 
     /**
-     * Versendet die Daten des aktuellen Frames. Um das Netzwerk zu entlasten, werden die eigenen Frames nicht über den
-     * Server zurück an den Sender gesendet, sondern hier direkt zum Abspielen im Client weitergeleitet.
+     * Wandelt ein Byte-Array aus BGR-Bilddaten in ein Byte-Array aus RGB-Bilddaten um.
+     * @param bgr Byte-Array aus BGR-Bilddaten.
+     * @return Byte-Array aus RGB-Bilddaten.
+     */
+    private byte[] toRGB(byte[] bgr) {
+        byte[] rgb = new byte[bgr.length];
+        for (int i = 0; i < rgb.length; i += 3) {
+            rgb[i] = bgr[i + 2];
+            rgb[i + 1] = bgr[i + 1];
+            rgb[i + 2] = bgr[i];
+        }
+        return rgb;
+    }
+
+    /**
+     * Versendet die Daten des aktuellen Frames. Um das Netzwerk zu entlasten, werden die Frames nicht zurück an den
+     * Sender gesendet, sondern direkt zum Abspielen im Client weitergeleitet.
      * @param frameData Zu sendende Daten.
      */
     private void sendFrameData(final byte[] frameData) {
@@ -149,16 +169,11 @@ public class VideoRecorder implements Runnable {
         if (internUser == null) {
             return;
         }
-        for (int i = 0; i < PARTS; i++) {
-            byte[] sendData = Arrays.copyOfRange(frameData, i * frameData.length / PARTS, (i + 1) * frameData.length / PARTS);
-
-            try {
-                Chati.CHATI.getMultimediaManager().receiveVideoFrame(internUser.getUserId(), LocalDateTime.now(), sendData, i);
-            } catch (UserNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            Chati.CHATI.send(ServerSender.SendAction.VIDEO, sendData, i);
+        try {
+            Chati.CHATI.getMultimediaManager().receiveVideoFrame(internUser.getUserId(), LocalDateTime.now(), frameData);
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
         }
+        Chati.CHATI.send(ServerSender.SendAction.VIDEO, frameData);
     }
 }

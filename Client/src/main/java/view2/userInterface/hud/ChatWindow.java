@@ -84,8 +84,8 @@ public class ChatWindow extends ResizableWindow {
      */
     public ChatWindow() {
         super("window.title.chat");
-        this.chatMessages = new LinkedList<>();
-        this.typingUsers = new HashMap<>();
+        chatMessages = new LinkedList<>();
+        typingUsers = new HashMap<>();
 
         messageContainer = new Table();
         historyScrollPane = new ScrollPane(messageContainer, Chati.CHATI.getSkin());
@@ -345,18 +345,6 @@ public class ChatWindow extends ResizableWindow {
     }
 
     /**
-     * Leert den Nachrichtenverlauf und das Nachrichtenfeld.
-     */
-    public void clearChat() {
-        chatMessages.clear();
-        typingUsers.clear();
-        typeMessageArea.reset();
-        messageContainer.clearChildren();
-        removeAttachedImage();
-        setSendButtonState();
-    }
-
-    /**
      * Zeige das Chatfenster an und fokussiere es.
      */
     public void show() {
@@ -380,6 +368,18 @@ public class ChatWindow extends ResizableWindow {
         if (getStage() != null) {
             getStage().unfocus(this);
         }
+    }
+
+    /**
+     * Leert den Nachrichtenverlauf und das Nachrichtenfeld.
+     */
+    public void clearChat() {
+        chatMessages.clear();
+        typingUsers.clear();
+        typeMessageArea.reset();
+        messageContainer.clearChildren();
+        removeAttachedImage();
+        setSendButtonState();
     }
 
     /**

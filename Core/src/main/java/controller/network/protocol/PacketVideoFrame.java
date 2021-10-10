@@ -22,7 +22,6 @@ public class PacketVideoFrame implements Packet<PacketListener> {
     private UUID senderId;
     private LocalDateTime timestamp;
     private byte[] frameData;
-    private int number;
 
     /**
      * @deprecated Ausschließlich für die Deserialisierung des Netzwerkpakets.
@@ -36,9 +35,8 @@ public class PacketVideoFrame implements Packet<PacketListener> {
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Client-Anwendung.
      * @param frameData die Daten des Frames von der Kameraaufzeichnung des Benutzers.
      */
-    public PacketVideoFrame(final byte[] frameData, final int number) {
+    public PacketVideoFrame(final byte[] frameData) {
         this.frameData = frameData;
-        this.number = number;
     }
 
     /**
@@ -48,11 +46,10 @@ public class PacketVideoFrame implements Packet<PacketListener> {
      * @param frameData die Daten des Frames von der Kameraaufzeichnung des Benutzers.
      */
     public PacketVideoFrame(@Nullable final UUID senderId, @NotNull final LocalDateTime timestamp,
-                              final byte[] frameData, final int number) {
+                              final byte[] frameData) {
         this.senderId = senderId;
         this.timestamp = timestamp;
         this.frameData = frameData;
-        this.number = number;
     }
 
     @Override
@@ -66,7 +63,6 @@ public class PacketVideoFrame implements Packet<PacketListener> {
         kryo.writeObjectOrNull(output, this.timestamp, LocalDateTime.class);
         output.writeVarInt(this.frameData.length, true);
         output.writeBytes(this.frameData);
-        output.writeVarInt(number, true);
     }
 
     @Override
@@ -74,13 +70,12 @@ public class PacketVideoFrame implements Packet<PacketListener> {
         this.senderId = PacketUtils.readNullableUniqueId(input);
         this.timestamp = kryo.readObjectOrNull(input, LocalDateTime.class);
         this.frameData = input.readBytes(input.readVarInt(true));
-        this.number = input.readVarInt(true);
     }
 
     @Override
     public @NotNull String toString() {
         return this.getClass().getSimpleName() + "{senderId=" + this.senderId + ", timestamp=" + this.timestamp
-                + ", frameData=" + Arrays.toString(this.frameData) + ", number=" + this.number + "}";
+                + ", frameData=" + Arrays.toString(this.frameData) + "}";
     }
 
     /**
@@ -105,13 +100,5 @@ public class PacketVideoFrame implements Packet<PacketListener> {
      */
     public byte[] getFrameData() {
         return this.frameData;
-    }
-
-    /**
-     * Gibt die Nummer des Pakets zurück.
-     * @return Nummer des Pakets.
-     */
-    public int getNumber() {
-        return this.number;
     }
 }

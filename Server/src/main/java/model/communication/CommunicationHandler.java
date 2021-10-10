@@ -164,7 +164,7 @@ public class CommunicationHandler {
      * @param sender Kommunizierender Benutzer.
      * @param frameData Zu versendendes Frame.
      */
-    public static void handleVideoFrame(@NotNull final User sender, final byte[] frameData, final int number) {
+    public static void handleVideoFrame(@NotNull final User sender, final byte[] frameData) {
         if (sender.getLocation() == null) {
             throw new IllegalStateException("Communicators location is not available.");
         }
@@ -182,7 +182,7 @@ public class CommunicationHandler {
         receivers.remove(sender.getUserId());
 
         // Versende die Sprachnachricht.
-        VideoFrame videoFrame = new VideoFrame(sender, frameData, number);
+        VideoFrame videoFrame = new VideoFrame(sender, frameData);
         receivers.values().forEach(user -> user.send(SendAction.VIDEO, videoFrame));
     }
 

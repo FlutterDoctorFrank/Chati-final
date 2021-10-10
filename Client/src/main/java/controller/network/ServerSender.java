@@ -474,15 +474,14 @@ public interface ServerSender {
         VIDEO {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                if (objects.length == 2) {
-                    if (objects[0] instanceof byte[] && objects[1] instanceof Integer) {
-                        return new PacketVideoFrame((byte[]) objects[0], (int) objects[1]);
+                if (objects.length == 1) {
+                    if (objects[0] instanceof byte[]) {
+                        return new PacketVideoFrame((byte[]) objects[0]);
                     } else {
-                        throw new IllegalArgumentException("Expected byte[] and Integer, got " + objects[0].getClass()
-                                + "and " + objects[1].getClass());
+                        throw new IllegalArgumentException("Expected byte[], got " + objects[0].getClass());
                     }
                 } else {
-                    throw new IllegalArgumentException("Expected Array size of 2, got " + objects.length);
+                    throw new IllegalArgumentException("Expected Array size of 1, got " + objects.length);
                 }
             }
         };
