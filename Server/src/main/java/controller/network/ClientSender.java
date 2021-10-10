@@ -138,7 +138,7 @@ public interface ClientSender {
                             return new PacketOutUserInfo(world.getContextId(), Action.UPDATE_USER, info);
                         }
 
-                        return new PacketOutUserInfo(null, info.getFlags().contains(Flag.FRIEND) ?
+                        return new PacketOutUserInfo(world.getContextId(), info.getFlags().contains(Flag.FRIEND) ?
                                 Action.UPDATE_USER : Action.REMOVE_USER, info);
                     } else {
                         if (user.equals(other)) {
