@@ -381,8 +381,7 @@ public class Bot extends User {
 
             try {
                 move(Direction.values()[rotate], currentLocation.getPosX(), currentLocation.getPosY(), false);
-                nextRotate += 500;
-                System.out.println("Called move method to rotate user to direction: " + Direction.values()[rotate]);
+                nextRotate += 250;
             } catch (IllegalPositionException ignored) {
 
             }

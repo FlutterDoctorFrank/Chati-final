@@ -11,7 +11,12 @@ import model.user.IUser;
 import model.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Eine Klasse, welche einen Kontext der Anwendung repräsentiert. Ein Kontext legt den
@@ -61,7 +66,7 @@ public abstract class Context implements IContext {
         this.contextName = contextName;
         this.parent = parent;
         this.children = new HashMap<>();
-        this.containedUsers = new HashMap<>();
+        this.containedUsers = new ConcurrentHashMap<>();
         this.reportedUsers = new HashMap<>();
         this.mutedUsers = new HashMap<>();
         this.bannedUsers = new HashMap<>();

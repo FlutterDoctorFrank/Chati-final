@@ -924,13 +924,15 @@ public class User implements IUser {
             throw new IllegalStateException("User is not logged in");
         }
 
+        // Stellt sicher, dass beim nachfolgenden Verlassen der Welt keine Netzwerkpakete an den Client gesendet werden.
+        this.status = Status.OFFLINE;
+        this.clientSender = null;
+
         try {
             leaveWorld();
         } catch (IllegalStateException ignored) {
             // Benutzer ist nicht in einer Welt
         }
-        this.clientSender = null;
-        this.status = Status.OFFLINE;
 
         updateUserInfo(false);
         updateLastLogout();
