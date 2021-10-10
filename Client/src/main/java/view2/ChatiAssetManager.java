@@ -5,7 +5,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -35,20 +34,22 @@ public class ChatiAssetManager implements Disposable {
      * Erzeugt eine neue Instanz des ChatiAssetManager. Lädt alle in der Anwendung benötigten Ressourcen.
      */
     public ChatiAssetManager() {
-        // Definiere Parameter für den TexturePacker.
-        String texturePackerInput = "Client/src/main/resources/textures";
-        String texturePackerOutput = "Client/src/main/resources/atlas";
-        String texturePackerFileName = "textures";
-        TexturePacker.Settings texturePackerSettings = new TexturePacker.Settings();
-        texturePackerSettings.maxWidth = 2048;
-        texturePackerSettings.filterMin = Texture.TextureFilter.Linear;
-        texturePackerSettings.filterMag = Texture.TextureFilter.Linear;
-        texturePackerSettings.combineSubdirectories = true;
-        texturePackerSettings.flattenPaths = true;
+        if (System.getProperty("RunTexturePacker") != null) {
+            // Definiere Parameter für den TexturePacker.
+            String texturePackerInput = "Client/src/main/resources/textures";
+            String texturePackerOutput = "Client/src/main/resources/atlas";
+            String texturePackerFileName = "textures";
+            TexturePacker.Settings texturePackerSettings = new TexturePacker.Settings();
+            texturePackerSettings.maxWidth = 2048;
+            texturePackerSettings.filterMin = Texture.TextureFilter.Linear;
+            texturePackerSettings.filterMag = Texture.TextureFilter.Linear;
+            texturePackerSettings.combineSubdirectories = true;
+            texturePackerSettings.flattenPaths = true;
 
-        // Erzeuge neuen TextureAtlas, falls Ressourcen nicht vorhanden sind oder modifiziert wurden.
-        if (TexturePacker.isModified(texturePackerInput, texturePackerOutput, texturePackerFileName, texturePackerSettings)) {
-            TexturePacker.process(texturePackerSettings, texturePackerInput, texturePackerOutput, texturePackerFileName);
+            // Erzeuge neuen TextureAtlas, falls Ressourcen nicht vorhanden sind oder modifiziert wurden.
+            if (TexturePacker.isModified(texturePackerInput, texturePackerOutput, texturePackerFileName, texturePackerSettings)) {
+                TexturePacker.process(texturePackerSettings, texturePackerInput, texturePackerOutput, texturePackerFileName);
+            }
         }
 
         // Erzeuge neuen AssetManager zum Laden von allen benötigten Ressourcen.

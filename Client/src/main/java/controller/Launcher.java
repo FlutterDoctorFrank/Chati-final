@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import view2.Chati;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -106,14 +106,18 @@ public class Launcher {
                 }
 
                 try {
-                    final InputStream properties = Launcher.class.getClassLoader().getResourceAsStream("logging.properties");
-                    final File home = new File(System.getProperty("user.home"), "Documents/Chati");
+                    final URL properties = Launcher.class.getClassLoader().getResource("logging.properties");
+                    final File home = new File(System.getProperty("user.home"), "Chati");
+
+                    if (properties != null && !properties.toString().startsWith("jar:")) {
+                        System.setProperty("RunTexturePacker", "");
+                    }
 
                     if (home.mkdirs()) {
                         System.out.println("Created home directory for Chati");
                     }
 
-                    LogManager.getLogManager().readConfiguration(properties);
+                    LogManager.getLogManager().readConfiguration(properties != null ? properties.openStream() : null);
                 } catch (IOException | NullPointerException ex) {
                     System.err.println("Failed to load logging properties. Using default configuration.");
                 }

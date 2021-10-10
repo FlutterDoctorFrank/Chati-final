@@ -68,6 +68,8 @@ public class ClientNetworkManagerTest extends RandomTest {
         Assert.assertFalse(this.network.isActive());
 
         this.handler.reset();
+        this.network.setHost("127.0.0.1");
+        this.network.setPorts(0, 1);
         this.network.start();
 
         try {

@@ -92,7 +92,7 @@ public class ClientNetworkManager extends NetworkManager<Client> implements Runn
                     continue;
                 }
 
-                this.endPoint.connect(60000, this.host, this.tcp, this.udp);
+                this.endPoint.connect(5000, this.host, this.tcp, this.udp);
             } catch (IOException ex) {
                 LOGGER.warning(String.format("Failed to connect to server on ip: %s", this.host));
             } catch (Exception ex) {

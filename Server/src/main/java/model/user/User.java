@@ -928,10 +928,10 @@ public class User implements IUser {
         this.status = Status.OFFLINE;
         this.clientSender = null;
 
-        try {
-            leaveWorld();
-        } catch (IllegalStateException ignored) {
-            // Benutzer ist nicht in einer Welt
+        // Entferne die Welt, wenn sich der Benutzer momentan in einer befindet.
+        if (currentWorld != null) {
+            currentWorld.removeUser(this);
+            currentLocation = null;
         }
 
         updateUserInfo(false);
