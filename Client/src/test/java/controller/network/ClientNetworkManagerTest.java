@@ -88,9 +88,6 @@ public class ClientNetworkManagerTest extends RandomTest {
 
         this.handler.reset();
         this.network.start();
-
-        Assert.assertFalse(this.handler.logged());
-
         this.network.start();
         this.network.stop();
     }
