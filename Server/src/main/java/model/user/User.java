@@ -558,6 +558,12 @@ public class User implements IUser {
         }
         // Sende geänderte Rolleninformationen an alle relevanten Benutzer.
         updateRoleInfo(contextRole);
+        // Sende die gebannten Benutzer innerhalb der aktuellen Welt, wenn der Benutzer nun die Berechtigung dazu hat.
+        if (currentWorld != null) {
+            if (hasPermission(currentWorld, Permission.BAN_USER) || hasPermission(currentWorld, Permission.BAN_MODERATOR)) {
+                currentWorld.getBannedUsers().values().forEach(banned -> send(SendAction.USER_INFO, banned));
+            }
+        }
     }
 
     /**
@@ -749,6 +755,9 @@ public class User implements IUser {
      */
     public void setWorld(@Nullable final World world) {
         currentWorld = world;
+        if (world == null) {
+            currentLocation = null;
+        }
     }
 
     /**
@@ -954,11 +963,14 @@ public class User implements IUser {
      * Aktualisiert die Menge der Benutzer, mit denen gerade kommuniziert werden kann.
      */
     public void updateCommunicableUsers() {
-        if (currentLocation == null) {
-            return;
-        }
         Map<UUID, User> currentCommunicableUsers = getCommunicableUsers();
-        Map<UUID, User> newCommunicableUsers = currentLocation.getArea().getCommunicableUsers(this);
+        Map<UUID, User> newCommunicableUsers;
+
+        if (currentLocation == null) {
+            newCommunicableUsers = Collections.emptyMap();
+        } else {
+            newCommunicableUsers = currentLocation.getArea().getCommunicableUsers(this);
+        }
         CommunicationHandler.filterIgnoredUsers(this, newCommunicableUsers);
 
         if (currentCommunicableUsers.keySet().equals(newCommunicableUsers.keySet())) {

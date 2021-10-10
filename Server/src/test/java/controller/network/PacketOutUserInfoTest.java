@@ -182,7 +182,7 @@ public class PacketOutUserInfoTest extends PacketServerTest {
 
         final PacketOutUserInfo packet = this.getPacket(PacketOutUserInfo.class, target);
 
-        Assert.assertNull(packet.getContextId());
+        Assert.assertEquals(world.getContextId(), packet.getContextId());
         Assert.assertEquals(Action.REMOVE_USER, packet.getAction());
         Assert.assertEquals(target.getUserId(), packet.getInfo().getUserId());
         Assert.assertNotNull(packet.getInfo().getName());
@@ -210,7 +210,7 @@ public class PacketOutUserInfoTest extends PacketServerTest {
 
         final PacketOutUserInfo packet = this.getPacket(PacketOutUserInfo.class, target);
 
-        Assert.assertNull(packet.getContextId());
+        Assert.assertEquals(world.getContextId(), packet.getContextId());
         Assert.assertEquals(Action.UPDATE_USER, packet.getAction());
         Assert.assertEquals(target.getUserId(), packet.getInfo().getUserId());
         Assert.assertNotNull(packet.getInfo().getName());
