@@ -48,6 +48,7 @@ public class BotManager implements Runnable {
                 } else if (bot.isAutoChat()) {
                     bot.chat();
                 }
+                bot.choose();
 
                 try {
                     Thread.sleep(500 / AudioUtils.FRAME_RATE);

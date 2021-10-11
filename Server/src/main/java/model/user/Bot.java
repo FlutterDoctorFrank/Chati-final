@@ -73,8 +73,14 @@ public class Bot extends User {
     @Override
     public void send(@NotNull final SendAction action, @NotNull final Object object) {
         switch (action) {
+            case CONTEXT_JOIN:
+                if (object instanceof User && object.equals(this)) {
+                    search();
+                }
+                break;
+
             case AVATAR_SPAWN:
-                if (object instanceof User && !object.equals(this)) {
+                if (object instanceof User && !(object instanceof Bot)) {
                     if (followUser != null) {
                         if (followUser.equals(object)) {
                             if (currentLocation.distance(followUser.currentLocation) > FOLLOW_DISTANCE + MINIMUM_DISTANCE) {
@@ -93,7 +99,7 @@ public class Bot extends User {
                 break;
 
             case AVATAR_MOVE:
-                if (object instanceof User && !object.equals(this)) {
+                if (object instanceof User && !(object instanceof Bot)) {
                     if (followUser != null) {
                         if (followUser.equals(object)) {
                             if (currentLocation.distance(followUser.currentLocation) > FOLLOW_DISTANCE + MINIMUM_DISTANCE) {
@@ -121,15 +127,13 @@ public class Bot extends User {
                     } else {
                         if (currentLocation.distance(((User) object).currentLocation) <= FOLLOW_DISTANCE) {
                             followUser = (User) object;
-                        } else {
-                            choose();
                         }
                     }
                 }
                 break;
 
             case AVATAR_REMOVE:
-                if (object instanceof User && !object.equals(this)) {
+                if (object instanceof User && !(object instanceof Bot)) {
                     if (followUser != null && followUser.equals(object)) {
                         search();
                     }
@@ -177,19 +181,19 @@ public class Bot extends User {
      * Lässt den Bot ein Ziel zum Verfolgen auswählen.
      */
     public void choose() {
-        if (followUser != null || !follow || !teleport) {
+        if (!teleport || !follow || followUser != null) {
             return;
         }
 
         if (System.currentTimeMillis() > nextFollow) {
             try {
-                followUser = currentLocation.getRoom().getUsers().values().stream()
+                User follow = currentLocation.getRoom().getUsers().values().stream()
                         .filter(user -> !user.equals(this)).findAny().orElseThrow();
 
                 Room room = currentLocation.getRoom();
-                Direction direction = followUser.currentLocation.getDirection();
-                float posX = followUser.currentLocation.getPosX();
-                float posY = followUser.currentLocation.getPosY();
+                Direction direction = follow.currentLocation.getDirection();
+                float posX = follow.currentLocation.getPosX();
+                float posY = follow.currentLocation.getPosY();
 
                 switch (direction) {
                     case UP:
@@ -197,7 +201,7 @@ public class Bot extends User {
 
                         while (!room.isLegal(posX, posY)) {
                             posY += 1;
-                            if (posY > followUser.currentLocation.getPosY()) {
+                            if (posY > follow.currentLocation.getPosY()) {
                                 return;
                             }
                         }
@@ -208,7 +212,7 @@ public class Bot extends User {
 
                         while (!room.isLegal(posX, posY)) {
                             posX += 1;
-                            if (posX > followUser.currentLocation.getPosX()) {
+                            if (posX > follow.currentLocation.getPosX()) {
                                 return;
                             }
                         }
@@ -219,7 +223,7 @@ public class Bot extends User {
 
                         while (!room.isLegal(posX, posY)) {
                             posY -= 1;
-                            if (posY < followUser.currentLocation.getPosY()) {
+                            if (posY < follow.currentLocation.getPosY()) {
                                 return;
                             }
                         }
@@ -230,14 +234,17 @@ public class Bot extends User {
 
                         while (!room.isLegal(posX, posY)) {
                             posX -= 1;
-                            if (posX > followUser.currentLocation.getPosX()) {
+                            if (posX > follow.currentLocation.getPosX()) {
                                 return;
                             }
                         }
                         break;
                 }
 
-                teleport(new Location(room, direction, posX, posY));
+                if (followUser == null) {
+                    followUser = follow;
+                    teleport(new Location(room, direction, posX, posY));
+                }
             } catch (NoSuchElementException ignored) {
 
             }
@@ -371,7 +378,7 @@ public class Bot extends User {
      * Folgt einem Benutzer.
      */
     private void follow() {
-        if (followUser == null || !follow) {
+        if (!follow || followUser == null) {
             return;
         }
 

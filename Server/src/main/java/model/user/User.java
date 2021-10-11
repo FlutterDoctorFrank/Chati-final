@@ -112,7 +112,7 @@ public class User implements IUser {
      * @param persistent true, wenn Informationen zu dem Benutzer in der Datenbank hinterlegt werden sollen, sonst false.
      */
     protected User(@NotNull final String username, final boolean persistent) {
-        this(UUID.randomUUID(), username, Avatar.values()[new Random().nextInt(Avatar.values().length)],
+        this(UUID.randomUUID(), username, Avatar.values()[new Random().nextInt(Avatar.values().length - 3)],
                 LocalDateTime.now(), persistent);
     }
 

@@ -9,6 +9,7 @@ import model.context.spatial.ContextMenu;
 import model.context.spatial.Direction;
 import model.context.spatial.Expanse;
 import model.context.spatial.Location;
+import model.context.spatial.MapUtils;
 import model.context.spatial.Room;
 import model.exception.ContextNotFoundException;
 import model.exception.IllegalInteractionException;
@@ -123,18 +124,19 @@ public abstract class Interactable extends Area implements IInteractable {
     }
 
     public static @NotNull Location getLegalPosition(@NotNull final Location location) {
+        final Room room = location.getRoom();
+        final int distance = (int) room.getInteractionDistance() + MapUtils.AVATAR_RADIUS;
         int searchedDirections = 0;
         int ordinal = location.getDirection().ordinal();
         float posX = location.getPosX();
         float posY = location.getPosY();
-        Room room = location.getRoom();
 
         while (searchedDirections < Direction.values().length) {
             Direction direction = Direction.values()[ordinal];
 
             switch (direction) {
                 case UP:
-                    for (int range = 0; range < room.getInteractionDistance(); range++) {
+                    for (int range = 0; range < distance; range++) {
                         if (room.isLegal(posX, posY + range)) {
                             return new Location(room, direction, posX, posY + range);
                         }
@@ -142,7 +144,7 @@ public abstract class Interactable extends Area implements IInteractable {
                     break;
 
                 case RIGHT:
-                    for (int range = 0; range < room.getInteractionDistance(); range++) {
+                    for (int range = 0; range < distance; range++) {
                         if (room.isLegal(posX + range, posY)) {
                             return new Location(room, direction, posX + range, posY);
                         }
@@ -150,7 +152,7 @@ public abstract class Interactable extends Area implements IInteractable {
                     break;
 
                 case DOWN:
-                    for (int range = 0; range < room.getInteractionDistance(); range++) {
+                    for (int range = 0; range < distance; range++) {
                         if (room.isLegal(posX, posY - range)) {
                             return new Location(room, direction, posX, posY - range);
                         }
@@ -158,7 +160,7 @@ public abstract class Interactable extends Area implements IInteractable {
                     break;
 
                 case LEFT:
-                    for (int range = 0; range < room.getInteractionDistance(); range++) {
+                    for (int range = 0; range < distance; range++) {
                         if (room.isLegal(posX - range, posY)) {
                             return new Location(room, direction, posX - range, posY);
                         }
