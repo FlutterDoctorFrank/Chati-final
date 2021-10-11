@@ -68,7 +68,7 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
 
     public void send(@NotNull final Packet<?> packet) {
         if (this.connection.isConnected()) {
-            if (packet instanceof PacketVideoFrame) {
+            if (packet instanceof PacketAudioMessage || packet instanceof PacketVideoFrame) {
                 this.connection.sendUDP(packet);
             } else {
                 this.connection.sendTCP(packet);

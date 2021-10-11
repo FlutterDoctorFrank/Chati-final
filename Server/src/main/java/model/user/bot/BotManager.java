@@ -49,13 +49,13 @@ public class BotManager implements Runnable {
                     bot.chat();
                 }
                 bot.choose();
-
-                try {
-                    Thread.sleep(500 / AudioUtils.FRAME_RATE);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             });
+
+            try {
+                Thread.sleep(955 / AudioUtils.FRAME_RATE);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

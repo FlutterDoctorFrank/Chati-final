@@ -44,7 +44,7 @@ public abstract class AudioProducer {
      * @return Block mit aktuell abzuspielenden Audiodaten.
      */
     public short[] getNextFrame() {
-        short[] block = new short[AudioUtils.FRAME_SIZE];
+        short[] block = new short[MultimediaManager.AUDIO_BLOCK_SIZE];
         for (int i = 0; i < block.length; i++) {
             Short data = receivedDataQueue.poll();
             block[i] = data != null ? data : 0;
@@ -84,6 +84,6 @@ public abstract class AudioProducer {
      * @return Größe der Warteschlange in der Anzahl abspielbarer Blöcke.
      */
     protected int queueSizeInFrames() {
-        return receivedDataQueue.size() / AudioUtils.FRAME_SIZE;
+        return receivedDataQueue.size() / MultimediaManager.AUDIO_BLOCK_SIZE;
     }
 }

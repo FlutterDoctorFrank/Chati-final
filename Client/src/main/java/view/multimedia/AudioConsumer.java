@@ -46,7 +46,7 @@ public class AudioConsumer implements Runnable, Disposable {
 
     @Override
     public void run() {
-        short[] mixedData = new short[AudioUtils.FRAME_SIZE];
+        short[] mixedData = new short[MultimediaManager.AUDIO_BLOCK_SIZE];
 
         outer:
         while (isRunning) {
@@ -68,13 +68,13 @@ public class AudioConsumer implements Runnable, Disposable {
             Set<short[]> frames = voiceDataBuffer.values().stream().filter(VoiceChatUser::isReady)
                     .map(VoiceChatUser::getNextFrame).collect(Collectors.toSet());
             voiceDataBuffer.values().removeIf(Predicate.not(VoiceChatUser::isActive));
-            short[] musicFrame = new short[AudioUtils.FRAME_SIZE];
+            short[] musicFrame = new short[MultimediaManager.AUDIO_BLOCK_SIZE];
             if (musicStream.isReady()) {
                 musicFrame = musicStream.getNextFrame();
             }
 
-            int[] temp = new int[AudioUtils.FRAME_SIZE];
-            for (int i = 0; i < AudioUtils.FRAME_SIZE; i++) {
+            int[] temp = new int[MultimediaManager.AUDIO_BLOCK_SIZE];
+            for (int i = 0; i < MultimediaManager.AUDIO_BLOCK_SIZE; i++) {
                 if (Chati.CHATI.getPreferences().isSoundOn()) {
                     // Mische Daten aller Teilnehmer des Voicechats und setze die entsprechende Lautstärke.
                     for (short[] block : frames) {

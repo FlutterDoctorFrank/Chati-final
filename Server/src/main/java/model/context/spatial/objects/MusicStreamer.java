@@ -216,7 +216,7 @@ public class MusicStreamer extends Interactable implements Runnable {
 
     @Override
     public void run() {
-        byte[] sendData = new byte[2 * AudioUtils.FRAME_SIZE];
+        byte[] sendData = new byte[AudioUtils.FRAME_SIZE];
 
         outer:
         while (isRunning) {

@@ -55,7 +55,7 @@ public class VoiceRecorder implements Runnable, Disposable {
                 }
             }
 
-            short[] recordedData = new short[AudioUtils.FRAME_SIZE];
+            short[] recordedData = new short[MultimediaManager.AUDIO_BLOCK_SIZE];
             recorder.read(recordedData, 0, recordedData.length);
             sendDataQueue.add(recordedData);
             if (sendDataQueue.size() > MAX_FRAMES) {

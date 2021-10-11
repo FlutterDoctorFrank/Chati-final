@@ -10,10 +10,11 @@ public class AudioUtils {
     public static final AudioFormat.Encoding ENCODING = AudioFormat.Encoding.PCM_SIGNED;
     public static final int SAMPLING_RATE = 44100;
     public static final int SAMPLE_SIZE_IN_BITS = 16;
+    public static final int SAMPLE_SIZE_IN_BYTES = SAMPLE_SIZE_IN_BITS / 8;
     public static final int CHANNELS = 1;
     public static final boolean MONO = CHANNELS == 1;
     public static final int FRAME_RATE = 30;
-    public static final int FRAME_SIZE = SAMPLING_RATE / FRAME_RATE;
+    public static final int FRAME_SIZE = SAMPLE_SIZE_IN_BYTES * SAMPLING_RATE / FRAME_RATE;
 
     private AudioUtils() {
     }

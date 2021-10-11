@@ -78,7 +78,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
 
     public void send(@NotNull final Packet<?> packet) {
         if (this.manager.getEndPoint().isConnected()) {
-            if (packet instanceof PacketVideoFrame) {
+            if (packet instanceof PacketAudioMessage || packet instanceof PacketVideoFrame) {
                 this.manager.getEndPoint().sendUDP(packet);
             } else {
                 this.manager.getEndPoint().sendTCP(packet);

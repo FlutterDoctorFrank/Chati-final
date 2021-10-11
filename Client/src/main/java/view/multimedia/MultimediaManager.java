@@ -2,6 +2,7 @@ package view.multimedia;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import controller.AudioUtils;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import model.user.IUserView;
@@ -17,6 +18,8 @@ import java.util.logging.Level;
  * Eine Klasse, welche die in der Anwendung verwendeten Medien verwaltet.
  */
 public class MultimediaManager implements Disposable {
+
+    public static final int AUDIO_BLOCK_SIZE = AudioUtils.FRAME_SIZE / AudioUtils.SAMPLE_SIZE_IN_BYTES;
 
     private VoiceRecorder voiceRecorder;
     private AudioConsumer audioConsumer;

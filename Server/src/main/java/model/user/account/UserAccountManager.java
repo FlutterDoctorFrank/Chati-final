@@ -11,7 +11,6 @@ import model.exception.UserNotFoundException;
 import model.notification.Notification;
 import model.role.Permission;
 import model.role.Role;
-import model.user.Bot;
 import model.user.User;
 import model.user.bot.BotManager;
 import org.jetbrains.annotations.NotNull;
