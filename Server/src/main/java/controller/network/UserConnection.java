@@ -101,7 +101,8 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 this.connection.close();
             } catch (Exception ex) {
                 // Unerwartete Exceptions abfangen, sodass ein Fehler nicht direkt zum Absturz der Anwendung führt.
-                LOGGER.log(Level.WARNING, "Unhandled exception while processing network-packet " + object.getClass().getSimpleName(), ex);
+                LOGGER.log(Level.WARNING, "Unhandled exception while processing network-packet "
+                        + object.getClass().getSimpleName() + " from connection " + connection.getID(), ex);
             }
         }
     }
@@ -159,12 +160,12 @@ public class UserConnection extends Listener implements PacketListenerIn, Client
                 this.user.move(packet.getDirection(), packet.getPosX(), packet.getPosY(), packet.isSprinting());
             } catch (IllegalPositionException ex) {
                 if (user.getLocation() == null) {
-                    LOGGER.warning("User " + this.user + " has no valid position.");
+                    LOGGER.warning("User " + this + " has no valid position.");
                     return;
                 }
 
                 // Illegale Position erhalten. Sende vorherige Position.
-                LOGGER.warning("User " + this.user + " tried illegal movement: " + ex.getMessage());
+                LOGGER.warning("User " + this + " tried illegal movement: " + ex.getMessage());
 
                 final Direction direction = this.user.getLocation().getDirection();
                 final float posX = this.user.getLocation().getPosX();
