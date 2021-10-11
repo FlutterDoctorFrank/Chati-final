@@ -8,7 +8,7 @@ import model.exception.ContextNotFoundException;
 import model.exception.UserNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import view2.IModelObserver;
+import view.IModelObserver;
 
 import java.util.*;
 import java.util.function.Function;

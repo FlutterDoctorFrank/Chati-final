@@ -6,7 +6,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import model.user.UserManager;
 import org.jetbrains.annotations.NotNull;
-import view2.Chati;
+import view.Chati;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;

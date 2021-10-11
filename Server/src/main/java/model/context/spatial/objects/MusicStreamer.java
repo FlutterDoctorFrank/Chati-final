@@ -193,6 +193,12 @@ public class MusicStreamer extends Interactable implements Runnable {
         }
     }
 
+    @Override
+    public synchronized void stop() {
+        isRunning = false;
+        notifyAll();
+    }
+
     /**
      * Startet einen Thread zum Senden von Musikstreamingdaten.
      */
@@ -266,6 +272,7 @@ public class MusicStreamer extends Interactable implements Runnable {
                 LOGGER.log(Level.WARNING, "Exception during music streaming", e);
             }
         }
+        LOGGER.info("Ended music thread for jukebox " + getContextId());
     }
 
     /**

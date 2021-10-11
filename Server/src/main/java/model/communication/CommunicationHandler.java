@@ -12,10 +12,10 @@ import model.context.spatial.Room;
 import model.context.spatial.World;
 import model.exception.UserNotFoundException;
 import model.role.Permission;
-import model.user.Bot;
 import model.user.Status;
 import model.user.User;
 import model.user.account.UserAccountManager;
+import model.user.bot.BotManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Map;
@@ -520,7 +520,7 @@ public class CommunicationHandler {
                     return;
                 }
 
-                Bot.create(commandParts[1], sender);
+                BotManager.getInstance().createBot(commandParts[1], sender);
             }
         },
 
@@ -551,9 +551,9 @@ public class CommunicationHandler {
                 String[] commandParts = message.split("\\s", 2);
 
                 if (commandParts.length < 2) {
-                    Bot.destroyAll(sender);
+                    BotManager.getInstance().destroyAllBots();
                 } else {
-                    Bot.destroy(commandParts[1], sender);
+                    BotManager.getInstance().destroyBot(commandParts[1], sender);
                 }
             }
         };

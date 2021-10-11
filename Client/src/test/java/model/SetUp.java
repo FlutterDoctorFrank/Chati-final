@@ -1,7 +1,7 @@
 package model;
 
 import model.user.UserManager;
-import view2.IModelObserver;
+import view.IModelObserver;
 
 public class SetUp {
     public static void setUpModelObserver(){

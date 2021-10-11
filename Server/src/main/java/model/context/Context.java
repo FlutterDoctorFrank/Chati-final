@@ -136,6 +136,7 @@ public abstract class Context implements IContext {
      * @param child Zu entfernender Kontext.
      */
     public void removeChild(@NotNull final Area child) {
+        child.stop();
         children.remove(child.getContextId());
     }
 
@@ -367,7 +368,8 @@ public abstract class Context implements IContext {
      * @return true, wenn der übergebene Kontext übergeordnet ist, sonst false.
      */
     public boolean isInContext(@NotNull final Context context) {
-        return equals(context) || (parent != null && parent.isInContext(context));
+        return equals(context) || (parent != null && parent.getChildren().containsKey(contextId)
+                && parent.isInContext(context));
     }
 
     /**
@@ -427,6 +429,13 @@ public abstract class Context implements IContext {
             throw new ContextNotFoundException("There is no context with this ID.", contextId);
         }
         return found;
+    }
+
+    /**
+     * Stoppt alle Threads, die in diesem, oder untergeordneten Kontexten gestartet wurden.
+     */
+    public void stop() {
+        children.values().forEach(Context::stop);
     }
 
     @Override

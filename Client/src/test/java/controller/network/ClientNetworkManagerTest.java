@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import util.RandomTest;
-import view2.ViewControllerInterface;
+import view.ViewControllerInterface;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 

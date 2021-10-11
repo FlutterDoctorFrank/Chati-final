@@ -7,7 +7,6 @@ import controller.AudioUtils;
 import controller.network.ClientSender.SendAction;
 import model.communication.message.MessageType;
 import model.communication.message.TextMessage;
-import model.context.global.GlobalContext;
 import model.context.spatial.Direction;
 import model.context.spatial.Location;
 import model.context.spatial.MapUtils;
@@ -17,16 +16,14 @@ import model.exception.IllegalPositionException;
 import model.exception.UserNotFoundException;
 import model.notification.Notification;
 import model.role.Permission;
-import model.role.Role;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import javax.sound.sampled.AudioFormat;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.Queue;
+import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Eine Klasse, welche einen automatisierten Benutzer repräsentiert.
@@ -37,9 +34,9 @@ public class Bot extends User {
     private static final float SPRINT_SPEED_FACTOR = 1.67f;
     private static final float MINIMUM_DISTANCE = 2 * MapUtils.INTERACTION_DISTANCE;
     private static final float FOLLOW_DISTANCE = 4 * MapUtils.INTERACTION_DISTANCE;
+    private static final float MIN_AUTO_CHAT_PAUSE = 10; // In Sekunden.
 
-    private static final Map<String, Bot> bots = new HashMap<>();
-
+    private final Queue<byte[]> audioDataBuffer;
     private final Voice voice;
     private User followUser;
     private User forwardWhisperTo;
@@ -49,113 +46,23 @@ public class Bot extends User {
     private boolean autoChat;
     private long nextFollow;
     private long nextRotate;
+    private long lastTimeAutoChat;
+    private final Random random;
 
     /**
      * Erzeugt eine neue Instanz eines Bot.
      * @param botname Name des Bots.
      */
-    private Bot(@NotNull final String botname) {
+    public Bot(@NotNull final String botname) {
         super(botname, false);
-        System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");
+        this.audioDataBuffer = new LinkedBlockingQueue<>();
         this.voice = VoiceManager.getInstance().getVoice("kevin16");
         this.voice.setAudioPlayer(new BotAudioPlayer(this));
         this.voice.allocate();
         this.sprint = false;
         this.follow = true;
         this.autoChat = true;
-    }
-
-    /**
-     * Erzeugt einen neuen Bot.
-     * @param botname Name des Bots.
-     * @param executor Erzeugender Benutzer.
-     */
-    public static void create(@NotNull final String botname, @NotNull final User executor) {
-        if (executor.getWorld() == null || executor.getLocation() == null) {
-            // Evtl Loggen
-            return;
-        }
-
-        if (bots.containsKey(botname) || UserAccountManager.getInstance().isRegistered(botname)) {
-            // Informiere den ausführenden Benutzer darüber, dass bereits ein Bot mit diesem Namen existiert.
-            TextMessage infoMessage = new TextMessage("chat.command.create-bot.already-exist");
-            executor.send(SendAction.MESSAGE, infoMessage);
-            return;
-        }
-
-        Bot bot = new Bot(botname);
-        bot.addRole(GlobalContext.getInstance(), Role.BOT);
-        bot.login(null);
-        GlobalContext.getInstance().addUser(bot);
-        bot.teleport(executor.getLocation());
-        bots.put(botname, bot);
-    }
-
-    /**
-     * Entfernt einen Bot.
-     * @param botname Name des Bots.
-     * @param executor Entfernender Benutzer.
-     */
-    public static void destroy(@NotNull final String botname, @NotNull final User executor) {
-        if (executor.getWorld() == null || executor.getLocation() == null) {
-            // Evtl Loggen
-            return;
-        }
-
-        if (destroy(botname)) {
-            bots.remove(botname);
-        } else {
-            // Informiere den ausführenden Benutzer darüber, dass kein Bot mit diesem Namen existiert.
-            TextMessage infoMessage = new TextMessage("chat.command.create-bot.not-exist");
-            executor.send(SendAction.MESSAGE, infoMessage);
-        }
-    }
-
-    /**
-     * Entfernt alle Bots.
-     * @param executor Entfernender Benutzer.
-     */
-    public static void destroyAll(@NotNull final User executor) {
-        bots.values().forEach(bot -> destroy(bot.getUsername()));
-        bots.clear();
-    }
-
-    /**
-     * Löscht die Informationen über einen Bot.
-     * @param botname Name des Bots, dessen Informationen gelöscht werden soll.
-     * @return true, wenn ein Bot mit dem Namen gefunden wurde, sonst false.
-     */
-    private static boolean destroy(@NotNull final String botname) {
-        Bot bot = bots.get(botname);
-        if (bot != null) {
-            UserAccountManager.getInstance().getUsers().values().forEach(user -> user.removeFriend(bot));
-            UserAccountManager.getInstance().getUsers().values().forEach(user -> user.unignoreUser(bot));
-            bot.logout();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Gibt einen Bot zurück.
-     * @param botId ID des Bots.
-     * @return Bot mit der ID.
-     */
-    public static @Nullable Bot get(@NotNull final UUID botId) {
-        try {
-            return bots.values().stream().filter(bot -> bot.getUserId().equals(botId)).findFirst().orElseThrow();
-        } catch (NoSuchElementException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Gibt einen Bot zurück.
-     * @param botname Name des Bots.
-     * @return Bot mit dem Namen.
-     */
-    public static @Nullable Bot get(@NotNull final String botname) {
-        return bots.get(botname);
+        this.random = new Random();
     }
 
     @Override
@@ -249,7 +156,6 @@ public class Bot extends User {
                                 return;
                             }
                         }
-                        chat();
                     }
                 }
                 break;
@@ -267,51 +173,9 @@ public class Bot extends User {
         }
     }
 
-    private boolean inFront(@NotNull final User user) {
-        switch (currentLocation.getDirection()) {
-            case UP:
-                return user.currentLocation.getPosY() > currentLocation.getPosY();
-
-            case RIGHT:
-                return user.currentLocation.getPosX() > currentLocation.getPosX();
-
-            case DOWN:
-                return user.currentLocation.getPosY() < currentLocation.getPosY();
-
-            case LEFT:
-                return user.currentLocation.getPosX() < currentLocation.getPosX();
-        }
-
-        return false;
-    }
-
     /**
-     * Lässt den Bot einen Benutzer zum Folgen suchen.
+     * Lässt den Bot ein Ziel zum Verfolgen auswählen.
      */
-    private void search() {
-        followUser = null;
-        nextFollow = System.currentTimeMillis() + 3000;
-        nextRotate = System.currentTimeMillis() + 250;
-
-        if (!follow) {
-            return;
-        }
-
-        float minimumDistance = Float.MAX_VALUE;
-
-        // Suche nach dem nächsten Benutzer innerhalb des Folgeradius.
-        for (final User user : currentLocation.getRoom().getUsers().values()) {
-            if (!user.equals(this) && inFront(user)) {
-                float distance = currentLocation.distance(user.currentLocation);
-
-                if (distance <= FOLLOW_DISTANCE && distance < minimumDistance) {
-                    followUser = user;
-                    minimumDistance = distance;
-                }
-            }
-        }
-    }
-
     public void choose() {
         if (followUser != null || !follow || !teleport) {
             return;
@@ -390,6 +254,120 @@ public class Bot extends User {
     }
 
     /**
+     * Lässt den Bot vorgefertigte Nachrichten schreiben.
+     */
+    public void chat() {
+        long now = System.currentTimeMillis();
+        if (now - lastTimeAutoChat < 1000 * MIN_AUTO_CHAT_PAUSE) {
+            return;
+        }
+        lastTimeAutoChat = now;
+        int randomNumber = random.nextInt(128);
+        switch (randomNumber) {
+            case 0:
+                chat("Wer immer tut was er schon kann, bleibt immer das was er schon war.", new byte[0], null);
+                break;
+            case 1:
+                chat("Ein guter Gewinner muss auch ein guter Verlierer sein.", new byte[0], null);
+                break;
+            case 2:
+                chat("Zu fallen ist nicht schlimm. Schlimm ist es, liegenzubleiben.", new byte[0], null);
+                break;
+            case 3:
+                chat("Es gibt keinen Weg zum Glück. Glücklich sein ist der Weg.", new byte[0], null);
+                break;
+            case 4:
+                chat("Denke nicht so oft an das was dir fehlt, sondern an das was du hast.", new byte[0], null);
+                break;
+            case 5:
+                chat("Wer etwas will, der sucht nach Wegen. Wer etwas nicht will, sucht nach Gründen.", new byte[0], null);
+                break;
+            case 6:
+                chat("Manchmal muss man am Ende stehen, um den Anfang zu sehen.", new byte[0], null);
+                break;
+            case 7:
+                chat("Die Wahrheit erkennt man nicht an schönen Worten, sondern an leisen Taten.", new byte[0], null);
+                break;
+            default:
+                // Tu nichts.
+        }
+    }
+
+    /**
+     * Gibt zurück, ob der Bot von selbst schreiben soll.
+     * @return true, wenn der Bot von selbst schreiben soll, sonst false.
+     */
+    public boolean isAutoChat() {
+        return autoChat;
+    }
+
+    /**
+     * Gibt zurück, ob der Bot aktuell Daten zum Abspielen hat.
+     * @return true, wenn er Daten zum Abspielen hat, sonst false.
+     */
+    public boolean hasData() {
+        return !audioDataBuffer.isEmpty();
+    }
+
+    /**
+     * Gibt die nächsten zu sendenden Sprachdaten zurück.
+     * @return Zu sendende Sprachdaten des Bots.
+     */
+    public byte[] getNextFrame() {
+        return audioDataBuffer.poll();
+    }
+
+    /**
+     * Gibt zurück, ob der Bot vor einem Benutzer steht.
+     * @param user Zu überprüfender Benutzer.
+     * @return true, wenn er vor dem Benutzer steht, sonst false.
+     */
+    private boolean inFront(@NotNull final User user) {
+        switch (currentLocation.getDirection()) {
+            case UP:
+                return user.currentLocation.getPosY() > currentLocation.getPosY();
+
+            case RIGHT:
+                return user.currentLocation.getPosX() > currentLocation.getPosX();
+
+            case DOWN:
+                return user.currentLocation.getPosY() < currentLocation.getPosY();
+
+            case LEFT:
+                return user.currentLocation.getPosX() < currentLocation.getPosX();
+        }
+
+        return false;
+    }
+
+    /**
+     * Lässt den Bot einen Benutzer zum Folgen suchen.
+     */
+    private void search() {
+        followUser = null;
+        nextFollow = System.currentTimeMillis() + 3000;
+        nextRotate = System.currentTimeMillis() + 250;
+
+        if (!follow) {
+            return;
+        }
+
+        float minimumDistance = Float.MAX_VALUE;
+
+        // Suche nach dem nächsten Benutzer innerhalb des Folgeradius.
+        for (final User user : currentLocation.getRoom().getUsers().values()) {
+            if (!user.equals(this) && inFront(user)) {
+                float distance = currentLocation.distance(user.currentLocation);
+
+                if (distance <= FOLLOW_DISTANCE && distance < minimumDistance) {
+                    followUser = user;
+                    minimumDistance = distance;
+                }
+            }
+        }
+    }
+
+    /**
      * Folgt einem Benutzer.
      */
     private void follow() {
@@ -459,16 +437,6 @@ public class Bot extends User {
 
             }
         }
-    }
-
-    /**
-     * Lässt den Bot vorgefertigte Nachrichten schreiben oder sprechen.
-     */
-    private void chat() {
-        if (!autoChat) {
-            return;
-        }
-        // Sprüche ausm Lexikon klopfen
     }
 
     /**
@@ -725,6 +693,7 @@ public class Bot extends User {
             return true;
         }
 
+        @Override
         public boolean drain() {
             return true;
         }
@@ -753,7 +722,7 @@ public class Bot extends User {
             }
             byte[] upSampledBytes = AudioUtils.toByte(upSampledShorts, true);
             for (int i = 0; i < upSampledBytes.length; i += AudioUtils.FRAME_SIZE) {
-                bot.talk(Arrays.copyOfRange(upSampledBytes, i, i + AudioUtils.FRAME_SIZE));
+                bot.audioDataBuffer.add(Arrays.copyOfRange(upSampledBytes, i, i + AudioUtils.FRAME_SIZE));
             }
             return true;
         }

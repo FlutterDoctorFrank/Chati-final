@@ -8,7 +8,7 @@ import model.context.spatial.ContextMenu;
 import model.exception.UserNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import view2.ViewControllerInterface;
+import view.ViewControllerInterface;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;

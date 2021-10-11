@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 /**
  * Eine Klasse die benutzt wird, um Ereignisse auszuführen, die in der Zukunft stattfinden sollen.
  */
-public class TimedEventScheduler extends Thread {
+public class TimedEventScheduler implements Runnable {
 
     /** Singleton-Instanz der Klasse. */
     private static TimedEventScheduler scheduler;
@@ -26,25 +26,19 @@ public class TimedEventScheduler extends Thread {
     private TimedEventScheduler() {
         this.timedEvents = new PriorityBlockingQueue<>();
         this.isRunning = false;
-
-        this.setDaemon(true);
     }
 
     @Override
-    public void start() {
-        this.isRunning = true;
-        super.start();
-    }
-
-    @Override
-    public synchronized void run() {
+    public void run() {
         while (isRunning) {
-            // Warte, solange es keine abzuarbeitenden Ereignisse gibt.
-            while (timedEvents.isEmpty()) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            synchronized (this) {
+                // Warte, solange es keine abzuarbeitenden Ereignisse gibt.
+                while (timedEvents.isEmpty()) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             LocalDateTime now = LocalDateTime.now();
@@ -65,7 +59,7 @@ public class TimedEventScheduler extends Thread {
                 // Wenn die Zeit nicht erreicht ist, warte bis die Zeit zum Abarbeiten des ersten Ereignisses
                 // eingetroffen ist.
                 try {
-                    wait(now.until(first.getTime(), ChronoUnit.MILLIS));
+                    Thread.sleep(now.until(first.getTime(), ChronoUnit.MILLIS));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -82,6 +76,16 @@ public class TimedEventScheduler extends Thread {
     public synchronized void put(@NotNull final TimedEvent event) {
         timedEvents.put(event);
         notifyAll();
+    }
+
+    /**
+     * Startet den Thread des TimedEventScheduler.
+     */
+    private void start() {
+        this.isRunning = true;
+        Thread schedulerThread = new Thread(this);
+        schedulerThread.setDaemon(true);
+        schedulerThread.start();
     }
 
     /**

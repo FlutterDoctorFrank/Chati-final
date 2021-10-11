@@ -26,7 +26,6 @@
             <version>23.0</version>
         </dependency>
 
-
         <!-- LibGDX - Headless Backend -->
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
@@ -48,9 +47,7 @@
             <artifactId>freetts</artifactId>
             <version>1.2.2</version>
         </dependency>
-
     </dependencies>
-
     <build>
         <finalName>Chati-Server</finalName>
         <plugins>

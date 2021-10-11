@@ -25,11 +25,9 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.*;
-import view2.Chati;
+import view.Chati;
 
 /** Anmerkung: Diese Klasse ist eine exakte Kopie der Klasse TextArea von LibGDX, mit der Ausnahme der Methode drawText.
  *  Dies ist zur Korrekten Darstellung von Emojis in der TextArea nötig, da das dafür notwendige Verhalten nicht

@@ -13,6 +13,7 @@ import model.role.Permission;
 import model.role.Role;
 import model.user.Bot;
 import model.user.User;
+import model.user.bot.BotManager;
 import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,7 +74,7 @@ public class UserAccountManager implements IUserAccountManager {
             throw new IllegalAccountActionException("", "account.register.illegal-password");
         }
         // Überprüfe, ob bereits ein Konto mit diesem Benutzernamen existiert.
-        if (isRegistered(username) || Bot.get(username) != null) {
+        if (isRegistered(username) || BotManager.getInstance().getBot(username) != null) {
             throw new IllegalAccountActionException("", "account.register.already-taken", username);
         }
         // Erzeuge Benutzer und füge ihn zu den registrierten Benutzern hinzu.
@@ -200,7 +201,7 @@ public class UserAccountManager implements IUserAccountManager {
     public @NotNull User getUser(@NotNull final UUID userId) throws UserNotFoundException {
         User user = registeredUsers.get(userId);
         if (user == null) {
-            user = Bot.get(userId);
+            user = BotManager.getInstance().getBot(userId);
             if (user == null) {
                 throw new UserNotFoundException("User does not exist.", userId);
             }
@@ -215,7 +216,7 @@ public class UserAccountManager implements IUserAccountManager {
      * @throws UserNotFoundException wenn kein Benutzer mit dem Benutzernamen existiert.
      */
     public @NotNull User getUser(@NotNull final String username) throws UserNotFoundException {
-        User user = Bot.get(username);
+        User user = BotManager.getInstance().getBot(username);
         if (user == null) {
             user = getUser(username, true);
         }

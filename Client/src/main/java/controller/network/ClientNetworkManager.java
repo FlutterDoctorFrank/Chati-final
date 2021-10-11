@@ -4,7 +4,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import model.user.IUserManagerController;
 import org.jetbrains.annotations.NotNull;
-import view2.ViewControllerInterface;
+import view.ViewControllerInterface;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
