@@ -33,7 +33,7 @@ import java.time.LocalDateTime;
  */
 public abstract class NetworkManager<T extends EndPoint> extends Listener {
 
-    private static final String HOST_IP = "85.215.241.212"; // 81.169.218.151
+    private static final String HOST_IP = "81.169.218.151"; // 85.215.241.212
     private static final int HOST_TCP_PORT = 54777;
     private static final int HOST_UDP_PORT = 59001;
 
