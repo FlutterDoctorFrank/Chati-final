@@ -79,6 +79,8 @@ public class InformationWindow extends ChatiWindow {
         Label toggleFullscreenKeyLabel = new Label(KeyCommand.TOGGLE_FULLSCREEN.toString(), Chati.CHATI.getSkin());
         InformationLabel closeLabel = new InformationLabel("menu.label.close-window");
         Label closeKeyLabel = new Label(KeyCommand.CLOSE.toString(), Chati.CHATI.getSkin());
+        InformationLabel openVideoChatLabel = new InformationLabel("menu.label.open-video-chat");
+        Label openVideoChatKeyLabel = new Label(KeyCommand.OPEN_VIDEO_CHAT.toString(), Chati.CHATI.getSkin());
 
         InformationLabel commandsLabel = new InformationLabel("menu.label.commands");
         InformationLabel chatCommandsLabel = new InformationLabel("menu.label.chat-commands");
@@ -150,6 +152,7 @@ public class InformationWindow extends ChatiWindow {
         menuKeysTableContainer.top();
         menuKeysTableContainer.defaults().colspan(2).pad(SPACE).padLeft(2 * SPACE).growX();
         menuKeysTableContainer.add(openChatLabel, openChatKeyLabel).row();
+        menuKeysTableContainer.add(openVideoChatLabel, openVideoChatKeyLabel).row();
         menuKeysTableContainer.add(openUserMenuLabel, openUserMenuKeyLabel).row();
         menuKeysTableContainer.add(openNotificationMenuLabel, openNotificationMenuKeyLabel).row();
         menuKeysTableContainer.add(openSettingsMenuLabel, openSettingsMenuKeyLabel).row();
