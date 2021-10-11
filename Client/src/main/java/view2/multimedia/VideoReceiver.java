@@ -4,6 +4,7 @@ import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import view2.Chati;
 
 import java.time.LocalDateTime;
@@ -56,7 +57,7 @@ public class VideoReceiver {
      * Gibt den nächsten anzuzeigenden Frame zurück.
      * @return Nächster anzuzeigender Frame.
      */
-    public VideoFrame getNextFrame() {
+    public @Nullable VideoFrame getNextFrame() {
         return frameDataBuffer.poll();
     }
 

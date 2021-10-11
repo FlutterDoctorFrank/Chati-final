@@ -53,7 +53,7 @@ public class VideoChatWindow extends ResizableWindow {
         frameBuffer = BufferUtils.createByteBuffer(VideoRecorder.COLOR_BYTES * VideoRecorder.FRAME_WIDTH
                 * VideoRecorder.FRAME_HEIGHT);
 
-        videoChatGroup = new HorizontalGroup().wrap().pad(SPACE);
+        videoChatGroup = new HorizontalGroup().wrap().space(SPACE).wrapSpace(SPACE).pad(SPACE);
         videoChatGroup.top().left();
         videoChatScrollPane = new ScrollPane(videoChatGroup, Chati.CHATI.getSkin());
         videoChatScrollPane.setOverscroll(false, false);
@@ -75,9 +75,9 @@ public class VideoChatWindow extends ResizableWindow {
         float height = MIN_HEIGHT + getPadY();
         setWidth(width);
         setHeight(height);
-        setPosition(Gdx.graphics.getWidth() + ChatWindow.DEFAULT_WIDTH - 2 * width, 0);
+        setPosition(Gdx.graphics.getWidth() - ChatWindow.DEFAULT_WIDTH - 125, 0);
 
-        add(videoChatScrollPane).minWidth(MIN_WIDTH).minHeight(MIN_HEIGHT).grow();
+        add(videoChatScrollPane).minWidth(MIN_WIDTH + SPACE).minHeight(MIN_HEIGHT).grow();
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
     }
 
@@ -165,7 +165,7 @@ public class VideoChatWindow extends ResizableWindow {
      */
     private static class VideoChatUser {
 
-        private static final float MAX_INACTIVE_TIME = 1; // In Sekunden
+        private static final float MAX_INACTIVE_TIME = 3; // In Sekunden
 
         private final IUserView user;
         private final Texture videoTexture;
@@ -223,7 +223,8 @@ public class VideoChatWindow extends ResizableWindow {
          * @return true, falls ein Frame eingegangen ist, sonst false.
          */
         public boolean isActive() {
-            return LocalDateTime.now().minus((long) (1000 * MAX_INACTIVE_TIME), ChronoUnit.MILLIS).isBefore(lastFrameTime);
+            return LocalDateTime.now().minus((long) (1000 * MAX_INACTIVE_TIME), ChronoUnit.MILLIS)
+                    .isBefore(lastFrameTime) && user.canShow();
         }
 
         /**

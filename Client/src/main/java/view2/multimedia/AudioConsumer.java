@@ -67,7 +67,7 @@ public class AudioConsumer implements Runnable, Disposable {
             // Entferne die obersten Elemente aus den Puffern des Voicechats und des Musikstreams.
             Set<short[]> frames = voiceDataBuffer.values().stream().filter(VoiceChatUser::isReady)
                     .map(VoiceChatUser::getAudioDataBlock).collect(Collectors.toSet());
-            voiceDataBuffer.values().removeIf(Predicate.not(VoiceChatUser::hasData));
+            voiceDataBuffer.values().removeIf(Predicate.not(VoiceChatUser::isActive));
             short[] musicFrame = new short[AudioUtils.FRAME_SIZE];
             if (musicStream.isReady()) {
                 musicFrame = musicStream.getAudioDataBlock();

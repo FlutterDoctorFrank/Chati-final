@@ -40,6 +40,14 @@ public class VoiceChatUser extends AudioProducer {
     }
 
     /**
+     * Gibt zurück, ob der Benutzer gerade spricht.
+     * @return true, wenn der Benutzer gerade spricht, sonst false.
+     */
+    public boolean isActive() {
+        return hasData() && sender.canTalk();
+    }
+
+    /**
      * Gibt den sendenden Benutzer zurück.
      * @return Sendender Benutzer.
      */

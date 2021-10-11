@@ -311,7 +311,7 @@ public class ChatiPreferences {
         KeyCommand.SEND_CHAT_MESSAGE.addKeyBindings(List.of(Input.Keys.ENTER, Input.Keys.NUMPAD_ENTER));
         KeyCommand.PUSH_TO_TALK.addKeyBindings(List.of(Input.Keys.P));
         KeyCommand.OPEN_CHAT.addKeyBindings(List.of(Input.Keys.SPACE));
-        KeyCommand.OPEN_VIDEO_CHAT.addKeyBindings(List.of(Input.Keys.ALT_LEFT, Input.Keys.ALT_RIGHT));
+        KeyCommand.OPEN_VIDEO_CHAT.addKeyBindings(List.of(Input.Keys.V));
         KeyCommand.OPEN_USER_MENU.addKeyBindings(List.of(Input.Keys.NUM_1, Input.Keys.NUMPAD_1));
         KeyCommand.OPEN_NOTIFICATION_MENU.addKeyBindings(List.of(Input.Keys.NUM_2, Input.Keys.NUMPAD_2));
         KeyCommand.OPEN_SETTINGS_MENU.addKeyBindings(List.of(Input.Keys.NUM_3, Input.Keys.NUMPAD_3));

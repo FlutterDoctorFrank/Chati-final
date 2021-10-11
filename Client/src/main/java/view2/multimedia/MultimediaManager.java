@@ -22,7 +22,7 @@ public class MultimediaManager implements Disposable {
 
     private VoiceRecorder voiceRecorder;
     private AudioConsumer audioConsumer;
-    private VideoRecorder videoRecorder;
+    private final VideoRecorder videoRecorder;
     private final VideoReceiver videoReceiver;
 
     /**
@@ -46,13 +46,7 @@ public class MultimediaManager implements Disposable {
             this.voiceRecorder = null;
         }
 
-        try {
-            this.videoRecorder = new VideoRecorder();
-        } catch (WebcamException e) {
-            Chati.LOGGER.log(Level.WARNING, "Webcam not available", e);
-            this.videoRecorder = null;
-        }
-
+        this.videoRecorder = new VideoRecorder();
         this.videoReceiver = new VideoReceiver();
     }
 
@@ -99,30 +93,24 @@ public class MultimediaManager implements Disposable {
             }
         }
 
-        if (videoRecorder != null) {
-            if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
-                if (internUser != null && internUser.isInCurrentWorld()) {
-                    if (!videoRecorder.isRunning()) {
-                        try {
-                            videoRecorder.start();
-                        } catch (WebcamLockException e) {
-                            Chati.LOGGER.log(Level.WARNING, "Webcam is already in use", e);
-                        }
-                    }
-                } else if (internUser == null || !internUser.isInCurrentWorld()) {
-                    if (videoRecorder.isRunning()) {
-                        videoRecorder.stop();
-                    }
+        if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
+            if (internUser != null && internUser.isInCurrentWorld()) {
+                if (!videoRecorder.isRunning()) {
+                    videoRecorder.start();
+                }
+            } else if (internUser == null || !internUser.isInCurrentWorld()) {
+                if (videoRecorder.isRunning()) {
+                    videoRecorder.stop();
                 }
             }
+        }
 
-            if (videoRecorder.isRunning()) {
-                if (Chati.CHATI.getPreferences().isCameraOn() && internUser != null && internUser.canShow()
-                        && !videoRecorder.isRecording()) {
-                    videoRecorder.startRecording();
-                } else if (videoRecorder.isRecording()) {
-                    videoRecorder.stopRecording();
-                }
+        if (videoRecorder.isRunning()) {
+            if (Chati.CHATI.getPreferences().isCameraOn() && internUser != null && internUser.canShow()
+                    && !videoRecorder.isRecording()) {
+                videoRecorder.startRecording();
+            } else if (videoRecorder.isRecording()) {
+                videoRecorder.stopRecording();
             }
         }
     }

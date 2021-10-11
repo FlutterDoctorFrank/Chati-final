@@ -10,10 +10,8 @@ import model.context.global.GlobalContext;
 import model.context.spatial.Area;
 import model.context.spatial.Room;
 import model.context.spatial.World;
-import model.exception.IllegalAccountActionException;
 import model.exception.UserNotFoundException;
 import model.role.Permission;
-import model.role.Role;
 import model.user.Bot;
 import model.user.Status;
 import model.user.User;
@@ -172,8 +170,7 @@ public class CommunicationHandler {
         // Überprüfung, ob in dem Bereich des Benutzers Videonachrichten versendet werden können oder der sendende
         // Benutzer in dem Kontext stummgeschaltet ist.
         Area communicationContext = sender.getLocation().getArea();
-        if (!communicationContext.canCommunicateWith(CommunicationMedium.VOICE) // TODO Ändere zu Video wenn Map aktualisiert
-                || communicationContext.isMuted(sender)) {
+        if (!communicationContext.canCommunicateWith(CommunicationMedium.VIDEO) || communicationContext.isMuted(sender)) {
             return;
         }
 
@@ -264,11 +261,11 @@ public class CommunicationHandler {
                 // an den die Nachricht gerichtet ist, beschäftigt ist.
                 Context commonContext = communicationContext.lastCommonAncestor(receiver.getLocation().getArea());
 
-                if ((((!communicableUsers.containsKey(receiver.getUserId())
-                        && !receiver.hasPermission(commonContext, Permission.CONTACT_USER))
-                        || receiver.getStatus() == Status.BUSY)
-                        && !sender.hasPermission(commonContext, Permission.CONTACT_USER))
-                        || sender.isIgnoring(receiver) || receiver.isIgnoring(sender)) {
+                if (!sender.hasPermission(commonContext, Permission.CONTACT_USER)
+                        && !receiver.hasPermission(commonContext, Permission.CONTACT_USER)
+                        && (!sender.isFriend(receiver) && !communicableUsers.containsKey(receiver.getUserId())
+                        || receiver.getStatus() == Status.BUSY || sender.isIgnoring(receiver)
+                        || receiver.isIgnoring(sender))) {
                     // Informiere den kommunizierenden Benutzer darüber, dass die Flüsterkommunikation nicht möglich ist.
                     TextMessage infoMessage = new TextMessage("chat.command.whisper.not-possible", receiver.getUsername());
                     sender.send(SendAction.MESSAGE, infoMessage);

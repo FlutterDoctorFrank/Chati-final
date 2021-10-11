@@ -1,5 +1,6 @@
 package model.user;
 
+import model.communication.CommunicationMedium;
 import model.context.Context;
 import model.context.ContextID;
 import model.context.spatial.Direction;
@@ -312,9 +313,9 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canWhisper() {
         IInternUserView internUser = UserManager.getInstance().getInternUser();
-        return this.isOnline() && (this.status != Status.BUSY && ((this.canCommunicateWith && !this.isIgnored)
-                || this.isFriend) || internUser.hasPermission(Permission.CONTACT_USER)
-                || this.hasPermission(Permission.CONTACT_USER));
+        return internUser.getCurrentWorld() != null && this.isOnline() && (this.status != Status.BUSY
+                && ((this.canCommunicateWith && !this.isIgnored) || this.isFriend)
+                || internUser.hasPermission(Permission.CONTACT_USER) || this.hasPermission(Permission.CONTACT_USER));
     }
 
     @Override
@@ -374,6 +375,18 @@ public class User implements IUserController, IUserView {
     @Override
     public boolean canCommunicateWith() {
         return canCommunicateWith;
+    }
+
+    @Override
+    public boolean canTalk() {
+        return canCommunicateWith && currentLocation != null
+                && currentLocation.getArea().getCommunicationMedia().contains(CommunicationMedium.VOICE);
+    }
+
+    @Override
+    public boolean canShow() {
+        return canCommunicateWith && currentLocation != null
+                && currentLocation.getArea().getCommunicationMedia().contains(CommunicationMedium.VIDEO);
     }
 
     @Override

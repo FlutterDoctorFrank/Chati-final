@@ -249,7 +249,6 @@ public class WorldScreen extends ChatiScreen {
      */
     public void menuActionResponse(final boolean success, @Nullable final MessageBundle messageBundle) {
         if (!isMenuOpen()) {
-            Chati.LOGGER.log(Level.WARNING, "Got a response for an interactable menu that is not open");
             return;
         }
         currentInteractableWindow.receiveResponse(success, messageBundle);

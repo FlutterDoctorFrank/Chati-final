@@ -53,6 +53,9 @@ public class NotificationListEntry extends Table implements Translatable, Compar
         if (!notification.isRead()) {
             stateImage.setDrawable(Chati.CHATI.getDrawable("notification_new"));
             stateImage.addListener(new ChatiTooltip("hud.tooltip.new"));
+        } else if (notification.getType() == NotificationType.INFORMATION) {
+            stateImage.setDrawable(Chati.CHATI.getDrawable("notification_read"));
+            stateImage.addListener(new ChatiTooltip("hud.tooltip.read"));
         } else if (notification.isAccepted()) {
             stateImage.setDrawable(Chati.CHATI.getDrawable("notification_accepted"));
             stateImage.addListener(new ChatiTooltip("hud.tooltip.accepted"));

@@ -29,16 +29,16 @@ public class ChatiStage extends Stage {
     @Override
     public boolean keyDown(final int keycode) {
         if (!(getKeyboardFocus() instanceof TextField)) {
-            if (KeyCommand.OPEN_CHAT.matches(keycode)) {
-                Chati.CHATI.getHeadUpDisplay().showChatWindow();
-            }
-
-            if (KeyCommand.OPEN_VIDEO_CHAT.matches(keycode)) {
-                Chati.CHATI.getHeadUpDisplay().showVideoChatWindow();
-            }
-
             IInternUserView internUser = Chati.CHATI.getInternUser();
             if (internUser != null && internUser.getCurrentWorld() != null) {
+                if (KeyCommand.OPEN_CHAT.matches(keycode)) {
+                    Chati.CHATI.getHeadUpDisplay().showChatWindow();
+                }
+
+                if (KeyCommand.OPEN_VIDEO_CHAT.matches(keycode)) {
+                    Chati.CHATI.getHeadUpDisplay().showVideoChatWindow();
+                }
+
                 if (KeyCommand.OPEN_COMMUNICATION_MENU.matches(keycode)) {
                     if (Chati.CHATI.getHeadUpDisplay().isCommunicationWindowOpen()) {
                         Chati.CHATI.getHeadUpDisplay().closeCommunicationWindow();

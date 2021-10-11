@@ -114,6 +114,18 @@ public interface IUserView {
     boolean canCommunicateWith();
 
     /**
+     * Gibt zurück, ob der Benutzer gerade Sprachnachrichten versenden darf.
+     * @return true, wenn er Sprachnachrichten versenden darf, sonst false.
+     */
+    boolean canTalk();
+
+    /**
+     * Gibt zurück, ob der Benutzer Videoframes senden darf.
+     * @return true, wenn er Videoframes senden darf, sonst false.
+     */
+    boolean canShow();
+
+    /**
      * Gibt zurück, ob der Benutzer im aktuellen räumlichen Kontext des internen Benutzers als gemeldet markiert ist.
      * @return true, wenn der Benutzer im aktuellen räumlichen Kontext als gemeldet markiert ist, sonst false.
      */
