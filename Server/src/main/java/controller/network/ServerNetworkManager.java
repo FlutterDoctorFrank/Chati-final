@@ -25,7 +25,7 @@ public class ServerNetworkManager extends NetworkManager<Server> {
 
     public ServerNetworkManager(@NotNull final IUserAccountManager accountManager,
                                 @NotNull final IGlobalContext global) {
-        super(new Server(WRITE_SIZE, READ_SIZE));
+        super(new Server(BUFFER_SIZE, BUFFER_SIZE));
 
         this.connections = new ConcurrentHashMap<>();
         this.accountManager = accountManager;

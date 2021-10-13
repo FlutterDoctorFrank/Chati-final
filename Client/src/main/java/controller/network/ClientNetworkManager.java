@@ -24,7 +24,7 @@ public class ClientNetworkManager extends NetworkManager<Client> implements Runn
     private Thread networkThread;
 
     public ClientNetworkManager(@NotNull final IUserManagerController userManager) {
-        super(new Client(WRITE_SIZE, READ_SIZE));
+        super(new Client(BUFFER_SIZE, BUFFER_SIZE));
 
         this.userManager = userManager;
     }
