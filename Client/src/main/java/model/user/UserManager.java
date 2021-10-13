@@ -9,8 +9,12 @@ import model.exception.UserNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view.IModelObserver;
-
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -37,7 +41,7 @@ public class UserManager implements IUserManagerController, IUserManagerView {
      */
     private UserManager() {
         this.internUser = null;
-        this.externUsers = new HashMap<>();
+        this.externUsers = new ConcurrentHashMap<>();
         this.modelObserver = null;
     }
 

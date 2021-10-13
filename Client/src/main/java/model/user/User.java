@@ -379,14 +379,26 @@ public class User implements IUserController, IUserView {
 
     @Override
     public boolean canTalk() {
-        return canCommunicateWith && currentLocation != null
-                && currentLocation.getArea().getCommunicationMedia().contains(CommunicationMedium.VOICE);
+        if (canCommunicateWith && currentLocation != null) {
+            try {
+                return currentLocation.getArea().getCommunicationMedia().contains(CommunicationMedium.VOICE);
+            } catch (IllegalStateException ignored) {
+
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean canShow() {
-        return canCommunicateWith && currentLocation != null
-                && currentLocation.getArea().getCommunicationMedia().contains(CommunicationMedium.VIDEO);
+        if (canCommunicateWith && currentLocation != null) {
+            try {
+                return currentLocation.getArea().getCommunicationMedia().contains(CommunicationMedium.VIDEO);
+            } catch (IllegalStateException ignored) {
+
+            }
+        }
+        return false;
     }
 
     @Override
