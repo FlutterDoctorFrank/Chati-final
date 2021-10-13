@@ -17,7 +17,7 @@ public class CameraRecorder extends VideoRecorder {
 
     public static final int FRAME_WIDTH = 640;
     public static final int FRAME_HEIGHT = 480;
-    private static final float COMPRESSION_QUALITIY = 0.9f;
+    private static final float COMPRESSION_QUALITIY = 0.75f;
 
     private Webcam webcam;
 

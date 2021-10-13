@@ -4,7 +4,7 @@ public abstract class VideoRecorder implements Runnable {
 
     public static final int MAX_FPS = 15;
     public static final int COLOR_BYTES = 3;
-    protected static final int MAX_DATA_SIZE = 65470;
+    protected static final int MAX_DATA_SIZE = 42768;
 
     protected boolean isRunning;
     protected boolean isRecording;

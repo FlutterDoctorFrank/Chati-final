@@ -15,7 +15,7 @@ public class ScreenRecorder extends VideoRecorder {
 
     public static final int FRAME_WIDTH = 850;
     public static final int FRAME_HEIGHT = 480;
-    private static final float COMPRESSION_QUALITIY = 0.75f;
+    private static final float COMPRESSION_QUALITIY = 0.25f;
 
     private Robot robot;
 
