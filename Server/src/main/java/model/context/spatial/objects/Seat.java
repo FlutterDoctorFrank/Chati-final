@@ -76,6 +76,14 @@ public class Seat extends Interactable {
 
         if (menuOption == MENU_OPTION_SIT) { // Bewege den Benutzer auf den Platz.
             user.send(SendAction.CLOSE_MENU, this);
+
+            if (!containedUsers.isEmpty()) {
+                // Teile dem Benutzer mit, dass der Platz bereits von einem anderen Benutzer belegt ist.
+                TextMessage infoMessage = new TextMessage("object.seat.already-occupied");
+                user.send(SendAction.MESSAGE, infoMessage);
+                return;
+            }
+
             try {
                 user.setMovable(false);
                 user.teleport(place);
