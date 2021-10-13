@@ -84,9 +84,6 @@ public abstract class FileChooserWindow extends ChatiWindow {
         changeDirectory(Gdx.files.absolute(homePath));
 
         // Layout
-        setModal(true);
-        setMovable(false);
-
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).padBottom(SPACE).center().growX();
         infoLabel.setAlignment(Align.center, Align.center);

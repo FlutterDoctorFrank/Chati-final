@@ -11,6 +11,7 @@ import view.Chati;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -19,6 +20,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Eine Klasse, welches Videoframes erhält und diese zur Anzeige zur Verfügung stellt.
  */
 public class VideoReceiver {
+
+    private static final float DELAY = 0.25f; // In Sekunden.
 
     private final Queue<VideoFrame> videoFrameBuffer;
 
@@ -60,16 +63,21 @@ public class VideoReceiver {
                 preparedFrame = VideoUtils.flipImageX(preparedFrame);
             }
             byte[] frameData = ((DataBufferByte) preparedFrame.getRaster().getDataBuffer()).getData();
-            videoFrameBuffer.add(new VideoFrame(internUser, LocalDateTime.now(), screen, VideoUtils.toRGB(frameData)));
+            videoFrameBuffer.add(new VideoFrame(internUser, LocalDateTime.now()
+                    .minus((long) (1000 * DELAY), ChronoUnit.MILLIS), screen, VideoUtils.toRGB(frameData)));
         }
     }
 
     /**
-     * Gibt zurück, ob Frames von Kameraaufnahmen vorhanden sind.
-     * @return true, wenn Frames vorhanden sind, sonst false.
+     * Gibt zurück, ob Frames von Kameraaufnahmen vorhanden und zum Abspielen bereit sind.
+     * @return true, wenn Frames vorhanden und abspielbereit sind, sonst false.
      */
-    public boolean hasFrame() {
-        return !videoFrameBuffer.isEmpty();
+    public boolean hasReadyFrame() {
+        VideoFrame frame = videoFrameBuffer.peek();
+        if (frame == null) {
+            return false;
+        }
+        return ChronoUnit.MILLIS.between(frame.getTimestamp(), LocalDateTime.now()) > 1000 * DELAY;
     }
 
     /**

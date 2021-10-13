@@ -1,10 +1,11 @@
-package view.userInterface.hud;
+package view.userInterface.hud.chat;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -14,8 +15,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import model.user.IInternUserView;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.BufferUtils;
 import view.Chati;
+import view.ChatiCursor;
 import view.ChatiLocalization.Translatable;
 import view.multimedia.video.ScreenRecorder;
 import view.multimedia.video.VideoReceiver;
@@ -25,7 +28,6 @@ import view.userInterface.*;
 import view.userInterface.actor.ChatiImageButton;
 import view.userInterface.actor.ChatiTooltip;
 import view.userInterface.actor.ResizableWindow;
-import view.userInterface.hud.chat.ChatWindow;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
@@ -55,8 +57,10 @@ public class VideoChatWindow extends ResizableWindow implements Translatable {
     private final ByteBuffer frameBuffer;
     private final HorizontalGroup videoChatGroup;
     private final ScrollPane videoChatScrollPane;
+    private final ChatiImageButton cameraButton;
     private final ChatiImageButton shareButton;
     private VideoWindow videoWindow;
+    private boolean cameraOn;
     private boolean shareScreen;
 
     /**
@@ -69,8 +73,19 @@ public class VideoChatWindow extends ResizableWindow implements Translatable {
         frameBuffer = BufferUtils.createByteBuffer(VideoRecorder.COLOR_BYTES * ScreenRecorder.FRAME_WIDTH
                 * ScreenRecorder.FRAME_HEIGHT);
 
+        cameraButton = new ChatiImageButton(Chati.CHATI.getDrawable("camera_on"), Chati.CHATI.getDrawable("camera_off"),
+                Chati.CHATI.getDrawable("camera_disabled"));
+        cameraButton.addListener(new ChatiTooltip("hud.tooltip.toggle-camera"));
+        cameraButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
+                setCameraOn(cameraButton.isChecked());
+            }
+        });
+
         shareButton = new ChatiImageButton(Chati.CHATI.getDrawable("share_screen_on"),
                 Chati.CHATI.getDrawable("share_screen_off"), Chati.CHATI.getDrawable("share_screen_disabled"));
+        shareButton.addListener(new ChatiTooltip("hud.tooltip.share-screen"));
         shareButton.addListener(new ClickListener() {
             @Override
             public void clicked(@NotNull final InputEvent event, final float x, final float y) {
@@ -102,7 +117,8 @@ public class VideoChatWindow extends ResizableWindow implements Translatable {
         setPosition(Gdx.graphics.getWidth() - ChatWindow.DEFAULT_WIDTH - 125, 0);
 
         Table shareButtonContainer = new Table();
-        shareButtonContainer.add(shareButton).size(ICON_SIZE).left().padLeft(SPACE).growX();
+        shareButtonContainer.left().defaults().size(ICON_SIZE).left().padLeft(SPACE);
+        shareButtonContainer.add(cameraButton, shareButton);
         add(shareButtonContainer).left().growX().row();
         add(videoChatScrollPane).minWidth(MIN_WIDTH).minHeight(MIN_HEIGHT).grow();
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
@@ -181,6 +197,14 @@ public class VideoChatWindow extends ResizableWindow implements Translatable {
 
         IInternUserView internUser = Chati.CHATI.getInternUser();
         if (internUser != null) {
+            if (Chati.CHATI.getMultimediaManager().hasCamera() && internUser.canShow() && cameraButton.isDisabled()) {
+                cameraButton.setDisabled(false);
+                cameraButton.setTouchable(Touchable.enabled);
+            } else if ((!Chati.CHATI.getMultimediaManager().hasCamera() || !internUser.canShow())
+                    && !cameraButton.isDisabled()) {
+                cameraButton.setDisabled(true);
+                cameraButton.setTouchable(Touchable.disabled);
+            }
             if (internUser.canShare() && shareButton.isDisabled()) {
                 shareButton.setDisabled(false);
                 shareButton.setTouchable(Touchable.enabled);
@@ -230,10 +254,10 @@ public class VideoChatWindow extends ResizableWindow implements Translatable {
         if (getStage() != null && VideoChatWindow.this.videoWindow == null) {
             if (user.isScreen()) {
                 videoWindow = new VideoWindow("window.title.video-chat.single-screen",
-                        new Monitor(user.getUser(), user.isScreen()));
+                        new Monitor(user.getUser(), user.isScreen(), true));
             } else {
                 videoWindow = new VideoWindow("window.title.video-chat.single-camera",
-                        new Monitor(user.getUser(), user.isScreen()));
+                        new Monitor(user.getUser(), user.isScreen(), true));
             }
             getStage().addActor(videoWindow);
         }
@@ -258,11 +282,27 @@ public class VideoChatWindow extends ResizableWindow implements Translatable {
     }
 
     /**
+     * Setzt die Information, ob die Kamera eingeschaltet ist.
+     * @param cameraOn true, wenn die Kamera eingeschaltet ist, sonst false.
+     */
+    public void setCameraOn(final boolean cameraOn) {
+        this.cameraOn = cameraOn;
+    }
+
+    /**
      * Setzt die Information, ob der aktuelle Bildschirm geteilt werden soll.
      * @param shareScreen true, wenn der Bildschirm geteilt werden soll, sonst false.
      */
     public void shareScreen(final boolean shareScreen) {
         this.shareScreen = shareScreen;
+    }
+
+    /**
+     * Gibt zurück, ob die Kamera eingeschaltet ist.
+     * @return true, wenn die Kamera eingeschaltet ist, sonst false.
+     */
+    public boolean isCameraOn() {
+        return cameraOn;
     }
 
     /**
@@ -281,7 +321,7 @@ public class VideoChatWindow extends ResizableWindow implements Translatable {
         if (userCameras.containsKey(user)) {
             return;
         }
-        Monitor monitor = new Monitor(user, false);
+        Monitor monitor = new Monitor(user, false, false);
         userCameras.put(user, monitor);
         Table videoChatUserContainer = new Table();
         videoChatUserContainer.add(monitor).size(VIDEO_WIDTH, VIDEO_HEIGHT + 30);
@@ -312,7 +352,7 @@ public class VideoChatWindow extends ResizableWindow implements Translatable {
         if (userScreens.containsKey(user)) {
             return;
         }
-        Monitor screenSharingUser = new Monitor(user, true);
+        Monitor screenSharingUser = new Monitor(user, true, false);
         userScreens.put(user, screenSharingUser);
         Table screenSharingUserContainer = new Table();
         screenSharingUserContainer.add(screenSharingUser).size(VIDEO_WIDTH, VIDEO_HEIGHT + 30);
@@ -356,14 +396,17 @@ public class VideoChatWindow extends ResizableWindow implements Translatable {
         private final Texture videoTexture;
         private final Image talkingBackgroundImage;
         private LocalDateTime lastFrameTime;
+        private boolean underCursor;
 
         /**
          * Erzeugt eine neue Instanz eines Monitor.
          * @param user Zugehöriger Benutzer.
          * @param screen falls true, repräsentiert diese Instanz einen geteilten Bildschirm, sonst einen mit der Kamera
          * am Videochat teilnehmenden Benutzer.
+         * @param window falls true, wird dieser Monitor in einem separaten Fenster angezeigt, sonst im Fenster des
+         * VideoChat.
          */
-        public Monitor(@NotNull final IUserView user, final boolean screen) {
+        public Monitor(@NotNull final IUserView user, final boolean screen, final boolean window) {
             this.user = user;
             this.screen = screen;
             Stack videoChatUserStack = new Stack();
@@ -387,6 +430,28 @@ public class VideoChatWindow extends ResizableWindow implements Translatable {
             videoChatUserStack.add(videoImageContainer);
 
             videoChatUserStack.addListener(new ClickListener() {
+                @Override
+                public void enter(@NotNull final InputEvent event, final float x, final float y,
+                                  final int pointer, @Nullable final Actor fromActor) {
+                    if (pointer == -1 && !window) {
+                        underCursor = true;
+                    }
+                }
+                @Override
+                public void exit(@NotNull final InputEvent event, final float x, final float y,
+                                 final int pointer, @Nullable final Actor toActor) {
+                    if (pointer == -1 && !window) {
+                        underCursor = false;
+                        Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
+                    }
+                }
+                @Override
+                public boolean mouseMoved(@NotNull final InputEvent event, final float x, final float y) {
+                    if (underCursor && !window) {
+                        Gdx.graphics.setCursor(ChatiCursor.HAND.getCursor());
+                    }
+                    return true;
+                }
                 @Override
                 public void clicked(@NotNull final InputEvent event, final float x, final float y) {
                     openVideoWindow(Monitor.this);
@@ -437,7 +502,7 @@ public class VideoChatWindow extends ResizableWindow implements Translatable {
             }
             IInternUserView internUser = Chati.CHATI.getInternUser();
             if (user.equals(internUser)) {
-                if (screen && !shareScreen || !screen && !Chati.CHATI.getPreferences().isCameraOn()) {
+                if (screen && !shareScreen || !screen && !cameraOn) {
                     return false;
                 }
             }

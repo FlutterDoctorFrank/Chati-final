@@ -36,8 +36,6 @@ public class CommunicationWindow extends ChatiWindow {
         showCommunicableUsers();
 
         // Layout
-        setMovable(false);
-
         userListContainer.top();
         add(userListScrollPane).grow();
     }

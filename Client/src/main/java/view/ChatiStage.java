@@ -54,10 +54,6 @@ public class ChatiStage extends Stage {
                 if (KeyCommand.TOGGLE_MICROPHONE.matches(keycode)) {
                     Chati.CHATI.getHeadUpDisplay().toggleMicrophone();
                 }
-
-                if (KeyCommand.TOGGLE_CAMERA.matches(keycode)) {
-                    Chati.CHATI.getHeadUpDisplay().toggleCamera();
-                }
             }
 
             if (KeyCommand.OPEN_USER_MENU.matches(keycode)) {

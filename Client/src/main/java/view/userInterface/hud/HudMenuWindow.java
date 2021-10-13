@@ -22,7 +22,6 @@ public abstract class HudMenuWindow extends ChatiWindow {
      */
     protected HudMenuWindow(@NotNull final String titleKey) {
         super(titleKey);
-        setMovable(false);
         setSize(HUD_WINDOW_WIDTH, HUD_WINDOW_HEIGHT);
     }
 

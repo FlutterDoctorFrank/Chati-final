@@ -173,9 +173,6 @@ public class MusicStreamerWindow extends InteractableWindow {
         setSelectedTitle();
 
         // Layout
-        setModal(true);
-        setMovable(false);
-
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).padBottom(SPACE).center().growX();
         infoLabel.setAlignment(Align.center, Align.center);

@@ -50,9 +50,6 @@ public class SeatWindow extends InteractableWindow {
         });
 
         // Layout
-        setModal(true);
-        setMovable(false);
-
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACE).center().growX();
         infoLabel.setAlignment(Align.center, Align.center);

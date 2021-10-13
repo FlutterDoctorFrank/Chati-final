@@ -358,9 +358,6 @@ public class NotificationListEntry extends Table implements Translatable, Compar
             });
 
             // Layout
-            setModal(true);
-            setMovable(false);
-
             Table container = new Table();
             container.defaults().height(ROW_HEIGHT).spaceBottom(SPACE).center().growX();
             infoLabel.setAlignment(Align.center, Align.center);

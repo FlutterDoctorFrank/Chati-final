@@ -16,9 +16,9 @@ import java.util.Queue;
  */
 public class VoiceRecorder implements Runnable, Disposable {
 
-    private static final float LOOK_AHEAD = 0.1f; // in Sekunden
+    private static final float LOOK_AHEAD = 0.15f; // in Sekunden
     private static final int MAX_FRAMES = (int) (LOOK_AHEAD * AudioUtils.FRAME_RATE);
-    private static final float STOP_SENDING_DELAY = 0.25f; // in Sekunden
+    private static final float STOP_SENDING_DELAY = 0.3f; // in Sekunden
 
     private final AudioRecorder recorder;
     private final Queue<short[]> sendDataQueue;
@@ -161,13 +161,14 @@ public class VoiceRecorder implements Runnable, Disposable {
             return;
         }
         /*
-         * Verwendung einer Exponentialfunktion. Wert für a wurde rechnerisch ermittelt, sodass:
-         * - Bei maximaler Mikrophonempfindlichkeit alles aufgezeichnet wird. (SendGate = 0)
-         * - Bei minimaler Mikrophonempfindlichkeit nichts aufgezeichnet wird. (SendGate = Short.MAX_VALUE + 1)
-         * - Bei mittlerer Mikrophonempfindlichkeit das SendGate auf 1536 gesetzt wird. Dieser Wert hat sich als
+         * Verwendung einer Exponentialfunktion für die gilt, sodass:
+         * - Bei maximaler Mikrophonempfindlichkeit wird alles aufgezeichnet. (SendGate = 0)
+         * - Bei minimaler Mikrophonempfindlichkeit wird nichts aufgezeichnet. (SendGate = Short.MAX_VALUE + 1)
+         * - Bei mittlerer Mikrophonempfindlichkeit wird das SendGate auf 1550 gesetzt. Dieser Wert hat sich als
          *   geeignet herausgestellt, um normale Gesprächslautstärke aufzunehmen.
          */
-        double a = 975375361d / 29695;
-        this.sendGate = (float) (a * Math.pow((a - Short.MAX_VALUE) / a, microphoneSensitivity) + Short.MAX_VALUE - a);
+        double a = 32847;
+        this.sendGate = (float) (a * Math.pow((a - Short.MAX_VALUE + 1) / a, microphoneSensitivity)
+                + Short.MAX_VALUE + 1 - a);
     }
 }

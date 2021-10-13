@@ -24,17 +24,6 @@ public abstract class InteractableWindow extends ChatiWindow {
      * @param titleKey Kennung des anzuzeigenden Titels.
      * @param interactableId ID des zugehörigen Interaktionsobjekts.
      * @param interactableMenu Typ des anzuzeigenden Menüs.
-     */
-    protected InteractableWindow(@NotNull final String titleKey, @NotNull final ContextID interactableId,
-                                 @NotNull final ContextMenu interactableMenu) {
-        this(titleKey, interactableId, interactableMenu, -1f, -1f);
-    }
-
-    /**
-     * Erzeugt eine neue Instanz des InteractableWindow.
-     * @param titleKey Kennung des anzuzeigenden Titels.
-     * @param interactableId ID des zugehörigen Interaktionsobjekts.
-     * @param interactableMenu Typ des anzuzeigenden Menüs.
      * @param width Die Breite des InteractableWindows.
      * @param height Die Höhe des InteractableWindows.
      */

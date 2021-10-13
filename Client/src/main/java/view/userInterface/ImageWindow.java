@@ -30,9 +30,6 @@ public class ImageWindow extends ChatiWindow {
         super("", 1, 1);
         getTitleLabel().setText(imageName);
 
-        setModal(true);
-        setMovable(false);
-
         this.imagePixmap = new Pixmap(imageData, 0, imageData.length);
 
         ChatiTextButton saveButton = new ChatiTextButton("menu.button.save", true);
@@ -47,6 +44,8 @@ public class ImageWindow extends ChatiWindow {
         Texture imageTexture = new Texture(imagePixmap);
         Image image = new Image(new TextureRegionDrawable(imageTexture));
 
+
+        // Layout
         float widthRatio = 1;
         float heightRatio = 1;
         float maxImageWidth = Gdx.graphics.getWidth() - getPadX();

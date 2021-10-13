@@ -157,9 +157,6 @@ public class SoundConfigurationWindow extends ChatiWindow {
         });
 
         // Layout
-        setModal(true);
-        setMovable(false);
-
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACE / 2).center().growX();
         infoLabel.setAlignment(Align.center, Align.center);

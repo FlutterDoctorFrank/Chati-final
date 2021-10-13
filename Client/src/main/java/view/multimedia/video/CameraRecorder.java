@@ -100,4 +100,12 @@ public class CameraRecorder extends VideoRecorder {
     public boolean isRunning() {
         return super.isRunning() && webcam != null && webcam.isOpen();
     }
+
+    /**
+     * Gibt zurück, ob die Anwendung eine Kamera verwendet.
+     * @return true, wenn eine Kamera verwendet wird, sonst false.
+     */
+    public boolean hasCamera() {
+        return webcam != null && webcam.isOpen();
+    }
 }

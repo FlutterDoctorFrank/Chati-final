@@ -85,9 +85,7 @@ public class WorldConfigurationWindow extends ChatiWindow {
             }
         });
 
-        setModal(true);
-        setMovable(false);
-
+        // Layout
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACE / 2).center().growX();
         infoLabel.setAlignment(Align.center, Align.center);

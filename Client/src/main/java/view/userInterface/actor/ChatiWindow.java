@@ -59,6 +59,7 @@ public abstract class ChatiWindow extends Window implements Translatable {
 
         getTitleTable().add(closeButton).right().width(getPadTop() * (2f/3f)).height(getPadTop() * (2f/3f));
 
+        setMovable(false);
         if (width > 0 && height > 0) {
             setWidth(width);
             setHeight(height);

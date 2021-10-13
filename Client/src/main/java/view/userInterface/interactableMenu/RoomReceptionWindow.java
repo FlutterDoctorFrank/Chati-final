@@ -44,10 +44,6 @@ public class RoomReceptionWindow extends InteractableWindow {
     public RoomReceptionWindow(@NotNull final ContextID roomReceptionId) {
         super("window.title.room-reception", roomReceptionId, ContextMenu.ROOM_RECEPTION_MENU, WINDOW_WIDTH, WINDOW_HEIGHT);
         setCurrentTable(new RoomSelectTable());
-
-        // Layout
-        setModal(true);
-        setMovable(false);
     }
 
     /**

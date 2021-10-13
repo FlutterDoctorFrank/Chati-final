@@ -63,6 +63,8 @@ public class InformationWindow extends ChatiWindow {
         InformationLabel menuKeysLabel = new InformationLabel("menu.label.menu-keys");
         InformationLabel openChatLabel = new InformationLabel("menu.label.open-chat");
         Label openChatKeyLabel = new Label(KeyCommand.OPEN_CHAT.toString(), Chati.CHATI.getSkin());
+        InformationLabel openVideoChatLabel = new InformationLabel("menu.label.open-video-chat");
+        Label openVideoChatKeyLabel = new Label(KeyCommand.OPEN_VIDEO_CHAT.toString(), Chati.CHATI.getSkin());
         InformationLabel openUserMenuLabel = new InformationLabel("menu.label.open-user-menu");
         Label openUserMenuKeyLabel = new Label(KeyCommand.OPEN_USER_MENU.toString(), Chati.CHATI.getSkin());
         InformationLabel openNotificationMenuLabel = new InformationLabel("menu.label.open-notification-menu");
@@ -71,16 +73,14 @@ public class InformationWindow extends ChatiWindow {
         Label openSettingsMenuKeyLabel = new Label(KeyCommand.OPEN_SETTINGS_MENU.toString(), Chati.CHATI.getSkin());
         InformationLabel openCommunicationMenuLabel = new InformationLabel("menu.label.open-communication-menu");
         Label openCommunicationMenuKeyLabel = new Label(KeyCommand.OPEN_COMMUNICATION_MENU.toString(), Chati.CHATI.getSkin());
-        InformationLabel toggleMicrophoneLabel = new InformationLabel("menu.label.toggle-microphone");
-        Label toggleMicrophoneKeyLabel = new Label(KeyCommand.TOGGLE_MICROPHONE.toString(), Chati.CHATI.getSkin());
         InformationLabel toggleSoundLabel = new InformationLabel("menu.label.toggle-sound");
         Label toggleSoundKeyLabel = new Label(KeyCommand.TOGGLE_SOUND.toString(), Chati.CHATI.getSkin());
+        InformationLabel toggleMicrophoneLabel = new InformationLabel("menu.label.toggle-microphone");
+        Label toggleMicrophoneKeyLabel = new Label(KeyCommand.TOGGLE_MICROPHONE.toString(), Chati.CHATI.getSkin());
         InformationLabel toggleFullscreenLabel = new InformationLabel("menu.label.toggle-fullscreen");
         Label toggleFullscreenKeyLabel = new Label(KeyCommand.TOGGLE_FULLSCREEN.toString(), Chati.CHATI.getSkin());
         InformationLabel closeLabel = new InformationLabel("menu.label.close-window");
         Label closeKeyLabel = new Label(KeyCommand.CLOSE.toString(), Chati.CHATI.getSkin());
-        InformationLabel openVideoChatLabel = new InformationLabel("menu.label.open-video-chat");
-        Label openVideoChatKeyLabel = new Label(KeyCommand.OPEN_VIDEO_CHAT.toString(), Chati.CHATI.getSkin());
 
         InformationLabel commandsLabel = new InformationLabel("menu.label.commands");
         InformationLabel chatCommandsLabel = new InformationLabel("menu.label.chat-commands");
@@ -101,9 +101,6 @@ public class InformationWindow extends ChatiWindow {
         chatGlobalMessageCommandLabel.setColor(Color.GOLD);
 
         // Layout
-        setModal(true);
-        setMovable(false);
-
         infoLabel.setAlignment(Align.center, Align.center);
         add(infoLabel).padTop(2 * SPACE).padBottom(2 * SPACE).row();
 
@@ -157,8 +154,8 @@ public class InformationWindow extends ChatiWindow {
         menuKeysTableContainer.add(openNotificationMenuLabel, openNotificationMenuKeyLabel).row();
         menuKeysTableContainer.add(openSettingsMenuLabel, openSettingsMenuKeyLabel).row();
         menuKeysTableContainer.add(openCommunicationMenuLabel, openCommunicationMenuKeyLabel).row();
-        menuKeysTableContainer.add(toggleMicrophoneLabel, toggleMicrophoneKeyLabel).row();
         menuKeysTableContainer.add(toggleSoundLabel, toggleSoundKeyLabel).row();
+        menuKeysTableContainer.add(toggleMicrophoneLabel, toggleMicrophoneKeyLabel).row();
         menuKeysTableContainer.add(toggleFullscreenLabel, toggleFullscreenKeyLabel).row();
         menuKeysTableContainer.add(closeLabel, closeKeyLabel);
         menuKeyBindingsContainer.add(menuKeysTableContainer);

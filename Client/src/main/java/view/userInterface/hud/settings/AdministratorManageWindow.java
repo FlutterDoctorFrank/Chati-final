@@ -130,9 +130,6 @@ public class AdministratorManageWindow extends ChatiWindow {
         });
 
         // Layout
-        setModal(true);
-        setMovable(false);
-
         Table container = new Table();
         container.defaults().height(ROW_HEIGHT).spaceBottom(SPACING).center().growX();
         infoLabel.setAlignment(Align.center, Align.center);

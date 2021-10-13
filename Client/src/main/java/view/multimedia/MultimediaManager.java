@@ -40,7 +40,6 @@ public class MultimediaManager implements Disposable {
         try {
             this.audioConsumer = new AudioConsumer();
             setVolume();
-
             try {
                 this.voiceRecorder = new VoiceRecorder();
                 setMicrophoneSensitivity();
@@ -121,8 +120,8 @@ public class MultimediaManager implements Disposable {
         }
 
         if (cameraRecorder.isRunning()) {
-            if (Chati.CHATI.getPreferences().isCameraOn() && internUser != null && internUser.canShow()
-                    && !cameraRecorder.isRecording()) {
+            if (Chati.CHATI.getHeadUpDisplay().getVideoChatWindow().isCameraOn() && internUser != null
+                    && internUser.canShow() && !cameraRecorder.isRecording()) {
                 cameraRecorder.startRecording();
             } else if (cameraRecorder.isRecording()) {
                 cameraRecorder.stopRecording();
@@ -281,11 +280,19 @@ public class MultimediaManager implements Disposable {
     }
 
     /**
+     * Gibt zurück, ob die Anwendung gerade eine Kamera verwendet.
+     * @return true, wenn eine Kamera verwendet wird, sonst false.
+     */
+    public boolean hasCamera() {
+        return cameraRecorder.hasCamera();
+    }
+
+    /**
      * Gibt zurück, ob Frames von Kameraaufnahmen vorhanden sind.
      * @return true, wenn Frames vorhanden sind, sonst false.
      */
     public boolean hasVideoFrame() {
-        return videoReceiver.hasFrame();
+        return videoReceiver.hasReadyFrame();
     }
 
     /**

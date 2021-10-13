@@ -20,6 +20,7 @@ import view.Chati;
 import view.ChatiLocalization.Translatable;
 import view.userInterface.actor.ChatiImageButton;
 import view.userInterface.hud.chat.ChatWindow;
+import view.userInterface.hud.chat.VideoChatWindow;
 import view.userInterface.hud.notificationList.NotificationListWindow;
 import view.userInterface.hud.settings.SettingsWindow;
 import view.userInterface.hud.userList.UserListWindow;
@@ -45,7 +46,6 @@ public class HeadUpDisplay extends Table implements Translatable {
     private final ImageButton communicationButton;
     private final ImageButton soundButton;
     private final ImageButton microphoneButton;
-    private final ImageButton cameraButton;
 
     private HudMenuWindow currentMenuWindow;
     private CommunicationWindow communicationWindow;
@@ -162,16 +162,6 @@ public class HeadUpDisplay extends Table implements Translatable {
             }
         });
 
-        cameraButton = new ChatiImageButton(Chati.CHATI.getDrawable("camera_off"), Chati.CHATI.getDrawable("camera_on"));
-        cameraButton.setChecked(Chati.CHATI.getPreferences().isCameraOn());
-        cameraButton.setVisible(false);
-        cameraButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                Chati.CHATI.getPreferences().setCameraOn(cameraButton.isChecked());
-            }
-        });
-
         ButtonGroup<ImageButton> hudMenuButtonGroup = new ButtonGroup<>();
         hudMenuButtonGroup.setMinCheckCount(0);
         hudMenuButtonGroup.setMaxCheckCount(1);
@@ -200,8 +190,7 @@ public class HeadUpDisplay extends Table implements Translatable {
         communicationButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
         soundButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
         microphoneButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
-        cameraButton.getImage().setOrigin(BUTTON_SIZE / 2, BUTTON_SIZE / 2);
-        bottomLeftButtonContainer.add(communicationButton, soundButton, microphoneButton, cameraButton);
+        bottomLeftButtonContainer.add(communicationButton, soundButton, microphoneButton);
         addActor(bottomLeftButtonContainer);
 
         // Unten rechts: Chat, Videochat
@@ -229,17 +218,16 @@ public class HeadUpDisplay extends Table implements Translatable {
 
             if (internUser != null && internUser.isInCurrentWorld()) {
                 if (!chatButton.isVisible() || !videoChatButton.isVisible() || !communicationButton.isVisible()
-                        || !soundButton.isVisible() || !microphoneButton.isVisible() || !cameraButton.isVisible()) {
+                        || !soundButton.isVisible() || !microphoneButton.isVisible()) {
                     chatButton.setVisible(true);
                     videoChatButton.setVisible(true);
                     communicationButton.setVisible(true);
                     soundButton.setVisible(true);
                     microphoneButton.setVisible(true);
-                    cameraButton.setVisible(true);
                 }
             } else if ((internUser == null || !internUser.isInCurrentWorld())) {
                 if (chatButton.isVisible() || videoChatButton.isVisible() || communicationButton.isVisible()
-                        || soundButton.isVisible() || microphoneButton.isVisible() || cameraButton.isVisible()) {
+                        || soundButton.isVisible() || microphoneButton.isVisible()) {
                     chatWindow.clearChat();
                     videoChatWindow.clearVideoChat();
                     hideChatWindow();
@@ -249,7 +237,6 @@ public class HeadUpDisplay extends Table implements Translatable {
                     communicationButton.setVisible(false);
                     soundButton.setVisible(false);
                     microphoneButton.setVisible(false);
-                    cameraButton.setVisible(false);
                 }
             }
         }
@@ -384,14 +371,6 @@ public class HeadUpDisplay extends Table implements Translatable {
     public void toggleMicrophone() {
         microphoneButton.setChecked(!microphoneButton.isChecked());
         Chati.CHATI.getPreferences().setMicrophoneOn(microphoneButton.isChecked());
-    }
-
-    /**
-     * Schaltet die Kamera ein oder aus.
-     */
-    public void toggleCamera() {
-        cameraButton.setChecked(!cameraButton.isChecked());
-        Chati.CHATI.getPreferences().setCameraOn(cameraButton.isChecked());
     }
 
     /**
@@ -570,11 +549,12 @@ public class HeadUpDisplay extends Table implements Translatable {
     @Override
     public void translate() {
         chatWindow.translate();
-        if (communicationWindow != null) {
-            communicationWindow.translate();
-        }
+        videoChatWindow.translate();
         if (currentMenuWindow != null) {
             currentMenuWindow.translate();
+        }
+        if (communicationWindow != null) {
+            communicationWindow.translate();
         }
     }
 

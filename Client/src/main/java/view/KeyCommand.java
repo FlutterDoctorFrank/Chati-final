@@ -66,9 +66,6 @@ public enum KeyCommand {
     /** Repräsentiert das Ein- beziehungsweise Ausschalten des Mikrofons. */
     TOGGLE_MICROPHONE,
 
-    /** Repräsentiert das Ein- beziehungsweise Ausschalten der Kamera. */
-    TOGGLE_CAMERA,
-
     /** Repräsentiert die Taste, zum Wechseln des Bildschirmmodus.  */
     TOGGLE_FULLSCREEN,
 
