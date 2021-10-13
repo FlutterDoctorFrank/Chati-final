@@ -1,24 +1,22 @@
 package view.userInterface.interactableMenu;
 
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import model.MessageBundle;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import view.userInterface.actor.ChatiLabel;
-import view.userInterface.actor.ChatiTextButton;
+import view.userInterface.actor.ChatiTable;
+import view.userInterface.interactableMenu.game.TicTacToeTable;
 
 /**
  * Eine Klasse, welches das Menü des GameBoard repräsentiert.
  */
 public class GameBoardWindow extends InteractableWindow {
 
-    private static final float WINDOW_WIDTH = 600;
-    private static final float WINDOW_HEIGHT = 200;
+    private static final float WINDOW_WIDTH = 750;
+    private static final float WINDOW_HEIGHT = 400;
+
+    private ChatiTable currentTable;
 
     /**
      * Erzeugt eine neue Instanz des GameBoardWindow.
@@ -27,33 +25,21 @@ public class GameBoardWindow extends InteractableWindow {
     public GameBoardWindow(@NotNull final ContextID gameBoardId) {
         super("window.title.game-board", gameBoardId, ContextMenu.GAME_BOARD_MENU, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        infoLabel = new ChatiLabel("window.entry.not-implemented");
+        setCurrentTable(new TicTacToeTable(this));
 
-        ChatiTextButton confirmButton = new ChatiTextButton("menu.button.okay", true);
-        confirmButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(@NotNull final InputEvent event, final float x, final float y) {
-                close();
-            }
-        });
-
+        // Layout
         setModal(true);
         setMovable(false);
+    }
 
-        Table container = new Table();
-        container.defaults().height(ROW_HEIGHT).spaceBottom(SPACE).center().growX();
-        infoLabel.setAlignment(Align.center, Align.center);
-        container.add(infoLabel).row();
-        Table buttonContainer = new Table();
-        buttonContainer.defaults().colspan(2).height(ROW_HEIGHT).growX();
-        buttonContainer.add(confirmButton);
-        container.add(buttonContainer);
-        add(container).padLeft(SPACE).padRight(SPACE).grow();
-
-        // Translatable register
-        translatables.add(infoLabel);
-        translatables.add(confirmButton);
-        translatables.trimToSize();
+    /**
+     * Setzt den momentan anzuzeigenden Inhalt.
+     * @param table Container des anzuzeigenden Inhalts.
+     */
+    public void setCurrentTable(@NotNull final ChatiTable table) {
+        removeActor(currentTable);
+        currentTable = table;
+        addActor(table);
     }
 
     @Override

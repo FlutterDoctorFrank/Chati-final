@@ -51,6 +51,13 @@
 		"up": "radio-button-off",
 		"down": "radio-button",
 		"checked": "radio-button"
+	},
+	"field": {
+		"font": "font-label",
+		"fontColor": { "a": 1, "b": 1, "g": 1, "r": 1 },
+		"downFontColor": { "a": 1, "b": 1, "g": 0.2, "r": 1 },
+		"up": "list",
+		"down": "list"
 	}
 },
 "ImageButtonStyle": {
