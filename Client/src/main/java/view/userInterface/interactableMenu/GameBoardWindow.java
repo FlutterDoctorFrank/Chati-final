@@ -9,8 +9,8 @@ import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import view.userInterface.ChatiLabel;
-import view.userInterface.ChatiTextButton;
+import view.userInterface.actor.ChatiLabel;
+import view.userInterface.actor.ChatiTextButton;
 
 /**
  * Eine Klasse, welches das Menü des GameBoard repräsentiert.

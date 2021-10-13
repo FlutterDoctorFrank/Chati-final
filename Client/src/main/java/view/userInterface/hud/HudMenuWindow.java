@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
-import view.userInterface.ChatiWindow;
-import view.userInterface.ChatiTextButton;
+import view.userInterface.actor.ChatiWindow;
+import view.userInterface.actor.ChatiTextButton;
 
 /**
  * Eine abstrakte Klasse, welche ein Menü des HeadUpDisplay repräsentiert.

@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
-import view.userInterface.ChatiTable;
+import view.userInterface.actor.ChatiTable;
 
 /**
  * Eine Klasse, welche das Menü zum Verbinden repräsentiert.

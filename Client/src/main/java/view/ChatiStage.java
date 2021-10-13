@@ -6,8 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import model.user.IInternUserView;
 import org.jetbrains.annotations.NotNull;
-import view.userInterface.ChatiWindow;
-import view.userInterface.hud.ChatWindow;
+import view.userInterface.actor.ChatiWindow;
+import view.userInterface.hud.chat.ChatWindow;
 import java.util.Stack;
 
 /**
@@ -98,6 +98,8 @@ public class ChatiStage extends Stage {
                 openWindows.peek().close();
             } else if (Chati.CHATI.getHeadUpDisplay().isChatOpen()) {
                 Chati.CHATI.getHeadUpDisplay().hideChatWindow();
+            } else if (Chati.CHATI.getHeadUpDisplay().getVideoChatWindow().isVideoWindowOpen()) {
+                Chati.CHATI.getHeadUpDisplay().getVideoChatWindow().closeVideoWindow();
             } else if (Chati.CHATI.getHeadUpDisplay().isVideoChatOpen()) {
                 Chati.CHATI.getHeadUpDisplay().hideVideoChatWindow();
             } else {

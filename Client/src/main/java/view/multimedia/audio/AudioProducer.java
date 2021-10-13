@@ -1,7 +1,8 @@
-package view.multimedia;
+package view.multimedia.audio;
 
-import controller.AudioUtils;
+import utils.AudioUtils;
 import org.jetbrains.annotations.NotNull;
+import view.multimedia.MultimediaManager;
 
 import java.time.LocalDateTime;
 import java.util.Queue;

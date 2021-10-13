@@ -1,4 +1,4 @@
-package view.userInterface;
+package view.userInterface.actor;
 
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import model.Resource;

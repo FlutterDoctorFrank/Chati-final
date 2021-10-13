@@ -7,7 +7,7 @@ import model.context.spatial.ContextMenu;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view.Chati;
-import view.userInterface.ChatiWindow;
+import view.userInterface.actor.ChatiWindow;
 
 /**
  * Eine abstrakte Klasse, welche das Menü eines Interaktionsobjekts repräsentiert.

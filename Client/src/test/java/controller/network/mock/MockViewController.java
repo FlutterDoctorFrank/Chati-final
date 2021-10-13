@@ -68,16 +68,16 @@ public class MockViewController implements ViewControllerInterface {
     }
 
     @Override
-    public void showTypingUser(@NotNull final UUID userId) {
+    public void receiveTypingUser(@NotNull final UUID userId) {
         this.calls.add("show-typing-user");
     }
 
     private boolean unknownSender;
 
     @Override
-    public void showChatMessage(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
-                                @NotNull final MessageType messageType, @NotNull final String message,
-                                final byte[] imageData, @Nullable final String imageName) throws UserNotFoundException {
+    public void receiveChatMessage(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
+                                   @NotNull final MessageType messageType, @NotNull final String message,
+                                   final byte[] imageData, @Nullable final String imageName) throws UserNotFoundException {
         this.calls.add("show-chat-message");
 
         if (this.unknownSender) {
@@ -90,13 +90,13 @@ public class MockViewController implements ViewControllerInterface {
     }
 
     @Override
-    public void showInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle) {
+    public void receiveInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle) {
         this.calls.add("show-info-message");
     }
 
     @Override
-    public void playVoiceData(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
-                              final byte[] voiceData) throws UserNotFoundException {
+    public void receiveVoiceFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
+                                  final byte[] voiceData) throws UserNotFoundException {
         this.calls.add("play-voice-data");
 
         if (this.unknownSender) {
@@ -109,15 +109,15 @@ public class MockViewController implements ViewControllerInterface {
     }
 
     @Override
-    public void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData,
-                              final float position, final int seconds) {
+    public void receiveMusicFrame(@NotNull final LocalDateTime timestamp, final byte[] musicData,
+                                  final float position, final int seconds) {
         this.calls.add("play-music-data");
     }
 
     @Override
-    public void showVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, byte[] frameData)
-            throws UserNotFoundException {
-        this.calls.add("show-video-frame");
+    public void receiveVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
+                                  final boolean screen, final byte[] frameData) {
+        this.calls.add("show-camera-frame");
     }
 
     @Override

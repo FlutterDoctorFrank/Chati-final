@@ -1,6 +1,7 @@
-package view.multimedia;
+package view.multimedia.audio;
 
 import org.jetbrains.annotations.NotNull;
+import view.multimedia.audio.AudioProducer;
 
 import java.time.LocalDateTime;
 import java.util.Queue;

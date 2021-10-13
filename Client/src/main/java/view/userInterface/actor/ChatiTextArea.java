@@ -1,10 +1,11 @@
-package view.userInterface;
+package view.userInterface.actor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.ModifiedTextArea;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view.Chati;
@@ -12,9 +13,11 @@ import view.ChatiCursor;
 import view.ChatiLocalization.Translatable;
 
 /**
- * Eine Klasse, welche die in der Anwendung verwendeten TextFields repräsentiert.
+ * Eine Klasse, welche die in der Anwendung verwendeten TextAreas repräsentiert.
  */
-public class ChatiTextField extends TextField implements Translatable {
+public class ChatiTextArea extends ModifiedTextArea implements Translatable {
+
+    private static final int TEXT_AREA_MAX_LENGTH = 512;
 
     private final String messageTextKey;
     private boolean underCursor;
@@ -22,21 +25,26 @@ public class ChatiTextField extends TextField implements Translatable {
     /**
      * Erzeugt eine neue Instanz der ChatiTextArea.
      * @param messageTextKey Kennung der anzuzeigenden Nachricht, wenn der Text leer ist.
-     * @param textFieldType Typ des Textfeldes.
+     * @param writeEnters Information, ob das Drücken der Enter-Taste bei nicht leerem Text in der TextArea einen
+     * Zeilenumbruch verursacht.
      */
-    public ChatiTextField(@NotNull final String messageTextKey, @NotNull final TextFieldType textFieldType) {
+    public ChatiTextArea(@NotNull final String messageTextKey, final boolean writeEnters) {
         super("", Chati.CHATI.getSkin());
         this.messageTextKey = messageTextKey;
-        this.translate();
-
-        setMaxLength(textFieldType.getMaxFieldLength());
-        if (textFieldType == TextFieldType.PASSWORD) {
-            setPasswordMode(true);
-            setPasswordCharacter('*');
-        }
-        setTextFieldFilter((textField, c) -> !isBlank() || !Character.toString(c).matches("\\s"));
+        this.writeEnters = false;
+        translate();
 
         underCursor = false;
+        setMaxLength(TEXT_AREA_MAX_LENGTH);
+        addListener(new ChangeListener() {
+            @Override
+            public void changed(@NotNull final ChangeEvent event, @NotNull final Actor actor) {
+                ChatiTextArea.this.writeEnters = writeEnters && !getText().isBlank();
+            }
+        });
+
+        setTextFieldFilter((textField, c) -> !isBlank() || !Character.toString(c).matches("\\s"));
+
         addListener(new InputListener() {
             @Override
             public void enter(@NotNull InputEvent event, final float x, final float y, final int pointer,
@@ -72,7 +80,7 @@ public class ChatiTextField extends TextField implements Translatable {
     }
 
     /**
-     * Leert den Text und entfernt den Fokus von des TextField.
+     * Leert den Text und entfernt den Fokus von der TextArea.
      */
     public void reset() {
         setText("");
@@ -85,39 +93,5 @@ public class ChatiTextField extends TextField implements Translatable {
     @Override
     public void translate() {
         setMessageText(Chati.CHATI.getLocalization().translate(messageTextKey));
-    }
-
-    /**
-     * Ein Enum, welches die maximale Länge des Textes festlegt, die in ein Textfeld von diesem Typ eingegeben werden
-     * kann.
-     */
-    public enum TextFieldType {
-
-        /** Repräsentiert ein Standard-Textfeld. */
-        STANDARD(32),
-
-        /** Repräsentiert ein Passwort-Textfeld. */
-        PASSWORD(48),
-
-        /** Repräsentiert ein Dateinamen-Textfeld. */
-        FILE(128);
-
-        private final int maxFieldLength;
-
-        /**
-         * Erzeugt eine neue Instanz eines TextFieldType
-         * @param maxFieldLength Maximale Länge des Textes, die in ein Textfeld von diesem Typ eingegeben werden kann.
-         */
-        TextFieldType(final int maxFieldLength) {
-            this.maxFieldLength = maxFieldLength;
-        }
-
-        /**
-         * Gibt die maximale Länge des Textes zurück, die in ein Textfeld von diesem Typ eingegeben werden kann.
-         * @return Maximale Länge.
-         */
-        public int getMaxFieldLength() {
-            return maxFieldLength;
-        }
     }
 }

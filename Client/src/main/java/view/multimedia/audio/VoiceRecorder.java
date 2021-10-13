@@ -1,11 +1,12 @@
-package view.multimedia;
+package view.multimedia.audio;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioRecorder;
 import com.badlogic.gdx.utils.Disposable;
-import controller.AudioUtils;
+import utils.AudioUtils;
 import controller.network.ServerSender;
 import view.Chati;
+import view.multimedia.MultimediaManager;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -15,7 +16,7 @@ import java.util.Queue;
  */
 public class VoiceRecorder implements Runnable, Disposable {
 
-    private static final float LOOK_AHEAD = 0.2f; // in Sekunden
+    private static final float LOOK_AHEAD = 0.1f; // in Sekunden
     private static final int MAX_FRAMES = (int) (LOOK_AHEAD * AudioUtils.FRAME_RATE);
     private static final float STOP_SENDING_DELAY = 0.25f; // in Sekunden
 

@@ -427,7 +427,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void showTypingUser(@NotNull final UUID userId) {
+    public void receiveTypingUser(@NotNull final UUID userId) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(worldScreen)) {
                 headUpDisplay.showTypingUser(userId);
@@ -436,9 +436,9 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void showChatMessage(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
-                                @NotNull final MessageType messageType, @NotNull final String message,
-                                byte[] imageData, @Nullable String imageName) {
+    public void receiveChatMessage(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
+                                   @NotNull final MessageType messageType, @NotNull final String message,
+                                   byte[] imageData, @Nullable String imageName) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(worldScreen)) {
                 try {
@@ -451,7 +451,7 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void showInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle) {
+    public void receiveInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle) {
         Gdx.app.postRunnable(() -> {
             if (this.screen.equals(worldScreen)) {
                 headUpDisplay.showInfoMessage(timestamp, messageBundle);
@@ -460,26 +460,26 @@ public class Chati extends Game implements ViewControllerInterface, IModelObserv
     }
 
     @Override
-    public void playVoiceData(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, final byte[] voiceData)
+    public void receiveVoiceFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, final byte[] voiceData)
             throws UserNotFoundException {
         if (this.screen.equals(worldScreen)) {
-            multimediaManager.playVoiceData(userId, timestamp, voiceData);
+            multimediaManager.receiveVoiceData(userId, timestamp, voiceData);
         }
     }
 
     @Override
-    public void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData,
-                              final float position, final int seconds) {
+    public void receiveMusicFrame(@NotNull final LocalDateTime timestamp, final byte[] musicData,
+                                  final float position, final int seconds) {
         if (this.screen.equals(worldScreen)) {
-            multimediaManager.playMusicData(timestamp, musicData, position, seconds);
+            multimediaManager.receiveMusicData(timestamp, musicData, position, seconds);
         }
     }
 
     @Override
-    public void showVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
-                               final byte[] frameData) throws UserNotFoundException {
+    public void receiveVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
+                                  final boolean screen, final byte[] frameData) throws UserNotFoundException {
         if (this.screen.equals(worldScreen)) {
-            multimediaManager.receiveVideoFrame(userId, timestamp, frameData);
+            multimediaManager.receiveVideoFrame(userId, timestamp, screen, frameData);
         }
     }
 

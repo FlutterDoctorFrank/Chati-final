@@ -15,12 +15,12 @@ import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
 import view.Response;
-import view.userInterface.ChatiImageButton;
-import view.userInterface.ChatiLabel;
-import view.userInterface.ChatiTextArea;
-import view.userInterface.ChatiTextButton;
-import view.userInterface.ChatiTooltip;
-import view.userInterface.ChatiWindow;
+import view.userInterface.actor.ChatiImageButton;
+import view.userInterface.actor.ChatiLabel;
+import view.userInterface.actor.ChatiTextArea;
+import view.userInterface.actor.ChatiTextButton;
+import view.userInterface.actor.ChatiTooltip;
+import view.userInterface.actor.ChatiWindow;
 import view.userInterface.UserInfoContainer;
 import java.util.logging.Level;
 

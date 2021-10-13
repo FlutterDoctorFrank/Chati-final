@@ -19,9 +19,9 @@ import model.user.IInternUserView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view.Chati;
-import view.userInterface.ChatiImageButton;
-import view.userInterface.ChatiLabel;
-import view.userInterface.ChatiTooltip;
+import view.userInterface.actor.ChatiImageButton;
+import view.userInterface.actor.ChatiLabel;
+import view.userInterface.actor.ChatiTooltip;
 import view.userInterface.WeblinkClickListener;
 
 import java.text.SimpleDateFormat;

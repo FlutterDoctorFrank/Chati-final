@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import view.Chati;
 import view.ChatiScreen;
 import view.Response;
-import view.userInterface.ChatiTable;
+import view.userInterface.actor.ChatiTable;
 
 /**
  * Eine Klasse, welche den Menübildschirm der Anwendung repräsentiert.

@@ -1,6 +1,6 @@
 package model.user.bot;
 
-import controller.AudioUtils;
+import utils.AudioUtils;
 import controller.network.ClientSender;
 import model.communication.message.TextMessage;
 import model.context.global.GlobalContext;

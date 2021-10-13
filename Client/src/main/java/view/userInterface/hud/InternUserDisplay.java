@@ -13,7 +13,7 @@ import model.user.IInternUserView;
 import model.user.Status;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
-import view.userInterface.ChatiTooltip;
+import view.userInterface.actor.ChatiTooltip;
 import view.userInterface.UserInfoContainer;
 import java.util.logging.Level;
 

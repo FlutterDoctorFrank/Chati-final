@@ -19,6 +19,11 @@ public enum Permission {
     CONTACT_CONTEXT,
 
     /**
+     * Erlaubt das Teilen des Bildschirms.
+     */
+    SHARE_SCREEN,
+
+    /**
      * Erlaubt es zu sehen, wenn ein unsichtbarer Benutzer online ist.
      */
     SEE_INVISIBLE_USERS,

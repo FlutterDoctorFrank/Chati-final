@@ -390,6 +390,11 @@ public class User implements IUserController, IUserView {
     }
 
     @Override
+    public boolean canShare() {
+        return canShow() && hasPermission(Permission.SHARE_SCREEN);
+    }
+
+    @Override
     public boolean isReported() {
         Context current = UserManager.getInstance().getInternUser().getDeepestContext();
         do {

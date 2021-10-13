@@ -5,8 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
-import view.userInterface.ChatiTable;
-import view.userInterface.ChatiTextButton;
+import view.userInterface.actor.ChatiTable;
+import view.userInterface.actor.ChatiTextButton;
 
 /**
  * Eine Klasse, welche das Menü zum Vornehmen von Einstellungen am Benutzerkonto repräsentiert.

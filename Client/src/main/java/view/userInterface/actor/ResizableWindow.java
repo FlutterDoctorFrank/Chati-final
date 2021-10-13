@@ -1,4 +1,4 @@
-package view.userInterface;
+package view.userInterface.actor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -9,25 +9,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view.Chati;
 import view.ChatiCursor;
-import view.ChatiLocalization.Translatable;
 
 /**
  * Eine Klasse, welche ein größenveränderbares Fenster repräsentiert.
  */
-public abstract class ResizableWindow extends Window implements Translatable {
+public abstract class ResizableWindow extends Window {
 
     private static final int RESIZE_BORDER = 8;
 
-    private final String titleKey;
     private boolean resizeCursor;
 
     /**
      * Erzeugt eine neue Instanz des ResizableWindow.
-     * @param titleKey
+     * @param title Anzuzeigender Titel.
      */
-    public ResizableWindow(@NotNull final String titleKey) {
-        super(Chati.CHATI.getLocalization().translate(titleKey), Chati.CHATI.getSkin());
-        this.titleKey = titleKey;
+    public ResizableWindow(@NotNull final String title) {
+        super(title, Chati.CHATI.getSkin());
 
         setModal(false);
         setMovable(true);
@@ -77,7 +74,7 @@ public abstract class ResizableWindow extends Window implements Translatable {
              * @param y Y-Koordinate des Cursors.
              */
             private void setCursor(final float x, final float y) {
-                if (!isResizable() || !isVisible()) {
+                if (!hasParent() || !isVisible() || !isResizable()) {
                     Gdx.graphics.setCursor(ChatiCursor.ARROW.getCursor());
                     resizeCursor = false;
                     return;
@@ -105,10 +102,5 @@ public abstract class ResizableWindow extends Window implements Translatable {
                 }
             }
         });
-    }
-
-    @Override
-    public void translate() {
-        getTitleLabel().setText(Chati.CHATI.getLocalization().translate(titleKey));
     }
 }

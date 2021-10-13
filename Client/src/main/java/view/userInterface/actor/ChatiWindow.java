@@ -1,4 +1,4 @@
-package view.userInterface;
+package view.userInterface.actor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -8,12 +8,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
 import view.ChatiLocalization.Translatable;
+
 import java.util.ArrayList;
 
 /**
  * Eine Klasse, welche die in der Anwendung verwendeten Windows repräsentiert.
  */
-public abstract class ChatiWindow extends Window implements IChatiWindow, Translatable {
+public abstract class ChatiWindow extends Window implements Translatable {
 
     protected static final float ROW_HEIGHT = 60;
     protected static final float SPACE = 15;
@@ -83,17 +84,14 @@ public abstract class ChatiWindow extends Window implements IChatiWindow, Transl
         super.setHeight(height);
     }
 
-    @Override
     public void open() {
         Chati.CHATI.getScreen().getStage().openWindow(this);
     }
 
-    @Override
     public void close() {
         Chati.CHATI.getScreen().getStage().closeWindow(this);
     }
 
-    @Override
     public abstract void focus();
 
     /**

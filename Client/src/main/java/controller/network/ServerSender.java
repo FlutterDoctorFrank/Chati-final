@@ -468,20 +468,23 @@ public interface ServerSender {
          * Information, dass ein Videoframe gesendet werden soll.
          * <p>
          *     Erwartet als Objekt Array die Klassen:<br>
-         *     - {@code 0}: {@code byte[]}, Die Daten des Videoframes
+         *     - {@code 0}: {@link Boolean}, falls true, ist das Frame von einer Bildschirmaufnahme, sonst von einer Kameraaufnahme.
+         *     - {@code 1}: {@code byte[]}, Die Daten des Videoframes
+         *
          * </p>
          */
         VIDEO {
             @Override
             protected @NotNull Packet<?> getPacket(@NotNull final Object... objects) {
-                if (objects.length == 1) {
-                    if (objects[0] instanceof byte[]) {
-                        return new PacketVideoFrame((byte[]) objects[0]);
+                if (objects.length == 2) {
+                    if (objects[0] instanceof Boolean && objects[1] instanceof byte[]) {
+                        return new PacketVideoFrame((boolean) objects[0], (byte[]) objects[1]);
                     } else {
-                        throw new IllegalArgumentException("Expected byte[], got " + objects[0].getClass());
+                        throw new IllegalArgumentException("Expected boolean and byte[], got " + objects[0].getClass()
+                                + " and " + objects[1].getClass());
                     }
                 } else {
-                    throw new IllegalArgumentException("Expected Array size of 1, got " + objects.length);
+                    throw new IllegalArgumentException("Expected Array size of 2, got " + objects.length);
                 }
             }
         };

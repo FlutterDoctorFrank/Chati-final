@@ -10,6 +10,8 @@ import model.user.IUserView;
 import model.user.Status;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
+import view.userInterface.actor.ChatiTooltip;
+
 import java.util.ArrayList;
 import java.util.List;
 

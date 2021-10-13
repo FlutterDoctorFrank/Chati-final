@@ -18,7 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view.Chati;
 import view.ChatiLocalization.Translatable;
-import view.userInterface.ChatiImageButton;
+import view.userInterface.actor.ChatiImageButton;
+import view.userInterface.hud.chat.ChatWindow;
 import view.userInterface.hud.notificationList.NotificationListWindow;
 import view.userInterface.hud.settings.SettingsWindow;
 import view.userInterface.hud.userList.UserListWindow;
@@ -240,7 +241,7 @@ public class HeadUpDisplay extends Table implements Translatable {
                 if (chatButton.isVisible() || videoChatButton.isVisible() || communicationButton.isVisible()
                         || soundButton.isVisible() || microphoneButton.isVisible() || cameraButton.isVisible()) {
                     chatWindow.clearChat();
-                    videoChatWindow.clearVideochat();
+                    videoChatWindow.clearVideoChat();
                     hideChatWindow();
                     hideVideoChatWindow();
                     chatButton.setVisible(false);

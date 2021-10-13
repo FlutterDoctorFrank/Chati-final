@@ -1,5 +1,6 @@
-package view.multimedia;
+package view.multimedia.video;
 
+import utils.VideoUtils;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import model.user.IUserView;
@@ -7,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view.Chati;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.time.LocalDateTime;
 import java.util.Queue;
 import java.util.UUID;
@@ -17,48 +20,64 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class VideoReceiver {
 
-    private final Queue<VideoFrame> frameDataBuffer;
+    private final Queue<VideoFrame> videoFrameBuffer;
 
     /**
      * Erzeugt eine neue Instanz des VideoReceiver.
      */
     public VideoReceiver() {
-        this.frameDataBuffer = new LinkedBlockingQueue<>();
+        this.videoFrameBuffer = new LinkedBlockingQueue<>();
     }
 
     /**
-     * Hinterlegt ein erhaltenes VideoFrame.
+     * Hinterlegt ein erhaltenes VideoFrame von einem externen Benutzer.
      * @param userId ID des Benutzers, dessen Frame erhalten wurde.
      * @param timestamp Zeitstempel des Frames.
+     * @param screen true, wenn dieser Frame Teil einer Bildschirmaufnahme ist.
      * @param frameData Daten des Frames.
      * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
      */
     public void receiveVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
-                                  final byte[] frameData) throws UserNotFoundException {
-        IUserView sender;
-        IInternUserView internUser = Chati.CHATI.getInternUser();
-        if (internUser != null && internUser.getUserId().equals(userId)) {
-            sender = internUser;
-        } else {
-            sender = Chati.CHATI.getUserManager().getExternUserView(userId);
+                                  final boolean screen, final byte[] frameData) throws UserNotFoundException {
+        IUserView sender = Chati.CHATI.getUserManager().getExternUserView(userId);
+        BufferedImage frame = VideoUtils.read(frameData);
+        if (frame != null) {
+            byte[] decompressedData = ((DataBufferByte) frame.getRaster().getDataBuffer()).getData();
+            videoFrameBuffer.add(new VideoFrame(sender, timestamp, screen, VideoUtils.toRGB(decompressedData)));
         }
-        frameDataBuffer.add(new VideoFrame(sender, timestamp, frameData));
     }
 
     /**
-     * Gibt zurück, ob Frames vorhanden sind.
+     * Hinterlegt ein erhaltenes VideoFrame vom intern angemeldeten Benutzer.
+     * @param frame Erhaltenes Videoframe.
+     * @param screen true, wenn dieser Frame Teil einer Bildschirmaufnahme ist.
+     */
+    public void receiveVideoFrame(@NotNull final BufferedImage frame, final boolean screen) {
+        IInternUserView internUser = Chati.CHATI.getInternUser();
+        if (internUser != null) {
+            BufferedImage preparedFrame = VideoUtils.scaleImage(frame, frame.getWidth(), frame.getHeight());
+            if (!screen) {
+                preparedFrame = VideoUtils.flipImageX(preparedFrame);
+            }
+            byte[] frameData = ((DataBufferByte) preparedFrame.getRaster().getDataBuffer()).getData();
+            videoFrameBuffer.add(new VideoFrame(internUser, LocalDateTime.now(), screen, VideoUtils.toRGB(frameData)));
+        }
+    }
+
+    /**
+     * Gibt zurück, ob Frames von Kameraaufnahmen vorhanden sind.
      * @return true, wenn Frames vorhanden sind, sonst false.
      */
     public boolean hasFrame() {
-        return !frameDataBuffer.isEmpty();
+        return !videoFrameBuffer.isEmpty();
     }
 
     /**
-     * Gibt den nächsten anzuzeigenden Frame zurück.
+     * Gibt den nächsten anzuzeigenden Frame einer Kameraaufnahme zurück.
      * @return Nächster anzuzeigender Frame.
      */
     public @Nullable VideoFrame getNextFrame() {
-        return frameDataBuffer.poll();
+        return videoFrameBuffer.poll();
     }
 
     /**
@@ -68,6 +87,7 @@ public class VideoReceiver {
 
         private final IUserView sender;
         private final LocalDateTime timestamp;
+        private final boolean screenshot;
         private final byte[] frameData;
 
         /**
@@ -77,9 +97,10 @@ public class VideoReceiver {
          * @param frameData Daten des Frames.
          */
         public VideoFrame(@NotNull final IUserView sender, @NotNull final LocalDateTime timestamp,
-                          final byte[] frameData) {
+                          final boolean screenshot, final byte[] frameData) {
             this.sender = sender;
             this.timestamp = timestamp;
+            this.screenshot = screenshot;
             this.frameData = frameData;
         }
 
@@ -97,6 +118,14 @@ public class VideoReceiver {
          */
         public @NotNull LocalDateTime getTimestamp() {
             return timestamp;
+        }
+
+        /**
+         * Gibt zurück, ob dieser Frame Teil einer Bildschirm- oder Kameraaufnahme ist.
+         * @return true, wenn dieser Frame Teil einer Bildschirmaufnahme ist, sonst false.
+         */
+        public boolean isScreenshot() {
+            return screenshot;
         }
 
         /**

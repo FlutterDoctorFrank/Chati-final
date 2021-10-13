@@ -200,11 +200,11 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             }
 
             if (packet.getSenderId() == null) {
-                this.manager.getView().playMusicData(packet.getTimestamp(), packet.getAudioData(),
+                this.manager.getView().receiveMusicFrame(packet.getTimestamp(), packet.getAudioData(),
                         packet.getPosition(), packet.getSeconds());
             } else {
                 try {
-                    this.manager.getView().playVoiceData(packet.getSenderId(), packet.getTimestamp(), packet.getAudioData());
+                    this.manager.getView().receiveVoiceFrame(packet.getSenderId(), packet.getTimestamp(), packet.getAudioData());
                 } catch (UserNotFoundException ex) {
                     // Unbekannter Sender.
                     LOGGER.warning("Server tried to send voice message from unknown sender with id: " + ex.getUserID());
@@ -256,7 +256,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             return;
                         }
 
-                        this.manager.getView().showChatMessage(packet.getSenderId(), packet.getTimestamp(),
+                        this.manager.getView().receiveChatMessage(packet.getSenderId(), packet.getTimestamp(),
                                 packet.getMessageType(), packet.getMessage(), packet.getImageData(), packet.getImageName());
                         break;
 
@@ -266,7 +266,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                             return;
                         }
 
-                        this.manager.getView().showInfoMessage(packet.getTimestamp(), packet.getBundle());
+                        this.manager.getView().receiveInfoMessage(packet.getTimestamp(), packet.getBundle());
                         break;
                 }
             } catch (UserNotFoundException ex) {
@@ -336,7 +336,7 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
                 return;
             }
 
-            this.manager.getView().showTypingUser(packet.getSenderId());
+            this.manager.getView().receiveTypingUser(packet.getSenderId());
         } else {
             this.logUnexpectedPacket(packet, "Can not receive typing information while user is not in a world");
         }
@@ -444,8 +444,8 @@ public class ServerConnection extends Listener implements PacketListenerOut, Ser
             }
 
             try {
-                this.manager.getView().showVideoFrame(packet.getSenderId(), packet.getTimestamp(),
-                        packet.getFrameData());
+                this.manager.getView().receiveVideoFrame(packet.getSenderId(), packet.getTimestamp(),
+                        packet.isScreenshot(), packet.getFrameData());
             } catch (UserNotFoundException ex) {
                 // Unbekannter Sender.
                 LOGGER.warning("Server tried to send video frame from unknown sender with id: " + ex.getUserID());

@@ -97,6 +97,13 @@ public interface IUser {
     void show(final byte[] frameData);
 
     /**
+     * Sendet einen Videoframe einer Bildschirmaufnahme des Benutzers, von dem es erhalten wurde gemäß der geltenden
+     * Kommunikationsform an andere Benutzer.
+     * @param frameData Daten des Frames.
+     */
+    void share(final byte[] frameData);
+
+    /**
      * Führt im Namen des Benutzers eine administrative Aktion auf einen anderen Benutzer aus.
      * @param targetId ID des Benutzers, auf den die Aktion ausgeführt werden soll.
      * @param action Auszuführende Aktion.

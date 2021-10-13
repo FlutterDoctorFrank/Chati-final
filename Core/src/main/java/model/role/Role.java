@@ -15,7 +15,7 @@ public enum Role {
     /**
      * Repräsentiert die Rolle eines Besitzers.
      */
-    OWNER(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.SEE_INVISIBLE_USERS,
+    OWNER(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.SHARE_SCREEN, Permission.SEE_INVISIBLE_USERS,
             Permission.TELEPORT_TO_USER, Permission.ENTER_PRIVATE_ROOM, Permission.MUTE, Permission.BAN_MODERATOR,
             Permission.BAN_USER, Permission.ASSIGN_AREA_MANAGER, Permission.ASSIGN_MODERATOR,
             Permission.ASSIGN_ADMINISTRATOR, Permission.MANAGE_WORLDS, Permission.MANAGE_BOTS),
@@ -23,27 +23,28 @@ public enum Role {
     /**
      * Repräsentiert die Rolle eines Administrators.
      */
-    ADMINISTRATOR(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.SEE_INVISIBLE_USERS,
-            Permission.TELEPORT_TO_USER, Permission.ENTER_PRIVATE_ROOM, Permission.MUTE, Permission.BAN_MODERATOR,
-            Permission.BAN_USER, Permission.ASSIGN_AREA_MANAGER, Permission.ASSIGN_MODERATOR, Permission.MANAGE_WORLDS,
-            Permission.MANAGE_BOTS),
+    ADMINISTRATOR(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.SHARE_SCREEN,
+            Permission.SEE_INVISIBLE_USERS, Permission.TELEPORT_TO_USER, Permission.ENTER_PRIVATE_ROOM, Permission.MUTE,
+            Permission.BAN_MODERATOR, Permission.BAN_USER, Permission.ASSIGN_AREA_MANAGER, Permission.ASSIGN_MODERATOR,
+            Permission.MANAGE_WORLDS, Permission.MANAGE_BOTS),
 
     /**
      * Repräsentiert die Rolle eines Moderators.
      */
-    MODERATOR(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.SEE_INVISIBLE_USERS,
-            Permission.TELEPORT_TO_USER, Permission.ENTER_PRIVATE_ROOM, Permission.MUTE, Permission.BAN_USER,
-            Permission.ASSIGN_AREA_MANAGER),
+    MODERATOR(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.SHARE_SCREEN,
+            Permission.SEE_INVISIBLE_USERS, Permission.TELEPORT_TO_USER, Permission.ENTER_PRIVATE_ROOM, Permission.MUTE,
+            Permission.BAN_USER, Permission.ASSIGN_AREA_MANAGER),
 
     /**
      * Repräsentiert die Rolle eines Rauminhabers.
      */
-    ROOM_OWNER(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.MANAGE_PRIVATE_ROOM, Permission.MUTE),
+    ROOM_OWNER(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.SHARE_SCREEN,
+            Permission.MANAGE_PRIVATE_ROOM, Permission.MUTE),
 
     /**
      * Repräsentiert die Rolle eines Bereichsberechtigten.
      */
-    AREA_MANAGER(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.MUTE),
+    AREA_MANAGER(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.SHARE_SCREEN, Permission.MUTE),
 
     /**
      * Repräsentiert einen Bot.

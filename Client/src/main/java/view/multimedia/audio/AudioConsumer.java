@@ -1,14 +1,16 @@
-package view.multimedia;
+package view.multimedia.audio;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Disposable;
-import controller.AudioUtils;
+import utils.AudioUtils;
 import model.exception.UserNotFoundException;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
+import view.multimedia.MultimediaManager;
+
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;

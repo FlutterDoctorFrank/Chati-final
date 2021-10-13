@@ -7,8 +7,9 @@ import controller.network.ServerSender;
 import model.context.spatial.ContextMap;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
-import view.userInterface.*;
 import view.Response;
+import view.userInterface.actor.*;
+
 import java.util.EnumSet;
 
 /**

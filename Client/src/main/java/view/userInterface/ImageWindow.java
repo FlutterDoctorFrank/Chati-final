@@ -1,4 +1,4 @@
-package view.userInterface.hud;
+package view.userInterface;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -9,8 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import org.jetbrains.annotations.NotNull;
-import view.userInterface.ChatiTextButton;
-import view.userInterface.ChatiWindow;
+import view.userInterface.actor.ChatiTextButton;
+import view.userInterface.actor.ChatiWindow;
 
 /**
  * Eine Klasse, welche das Fenster zum Anzeigen eines Bildes repräsentiert.
@@ -26,7 +26,7 @@ public class ImageWindow extends ChatiWindow {
      * @param imageName Name der Bilddatei.
      * @param imageData Anzuzeigendes Bild.
      */
-    protected ImageWindow(@NotNull final String imageName, final byte[] imageData) {
+    public ImageWindow(@NotNull final String imageName, final byte[] imageData) {
         super("", 1, 1);
         getTitleLabel().setText(imageName);
 

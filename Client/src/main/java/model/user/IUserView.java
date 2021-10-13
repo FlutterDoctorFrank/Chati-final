@@ -120,10 +120,16 @@ public interface IUserView {
     boolean canTalk();
 
     /**
-     * Gibt zurück, ob der Benutzer Videoframes senden darf.
-     * @return true, wenn er Videoframes senden darf, sonst false.
+     * Gibt zurück, ob der Benutzer Kameraaufnahmen versenden darf.
+     * @return true, wenn er Kameraaufnahmen senden darf, sonst false.
      */
     boolean canShow();
+
+    /**
+     * Gibt zurück, ob der Benutzer Bildschirmaufnahmen versenden darf.
+     * @return true, wenn er Bildschirmaufnahmen senden darf, sonst false.
+     */
+    boolean canShare();
 
     /**
      * Gibt zurück, ob der Benutzer im aktuellen räumlichen Kontext des internen Benutzers als gemeldet markiert ist.

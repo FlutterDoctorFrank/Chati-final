@@ -13,9 +13,9 @@ import com.badlogic.gdx.utils.Align;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
 import view.ChatiPreferences;
-import view.userInterface.ChatiLabel;
-import view.userInterface.ChatiTextButton;
-import view.userInterface.ChatiWindow;
+import view.userInterface.actor.ChatiLabel;
+import view.userInterface.actor.ChatiTextButton;
+import view.userInterface.actor.ChatiWindow;
 
 /**
  * Eine Klasse, welche das Menü zum Vornehmen von Soundeinstellungen repräsentiert.

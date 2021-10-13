@@ -10,7 +10,7 @@ import model.role.Permission;
 import model.user.IInternUserView;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
-import view.userInterface.ChatiTextButton;
+import view.userInterface.actor.ChatiTextButton;
 import view.userInterface.hud.HudMenuWindow;
 import view.userInterface.menu.LoginTable;
 import view.userInterface.menu.StartTable;

@@ -6,6 +6,7 @@ import model.communication.message.MessageType;
 import model.context.ContextID;
 import model.context.spatial.ContextMenu;
 import model.exception.UserNotFoundException;
+import model.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
@@ -83,7 +84,7 @@ public interface ViewControllerInterface {
      * Benachrichtigt die View, dass ein Benutzer im Chat als tippend angezeigt werden soll.
      * @param userId Die ID des als tippend anzuzeigenden Benutzers.
      */
-    void showTypingUser(@NotNull final UUID userId);
+    void receiveTypingUser(@NotNull final UUID userId);
 
     /**
      * Benachrichtigt die View, dass eine neue Chatnachricht erhalten wurde.
@@ -95,16 +96,16 @@ public interface ViewControllerInterface {
      * @param imageName Name des Bildanhangs.
      * @throws UserNotFoundException wenn kein Benutzer mit der ID gefunden werden konnte.
      */
-    void showChatMessage(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
-                         @NotNull final MessageType messageType, @NotNull final String message,
-                         final byte[] imageData, @Nullable final String imageName) throws UserNotFoundException;
+    void receiveChatMessage(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
+                            @NotNull final MessageType messageType, @NotNull final String message,
+                            final byte[] imageData, @Nullable final String imageName) throws UserNotFoundException;
 
     /**
      * Benachrichtigt die View, dass eine neue Informationsnachricht erhalten wurde.
      * @param timestamp Zeitpunkt, an dem diese Nachricht gesendet wurde.
      * @param messageBundle Übersetzbare Nachricht mit ihren benötigten Argument.
      */
-    void showInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle);
+    void receiveInfoMessage(@NotNull final LocalDateTime timestamp, @NotNull final MessageBundle messageBundle);
 
     /**
      * Benachrichtigt die View, dass ein neues Voice-Paket erhalten wurde.
@@ -113,7 +114,7 @@ public interface ViewControllerInterface {
      * @param voiceData Sprachdaten, die abgespielt werden sollen.
      * @throws UserNotFoundException wenn kein Benutzer mit der ID gefunden werden konnte.
      */
-    void playVoiceData(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, final byte[] voiceData)
+    void receiveVoiceFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, final byte[] voiceData)
             throws UserNotFoundException;
 
     /**
@@ -123,18 +124,19 @@ public interface ViewControllerInterface {
      * @param position Aktuelle Position im Musikstück.
      * @param seconds Aktuelle Sekunde im Musikstück.
      */
-    void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData,
-                       final float position, final int seconds);
+    void receiveMusicFrame(@NotNull final LocalDateTime timestamp, final byte[] musicData,
+                           final float position, final int seconds);
 
     /**
-     * Benachrichtigt die View, dass ein neuer Video-Paket erhalten wurde.
+     * Benachrichtigt die View, dass ein neues Video-Paket erhalten wurde.
      * @param userId ID des Benutzers, der dieses Paket gesendet hat.
      * @param timestamp Zeitpunkt, an dem dieses Paket gesendet wurde.
+     * @param screen true, wenn dieser Frame Teil einer Bildschirmaufnahme ist, sonst false.
      * @param frameData Videodaten des Frames, das gezeigt werden soll.
      * @throws UserNotFoundException wenn kein Benutzer mit der ID gefunden werden konnte.
      */
-    void showVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, final byte[] frameData)
-            throws UserNotFoundException;
+    void receiveVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp, final boolean screen,
+                           final byte[] frameData) throws UserNotFoundException;
 
     /**
      * Benachrichtigt die View, dass das Menü eines Interaktionsobjekts geöffnet werden soll.

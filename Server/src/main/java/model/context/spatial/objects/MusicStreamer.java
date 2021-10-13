@@ -1,6 +1,6 @@
 package model.context.spatial.objects;
 
-import controller.AudioUtils;
+import utils.AudioUtils;
 import controller.network.ClientSender;
 import model.communication.CommunicationMedium;
 import model.communication.CommunicationRegion;

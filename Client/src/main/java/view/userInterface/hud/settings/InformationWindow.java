@@ -8,8 +8,8 @@ import com.badlogic.gdx.utils.Align;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
 import view.KeyCommand;
-import view.userInterface.ChatiLabel;
-import view.userInterface.ChatiWindow;
+import view.userInterface.actor.ChatiLabel;
+import view.userInterface.actor.ChatiWindow;
 
 /**
  * Eine Klasse, welche ein Menü zum Einsehen von Informationen zur Anwendung repräsentiert.

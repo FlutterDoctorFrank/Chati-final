@@ -1,4 +1,4 @@
-package view.userInterface.hud;
+package view.userInterface.hud.chat;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -8,12 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -32,6 +27,9 @@ import view.ChatiEmojiManager;
 import view.ChatiLocalization.Translatable;
 import view.KeyCommand;
 import view.userInterface.*;
+import view.userInterface.ImageFileChooserWindow;
+import view.userInterface.ImageWindow;
+import view.userInterface.actor.*;
 import view.world.component.InternUserAvatar;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -48,7 +46,7 @@ import java.util.regex.Pattern;
 /**
  * Eine Klasse, welche das Chatfenster der Anwendung repräsentiert.
  */
-public class ChatWindow extends ResizableWindow {
+public class ChatWindow extends ResizableWindow implements Translatable {
 
     private static final int MAX_CHAT_MESSAGES = 256;
     private static final long SHOW_TYPING_DURATION = 1; // in Sekunden
@@ -83,7 +81,7 @@ public class ChatWindow extends ResizableWindow {
      * Erzeugt eine neue Instanz des ChatWindow.
      */
     public ChatWindow() {
-        super("window.title.chat");
+        super(Chati.CHATI.getLocalization().translate("window.title.chat"));
         chatMessages = new LinkedList<>();
         typingUsers = new HashMap<>();
 
@@ -98,7 +96,7 @@ public class ChatWindow extends ResizableWindow {
         creditsLabel.addListener(new WeblinkClickListener(creditsLabel, weblinkColor, 0));
         creditsLabel.setFontScale(0.67f);
         emojiContainer.add(creditsLabel).left().padLeft(SPACE).row();
-        HorizontalGroup emojiGroup = new HorizontalGroup().wrap().rowAlign(Align.left).padLeft(SPACE);
+        HorizontalGroup emojiGroup = new HorizontalGroup().wrap().padLeft(SPACE);
         Chati.CHATI.getEmojiManager().getEmojis().values().forEach(emoji -> {
             ChatiImageButton emojiButton = new ChatiImageButton(new TextureRegionDrawable(emoji.getRegion()));
             emojiButton.addListener(new ClickListener() {
@@ -193,8 +191,7 @@ public class ChatWindow extends ResizableWindow {
         // Layout
         setVisible(false);
         setPosition(Gdx.graphics.getWidth(), 0);
-        setWidth(DEFAULT_WIDTH);
-        setHeight(DEFAULT_HEIGHT);
+        setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
         messageContainer.top();
         messageContainer.defaults().top().left().padLeft(SPACE).padBottom(SPACE).growX();
@@ -504,7 +501,7 @@ public class ChatWindow extends ResizableWindow {
 
     @Override
     public void translate() {
-        super.translate();
+        getTitleLabel().setText(Chati.CHATI.getLocalization().translate("window.title.chat"));
         chatMessages.forEach(ChatMessage::translate);
         typeMessageArea.translate();
         sendButton.translate();

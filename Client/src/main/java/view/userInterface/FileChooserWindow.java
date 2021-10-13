@@ -1,4 +1,4 @@
-package view.userInterface.hud;
+package view.userInterface;
 
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.Gdx;
@@ -12,10 +12,11 @@ import com.badlogic.gdx.utils.Array;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import view.Chati;
-import view.userInterface.ChatiLabel;
-import view.userInterface.ChatiTextButton;
-import view.userInterface.ChatiTextField;
-import view.userInterface.ChatiWindow;
+import view.userInterface.actor.ChatiLabel;
+import view.userInterface.actor.ChatiTextButton;
+import view.userInterface.actor.ChatiTextField;
+import view.userInterface.actor.ChatiWindow;
+
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.FileFilter;

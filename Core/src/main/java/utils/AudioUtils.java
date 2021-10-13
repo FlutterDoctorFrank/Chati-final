@@ -1,4 +1,4 @@
-package controller;
+package utils;
 
 import javax.sound.sampled.AudioFormat;
 
@@ -66,7 +66,7 @@ public class AudioUtils {
      * @param stereoData Stereodaten.
      * @return Monodaten.
      */
-    public static byte[] toMono(byte[] stereoData) {
+    public static byte[] toMono(final byte[] stereoData) {
         byte[] monoData = new byte[stereoData.length / 2];
         for (int i = 0; i < monoData.length; i += 2) {
             monoData[i] = stereoData[2 * i];

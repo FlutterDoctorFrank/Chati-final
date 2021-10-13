@@ -3,7 +3,7 @@ package view.userInterface.hud;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import model.user.IInternUserView;
 import view.Chati;
-import view.userInterface.ChatiWindow;
+import view.userInterface.actor.ChatiWindow;
 import view.userInterface.hud.userList.UserListEntry;
 import java.util.Set;
 import java.util.TreeSet;

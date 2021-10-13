@@ -16,11 +16,11 @@ import model.notification.NotificationType;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
 import view.ChatiLocalization.Translatable;
-import view.userInterface.ChatiImageButton;
-import view.userInterface.ChatiLabel;
-import view.userInterface.ChatiTextButton;
-import view.userInterface.ChatiTooltip;
-import view.userInterface.ChatiWindow;
+import view.userInterface.actor.ChatiImageButton;
+import view.userInterface.actor.ChatiLabel;
+import view.userInterface.actor.ChatiTextButton;
+import view.userInterface.actor.ChatiTooltip;
+import view.userInterface.actor.ChatiWindow;
 import java.sql.Timestamp;
 import java.util.logging.Level;
 

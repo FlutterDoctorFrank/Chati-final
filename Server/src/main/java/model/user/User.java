@@ -230,7 +230,14 @@ public class User implements IUser {
     public void show(final byte[] frameData) {
         throwIfNotOnline();
         throwIfNotInWorld();
-        CommunicationHandler.handleVideoFrame(this, frameData);
+        CommunicationHandler.handleCameraFrame(this, frameData);
+    }
+
+    @Override
+    public void share(byte[] frameData) {
+        throwIfNotOnline();
+        throwIfNotInWorld();
+        CommunicationHandler.handleScreenFrame(this, frameData);
     }
 
     @Override

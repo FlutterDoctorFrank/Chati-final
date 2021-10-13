@@ -7,10 +7,10 @@ import com.badlogic.gdx.utils.Align;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
 import view.ChatiLocalization;
-import view.userInterface.ChatiLabel;
-import view.userInterface.ChatiSelectBox;
-import view.userInterface.ChatiTextButton;
-import view.userInterface.ChatiWindow;
+import view.userInterface.actor.ChatiLabel;
+import view.userInterface.actor.ChatiSelectBox;
+import view.userInterface.actor.ChatiTextButton;
+import view.userInterface.actor.ChatiWindow;
 import java.util.Locale;
 
 /**

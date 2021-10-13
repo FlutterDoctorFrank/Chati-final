@@ -142,8 +142,7 @@ public class CommunicationHandler {
         // Überprüfung, ob in dem Bereich des Benutzers Sprachnachrichten versendet werden können oder der sendende
         // Benutzer in dem Kontext stummgeschaltet ist.
         Area communicationContext = sender.getLocation().getArea();
-        if (!communicationContext.canCommunicateWith(CommunicationMedium.VOICE)
-                || communicationContext.isMuted(sender)) {
+        if (!communicationContext.canCommunicateWith(CommunicationMedium.VOICE) || communicationContext.isMuted(sender)) {
             return;
         }
 
@@ -162,7 +161,7 @@ public class CommunicationHandler {
      * @param sender Kommunizierender Benutzer.
      * @param frameData Zu versendendes Frame.
      */
-    public static void handleVideoFrame(@NotNull final User sender, final byte[] frameData) {
+    public static void handleCameraFrame(@NotNull final User sender, final byte[] frameData) {
         if (sender.getLocation() == null) {
             throw new IllegalStateException("Communicators location is not available.");
         }
@@ -178,8 +177,36 @@ public class CommunicationHandler {
         Map<UUID, User> receivers = sender.getCommunicableUsers();
         receivers.remove(sender.getUserId());
 
-        // Versende die Sprachnachricht.
-        VideoFrame videoFrame = new VideoFrame(sender, frameData);
+        // Versende das Frame.
+        VideoFrame videoFrame = new VideoFrame(sender, false, frameData);
+        receivers.values().forEach(user -> user.send(SendAction.VIDEO, videoFrame));
+    }
+
+    /**
+     * Ermittelt die Nutzer, die dieses Frame gemäß der im räumlichen Kontext des Senders geltenden Kommunikationsform
+     * empfangen sollen und leitet es an diese weiter.
+     * @param sender Kommunizierender Benutzer.
+     * @param frameData Zu versendendes Frame.
+     */
+    public static void handleScreenFrame(@NotNull final User sender, final byte[] frameData) {
+        if (sender.getLocation() == null) {
+            throw new IllegalStateException("Communicators location is not available.");
+        }
+
+        // Überprüfung, ob in dem Bereich des Benutzers Videonachrichten versendet werden können oder der sendende
+        // Benutzer in dem Kontext stummgeschaltet ist.
+        Area communicationContext = sender.getLocation().getArea();
+        if (!communicationContext.canCommunicateWith(CommunicationMedium.VIDEO) || communicationContext.isMuted(sender)
+                || !sender.hasPermission(communicationContext, Permission.SHARE_SCREEN)) {
+            return;
+        }
+
+        // Ermittle die empfangsberechtigten Benutzer gemäß der Kommunikationsform, ohne den sendenden Benutzer.
+        Map<UUID, User> receivers = sender.getCommunicableUsers();
+        receivers.remove(sender.getUserId());
+
+        // Versende das Frame.
+        VideoFrame videoFrame = new VideoFrame(sender, true, frameData);
         receivers.values().forEach(user -> user.send(SendAction.VIDEO, videoFrame));
     }
 

@@ -6,9 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import controller.network.ServerSender;
 import org.jetbrains.annotations.NotNull;
 import view.Chati;
-import view.userInterface.ChatiTable;
-import view.userInterface.ChatiTextButton;
-import view.userInterface.ChatiTextField;
+import view.userInterface.actor.ChatiTable;
+import view.userInterface.actor.ChatiTextButton;
+import view.userInterface.actor.ChatiTextField;
 import view.Response;
 
 /**

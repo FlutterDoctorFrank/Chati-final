@@ -2,14 +2,20 @@ package view.multimedia;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import controller.AudioUtils;
+import utils.AudioUtils;
 import model.exception.UserNotFoundException;
 import model.user.IInternUserView;
 import model.user.IUserView;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import view.Chati;
-import view.multimedia.VideoReceiver.VideoFrame;
+import view.multimedia.audio.AudioConsumer;
+import view.multimedia.audio.VoiceRecorder;
+import view.multimedia.video.CameraRecorder;
+import view.multimedia.video.ScreenRecorder;
+import view.multimedia.video.VideoReceiver;
 
+import java.awt.image.BufferedImage;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -23,7 +29,8 @@ public class MultimediaManager implements Disposable {
 
     private VoiceRecorder voiceRecorder;
     private AudioConsumer audioConsumer;
-    private final VideoRecorder videoRecorder;
+    private final CameraRecorder cameraRecorder;
+    private final ScreenRecorder screenRecorder;
     private final VideoReceiver videoReceiver;
 
     /**
@@ -47,7 +54,8 @@ public class MultimediaManager implements Disposable {
             this.voiceRecorder = null;
         }
 
-        this.videoRecorder = new VideoRecorder();
+        this.cameraRecorder = new CameraRecorder();
+        this.screenRecorder = new ScreenRecorder();
         this.videoReceiver = new VideoReceiver();
     }
 
@@ -96,22 +104,37 @@ public class MultimediaManager implements Disposable {
 
         if (Chati.CHATI.isUserInfoChanged() || Chati.CHATI.isWorldChanged()) {
             if (internUser != null && internUser.isInCurrentWorld()) {
-                if (!videoRecorder.isRunning()) {
-                    videoRecorder.start();
+                if (!cameraRecorder.isRunning()) {
+                    cameraRecorder.start();
+                }
+                if (!screenRecorder.isRunning()) {
+                    screenRecorder.start();
                 }
             } else if (internUser == null || !internUser.isInCurrentWorld()) {
-                if (videoRecorder.isRunning()) {
-                    videoRecorder.stop();
+                if (cameraRecorder.isRunning()) {
+                    cameraRecorder.stop();
+                }
+                if (screenRecorder.isRunning()) {
+                    screenRecorder.stop();
                 }
             }
         }
 
-        if (videoRecorder.isRunning()) {
+        if (cameraRecorder.isRunning()) {
             if (Chati.CHATI.getPreferences().isCameraOn() && internUser != null && internUser.canShow()
-                    && !videoRecorder.isRecording()) {
-                videoRecorder.startRecording();
-            } else if (videoRecorder.isRecording()) {
-                videoRecorder.stopRecording();
+                    && !cameraRecorder.isRecording()) {
+                cameraRecorder.startRecording();
+            } else if (cameraRecorder.isRecording()) {
+                cameraRecorder.stopRecording();
+            }
+        }
+
+        if (screenRecorder.isRunning()) {
+            if (Chati.CHATI.getHeadUpDisplay().getVideoChatWindow().shareScreen() && internUser != null
+                    && internUser.canShare() && !screenRecorder.isRecording()) {
+                screenRecorder.startRecording();
+            } else if (screenRecorder.isRecording()) {
+                screenRecorder.stopRecording();
             }
         }
     }
@@ -165,7 +188,7 @@ public class MultimediaManager implements Disposable {
      * @param voiceData Abzuspielende Sprachdaten.
      * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
      */
-    public void playVoiceData(@NotNull final UUID senderId, @NotNull final LocalDateTime timestamp, final byte[] voiceData)
+    public void receiveVoiceData(@NotNull final UUID senderId, @NotNull final LocalDateTime timestamp, final byte[] voiceData)
             throws UserNotFoundException {
         if (audioConsumer != null && audioConsumer.isRunning()) {
             audioConsumer.receiveVoiceData(senderId, timestamp, voiceData);
@@ -179,8 +202,8 @@ public class MultimediaManager implements Disposable {
      * @param position Aktuelle Position im Musikstück.
      * @param seconds Aktuelle Sekunde im Musikstück.
      */
-    public void playMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData,
-                              final float position, final int seconds) {
+    public void receiveMusicData(@NotNull final LocalDateTime timestamp, final byte[] musicData,
+                                 final float position, final int seconds) {
         if (audioConsumer != null && audioConsumer.isRunning()) {
             audioConsumer.receiveMusicStream(timestamp, musicData, position, seconds);
         }
@@ -198,15 +221,25 @@ public class MultimediaManager implements Disposable {
     }
 
     /**
-     * Hinterlegt ein erhaltenes VideoFrame.
+     * Hinterlegt ein erhaltenes VideoFrame von einem externen Benutzer.
      * @param userId ID des Benutzers, dessen Frame erhalten wurde.
      * @param timestamp Zeitstempel des Frames.
+     * @param screen true, wenn dieser Frame Teil einer Bildschirmaufnahme ist, sonst false.
      * @param frameData Daten des Frames.
      * @throws UserNotFoundException falls kein Benutzer mit der ID gefunden wurde.
      */
     public void receiveVideoFrame(@NotNull final UUID userId, @NotNull final LocalDateTime timestamp,
-                               final byte[] frameData) throws UserNotFoundException {
-        videoReceiver.receiveVideoFrame(userId, timestamp, frameData);
+                                  final boolean screen, final byte[] frameData) throws UserNotFoundException {
+        videoReceiver.receiveVideoFrame(userId, timestamp, screen, frameData);
+    }
+
+    /**
+     * Hinterlegt ein erhaltenes VideoFrame vom intern angemeldeten Benutzer.
+     * @param frame Erhaltenes Videoframe.
+     * @param screen true, wenn dieser Frame Teil einer Bildschirmaufnahme ist, sonst false.
+     */
+    public void receiveVideoFrame(@NotNull final BufferedImage frame, final boolean screen) {
+        videoReceiver.receiveVideoFrame(frame, screen);
     }
 
     /**
@@ -232,22 +265,6 @@ public class MultimediaManager implements Disposable {
     }
 
     /**
-     * Gibt zurück, ob Frames vorhanden sind.
-     * @return true, wenn Frames vorhanden sind, sonst false.
-     */
-    public boolean hasFrame() {
-        return videoReceiver.hasFrame();
-    }
-
-    /**
-     * Gibt den nächsten anzuzeigenden Frame zurück.
-     * @return Nächster anzuzeigender Frame.
-     */
-    public VideoFrame getNextFrame() {
-        return videoReceiver.getNextFrame();
-    }
-
-    /**
      * Gibt die aktuelle Position im laufenden Musikstück zurück.
      * @return Aktuelle Position im Musikstück.
      */
@@ -261,5 +278,21 @@ public class MultimediaManager implements Disposable {
      */
     public int getCurrentSeconds() {
         return audioConsumer != null ? audioConsumer.getCurrentSeconds() : 0;
+    }
+
+    /**
+     * Gibt zurück, ob Frames von Kameraaufnahmen vorhanden sind.
+     * @return true, wenn Frames vorhanden sind, sonst false.
+     */
+    public boolean hasVideoFrame() {
+        return videoReceiver.hasFrame();
+    }
+
+    /**
+     * Gibt den nächsten anzuzeigenden Frame einer Kameraaufnahme zurück.
+     * @return Nächster anzuzeigender Frame.
+     */
+    public @Nullable VideoReceiver.VideoFrame getNextVideoFrame() {
+        return videoReceiver.getNextFrame();
     }
 }

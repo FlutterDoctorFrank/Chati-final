@@ -114,8 +114,13 @@ public class MockIUser implements IUser {
     }
 
     @Override
-    public void show(byte[] frameData) {
+    public void show(final byte[] frameData) {
         this.calls.add("show");
+    }
+
+    @Override
+    public void share(final byte[] frameData) {
+        this.calls.add("share");
     }
 
     private boolean unknownUser;

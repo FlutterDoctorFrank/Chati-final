@@ -21,6 +21,7 @@ public class PacketVideoFrame implements Packet<PacketListener> {
 
     private UUID senderId;
     private LocalDateTime timestamp;
+    private boolean screenshot;
     private byte[] frameData;
 
     /**
@@ -33,9 +34,11 @@ public class PacketVideoFrame implements Packet<PacketListener> {
 
     /**
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Client-Anwendung.
+     * @param screenshot falls true, ist dieses Frame von einer Bildschirmaufnahme, sonst von einer Kameraaufnahme.
      * @param frameData die Daten des Frames von der Kameraaufzeichnung des Benutzers.
      */
-    public PacketVideoFrame(final byte[] frameData) {
+    public PacketVideoFrame(final boolean screenshot, final byte[] frameData) {
+        this.screenshot = screenshot;
         this.frameData = frameData;
     }
 
@@ -43,12 +46,14 @@ public class PacketVideoFrame implements Packet<PacketListener> {
      * Ausschließlich für die Erzeugung des Netzwerkpakets von der Server-Anwendung.
      * @param senderId die Benutzer-ID des Senders des Videoframes.
      * @param timestamp der Zeitpunkt, an dem das Frame versendet wurde.
+     * @param screenshot falls true, ist dieses Frame von einer Bildschirmaufnahme, sonst von einer Kameraaufnahme.
      * @param frameData die Daten des Frames von der Kameraaufzeichnung des Benutzers.
      */
     public PacketVideoFrame(@Nullable final UUID senderId, @NotNull final LocalDateTime timestamp,
-                              final byte[] frameData) {
+                            final boolean screenshot, final byte[] frameData) {
         this.senderId = senderId;
         this.timestamp = timestamp;
+        this.screenshot = screenshot;
         this.frameData = frameData;
     }
 
@@ -61,6 +66,7 @@ public class PacketVideoFrame implements Packet<PacketListener> {
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeNullableUniqueId(output, this.senderId);
         kryo.writeObjectOrNull(output, this.timestamp, LocalDateTime.class);
+        output.writeBoolean(screenshot);
         output.writeVarInt(this.frameData.length, true);
         output.writeBytes(this.frameData);
     }
@@ -69,13 +75,14 @@ public class PacketVideoFrame implements Packet<PacketListener> {
     public void read(@NotNull final Kryo kryo, @NotNull final Input input) {
         this.senderId = PacketUtils.readNullableUniqueId(input);
         this.timestamp = kryo.readObjectOrNull(input, LocalDateTime.class);
+        this.screenshot = input.readBoolean();
         this.frameData = input.readBytes(input.readVarInt(true));
     }
 
     @Override
     public @NotNull String toString() {
         return this.getClass().getSimpleName() + "{senderId=" + this.senderId + ", timestamp=" + this.timestamp
-                + ", frameData=" + Arrays.toString(this.frameData) + "}";
+                + ", isScreen=" + screenshot + ", frameData=" + Arrays.toString(this.frameData) + "}";
     }
 
     /**
@@ -95,8 +102,16 @@ public class PacketVideoFrame implements Packet<PacketListener> {
     }
 
     /**
-     * Gibt die Daten des Frames von der Kameraaufzeichnung des Benutzers zurück.
-     * @return die Daten des Frames von der Kameraaufzeichnung des Benutzers.
+     * Gibt an, ob dieses Frame von einer Bildschirmaufnahme oder einer Kameraaufnahme ist.
+     * @return true, falls dieses Frame von einer Bildschirmaufnahme ist, sonst false.
+     */
+    public boolean isScreenshot() {
+        return this.screenshot;
+    }
+
+    /**
+     * Gibt die Daten des Frames zurück.
+     * @return die Daten des Frames.
      */
     public byte[] getFrameData() {
         return this.frameData;
