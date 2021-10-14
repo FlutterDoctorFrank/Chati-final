@@ -1,5 +1,9 @@
 package model.user.bot;
 
+import marytts.LocalMaryInterface;
+import marytts.MaryInterface;
+import marytts.exceptions.MaryConfigurationException;
+import marytts.exceptions.SynthesisException;
 import utils.AudioUtils;
 import controller.network.ClientSender;
 import model.communication.message.TextMessage;
@@ -10,6 +14,14 @@ import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -17,11 +29,23 @@ import java.util.*;
  */
 public class BotManager implements Runnable {
 
+    /** Weibliche deutsche Stimme für den Text-To-Speech Synthesizer. */
+    public static final String GERMAN_FEMALE_VOICE = "bits1-hsmm";
+
+    /** Männliche deutsche Stimme für den Text-To-Speech Synthesizer. */
+    public static final String GERMAN_MALE_VOICE = "bits3-hsmm";
+
+    /** Männliche englische Stimme für den Text-To-Speech Synthesizer. */
+    public static final String ENGLISH_MALE_VOICE = "cmu-rms-hsmm";
+
     /** Singleton-Instanz der Klasse. */
     private static BotManager botManager;
 
     /** Menge aller Bots. */
     private final Map<String, Bot> bots;
+
+    /** Stellt Methoden bereit, um Text in Sprachdaten umzuwandeln. */
+    private MaryInterface textToSpeech;
 
     /** Information, ob der BotManager gerade aktiv ist. */
     private boolean isRunning;
@@ -30,25 +54,51 @@ public class BotManager implements Runnable {
      * Erzeugt eine neue Instanz des BotManager.
      */
     private BotManager() {
-        System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");
         this.bots = new HashMap<>();
         this.isRunning = false;
     }
 
+    /**
+     * Startet den Thread des BotManager.
+     */
+    private void start() {
+        this.isRunning = true;
+        Thread botManagerThread = new Thread(this);
+        botManagerThread.setDaemon(true);
+        botManagerThread.start();
+    }
+
     @Override
     public void run() {
+        try {
+            textToSpeech = new LocalMaryInterface();
+        } catch (MaryConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        long now = System.currentTimeMillis();
+        long timer = 0;
+        long deltaTime;
+
         while (isRunning) {
-            bots.values().forEach(bot -> {
-                if (bot.hasData()) {
+            deltaTime = System.currentTimeMillis() - now;
+            now = System.currentTimeMillis();
+            timer += deltaTime;
+
+            for (Bot bot : bots.values()) {
+                if (bot.hasVoiceData()) {
                     byte[] sendData = bot.getNextFrame();
                     if (sendData != null) {
                         bot.talk(sendData);
                     }
-                } else if (bot.isAutoChat()) {
-                    bot.chat();
+                } else {
+                    if (timer >= 1000) {
+                        timer = 0;
+                        bot.randomChat();
+                    }
                 }
                 bot.choose();
-            });
+            }
 
             try {
                 Thread.sleep(955 / AudioUtils.FRAME_RATE);
@@ -56,6 +106,30 @@ public class BotManager implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Generiert abspielbare Sprachdaten aus einem Text.
+     * @param voice Stimme, in der die Sprachdaten generiert werden soll.
+     * @param text Text, der in Sprachdaten umgewandelt werden soll.
+     * @return Sprachdaten des Textes.
+     */
+    public byte[] generateSpeech(@NotNull final String voice, @NotNull final String text) {
+        if (textToSpeech != null) {
+            textToSpeech.setVoice(voice);
+            try {
+                AudioInputStream audioIn = textToSpeech.generateAudio(text);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                AudioSystem.write(audioIn, AudioFileFormat.Type.WAVE, out);
+                ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+                byte[] bytes = AudioSystem.getAudioInputStream(new BufferedInputStream(in)).readAllBytes();
+                short[] data = AudioUtils.toShort(bytes, false);
+                return AudioUtils.toByte(AudioUtils.sampleUp(data, 3), true);
+            } catch (SynthesisException | IOException | UnsupportedAudioFileException e) {
+                e.printStackTrace();
+            }
+        }
+        return new byte[0];
     }
 
     /**
@@ -147,16 +221,6 @@ public class BotManager implements Runnable {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Startet den Thread des BotManager.
-     */
-    private void start() {
-        this.isRunning = true;
-        Thread botManagerThread = new Thread(this);
-        botManagerThread.setDaemon(true);
-        botManagerThread.start();
     }
 
     /**

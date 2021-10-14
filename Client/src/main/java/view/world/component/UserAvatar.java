@@ -86,7 +86,7 @@ public class UserAvatar extends Sprite {
         this.shaderProgram = new ShaderProgram(VERTEX_SHADER, FRAGMENT_SHADER);
 
         Avatar avatar = user.getAvatar();
-        this.alpha = avatar.isGhost() ? 0.67f : 1;
+        this.alpha = avatar.isTransparent() ? 0.67f : 1;
         this.avatarStandUp = Chati.CHATI.getDrawable(avatar.getPath() + "_stand_up").getRegion();
         this.avatarStandLeft = Chati.CHATI.getDrawable(avatar.getPath() + "_stand_left").getRegion();
         this.avatarStandDown = Chati.CHATI.getDrawable(avatar.getPath() + "_stand_down").getRegion();

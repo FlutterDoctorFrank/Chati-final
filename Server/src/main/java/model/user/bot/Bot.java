@@ -1,8 +1,5 @@
 package model.user.bot;
 
-import com.sun.speech.freetts.Voice;
-import com.sun.speech.freetts.VoiceManager;
-import com.sun.speech.freetts.audio.AudioPlayer;
 import model.user.Status;
 import model.user.User;
 import utils.AudioUtils;
@@ -20,7 +17,7 @@ import model.notification.Notification;
 import model.role.Permission;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;
-import javax.sound.sampled.AudioFormat;
+
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Queue;
@@ -36,20 +33,21 @@ public class Bot extends User {
     private static final float SPRINT_SPEED_FACTOR = 1.67f;
     private static final float MINIMUM_DISTANCE = 2 * MapUtils.TILE_SIZE;
     private static final float FOLLOW_DISTANCE = 4 * MapUtils.TILE_SIZE;
+    private static final float AUTO_CHAT_CHANCE = 1f / 128; // Pro Sekunde.
     private static final float MIN_AUTO_CHAT_PAUSE = 10; // In Sekunden.
 
-    private final Queue<byte[]> audioDataBuffer;
-    private final Voice voice;
-    private final Random random;
+    private final Queue<byte[]> voiceDataBuffer;
+    private String voice;
     private User followUser;
     private User forwardWhisperTo;
     private boolean sprint;
     private boolean follow;
     private boolean teleport;
     private boolean autoChat;
+    private boolean autoTalk;
     private long nextFollow;
     private long nextRotate;
-    private long lastTimeAutoChat;
+    private long lastTimeChat;
 
     /**
      * Erzeugt eine neue Instanz eines Bot.
@@ -57,14 +55,8 @@ public class Bot extends User {
      */
     public Bot(@NotNull final String botname) {
         super(botname, false);
-        this.audioDataBuffer = new LinkedBlockingQueue<>();
-        this.voice = VoiceManager.getInstance().getVoice("kevin16");
-        this.voice.setAudioPlayer(new BotAudioPlayer(this));
-        this.voice.allocate();
-        this.sprint = false;
-        this.follow = true;
-        this.autoChat = true;
-        this.random = new Random();
+        this.voiceDataBuffer = new LinkedBlockingQueue<>();
+        this.voice = getAvatar().isMale() ? BotManager.GERMAN_MALE_VOICE : BotManager.GERMAN_FEMALE_VOICE;
     }
 
     @Override
@@ -165,12 +157,12 @@ public class Bot extends User {
                                 }
                             } else {
                                 if (forwardWhisperTo != null) {
-                                    chat("\\\\" + forwardWhisperTo.getUsername() + " Nachricht Weitergeleitet von "
-                                            + sender.getUsername() + ": \n" + textMessage, new byte[0], null);
+                                    whisper(forwardWhisperTo, "Nachricht weitergeleitet von " + sender.getUsername()
+                                            + ": \n" + textMessage);
                                     return;
                                 }
                                 if (textMessage.getImageName() != null) {
-                                    chat("\\\\" + sender.getUsername() + " Danke für das nette Bild.", new byte[0], null);
+                                    whisper(sender, "Danke für das nette Bild.");
                                 }
                             }
                         }
@@ -184,8 +176,9 @@ public class Bot extends User {
                     try {
                         notification.accept();
                     } catch (IllegalNotificationActionException e) {
-                        // Tu nichts
+                        // Ignoriere
                     }
+                    removeNotification(notification);
                 }
                 break;
         }
@@ -280,57 +273,51 @@ public class Bot extends User {
     /**
      * Lässt den Bot vorgefertigte Nachrichten schreiben.
      */
-    public void chat() {
-        long now = System.currentTimeMillis();
-        if (now - lastTimeAutoChat < 1000 * MIN_AUTO_CHAT_PAUSE) {
-            return;
-        }
-        lastTimeAutoChat = now;
-        int randomNumber = random.nextInt(128);
-        switch (randomNumber) {
-            case 0:
-                chat("Wer immer tut was er schon kann, bleibt immer das was er schon war.", new byte[0], null);
-                break;
-            case 1:
-                chat("Ein guter Gewinner muss auch ein guter Verlierer sein.", new byte[0], null);
-                break;
-            case 2:
-                chat("Zu fallen ist nicht schlimm. Schlimm ist es, liegenzubleiben.", new byte[0], null);
-                break;
-            case 3:
-                chat("Es gibt keinen Weg zum Glück. Glücklich sein ist der Weg.", new byte[0], null);
-                break;
-            case 4:
-                chat("Denke nicht so oft an das was dir fehlt, sondern an das was du hast.", new byte[0], null);
-                break;
-            case 5:
-                chat("Wer etwas will, der sucht nach Wegen. Wer etwas nicht will, sucht nach Gründen.", new byte[0], null);
-                break;
-            case 6:
-                chat("Manchmal muss man am Ende stehen, um den Anfang zu sehen.", new byte[0], null);
-                break;
-            case 7:
-                chat("Die Wahrheit erkennt man nicht an schönen Worten, sondern an leisen Taten.", new byte[0], null);
-                break;
-            default:
-                // Tu nichts.
-        }
+    public void chat(@NotNull final String message) {
+        chat(message, new byte[0], null);
+        lastTimeChat = System.currentTimeMillis();
     }
 
     /**
-     * Gibt zurück, ob der Bot von selbst schreiben soll.
-     * @return true, wenn der Bot von selbst schreiben soll, sonst false.
+     * Lässt den Bot einen Text vorlesen.
+     * @param message Vorzulesender Text.
      */
-    public boolean isAutoChat() {
-        return autoChat;
+    public void talk(@NotNull final String message) {
+        byte[] voiceData = BotManager.getInstance().generateSpeech(voice, message);
+        for (int i = 0; i < voiceData.length; i += AudioUtils.FRAME_SIZE) {
+            voiceDataBuffer.add(Arrays.copyOfRange(voiceData, i, i + AudioUtils.FRAME_SIZE));
+        }
+        lastTimeChat = System.currentTimeMillis();
+    }
+
+    /**
+     * Lässt den Bot zufallsabhängig Nachrichten versenden oder sprechen.
+     */
+    public void randomChat() {
+        if (new Random().nextInt((int) (1 / AUTO_CHAT_CHANCE)) == 0) {
+            String message = getRandomMessage();
+            if (new Random().nextBoolean()) {
+                if (canAutoChat()) {
+                    chat(message);
+                } else if (canAutoTalk()) {
+                    talk(message);
+                }
+            } else {
+                if (canAutoTalk()) {
+                    talk(message);
+                } else if (canAutoChat()) {
+                    chat(message);
+                }
+            }
+        }
     }
 
     /**
      * Gibt zurück, ob der Bot aktuell Daten zum Abspielen hat.
      * @return true, wenn er Daten zum Abspielen hat, sonst false.
      */
-    public boolean hasData() {
-        return !audioDataBuffer.isEmpty();
+    public boolean hasVoiceData() {
+        return !voiceDataBuffer.isEmpty();
     }
 
     /**
@@ -338,7 +325,7 @@ public class Bot extends User {
      * @return Zu sendende Sprachdaten des Bots.
      */
     public byte[] getNextFrame() {
-        return audioDataBuffer.poll();
+        return voiceDataBuffer.poll();
     }
 
     /**
@@ -468,11 +455,51 @@ public class Bot extends User {
     }
 
     /**
-     * Lässt den Bot einen Text vorlesen.
-     * @param message Vorzulesender Text.
+     * Flüstert einem Benutzer eine Nachricht zu.
+     * @param user Benutzer, dem eine Nachricht zugeflüstert werden soll.
+     * @param message Nachricht, die dem Benutzer zugeflüstert werden soll.
      */
-    private void talk(@NotNull final String message) {
-        this.voice.speak(message);
+    private void whisper(@NotNull final User user, @NotNull final String message) {
+        TextMessage whisperMessage = new TextMessage(this, message, new byte[0], null, MessageType.WHISPER);
+        user.send(SendAction.MESSAGE, whisperMessage);
+    }
+
+    /**
+     * Gibt zurück, ob der Bot von selbst schreiben soll.
+     * @return true, wenn der Bot von selbst schreiben soll, sonst false.
+     */
+    private boolean canAutoChat() {
+        return autoChat && System.currentTimeMillis() - lastTimeChat >= 1000 * MIN_AUTO_CHAT_PAUSE;
+    }
+
+    /**
+     * Gibt zurück, ob der Bot von selbst sprechen soll.
+     * @return true, wenn der Bot von selbst sprechen soll, sonst false.
+     */
+    private boolean canAutoTalk() {
+        return autoTalk && System.currentTimeMillis() - lastTimeChat >= 1000 * MIN_AUTO_CHAT_PAUSE;
+    }
+
+    /**
+     * Gibt eine zufällige vorgefertigte Nachricht zurück.
+     * @return Zufällige vorgefertigte Nachricht.
+     */
+    private @NotNull String getRandomMessage() {
+        switch (new Random().nextInt(12)) {
+            case 0: return "Wer immer tut was er schon kann, bleibt immer das was er schon war.";
+            case 1: return "Ein guter Gewinner muss auch ein guter Verlierer sein.";
+            case 2: return "Zu fallen ist nicht schlimm. Schlimm ist es, liegenzubleiben.";
+            case 3: return "Es gibt keinen Weg zum Glück. Glücklich sein ist der Weg.";
+            case 4: return "Denke nicht so oft an das was dir fehlt, sondern an das was du hast.";
+            case 5: return "Wer etwas will, der sucht nach Wegen. Wer etwas nicht will, sucht nach Gründen.";
+            case 6: return "Manchmal muss man am Ende stehen, um den Anfang zu sehen.";
+            case 7: return "Die Wahrheit erkennt man nicht an schönen Worten, sondern an leisen Taten.";
+            case 8: return "Man kann dir deinen Weg weisen, gehen musst du ihn selbst...";
+            case 9: return "Auch ein langer Weg beginnt mit einem ersten Schritt.";
+            case 10: return "Das Leben ist wie eine Achterbahnfahrt.";
+            case 11: return "Gib niemals die Hoffnung auf.";
+            default: return "";
+        }
     }
 
     /**
@@ -486,7 +513,7 @@ public class Bot extends User {
         HELP("(?i)help") {
             @Override
             public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
-                bot.chat("\\\\" + sender.getUsername() + " Verfügbare Befehle: \n"
+                bot.whisper(sender, "Verfügbare Befehle: \n"
                         + "\\follow <Benutzername> : Teleportiere zum Benutzer und verfolge ihn. \n"
                         + "\\follow : Verfolge Benutzer in der Nähe. \n"
                         + "\\unfollow : Verfolge keinen Benutzer mehr. \n"
@@ -494,14 +521,17 @@ public class Bot extends User {
                         + "\\teleport_off : Teleportiere nicht mehr zu einem Benutzer, wenn kein Benutzer zum Verfolgen gefunden wird. \n"
                         + "\\sprint_on : Laufe mit Sprintgeschwindigkeit. \n"
                         + "\\sprint_off : Laufe mit normaler Geschwindigkeit. \n"
-                        + "\\autochat_on : Schreibe automatisierte Nachrichten per Zufall. \n"
-                        + "\\autochat_off : Schreibe keine automatisierten Nachrichten per Zufall. \n"
+                        + "\\autochat_on : Schreibe automatisiert Nachrichten per Zufall. \n"
+                        + "\\autochat_off : Schreibe nicht mehr automatisiert Nachrichten per Zufall. \n"
+                        + "\\autotalk_on : Spreche automatisiert Nachrichten per Zufall. \n"
+                        + "\\autotalk_off : Spreche nicht mehr automatisiert Nachrichten per Zufall. \n"
                         + "\\forward <Benutzername> : Leite erhaltene Flüsternachrichten an den Benutzer weiter. \n"
                         + "\\forward : Leite erhaltene Flüsternachrichten an dich weiter. \n"
                         + "\\forward_off : Leite Flüsternachrichten nicht mehr weiter. \n"
                         + "\\write <Nachricht> : Schreibe eine Textnachricht. \n"
-                        + "\\talk <Nachricht> : Lese die Nachricht vor.",
-                new byte[0], null);
+                        + "\\talk <Nachricht> : Lese eine Nachricht vor."
+                        + "\\set_voice <Name> : Lege meine Stimme fest. Wahl aus: de-w, de-m und en-m. \n"
+                        + "\\destroy : Zerstöre mich.");
             }
         },
 
@@ -520,7 +550,8 @@ public class Bot extends User {
                             bot.teleport(bot.followUser.getLocation());
                         }
                     } catch (UserNotFoundException e) {
-                        // Tu nichts.
+                        bot.whisper(sender, "Ich konnte diesen Benutzer nicht finden.");
+                        return;
                     }
                 }
 
@@ -578,7 +609,7 @@ public class Bot extends User {
         },
 
         /**
-         * Lässt den Bot vorgefertigte Nachrichten schreiben und sprechen.
+         * Lässt den Bot vorgefertigte Nachrichten schreiben.
          */
         AUTOCHAT_ON("(?i)autochat_on") {
             @Override
@@ -588,12 +619,32 @@ public class Bot extends User {
         },
 
         /**
-         * Stoppt das Schreiben und Sprechen von vorgefertigten Nachrichten.
+         * Stoppt das Schreiben von vorgefertigten Nachrichten.
          */
         AUTOCHAT_OFF("(?i)autochat_off") {
             @Override
             public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
                 bot.autoChat = false;
+            }
+        },
+
+        /**
+         * Lässt den Bot vorgefertigte Nachrichten sprechen.
+         */
+        AUTOTALK_ON("(?i)autotalk_on") {
+            @Override
+            public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
+                bot.autoTalk = true;
+            }
+        },
+
+        /**
+         * Stoppt das Sprechen von vorgefertigten Nachrichten.
+         */
+        AUTOTALK_OFF("(?i)autotalk_off") {
+            @Override
+            public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
+                bot.autoTalk = false;
             }
         },
 
@@ -610,7 +661,7 @@ public class Bot extends User {
                     try {
                         bot.forwardWhisperTo = UserAccountManager.getInstance().getUser(commandParts[1]);
                     } catch (UserNotFoundException e) {
-                        // Tu nichts.
+                        bot.whisper(sender, "Ich konnte diesen Benutzer nicht finden.");
                     }
                 } else {
                     bot.forwardWhisperTo = sender;
@@ -637,7 +688,7 @@ public class Bot extends User {
                 String[] commandParts = message.split("\\s", 2);
 
                 if (commandParts.length == 2) {
-                    bot.chat(commandParts[1], new byte[0], null);
+                    bot.chat(commandParts[1]);
                 }
             }
         },
@@ -653,6 +704,38 @@ public class Bot extends User {
                 if (commandParts.length == 2) {
                     bot.talk(commandParts[1]);
                 }
+            }
+        },
+
+        SET_VOICE("(?i)set_voice(\\s.*|$)") {
+            @Override
+            public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
+                String[] commandParts = message.split("\\s", 2);
+
+                if (commandParts.length == 2) {
+                    switch (commandParts[1]) {
+                        case "de-w":
+                            bot.voice = BotManager.GERMAN_FEMALE_VOICE;
+                            break;
+                        case "de-m":
+                            bot.voice = BotManager.GERMAN_MALE_VOICE;
+                            break;
+                        case "en-m":
+                            bot.voice = BotManager.ENGLISH_MALE_VOICE;
+                            break;
+                        default:
+                            bot.whisper(sender, "Ungültige Stimme. Wahl aus: de-w, de-m, en-m.");
+                    }
+                } else {
+                    bot.whisper(sender, "Bitte gib eine Stimme ein. Wahl aus: de-w, de-m, en-m");
+                }
+            }
+        },
+
+        DESTROY("(?i)destroy") {
+            @Override
+            public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
+                BotManager.getInstance().destroyBot(bot.getUsername(), sender);
             }
         };
 
@@ -672,116 +755,6 @@ public class Bot extends User {
          */
         WhisperCommand(@NotNull final String commandPattern) {
             this.commandPattern = commandPattern;
-        }
-    }
-
-    /**
-     * Der AudioPlayer des Bots.
-     */
-    private static class BotAudioPlayer implements AudioPlayer {
-
-        private final Bot bot;
-        private AudioFormat currentFormat;
-
-        /**
-         * Erzeugt eine neue Instanz des BotAudioPlayer.
-         * @param bot Zugehöriger Bot.
-         */
-        public BotAudioPlayer(@NotNull final Bot bot) {
-            this.bot = bot;
-            setAudioFormat(new AudioFormat(AudioUtils.ENCODING, AudioUtils.SAMPLING_RATE,
-                    AudioUtils.SAMPLE_SIZE_IN_BITS, AudioUtils.CHANNELS, AudioUtils.FRAME_SIZE,
-                    AudioUtils.FRAME_RATE, true));
-        }
-
-        @Override
-        public synchronized void setAudioFormat(AudioFormat format) {
-            this.currentFormat = format;
-        }
-
-        @Override
-        public AudioFormat getAudioFormat() {
-            return currentFormat;
-        }
-
-        @Override
-        public void pause() {
-        }
-
-        @Override
-        public synchronized void resume() {
-        }
-
-        @Override
-        public synchronized void cancel() {
-        }
-
-        @Override
-        public synchronized void reset() {
-        }
-
-        @Override
-        public void startFirstSampleTimer() {
-        }
-
-        @Override
-        public synchronized void close() {
-        }
-
-        @Override
-        public float getVolume() {
-            return 1.0F;
-        }
-
-        @Override
-        public void setVolume(float volume) {
-        }
-
-        @Override
-        public void begin(int size) {
-        }
-
-        @Override
-        public boolean end() {
-            return true;
-        }
-
-        @Override
-        public boolean drain() {
-            return true;
-        }
-
-        @Override
-        public synchronized long getTime() {
-            return -1L;
-        }
-
-        @Override
-        public synchronized void resetTime() {
-        }
-
-        @Override
-        public boolean write(byte[] audioData) {
-            return write(audioData, 0, audioData.length);
-        }
-
-        @Override
-        public boolean write(byte[] bytes, int offset, int size) {
-            short[] shorts = AudioUtils.toShort(bytes, true);
-            short[] upSampledShorts = new short[2 * shorts.length];
-            for (int i = 0; i < shorts.length - 1; i++) {
-                upSampledShorts[2 * i] = shorts[i];
-                upSampledShorts[2 * i + 1] = (short) (1f / 2 * shorts[i] + 1f / 2 * shorts[i + 1]);
-            }
-            byte[] upSampledBytes = AudioUtils.toByte(upSampledShorts, true);
-            for (int i = 0; i < upSampledBytes.length; i += AudioUtils.FRAME_SIZE) {
-                bot.audioDataBuffer.add(Arrays.copyOfRange(upSampledBytes, i, i + AudioUtils.FRAME_SIZE));
-            }
-            return true;
-        }
-
-        @Override
-        public void showMetrics() {
         }
     }
 }

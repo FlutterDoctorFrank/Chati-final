@@ -12,6 +12,13 @@
     <name>Chati Server</name>
     <artifactId>chati-server</artifactId>
 
+    <repositories>
+        <repository>
+            <id>bintray</id>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>tm-pse</groupId>
@@ -41,11 +48,32 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- FreeTTS -->
+        <!-- MaryTTS -->
         <dependency>
-            <groupId>net.sf.sociaal</groupId>
-            <artifactId>freetts</artifactId>
-            <version>1.2.2</version>
+            <groupId>de.dfki.mary</groupId>
+            <artifactId>voice-cmu-slt-hsmm</artifactId>
+            <version>5.2</version>
+        </dependency>
+
+        <!-- MaryTTS - German Female Voice -->
+        <dependency>
+            <groupId>de.dfki.mary</groupId>
+            <artifactId>voice-bits1-hsmm</artifactId>
+            <version>5.2</version>
+        </dependency>
+
+        <!-- MaryTTS - German Male Voice -->
+        <dependency>
+            <groupId>de.dfki.mary</groupId>
+            <artifactId>voice-bits3-hsmm</artifactId>
+            <version>5.2</version>
+        </dependency>
+
+        <!-- MaryTTS - English Voice -->
+        <dependency>
+            <groupId>de.dfki.mary</groupId>
+            <artifactId>voice-cmu-rms-hsmm</artifactId>
+            <version>5.2</version>
         </dependency>
     </dependencies>
     <build>

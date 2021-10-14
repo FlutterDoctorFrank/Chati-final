@@ -114,7 +114,7 @@ public class VideoChatWindow extends ResizableWindow implements Translatable {
         float width = 2 * MIN_WIDTH;
         float height = MIN_HEIGHT + ICON_SIZE + getPadY();
         setSize(width, height);
-        setPosition(Gdx.graphics.getWidth() - ChatWindow.DEFAULT_WIDTH - 125, 0);
+        setPosition(Gdx.graphics.getWidth(), 0);
 
         Table shareButtonContainer = new Table();
         shareButtonContainer.left().defaults().size(ICON_SIZE).left().padLeft(SPACE);
