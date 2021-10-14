@@ -12,7 +12,7 @@ import java.util.UUID;
 public class RadiusCommunication extends AreaCommunication {
 
     /** Standardmäßiger Radius, innerhalb dem Benutzer kommunizieren können. */
-    private static final float DEFAULT_RADIUS = 2 * MapUtils.INTERACTION_DISTANCE;
+    private static final float DEFAULT_RADIUS = 2 * MapUtils.TILE_SIZE;
 
     /** Radius, innerhalb dem Benutzer kommunizieren können.*/
     private final float radius;

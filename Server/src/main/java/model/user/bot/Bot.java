@@ -1,8 +1,10 @@
-package model.user;
+package model.user.bot;
 
 import com.sun.speech.freetts.Voice;
 import com.sun.speech.freetts.VoiceManager;
 import com.sun.speech.freetts.audio.AudioPlayer;
+import model.user.Status;
+import model.user.User;
 import utils.AudioUtils;
 import controller.network.ClientSender.SendAction;
 import model.communication.message.MessageType;
@@ -32,12 +34,13 @@ public class Bot extends User {
 
     private static final float DEFAULT_VELOCITY = 100f / 30;
     private static final float SPRINT_SPEED_FACTOR = 1.67f;
-    private static final float MINIMUM_DISTANCE = 2 * MapUtils.INTERACTION_DISTANCE;
-    private static final float FOLLOW_DISTANCE = 4 * MapUtils.INTERACTION_DISTANCE;
+    private static final float MINIMUM_DISTANCE = 2 * MapUtils.TILE_SIZE;
+    private static final float FOLLOW_DISTANCE = 4 * MapUtils.TILE_SIZE;
     private static final float MIN_AUTO_CHAT_PAUSE = 10; // In Sekunden.
 
     private final Queue<byte[]> audioDataBuffer;
     private final Voice voice;
+    private final Random random;
     private User followUser;
     private User forwardWhisperTo;
     private boolean sprint;
@@ -47,7 +50,6 @@ public class Bot extends User {
     private long nextFollow;
     private long nextRotate;
     private long lastTimeAutoChat;
-    private final Random random;
 
     /**
      * Erzeugt eine neue Instanz eines Bot.
@@ -81,37 +83,42 @@ public class Bot extends User {
 
             case AVATAR_SPAWN:
                 if (object instanceof User && !(object instanceof Bot)) {
+                    User user = (User) object;
                     if (followUser != null) {
                         if (followUser.equals(object)) {
-                            if (currentLocation.distance(followUser.currentLocation) > FOLLOW_DISTANCE + MINIMUM_DISTANCE) {
+                            if (followUser.getLocation() != null &&
+                                    currentLocation.distance(followUser.getLocation()) > FOLLOW_DISTANCE + MINIMUM_DISTANCE) {
                                 search();
                             }
                         }
-                        if (currentLocation.distance(followUser.currentLocation)
-                                < currentLocation.distance(((User) object).currentLocation)) {
+                        if (followUser.getLocation() != null && user.getLocation() != null &&
+                                currentLocation.distance(followUser.getLocation()) < currentLocation.distance(user.getLocation())) {
                             return;
                         }
                     }
-                    if (currentLocation.distance(((User) object).currentLocation) <= FOLLOW_DISTANCE) {
-                        followUser = (User) object;
+                    if (user.getLocation() != null && currentLocation.distance(user.getLocation()) <= FOLLOW_DISTANCE) {
+                        followUser = user;
                     }
                 }
                 break;
 
             case AVATAR_MOVE:
                 if (object instanceof User && !(object instanceof Bot)) {
+                    User user = (User) object;
                     if (followUser != null) {
                         if (followUser.equals(object)) {
-                            if (currentLocation.distance(followUser.currentLocation) > FOLLOW_DISTANCE + MINIMUM_DISTANCE) {
+                            if (followUser.getLocation() != null
+                                    && currentLocation.distance(followUser.getLocation()) > FOLLOW_DISTANCE + MINIMUM_DISTANCE) {
                                 search();
                                 return;
                             }
 
-                            for (final User user : currentLocation.getRoom().getUsers().values()) {
-                                if (!user.equals(this) && !user.equals(followUser) && inFront(user)) {
-                                    if (currentLocation.distance(user.currentLocation)
-                                            < currentLocation.distance(followUser.currentLocation)) {
-                                        followUser = (User) object;
+                            for (final User roomUser : currentLocation.getRoom().getUsers().values()) {
+                                if (!roomUser.equals(this) && !roomUser.equals(followUser) && inFront(roomUser)) {
+                                    if (followUser.getLocation() != null && roomUser.getLocation() != null
+                                            &&currentLocation.distance(roomUser.getLocation())
+                                            < currentLocation.distance(followUser.getLocation())) {
+                                        followUser = user;
                                         return;
                                     }
                                 }
@@ -119,14 +126,15 @@ public class Bot extends User {
 
                             follow();
                         } else {
-                            if (currentLocation.distance(((User) object).currentLocation)
-                                    < currentLocation.distance(followUser.currentLocation)) {
-                                followUser = (User) object;
+                            if (followUser.getLocation() != null && user.getLocation() != null
+                                    &&currentLocation.distance(user.getLocation())
+                                    < currentLocation.distance(followUser.getLocation())) {
+                                followUser = user;
                             }
                         }
                     } else {
-                        if (currentLocation.distance(((User) object).currentLocation) <= FOLLOW_DISTANCE) {
-                            followUser = (User) object;
+                        if (user.getLocation() != null && currentLocation.distance(user.getLocation()) <= FOLLOW_DISTANCE) {
+                            followUser = user;
                         }
                     }
                 }
@@ -146,18 +154,24 @@ public class Bot extends User {
                     User sender = textMessage.getSender();
                     String message = textMessage.getTextMessage();
                     if (sender != null && !sender.equals(this)) {
-                        if (textMessage.getMessageType() == MessageType.WHISPER && message != null
-                                && message.startsWith("\\") && getWorld() != null
-                                && sender.hasPermission(getWorld(), Permission.MANAGE_BOTS)) {
-                            for (WhisperCommand command : WhisperCommand.values()) {
-                                if (message.substring(1).matches(command.commandPattern)) {
-                                    command.handle(sender, this, message.substring(1));
+                        if (textMessage.getMessageType() == MessageType.WHISPER && message != null) {
+                            if (message.startsWith("\\") && getWorld() != null
+                                    && sender.hasPermission(getWorld(), Permission.MANAGE_BOTS)) {
+                                for (WhisperCommand command : WhisperCommand.values()) {
+                                    if (message.substring(1).matches(command.commandPattern)) {
+                                        command.handle(sender, this, message.substring(1));
+                                        return;
+                                    }
+                                }
+                            } else {
+                                if (forwardWhisperTo != null) {
+                                    chat("\\\\" + forwardWhisperTo.getUsername() + " Nachricht Weitergeleitet von "
+                                            + sender.getUsername() + ": \n" + textMessage, new byte[0], null);
                                     return;
                                 }
-                            }
-                            if (forwardWhisperTo != null) {
-                                forwardWhisperTo.send(SendAction.MESSAGE, textMessage);
-                                return;
+                                if (textMessage.getImageName() != null) {
+                                    chat("\\\\" + sender.getUsername() + " Danke für das nette Bild.", new byte[0], null);
+                                }
                             }
                         }
                     }
@@ -170,7 +184,7 @@ public class Bot extends User {
                     try {
                         notification.accept();
                     } catch (IllegalNotificationActionException e) {
-                        e.printStackTrace();
+                        // Tu nichts
                     }
                 }
                 break;
@@ -189,11 +203,14 @@ public class Bot extends User {
             try {
                 User follow = currentLocation.getRoom().getUsers().values().stream()
                         .filter(user -> !user.equals(this)).findAny().orElseThrow();
+                if (follow.getLocation() == null) {
+                    return;
+                }
 
                 Room room = currentLocation.getRoom();
-                Direction direction = follow.currentLocation.getDirection();
-                float posX = follow.currentLocation.getPosX();
-                float posY = follow.currentLocation.getPosY();
+                Direction direction = follow.getLocation().getDirection();
+                float posX = follow.getLocation().getPosX();
+                float posY = follow.getLocation().getPosY();
 
                 switch (direction) {
                     case UP:
@@ -201,7 +218,7 @@ public class Bot extends User {
 
                         while (!room.isLegal(posX, posY)) {
                             posY += 1;
-                            if (posY > follow.currentLocation.getPosY()) {
+                            if (posY > follow.getLocation().getPosY()) {
                                 return;
                             }
                         }
@@ -212,7 +229,7 @@ public class Bot extends User {
 
                         while (!room.isLegal(posX, posY)) {
                             posX += 1;
-                            if (posX > follow.currentLocation.getPosX()) {
+                            if (posX > follow.getLocation().getPosX()) {
                                 return;
                             }
                         }
@@ -223,7 +240,7 @@ public class Bot extends User {
 
                         while (!room.isLegal(posX, posY)) {
                             posY -= 1;
-                            if (posY < follow.currentLocation.getPosY()) {
+                            if (posY < follow.getLocation().getPosY()) {
                                 return;
                             }
                         }
@@ -234,7 +251,7 @@ public class Bot extends User {
 
                         while (!room.isLegal(posX, posY)) {
                             posX -= 1;
-                            if (posX > follow.currentLocation.getPosX()) {
+                            if (posX > follow.getLocation().getPosX()) {
                                 return;
                             }
                         }
@@ -330,18 +347,22 @@ public class Bot extends User {
      * @return true, wenn er vor dem Benutzer steht, sonst false.
      */
     private boolean inFront(@NotNull final User user) {
+        if (user.getLocation() == null) {
+            return false;
+        }
+
         switch (currentLocation.getDirection()) {
             case UP:
-                return user.currentLocation.getPosY() > currentLocation.getPosY();
+                return user.getLocation().getPosY() > currentLocation.getPosY();
 
             case RIGHT:
-                return user.currentLocation.getPosX() > currentLocation.getPosX();
+                return user.getLocation().getPosX() > currentLocation.getPosX();
 
             case DOWN:
-                return user.currentLocation.getPosY() < currentLocation.getPosY();
+                return user.getLocation().getPosY() < currentLocation.getPosY();
 
             case LEFT:
-                return user.currentLocation.getPosX() < currentLocation.getPosX();
+                return user.getLocation().getPosX() < currentLocation.getPosX();
         }
 
         return false;
@@ -363,8 +384,8 @@ public class Bot extends User {
 
         // Suche nach dem nächsten Benutzer innerhalb des Folgeradius.
         for (final User user : currentLocation.getRoom().getUsers().values()) {
-            if (!user.equals(this) && inFront(user)) {
-                float distance = currentLocation.distance(user.currentLocation);
+            if (!user.equals(this) && user.getLocation() != null && inFront(user)) {
+                float distance = currentLocation.distance(user.getLocation());
 
                 if (distance <= FOLLOW_DISTANCE && distance < minimumDistance) {
                     followUser = user;
@@ -378,7 +399,7 @@ public class Bot extends User {
      * Folgt einem Benutzer.
      */
     private void follow() {
-        if (!follow || followUser == null) {
+        if (!follow || followUser == null || followUser.getLocation() == null) {
             return;
         }
 
@@ -387,10 +408,10 @@ public class Bot extends User {
         float moveY = 0;
         float movementSpeed = sprint && followUser.isSprinting() ? DEFAULT_VELOCITY * SPRINT_SPEED_FACTOR : DEFAULT_VELOCITY;
 
-        switch (followUser.currentLocation.getDirection()) {
+        switch (followUser.getLocation().getDirection()) {
             case UP:
             case DOWN:
-                moveX = followUser.currentLocation.getPosX() - currentLocation.getPosX();
+                moveX = followUser.getLocation().getPosX() - currentLocation.getPosX();
 
                 if (moveX != 0) {
                     if (Math.abs(moveX) > movementSpeed) {
@@ -398,8 +419,8 @@ public class Bot extends User {
                         moveX = moveX > 0 ? movementSpeed : -movementSpeed;
                     }
                 } else {
-                    if (followUser.currentLocation.getDirection() == direction) {
-                        moveY = followUser.currentLocation.getPosY() - currentLocation.getPosY();
+                    if (followUser.getLocation().getDirection() == direction) {
+                        moveY = followUser.getLocation().getPosY() - currentLocation.getPosY();
 
                         if (Math.abs(moveY) < MINIMUM_DISTANCE) {
                             moveY = 0;
@@ -407,14 +428,14 @@ public class Bot extends User {
                             moveY = moveY > 0 ? movementSpeed : -movementSpeed;
                         }
                     } else {
-                        direction = followUser.currentLocation.getDirection();
+                        direction = followUser.getLocation().getDirection();
                     }
                 }
                 break;
 
             case RIGHT:
             case LEFT:
-                moveY = followUser.currentLocation.getPosY() - currentLocation.getPosY();
+                moveY = followUser.getLocation().getPosY() - currentLocation.getPosY();
 
                 if (moveY != 0) {
                     if (Math.abs(moveY) > movementSpeed) {
@@ -422,8 +443,8 @@ public class Bot extends User {
                         moveY = moveY > 0 ? movementSpeed : -movementSpeed;
                     }
                 } else {
-                    if (followUser.currentLocation.getDirection() == direction) {
-                        moveX = followUser.currentLocation.getPosX() - currentLocation.getPosX();
+                    if (followUser.getLocation().getDirection() == direction) {
+                        moveX = followUser.getLocation().getPosX() - currentLocation.getPosX();
 
                         if (Math.abs(moveX) < MINIMUM_DISTANCE) {
                             moveX = 0;
@@ -431,7 +452,7 @@ public class Bot extends User {
                             moveX = moveX > 0 ? movementSpeed : -movementSpeed;
                         }
                     } else {
-                        direction = followUser.currentLocation.getDirection();
+                        direction = followUser.getLocation().getDirection();
                     }
                 }
                 break;
@@ -458,6 +479,31 @@ public class Bot extends User {
      * Ein Enum, welches die Kommandos repräsentiert, mit denen man den Bot konfigurieren kann.
      */
     private enum WhisperCommand {
+
+        /**
+         * Sendet eine Auflistung aller verfügbaren Befehle als Flüsternachricht.
+         */
+        HELP("(?i)help") {
+            @Override
+            public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
+                bot.chat("\\\\" + sender.getUsername() + " Verfügbare Befehle: \n"
+                        + "\\follow <Benutzername> : Teleportiere zum Benutzer und verfolge ihn. \n"
+                        + "\\follow : Verfolge Benutzer in der Nähe. \n"
+                        + "\\unfollow : Verfolge keinen Benutzer mehr. \n"
+                        + "\\teleport_on : Teleportiere zu einem Benutzer, wenn kein Benutzer zum Verfolgen gefunden wird. \n"
+                        + "\\teleport_off : Teleportiere nicht mehr zu einem Benutzer, wenn kein Benutzer zum Verfolgen gefunden wird. \n"
+                        + "\\sprint_on : Laufe mit Sprintgeschwindigkeit. \n"
+                        + "\\sprint_off : Laufe mit normaler Geschwindigkeit. \n"
+                        + "\\autochat_on : Schreibe automatisierte Nachrichten per Zufall. \n"
+                        + "\\autochat_off : Schreibe keine automatisierten Nachrichten per Zufall. \n"
+                        + "\\forward <Benutzername> : Leite erhaltene Flüsternachrichten an den Benutzer weiter. \n"
+                        + "\\forward : Leite erhaltene Flüsternachrichten an dich weiter. \n"
+                        + "\\forward_off : Leite Flüsternachrichten nicht mehr weiter. \n"
+                        + "\\write <Nachricht> : Schreibe eine Textnachricht. \n"
+                        + "\\talk <Nachricht> : Lese die Nachricht vor.",
+                new byte[0], null);
+            }
+        },
 
         /**
          * Lässt den Bot einen Benutzer verfolgen.
@@ -560,14 +606,14 @@ public class Bot extends User {
             public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
                 String[] commandParts = message.split("\\s", 2);
 
-                if (commandParts.length < 2) {
-                    bot.forwardWhisperTo = sender;
-                } else {
+                if (commandParts.length == 2) {
                     try {
                         bot.forwardWhisperTo = UserAccountManager.getInstance().getUser(commandParts[1]);
                     } catch (UserNotFoundException e) {
                         // Tu nichts.
                     }
+                } else {
+                    bot.forwardWhisperTo = sender;
                 }
             }
         },
@@ -575,7 +621,7 @@ public class Bot extends User {
         /**
          * Veranlasst, dass der Bot keine Flüsternachrichten mehr weiterleitet.
          */
-        FORWARD_OFF("(?i)forward_off.*") {
+        FORWARD_OFF("(?i)forward_off") {
             @Override
             public void handle(@NotNull final User sender, @NotNull final Bot bot, @NotNull final String message) {
                 bot.forwardWhisperTo = null;

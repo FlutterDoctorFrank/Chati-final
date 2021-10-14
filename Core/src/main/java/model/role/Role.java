@@ -49,20 +49,12 @@ public enum Role {
     /**
      * Repräsentiert einen Bot.
      */
-    BOT(Permission.CONTACT_CONTEXT, Permission.MUTE, Permission.BAN_USER, Permission.BAN_MODERATOR);
+    BOT(Permission.CONTACT_USER, Permission.CONTACT_CONTEXT, Permission.MUTE, Permission.BAN_USER, Permission.BAN_MODERATOR);
 
     private final Set<Permission> permissions;
 
     Role(@NotNull final Permission... permissions) {
         this.permissions = Collections.unmodifiableSet(EnumSet.copyOf(Arrays.asList(permissions)));
-    }
-
-    /**
-     * Gibt die Menge der Berechtigung dieser Rolle zurück.
-     * @return Die Berechtigungen der Rolle.
-     */
-    public @NotNull @Unmodifiable Set<Permission> getPermissions() {
-        return this.permissions;
     }
 
     /**

@@ -31,7 +31,7 @@ public class MapUtils {
 
     private static final Logger LOGGER = Logger.getLogger("chati.map-loader");
 
-    public static final float INTERACTION_DISTANCE = 32;
+    public static final float TILE_SIZE = 32;
     public static final int AVATAR_RADIUS = 15;
 
     private MapUtils() {
@@ -258,7 +258,7 @@ public class MapUtils {
                 LOGGER.warning(String.format("Unable to find required interaction distance in map: %s", room.getMap()));
             }
 
-            return INTERACTION_DISTANCE;
+            return TILE_SIZE;
         }
 
         return baseLayer.getTileWidth();

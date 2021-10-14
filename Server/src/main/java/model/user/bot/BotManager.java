@@ -5,7 +5,6 @@ import controller.network.ClientSender;
 import model.communication.message.TextMessage;
 import model.context.global.GlobalContext;
 import model.role.Role;
-import model.user.Bot;
 import model.user.User;
 import model.user.account.UserAccountManager;
 import org.jetbrains.annotations.NotNull;

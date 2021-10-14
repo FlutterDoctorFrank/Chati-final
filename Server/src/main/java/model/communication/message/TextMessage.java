@@ -102,4 +102,9 @@ public class TextMessage extends Message implements ITextMessage {
     public @NotNull MessageType getMessageType() {
         return messageType;
     }
+
+    @Override
+    public String toString() {
+        return textMessage;
+    }
 }
