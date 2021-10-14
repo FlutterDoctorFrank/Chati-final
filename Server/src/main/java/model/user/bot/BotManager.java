@@ -93,11 +93,13 @@ public class BotManager implements Runnable {
                     }
                 } else {
                     if (timer >= 1000) {
-                        timer = 0;
                         bot.randomChat();
                     }
                 }
                 bot.choose();
+            }
+            if (timer >= 1000) {
+                timer = 0;
             }
 
             try {
@@ -123,8 +125,8 @@ public class BotManager implements Runnable {
                 AudioSystem.write(audioIn, AudioFileFormat.Type.WAVE, out);
                 ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
                 byte[] bytes = AudioSystem.getAudioInputStream(new BufferedInputStream(in)).readAllBytes();
-                short[] data = AudioUtils.toShort(bytes, false);
-                return AudioUtils.toByte(AudioUtils.sampleUp(data, 3), true);
+                short[] shorts = AudioUtils.toShort(bytes, false);
+                return AudioUtils.toByte(AudioUtils.sampleUp(shorts, 3), true);
             } catch (SynthesisException | IOException | UnsupportedAudioFileException e) {
                 e.printStackTrace();
             }
