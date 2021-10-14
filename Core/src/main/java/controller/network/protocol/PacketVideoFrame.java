@@ -66,7 +66,7 @@ public class PacketVideoFrame implements Packet<PacketListener> {
     public void write(@NotNull final Kryo kryo, @NotNull final Output output) {
         PacketUtils.writeNullableUniqueId(output, this.senderId);
         kryo.writeObjectOrNull(output, this.timestamp, LocalDateTime.class);
-        output.writeBoolean(screenshot);
+        output.writeBoolean(this.screenshot);
         output.writeVarInt(this.frameData.length, true);
         output.writeBytes(this.frameData);
     }
@@ -77,12 +77,13 @@ public class PacketVideoFrame implements Packet<PacketListener> {
         this.timestamp = kryo.readObjectOrNull(input, LocalDateTime.class);
         this.screenshot = input.readBoolean();
         this.frameData = input.readBytes(input.readVarInt(true));
+        System.out.println("Read PacketVideoFrame with total of " + input.total() + " bytes.");
     }
 
     @Override
     public @NotNull String toString() {
         return this.getClass().getSimpleName() + "{senderId=" + this.senderId + ", timestamp=" + this.timestamp
-                + ", isScreen=" + screenshot + ", frameData=" + Arrays.toString(this.frameData) + "}";
+                + ", isScreen=" + this.screenshot + ", frameData=" + Arrays.toString(this.frameData) + "}";
     }
 
     /**
